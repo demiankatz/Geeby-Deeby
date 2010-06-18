@@ -1,0 +1,92 @@
+a {
+    text-decoration:none;
+    color:#774E03;
+}
+
+a:hover {
+    color:#D79110;
+}
+
+body {
+    font-size: 10pt;
+    font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
+    background-color: #F3E3C6;
+}
+
+h1 {
+    font-size: 150%;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+h2 {
+    font-size: 125%;
+}
+
+table {
+    width: 100%;
+}
+
+td, th {
+    vertical-align: top;
+}
+
+.fineprint {
+    font-size: smaller;
+}
+
+.footer {
+    border-top: 1px solid black;
+}
+
+table.edit {
+    width: 100%;
+}
+
+table.edit tr th {
+    font-weight: bold;
+    text-align: right;
+    padding-right: 5px;
+    width: 30%;
+}
+
+table.edit tr th span.note {
+    font-weight: normal;
+    font-size: 80%;
+    line-height: 80%;
+}
+
+table.edit tr td input {
+    width: 100%;
+    font-size: 10pt;
+}
+
+table.edit tr td textarea {
+    width: 100%;
+    min-width: 300px;
+    height: 150px;
+    font-size: 10pt;
+}
+
+.edit_container {
+    width: 500px;
+}
+
+table.list_item {
+    width: auto;
+    padding: 0px;
+}
+
+table.list_item tr td {
+    padding: 0px;
+    margin: 0px;
+}
+
+.edit_tab_contents {
+    height: 300px;
+    overflow: auto;
+}
+
+input.number {
+    width: 50px;
+}
