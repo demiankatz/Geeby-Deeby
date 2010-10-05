@@ -550,7 +550,7 @@ function saveItem()
     var details = {
         id: itemID, 
         name: itemName, 
-        length: len,
+        len: len,
         endings: endings,
         errata: errata,
         thanks: thanks,
