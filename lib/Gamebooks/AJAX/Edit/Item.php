@@ -632,6 +632,18 @@ class AJAX_Edit_Item extends AJAX_Edit_Base
     }
     
     /**
+     * Display item bibliography.
+     *
+     * @access  public
+     */
+    public function getItemReferences()
+    {
+        $list = new ItemList();
+        $this->interface->assign('itemBib', $list->getReferencedBy($_GET['id']));
+        $this->interface->showSubPage('item_bib.tpl');
+    }
+    
+    /**
      * Display "translated from" list.
      *
      * @access  public
@@ -782,6 +794,46 @@ class AJAX_Edit_Item extends AJAX_Edit_Base
         
         $item = new Item($source_id);
         if ($item->deleteTranslation($trans_id)) {
+            $this->jsonReportSuccess();
+        } else {
+            $this->jsonDie('Problem removing relationship.');
+        }
+    }
+
+    /**
+     * Add an item reference to an item.
+     *
+     * @access  public
+     */
+    public function addItemReference()
+    {
+        $item_id = intval($_POST['item_id']);
+        $bib_item_id = intval($_POST['bib_item_id']);
+        
+        if ($item_id == $bib_item_id) {
+            $this->jsonDie('You cannot link an item to itself.');
+        }
+        
+        $item = new Item($item_id);
+        if ($item->addItemReference($bib_item_id)) {
+            $this->jsonReportSuccess();
+        } else {
+            $this->jsonDie('Problem storing relationship.');
+        }
+    }
+    
+    /**
+     * Remove a translation from an item.
+     *
+     * @access  public
+     */
+    public function deleteItemReference()
+    {
+        $item_id = intval($_POST['item_id']);
+        $bib_item_id = intval($_POST['bib_item_id']);
+        
+        $item = new Item($item_id);
+        if ($item->deleteItemReference($bib_item_id)) {
             $this->jsonReportSuccess();
         } else {
             $this->jsonDie('Problem removing relationship.');

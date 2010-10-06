@@ -349,6 +349,16 @@ function redrawAdaptedFrom()
     $('#adapt_from').load(url);
 }
 
+/* Redraw the item bibliography:
+ */
+function redrawItemBib()
+{
+    var itemID = $('#Item_ID').val();
+    var url = 'ajax.php?module=item&method=getItemReferences&id=' + 
+        encodeURIComponent(itemID);
+    $('#item_bib').load(url);
+}
+
 /* Redraw the translation list:
  */
 function redrawTranslations()
@@ -524,6 +534,58 @@ function deleteTranslation(relatedID)
         if (data.success) {
             // Update the list.
             redrawTranslations();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Save an item reference:
+ */
+function addItemReference()
+{
+    var itemID = $('#Item_ID').val();
+    var relatedID = parseInt($('#item_bib_id').val());
+    
+    // Validate user selection:
+    if (isNaN(relatedID)) {
+        alert("Please choose a valid item.");
+        return;
+    }
+    
+    // Save and update based on selected relationship:
+    var url = 'ajax.php?module=item&method=addItemReference';
+    $.post(url, {item_id: itemID, bib_item_id: relatedID}, function(data) {
+        // If save was successful...
+        if (data.success) {
+	        // Clear the form
+	        $('#item_bib_id').val('');
+	        
+            // Update the list.
+            redrawItemBib();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Delete an item reference:
+ */
+function deleteItemReference(relatedID)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+    
+    var itemID = $('#Item_ID').val();
+    var url = 'ajax.php?module=item&method=deleteItemReference';
+    $.post(url, {item_id: itemID, bib_item_id: relatedID}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawItemBib();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);

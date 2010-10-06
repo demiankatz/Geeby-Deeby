@@ -61,7 +61,12 @@
   </div>
   
   <div id="bib-tab" class="edit_tab_contents">
-    Under construction...
+    <b>Item References:</b>
+    <input id="item_bib_id" class="Item_ID" />
+    <button onclick="addItemReference();">Add Reference</button>
+    <div id="item_bib">
+      {include file="item_bib.tpl"}
+    </div>
   </div>
   
   <div id="codes-tab" class="edit_tab_contents">

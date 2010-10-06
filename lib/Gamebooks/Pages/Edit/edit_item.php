@@ -69,6 +69,7 @@ function edit_item($interface)
     $interface->assign('adaptedFrom', $list->getAdaptedFrom($_GET['id']));
     $interface->assign('adaptedInto', $list->getAdaptations($_GET['id']));
     $interface->assign('item_list', $list->getFromCollection($_GET['id']));
+    $interface->assign('itemBib', $list->getReferencedBy($_GET['id']));
     
     // Display page with appropriate Javascript:
     $interface->addCSS('ui-lightness/jquery-ui-autocomplete.css');

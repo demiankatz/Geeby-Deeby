@@ -91,6 +91,38 @@ class Item extends Row
     }
 
     /**
+     * Add an item reference for this item.
+     *
+     * @access  public
+     * @param   int     $id             The ID of the referenced item.
+     * @return  boolean                 Boolean true on success, false on error.
+     */
+    public function addItemReference($id)
+    {
+        $item_id = intval($id);
+        $my_id = intval($this->id);
+        $sql = "INSERT INTO Items_Bibliography(Bib_Item_ID, Item_ID) " .
+            "VALUES ($my_id, $item_id);";
+        return $this->db->query($sql);
+    }
+    
+    /**
+     * Delete an item reference for this item.
+     *
+     * @access  public
+     * @param   int     $id             The ID of the referenced item.
+     * @return  boolean                 Boolean true on success, false on error.
+     */
+    public function deleteItemReference($id)
+    {
+        $item_id = intval($id);
+        $my_id = intval($this->id);
+        $sql = "DELETE FROM Items_Bibliography WHERE Bib_Item_ID={$my_id} AND " .
+            " Item_ID={$item_id};";
+        return $this->db->query($sql);
+    }
+
+    /**
      * Add an adaptation for this item.
      *
      * @access  public
@@ -875,6 +907,29 @@ class ItemList
         $sql = "SELECT Items.* FROM Items_Translations " .
             "JOIN Items ON Items_Translations.Source_Item_ID=Items.Item_ID " .
             "WHERE Items_Translations.Trans_Item_ID='{$id}' " .
+            "ORDER BY Item_Name;";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
+     * Get all items referenced by the specified item.
+     *
+     * @access  public
+     * @param   int     $id             A valid Item_ID value.
+     * @return  array                   Selected contents of Items table.
+     */
+    public function getReferencedBy($id)
+    {
+        // Sanitize input:
+        $id = intval($id);
+        $sql = "SELECT Items.* FROM Items_Bibliography " .
+            "JOIN Items ON Items_Bibliography.Item_ID=Items.Item_ID " .
+            "WHERE Items_Bibliography.Bib_Item_ID='{$id}' " .
             "ORDER BY Item_Name;";
         $result = $this->db->query($sql);
         $list = array();
