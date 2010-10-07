@@ -18,6 +18,8 @@
   *
   */
 require_once 'Gamebooks/Tables/Item.php';
+require_once 'Gamebooks/Tables/Person.php';
+require_once 'Gamebooks/Tables/Series.php';
 require_once 'Gamebooks/Tables/Role.php';
 require_once 'Gamebooks/Tables/MaterialType.php';
 require_once 'Gamebooks/Tables/Platform.php';
@@ -69,7 +71,13 @@ function edit_item($interface)
     $interface->assign('adaptedFrom', $list->getAdaptedFrom($_GET['id']));
     $interface->assign('adaptedInto', $list->getAdaptations($_GET['id']));
     $interface->assign('item_list', $list->getFromCollection($_GET['id']));
+    
+    // Save bibliographic information:
     $interface->assign('itemBib', $list->getReferencedBy($_GET['id']));
+    $list = new PersonList();
+    $interface->assign('peopleBib', $list->getReferencedBy($_GET['id']));
+    $list = new SeriesList();
+    $interface->assign('seriesBib', $list->getReferencedBy($_GET['id']));
     
     // Display page with appropriate Javascript:
     $interface->addCSS('ui-lightness/jquery-ui-autocomplete.css');

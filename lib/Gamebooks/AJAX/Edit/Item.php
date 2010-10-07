@@ -644,6 +644,32 @@ class AJAX_Edit_Item extends AJAX_Edit_Base
     }
     
     /**
+     * Display series bibliography.
+     *
+     * @access  public
+     */
+    public function getSeriesReferences()
+    {
+        require_once 'Gamebooks/Tables/Series.php';
+        $list = new SeriesList();
+        $this->interface->assign('seriesBib', $list->getReferencedBy($_GET['id']));
+        $this->interface->showSubPage('series_bib.tpl');
+    }
+    
+    /**
+     * Display person bibliography.
+     *
+     * @access  public
+     */
+    public function getPersonReferences()
+    {
+        require_once 'Gamebooks/Tables/Person.php';
+        $list = new PersonList();
+        $this->interface->assign('peopleBib', $list->getReferencedBy($_GET['id']));
+        $this->interface->showSubPage('people_bib.tpl');
+    }
+    
+    /**
      * Display "translated from" list.
      *
      * @access  public
@@ -823,7 +849,7 @@ class AJAX_Edit_Item extends AJAX_Edit_Base
     }
     
     /**
-     * Remove a translation from an item.
+     * Remove an item reference from an item.
      *
      * @access  public
      */
@@ -834,6 +860,78 @@ class AJAX_Edit_Item extends AJAX_Edit_Base
         
         $item = new Item($item_id);
         if ($item->deleteItemReference($bib_item_id)) {
+            $this->jsonReportSuccess();
+        } else {
+            $this->jsonDie('Problem removing relationship.');
+        }
+    }
+
+    /**
+     * Add a series reference to an item.
+     *
+     * @access  public
+     */
+    public function addSeriesReference()
+    {
+        $item_id = intval($_POST['item_id']);
+        $series_id = intval($_POST['series_id']);
+        
+        $item = new Item($item_id);
+        if ($item->addSeriesReference($series_id)) {
+            $this->jsonReportSuccess();
+        } else {
+            $this->jsonDie('Problem storing relationship.');
+        }
+    }
+    
+    /**
+     * Remove a series reference from an item.
+     *
+     * @access  public
+     */
+    public function deleteSeriesReference()
+    {
+        $item_id = intval($_POST['item_id']);
+        $series_id = intval($_POST['series_id']);
+        
+        $item = new Item($item_id);
+        if ($item->deleteSeriesReference($series_id)) {
+            $this->jsonReportSuccess();
+        } else {
+            $this->jsonDie('Problem removing relationship.');
+        }
+    }
+
+    /**
+     * Add a person reference to an item.
+     *
+     * @access  public
+     */
+    public function addPersonReference()
+    {
+        $item_id = intval($_POST['item_id']);
+        $person_id = intval($_POST['person_id']);
+        
+        $item = new Item($item_id);
+        if ($item->addPersonReference($person_id)) {
+            $this->jsonReportSuccess();
+        } else {
+            $this->jsonDie('Problem storing relationship.');
+        }
+    }
+    
+    /**
+     * Remove a person reference from an item.
+     *
+     * @access  public
+     */
+    public function deletePersonReference()
+    {
+        $item_id = intval($_POST['item_id']);
+        $person_id = intval($_POST['person_id']);
+        
+        $item = new Item($item_id);
+        if ($item->deletePersonReference($person_id)) {
             $this->jsonReportSuccess();
         } else {
             $this->jsonDie('Problem removing relationship.');

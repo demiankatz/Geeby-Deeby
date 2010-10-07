@@ -228,6 +228,29 @@ class PersonList
     }
     
     /**
+     * Get all people referenced by the specified item.
+     *
+     * @access  public
+     * @param   int     $id             A valid Item_ID value.
+     * @return  array                   Selected contents of People table.
+     */
+    public function getReferencedBy($id)
+    {
+        // Sanitize input:
+        $id = intval($id);
+        $sql = "SELECT People.* FROM People_Bibliography " .
+            "JOIN People ON People_Bibliography.Person_ID=People.Person_ID " .
+            "WHERE People_Bibliography.Item_ID='{$id}' " .
+            "ORDER BY People.Last_Name, People.First_Name, People.Middle_Name;";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
      * Return rows associated with a query typed into an autosuggester.
      *
      * @access  public

@@ -61,11 +61,24 @@
   </div>
   
   <div id="bib-tab" class="edit_tab_contents">
+    <p>The current item is about the following items, series and people...</p>
     <b>Item References:</b>
     <input id="item_bib_id" class="Item_ID" />
     <button onclick="addItemReference();">Add Reference</button>
     <div id="item_bib">
       {include file="item_bib.tpl"}
+    </div>
+    <b>Series References:</b>
+    <input id="series_bib_id" class="Series_ID" />
+    <button onclick="addSeriesReference();">Add Reference</button>
+    <div id="series_bib">
+      {include file="series_bib.tpl"}
+    </div>
+    <b>Person References:</b>
+    <input id="person_bib_id" class="Person_ID" />
+    <button onclick="addPersonReference();">Add Reference</button>
+    <div id="people_bib">
+      {include file="people_bib.tpl"}
     </div>
   </div>
   

@@ -123,6 +123,70 @@ class Item extends Row
     }
 
     /**
+     * Add a series reference for this item.
+     *
+     * @access  public
+     * @param   int     $id             The ID of the referenced series.
+     * @return  boolean                 Boolean true on success, false on error.
+     */
+    public function addSeriesReference($id)
+    {
+        $series_id = intval($id);
+        $my_id = intval($this->id);
+        $sql = "INSERT INTO Series_Bibliography(Item_ID, Series_ID) " .
+            "VALUES ($my_id, $series_id);";
+        return $this->db->query($sql);
+    }
+    
+    /**
+     * Delete a series reference for this item.
+     *
+     * @access  public
+     * @param   int     $id             The ID of the referenced series.
+     * @return  boolean                 Boolean true on success, false on error.
+     */
+    public function deleteSeriesReference($id)
+    {
+        $series_id = intval($id);
+        $my_id = intval($this->id);
+        $sql = "DELETE FROM Series_Bibliography WHERE Item_ID={$my_id} AND " .
+            " Series_ID={$series_id};";
+        return $this->db->query($sql);
+    }
+
+    /**
+     * Add a person reference for this item.
+     *
+     * @access  public
+     * @param   int     $id             The ID of the referenced person.
+     * @return  boolean                 Boolean true on success, false on error.
+     */
+    public function addPersonReference($id)
+    {
+        $person_id = intval($id);
+        $my_id = intval($this->id);
+        $sql = "INSERT INTO People_Bibliography(Item_ID, Person_ID) " .
+            "VALUES ($my_id, $person_id);";
+        return $this->db->query($sql);
+    }
+    
+    /**
+     * Delete a person reference for this item.
+     *
+     * @access  public
+     * @param   int     $id             The ID of the referenced person.
+     * @return  boolean                 Boolean true on success, false on error.
+     */
+    public function deletePersonReference($id)
+    {
+        $person_id = intval($id);
+        $my_id = intval($this->id);
+        $sql = "DELETE FROM People_Bibliography WHERE Item_ID={$my_id} AND " .
+            " Person_ID={$person_id};";
+        return $this->db->query($sql);
+    }
+
+    /**
      * Add an adaptation for this item.
      *
      * @access  public

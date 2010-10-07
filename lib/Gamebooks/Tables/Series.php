@@ -394,6 +394,29 @@ class SeriesList
     }
     
     /**
+     * Get all series referenced by the specified item.
+     *
+     * @access  public
+     * @param   int     $id             A valid Item_ID value.
+     * @return  array                   Selected contents of Series table.
+     */
+    public function getReferencedBy($id)
+    {
+        // Sanitize input:
+        $id = intval($id);
+        $sql = "SELECT Series.* FROM Series_Bibliography " .
+            "JOIN Series ON Series_Bibliography.Series_ID=Series.Series_ID " .
+            "WHERE Series_Bibliography.Item_ID='{$id}' " .
+            "ORDER BY Series_Name;";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
      * Get all series translated into the specified series.
      *
      * @access  public

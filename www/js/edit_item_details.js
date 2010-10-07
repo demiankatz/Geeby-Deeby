@@ -359,6 +359,26 @@ function redrawItemBib()
     $('#item_bib').load(url);
 }
 
+/* Redraw the series bibliography:
+ */
+function redrawSeriesBib()
+{
+    var itemID = $('#Item_ID').val();
+    var url = 'ajax.php?module=item&method=getSeriesReferences&id=' + 
+        encodeURIComponent(itemID);
+    $('#series_bib').load(url);
+}
+
+/* Redraw the person bibliography:
+ */
+function redrawPersonBib()
+{
+    var itemID = $('#Item_ID').val();
+    var url = 'ajax.php?module=item&method=getPersonReferences&id=' + 
+        encodeURIComponent(itemID);
+    $('#people_bib').load(url);
+}
+
 /* Redraw the translation list:
  */
 function redrawTranslations()
@@ -559,9 +579,9 @@ function addItemReference()
     $.post(url, {item_id: itemID, bib_item_id: relatedID}, function(data) {
         // If save was successful...
         if (data.success) {
-	        // Clear the form
-	        $('#item_bib_id').val('');
-	        
+            // Clear the form
+            $('#item_bib_id').val('');
+            
             // Update the list.
             redrawItemBib();
         } else {
@@ -586,6 +606,110 @@ function deleteItemReference(relatedID)
         if (data.success) {
             // Update the list.
             redrawItemBib();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Save a series reference:
+ */
+function addSeriesReference()
+{
+    var itemID = $('#Item_ID').val();
+    var relatedID = parseInt($('#series_bib_id').val());
+    
+    // Validate user selection:
+    if (isNaN(relatedID)) {
+        alert("Please choose a valid series.");
+        return;
+    }
+    
+    // Save and update based on selected relationship:
+    var url = 'ajax.php?module=item&method=addSeriesReference';
+    $.post(url, {item_id: itemID, series_id: relatedID}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Clear the form
+            $('#series_bib_id').val('');
+            
+            // Update the list.
+            redrawSeriesBib();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Delete a series reference:
+ */
+function deleteSeriesReference(relatedID)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+    
+    var itemID = $('#Item_ID').val();
+    var url = 'ajax.php?module=item&method=deleteSeriesReference';
+    $.post(url, {item_id: itemID, series_id: relatedID}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawSeriesBib();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Save a person reference:
+ */
+function addPersonReference()
+{
+    var itemID = $('#Item_ID').val();
+    var relatedID = parseInt($('#person_bib_id').val());
+    
+    // Validate user selection:
+    if (isNaN(relatedID)) {
+        alert("Please choose a valid person.");
+        return;
+    }
+    
+    // Save and update based on selected relationship:
+    var url = 'ajax.php?module=item&method=addPersonReference';
+    $.post(url, {item_id: itemID, person_id: relatedID}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Clear the form
+            $('#person_bib_id').val('');
+            
+            // Update the list.
+            redrawPersonBib();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Delete a person reference:
+ */
+function deletePersonReference(relatedID)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+    
+    var itemID = $('#Item_ID').val();
+    var url = 'ajax.php?module=item&method=deletePersonReference';
+    $.post(url, {item_id: itemID, person_id: relatedID}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawPersonBib();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
@@ -1088,4 +1212,10 @@ $(document).ready(function(){
         highlight: false
     };
     $('.Person_ID').autocomplete(options);
+    options = {
+        url: "ajax.php", 
+        extraParams: {module: "series", method: "suggest" }, 
+        highlight: false
+    };
+    $('.Series_ID').autocomplete(options);
 });
