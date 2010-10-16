@@ -28,13 +28,19 @@ doNotCache();
 // Normalize and validate the module name:
 $module = ucwords($_GET['module']);
 switch($module) {
+case 'Linktype':
+    // Fix capitalization:
+    $module = 'LinkType';
+    break;
 case 'Materialtype':
     // Fix capitalization:
     $module = 'MaterialType';
+    break;
 case 'Category':
 case 'Country':
 case 'Item':
 case 'Language':
+case 'Link':
 case 'Note':
 case 'Platform':
 case 'People':

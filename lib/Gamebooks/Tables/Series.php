@@ -417,6 +417,29 @@ class SeriesList
     }
     
     /**
+     * Get all series referenced by the specified link.
+     *
+     * @access  public
+     * @param   int     $id             A valid Link_ID value.
+     * @return  array                   Selected contents of Series table.
+     */
+    public function getByLink($id)
+    {
+        // Sanitize input:
+        $id = intval($id);
+        $sql = "SELECT Series.* FROM Series_Links " .
+            "JOIN Series ON Series_Links.Series_ID=Series.Series_ID " .
+            "WHERE Series_Links.Link_ID='{$id}' " .
+            "ORDER BY Series_Name;";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
      * Get all series translated into the specified series.
      *
      * @access  public

@@ -36,9 +36,11 @@ switch($page) {
 case 'categories':
 case 'countries':
 case 'edit_item':
+case 'edit_link':
 case 'edit_person':
 case 'edit_series':
 case 'languages':
+case 'links':
 case 'materials':
 case 'notes':
 case 'platforms':

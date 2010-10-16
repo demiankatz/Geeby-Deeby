@@ -7,7 +7,7 @@
   <li>FAQs (not implemented yet)</li>
   <li>Files (not implemented yet)</li>
   <li><a target='_materials' href='?page=languages'>Languages</a></li>
-  <li>Links (not implemented yet)</li>
+  <li><a target='_links' href='?page=links'>Links</a></li>
   <li><a target='_materials' href='?page=materials'>Material Types</a></li>
   <li><a target='_notes' href='?page=notes'>Notes</a></li>
   <li><a target='_people' href='?page=people'>People</a></li>

@@ -1027,6 +1027,29 @@ class ItemList
     }
     
     /**
+     * Get all items related to the specified link.
+     *
+     * @access  public
+     * @param   int     $id             A valid Link_ID value.
+     * @return  array                   Selected contents of Items table.
+     */
+    public function getByLink($id)
+    {
+        // Sanitize input:
+        $id = intval($id);
+        $sql = "SELECT Items.* FROM Items_Links " .
+            "JOIN Items ON Items_Links.Item_ID=Items.Item_ID " .
+            "WHERE Items_Links.Link_ID='{$id}' " .
+            "ORDER BY Item_Name;";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
      * Assign the item list to the user interface.
      *
      * @access  public
