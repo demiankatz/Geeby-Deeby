@@ -31,6 +31,10 @@ td, th {
     vertical-align: top;
 }
 
+.error {
+    color: red;
+}
+
 .fineprint {
     font-size: smaller;
 }

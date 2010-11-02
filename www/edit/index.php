@@ -19,6 +19,10 @@
   */
 require_once 'Gamebooks/UI.php';
 require_once 'Gamebooks/util.php';
+require_once 'Gamebooks/CurrentUser.php';
+
+// Start up a session
+session_start();
 
 // We don't want to work with the magic_quotes_gpc setting!
 undoMagicQuotes();
@@ -30,8 +34,15 @@ doNotCache();
 $interface = new UI('edit');
 $interface->addCSS('edit.css');
 
-// Display appropriate page based on the current parameters:
-$page = $_GET['page'];
+// Process login -- either validate the current username and password being
+// submitted or else check if there is already a user in the session.
+$user = (isset($_REQUEST['user']) && isset($_REQUEST['pass'])) ?
+    CurrentUser::passwordLogin($_REQUEST['user'], $_REQUEST['pass']) :
+    CurrentUser::loggedIn();
+
+// Display appropriate page based on the current parameters; note that if a user
+// is not logged in, they are automatically forced to the login page.
+$page = ($user == false) ? 'login' : $_GET['page'];
 switch($page) {
 case 'categories':
 case 'countries':
@@ -41,6 +52,7 @@ case 'edit_person':
 case 'edit_series':
 case 'languages':
 case 'links':
+case 'login':
 case 'materials':
 case 'notes':
 case 'platforms':

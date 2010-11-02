@@ -18,12 +18,22 @@
   *
   */
 require_once 'Gamebooks/util.php';
+require_once 'Gamebooks/CurrentUser.php';
+
+// Start up a session
+session_start();
 
 // We don't want to work with the magic_quotes_gpc setting!
 undoMagicQuotes();
 
 // Avoid browser caching:
 doNotCache();
+
+// Automatically fail if the user is not logged in:
+$user = CurrentUser::loggedIn();
+if (!$user) {
+    die('User must be logged in.');
+}
 
 // Normalize and validate the module name:
 $module = ucwords($_GET['module']);
