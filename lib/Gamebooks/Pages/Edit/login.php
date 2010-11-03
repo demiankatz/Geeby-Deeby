@@ -19,7 +19,7 @@
   */
 
 /**
- * Handler for links page.
+ * Handler for login page.
  *
  * @param   UI  $interface      Current instance of user interface class.
  */
