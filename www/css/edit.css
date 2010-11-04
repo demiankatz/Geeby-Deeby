@@ -39,6 +39,12 @@ td, th {
     font-size: smaller;
 }
 
+.headerControls {
+    float: right;
+    text-align: right;
+    width: 150px;
+}
+
 .footer {
     border-top: 1px solid black;
 }

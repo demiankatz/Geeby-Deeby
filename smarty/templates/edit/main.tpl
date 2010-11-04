@@ -13,6 +13,9 @@
     </title>
   </head>
   <body>
+    <div class="headerControls">
+      {if $loggedIn}<a href="?page=logout">Log Out</a>{/if}
+    </div>
     {include file=$subPage}
     <div class="footer">
       <p>

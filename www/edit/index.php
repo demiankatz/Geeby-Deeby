@@ -30,6 +30,13 @@ undoMagicQuotes();
 // Avoid browser caching:
 doNotCache();
 
+// Special case -- handle logout page:
+if ($_GET['page'] == 'logout') {
+    CurrentUser::logOut();
+    header('Location: index.php');
+    die();
+}
+
 // Initialize user interface:
 $interface = new UI('edit');
 $interface->addCSS('edit.css');
@@ -40,11 +47,14 @@ $user = (isset($_REQUEST['user']) && isset($_REQUEST['pass'])) ?
     CurrentUser::passwordLogin($_REQUEST['user'], $_REQUEST['pass']) :
     CurrentUser::loggedIn();
 
+// Flag whether or not the user is logged in:
+$interface->assign('loggedIn', $user !== false);
+
 // Display appropriate page based on the current parameters; note that if a user
 // is not logged in, they are automatically forced to the login page.
 $page = ($user == false) ? 'login' : $_GET['page'];
-$page = checkPermission($page) ? $page : 'unauthorized';
-switch($page) {
+
+switch(checkPermission($page) ? $page : 'unauthorized') {
 case 'categories':
 case 'countries':
 case 'edit_item':

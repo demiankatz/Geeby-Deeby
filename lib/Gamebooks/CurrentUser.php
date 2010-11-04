@@ -79,6 +79,16 @@ class CurrentUser
         }
         return false;
     }
+    
+    /**
+     * Log out the current user.
+     *
+     * @access  public
+     */
+    public static function logOut()
+    {
+        unset($_SESSION['gbdbUser']);
+    }
 }
 
 ?>
