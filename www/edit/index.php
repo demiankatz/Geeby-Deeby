@@ -43,6 +43,7 @@ $user = (isset($_REQUEST['user']) && isset($_REQUEST['pass'])) ?
 // Display appropriate page based on the current parameters; note that if a user
 // is not logged in, they are automatically forced to the login page.
 $page = ($user == false) ? 'login' : $_GET['page'];
+$page = checkPermission($page) ? $page : 'unauthorized';
 switch($page) {
 case 'categories':
 case 'countries':
@@ -59,12 +60,54 @@ case 'platforms':
 case 'people':
 case 'publishers':
 case 'series':
+case 'unauthorized':
     require_once "Gamebooks/Pages/Edit/{$page}.php";
     $page($interface);
     break;
 default:
+    // Assign some permissions so we know which parts of the menu to display:
+    $interface->assign('contentEditor', CurrentUser::hasPermission('Content_Editor'));
+    $interface->assign('approver', CurrentUser::hasPermission('Approver'));
+    $interface->assign('userEditor', CurrentUser::hasPermission('User_Editor'));
     $interface->setPageTitle('Main Menu');
     $interface->showPage('menu.tpl');
     break;
+}
+
+function checkPermission($page)
+{
+    // If no page is set, we want the main menu -- everyone can see that!
+    if (empty($page)) {
+        return true;
+    }
+    
+    switch($page) {
+    // Everyone has permission to log in and see errors!
+    case 'login':
+    case 'unauthorized':
+        return true;
+        break;
+    // Only editors have permission to change things:
+    case 'categories':
+    case 'countries':
+    case 'edit_item':
+    case 'edit_link':
+    case 'edit_person':
+    case 'edit_series':
+    case 'languages':
+    case 'links':
+    case 'materials':
+    case 'notes':
+    case 'platforms':
+    case 'people':
+    case 'publishers':
+    case 'series':
+        return CurrentUser::hasPermission('Content_Editor');
+        break;
+    // Undefined pages are blocked by default -- this reduces the chances of a
+    // new page being accidentally added without proper security levels.
+    default:
+        return false;
+    }
 }
 ?>

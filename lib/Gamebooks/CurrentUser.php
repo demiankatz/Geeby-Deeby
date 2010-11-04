@@ -30,6 +30,25 @@ require_once 'Gamebooks/Tables/User.php';
 class CurrentUser
 {
     /**
+     * Check if the current user has the specified permission.
+     *
+     * @access  public
+     * @param   string  $permission     The name of the permission to check.
+     * @return  boolean                 True if action permitted, false otherwise.
+     */
+    public static function hasPermission($permission)
+    {
+        // If the user isn't logged in, they have no permissions!
+        $user = self::loggedIn();
+        if (!$user) {
+            return false;
+        }
+
+        // User is logged in... so check permissions:
+        return $user->hasPermission($permission);
+    }
+
+    /**
      * Attempt to log in using the specified username and password.
      *
      * @access  public

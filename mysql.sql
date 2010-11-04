@@ -749,6 +749,23 @@ CREATE TABLE `Series_Translations` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `User_Groups`
+--
+
+DROP TABLE IF EXISTS `User_Groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `User_Groups` (
+  `User_Group_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Group_Name` tinytext NOT NULL,
+  `Content_Editor` tinyint NOT NULL DEFAULT 0,
+  `User_Editor` tinyint NOT NULL DEFAULT 0,
+  `Approver` tinyint NOT NULL DEFAULT 0,
+  PRIMARY KEY (`User_Group_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Users`
 --
 
@@ -762,6 +779,7 @@ CREATE TABLE `Users` (
   `Name` tinytext NOT NULL,
   `Address` tinytext,
   `Person_ID` int(11) DEFAULT NULL,
+  `User_Group_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`User_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

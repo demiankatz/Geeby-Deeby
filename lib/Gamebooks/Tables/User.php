@@ -29,6 +29,8 @@ require_once 'Gamebooks/Tables/Row.php';
  */
 class User extends Row
 {
+    private $permissions = false;
+
     /**
      * Constructor
      *
@@ -48,7 +50,57 @@ class User extends Row
         
         parent::__construct($input);
     }
-    
+ 
+    /**
+     * Check if the user has the specified permission.
+     *
+     * @access  public
+     * @param   string  $permission     The name of the permission to check.
+     * @return  boolean                 True if action permitted, false otherwise.
+     */
+    public function hasPermission($permission)
+    {
+        // Make sure we have permissions available:
+        $this->loadPermissions();
+
+        // Check the permission:
+        return (isset($this->permissions[$permission]) &&
+            !empty($this->permissions[$permission]));
+    }
+
+    /**
+     * Load permission data if not already available.
+     *
+     * @access  private
+     */
+    public function loadPermissions()
+    {
+        // If permissions are already loaded, we're done here:
+        if ($this->permissions !== false) {
+            return;
+        // If permissions are not loaded and the current user is assigned to a
+        // group, load the permissions for that group.
+        } else if (isset($this->row['User_Group_ID']) &&
+            !empty($this->row['User_Group_ID'])) {
+            $safeGroup = intval($this->row['User_Group_ID']);
+            $sql = "SELECT * FROM User_Groups WHERE User_Group_ID={$safeGroup}";
+            $result = $this->db->query($sql);
+            if ($result && ($permissions = $this->db->fetchAssoc($result))) {
+                // Unset non-permission related fields:
+                unset($permissions['User_Group_ID']);
+                unset($permissions['Group_Name']);
+                
+                // Store remaining data:
+                $this->permissions = $permissions;
+                return;
+            }
+        }
+
+        // If we got this far, we were unable to find permissions -- default to
+        // "no permissions."        
+        $this->permissions = array();
+    }
+   
     /**
      * Attempt to log in using the specified username and password.  On successful
      * login, the specified user's row will be loaded into the object.
