@@ -30,6 +30,7 @@ require_once 'Gamebooks/UI.php';
 class AJAX_Edit_Base
 {
     protected $interface;
+    protected $requiredPermission = 'Content_Editor';
     
     /**
      * Constructor
@@ -38,6 +39,15 @@ class AJAX_Edit_Base
      */
     public function __construct()
     {
+        // Automatically fail if the user is not logged in or has no access rights:
+        $user = CurrentUser::loggedIn();
+        if (!$user) {
+            $this->jsonDie('User must be logged in.');
+        }
+        if (!CurrentUser::hasPermission($this->requiredPermission)) {
+            $this->jsonDie('Permission denied.');
+        }
+        
         // Activate the UI in case we need it.
         $this->interface = new UI('edit');
         
@@ -46,7 +56,7 @@ class AJAX_Edit_Base
         if (strtolower($method) != '__construct' && method_exists($this, $method)) {
             $this->$method();
         } else {
-            die('Invalid method');
+            $this->jsonDie('Invalid method');
         }
     }
     

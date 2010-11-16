@@ -29,15 +29,6 @@ undoMagicQuotes();
 // Avoid browser caching:
 doNotCache();
 
-// Automatically fail if the user is not logged in or has no edit rights:
-$user = CurrentUser::loggedIn();
-if (!$user) {
-    die('User must be logged in.');
-}
-if (!CurrentUser::hasPermission('Content_Editor')) {
-    die('Permission denied.');
-}
-
 // Normalize and validate the module name:
 $module = ucwords($_GET['module']);
 switch($module) {
@@ -63,7 +54,7 @@ case 'Series':
     // Name is valid -- no special action required.
     break;
 default:
-    die('Unrecognized AJAX module');
+    $module = 'Invalid';
 }
 
 // Load the appropriate AJAX routine -- we know it is valid if we got this far.
