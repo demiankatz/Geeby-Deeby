@@ -55,6 +55,7 @@ $interface->assign('loggedIn', $user !== false);
 $page = ($user == false) ? 'login' : $_GET['page'];
 
 switch(checkPermission($page) ? $page : 'unauthorized') {
+case 'approve':
 case 'categories':
 case 'countries':
 case 'edit_item':
@@ -113,6 +114,10 @@ function checkPermission($page)
     case 'publishers':
     case 'series':
         return CurrentUser::hasPermission('Content_Editor');
+        break;
+    // Only approvers have permission to accept new users/content:
+    case 'approve':
+        return CurrentUser::hasPermission('Approver');
         break;
     // Undefined pages are blocked by default -- this reduces the chances of a
     // new page being accidentally added without proper security levels.

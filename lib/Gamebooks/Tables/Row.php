@@ -174,6 +174,19 @@ class Row
     }
     
     /**
+     * Remove the current object (based on ID) from the database.
+     *
+     * @access  public
+     * @return  boolean                 True on success, false on failure.
+     */
+    public function delete()
+    {
+        $safeId = $this->db->escape($this->id);
+        $sql = "DELETE FROM {$this->table} WHERE {$this->idKey}='{$safeId}';";
+        return $this->db->query($sql);
+    }
+
+    /**
      * Save the current values in the object back to the database.
      *
      * @access  public

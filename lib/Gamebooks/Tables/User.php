@@ -136,7 +136,7 @@ class User extends Row
 class UserList
 {
     private $db;
-    private $list = array();
+    private $list = false;
     
     /**
      * Constructor
@@ -146,16 +146,29 @@ class UserList
     public function __construct()
     {
         $this->db = new GBDB();
+    }
+
+    /**
+     * Get a list of users pending approval.
+     *
+     * @access  public
+     * @return  array                   Selected contents of Users table.
+     */    
+    public function getUnapproved()
+    {
+        $list = array();
         
         // Don't select all fields -- no need to risk exposing password data!
         $sql = "SELECT User_ID, Username, Name, Address, Person_ID FROM Users " .
-            "ORDER BY Username;";
+            "WHERE Person_ID=0 ORDER BY Username;";
         $res = $this->db->query($sql);
         while ($tmp = $this->db->fetchAssoc($res)) {
-            $this->list[] = $tmp;
+            $list[] = $tmp;
         }
+        
+        return $list;
     }
-    
+
     /**
      * Get associative array representing user list.
      *
@@ -164,6 +177,17 @@ class UserList
      */
     public function getList()
     {
+        if ($this->list === false) {
+            $this->list = array();
+
+            // Don't select all fields -- no need to risk exposing password data!
+            $sql = "SELECT User_ID, Username, Name, Address, Person_ID FROM Users " .
+                "ORDER BY Username;";
+            $res = $this->db->query($sql);
+            while ($tmp = $this->db->fetchAssoc($res)) {
+                $this->list[] = $tmp;
+            }
+        }
         return $this->list;
     }
     

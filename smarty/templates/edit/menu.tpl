@@ -1,4 +1,4 @@
-<h1>Gamebooks.org Data Entry Interface 2.0</h1>
+<h1>{$siteTitle|escape} - Administration</h1>
 
 {if $contentEditor}
   <h2>Edit Data</h2>
@@ -22,7 +22,7 @@
   <h2>Extra Tools</h2>
   <ul>
     {if $approver}
-      <li>Approve Users / Content Submissions (not implemented yet)</li>
+      <li><a target='_approve' href='?page=approve'>Approve Users / Content Submissions</a></li>
     {/if}
     {if $userEditor}
       <li>Edit Users (not implemented yet)</li>

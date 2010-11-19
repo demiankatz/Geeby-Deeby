@@ -40,6 +40,7 @@ case 'Materialtype':
     // Fix capitalization:
     $module = 'MaterialType';
     break;
+case 'Approve':
 case 'Category':
 case 'Country':
 case 'Item':
