@@ -6,6 +6,7 @@ define('GAMEBOOKS_HOME', '/home/gamebooks');
 // Values used in displaying information about the site:
 define('GAMEBOOKS_SITE_NAME', "My Gamebook Web Page");
 define('GAMEBOOKS_SITE_EMAIL', 'me@emailhost.com');
+define('GAMEBOOKS_SITE_OWNER', 'Webmaster');    // signature in welcome emails
 
 // Values used to connect to the MySQL database:
 define('GAMEBOOKS_DB_HOST', 'localhost');

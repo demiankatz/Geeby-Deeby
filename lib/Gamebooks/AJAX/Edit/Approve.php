@@ -41,6 +41,68 @@ class AJAX_Edit_Approve extends AJAX_Edit_Base
         $this->requiredPermission = 'Approver';
         parent::__construct();
     }
+
+    /**
+     * Send an email to an approved user.
+     *
+     * @param string $address Email address.
+     *
+     * @return bool
+     * @access private
+     */
+    private function _sendApprovalEmail($address)
+    {
+        // If we don't have an address, report success -- we'll skip the email step:
+        $address = trim($address);
+        if (empty($address)) {
+            return true;
+        }
+        $subject = GAMEBOOKS_SITE_NAME . " Membership";
+        $message = "I have just approved your membership to " . GAMEBOOKS_SITE_NAME . ".\n";
+        $message .= "Thanks for signing up!  You can now start building \n";
+        $message .= "collections and submitting reviews.  Please let me know\n"; 
+        $message .= "if you have any questions or suggestions.\n\n";
+        $message .= "- " . GAMEBOOKS_SITE_OWNER;
+        $from = "From: " . GAMEBOOKS_SITE_EMAIL;
+        return @mail($address, $subject, $message, $from);
+    }
+
+    /**
+     * Accept a pending user.
+     *
+     * @access  public
+     */
+    public function approveUser()
+    {
+        if (!isset($_REQUEST['id'])) {
+            $this->jsonDie('Missing ID value.');
+        }
+        
+        $id = intval($_REQUEST['id']);
+        $person_id = intval($_REQUEST['person_id']);
+        $user = new User($id);
+        $row = $user->getRow();
+        if (!$row) {
+            $this->jsonDie('Problem loading user data.');
+        }
+        if ($row['Person_ID'] != 0) {
+            $this->jsonDie('User already approved.');
+        }
+        if ($person_id === 0) {
+            $this->jsonDie('Invalid Person ID.');
+        }
+        $user->set('Person_ID', $person_id);
+        $user->set('Username', $_REQUEST['username']);
+        $user->set('Name', $_REQUEST['fullname']);
+        $user->set('Address', $_REQUEST['address']);
+        if (!$user->save()) {
+            $this->jsonDie('Cannot approve user.');
+        }
+        if (!$this->_sendApprovalEmail($_REQUEST['address'])) {
+            $this->jsonDie('Problem sending email; user approved anyway.');
+        }
+        $this->jsonReportSuccess();
+    }
     
     /**
      * Reject a pending user.

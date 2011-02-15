@@ -22,7 +22,27 @@ function hideUserButtons(userID)
  */
 function approveUser(userID)
 {
-    alert("approve " + userID + " -- NOT IMPLEMENTED YET");
+    // Hide buttons to prevent double-click:
+    hideUserButtons(userID);
+    
+    // Use AJAX to save the values:
+    var url = 'ajax.php?module=approve&method=approveUser';
+    var details = {
+        id: userID,
+        person_id: parseInt($('#Person_ID_' + userID).val()),
+        username: $('#Username_' + userID).val(),
+        fullname: $('#Name_' + userID).val(),
+        address: $('#Address_' + userID).val()
+    };
+    $.post(url, details, function(data) {
+        // If save failed, display error message.
+        if (!data.success) {
+            alert('Error: ' + data.msg);
+        }
+        
+        // Hide row now that processing is complete.
+        hideUserRow(userID);
+    }, 'json');
 }
 
 /* Reject the specified user:
