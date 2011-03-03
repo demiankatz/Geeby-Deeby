@@ -72,6 +72,30 @@ function rejectUser(userID)
     }, 'json');
 }
 
+/* Approve a review */
+function approveReview(userID, itemID)
+{
+    alert('Not implemented yet.');
+}
+
+/* Reject a review */
+function rejectReview(userID, itemID)
+{
+    alert('Not implemented yet.');
+}
+
+/* Approve a comment */
+function approveComment(userID, seriesID)
+{
+    alert('Not implemented yet.');
+}
+
+/* Reject a comment */
+function rejectComment(userID, seriesID)
+{
+    alert('Not implemented yet.');
+}
+
 // Activate page controls on domready:
 $(document).ready(function(){
     options = {

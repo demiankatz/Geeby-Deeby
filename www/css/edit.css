@@ -82,6 +82,13 @@ table.edit tr td textarea {
     width: 500px;
 }
 
+table.approve tr td textarea {
+    width: 100%;
+    min-width: 500px;
+    height: 200px;
+    font-size: 10pt;
+}
+
 table.list_item {
     width: auto;
     padding: 0px;

@@ -417,6 +417,26 @@ class SeriesList
     }
     
     /**
+     * Get pending series comments.
+     *
+     * @access  public
+     * @return  array
+     */
+    public function getPendingReviews()
+    {
+        $sql = "SELECT Series_Reviews.*, Series.*, Users.* " .
+            "FROM Series_Reviews JOIN Series ON Series_Reviews.Series_ID = Series.Series_ID " .
+            "JOIN Users ON Series_Reviews.User_ID = Users.User_ID " .
+            "WHERE Series_Reviews.Approved = 'n'";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
      * Get all series referenced by the specified link.
      *
      * @access  public

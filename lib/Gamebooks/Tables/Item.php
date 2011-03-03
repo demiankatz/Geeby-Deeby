@@ -1025,6 +1025,26 @@ class ItemList
         }
         return $list;
     }
+
+    /**
+     * Get pending item reviews.
+     *
+     * @access  public
+     * @return  array
+     */
+    public function getPendingReviews()
+    {
+        $sql = "SELECT Items_Reviews.*, Items.*, Users.* " .
+            "FROM Items_Reviews JOIN Items ON Items_Reviews.Item_ID = Items.Item_ID " .
+            "JOIN Users ON Items_Reviews.User_ID = Users.User_ID " .
+            "WHERE Items_Reviews.Approved = 'n'";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
     
     /**
      * Get all items related to the specified link.

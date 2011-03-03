@@ -17,6 +17,8 @@
   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   *
   */
+require_once 'Gamebooks/Tables/Item.php';
+require_once 'Gamebooks/Tables/Series.php';
 require_once 'Gamebooks/Tables/User.php';
 
 /**
@@ -26,9 +28,13 @@ require_once 'Gamebooks/Tables/User.php';
  */
 function approve($interface)
 {
-    // Load platforms from database:
+    // Load pending content from database:
     $list = new UserList();
     $interface->assign('newUsers', $list->getUnapproved());
+    $list = new ItemList();
+    $interface->assign('pendingReviews', $list->getPendingReviews());
+    $list = new SeriesList();
+    $interface->assign('pendingComments', $list->getPendingReviews());
     
     // Display page with appropriate Javascript:
     $interface->addCSS('ui-lightness/jquery-ui-autocomplete.css');
