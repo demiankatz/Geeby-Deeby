@@ -349,6 +349,21 @@ class Series extends Row
             "VALUES ({$seriesID}, '{$title}', {$noteID});";
         return $this->db->query($sql);
     }
+
+    /**
+     * Reject an unwanted comment.
+     *
+     * @access  public
+     * @param   int     $userID         ID of the user submitting the review.
+     * @return  boolean                 True on success, false on error.
+     */
+    public function rejectComment($userID)
+    {
+        $userID = intval($userID);
+        // Only allow rejection of unapproved reviews!
+        $sql = "DELETE FROM Series_Reviews WHERE User_ID=$userID AND approved='n'";
+        return $this->db->query($sql);
+    }
 }
 
 /**

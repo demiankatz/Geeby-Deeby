@@ -19,6 +19,8 @@
   */
 require_once 'Gamebooks/AJAX/Edit/Base.php';
 require_once 'Gamebooks/Tables/User.php';
+require_once 'Gamebooks/Tables/Item.php';
+require_once 'Gamebooks/Tables/Series.php';
 
 /**
  * Edit AJAX Support
@@ -126,6 +128,76 @@ class AJAX_Edit_Approve extends AJAX_Edit_Base
         }
         if (!$user->delete()) {
             $this->jsonDie('Cannot reject user.');
+        } else {
+            $this->jsonReportSuccess();
+        }
+    }
+    
+    /**
+     * Reject a pending item review.
+     *
+     * @access  public
+     */
+    public function rejectReview()
+    {
+        if (!isset($_REQUEST['user_id'])) {
+            $this->jsonDie('Missing User ID value.');
+        }
+        if (!isset($_REQUEST['item_id'])) {
+            $this->jsonDie('Missing Item ID value.');
+        }
+        
+        $user_id = intval($_REQUEST['user_id']);
+        $user = new User($user_id);
+        $row = $user->getRow();
+        if (!$row) {
+            $this->jsonDie('Problem loading user data.');
+        }
+        
+        $item_id = intval($_REQUEST['item_id']);
+        $item = new Item($item_id);
+        $row = $item->getRow();
+        if (!$row) {
+            $this->jsonDie('Problem loading item data.');
+        }
+        
+        if (!$item->rejectReview($user_id)) {
+            $this->jsonDie('Cannot reject review.');
+        } else {
+            $this->jsonReportSuccess();
+        }
+    }
+    
+    /**
+     * Reject a pending series comment.
+     *
+     * @access  public
+     */
+    public function rejectComment()
+    {
+        if (!isset($_REQUEST['user_id'])) {
+            $this->jsonDie('Missing User ID value.');
+        }
+        if (!isset($_REQUEST['series_id'])) {
+            $this->jsonDie('Missing Series ID value.');
+        }
+        
+        $user_id = intval($_REQUEST['user_id']);
+        $user = new User($user_id);
+        $row = $user->getRow();
+        if (!$row) {
+            $this->jsonDie('Problem loading user data.');
+        }
+        
+        $series_id = intval($_REQUEST['series_id']);
+        $series = new Series($series_id);
+        $row = $series->getRow();
+        if (!$row) {
+            $this->jsonDie('Problem loading series data.');
+        }
+        
+        if (!$series->rejectComment($user_id)) {
+            $this->jsonDie('Cannot reject comment.');
         } else {
             $this->jsonReportSuccess();
         }

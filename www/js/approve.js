@@ -72,16 +72,79 @@ function rejectUser(userID)
     }, 'json');
 }
 
-/* Approve a review */
+/* Hide the row of the specified review after processing is complete:
+ */
+function hideReviewRow(userID, itemID)
+{
+    var o = document.getElementById('PendingReview_' + userID + '_' + itemID);
+    if (o) {
+        o.style.display = 'none';
+    }
+}
+
+/* Hide the controls associated with a particular review:
+ */
+function hideReviewButtons(userID, itemID)
+{
+    var o = document.getElementById('ReviewButtons_' + userID + '_' + itemID);
+    if (o) {
+        o.innerHTML = 'Working...';
+    }
+}
+
+/* Approve a review
+ */
 function approveReview(userID, itemID)
 {
     alert('Not implemented yet.');
 }
 
-/* Reject a review */
+/* Reject a review
+ */
 function rejectReview(userID, itemID)
 {
-    alert('Not implemented yet.');
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+    
+    // Hide buttons to prevent double-click:
+    hideReviewButtons(userID, itemID);
+    
+    // Use AJAX to save the values:
+    var url = 'ajax.php?module=approve&method=rejectReview';
+    var details = {
+        user_id: userID,
+        item_id: itemID
+    };
+    $.post(url, details, function(data) {
+        // If save failed, display error message.
+        if (!data.success) {
+            alert('Error: ' + data.msg);
+        }
+        
+        // Hide row now that processing is complete.
+        hideReviewRow(userID, itemID);
+    }, 'json');
+}
+
+/* Hide the row of the specified comment after processing is complete:
+ */
+function hideCommentRow(userID, seriesID)
+{
+    var o = document.getElementById('PendingComment_' + userID + '_' + seriesID);
+    if (o) {
+        o.style.display = 'none';
+    }
+}
+
+/* Hide the controls associated with a particular comment:
+ */
+function hideCommentButtons(userID, seriesID)
+{
+    var o = document.getElementById('CommentButtons_' + userID + '_' + seriesID);
+    if (o) {
+        o.innerHTML = 'Working...';
+    }
 }
 
 /* Approve a comment */
@@ -93,7 +156,28 @@ function approveComment(userID, seriesID)
 /* Reject a comment */
 function rejectComment(userID, seriesID)
 {
-    alert('Not implemented yet.');
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+    
+    // Hide buttons to prevent double-click:
+    hideCommentButtons(userID, seriesID);
+    
+    // Use AJAX to save the values:
+    var url = 'ajax.php?module=approve&method=rejectComment';
+    var details = {
+        user_id: userID,
+        series_id: seriesID
+    };
+    $.post(url, details, function(data) {
+        // If save failed, display error message.
+        if (!data.success) {
+            alert('Error: ' + data.msg);
+        }
+        
+        // Hide row now that processing is complete.
+        hideCommentRow(userID, seriesID);
+    }, 'json');
 }
 
 // Activate page controls on domready:

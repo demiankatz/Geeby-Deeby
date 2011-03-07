@@ -809,6 +809,21 @@ class Item extends Row
             "Item_ID={$itemID} AND Collection_Item_ID={$my_id};";
         return $this->db->query($sql);
     }
+    
+    /**
+     * Reject an unwanted review.
+     *
+     * @access  public
+     * @param   int     $userID         ID of the user submitting the review.
+     * @return  boolean                 True on success, false on error.
+     */
+    public function rejectReview($userID)
+    {
+        $userID = intval($userID);
+        // Only allow rejection of unapproved reviews!
+        $sql = "DELETE FROM Items_Reviews WHERE User_ID=$userID AND approved='n'";
+        return $this->db->query($sql);
+    }
 }
 
 /**
