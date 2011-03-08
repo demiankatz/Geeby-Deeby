@@ -96,7 +96,25 @@ function hideReviewButtons(userID, itemID)
  */
 function approveReview(userID, itemID)
 {
-    alert('Not implemented yet.');
+    // Hide buttons to prevent double-click:
+    hideReviewButtons(userID, itemID);
+    
+    // Use AJAX to save the values:
+    var url = 'ajax.php?module=approve&method=approveReview';
+    var details = {
+        user_id: userID,
+        item_id: itemID,
+        text: $('#ReviewText_' + userID + '_' + itemID).val()
+    };
+    $.post(url, details, function(data) {
+        // If save failed, display error message.
+        if (!data.success) {
+            alert('Error: ' + data.msg);
+        }
+        
+        // Hide row now that processing is complete.
+        hideReviewRow(userID, itemID);
+    }, 'json');
 }
 
 /* Reject a review
@@ -147,13 +165,33 @@ function hideCommentButtons(userID, seriesID)
     }
 }
 
-/* Approve a comment */
+/* Approve a comment
+ */
 function approveComment(userID, seriesID)
 {
-    alert('Not implemented yet.');
+    // Hide buttons to prevent double-click:
+    hideCommentButtons(userID, seriesID);
+    
+    // Use AJAX to save the values:
+    var url = 'ajax.php?module=approve&method=approveComment';
+    var details = {
+        user_id: userID,
+        series_id: seriesID,
+        text: $('#CommentText_' + userID + '_' + seriesID).val()
+    };
+    $.post(url, details, function(data) {
+        // If save failed, display error message.
+        if (!data.success) {
+            alert('Error: ' + data.msg);
+        }
+        
+        // Hide row now that processing is complete.
+        hideCommentRow(userID, seriesID);
+    }, 'json');
 }
 
-/* Reject a comment */
+/* Reject a comment
+ */
 function rejectComment(userID, seriesID)
 {
     if (!confirm("Are you sure?")) {

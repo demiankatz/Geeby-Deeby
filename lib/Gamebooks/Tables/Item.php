@@ -811,6 +811,38 @@ class Item extends Row
     }
     
     /**
+     * Approve a pending review.
+     *
+     * @access  public
+     * @param   int     $userID         ID of the user submitting the review.
+     * @param   string  $text           Text of review to update.
+     * @return  boolean                 True on success, false on error.
+     */
+    public function approveReview($userID, $text)
+    {
+        $userID = intval($userID);
+        $itemID = intval($this->id);
+        $text = $this->db->escape($text);
+        
+        // Approve the review!
+        $sql = "UPDATE Items_Reviews SET Review='{$text}', Approved='y' " .
+            "WHERE User_ID={$userID} AND Item_ID={$itemID} AND Approved='n'";
+        $result = $this->db->query($sql);
+        if (!$result) {
+            return false;
+        }
+        
+        // Update the recent reviews list and ignore the result (if we try to
+        // add something that was previously approved, we should simply ignore
+        // the duplicate key error).
+        $date = $this->db->escape(date("Y-m-d"));
+        $sql = "INSERT INTO Recent_Reviews(Added, User_ID, Item_ID, Type)" .
+            " VALUES('{$date}','{$userID}','{$itemID}','item')";
+        $this->db->query($sql);
+        return $result;
+    }
+    
+    /**
      * Reject an unwanted review.
      *
      * @access  public
@@ -820,8 +852,10 @@ class Item extends Row
     public function rejectReview($userID)
     {
         $userID = intval($userID);
+        $itemID = intval($this->id);
         // Only allow rejection of unapproved reviews!
-        $sql = "DELETE FROM Items_Reviews WHERE User_ID=$userID AND approved='n'";
+        $sql = "DELETE FROM Items_Reviews " .
+            "WHERE User_ID={$userID} AND Item_ID={$itemID} AND Approved='n'";
         return $this->db->query($sql);
     }
 }
