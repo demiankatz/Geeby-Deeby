@@ -73,10 +73,10 @@ class LinkTypeList
     }
     
     /**
-     * Get associative array representing material type list.
+     * Get associative array representing link type list.
      *
      * @access  public
-     * @return  array                   Contents of Material_Types table.
+     * @return  array                   Contents of Link_Types table.
      */
     public function getList()
     {
