@@ -1119,6 +1119,29 @@ class ItemList
     }
     
     /**
+     * Get all items related to the specified file.
+     *
+     * @access  public
+     * @param   int     $id             A valid File_ID value.
+     * @return  array                   Selected contents of Items table.
+     */
+    public function getByFile($id)
+    {
+        // Sanitize input:
+        $id = intval($id);
+        $sql = "SELECT Items.* FROM Items_Files " .
+            "JOIN Items ON Items_Files.Item_ID=Items.Item_ID " .
+            "WHERE Items_Files.File_ID='{$id}' " .
+            "ORDER BY Item_Name;";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
      * Assign the item list to the user interface.
      *
      * @access  public

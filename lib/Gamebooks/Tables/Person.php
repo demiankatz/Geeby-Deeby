@@ -274,6 +274,29 @@ class PersonList
     }
     
     /**
+     * Get all people related to the specified file.
+     *
+     * @access  public
+     * @param   int     $id             A valid File_ID value.
+     * @return  array                   Selected contents of People table.
+     */
+    public function getByFile($id)
+    {
+        // Sanitize input:
+        $id = intval($id);
+        $sql = "SELECT People.* FROM People_Files " .
+            "JOIN People ON People_Files.Person_ID=People.Person_ID " .
+            "WHERE People_Files.File_ID='{$id}' " .
+            "ORDER BY People.Last_Name, People.First_Name, People.Middle_Name;";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
      * Return rows associated with a query typed into an autosuggester.
      *
      * @access  public

@@ -58,10 +58,12 @@ switch(checkPermission($page) ? $page : 'unauthorized') {
 case 'approve':
 case 'categories':
 case 'countries':
+case 'edit_file':
 case 'edit_item':
 case 'edit_link':
 case 'edit_person':
 case 'edit_series':
+case 'files':
 case 'languages':
 case 'links':
 case 'login':

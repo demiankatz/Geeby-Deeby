@@ -6,7 +6,7 @@
     <li><a target='_categories' href='?page=categories'>Categories</a></li>
     <li><a target='_countries' href='?page=countries'>Countries</a></li>
     <li>FAQs (not implemented yet)</li>
-    <li>Files (not implemented yet)</li>
+    <li><a target='_files' href='?page=files'>Files</a></li>
     <li><a target='_materials' href='?page=languages'>Languages</a></li>
     <li><a target='_links' href='?page=links'>Links</a></li>
     <li><a target='_materials' href='?page=materials'>Material Types</a></li>

@@ -509,6 +509,29 @@ class SeriesList
     }
     
     /**
+     * Get all series referenced by the specified file.
+     *
+     * @access  public
+     * @param   int     $id             A valid File_ID value.
+     * @return  array                   Selected contents of Series table.
+     */
+    public function getByFile($id)
+    {
+        // Sanitize input:
+        $id = intval($id);
+        $sql = "SELECT Series.* FROM Series_Files " .
+            "JOIN Series ON Series_Files.Series_ID=Series.Series_ID " .
+            "WHERE Series_Files.File_ID='{$id}' " .
+            "ORDER BY Series_Name;";
+        $result = $this->db->query($sql);
+        $list = array();
+        while ($tmp = $this->db->fetchAssoc($result)) {
+            $list[] = $tmp;
+        }
+        return $list;
+    }
+    
+    /**
      * Get all series translated into the specified series.
      *
      * @access  public
