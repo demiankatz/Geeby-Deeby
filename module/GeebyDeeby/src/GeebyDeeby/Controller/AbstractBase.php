@@ -1,6 +1,6 @@
 <?php
 /**
- * Index controller
+ * Abstract base controller
  *
  * PHP version 5
  *
@@ -26,9 +26,11 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
 
 /**
- * Index controller
+ * Abstract base controller
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,10 +38,15 @@ namespace GeebyDeeby\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class IndexController extends AbstractBase
+class AbstractBase extends AbstractActionController
 {
-    public function indexAction()
+    /**
+     * Provide a fresh view model.
+     *
+     * @return ViewModel
+     */
+    protected function createViewModel()
     {
-        return $this->createViewModel();
+        return new ViewModel();
     }
 }
