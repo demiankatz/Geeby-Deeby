@@ -23,19 +23,19 @@
  * @package  Bootstrap
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby;
 use Zend\Mvc\MvcEvent;
 
 /**
- * VuFind Bootstrapper
+ * GeebyDeeby Bootstrapper
  *
  * @category GeebyDeeby
  * @package  Bootstrap
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class Bootstrap
 {
@@ -70,11 +70,11 @@ class Bootstrap
     }
 
     /**
-     * Set view variables representing the current context.
+     * Set up global layout variables.
      *
      * @return void
      */
-    protected function initContext()
+    protected function initLayoutGlobals()
     {
         $callback = function ($event) {
             $serviceManager = $event->getApplication()->getServiceManager();
