@@ -1,6 +1,6 @@
 <?php
 /**
- * Row Definition for Categories
+ * Generic row gateway
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Db\Row;
 
 /**
- * Row Definition for Categories
+ * Generic row gateway
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -36,18 +36,8 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Category extends RowGateway
+class RowGateway extends \Zend\Db\RowGateway\RowGateway
 {
-    /**
-     * Constructor
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
-     */
-    public function __construct($adapter)
-    {
-        parent::__construct('Category_ID', 'Categories', $adapter);
-    }
-
     /**
      * Validate the fields in the current object.  Return error message if problem
      * found, boolean false if no errors were found.
@@ -56,9 +46,17 @@ class Category extends RowGateway
      */
     public function validate()
     {
-        if (empty($this->Category)) {
-            return 'Category name cannot be blank.';
-        }
+        // Assume valid row by default:
         return false;
+    }
+
+    /**
+     * Get primary key for the table.
+     *
+     * @return array
+     */
+    public function getPrimaryKeyColumn()
+    {
+        return $this->primaryKeyColumn;
     }
 }

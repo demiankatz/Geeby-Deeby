@@ -107,6 +107,29 @@ class Gateway extends AbstractTableGateway implements ServiceLocatorAwareInterfa
     }
 
     /**
+     * Retrieve a row by primary key.
+     *
+     * @param mixed $key Primary key (string or array)
+     *
+     * @return object
+     */
+    public function getByPrimaryKey($key)
+    {
+        $key = (array) $key;
+        $keyCols = $this->getResultSetPrototype()->getArrayObjectPrototype()
+            ->getPrimaryKeyColumn();
+        if (count($key) != count($keyCols)) {
+            throw new \Exception('Invalid key value passed in.');
+        }
+        $query = function ($select) use ($key, $keyCols) {
+            foreach ($keyCols as $i => $col) {
+                $select->where->equalTo($col, $key[$i]);
+            }
+        };
+        return $this->select($query)->current();
+    }
+
+    /**
      * Get access to another table.
      *
      * @param string $table Table name

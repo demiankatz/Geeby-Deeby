@@ -106,4 +106,116 @@ class AbstractBase extends AbstractActionController
     {
         return $this->jsonDie('Success', true);
     }
+
+    /**
+     * Generic method for displaying a list of items.
+     *
+     * @param string $table    Table to load list from
+     * @param string $assignTo View variable to assign list to
+     * @param string $tpl      Template to use in AJAX mode
+     *
+     * @return mixed
+     */
+    protected function getGenericList($table, $assignTo, $tpl)
+    {
+        $table = $this->getDbTable($table);
+        $view = $this->createViewModel(array($assignTo => $table->getList()));
+
+        // If this is an AJAX request, render the core list only, not the
+        // framing layout and buttons.
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $view->setTerminal(true);
+            $view->setTemplate($tpl);
+        }
+
+        return $view;
+    }
+
+    /**
+     * Support method for handleGenericItem() -- save.
+     *
+     * @param string $table     Table to load item from
+     * @param array  $assignMap Map of POST fields => object properties for saving
+     *
+     * @return mixed
+     */
+    protected function saveGenericItem($table, $assignMap)
+    {
+        // Extract values from the POST fields:
+        $id = $this->params()->fromPost('id', 'NEW');
+        $id = $id == 'NEW' ? false : intval($id);
+        $name = trim($this->params()->fromPost('name'));
+        $desc = trim($this->params()->fromPost('desc'));
+
+        // Attempt to save changes:
+        $table = $this->getDbTable($table);
+        $row = $id === false ? $table->createRow() : $table->getByPrimaryKey($id);
+        if (!is_object($row)) {
+            return $this->jsonDie('Problem loading row');
+        }
+        foreach ($assignMap as $post => $attr) {
+            $row->$attr = trim($this->params()->fromPost($post));
+        }
+        $problem = $row->validate();
+        if ($problem !== false) {
+            return $this->jsonDie($problem);
+        }
+        try {
+            $row->save();
+        } catch (\Exception $e) {
+            return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
+        }
+
+        // If we made it this far, we can report success:
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Support method for handleGenericItem() -- show form.
+     *
+     * @param string $table    Table to load item from
+     * @param string $assignTo Variable to assign form data to
+     *
+     * @return mixed
+     */
+    protected function showGenericItem($table, $assignTo)
+    {
+        $id = $this->params()->fromRoute('id', 'NEW');
+        $id = $id == 'NEW' ? false : intval($id);
+        $table = $this->getDbTable($table);
+        if ($id) {
+            $rowObj = $table->getByPrimaryKey($id);
+            if (is_object($rowObj)) {
+                $row = $rowObj->toArray();
+            } else {
+                $id = false;
+            }
+        }
+        if (!$id) {
+            $rowObj = $table->createRow();
+            $key = $rowObj->getPrimaryKeyColumn();
+            $row = array($key[0] => 'NEW');
+        }
+        return $this->createViewModel(array($assignTo => $row));
+    }
+
+    /**
+     * Generic method for handling item edit/save actions.
+     *
+     * @param string $table     Table to load item from
+     * @param array  $assignMap Map of POST fields => object properties for saving
+     * @param string $assignTo  Variable to assign form data to (for showing form)
+     *
+     * @return mixed
+     */
+    protected function handleGenericItem($table, $assignMap, $assignTo)
+    {
+        if ($this->getRequest()->isPost()) {
+            $view = $this->saveGenericItem($table, $assignMap);
+        } else {
+            $view = $this->showGenericItem($table, $assignTo);
+            $view->setTerminal($this->getRequest()->isXmlHttpRequest());
+        }
+        return $view;
+    }
 }

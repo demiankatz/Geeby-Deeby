@@ -45,79 +45,9 @@ class EditCategoryController extends AbstractBase
      */
     public function listAction()
     {
-        $table = $this->getDbTable('category');
-        $view = $this->createViewModel(array('categories' => $table->getList()));
-
-        // If this is an AJAX request, render the core list only, not the
-        // framing layout and buttons.
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            $view->setTerminal(true);
-            $view->setTemplate('geeby-deeby/edit-category/render-categories');
-        }
-
-        return $view;
-    }
-
-    /**
-     * Save a modified category
-     *
-     * @return mixed
-     */
-    protected function saveCategory()
-    {
-        // Extract values from the POST fields:
-        $id = $this->params()->fromPost('id', 'NEW');
-        $id = $id == 'NEW' ? false : intval($id);
-        $name = trim($this->params()->fromPost('name'));
-        $desc = trim($this->params()->fromPost('desc'));
-
-        // Validate input:
-        if (empty($name)) {
-            return $this->jsonDie('Category name cannot be blank.');
-        }
-
-        // Attempt to save changes:
-        $table = $this->getDbTable('category');
-        $category = $id === false
-            ? $table->createRow()
-            : $table->select(array('Category_ID' => $id))->current();
-        if (!is_object($category)) {
-            return $this->jsonDie('Problem loading category');
-        }
-        $category->Category = $name;
-        $category->Description = $desc;
-        try {
-            $category->save();
-        } catch (\Exception $e) {
-            return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
-        }
-
-        // If we made it this far, we can report success:
-        return $this->jsonReportSuccess();
-    }
-
-    /**
-     * Show a category edit form
-     *
-     * @return mixed
-     */
-    protected function showCategoryForm()
-    {
-        $id = $this->params()->fromRoute('id', 'NEW');
-        $id = $id == 'NEW' ? false : intval($id);
-        if ($id) {
-            $table = $this->getDbTable('category');
-            $category = $table->select(array('Category_ID' => $id))->current();
-            if (is_object($category)) {
-                $row = $category->toArray();
-            } else {
-                $id = false;
-            }
-        }
-        if (!$id) {
-            $row = array('Category_ID' => 'NEW');
-        }
-        return $this->createViewModel(array('category' => $row));
+        return $this->getGenericList(
+            'category', 'categories', 'geeby-deeby/edit-category/render-categories'
+        );
     }
 
     /**
@@ -127,12 +57,7 @@ class EditCategoryController extends AbstractBase
      */
     public function indexAction()
     {
-        if ($this->getRequest()->isPost()) {
-            $view = $this->saveCategory();
-        } else {
-            $view = $this->showCategoryForm();
-            $view->setTerminal($this->getRequest()->isXmlHttpRequest());
-        }
-        return $view;
+        $assignMap = array('name' => 'Category', 'desc' => 'Description');
+        return $this->handleGenericItem('category', $assignMap, 'category');
     }
 }
