@@ -43,10 +43,18 @@ class AbstractBase extends AbstractActionController
     /**
      * Provide a fresh view model.
      *
+     * @param array $params Parameters to pass to ViewModel constructor.
+     *
      * @return ViewModel
      */
-    protected function createViewModel()
+    protected function createViewModel($params = null)
     {
-        return new ViewModel();
+        $view = new ViewModel();
+        if (!empty($params)) {
+            foreach ($params as $k => $v) {
+                $view->setVariable($k, $v);
+            }
+        }
+        return $view;
     }
 }

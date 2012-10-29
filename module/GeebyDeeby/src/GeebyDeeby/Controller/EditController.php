@@ -40,6 +40,11 @@ class EditController extends AbstractBase
 {
     public function indexAction()
     {
-        return $this->createViewModel();
+        // TODO - set permissions based on login
+        return $this->createViewModel(
+            array(
+                'contentEditor' => true, 'approver' => true, 'userEditor' => true
+            )
+        );
     }
 }
