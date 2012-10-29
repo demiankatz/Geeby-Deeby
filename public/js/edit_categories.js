@@ -6,9 +6,9 @@ var editBox = false;
 function editCategory(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=category&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Category/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Category" : ("Edit Category " + id)),
+        title: (id === 'NEW' ? "Add Category" : ("Edit Category " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -22,7 +22,7 @@ function editCategory(id)
  */
 function redrawCategories()
 {
-    var url = 'ajax.php?module=category&method=getList';
+    var url = basePath + '/edit/CategoryList';
     $('#category_list').load(url);
 }
 
@@ -46,7 +46,7 @@ function saveCategory()
     $('#save_category_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=category&method=save';
+    var url = basePath + '/edit/Category/' + encodeURIComponent(categoryID);
     $.post(url, {id: categoryID, name: catName, desc: desc}, function(data) {
         // If save was successful...
         if (data.success) {

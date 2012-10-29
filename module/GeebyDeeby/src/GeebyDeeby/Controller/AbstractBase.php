@@ -57,4 +57,53 @@ class AbstractBase extends AbstractActionController
         }
         return $view;
     }
+
+    /**
+     * Get a database table gateway.
+     *
+     * @param string $table Name of table service to pull
+     *
+     * @return \Zend\Db\TableGateway\AbstractTableGateway
+     */
+    protected function getDbTable($table)
+    {
+        return $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager')
+            ->get($table);
+    }
+
+    /**
+     * Die with a JSON-encoded error message.
+     *
+     * @param string $msg     The message to send back.
+     * @param bool   $success Success status
+     *
+     * @return mixed
+     */
+    protected function jsonDie($msg, $success = false)
+    {
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine(
+            'Content-type', 'application/javascript'
+        );
+        $headers->addHeaderLine(
+            'Cache-Control', 'no-cache, must-revalidate'
+        );
+        $headers->addHeaderLine(
+            'Expires', 'Mon, 26 Jul 1997 05:00:00 GMT'
+        );
+        $output = array('success' => $success, 'msg' => $msg);
+        $response->setContent(json_encode($output));
+        return $response;
+    }
+    
+    /**
+     * Die with a JSON success status.
+     *
+     * @return mixed
+     */
+    protected function jsonReportSuccess()
+    {
+        return $this->jsonDie('Success', true);
+    }
 }

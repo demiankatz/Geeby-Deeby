@@ -13,9 +13,14 @@ return array(
         'siteEmail' => 'me@emailhost.com',
         'siteOwner' => 'Webmaster',
         'dbHost' => 'localhost',
-        'dbName' => 'gbdb',
-        'dbUser' => 'dbuser',
-        'dbPass' => 'dbpass',
+        'dbName' => 'gbdb', // database schema name
+        'dbUser' => 'gbdb', // database username
+        'dbPass' => 'gbdb', // database password
+        'db_table_plugin_manager' => array(
+            'invokables' => array(
+                'category' => 'GeebyDeeby\Db\Table\Category',
+            ),
+        ),
     ),
     'router' => array(
         'routes' => array(
@@ -64,6 +69,17 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'Approve',
                                 'action'        => 'index',
+                            ),
+                        ),
+                    ),
+                    'category' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Category[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditCategory',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
                             ),
                         ),
                     ),
@@ -182,10 +198,34 @@ return array(
         ),
     ),
     'service_manager' => array(
+        'factories' => array(
+            'GeebyDeeby\DbAdapter' => function ($sm) {
+                $config = $sm->get('Config');
+                return new \Zend\Db\Adapter\Adapter(
+                    array(
+                        'driver' => 'mysqli',
+                        'hostname' => $config['geeby-deeby']['dbHost'],
+                        'username' => $config['geeby-deeby']['dbUser'],
+                        'password' => $config['geeby-deeby']['dbPass'],
+                        'database' => $config['geeby-deeby']['dbName'],
+                        'options' => array('buffer_results' => true)
+                    )
+                );
+            },
+            'GeebyDeeby\DbTablePluginManager' => function ($sm) {
+                $config = $sm->get('Config');
+                return new \GeebyDeeby\Db\Table\PluginManager(
+                    new Zend\ServiceManager\Config(
+                        $config['geeby-deeby']['db_table_plugin_manager']
+                    )
+                );
+            },
+        ),
     ),
     'controllers' => array(
         'invokables' => array(
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
+            'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
         ),
     ),

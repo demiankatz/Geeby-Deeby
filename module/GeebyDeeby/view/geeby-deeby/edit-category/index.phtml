@@ -1,0 +1,15 @@
+<div id="editForm">
+  <input type="hidden" id="Category_ID" value="<?=$this->escapeHtml($category['Category_ID'])?>" />
+  <table class="edit">
+    <tr>
+      <th>Category:</th>
+      <td><input type="text" id="Category" value="<?=$this->escapeHtml(isset($category['Category']) ? $category['Category'] : '')?>" /></td>
+    </tr>
+    <tr>
+      <th>Description:</th>
+      <td><textarea id="Description"><?=$this->escapeHtml(isset($category['Description']) ? $category['Description'] : '')?></textarea></td>
+    </tr>
+  </table>
+  <button id="save_category" onclick="saveCategory();">Save</button>
+  <div id="save_category_status"></div>
+</div>
