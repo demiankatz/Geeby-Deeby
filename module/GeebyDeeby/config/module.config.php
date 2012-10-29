@@ -19,6 +19,8 @@ return array(
         'db_table_plugin_manager' => array(
             'invokables' => array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
+                'person' => 'GeebyDeeby\Db\Table\Person',
+                'role' => 'GeebyDeeby\Db\Table\Role',
             ),
         ),
     ),
@@ -153,6 +155,17 @@ return array(
                             ),
                         ),
                     ),
+                    'person' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Person[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditPerson',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
                     'person_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -160,6 +173,27 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditPerson',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'person_role' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/PersonRole[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditPerson',
+                                'action'        => 'role',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'person_role_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/PersonRoleList',
+                            'defaults' => array(
+                                'controller'    => 'EditPerson',
+                                'action'        => 'rolelist',
                             ),
                         ),
                     ),
@@ -226,6 +260,7 @@ return array(
         'invokables' => array(
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
+            'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
         ),
     ),

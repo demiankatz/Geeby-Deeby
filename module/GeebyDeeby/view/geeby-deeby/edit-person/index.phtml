@@ -1,0 +1,23 @@
+<div id="editForm">
+  <input type="hidden" id="Person_ID" value="<?=$this->escapeHtml($person['Person_ID'])?>" />
+  <table class="edit">
+    <tr>
+      <th>First Name:</th>
+      <td><input type="text" id="First_Name" value="<?=$this->escapeHtml(isset($person['First_Name']) ? $person['First_Name'] : '')?>" /></td>
+    </tr>
+    <tr>
+      <th>Middle Name:</th>
+      <td><input type="text" id="Middle_Name" value="<?=$this->escapeHtml(isset($person['Middle_Name']) ? $person['Middle_Name'] : '')?>" /></td>
+    </tr>
+    <tr>
+      <th>Last Name:</th>
+      <td><input type="text" id="Last_Name" value="<?=$this->escapeHtml(isset($person['Last_Name']) ? $person['Last_Name'] : '')?>" /></td>
+    </tr>
+    <tr>
+      <th>Biography:</th>
+      <td><textarea id="Biography"><?=$this->escapeHtml(isset($person['Biography']) ? $person['Biography'] : '')?></textarea></td>
+    </tr>
+  </table>
+  <button id="save_person" onclick="savePerson();">Save</button>
+  <div id="save_person_status"></div>
+</div>

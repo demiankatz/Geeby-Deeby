@@ -10,9 +10,9 @@ var editBox = false;
 function editPerson(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=people&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Person/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Person" : ("Edit Person " + id)),
+        title: (id === 'NEW' ? "Add Person" : ("Edit Person " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -26,7 +26,7 @@ function editPerson(id)
  */
 function redrawPeople()
 {
-    var url = 'ajax.php?module=people&method=getList';
+    var url = basePath + '/edit/PersonList';
     $('#people_list').load(url);
 }
 
@@ -52,7 +52,7 @@ function savePerson()
     $('#save_person_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=people&method=save';
+    var url = basePath + '/edit/Person/' + encodeURIComponent(personID);
     $.post(url, {id: personID, first: first, middle: middle, last: last, bio: bio}, function(data) {
         // If save was successful...
         if (data.success) {
@@ -79,9 +79,9 @@ function savePerson()
 function editRole(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=role&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/PersonRole/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Role" : ("Edit Role " + id)),
+        title: (id === 'NEW' ? "Add Role" : ("Edit Role " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -95,7 +95,7 @@ function editRole(id)
  */
 function redrawRoles()
 {
-    var url = 'ajax.php?module=role&method=getList';
+    var url = basePath + '/edit/PersonRoleList';
     $('#role_list').load(url);
 }
 
@@ -118,7 +118,7 @@ function saveRole()
     $('#save_role_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=role&method=save';
+    var url = basePath + '/edit/PersonRole/' + encodeURIComponent(roleID);
     $.post(url, {id: roleID, role: role}, function(data) {
         // If save was successful...
         if (data.success) {

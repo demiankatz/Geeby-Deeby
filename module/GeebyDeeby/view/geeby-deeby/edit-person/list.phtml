@@ -1,0 +1,18 @@
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_people.js') ?>
+<h1>Edit People</h1>
+<table>
+  <tr>
+    <td>
+      <p><b>People:</b></p>
+      <button id="add_person" type="button" onclick="editPerson('NEW');">Add Person</button>
+      <br /><br />
+      <div id="people_list"><?=$this->render('geeby-deeby/edit-person/render-people.phtml')?></div>
+    </td>
+    <td>
+      <p><b>Roles:</b></p>
+      <button id="add_role" type="button" onclick="editRole('NEW');">Add Role</button>
+      <br /><br />
+      <div id="role_list"><?=$this->render('geeby-deeby/edit-person/render-roles.phtml')?></div>
+    </td>
+  </tr>
+</table>

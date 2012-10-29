@@ -1,0 +1,3 @@
+<? foreach ($roles as $current): ?>
+  <a href="#" onclick="editRole(<?=$this->escapeHtml($current['Role_ID'])?>); return false;"><?=$this->escapeHtml($current['Role_Name'])?></a><br />
+<? endforeach; ?>
