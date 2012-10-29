@@ -57,6 +57,126 @@ return array(
                             ),
                         ),
                     ),
+                    'approve' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/Approve',
+                            'defaults' => array(
+                                'controller'    => 'Approve',
+                                'action'        => 'index',
+                            ),
+                        ),
+                    ),
+                    'category_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/CategoryList',
+                            'defaults' => array(
+                                'controller'    => 'EditCategory',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'country_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/CountryList',
+                            'defaults' => array(
+                                'controller'    => 'EditCountry',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'file_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/FileList',
+                            'defaults' => array(
+                                'controller'    => 'EditFile',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'language_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/LanguageList',
+                            'defaults' => array(
+                                'controller'    => 'EditLanguage',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'link_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/LinkList',
+                            'defaults' => array(
+                                'controller'    => 'EditLink',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'material_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/MaterialList',
+                            'defaults' => array(
+                                'controller'    => 'EditMaterial',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'note_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/NoteList',
+                            'defaults' => array(
+                                'controller'    => 'EditNote',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'person_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/PersonList',
+                            'defaults' => array(
+                                'controller'    => 'EditPerson',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'platform_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/PlatformList',
+                            'defaults' => array(
+                                'controller'    => 'EditPlatform',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'publisher_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/PublisherList',
+                            'defaults' => array(
+                                'controller'    => 'EditPublisher',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'series_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/SeriesList',
+                            'defaults' => array(
+                                'controller'    => 'EditSeries',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                 ),
             ),
         ),
