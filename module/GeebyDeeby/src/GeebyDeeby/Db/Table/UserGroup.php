@@ -1,6 +1,6 @@
 <?php
 /**
- * Index controller
+ * Table Definition for User_Groups
  *
  * PHP version 5
  *
@@ -20,65 +20,29 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Controller;
+namespace GeebyDeeby\Db\Table;
 
 /**
- * Index controller
+ * Table Definition for User_Groups
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class IndexController extends AbstractBase
+class UserGroup extends Gateway
 {
     /**
-     * Default home page
-     *
-     * @return mixed
+     * Constructor
      */
-    public function indexAction()
+    public function __construct()
     {
-        return $this->createViewModel();
-    }
-
-    /**
-     * Login form
-     *
-     * @return mixed
-     */
-    public function loginAction()
-    {
-        $view = $this->createViewModel();
-        if ($this->getRequest()->isPost()) {
-            $adapter = new \GeebyDeeby\Authentication\Adapter(
-                $this->getDbTable('user'),
-                $this->params()->fromPost('user'),
-                $this->params()->fromPost('pass')
-            );
-            $result = $this->getAuth()->authenticate($adapter);
-            if ($result->isValid()) {
-                return $this->redirect()->toRoute('home');
-            }
-            $view->msg = 'Invalid credentials; please try again.';
-        }
-        return $view;
-    }
-
-    /**
-     * Logout action
-     *
-     * @return mixed
-     */
-    public function logoutAction()
-    {
-        $this->getAuth()->clearIdentity();
-        return $this->redirect()->toRoute('home');
+        parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\User_Group');
     }
 }

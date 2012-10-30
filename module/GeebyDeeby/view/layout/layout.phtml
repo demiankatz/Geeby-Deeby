@@ -22,7 +22,7 @@
   </head>
   <body>
     <div class="headerControls">
-      <!-- TODO {if $loggedIn}<a href="?page=logout">Log Out</a>{/if} -->
+      <? if ($loggedIn): ?><a href="<?=$this->url('logout')?>">Log Out</a><? endif; ?>
     </div>
     <? echo $this->content; ?>
     <div class="footer">

@@ -21,6 +21,8 @@ return array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'role' => 'GeebyDeeby\Db\Table\Role',
+                'user' => 'GeebyDeeby\Db\Table\User',
+                'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
             ),
         ),
     ),
@@ -229,6 +231,28 @@ return array(
                     ),
                 ),
             ),
+            'login' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/login',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Index',
+                        'action'        => 'login',
+                    ),
+                ),
+            ),
+            'logout' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/logout',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Index',
+                        'action'        => 'logout',
+                    ),
+                ),
+            ),
         ),
     ),
     'service_manager' => array(
@@ -254,6 +278,9 @@ return array(
                     )
                 );
             },
+        ),
+        'invokables' => array(
+            'GeebyDeeby\Authentication' => 'Zend\Authentication\AuthenticationService',
         ),
     ),
     'controllers' => array(

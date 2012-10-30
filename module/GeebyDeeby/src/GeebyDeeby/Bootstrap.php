@@ -82,6 +82,8 @@ class Bootstrap
             $viewModel = $serviceManager->get('viewmanager')->getViewModel();
             $viewModel->siteTitle = $config['geeby-deeby']['siteTitle'];
             $viewModel->siteEmail = $config['geeby-deeby']['siteEmail'];
+            $viewModel->loggedIn
+                = $serviceManager->get('GeebyDeeby\Authentication')->hasIdentity();
         };
         $this->events->attach('dispatch', $callback);
     }

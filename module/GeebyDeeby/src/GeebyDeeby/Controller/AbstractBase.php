@@ -218,4 +218,14 @@ class AbstractBase extends AbstractActionController
         }
         return $view;
     }
+
+    /**
+     * Get access to the authentication service.
+     *
+     * @return \Zend\Authentication\AuthenticationService
+     */
+    protected function getAuth()
+    {
+        return $this->getServiceLocator()->get('GeebyDeeby\Authentication');
+    }
 }
