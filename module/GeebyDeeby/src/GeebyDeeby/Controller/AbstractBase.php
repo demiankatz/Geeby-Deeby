@@ -118,6 +118,10 @@ class AbstractBase extends AbstractActionController
      */
     protected function getGenericList($table, $assignTo, $tpl)
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         $table = $this->getDbTable($table);
         $view = $this->createViewModel(array($assignTo => $table->getList()));
 
@@ -210,6 +214,10 @@ class AbstractBase extends AbstractActionController
      */
     protected function handleGenericItem($table, $assignMap, $assignTo)
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $view = $this->saveGenericItem($table, $assignMap);
         } else {
@@ -290,6 +298,26 @@ class AbstractBase extends AbstractActionController
             }
         }
         return false;
+    }
+
+    /**
+     * Check that a user is logged in and has appropriate permissions.
+     * Returns boolean true if user has permission; otherwise returns a
+     * response object to redirect appropriately.
+     *
+     * @param string $permission Permission to check for
+     *
+     * @return mixed
+     */
+    protected function checkPermission($permission)
+    {
+        if (!($user = $this->getCurrentUser())) {
+            return $this->forceLogin();
+        }
+        if (!$user->hasPermission($permission)) {
+            return $this->forwardTo('GeebyDeeby\Controller\Edit', 'Denied');
+        }
+        return true;
     }
 
     /**

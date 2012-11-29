@@ -38,6 +38,11 @@ namespace GeebyDeeby\Controller;
  */
 class EditController extends AbstractBase
 {
+    /**
+     * Default edit menu
+     *
+     * @return mixed
+     */
     public function indexAction()
     {
         if (!($user = $this->getCurrentUser())) {
@@ -51,5 +56,15 @@ class EditController extends AbstractBase
                 'userEditor' => $user->hasPermission('User_Editor')
             )
         );
+    }
+
+    /**
+     * Display access denied message
+     *
+     * @return mixed
+     */
+    public function deniedAction()
+    {
+        return $this->createViewModel();
     }
 }
