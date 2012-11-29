@@ -276,6 +276,23 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Get the current user (if logged in) or false.
+     *
+     * @return \GeebyDeeby\Db\Row\User|bool
+     */
+    protected function getCurrentUser()
+    {
+        if ($this->getAuth()->hasIdentity()) {
+            $id = $this->getAuth()->getIdentity();
+            $user = $this->getDbTable('User')->getByPrimaryKey($id);
+            if (is_object($user)) {
+                return $user;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Redirect the user to the login screen.
      *
      * @param array  $extras  Associative array of extra fields to store

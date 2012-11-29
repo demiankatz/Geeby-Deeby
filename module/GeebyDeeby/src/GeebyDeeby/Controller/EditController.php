@@ -40,14 +40,15 @@ class EditController extends AbstractBase
 {
     public function indexAction()
     {
-        if (!$this->getAuth()->hasIdentity()) {
+        if (!($user = $this->getCurrentUser())) {
             return $this->forceLogin();
         }
 
-        // TODO - set permissions based on login
         return $this->createViewModel(
             array(
-                'contentEditor' => true, 'approver' => true, 'userEditor' => true
+                'contentEditor' => $user->hasPermission('Content_Editor'),
+                'approver' => $user->hasPermission('Approver'),
+                'userEditor' => $user->hasPermission('User_Editor')
             )
         );
     }

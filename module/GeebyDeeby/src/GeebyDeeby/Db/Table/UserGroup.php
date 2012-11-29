@@ -43,6 +43,6 @@ class UserGroup extends Gateway
      */
     public function __construct()
     {
-        parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\User_Group');
+        parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\UserGroup');
     }
 }

@@ -88,6 +88,7 @@ class User extends ServiceLocatorAwareGateway
             // Unset non-permission related fields:
             unset($this->permissions->User_Group_ID);
             unset($this->permissions->Group_Name);
+            return;
         }
 
         // If we got this far, we were unable to find permissions -- default to
