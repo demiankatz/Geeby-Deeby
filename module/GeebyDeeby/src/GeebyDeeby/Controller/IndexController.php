@@ -64,7 +64,10 @@ class IndexController extends AbstractBase
             );
             $result = $this->getAuth()->authenticate($adapter);
             if ($result->isValid()) {
-                return $this->redirect()->toRoute('home');
+                $followup = $this->followup()->retrieve();
+                return isset($followup->url)
+                    ? $this->redirect()->toUrl($followup->url)
+                    : $this->redirect()->toRoute('home');
             }
             $view->msg = 'Invalid credentials; please try again.';
         }

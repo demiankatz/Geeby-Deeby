@@ -228,4 +228,70 @@ class AbstractBase extends AbstractActionController
     {
         return $this->getServiceLocator()->get('GeebyDeeby\Authentication');
     }
+
+    /**
+     * Convenience method to make invocation of forward() helper less verbose.
+     *
+     * @param string $controller Controller to invoke
+     * @param string $action     Action to invoke
+     * @param array  $params     Extra parameters for the RouteMatch object (no
+     * need to provide action here, since $action takes care of that)
+     *
+     * @return bool              Returns false so this can be returned by a
+     * controller without causing duplicate ViewModel attachment.
+     */
+    public function forwardTo($controller, $action, $params = array())
+    {
+        // Inject action into the RouteMatch parameters
+        $params['action'] = $action;
+
+        // Dispatch the requested controller/action:
+        return $this->forward()->dispatch($controller, $params);
+    }
+
+    /**
+     * Get the view renderer
+     *
+     * @return \Zend\View\Renderer\RendererInterface
+     */
+    protected function getViewRenderer()
+    {
+        return $this->getServiceLocator()->get('viewmanager')->getRenderer();
+    }
+
+    /**
+     * Get the full URL to one of VuFind's routes.
+     *
+     * @param bool|string $route Boolean true for current URL, otherwise name of
+     * route to render as URL
+     *
+     * @return string
+     */
+    public function getServerUrl($route = true)
+    {
+        $serverHelper = $this->getViewRenderer()->plugin('serverurl');
+        return $serverHelper(
+            $route === true ? true : $this->url()->fromRoute($route)
+        );
+    }
+
+    /**
+     * Redirect the user to the login screen.
+     *
+     * @param array  $extras  Associative array of extra fields to store
+     * @param bool   $forward True to forward, false to redirect
+     *
+     * @return mixed
+     */
+    protected function forceLogin($extras = array(), $forward = true)
+    {
+        $this->followup()->store($extras);
+
+        // Set a flag indicating that we are forcing login:
+        $this->getRequest()->getPost()->set('forcingLogin', true);
+
+        return $forward
+            ? $this->forwardTo('GeebyDeeby\Controller\Index', 'Login')
+            : $this->redirect()->toRoute('login');
+    }
 }

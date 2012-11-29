@@ -40,6 +40,10 @@ class EditController extends AbstractBase
 {
     public function indexAction()
     {
+        if (!$this->getAuth()->hasIdentity()) {
+            return $this->forceLogin();
+        }
+
         // TODO - set permissions based on login
         return $this->createViewModel(
             array(
