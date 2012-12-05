@@ -1,0 +1,6 @@
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_materials.js') ?>
+<h1>Edit Material Types</h1>
+<p><b>Material Types:</b></p>
+<button id="add_material" type="button" onclick="editMaterial('NEW');">Add Material Type</button>
+<br /><br />
+<div id="material_list"><?=$this->render('geeby-deeby/edit-material-type/render-material-types.phtml')?></div>

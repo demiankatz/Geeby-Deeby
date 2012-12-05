@@ -6,9 +6,9 @@ var editBox = false;
 function editMaterial(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=materialtype&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/MaterialType/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Material Type" : ("Edit Material Type " + id)),
+        title: (id === 'NEW' ? "Add Material Type" : ("Edit Material Type " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -22,7 +22,7 @@ function editMaterial(id)
  */
 function redrawMaterials()
 {
-    var url = 'ajax.php?module=materialtype&method=getList';
+    var url = basePath + '/edit/MaterialTypeList';
     $('#material_list').load(url);
 }
 
@@ -45,8 +45,8 @@ function saveMaterial()
     $('#save_material_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=materialtype&method=save';
-    $.post(url, {id: materialID, material: material}, function(data) {
+    var url = basePath + '/edit/MaterialType/' + encodeURIComponent(materialID);
+    $.post(url, {material: material}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

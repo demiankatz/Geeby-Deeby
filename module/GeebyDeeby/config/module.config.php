@@ -21,6 +21,7 @@ return array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'language' => 'GeebyDeeby\Db\Table\Language',
+                'materialtype' => 'GeebyDeeby\Db\Table\MaterialType',
                 'note' => 'GeebyDeeby\Db\Table\Note',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'role' => 'GeebyDeeby\Db\Table\Role',
@@ -163,12 +164,23 @@ return array(
                             ),
                         ),
                     ),
+                    'material' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/MaterialType[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditMaterialType',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
                     'material_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
-                            'route'    => '/MaterialList',
+                            'route'    => '/MaterialTypeList',
                             'defaults' => array(
-                                'controller'    => 'EditMaterial',
+                                'controller'    => 'EditMaterialType',
                                 'action'        => 'list',
                             ),
                         ),
@@ -325,6 +337,7 @@ return array(
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
+            'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
