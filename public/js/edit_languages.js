@@ -6,9 +6,9 @@ var editBox = false;
 function editLanguage(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=language&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Language/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Language" : ("Edit Language " + id)),
+        title: (id === 'NEW' ? "Add Language" : ("Edit Language " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -22,7 +22,7 @@ function editLanguage(id)
  */
 function redrawLanguages()
 {
-    var url = 'ajax.php?module=language&method=getList';
+    var url = basePath + '/edit/LanguageList';
     $('#language_list').load(url);
 }
 
@@ -45,8 +45,8 @@ function saveLanguage()
     $('#save_language_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=language&method=save';
-    $.post(url, {id: languageID, language: language}, function(data) {
+    var url = basePath + '/edit/Language/' + encodeURIComponent(languageID);
+    $.post(url, {language: language}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

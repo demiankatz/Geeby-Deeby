@@ -20,6 +20,7 @@ return array(
             'invokables' => array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
                 'country' => 'GeebyDeeby\Db\Table\Country',
+                'language' => 'GeebyDeeby\Db\Table\Language',
                 'note' => 'GeebyDeeby\Db\Table\Note',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'role' => 'GeebyDeeby\Db\Table\Role',
@@ -128,6 +129,17 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditFile',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'language' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Language[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditLanguage',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
                             ),
                         ),
                     ),
@@ -314,6 +326,7 @@ return array(
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
+            'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
         ),

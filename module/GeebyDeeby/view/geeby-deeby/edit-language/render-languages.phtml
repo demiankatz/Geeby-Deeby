@@ -1,0 +1,3 @@
+<? foreach ($languages as $current): ?>
+  <a href="#" onclick="editLanguage(<?=$current['Language_ID']?>); return false;"><?=$this->escapeHtml($current['Language_Name'])?></a><br />
+<? endforeach; ?>
