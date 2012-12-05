@@ -140,16 +140,17 @@ class AbstractBase extends AbstractActionController
      *
      * @param string $table     Table to load item from
      * @param array  $assignMap Map of POST fields => object properties for saving
+     * @param string $idField   POST/Route field for unique ID
      *
      * @return mixed
      */
-    protected function saveGenericItem($table, $assignMap)
+    protected function saveGenericItem($table, $assignMap, $idField = 'id')
     {
         // Extract values from the POST fields:
-        $id = $this->params()->fromPost('id', 'NEW');
+        $id = $this->params()->fromRoute(
+            $idField, $this->params()->fromPost($idField, 'NEW')
+        );
         $id = $id == 'NEW' ? false : intval($id);
-        $name = trim($this->params()->fromPost('name'));
-        $desc = trim($this->params()->fromPost('desc'));
 
         // Attempt to save changes:
         $table = $this->getDbTable($table);
