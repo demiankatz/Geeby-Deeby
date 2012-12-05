@@ -26,7 +26,7 @@ function approveUser(userID)
     hideUserButtons(userID);
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=approve&method=approveUser';
+    var url = basePath + '/edit/Approve/ApproveUser';
     var details = {
         id: userID,
         person_id: parseInt($('#Person_ID_' + userID).val()),
@@ -57,7 +57,7 @@ function rejectUser(userID)
     hideUserButtons(userID);
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=approve&method=rejectUser';
+    var url = basePath + '/edit/Approve/RejectUser';
     var details = {
         id: userID
     };
@@ -100,7 +100,7 @@ function approveReview(userID, itemID)
     hideReviewButtons(userID, itemID);
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=approve&method=approveReview';
+    var url = basePath + '/edit/Approve/ApproveReview';
     var details = {
         user_id: userID,
         item_id: itemID,
@@ -129,7 +129,7 @@ function rejectReview(userID, itemID)
     hideReviewButtons(userID, itemID);
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=approve&method=rejectReview';
+    var url = basePath + '/edit/Approve/RejectReview';
     var details = {
         user_id: userID,
         item_id: itemID
@@ -173,7 +173,7 @@ function approveComment(userID, seriesID)
     hideCommentButtons(userID, seriesID);
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=approve&method=approveComment';
+    var url = basePath + '/edit/Approve/ApproveComment';
     var details = {
         user_id: userID,
         series_id: seriesID,
@@ -202,7 +202,7 @@ function rejectComment(userID, seriesID)
     hideCommentButtons(userID, seriesID);
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=approve&method=rejectComment';
+    var url = basePath + '/edit/Approve/RejectComment';
     var details = {
         user_id: userID,
         series_id: seriesID
