@@ -1,0 +1,6 @@
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_notes.js') ?>
+<h1>Edit Notes</h1>
+<p><b>Notes:</b></p>
+<button id="add_note" type="button" onclick="editNote('NEW');">Add Note</button>
+<br /><br />
+<div id="note_list"><?=$this->render('geeby-deeby/edit-note/render-notes.phtml')?></div>

@@ -1,0 +1,3 @@
+<? foreach ($notes as $current): ?>
+  <a href="#" onclick="editNote(<?=$current['Note_ID']?>); return false;"><?=$this->escapeHtml($current['Note'])?></a><br />
+<? endforeach; ?>

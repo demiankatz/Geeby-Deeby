@@ -1,0 +1,11 @@
+<div id="editForm">
+  <input type="hidden" id="Note_ID" value="<?=$this->escapeHtml($note['Note_ID'])?>" />
+  <table class="edit">
+    <tr>
+      <th>Note:</th>
+      <td><input type="text" id="Note" value="<?=isset($note['Note']) ? $this->escapeHtml($note['Note']) : ''?>" /></td>
+    </tr>
+  </table>
+  <button id="save_note" onclick="saveNote();">Save</button>
+  <div id="save_note_status"></div>
+</div>

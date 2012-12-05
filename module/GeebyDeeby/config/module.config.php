@@ -20,6 +20,7 @@ return array(
             'invokables' => array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
                 'country' => 'GeebyDeeby\Db\Table\Country',
+                'note' => 'GeebyDeeby\Db\Table\Note',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'user' => 'GeebyDeeby\Db\Table\User',
@@ -157,6 +158,17 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditMaterial',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'note' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Note[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditNote',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
                             ),
                         ),
                     ),
@@ -301,6 +313,7 @@ return array(
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
+            'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
         ),

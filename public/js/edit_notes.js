@@ -6,9 +6,9 @@ var editBox = false;
 function editNote(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=note&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Note/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Note" : ("Edit Note " + id)),
+        title: (id === 'NEW' ? "Add Note" : ("Edit Note " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -22,7 +22,7 @@ function editNote(id)
  */
 function redrawNotes()
 {
-    var url = 'ajax.php?module=note&method=getList';
+    var url = basePath + '/edit/NoteList';
     $('#note_list').load(url);
 }
 
@@ -45,8 +45,8 @@ function saveNote()
     $('#save_note_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=note&method=save';
-    $.post(url, {id: noteID, note: note}, function(data) {
+    var url = basePath + '/edit/Note/' + encodeURIComponent(noteID);
+    $.post(url, {note: note}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.
