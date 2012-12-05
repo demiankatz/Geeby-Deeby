@@ -1,0 +1,6 @@
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_countries.js') ?>
+<h1>Edit Countries</h1>
+<p><b>Countries:</b></p>
+<button id="add_country" type="button" onclick="editCountry('NEW');">Add Country</button>
+<br /><br />
+<div id="country_list"><?=$this->render('geeby-deeby/edit-country/render-countries.phtml')?></div>

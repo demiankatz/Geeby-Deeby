@@ -6,9 +6,9 @@ var editBox = false;
 function editCountry(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=country&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Country/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Country" : ("Edit Country " + id)),
+        title: (id === 'NEW' ? "Add Country" : ("Edit Country " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -22,7 +22,7 @@ function editCountry(id)
  */
 function redrawCountries()
 {
-    var url = 'ajax.php?module=country&method=getList';
+    var url = basePath + '/edit/CountryList';
     $('#country_list').load(url);
 }
 
@@ -45,8 +45,8 @@ function saveCountry()
     $('#save_country_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=country&method=save';
-    $.post(url, {id: countryID, country: country}, function(data) {
+    var url = basePath + '/edit/Country/' + encodeURIComponent(countryID);
+    $.post(url, {country: country}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

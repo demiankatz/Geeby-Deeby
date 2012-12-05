@@ -1,0 +1,3 @@
+<? foreach ($countries as $current): ?>
+  <a href="#" onclick="editCountry(<?=$this->escapeHtml($current['Country_ID'])?>); return false;"><?=$this->escapeHtml($current['Country_Name'])?></a><br />
+<? endforeach; ?>

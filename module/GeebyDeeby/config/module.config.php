@@ -19,6 +19,7 @@ return array(
         'db_table_plugin_manager' => array(
             'invokables' => array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
+                'country' => 'GeebyDeeby\Db\Table\Country',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'user' => 'GeebyDeeby\Db\Table\User',
@@ -95,6 +96,17 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditCategory',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'country' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Country[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditCountry',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
                             ),
                         ),
                     ),
@@ -288,6 +300,7 @@ return array(
         'invokables' => array(
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
+            'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
         ),
