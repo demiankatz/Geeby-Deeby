@@ -26,6 +26,7 @@ return array(
                 'materialtype' => 'GeebyDeeby\Db\Table\MaterialType',
                 'note' => 'GeebyDeeby\Db\Table\Note',
                 'person' => 'GeebyDeeby\Db\Table\Person',
+                'platform' => 'GeebyDeeby\Db\Table\Platform',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
                 'user' => 'GeebyDeeby\Db\Table\User',
@@ -283,6 +284,17 @@ return array(
                             ),
                         ),
                     ),
+                    'platform' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Platform[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditPlatform',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
                     'platform_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -388,6 +400,7 @@ return array(
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
+            'GeebyDeeby\Controller\EditPlatform' => 'GeebyDeeby\Controller\EditPlatformController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
         ),

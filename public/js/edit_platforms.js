@@ -6,9 +6,9 @@ var editBox = false;
 function editPlatform(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=platform&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Platform/' + encodeURIComponent(id)
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Platform" : ("Edit Platform " + id)),
+        title: (id === 'NEW' ? "Add Platform" : ("Edit Platform " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -22,7 +22,7 @@ function editPlatform(id)
  */
 function redrawPlatforms()
 {
-    var url = 'ajax.php?module=platform&method=getList';
+    var url = basePath + '/edit/PlatformList';
     $('#platform_list').load(url);
 }
 
@@ -45,8 +45,8 @@ function savePlatform()
     $('#save_platform_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=platform&method=save';
-    $.post(url, {id: platformID, platform: platform}, function(data) {
+    var url = basePath + '/edit/Platform/' + encodeURIComponent(platformID)
+    $.post(url, {platform: platform}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

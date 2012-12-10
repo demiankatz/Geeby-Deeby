@@ -1,0 +1,11 @@
+<div id="editForm">
+  <input type="hidden" id="Platform_ID" value="<?=$platform['Platform_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Platform:</th>
+      <td><input type="text" id="Platform" value="<?=isset($platform['Platform']) ? $this->escapeHtml($platform['Platform']) : ''?>" /></td>
+    </tr>
+  </table>
+  <button id="save_platform" onclick="savePlatform();">Save</button>
+  <div id="save_platform_status"></div>
+</div>
