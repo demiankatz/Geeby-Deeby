@@ -1,0 +1,3 @@
+<? foreach ($files as $current): ?>
+  <a href="<?=$this->url('edit/file', array('id' => $current['File_ID']))?>"><?=$this->escapeHtml($current['File_Name'])?></a><br />
+<? endforeach; ?>

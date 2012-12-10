@@ -20,6 +20,8 @@ return array(
             'invokables' => array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
                 'country' => 'GeebyDeeby\Db\Table\Country',
+                'file' => 'GeebyDeeby\Db\Table\File',
+                'filetype' => 'GeebyDeeby\Db\Table\FileType',
                 'language' => 'GeebyDeeby\Db\Table\Language',
                 'materialtype' => 'GeebyDeeby\Db\Table\MaterialType',
                 'note' => 'GeebyDeeby\Db\Table\Note',
@@ -124,6 +126,17 @@ return array(
                             ),
                         ),
                     ),
+                    'file' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/File[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditFile',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
                     'file_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -131,6 +144,27 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditFile',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'file_type' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/FileType[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditFile',
+                                'action'        => 'type',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'file_type_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/FileTypeList',
+                            'defaults' => array(
+                                'controller'    => 'EditFile',
+                                'action'        => 'typelist',
                             ),
                         ),
                     ),
@@ -349,6 +383,7 @@ return array(
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
+            'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',

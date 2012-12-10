@@ -6,9 +6,9 @@ var editBox = false;
 function editFile(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=file&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/File/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add File" : ("Edit File " + id)),
+        title: (id === 'NEW' ? "Add File" : ("Edit File " + id)),
         modal: true,
         autoOpen: true,
         width: 600,
@@ -22,7 +22,7 @@ function editFile(id)
  */
 function redrawFiles()
 {
-    var url = 'ajax.php?module=file&method=getList';
+    var url = basePath + '/edit/FileList';
     $('#file_list').load(url);
 }
 
@@ -53,9 +53,10 @@ function saveFile()
     $('#save_file_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var params = {id: fileID, file_name: fileName, path: filePath, desc: desc, 
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID);
+    var params = {file_name: fileName, path: filePath, desc: desc, 
         date_checked: dateChecked, type_id: typeID};
-    $.post('ajax.php?module=file&method=save', params, function(data) {
+    $.post(url, params, function(data) {
         // If save was successful...
         if (data.success) {
              // Close the dialog box.
@@ -82,9 +83,9 @@ function saveFile()
 function editFileType(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=filetype&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/FileType/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add File Type" : ("Edit File Type " + id)),
+        title: (id === 'NEW' ? "Add File Type" : ("Edit File Type " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -98,7 +99,7 @@ function editFileType(id)
  */
 function redrawFileTypes()
 {
-    var url = 'ajax.php?module=filetype&method=getList';
+    var url = basePath + '/edit/FileTypeList';
     $('#file_type_list').load(url);
 }
 
@@ -121,8 +122,8 @@ function saveFileType()
     $('#save_file_type_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=filetype&method=save';
-    $.post(url, {id: fileTypeID, fileType: fileType}, function(data) {
+    var url = basePath + '/edit/FileType/' + encodeURIComponent(fileTypeID);
+    $.post(url, {fileType: fileType}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

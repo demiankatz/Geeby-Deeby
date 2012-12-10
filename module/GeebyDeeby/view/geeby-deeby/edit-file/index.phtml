@@ -1,0 +1,23 @@
+<div id="editForm">
+  <input type="hidden" id="File_ID" value="<?=$file['File_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>File Name:</th>
+      <td><input type="text" id="File_Name" value="<?=isset($file['File_Name']) ? $this->escapeHtml($file['File_Name']) : '' ?>" /></td>
+    </tr>
+    <tr>
+      <th>File Path:</th>
+      <td><input type="text" id="File_Path" value="<?=isset($file['File_Path']) ? $this->escapeHtml($file['File_Path']) : '' ?>" /></td>
+    </tr>
+    <tr>
+      <th>File Type:</th>
+      <td><?=$this->render('geeby-deeby/edit-file/type-select.phtml', array('fileTypes' => $fileTypes, 'selected' => isset($file['File_Type_ID']) ? $file['File_Type_ID'] : null))?></td>
+    </tr>
+    <tr>
+      <th>Description:</th>
+      <td><textarea id="Description"><?=isset($file['Description']) ? $this->escapeHtml($file['Description']) : '' ?></textarea></td>
+    </tr>
+  </table>
+  <button id="save_file" onclick="saveFile();">Save</button>
+  <div id="save_file_status"></div>
+</div>
