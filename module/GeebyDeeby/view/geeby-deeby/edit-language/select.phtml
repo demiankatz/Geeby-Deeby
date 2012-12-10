@@ -1,0 +1,11 @@
+<? if (isset($languages) && !empty($languages)): ?>
+  <select id="Language_ID">
+    <? foreach ($languages as $current): ?>
+      <option value="<?=$current['Language_ID']?>"<?=($current['Language_ID'] == $selected) ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current['Language_Name'])?>
+      </option>
+    <? endforeach; ?>
+  </select>
+<? else: ?>
+  Please define languages.
+<? endif; ?>

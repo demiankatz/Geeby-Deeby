@@ -6,9 +6,9 @@ var editBox = false;
 function editSeries(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=series&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Series/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Series" : ("Edit Series " + id)),
+        title: (id === 'NEW' ? "Add Series" : ("Edit Series " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -22,7 +22,7 @@ function editSeries(id)
  */
 function redrawSeries()
 {
-    var url = 'ajax.php?module=series&method=getList';
+    var url = basePath + '/edit/SeriesList';
     $('#series_list').load(url);
 }
 
@@ -47,8 +47,8 @@ function saveSeries()
     $('#save_series_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=series&method=save';
-    $.post(url, {id: seriesID, name: seriesName, desc: desc, lang: lang}, function(data) {
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID);
+    $.post(url, {name: seriesName, desc: desc, lang: lang}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

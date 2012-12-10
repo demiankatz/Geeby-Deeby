@@ -25,6 +25,7 @@ return array(
                 'note' => 'GeebyDeeby\Db\Table\Note',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'role' => 'GeebyDeeby\Db\Table\Role',
+                'series' => 'GeebyDeeby\Db\Table\Series',
                 'user' => 'GeebyDeeby\Db\Table\User',
                 'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
             ),
@@ -268,6 +269,17 @@ return array(
                             ),
                         ),
                     ),
+                    'series' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Series[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditSeries',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
                     'series_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -341,6 +353,7 @@ return array(
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
+            'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
         ),
     ),

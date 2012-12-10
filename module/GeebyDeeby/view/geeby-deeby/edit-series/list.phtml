@@ -1,0 +1,6 @@
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_series.js') ?>
+<h1>Edit Series</h1>
+<p><b>Series:</b></p>
+<button id="add_series" type="button" onclick="editSeries('NEW');">Add Series</button>
+<br /><br />
+<div id="series_list"><?=$this->render('geeby-deeby/edit-series/render-series.phtml')?></div>

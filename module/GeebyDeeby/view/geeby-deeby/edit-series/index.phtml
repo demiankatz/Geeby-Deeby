@@ -1,0 +1,19 @@
+<div id="editForm">
+  <input type="hidden" id="Series_ID" value="<?=$series['Series_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Series Name:</th>
+      <td><input type="text" id="Series_Name" value="<?=isset($series['Series_Name']) ? $this->escapeHtml($series['Series_Name']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Description:</th>
+      <td><textarea id="Series_Description"><?=isset($series['Series_Description']) ? $this->escapeHtml($series['Series_Description']) : ''?></textarea></td>
+    </tr>
+    <tr>
+      <th>Language:</th>
+      <td><?=$this->render('geeby-deeby/edit-language/select.phtml', array('languages' => $languages, 'selected' => isset($series['Language_ID']) ? $series['Language_ID'] : null))?></td>
+    </tr>
+  </table>
+  <button id="save_series" onclick="saveSeries();">Save</button>
+  <div id="save_series_status"></div>
+</div>
