@@ -6,9 +6,9 @@ var editBox = false;
 function editPublisher(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=publisher&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Publisher/' + encodeURIComponent(id)
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Publisher" : ("Edit Publisher " + id)),
+        title: (id === 'NEW' ? "Add Publisher" : ("Edit Publisher " + id)),
         modal: true,
         autoOpen: true,
         width: 500,
@@ -22,7 +22,7 @@ function editPublisher(id)
  */
 function redrawPublishers()
 {
-    var url = 'ajax.php?module=publisher&method=getList';
+    var url = basePath + '/edit/PublisherList';
     $('#publisher_list').load(url);
 }
 
@@ -45,8 +45,8 @@ function savePublisher()
     $('#save_publisher_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=publisher&method=save';
-    $.post(url, {id: publisherID, publisher: publisher}, function(data) {
+    var url = basePath + '/edit/Publisher/' + encodeURIComponent(publisherID);
+    $.post(url, {publisher: publisher}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

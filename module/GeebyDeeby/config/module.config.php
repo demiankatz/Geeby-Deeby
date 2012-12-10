@@ -27,6 +27,7 @@ return array(
                 'note' => 'GeebyDeeby\Db\Table\Note',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'platform' => 'GeebyDeeby\Db\Table\Platform',
+                'publisher' => 'GeebyDeeby\Db\Table\Publisher',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
                 'user' => 'GeebyDeeby\Db\Table\User',
@@ -305,6 +306,17 @@ return array(
                             ),
                         ),
                     ),
+                    'publisher' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Publisher[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditPublisher',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
                     'publisher_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -401,6 +413,7 @@ return array(
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
             'GeebyDeeby\Controller\EditPlatform' => 'GeebyDeeby\Controller\EditPlatformController',
+            'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
         ),
