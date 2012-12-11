@@ -1,0 +1,3 @@
+<? foreach ($linkTypes as $current): ?>
+  <a href="#" onclick="editLinkType(<?=$current['Link_Type_ID']?>); return false;"><?=$this->escapeHtml($current['Link_Type'])?></a><br />
+<? endforeach; ?>

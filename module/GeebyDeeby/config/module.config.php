@@ -23,6 +23,8 @@ return array(
                 'file' => 'GeebyDeeby\Db\Table\File',
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
                 'language' => 'GeebyDeeby\Db\Table\Language',
+                'link' => 'GeebyDeeby\Db\Table\Link',
+                'linktype' => 'GeebyDeeby\Db\Table\LinkType',
                 'materialtype' => 'GeebyDeeby\Db\Table\MaterialType',
                 'note' => 'GeebyDeeby\Db\Table\Note',
                 'person' => 'GeebyDeeby\Db\Table\Person',
@@ -191,6 +193,17 @@ return array(
                             ),
                         ),
                     ),
+                    'link' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Link[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditLink',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
                     'link_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -198,6 +211,27 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditLink',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'link_type' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/LinkType[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditLink',
+                                'action'        => 'type',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'link_type_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/LinkTypeList',
+                            'defaults' => array(
+                                'controller'    => 'EditLink',
+                                'action'        => 'typelist',
                             ),
                         ),
                     ),
@@ -411,6 +445,7 @@ return array(
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
+            'GeebyDeeby\Controller\EditLink' => 'GeebyDeeby\Controller\EditLinkController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
             'GeebyDeeby\Controller\EditPlatform' => 'GeebyDeeby\Controller\EditPlatformController',
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',

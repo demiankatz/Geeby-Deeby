@@ -6,9 +6,9 @@ var editBox = false;
 function editLink(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=link&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/Link/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Link" : ("Edit Link " + id)),
+        title: (id === 'NEW' ? "Add Link" : ("Edit Link " + id)),
         modal: true,
         autoOpen: true,
         width: 600,
@@ -22,7 +22,7 @@ function editLink(id)
  */
 function redrawLinks()
 {
-    var url = 'ajax.php?module=link&method=getList';
+    var url = basePath + '/edit/LinkList';
     $('#link_list').load(url);
 }
 
@@ -53,9 +53,10 @@ function saveLink()
     $('#save_link_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var params = {id: linkID, link_name: linkName, url: url, desc: desc, 
+    var targetUrl = basePath + '/edit/Link/' + encodeURIComponent(linkID);
+    var params = {link_name: linkName, url: url, desc: desc, 
         date_checked: dateChecked, type_id: typeID};
-    $.post('ajax.php?module=link&method=save', params, function(data) {
+    $.post(targetUrl, params, function(data) {
         // If save was successful...
         if (data.success) {
              // Close the dialog box.
@@ -82,7 +83,7 @@ function saveLink()
 function editLinkType(id)
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=linktype&method=edit&id=' + encodeURIComponent(id);
+    var url = basePath + '/edit/LinkType/' + encodeURIComponent(id);
     editBox = $('<div>Loading...</div>').load(url).dialog({
         title: (id === false ? "Add Link Type" : ("Edit Link Type " + id)),
         modal: true,
@@ -98,7 +99,7 @@ function editLinkType(id)
  */
 function redrawLinkTypes()
 {
-    var url = 'ajax.php?module=linktype&method=getList';
+    var url = basePath + '/edit/LinkTypeList';
     $('#link_type_list').load(url);
 }
 
@@ -121,8 +122,8 @@ function saveLinkType()
     $('#save_link_type_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=linktype&method=save';
-    $.post(url, {id: linkTypeID, linkType: linkType}, function(data) {
+    var url = basePath + '/edit/LinkType/' + encodeURIComponent(linkTypeID);
+    $.post(url, {linkType: linkType}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

@@ -1,0 +1,18 @@
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_links.js') ?>
+<h1>Edit Links</h1>
+<table>
+  <tr>
+    <td>
+      <p><b>Links:</b></p>
+      <button id="add_link" type="button" onclick="editLink('NEW');">Add Link</button>
+      <br /><br />
+      <div id="link_list"><?=$this->render('geeby-deeby/edit-link/render-links.phtml')?></div>
+    </td>
+    <td>
+      <p><b>Link Types:</b></p>
+      <button id="add_link_type" type="button" onclick="editLinkType(false);">Add Link Type</button>
+      <br /><br />
+      <div id="link_type_list"><?=$this->render('geeby-deeby/edit-link/render-types.phtml')?></div>
+    </td>
+  </tr>
+</table>
