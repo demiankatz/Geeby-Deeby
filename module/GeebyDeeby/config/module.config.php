@@ -33,6 +33,7 @@ return array(
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
                 'seriescategories' => 'GeebyDeeby\Db\Table\SeriesCategories',
+                'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',
                 'user' => 'GeebyDeeby\Db\Table\User',
                 'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
             ),
@@ -365,11 +366,12 @@ return array(
                     'series' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Series[/:id]',
+                            'route'    => '/Series[/:id][/:action][/:extra]',
                             'defaults' => array(
                                 'controller'    => 'EditSeries',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null,
                             ),
                         ),
                     ),

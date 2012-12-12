@@ -71,9 +71,25 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbTable('materialtype')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
+            $view->series_materials = $this->getDbTable('seriesmaterialtypes')
+                ->getMaterials($view->seriesObj->Series_ID);
             $view->setTemplate('geeby-deeby/edit-series/edit-full');
         }
 
         return $view;
+    }
+
+    /**
+     * Work with material types
+     *
+     * @return mixed
+     */
+    public function materialAction()
+    {
+        return $this->handleGenericLink(
+            'seriesmaterialtypes', 'Series_ID', 'Material_Type_ID',
+            'series_materials', 'getMaterials',
+            'geeby-deeby/edit-series/material-type-list'
+        );
     }
 }

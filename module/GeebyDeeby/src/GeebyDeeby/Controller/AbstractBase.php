@@ -231,6 +231,51 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Handle generic linking between two items.
+     *
+     * @param string $tableName       Name of database table to modify
+     * @param string $primaryColumn   Name of database column whose value is in
+     * 'id' route parameter
+     * @param string $secondaryColumn Name of database column whose value is in
+     * 'extra' route parameter
+     * @param string $listVariable    Name of view variable to assign list to
+     * when displaying existing links
+     * @param string $listMethod      Name of method on table class to call for
+     * list assignment
+     * @param string $listTemplate    Name of template to use for displaying list
+     *
+     * @return mixed
+     */
+    public function handleGenericLink($tableName, $primaryColumn, $secondaryColumn,
+        $listVariable, $listMethod, $listTemplate
+    ) {
+        $primary = $this->params()->fromRoute('id');
+        $secondary = $this->params()->fromRoute('extra');
+        $table = $this->getDbTable($tableName);
+        if (!empty($primary) && !empty($secondary)) {
+            $row = array($primaryColumn => $primary, $secondaryColumn => $secondary);
+            try {
+                if ($this->getRequest()->isPut()) {
+                    $table->insert($row);
+                } else if ($this->getRequest()->isDelete()) {
+                    $table->delete($row);
+                } else {
+                    return $this->jsonDie('Unexpected method');
+                }
+                return $this->jsonReportSuccess();
+            } catch (\Exception $e) {
+                return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
+            }
+        }
+
+        // If we got this far, display a list:
+        $view = $this->createViewModel();
+        $view->$listVariable = $table->$listMethod($primary);
+        $view->setTemplate($listTemplate);
+        return $view;
+    }
+
+    /**
      * Get access to the authentication service.
      *
      * @return \Zend\Authentication\AuthenticationService
