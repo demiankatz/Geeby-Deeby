@@ -32,6 +32,7 @@ return array(
                 'publisher' => 'GeebyDeeby\Db\Table\Publisher',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
+                'seriescategories' => 'GeebyDeeby\Db\Table\SeriesCategories',
                 'user' => 'GeebyDeeby\Db\Table\User',
                 'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
             ),

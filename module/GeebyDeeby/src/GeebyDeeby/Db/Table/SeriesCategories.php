@@ -1,6 +1,6 @@
 <?php
 /**
- * Row Definition for Series
+ * Table Definition for Series_Categories
  *
  * PHP version 5
  *
@@ -20,62 +20,44 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Row;
+namespace GeebyDeeby\Db\Table;
 
 /**
- * Row Definition for Series
+ * Table Definition for Series_Categories
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Series extends ServiceLocatorAwareGateway
+class SeriesCategories extends Gateway
 {
     /**
      * Constructor
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function __construct($adapter)
+    public function __construct()
     {
-        parent::__construct('Series_ID', 'Series', $adapter);
+        parent::__construct('Series_Categories');
     }
 
     /**
-     * Get category information for this series.
+     * Get a list of categories for the specified series.
      *
-     * @return array Integer IDs for all categories associated with the series.
-     */
-    public function getCategoryIDs()
-    {
-        $categories = $this->getDbTable('seriescategories')
-            ->getCategories($this->Series_ID);
-        return array_map(
-            function ($current) {
-                return $current->Category_ID;
-            },
-            $categories->toArray()
-        );
-    }
-
-    /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * @var int $seriesID Series ID
      *
-     * @return string|bool
+     * @return mixed
      */
-    public function validate()
+    public function getCategories($seriesID)
     {
-        if (empty($this->Series_Name)) {
-            return 'Series name cannot be blank.';
-        }
-        return false;
+        $callback = function ($select) use ($seriesID) {
+            $select->where->equalTo('Series_ID', $seriesID);
+        };
+        return $this->select($callback);
     }
 }
