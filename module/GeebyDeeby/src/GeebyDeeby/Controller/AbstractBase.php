@@ -201,7 +201,9 @@ class AbstractBase extends AbstractActionController
             $key = $rowObj->getPrimaryKeyColumn();
             $row = array($key[0] => 'NEW');
         }
-        return $this->createViewModel(array($assignTo => $row));
+        return $this->createViewModel(
+            array($assignTo => $row, $assignTo . 'Obj' => $rowObj)
+        );
     }
 
     /**
