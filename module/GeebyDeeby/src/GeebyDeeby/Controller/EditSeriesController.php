@@ -65,6 +65,15 @@ class EditSeriesController extends AbstractBase
         $view = $this->handleGenericItem('series', $assignMap, 'series');
         $languages = $this->getDbTable('language');
         $view->languages = $languages->getList();
+
+        // Add extra fields/controls if outside of a lightbox:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->materials = $this->getDbTable('materialtype')->getList();
+            $view->countries = $this->getDbTable('country')->getList();
+            $view->categories = $this->getDbTable('category')->getList();
+            $view->setTemplate('geeby-deeby/edit-series/edit-full');
+        }
+
         return $view;
     }
 }

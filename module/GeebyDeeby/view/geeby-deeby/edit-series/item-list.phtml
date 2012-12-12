@@ -1,0 +1,25 @@
+<? if (!isset($item_list) || empty($item_list)): ?>
+  No items.
+<? else: ?>
+  <table class="list_item">
+    <tr><th>Order</th><th colspan="2">Title / Material Type</th></tr>
+    <? foreach ($item_list as $current): ?>
+      <tr>
+        <td>
+          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="order<?=$current['Item_ID']?>" />
+          <button onclick="changeSeriesOrder(<?=$current['Item_ID']?>);">Set</button>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="removeFromSeries(<?=$current['Item_ID']?>); return false;">
+          </a>
+        </td>
+        <td>
+          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>">
+            <?=$this->escapeHtml($current['Item_Name'])?>
+          </a>
+          (<?=$this->escapeHtml($current['Material_Type_Name'])?>)
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>

@@ -1,0 +1,18 @@
+<? if (isset($series_publishers) && !empty($series_publishers)): ?>
+  <? foreach ($series_publishers as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <?=$this->escapeHtml($current['Publisher_Name'])?>
+          (<?=(strlen($current['Imprint']) > 0) ? $this->escapeHtml($current['Imprint']) . ': ' : ''?><?=$this->escapeHtml($current['Country_Name'])?><?=(strlen($current['Note']) > 0) ? ' - ' . $this->escapeHtml($current['Note']) : '' ?>)
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deletePublisher(<?=$current['Series_Publisher_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No publishers set.
+<? endif; ?>

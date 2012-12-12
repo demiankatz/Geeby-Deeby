@@ -1,0 +1,110 @@
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_series_details.js') ?>
+<h1>Edit Series</h1>
+<div class="edit_container" style="width: 800px;">
+  <?=$this->render('geeby-deeby/edit-series/index.phtml')?>
+</div>
+<hr />
+<div id="tabs">
+  <ul>
+    <li><a href="#items-tab"><span>Attached Items</span></a></li>
+    <li><a href="#alt-titles-tab"><span>Alternate Titles</span></a></li>
+    <li><a href="#categories-tab"><span>Categories</span></a></li>
+    <li><a href="#material-tab"><span>Material Types</span></a></li>
+    <li><a href="#publishers-tab"><span>Publishers</span></a></li>
+    <li><a href="#translations-tab"><span>Translations</span></a></li>
+  </ul>
+
+  <div id="material-tab" class="edit_tab_contents">
+    <?=$this->render('geeby-deeby/edit-material-type/select.phtml', array('materials' => $materials, 'idPrefix'=>'Series_'))?> <button onclick="addMaterial();">Add</button>
+    <div id="material_list">
+      <?=$this->render('geeby-deeby/edit-series/material-type-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="publishers-tab" class="edit_tab_contents">
+    <div class="edit_container">
+      <table class="edit">
+        <tr>
+          <th>Publisher:</th>
+          <td><input id="Publisher_ID" /></td>
+        </tr>
+        <tr>
+          <th>Country:</th>
+          <td><?=$this->render('geeby-deeby/edit-country/select.phtml')?></td>
+        </tr>
+        <tr>
+          <th>Note:</th>
+          <td><input id="Publisher_Note_ID" class="Note_ID" /></td>
+        </tr>
+        <tr>
+          <th>Imprint:</th>
+          <td><input type="text" id="Imprint" /></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><button onclick="addPublisher();">Add</button></td>
+        </tr>
+      </table>
+    </div>
+    <div id="publisher_list">
+      <?=$this->render('geeby-deeby/edit-series/publisher-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="alt-titles-tab" class="edit_tab_contents">
+    <b>Title:</b> <input type="text" id="Alt_Title" />
+    <b>Note: </b> <input id="Alt_Title_Note" class="Note_ID" />
+    <button onclick="addAltTitle();">Add</button>
+    <div id="alt_title_list">
+      <?=$this->render('geeby-deeby/edit-series/alt-title-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="categories-tab" class="edit_tab_contents">
+    <? if (!empty($categories)): ?>
+      <? $selected_categories = $seriesObj->getCategoryIDs(); ?>
+      <? foreach ($categories as $current): ?>
+        <input type="checkbox" id="Category_ID_<?=$current['Category_ID']?>" class="Category_ID" value="<?=$current['Category_ID']?>"<?=in_array($current['Category_ID'], $selected_categories) ? ' checked="checked"' : '' ?> />
+        <label for="Category_ID_<?=$current['Category_ID']?>"><?=$this->escapeHtml($current['Category'])?></label><br />
+      <? endforeach; ?>
+      <button id="save_categories" onclick="saveCategories();">Save</button>
+      <div id="save_categories_status"></div>
+    <? else: ?>
+      No categories defined.
+    <? endif; ?>
+  </div>
+
+  <div id="translations-tab" class="edit_tab_contents">
+    <select id="trans_type">
+      <option value='from'>Translated From</option>
+      <option value='into'>Translated Into</option>
+    </select>
+    <input id="trans_name" />
+    <button onclick="saveTranslation();">Add Translation</button>
+    <table>
+      <tr>
+        <td>
+          <b>Translated From:</b>
+          <div id="trans_from">
+            <?=$this->render('geeby-deeby/edit-series/trans-from-list.phtml')?>
+          </div>
+        </td>
+        <td>
+          <b>Translated Into:</b>
+          <div id="trans_into">
+            <?=$this->render('geeby-deeby/edit-series/trans-into-list.phtml')?>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="items-tab" class="edit_tab_contents">
+    <input id="item_name" />
+    <button onclick="addExistingItem();">Add Existing Item</button>
+    <button onclick="addNewItem();">Add New Item</button>
+    <div id="item_list">
+      <?=$this->render('geeby-deeby/edit-series/item-list.phtml')?>
+    </div>
+  </div>
+</div>

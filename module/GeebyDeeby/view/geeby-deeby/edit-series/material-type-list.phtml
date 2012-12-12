@@ -1,0 +1,15 @@
+<? if (isset($series_materials) && !empty($series_materials)): ?>
+  <? foreach ($series_materials as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td><?=$this->escapeHtml($current['Material_Type_Name'])?></td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteMaterial(<?=$current['Material_Type_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No material types set.
+<? endif; ?>

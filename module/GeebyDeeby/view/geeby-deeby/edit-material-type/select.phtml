@@ -1,0 +1,11 @@
+<? if (isset($materials) && !empty($materials)): ?>
+  <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Material_Type_ID">
+    <? foreach ($materials as $current): ?>
+      <option value="<?=$current['Material_Type_ID']?>"<?=(isset($selected) && $current['Material_Type_ID'] == $selected) ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current['Material_Type_Name'])?>
+      </option>
+    <? endforeach; ?>
+  </select>
+<? else: ?>
+  Please define material types.
+<? endif; ?>
