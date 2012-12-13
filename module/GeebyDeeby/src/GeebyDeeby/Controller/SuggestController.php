@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic row gateway
+ * Autosuggestion controller
  *
  * PHP version 5
  *
@@ -20,57 +20,44 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Row;
+namespace GeebyDeeby\Controller;
 
 /**
- * Generic row gateway
+ * Autosuggestion controller
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class RowGateway extends \Zend\Db\RowGateway\RowGateway
+class SuggestController extends AbstractBase
 {
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Default home page
      *
-     * @return string|bool
+     * @return mixed
      */
-    public function validate()
+    public function indexAction()
     {
-        // Assume valid row by default:
-        return false;
-    }
-
-    /**
-     * Get primary key for the table.
-     *
-     * @return array
-     */
-    public function getPrimaryKeyColumn()
-    {
-        return $this->primaryKeyColumn;
-    }
-
-    /**
-     * Get primary key value for the table
-     *
-     * @return string
-     */
-    public function getPrimaryKeyValue()
-    {
-        if (count($this->primaryKeyColumn) != 1) {
-            throw new \Exception('Unsupported for multi-key tables');
+        $table = $this->getDbTable($this->params()->fromRoute('table'));
+        if (!is_callable(array($table, 'getSuggestions'))) {
+            throw new \Exception('Suggestions not supported.');
         }
-        $key = $this->primaryKeyColumn[0];
-        return $this->$key;
+        $suggestions = $table->getSuggestions(
+            $this->params()->fromQuery('q'),
+            $this->params()->fromQuery('limit', false)
+        );
+        $response = '';
+        foreach ($suggestions as $current) {
+            $response .= $current->getPrimaryKeyValue() . ': '
+                . $current->getDisplayName() . "\n";
+        }
+        return $this->getResponse()->setContent(htmlspecialchars($response));
     }
 }

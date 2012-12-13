@@ -409,6 +409,17 @@ return array(
                     ),
                 ),
             ),
+            'suggest' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Suggest[/:table]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Suggest',
+                        'action'        => 'index',
+                    ),
+                ),
+            ),
         ),
     ),
     'service_manager' => array(
@@ -454,6 +465,7 @@ return array(
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
+            'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
         ),
     ),
     'view_manager' => array(

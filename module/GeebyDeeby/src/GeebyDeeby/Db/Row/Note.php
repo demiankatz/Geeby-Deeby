@@ -61,4 +61,14 @@ class Note extends RowGateway
         }
         return false;
     }
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName()
+    {
+        return $this->Note;
+    }
 }

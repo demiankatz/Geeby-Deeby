@@ -58,4 +58,24 @@ class Publisher extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get autocomplete suggestions.
+     *
+     * @param string $query The user query.
+     * @param mixed  $limit Limit on returned rows (false for no limit).
+     *
+     * @return mixed
+     */
+    public function getSuggestions($query, $limit = false)
+    {
+        $callback = function ($select) use ($query, $limit) {
+            if ($limit !== false) {
+                $select->limit($limit);
+            }
+            $select->where->like('Publisher_Name', $query . '%');
+            $select->order('Publisher_Name');
+        };
+        return $this->select($callback);
+    }
 }

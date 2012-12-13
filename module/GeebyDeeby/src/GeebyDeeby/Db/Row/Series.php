@@ -78,4 +78,14 @@ class Series extends ServiceLocatorAwareGateway
         }
         return false;
     }
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName()
+    {
+        return $this->Series_Name;
+    }
 }
