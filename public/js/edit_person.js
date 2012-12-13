@@ -152,8 +152,7 @@ function deletePseudonym(relatedID)
 // Activate autocomplete when DOM is ready:
 $(document).ready(function(){
     var options = {
-        url: "ajax.php", 
-        extraParams: {module: "people", method: "suggest" }, 
+        url: basePath + "/Suggest/Person",
         highlight: false
     };
     $('#pseudo_name').autocomplete(options);

@@ -6,6 +6,7 @@
     <? echo $this->headTitle($this->layout()->siteTitle) ?>
 
     <? echo $this->headLink()
+           ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-autocomplete.css')
            ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-1.7.2.custom.css')
            ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
     ?>

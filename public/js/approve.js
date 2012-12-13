@@ -221,8 +221,7 @@ function rejectComment(userID, seriesID)
 // Activate page controls on domready:
 $(document).ready(function(){
     options = {
-        url: "ajax.php", 
-        extraParams: {module: "people", method: "suggest" }, 
+        url: basePath + "/Suggest/Person",
         highlight: false
     };
     $('.Person_ID').autocomplete(options);

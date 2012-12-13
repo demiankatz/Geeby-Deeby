@@ -53,6 +53,10 @@ class SuggestController extends AbstractBase
             $this->params()->fromQuery('q'),
             $this->params()->fromQuery('limit', false)
         );
+        $headers = $this->getResponse()->getHeaders();
+        $headers->addHeaderLine(
+            'Content-type', 'text/plain'
+        );
         $response = '';
         foreach ($suggestions as $current) {
             $response .= $current->getPrimaryKeyValue() . ': '

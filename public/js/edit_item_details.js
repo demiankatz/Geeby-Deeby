@@ -1195,26 +1195,22 @@ $(document).ready(function(){
     
     // Turn on autocomplete
     var options = {
-        url: "ajax.php", 
-        extraParams: {module: "item", method: "suggest" }, 
+        url: basePath + "/Suggest/Item",
         highlight: false
     };
     $('.Item_ID').autocomplete(options);
     options = {
-        url: "ajax.php", 
-        extraParams: {module: "note", method: "suggest" }, 
+        url: basePath + "/Suggest/Note",
         highlight: false
     };
     $('.Note_ID').autocomplete(options);
     options = {
-        url: "ajax.php", 
-        extraParams: {module: "people", method: "suggest" }, 
+        url: basePath + "/Suggest/Person",
         highlight: false
     };
     $('.Person_ID').autocomplete(options);
     options = {
-        url: "ajax.php", 
-        extraParams: {module: "series", method: "suggest" }, 
+        url: basePath + "/Suggest/Series",
         highlight: false
     };
     $('.Series_ID').autocomplete(options);

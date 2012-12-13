@@ -585,26 +585,22 @@ $(document).ready(function(){
 
     // Turn on autocomplete
     var options = {
-        url: "ajax.php",
-        extraParams: {module: "publisher", method: "suggest" },
+        url: basePath + "/Suggest/Publisher",
         highlight: false
     };
     $('#Publisher_ID').autocomplete(options);
     var options = {
-        url: "ajax.php",
-        extraParams: {module: "series", method: "suggest" },
+        url: basePath + "/Suggest/Series",
         highlight: false
     };
     $('#trans_name').autocomplete(options);
     var options = {
-        url: "ajax.php",
-        extraParams: {module: "item", method: "suggest" },
+        url: basePath + "/Suggest/Item",
         highlight: false
     };
     $('#item_name').autocomplete(options);
     var options = {
-        url: "ajax.php",
-        extraParams: {module: "note", method: "suggest" },
+        url: basePath + "/Suggest/Note",
         highlight: false
     };
     $('.Note_ID').autocomplete(options);
