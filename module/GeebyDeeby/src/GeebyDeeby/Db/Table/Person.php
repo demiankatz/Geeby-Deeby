@@ -58,4 +58,38 @@ class Person extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get autocomplete suggestions.
+     *
+     * @param string $query The user query.
+     * @param mixed  $limit Limit on returned rows (false for no limit).
+     *
+     * @return mixed
+     */
+    public function getSuggestions($query, $limit = false)
+    {
+        $parts = preg_split("/[\s,]+/", $query);
+        $first = $parts[0];
+        $c = count($parts);
+        $last = ($c > 1) ? $parts[$c - 1] : false;
+        $callback = function ($select) use ($first, $last, $limit) {
+            if ($limit !== false) {
+                $select->limit($limit);
+            }
+            $nest = $select->where->NEST;
+            $nest->like('First_Name', $first . '%')
+                ->OR->like('Last_Name', $first . '%');
+            if (intval($first) > 0) {
+                $nest->OR->equalTo('Person_ID', intval($first));
+            }
+            $nest->UNNEST;
+            if ($last) {
+                $select->where->AND->NEST->like('First_Name', $last . '%')
+                   ->OR->like('Last_Name', $last . '%')->UNNEST;
+            }
+            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
+        };
+        return $this->select($callback);
+    }
 }

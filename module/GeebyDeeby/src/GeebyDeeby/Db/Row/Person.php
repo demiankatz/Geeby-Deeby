@@ -61,4 +61,15 @@ class Person extends RowGateway
         }
         return false;
     }
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName()
+    {
+        $n = $this->First_Name . ' ' . $this->Middle_Name . ' ' . $this->Last_Name;
+        return trim(preg_replace('/\s+/', ' ', $n));
+    }
 }
