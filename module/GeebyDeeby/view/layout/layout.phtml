@@ -23,7 +23,7 @@
   </head>
   <body>
     <div class="headerControls">
-      <? if ($loggedIn): ?><a href="<?=$this->url('logout')?>">Log Out</a><? endif; ?>
+      <? if (isset($loggedIn) && $loggedIn): ?><a href="<?=$this->url('logout')?>">Log Out</a><? endif; ?>
     </div>
     <? echo $this->content; ?>
     <div class="footer">
