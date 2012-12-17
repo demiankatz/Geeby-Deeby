@@ -181,8 +181,7 @@ function deletePublisher(rowID)
 function redrawAltTitles()
 {
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=getAltTitles&id=' +
-        encodeURIComponent(seriesID);
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/AltTitle';
     $('#alt_title_list').load(url);
 }
 
@@ -199,9 +198,8 @@ function addAltTitle()
     }
 
     // Save and update:
-    var url = 'ajax.php?module=series&method=addAltTitle';
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/AltTitle/NEW';
     var details = {
-        series_id: seriesID,
         note_id: noteID,
         title: $('#Alt_Title').val()
     };
@@ -237,8 +235,8 @@ function deleteAltTitle(rowID)
 
     // Save and update:
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=deleteAltTitle';
-    $.post(url, {series_id: seriesID, row_id: rowID}, function(data) {
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/AltTitle/' + encodeURIComponent(rowID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -247,7 +245,7 @@ function deleteAltTitle(rowID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw the publisher list:

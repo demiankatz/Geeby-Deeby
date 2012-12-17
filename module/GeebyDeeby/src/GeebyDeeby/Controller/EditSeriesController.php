@@ -71,6 +71,8 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbTable('materialtype')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
+            $view->series_alt_titles = $this->getDbTable('seriesalttitles')
+                ->getAltTitles($view->seriesObj->Series_ID);
             $view->series_materials = $this->getDbTable('seriesmaterialtypes')
                 ->getMaterials($view->seriesObj->Series_ID);
             $view->series_publishers = $this->getDbTable('seriespublishers')
@@ -93,6 +95,32 @@ class EditSeriesController extends AbstractBase
             'series_materials', 'getMaterials',
             'geeby-deeby/edit-series/material-type-list'
         );
+    }
+
+    /**
+     * Work with alternate titles
+     *
+     * @return mixed
+     */
+    public function alttitleAction()
+    {
+        // Special case: new publisher:
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('seriesalttitles');
+            $row = $table->createRow();
+            $row->Series_ID = $this->params()->fromRoute('id');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $row->Series_AltName = $this->params()->fromPost('title');
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'seriesalttitles', 'Series_ID', 'Sequence_ID',
+                'series_alt_titles', 'getAltTitles',
+                'geeby-deeby/edit-series/alt-title-list.phtml'
+            );
+        }
     }
 
     /**

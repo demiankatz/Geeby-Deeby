@@ -32,6 +32,7 @@ return array(
                 'publisher' => 'GeebyDeeby\Db\Table\Publisher',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
+                'seriesalttitles' => 'GeebyDeeby\Db\Table\SeriesAltTitles',
                 'seriescategories' => 'GeebyDeeby\Db\Table\SeriesCategories',
                 'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',
                 'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
