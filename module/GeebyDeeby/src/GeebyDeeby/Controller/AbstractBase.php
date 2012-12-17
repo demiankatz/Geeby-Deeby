@@ -272,6 +272,7 @@ class AbstractBase extends AbstractActionController
         $view = $this->createViewModel();
         $view->$listVariable = $table->$listMethod($primary);
         $view->setTemplate($listTemplate);
+        $view->setTerminal(true);
         return $view;
     }
 
