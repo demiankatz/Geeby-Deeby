@@ -34,6 +34,7 @@ return array(
                 'series' => 'GeebyDeeby\Db\Table\Series',
                 'seriescategories' => 'GeebyDeeby\Db\Table\SeriesCategories',
                 'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',
+                'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
                 'user' => 'GeebyDeeby\Db\Table\User',
                 'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
             ),

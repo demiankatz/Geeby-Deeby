@@ -73,6 +73,8 @@ class EditSeriesController extends AbstractBase
             $view->categories = $this->getDbTable('category')->getList();
             $view->series_materials = $this->getDbTable('seriesmaterialtypes')
                 ->getMaterials($view->seriesObj->Series_ID);
+            $view->series_publishers = $this->getDbTable('seriespublishers')
+                ->getPublishers($view->seriesObj->Series_ID);
             $view->setTemplate('geeby-deeby/edit-series/edit-full');
         }
 
@@ -91,5 +93,33 @@ class EditSeriesController extends AbstractBase
             'series_materials', 'getMaterials',
             'geeby-deeby/edit-series/material-type-list'
         );
+    }
+
+    /**
+     * Work with publishers
+     *
+     * @return mixed
+     */
+    public function publisherAction()
+    {
+        // Special case: new publisher:
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('seriespublishers');
+            $row = $table->createRow();
+            $row->Series_ID = $this->params()->fromRoute('id');
+            $row->Publisher_ID = $this->params()->fromPost('publisher_id');
+            $row->Country_ID = $this->params()->fromPost('country_id');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $row->Imprint = $this->params()->fromPost('imprint');
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'seriespublishers', 'Series_ID', 'Series_Publisher_ID',
+                'series_publishers', 'getPublishers',
+                'geeby-deeby/edit-series/publisher-list.phtml'
+            );
+        }
     }
 }

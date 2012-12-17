@@ -122,9 +122,8 @@ function addPublisher()
     }
 
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=series&method=addPublisher';
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Publisher/NEW';
     var details = {
-        series_id: seriesID,
         publisher_id: publisherID,
         country_id: countryID,
         note_id: noteID,
@@ -164,8 +163,8 @@ function deletePublisher(rowID)
 
     // Save and update based on selected relationship:
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=deletePublisher';
-    $.post(url, {series_id: seriesID, row_id: rowID}, function(data) {
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Publisher/' + encodeURIComponent(rowID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the publisher list.
@@ -174,7 +173,7 @@ function deletePublisher(rowID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw the title list:
@@ -256,8 +255,7 @@ function deleteAltTitle(rowID)
 function redrawPublishers()
 {
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=getPublishers&id=' +
-        encodeURIComponent(seriesID);
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Publisher';
     $('#publisher_list').load(url);
 }
 
