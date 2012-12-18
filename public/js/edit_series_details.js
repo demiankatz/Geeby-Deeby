@@ -274,8 +274,8 @@ function saveCategories()
     $('#save_categories_status').html('Saving...');
 
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=series&method=saveCategories';
-    $.post(url, {series_id: $('#Series_ID').val(), "categories[]": values}, function(data) {
+    var url = basePath + '/edit/Series/' + encodeURIComponent($('#Series_ID').val()) + '/Categories';
+    $.post(url, {"categories[]": values}, function(data) {
         // If save failed, display error message.
         if (!data.success) {
             alert('Error: ' + data.msg);

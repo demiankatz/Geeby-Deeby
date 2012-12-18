@@ -84,6 +84,26 @@ class EditSeriesController extends AbstractBase
     }
 
     /**
+     * Work with categories
+     *
+     * @return mixed
+     */
+    public function categoriesAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('seriescategories');
+            $series = $this->params()->fromRoute('id');
+            $categories = $this->params()->fromPost('categories', array());
+            $table->delete(array('Series_ID' => $series));
+            foreach ($categories as $cat) {
+                $table->insert(array('Series_ID' => $series, 'Category_ID' => $cat));
+            }
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonError('Unexpected action');
+    }
+
+    /**
      * Work with material types
      *
      * @return mixed

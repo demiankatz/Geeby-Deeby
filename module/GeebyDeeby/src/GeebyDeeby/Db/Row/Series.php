@@ -59,7 +59,7 @@ class Series extends ServiceLocatorAwareGateway
             ->getCategories($this->Series_ID);
         return array_map(
             function ($current) {
-                return $current->Category_ID;
+                return $current['Category_ID'];
             },
             $categories->toArray()
         );
