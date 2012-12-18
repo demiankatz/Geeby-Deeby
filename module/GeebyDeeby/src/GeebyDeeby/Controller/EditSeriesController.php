@@ -77,6 +77,10 @@ class EditSeriesController extends AbstractBase
                 ->getMaterials($view->seriesObj->Series_ID);
             $view->series_publishers = $this->getDbTable('seriespublishers')
                 ->getPublishers($view->seriesObj->Series_ID);
+            $view->translatedInto = $this->getDbTable('seriestranslations')
+                ->getTranslatedFrom($view->seriesObj->Series_ID);
+            $view->translatedFrom = $this->getDbTable('seriestranslations')
+                ->getTranslatedInto($view->seriesObj->Series_ID);
             $view->setTemplate('geeby-deeby/edit-series/edit-full');
         }
 
@@ -169,5 +173,33 @@ class EditSeriesController extends AbstractBase
                 'geeby-deeby/edit-series/publisher-list.phtml'
             );
         }
+    }
+
+    /**
+     * Deal with translations
+     *
+     * @return mixed
+     */
+    public function translationAction()
+    {
+        return $this->handleGenericLink(
+            'seriestranslations', 'Source_Series_ID', 'Trans_Series_ID',
+            'translatedInto', 'getTranslatedFrom',
+            'geeby-deeby/edit-series/trans-into-list.phtml'
+        );
+    }
+
+    /**
+     * Deal with translation sources
+     *
+     * @return mixed
+     */
+    public function translatedfromAction()
+    {
+        return $this->handleGenericLink(
+            'seriestranslations', 'Trans_Series_ID', 'Source_Series_ID',
+            'translatedFrom', 'getTranslatedInto',
+            'geeby-deeby/edit-series/trans-from-list.phtml'
+        );
     }
 }

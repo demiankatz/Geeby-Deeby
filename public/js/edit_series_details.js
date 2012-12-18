@@ -291,8 +291,7 @@ function saveCategories()
 function redrawTranslations()
 {
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=getTranslations&id=' +
-        encodeURIComponent(seriesID);
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Translation';
     $('#trans_into').load(url);
 }
 
@@ -301,8 +300,7 @@ function redrawTranslations()
 function redrawTranslatedFrom()
 {
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=getTranslatedFrom&id=' +
-        encodeURIComponent(seriesID);
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/TranslatedFrom';
     $('#trans_from').load(url);
 }
 
@@ -321,10 +319,10 @@ function saveTranslation()
     }
 
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=series&method=addTranslation';
     switch(relationship) {
     case 'from':
-        $.post(url, {trans_id: seriesID, source_id: relatedID}, function(data) {
+        var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/TranslatedFrom/' + encodeURIComponent(relatedID);
+        $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
             // If save was successful...
             if (data.success) {
                 // Update the list.
@@ -333,10 +331,11 @@ function saveTranslation()
                 // Save failed -- display error message:
                 alert('Error: ' + data.msg);
             }
-        }, 'json');
+        }});
         break;
     case 'into':
-        $.post(url, {source_id: seriesID, trans_id: relatedID}, function(data) {
+        var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Translation/' + encodeURIComponent(relatedID);
+        $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
             // If save was successful...
             if (data.success) {
                 // Update the list.
@@ -345,7 +344,7 @@ function saveTranslation()
                 // Save failed -- display error message:
                 alert('Error: ' + data.msg);
             }
-        }, 'json');
+        }});
         break;
     default:
         alert('Unknown relationship.');
@@ -353,6 +352,7 @@ function saveTranslation()
         break;
     }
 }
+
 
 /* Delete a translation:
  */
@@ -363,8 +363,8 @@ function deleteTranslation(relatedID)
     }
 
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=deleteTranslation';
-    $.post(url, {source_id: seriesID, trans_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Translation/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -373,7 +373,7 @@ function deleteTranslation(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a translation:
@@ -385,8 +385,8 @@ function deleteTranslatedFrom(relatedID)
     }
 
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=deleteTranslation';
-    $.post(url, {trans_id: seriesID, source_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/TranslatedFrom/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -395,7 +395,7 @@ function deleteTranslatedFrom(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw the list of items linked to the series:
