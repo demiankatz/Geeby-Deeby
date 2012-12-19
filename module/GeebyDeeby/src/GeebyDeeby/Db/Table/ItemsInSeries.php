@@ -65,7 +65,9 @@ class ItemsInSeries extends Gateway
                 array('mt' => 'Material_Types'),
                 'i.Material_Type_ID = mt.Material_Type_ID'
             );
-            $select->order('i.Item_Name');
+            $select->order(
+                array('mt.Material_Type_Name', 'Position', 'i.Item_Name')
+            );
             $select->where->equalTo('Series_ID', $seriesID);
         };
         return $this->select($callback);

@@ -192,6 +192,26 @@ class EditSeriesController extends AbstractBase
     }
 
     /**
+     * Set the order of an item
+     *
+     * @return mixed
+     */
+    public function itemorderAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $series = $this->params()->fromRoute('id');
+            $item = $this->params()->fromPost('item_id');
+            $pos = $this->params()->fromPost('pos');
+            $this->getDbTable('itemsinseries')->update(
+                array('Position' => $pos),
+                array('Item_ID' => $item, 'Series_ID' => $series)
+            );
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
+    }
+
+    /**
      * Deal with translations
      *
      * @return mixed

@@ -493,9 +493,8 @@ function changeSeriesOrder(itemID)
     }
 
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=series&method=renumberItem';
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/ItemOrder';
     var details = {
-        series_id: seriesID,
         item_id: itemID,
         pos: pos
     };
