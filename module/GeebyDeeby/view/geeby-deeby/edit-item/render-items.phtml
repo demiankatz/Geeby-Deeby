@@ -1,0 +1,3 @@
+<? foreach ($items as $current): ?>
+  <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>"><?=$this->escapeHtml($current['Item_Name'])?></a><br />
+<? endforeach; ?>

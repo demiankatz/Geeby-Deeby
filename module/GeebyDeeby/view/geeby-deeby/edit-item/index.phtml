@@ -1,0 +1,31 @@
+<div id="editItemForm">
+  <input type="hidden" id="Item_ID" value="<?=$item['Item_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Material Type:</th>
+      <td><?=$this->render('geeby-deeby/edit-material-type/select.phtml', array('materials' => $materials, 'selected' => isset($item['Material_Type_ID']) ? $item['Material_Type_ID'] : null))?></td>
+    </tr>
+    <tr>
+      <th>Item Name:</th>
+      <td><input type="text" id="Item_Name" value="<?=isset($item['Item_Name']) ? $this->escapeHtml($item['Item_Name']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Length:</th>
+      <td><input type="text" id="Item_Length" value="<?=isset($item['Item_Length']) ? $this->escapeHtml($item['Item_Length']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Endings:</th>
+      <td><input type="text" id="Item_Endings" value="<?=isset($item['Item_Endings']) ? $this->escapeHtml($item['Item_Endings']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Errata:</th>
+      <td><textarea id="Item_Errata"><?=isset($item['Item_Errata']) ? $this->escapeHtml($item['Item_Errata']) : ''?></textarea></td>
+    </tr>
+    <tr>
+      <th>Thanks:</th>
+      <td><input type="text" id="Item_Thanks" value="<?=isset($item['Item_Thanks']) ? $this->escapeHtml($item['Item_Thanks']) : ''?>" /></td>
+    </tr>
+  </table>
+  <button id="save_item" onclick="saveItem();">Save</button>
+  <div id="save_item_status"></div>
+</div>

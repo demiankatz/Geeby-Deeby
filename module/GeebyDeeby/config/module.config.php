@@ -22,6 +22,8 @@ return array(
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'file' => 'GeebyDeeby\Db\Table\File',
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
+                'item' => 'GeebyDeeby\Db\Table\Item',
+                'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
                 'language' => 'GeebyDeeby\Db\Table\Language',
                 'link' => 'GeebyDeeby\Db\Table\Link',
                 'linktype' => 'GeebyDeeby\Db\Table\LinkType',
@@ -174,6 +176,27 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditFile',
                                 'action'        => 'typelist',
+                            ),
+                        ),
+                    ),
+                    'item' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Item[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditItem',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'item_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/ItemList',
+                            'defaults' => array(
+                                'controller'    => 'EditItem',
+                                'action'        => 'list',
                             ),
                         ),
                     ),
@@ -459,6 +482,7 @@ return array(
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
+            'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',

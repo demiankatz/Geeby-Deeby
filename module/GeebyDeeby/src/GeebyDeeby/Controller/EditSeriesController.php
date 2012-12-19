@@ -71,6 +71,8 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbTable('materialtype')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
+            $view->item_list = $this->getDbTable('itemsinseries')
+                ->getItemsForSeries($view->seriesObj->Series_ID);
             $view->series_alt_titles = $this->getDbTable('seriesalttitles')
                 ->getAltTitles($view->seriesObj->Series_ID);
             $view->series_materials = $this->getDbTable('seriesmaterialtypes')
@@ -173,6 +175,20 @@ class EditSeriesController extends AbstractBase
                 'geeby-deeby/edit-series/publisher-list.phtml'
             );
         }
+    }
+
+    /**
+     * Deal with items
+     *
+     * @return mixed
+     */
+    public function itemAction()
+    {
+        return $this->handleGenericLink(
+            'itemsinseries', 'Series_ID', 'Item_ID',
+            'item_list', 'getItemsForSeries',
+            'geeby-deeby/edit-series/item-list.phtml'
+        );
     }
 
     /**

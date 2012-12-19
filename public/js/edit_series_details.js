@@ -403,8 +403,7 @@ function deleteTranslatedFrom(relatedID)
 function redrawItemList()
 {
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=getItems&id=' +
-        encodeURIComponent(seriesID);
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Item';
     $('#item_list').load(url);
 }
 
@@ -413,7 +412,7 @@ function redrawItemList()
 function addNewItem()
 {
     // Open the edit dialog box:
-    var url = 'ajax.php?module=item&method=edit&id=';
+    var url = basePath + '/edit/Item/NEW';
     editBox = $('<div>Loading...</div>').load(url).dialog({
         title: "Add Item",
         modal: true,
@@ -439,12 +438,8 @@ function addExistingItem()
     }
 
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=series&method=addItem';
-    var details = {
-        series_id: seriesID,
-        item_id: itemID
-    };
-    $.post(url, details, function(data) {
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Item/' + encodeURIComponent(itemID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Clear the form:
@@ -456,7 +451,7 @@ function addExistingItem()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Remove an item from the series:
@@ -468,8 +463,8 @@ function removeFromSeries(itemID)
     }
 
     var seriesID = $('#Series_ID').val();
-    var url = 'ajax.php?module=series&method=deleteItem';
-    $.post(url, {series_id: seriesID, item_id: itemID}, function(data) {
+    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Item/' + encodeURIComponent(itemID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -478,7 +473,7 @@ function removeFromSeries(itemID)
             // Remove failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Change the position of an item within the series:
@@ -541,9 +536,8 @@ function saveItem()
     $('#save_item_status').html('Saving...');
 
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=item&method=save';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID);
     var details = {
-        id: itemID,
         name: itemName,
         len: len,
         endings: endings,
