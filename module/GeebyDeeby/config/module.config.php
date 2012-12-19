@@ -24,6 +24,7 @@ return array(
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
                 'item' => 'GeebyDeeby\Db\Table\Item',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
+                'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
                 'language' => 'GeebyDeeby\Db\Table\Language',
                 'link' => 'GeebyDeeby\Db\Table\Link',
@@ -31,6 +32,7 @@ return array(
                 'materialtype' => 'GeebyDeeby\Db\Table\MaterialType',
                 'note' => 'GeebyDeeby\Db\Table\Note',
                 'peoplefiles' => 'GeebyDeeby\Db\Table\PeopleFiles',
+                'peoplelinks' => 'GeebyDeeby\Db\Table\PeopleLinks',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'platform' => 'GeebyDeeby\Db\Table\Platform',
                 'publisher' => 'GeebyDeeby\Db\Table\Publisher',
@@ -39,6 +41,7 @@ return array(
                 'seriesalttitles' => 'GeebyDeeby\Db\Table\SeriesAltTitles',
                 'seriescategories' => 'GeebyDeeby\Db\Table\SeriesCategories',
                 'seriesfiles' => 'GeebyDeeby\Db\Table\SeriesFiles',
+                'serieslinks' => 'GeebyDeeby\Db\Table\SeriesLinks',
                 'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',
                 'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
                 'seriestranslations' => 'GeebyDeeby\Db\Table\SeriesTranslations',
@@ -228,11 +231,12 @@ return array(
                     'link' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Link[/:id]',
+                            'route'    => '/Link[/:id][/:action][/:extra]',
                             'defaults' => array(
                                 'controller'    => 'EditLink',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null,
                             ),
                         ),
                     ),

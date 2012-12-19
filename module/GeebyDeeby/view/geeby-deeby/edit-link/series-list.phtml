@@ -1,0 +1,17 @@
+<? if (isset($seriesLinks) && count($seriesLinks) > 0): ?>
+  <? foreach ($seriesLinks as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <a href="<?=$this->url('edit/series', array('id' => $current['Series_ID']))?>"><?=$this->escapeHtml($current['Series_Name'])?></a><br />
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="unlinkSeries(<?=$current['Series_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No relevant series.
+<? endif; ?>

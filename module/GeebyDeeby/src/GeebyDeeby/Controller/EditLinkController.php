@@ -69,6 +69,16 @@ class EditLinkController extends AbstractBase
         );
         $view = $this->handleGenericItem('link', $assignMap, 'link');
         $view->linkTypes = $this->typelistAction()->linkTypes;
+        // Add extra fields/controls if outside of a lightbox:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->itemsLinks = $this->getDbTable('itemslinks')
+                ->getItemsForLink($view->linkObj->Link_ID);
+            $view->peopleLinks = $this->getDbTable('peoplelinks')
+                ->getPeopleForLink($view->linkObj->Link_ID);
+            $view->seriesLinks = $this->getDbTable('serieslinks')
+                ->getSeriesForLink($view->linkObj->Link_ID);
+            $view->setTemplate('geeby-deeby/edit-link/edit-full');
+        }
         return $view;
     }
 
@@ -93,5 +103,47 @@ class EditLinkController extends AbstractBase
     {
         $assignMap = array('linkType' => 'Link_Type');
         return $this->handleGenericItem('linkType', $assignMap, 'linkType');
+    }
+
+    /**
+     * Deal with link/item links
+     *
+     * @return mixed
+     */
+    public function itemAction()
+    {
+        return $this->handleGenericLink(
+            'itemslinks', 'Link_ID', 'Item_ID',
+            'itemsLinks', 'getItemsForLink',
+            'geeby-deeby/edit-link/item-list.phtml'
+        );
+    }
+
+    /**
+     * Deal with link/item links
+     *
+     * @return mixed
+     */
+    public function personAction()
+    {
+        return $this->handleGenericLink(
+            'peoplelinks', 'Link_ID', 'Person_ID',
+            'peopleLinks', 'getPeopleForLink',
+            'geeby-deeby/edit-link/person-list.phtml'
+        );
+    }
+
+    /**
+     * Deal with link/series links
+     *
+     * @return mixed
+     */
+    public function seriesAction()
+    {
+        return $this->handleGenericLink(
+            'serieslinks', 'Link_ID', 'Series_ID',
+            'seriesLinks', 'getSeriesForLink',
+            'geeby-deeby/edit-link/series-list.phtml'
+        );
     }
 }

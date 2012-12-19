@@ -29,9 +29,10 @@ function saveLink()
     $('#save_link_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var params = {id: linkID, link_name: linkName, url: url, desc: desc, 
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID);
+    var params = {link_name: linkName, url: url, desc: desc, 
         date_checked: dateChecked, type_id: typeID};
-    $.post('ajax.php?module=link&method=save', params, function(data) {
+    $.post(url, params, function(data) {
         // If save was successful...
         if (!data.success) {
             // Save failed -- display error message.
@@ -48,8 +49,7 @@ function saveLink()
 function redrawItems()
 {
     var linkID = $('#Link_ID').val();
-    var url = 'ajax.php?module=link&method=getItemList&id=' + 
-        encodeURIComponent(linkID);
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Item';
     $('#link_item_list').load(url);
 }
 
@@ -58,8 +58,7 @@ function redrawItems()
 function redrawSeries()
 {
     var linkID = $('#Link_ID').val();
-    var url = 'ajax.php?module=link&method=getSeriesList&id=' + 
-        encodeURIComponent(linkID);
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Series';
     $('#link_series_list').load(url);
 }
 
@@ -68,8 +67,7 @@ function redrawSeries()
 function redrawPeople()
 {
     var linkID = $('#Link_ID').val();
-    var url = 'ajax.php?module=link&method=getPersonList&id=' + 
-        encodeURIComponent(linkID);
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Person';
     $('#link_person_list').load(url);
 }
 
@@ -87,8 +85,8 @@ function linkItem()
     }
     
     // Save and update:
-    var url = 'ajax.php?module=link&method=linkItem';
-    $.post(url, {link_id: linkID, item_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Item/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -97,7 +95,7 @@ function linkItem()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete an item:
@@ -109,8 +107,8 @@ function unlinkItem(relatedID)
     }
     
     var linkID = $('#Link_ID').val();
-    var url = 'ajax.php?module=link&method=unlinkItem';
-    $.post(url, {link_id: linkID, item_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Item/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the item list.
@@ -119,7 +117,7 @@ function unlinkItem(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Save a relationship to the current series:
@@ -136,8 +134,8 @@ function linkSeries()
     }
     
     // Save and update:
-    var url = 'ajax.php?module=link&method=linkSeries';
-    $.post(url, {link_id: linkID, series_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Series/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the series list.
@@ -146,7 +144,7 @@ function linkSeries()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a series:
@@ -158,8 +156,8 @@ function unlinkSeries(relatedID)
     }
     
     var linkID = $('#Link_ID').val();
-    var url = 'ajax.php?module=link&method=unlinkSeries';
-    $.post(url, {link_id: linkID, series_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Series/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the series list.
@@ -168,7 +166,7 @@ function unlinkSeries(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Save a relationship to the current person:
@@ -185,8 +183,8 @@ function linkPerson()
     }
     
     // Save and update:
-    var url = 'ajax.php?module=link&method=linkPerson';
-    $.post(url, {link_id: linkID, person_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Person/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -195,7 +193,7 @@ function linkPerson()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a person:
@@ -207,8 +205,8 @@ function unlinkPerson(relatedID)
     }
     
     var linkID = $('#Link_ID').val();
-    var url = 'ajax.php?module=link&method=unlinkPerson';
-    $.post(url, {link_id: linkID, person_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Link/' + encodeURIComponent(linkID) + '/Person/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -217,7 +215,7 @@ function unlinkPerson(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 // Activate autocomplete when DOM is ready:

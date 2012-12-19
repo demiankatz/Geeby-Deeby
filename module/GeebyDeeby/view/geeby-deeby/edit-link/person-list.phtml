@@ -1,0 +1,21 @@
+<? if (isset($peopleLinks) && count($peopleLinks) > 0): ?>
+  <? foreach ($peopleLinks as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
+            <?=$this->escapeHtml($current['Last_Name'])?>,
+            <?=$this->escapeHtml($current['First_Name'])?>
+            <?=$this->escapeHtml($current['Middle_Name'])?>
+          </a><br />
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="unlinkPerson(<?=$current['Person_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No relevant people.
+<? endif; ?>
