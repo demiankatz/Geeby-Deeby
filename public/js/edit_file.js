@@ -28,9 +28,10 @@ function saveFile()
     $('#save_file_status').html('Saving...');
     
     // Use AJAX to save the values:
-    var params = {id: fileID, file_name: fileName, path: filePath, desc: desc, 
+    var params = {file_name: fileName, path: filePath, desc: desc, 
         type_id: typeID};
-    $.post('ajax.php?module=file&method=save', params, function(data) {
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID);
+    $.post(url, params, function(data) {
         // If save was successful...
         if (!data.success) {
             // Save failed -- display error message.
@@ -47,8 +48,7 @@ function saveFile()
 function redrawItems()
 {
     var fileID = $('#File_ID').val();
-    var url = 'ajax.php?module=file&method=getItemList&id=' + 
-        encodeURIComponent(fileID);
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Item';
     $('#file_item_list').load(url);
 }
 
@@ -57,8 +57,7 @@ function redrawItems()
 function redrawSeries()
 {
     var fileID = $('#File_ID').val();
-    var url = 'ajax.php?module=file&method=getSeriesList&id=' + 
-        encodeURIComponent(fileID);
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Series';
     $('#file_series_list').load(url);
 }
 
@@ -67,8 +66,7 @@ function redrawSeries()
 function redrawPeople()
 {
     var fileID = $('#File_ID').val();
-    var url = 'ajax.php?module=file&method=getPersonList&id=' + 
-        encodeURIComponent(fileID);
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Person';
     $('#file_person_list').load(url);
 }
 
@@ -86,8 +84,8 @@ function linkItem()
     }
     
     // Save and update:
-    var url = 'ajax.php?module=file&method=linkItem';
-    $.post(url, {file_id: fileID, item_id: relatedID}, function(data) {
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Item/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -96,7 +94,7 @@ function linkItem()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete an item:
@@ -108,8 +106,8 @@ function unlinkItem(relatedID)
     }
     
     var fileID = $('#File_ID').val();
-    var url = 'ajax.php?module=file&method=unlinkItem';
-    $.post(url, {file_id: fileID, item_id: relatedID}, function(data) {
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Item/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the item list.
@@ -118,7 +116,7 @@ function unlinkItem(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Save a relationship to the current series:
@@ -135,8 +133,8 @@ function linkSeries()
     }
     
     // Save and update:
-    var url = 'ajax.php?module=file&method=linkSeries';
-    $.post(url, {file_id: fileID, series_id: relatedID}, function(data) {
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Series/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the series list.
@@ -145,7 +143,7 @@ function linkSeries()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a series:
@@ -157,8 +155,8 @@ function unlinkSeries(relatedID)
     }
     
     var fileID = $('#File_ID').val();
-    var url = 'ajax.php?module=file&method=unlinkSeries';
-    $.post(url, {file_id: fileID, series_id: relatedID}, function(data) {
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Series/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the series list.
@@ -167,7 +165,7 @@ function unlinkSeries(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Save a relationship to the current person:
@@ -184,8 +182,8 @@ function linkPerson()
     }
     
     // Save and update:
-    var url = 'ajax.php?module=file&method=linkPerson';
-    $.post(url, {file_id: fileID, person_id: relatedID}, function(data) {
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Person/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -194,7 +192,7 @@ function linkPerson()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a person:
@@ -206,8 +204,8 @@ function unlinkPerson(relatedID)
     }
     
     var fileID = $('#File_ID').val();
-    var url = 'ajax.php?module=file&method=unlinkPerson';
-    $.post(url, {file_id: fileID, person_id: relatedID}, function(data) {
+    var url = basePath + '/edit/File/' + encodeURIComponent(fileID) + '/Person/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -216,7 +214,7 @@ function unlinkPerson(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 // Activate autocomplete when DOM is ready:
