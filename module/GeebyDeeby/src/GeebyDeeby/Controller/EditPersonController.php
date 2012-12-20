@@ -66,7 +66,44 @@ class EditPersonController extends AbstractBase
             'first' => 'First_Name', 'middle' => 'Middle_Name',
             'last' => 'Last_Name', 'bio' => 'Biography'
         );
-        return $this->handleGenericItem('person', $assignMap, 'person');
+        $view = $this->handleGenericItem('person', $assignMap, 'person');
+        // Add extra fields/controls if outside of a lightbox:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->pseudonyms = $this->getDbTable('pseudonyms')
+                ->getPseudonyms($view->personObj->Person_ID);
+            $view->realnames = $this->getDbTable('pseudonyms')
+                ->getRealNames($view->personObj->Person_ID);
+            $view->setTemplate('geeby-deeby/edit-person/edit-full');
+        }
+        return $view;
+    }
+
+    /**
+     * Deal with pseudonyms
+     *
+     * @return mixed
+     */
+    public function pseudonymAction()
+    {
+        return $this->handleGenericLink(
+            'pseudonyms', 'Real_Person_ID', 'Pseudo_Person_ID',
+            'pseudonyms', 'getPseudonyms',
+            'geeby-deeby/edit-person/pseudonym-list.phtml'
+        );
+    }
+
+    /**
+     * Deal with real names
+     *
+     * @return mixed
+     */
+    public function realnameAction()
+    {
+        return $this->handleGenericLink(
+            'pseudonyms', 'Pseudo_Person_ID', 'Real_Person_ID',
+            'realnames', 'getRealNames',
+            'geeby-deeby/edit-person/realname-list.phtml'
+        );
     }
 
     /**

@@ -1,0 +1,19 @@
+<? if (isset($realnames) && count($realnames) > 0): ?>
+  <? foreach ($realnames as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
+            <?=$this->escapeHtml($current['Last_Name'] . ', ' . $current['First_Name'] . ' ' . $current['Middle_Name'])?>
+          </a>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteRealName(<?=$current['Person_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No relevant names.
+<? endif; ?>

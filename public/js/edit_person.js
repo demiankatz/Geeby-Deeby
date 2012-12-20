@@ -12,20 +12,20 @@ function savePerson()
     var middle = $('#Middle_Name').val();
     var last = $('#Last_Name').val();
     var bio = $('#Biography').val();
-    
+
     // Validate form:
     if (last.length == 0) {
         alert('Last name cannot be blank.');
         return;
     }
-    
+
     // Hide save button and display status message to avoid duplicate submission:
     $('#save_person').hide();
     $('#save_person_status').html('Saving...');
-    
+
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=people&method=save';
-    $.post(url, {id: personID, first: first, middle: middle, last: last, bio: bio}, function(data) {
+    var url = basePath + '/edit/Person/' + encodeURIComponent(personID);
+    $.post(url, {first: first, middle: middle, last: last, bio: bio}, function(data) {
         // If save was successful...
         if (!data.success) {
             // Save failed -- display error message.
@@ -42,8 +42,7 @@ function savePerson()
 function redrawPseudonyms()
 {
     var personID = $('#Person_ID').val();
-    var url = 'ajax.php?module=people&method=getPseudonymList&id=' + 
-        encodeURIComponent(personID);
+    var url = basePath + '/edit/Person/' + encodeURIComponent(personID) + "/Pseudonym";
     $('#pseudonym_list').load(url);
 }
 
@@ -52,8 +51,7 @@ function redrawPseudonyms()
 function redrawRealNames()
 {
     var personID = $('#Person_ID').val();
-    var url = 'ajax.php?module=people&method=getRealNameList&id=' + 
-        encodeURIComponent(personID);
+    var url = basePath + '/edit/Person/' + encodeURIComponent(personID) + "/RealName";
     $('#realname_list').load(url);
 }
 
@@ -64,18 +62,18 @@ function saveRelationship()
     var personID = $('#Person_ID').val();
     var relationship = $('#pseudo_type').val();
     var relatedID = parseInt($('#pseudo_name').val());
-    
+
     // Validate user selection:
     if (isNaN(relatedID)) {
         alert("Please choose a valid person.");
         return;
     }
-    
+
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=people&method=addPseudonym';
     switch(relationship) {
     case 'pseudonym':
-        $.post(url, {real_id: personID, pseudo_id: relatedID}, function(data) {
+        var url = basePath + '/edit/Person/' + encodeURIComponent(personID) + "/Pseudonym/" + encodeURIComponent(relatedID);
+        $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
             // If save was successful...
             if (data.success) {
                 // Update the person list.
@@ -84,10 +82,11 @@ function saveRelationship()
                 // Save failed -- display error message:
                 alert('Error: ' + data.msg);
             }
-        }, 'json');
+        }});
         break;
     case 'realname':
-        $.post(url, {pseudo_id: personID, real_id: relatedID}, function(data) {
+        var url = basePath + '/edit/Person/' + encodeURIComponent(personID) + "/RealName/" + encodeURIComponent(relatedID);
+        $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
             // If save was successful...
             if (data.success) {
                 // Update the person list.
@@ -96,7 +95,7 @@ function saveRelationship()
                 // Save failed -- display error message:
                 alert('Error: ' + data.msg);
             }
-        }, 'json');
+        }});
         break;
     default:
         alert('Unknown relationship.');
@@ -112,10 +111,10 @@ function deleteRealName(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var personID = $('#Person_ID').val();
-    var url = 'ajax.php?module=people&method=deletePseudonym';
-    $.post(url, {pseudo_id: personID, real_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Person/' + encodeURIComponent(personID) + "/RealName/" + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -124,7 +123,7 @@ function deleteRealName(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a pseudonym:
@@ -134,10 +133,10 @@ function deletePseudonym(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var personID = $('#Person_ID').val();
-    var url = 'ajax.php?module=people&method=deletePseudonym';
-    $.post(url, {real_id: personID, pseudo_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Person/' + encodeURIComponent(personID) + "/Pseudonym/" + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -146,7 +145,7 @@ function deletePseudonym(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 // Activate autocomplete when DOM is ready:

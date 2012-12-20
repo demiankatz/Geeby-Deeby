@@ -35,6 +35,7 @@ return array(
                 'peoplelinks' => 'GeebyDeeby\Db\Table\PeopleLinks',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'platform' => 'GeebyDeeby\Db\Table\Platform',
+                'pseudonyms' => 'GeebyDeeby\Db\Table\Pseudonyms',
                 'publisher' => 'GeebyDeeby\Db\Table\Publisher',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
@@ -316,11 +317,12 @@ return array(
                     'person' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Person[/:id]',
+                            'route'    => '/Person[/:id][/:action][/:extra]',
                             'defaults' => array(
                                 'controller'    => 'EditPerson',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null,
                             ),
                         ),
                     ),
