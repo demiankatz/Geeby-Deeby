@@ -10,21 +10,20 @@ function saveItem()
     var errata = $('#Item_Errata').val();
     var thanks = $('#Item_Thanks').val();
     var material = $('#Material_Type_ID').val();
-    
+
     // Validate form:
     if (itemName.length == 0) {
         alert('Item name cannot be blank.');
         return;
     }
-    
+
     // Hide save button and display status message to avoid duplicate submission:
     $('#save_item').hide();
     $('#save_item_status').html('Saving...');
-    
+
     // Use AJAX to save the values:
-    var url = 'ajax.php?module=item&method=save';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID);
     var details = {
-        id: itemID,
         name: itemName,
         len: len,
         endings: endings,
@@ -48,8 +47,7 @@ function saveItem()
 function redrawAltTitles()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getAltTitles&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AltTitle';
     $('#alt_title_list').load(url);
 }
 
@@ -59,16 +57,15 @@ function addAltTitle()
 {
     var itemID = $('#Item_ID').val();
     var noteID = parseInt($('#Alt_Title_Note').val());
-    
+
     // Validate user selection:
     if (isNaN(noteID)) {
         noteID = '';
     }
-    
+
     // Save and update:
-    var url = 'ajax.php?module=item&method=addAltTitle';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AltTitle/NEW';
     var details = {
-        item_id: itemID, 
         note_id: noteID,
         title: $('#Alt_Title').val()
     };
@@ -78,7 +75,7 @@ function addAltTitle()
             // Clear the form:
             $('#Alt_Title').val('');
             $('#Alt_Title_Note').val('');
-            
+
             // Update the list.
             redrawAltTitles();
         } else {
@@ -95,17 +92,17 @@ function deleteAltTitle(rowID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     // Validate user selection:
     if (isNaN(rowID)) {
         alert("Please choose a valid title.");
         return;
     }
-    
+
     // Save and update:
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteAltTitle';
-    $.post(url, {item_id: itemID, row_id: rowID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AltTitle/' + encodeURIComponent(rowID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -114,7 +111,7 @@ function deleteAltTitle(rowID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw the ISBN list:
@@ -122,8 +119,7 @@ function deleteAltTitle(rowID)
 function redrawISBNs()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getISBNs&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/ISBN';
     $('#item_isbns').load(url);
 }
 
@@ -133,16 +129,15 @@ function addISBN()
 {
     var itemID = $('#Item_ID').val();
     var noteID = parseInt($('#isbn_note').val());
-    
+
     // Validate user selection:
     if (isNaN(noteID)) {
         noteID = '';
     }
-    
+
     // Save and update:
-    var url = 'ajax.php?module=item&method=addISBN';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/ISBN/NEW';
     var details = {
-        item_id: itemID, 
         note_id: noteID,
         isbn: $('#isbn').val()
     };
@@ -152,7 +147,7 @@ function addISBN()
             // Clear the form:
             $('#isbn').val('');
             $('#isbn_note').val('');
-            
+
             // Update the list.
             redrawISBNs();
         } else {
@@ -169,17 +164,17 @@ function deleteISBN(rowID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     // Validate user selection:
     if (isNaN(rowID)) {
         alert("Please choose a valid ISBN.");
         return;
     }
-    
+
     // Save and update:
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteISBN';
-    $.post(url, {item_id: itemID, row_id: rowID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/ISBN/' + encodeURIComponent(rowID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -188,7 +183,7 @@ function deleteISBN(rowID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw the code list:
@@ -196,8 +191,7 @@ function deleteISBN(rowID)
 function redrawProductCodes()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getProductCodes&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/ProductCode';
     $('#item_codes').load(url);
 }
 
@@ -207,16 +201,15 @@ function addProductCode()
 {
     var itemID = $('#Item_ID').val();
     var noteID = parseInt($('#product_code_note').val());
-    
+
     // Validate user selection:
     if (isNaN(noteID)) {
         noteID = '';
     }
-    
+
     // Save and update:
-    var url = 'ajax.php?module=item&method=addProductCode';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/ProductCode/NEW';
     var details = {
-        item_id: itemID, 
         note_id: noteID,
         code: $('#product_code').val()
     };
@@ -226,7 +219,7 @@ function addProductCode()
             // Clear the form:
             $('#product_code').val('');
             $('#product_code_note').val('');
-            
+
             // Update the list.
             redrawProductCodes();
         } else {
@@ -243,17 +236,17 @@ function deleteProductCode(rowID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     // Validate user selection:
     if (isNaN(rowID)) {
         alert("Please choose a valid code.");
         return;
     }
-    
+
     // Save and update:
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteProductCode';
-    $.post(url, {item_id: itemID, row_id: rowID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/ProductCode/' + encodeURIComponent(rowID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -262,7 +255,7 @@ function deleteProductCode(rowID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw the platform list:
@@ -270,8 +263,7 @@ function deleteProductCode(rowID)
 function redrawPlatforms()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getPlatforms&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Platform';
     $('#platform_list').load(url);
 }
 
@@ -281,14 +273,10 @@ function addPlatform()
 {
     var itemID = $('#Item_ID').val();
     var platID = parseInt($('#Platform_ID').val());
-    
+
     // Save and update:
-    var url = 'ajax.php?module=item&method=addPlatform';
-    var details = {
-        item_id: itemID,
-        platform_id: platID
-    };
-    $.post(url, details, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Platform/' + encodeURIComponent(platID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -297,7 +285,7 @@ function addPlatform()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Remove a platform from the item:
@@ -307,17 +295,17 @@ function deletePlatform(platID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     // Validate user selection:
     if (isNaN(platID)) {
         alert("Please choose a valid platform.");
         return;
     }
-    
+
     // Save and update:
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deletePlatform';
-    $.post(url, {item_id: itemID, platform_id: platID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Platform/' + encodeURIComponent(platID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -326,7 +314,7 @@ function deletePlatform(platID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw the adaptation list:
@@ -334,8 +322,7 @@ function deletePlatform(platID)
 function redrawAdaptations()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getAdaptations&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Adaptation';
     $('#adapt_into').load(url);
 }
 
@@ -344,8 +331,7 @@ function redrawAdaptations()
 function redrawAdaptedFrom()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getAdaptedFrom&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AdaptedFrom';
     $('#adapt_from').load(url);
 }
 
@@ -354,8 +340,7 @@ function redrawAdaptedFrom()
 function redrawItemBib()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getItemReferences&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutItem';
     $('#item_bib').load(url);
 }
 
@@ -364,8 +349,7 @@ function redrawItemBib()
 function redrawSeriesBib()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getSeriesReferences&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutSeries';
     $('#series_bib').load(url);
 }
 
@@ -374,8 +358,7 @@ function redrawSeriesBib()
 function redrawPersonBib()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getPersonReferences&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutPerson';
     $('#people_bib').load(url);
 }
 
@@ -384,8 +367,7 @@ function redrawPersonBib()
 function redrawTranslations()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getTranslations&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Translation';
     $('#trans_into').load(url);
 }
 
@@ -394,8 +376,7 @@ function redrawTranslations()
 function redrawTranslatedFrom()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getTranslatedFrom&id=' + 
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/TranslatedFrom';
     $('#trans_from').load(url);
 }
 
@@ -406,18 +387,18 @@ function saveAdaptation()
     var itemID = $('#Item_ID').val();
     var relationship = $('#adapt_type').val();
     var relatedID = parseInt($('#adapt_name').val());
-    
+
     // Validate user selection:
     if (isNaN(relatedID)) {
         alert("Please choose a valid item.");
         return;
     }
-    
+
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=item&method=addAdaptation';
     switch(relationship) {
     case 'from':
-        $.post(url, {adapt_id: itemID, source_id: relatedID}, function(data) {
+        var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AdaptedFrom/' + encodeURIComponent(relatedID);
+        $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
             // If save was successful...
             if (data.success) {
                 // Update the list.
@@ -426,10 +407,11 @@ function saveAdaptation()
                 // Save failed -- display error message:
                 alert('Error: ' + data.msg);
             }
-        }, 'json');
+        }});
         break;
     case 'into':
-        $.post(url, {source_id: itemID, adapt_id: relatedID}, function(data) {
+        var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Adaptation/' + encodeURIComponent(relatedID);
+        $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
             // If save was successful...
             if (data.success) {
                 // Update the list.
@@ -438,7 +420,7 @@ function saveAdaptation()
                 // Save failed -- display error message:
                 alert('Error: ' + data.msg);
             }
-        }, 'json');
+        }});
         break;
     default:
         alert('Unknown relationship.');
@@ -454,10 +436,10 @@ function deleteAdaptation(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteAdaptation';
-    $.post(url, {source_id: itemID, adapt_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Adaptation/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -466,7 +448,7 @@ function deleteAdaptation(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete an adaptation:
@@ -476,10 +458,10 @@ function deleteAdaptedFrom(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteAdaptation';
-    $.post(url, {adapt_id: itemID, source_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AdaptedFrom/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -488,7 +470,7 @@ function deleteAdaptedFrom(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Save a translation:
@@ -498,18 +480,18 @@ function saveTranslation()
     var itemID = $('#Item_ID').val();
     var relationship = $('#trans_type').val();
     var relatedID = parseInt($('#trans_name').val());
-    
+
     // Validate user selection:
     if (isNaN(relatedID)) {
         alert("Please choose a valid item.");
         return;
     }
-    
+
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=item&method=addTranslation';
     switch(relationship) {
     case 'from':
-        $.post(url, {trans_id: itemID, source_id: relatedID}, function(data) {
+        var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/TranslatedFrom/' + encodeURIComponent(relatedID);
+        $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
             // If save was successful...
             if (data.success) {
                 // Update the list.
@@ -518,10 +500,11 @@ function saveTranslation()
                 // Save failed -- display error message:
                 alert('Error: ' + data.msg);
             }
-        }, 'json');
+        }});
         break;
     case 'into':
-        $.post(url, {source_id: itemID, trans_id: relatedID}, function(data) {
+        var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Translation/' + encodeURIComponent(relatedID);
+        $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
             // If save was successful...
             if (data.success) {
                 // Update the list.
@@ -530,7 +513,7 @@ function saveTranslation()
                 // Save failed -- display error message:
                 alert('Error: ' + data.msg);
             }
-        }, 'json');
+        }});
         break;
     default:
         alert('Unknown relationship.');
@@ -546,10 +529,10 @@ function deleteTranslation(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteTranslation';
-    $.post(url, {source_id: itemID, trans_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Translation/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -558,7 +541,7 @@ function deleteTranslation(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Save an item reference:
@@ -567,28 +550,28 @@ function addItemReference()
 {
     var itemID = $('#Item_ID').val();
     var relatedID = parseInt($('#item_bib_id').val());
-    
+
     // Validate user selection:
     if (isNaN(relatedID)) {
         alert("Please choose a valid item.");
         return;
     }
-    
+
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=item&method=addItemReference';
-    $.post(url, {item_id: itemID, bib_item_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutItem/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Clear the form
             $('#item_bib_id').val('');
-            
+
             // Update the list.
             redrawItemBib();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete an item reference:
@@ -598,10 +581,10 @@ function deleteItemReference(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteItemReference';
-    $.post(url, {item_id: itemID, bib_item_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutItem/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -610,7 +593,7 @@ function deleteItemReference(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Save a series reference:
@@ -619,28 +602,28 @@ function addSeriesReference()
 {
     var itemID = $('#Item_ID').val();
     var relatedID = parseInt($('#series_bib_id').val());
-    
+
     // Validate user selection:
     if (isNaN(relatedID)) {
         alert("Please choose a valid series.");
         return;
     }
-    
+
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=item&method=addSeriesReference';
-    $.post(url, {item_id: itemID, series_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutSeries/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Clear the form
             $('#series_bib_id').val('');
-            
+
             // Update the list.
             redrawSeriesBib();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a series reference:
@@ -650,10 +633,10 @@ function deleteSeriesReference(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteSeriesReference';
-    $.post(url, {item_id: itemID, series_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutSeries/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -662,7 +645,7 @@ function deleteSeriesReference(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Save a person reference:
@@ -671,28 +654,28 @@ function addPersonReference()
 {
     var itemID = $('#Item_ID').val();
     var relatedID = parseInt($('#person_bib_id').val());
-    
+
     // Validate user selection:
     if (isNaN(relatedID)) {
         alert("Please choose a valid person.");
         return;
     }
-    
+
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=item&method=addPersonReference';
-    $.post(url, {item_id: itemID, person_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutPerson/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Clear the form
             $('#person_bib_id').val('');
-            
+
             // Update the list.
             redrawPersonBib();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a person reference:
@@ -702,10 +685,10 @@ function deletePersonReference(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deletePersonReference';
-    $.post(url, {item_id: itemID, person_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AboutPerson/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -714,7 +697,7 @@ function deletePersonReference(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Delete a translation:
@@ -724,10 +707,10 @@ function deleteTranslatedFrom(relatedID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteTranslation';
-    $.post(url, {trans_id: itemID, source_id: relatedID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/TranslatedFrom/' + encodeURIComponent(relatedID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -736,7 +719,7 @@ function deleteTranslatedFrom(relatedID)
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw date list:
@@ -744,7 +727,7 @@ function deleteTranslatedFrom(relatedID)
 function redrawReleaseDates()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getDates&id=' + 
+    var url = 'ajax.php?module=item&method=getDates&id=' +
         encodeURIComponent(itemID);
     $('#date_list').load(url);
 }
@@ -771,7 +754,7 @@ function saveReleaseDate()
     if (isNaN(day)) {
         day = 0;
     }
-    
+
     // Validate month and day:
     if (month > 12) {
         alert('Please enter a valid month.');
@@ -781,7 +764,7 @@ function saveReleaseDate()
         alert('Please enter a valid day.');
         return;
     }
-    
+
     // Save the date:
     var url = 'ajax.php?module=item&method=addDate';
     var params =
@@ -805,7 +788,7 @@ function deleteReleaseDate(year, month, day)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
     var url = 'ajax.php?module=item&method=deleteDate';
     var params = {item_id: itemID, year: year, month: month, day: day};
@@ -826,7 +809,7 @@ function deleteReleaseDate(year, month, day)
 function redrawDescriptions()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getDescriptions&id=' + 
+    var url = 'ajax.php?module=item&method=getDescriptions&id=' +
         encodeURIComponent(itemID);
     $('#desc_list').load(url);
 }
@@ -839,7 +822,7 @@ function saveDescription()
     var itemID = $('#Item_ID').val();
     var descType = $('#DescriptionType').val();
     var desc = $('#Description').val();
-    
+
     // Save the date:
     var url = 'ajax.php?module=item&method=addDescription';
     $.post(url, {item_id: itemID, source: descType, desc: desc}, function(data) {
@@ -861,7 +844,7 @@ function deleteDescription(descType)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
     var url = 'ajax.php?module=item&method=deleteDescription';
     $.post(url, {item_id: itemID, source: descType}, function(data) {
@@ -881,7 +864,7 @@ function deleteDescription(descType)
 function redrawCredits()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getCredits&id=' + 
+    var url = 'ajax.php?module=item&method=getCredits&id=' +
         encodeURIComponent(itemID);
     $('#credits').load(url);
 }
@@ -910,7 +893,7 @@ function saveCredit()
         alert('Please select a valid role.');
         return;
     }
-    
+
     // Save the credit:
     var url = 'ajax.php?module=item&method=addCredit';
     var params =
@@ -934,7 +917,7 @@ function removeCredit(person, role)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
     var url = 'ajax.php?module=item&method=deleteCredit';
     var params = {item_id: itemID, person_id: person, role_id: role};
@@ -992,7 +975,7 @@ function changeCreditOrder(person, role)
 function redrawImages()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getImages&id=' + 
+    var url = 'ajax.php?module=item&method=getImages&id=' +
         encodeURIComponent(itemID);
     $('#image_list').load(url);
 }
@@ -1013,7 +996,7 @@ function saveImage()
     }
     var image = $('#image_path').val();
     var thumb = $('#thumb_path').val();
-    
+
     // Save the image:
     var url = 'ajax.php?module=item&method=addImage';
     var params =
@@ -1037,7 +1020,7 @@ function removeImage(image_id, role)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
     var url = 'ajax.php?module=item&method=deleteImage';
     var params = {item_id: itemID, image_id: image_id};
@@ -1091,7 +1074,7 @@ function changeImageOrder(image_id)
 function redrawAttachmentList()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getAttachments&id=' + 
+    var url = 'ajax.php?module=item&method=getAttachments&id=' +
         encodeURIComponent(itemID);
     $('#item_list').load(url);
 }
@@ -1102,17 +1085,17 @@ function addAttachedItem()
 {
     var itemID = $('#Item_ID').val();
     var attachID = parseInt($('#attachment_name').val());
-    
+
     // Validate user selection:
     if (isNaN(attachID)) {
         alert("Please choose a valid item.");
         return;
     }
-    
+
     // Save and update based on selected relationship:
     var url = 'ajax.php?module=item&method=addAttachment';
     var details = {
-        attach_id: attachID, 
+        attach_id: attachID,
         item_id: itemID
     };
     $.post(url, details, function(data) {
@@ -1120,7 +1103,7 @@ function addAttachedItem()
         if (data.success) {
             // Clear the form:
             $('#attachment_name').val('');
-            
+
             // Update the list.
             redrawAttachmentList();
         } else {
@@ -1137,7 +1120,7 @@ function removeAttachment(attachID)
     if (!confirm("Are you sure?")) {
         return;
     }
-    
+
     var itemID = $('#Item_ID').val();
     var url = 'ajax.php?module=item&method=deleteAttachment';
     $.post(url, {attach_id: attachID, item_id: itemID}, function(data) {
@@ -1158,7 +1141,7 @@ function changeAttachmentOrder(attachID)
 {
     var itemID = $('#Item_ID').val();
     var pos = parseInt($('#attachment' + attachID).val(), 10);
-    
+
     // Validate user selection:
     if (isNaN(itemID)) {
         alert("Please choose a valid item.");
@@ -1167,11 +1150,11 @@ function changeAttachmentOrder(attachID)
         alert("Please enter a valid number.");
         return;
     }
-    
+
     // Save and update based on selected relationship:
     var url = 'ajax.php?module=item&method=renumberAttachment';
     var details = {
-        attach_id: attachID, 
+        attach_id: attachID,
         item_id: itemID,
         pos: pos
     };
@@ -1192,7 +1175,7 @@ $(document).ready(function(){
     // Turn on tabs
     $("#tabs").tabs();
     $("#tabs").tabs('paging', {cycle: true});
-    
+
     // Turn on autocomplete
     var options = {
         url: basePath + "/Suggest/Item",

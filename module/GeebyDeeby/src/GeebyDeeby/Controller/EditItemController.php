@@ -71,7 +71,7 @@ class EditItemController extends AbstractBase
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            // TODO
+            $view->setTemplate('geeby-deeby/edit-item/edit-full');
         }
 
         // Process series ID linkage if necessary:
