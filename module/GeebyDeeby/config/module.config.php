@@ -24,8 +24,9 @@ return array(
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
                 'item' => 'GeebyDeeby\Db\Table\Item',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
-                'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
+                'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
+                'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',
                 'language' => 'GeebyDeeby\Db\Table\Language',
                 'link' => 'GeebyDeeby\Db\Table\Link',
                 'linktype' => 'GeebyDeeby\Db\Table\LinkType',
@@ -190,11 +191,12 @@ return array(
                     'item' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Item[/:id]',
+                            'route'    => '/Item[/:id][/:action][/:extra]',
                             'defaults' => array(
                                 'controller'    => 'EditItem',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null,
                             ),
                         ),
                     ),

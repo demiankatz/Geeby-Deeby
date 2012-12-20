@@ -71,6 +71,10 @@ class EditItemController extends AbstractBase
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->translatedInto = $this->getDbTable('itemstranslations')
+                ->getTranslatedFrom($view->itemObj->Item_ID);
+            $view->translatedFrom = $this->getDbTable('itemstranslations')
+                ->getTranslatedInto($view->itemObj->Item_ID);
             $view->setTemplate('geeby-deeby/edit-item/edit-full');
         }
 
@@ -87,5 +91,33 @@ class EditItemController extends AbstractBase
         }
 
         return $view;
+    }
+
+    /**
+     * Deal with translations
+     *
+     * @return mixed
+     */
+    public function translationAction()
+    {
+        return $this->handleGenericLink(
+            'itemstranslations', 'Source_Item_ID', 'Trans_Item_ID',
+            'translatedInto', 'getTranslatedFrom',
+            'geeby-deeby/edit-item/trans-into-list.phtml'
+        );
+    }
+
+    /**
+     * Deal with translation sources
+     *
+     * @return mixed
+     */
+    public function translatedfromAction()
+    {
+        return $this->handleGenericLink(
+            'itemstranslations', 'Trans_Item_ID', 'Source_Item_ID',
+            'translatedFrom', 'getTranslatedInto',
+            'geeby-deeby/edit-item/trans-from-list.phtml'
+        );
     }
 }

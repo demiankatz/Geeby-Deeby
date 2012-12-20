@@ -1,0 +1,19 @@
+<? if (isset($translatedFrom) && count($translatedFrom) > 0): ?>
+  <? foreach ($translatedFrom as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>#translations-tab">
+            <?=$this->escapeHtml($current['Item_Name'])?>
+          </a>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteTranslatedFrom(<?=$current['Item_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No relevant items.
+<? endif; ?>

@@ -53,7 +53,7 @@
       {include file="item_alt_titles.tpl"}
     </div>
   </div>
-  
+
   <div id="attached-tab" class="edit_tab_contents">
     <input id="attachment_name" class="Item_ID" />
     <button onclick="addAttachedItem();">Add Item</button>
@@ -61,7 +61,7 @@
       <?=$this->render('geeby-deeby/edit-item/list.phtml')?>
     </div>
   </div>
-  
+
   <div id="bib-tab" class="edit_tab_contents">
     <p>The current item is about the following items, series and people...</p>
     <b>Item References:</b>
@@ -83,7 +83,7 @@
       {include file="people_bib.tpl"}
     </div>
   </div>
-  
+
   <div id="codes-tab" class="edit_tab_contents">
     <table>
       <tr>
@@ -112,7 +112,7 @@
       </tr>
     </table>
   </div>
-  
+
   <div id="credits-tab" class="edit_tab_contents">
     <div class="edit_container">
       <table class="edit">
@@ -142,7 +142,7 @@
       {include file="item_credits.tpl"}
     </div>
   </div>
-  
+
   <div id="desc-tab" class="edit_tab_contents">
     <div class="edit_container">
       <table class="edit">
@@ -172,7 +172,7 @@
       {include file="item_descriptions.tpl"}
     </div>
   </div>
-  
+
   <div id="images-tab" class="edit_tab_contents">
     <div class="edit_container">
       <table class="edit">
@@ -202,7 +202,7 @@
       {include file="item_images.tpl"}
     </div>
   </div>
-  
+
   <div id="platforms-tab" class="edit_tab_contents">
     {include file="platform_select.tpl"}
     <button onclick="addPlatform();">Add Platform</button>
@@ -212,7 +212,7 @@
       {include file="item_platforms.tpl"}
     </div>
   </div>
-  
+
   <div id="release-tab" class="edit_tab_contents">
     <div class="edit_container">
       <table class="edit">
@@ -244,7 +244,7 @@
       {include file="item_release_dates.tpl"}
     </div>
   </div>
-  
+
   <div id="translations-tab" class="edit_tab_contents">
     <select id="trans_type">
       <option value='from'>Translated From</option>
@@ -257,13 +257,13 @@
         <td>
           <b>Translated From:</b>
           <div id="trans_from">
-            {include file="item_trans_from.tpl"}
+            <?=$this->render('geeby-deeby/edit-item/trans-from-list.phtml')?>
           </div>
         </td>
         <td>
           <b>Translated Into:</b>
           <div id="trans_into">
-            {include file="item_trans_into.tpl"}
+            <?=$this->render('geeby-deeby/edit-item/trans-into-list.phtml')?>
           </div>
         </td>
       </tr>
