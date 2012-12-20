@@ -23,6 +23,7 @@ return array(
                 'file' => 'GeebyDeeby\Db\Table\File',
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
                 'item' => 'GeebyDeeby\Db\Table\Item',
+                'itemsadaptations' => 'GeebyDeeby\Db\Table\ItemsAdaptations',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
                 'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',

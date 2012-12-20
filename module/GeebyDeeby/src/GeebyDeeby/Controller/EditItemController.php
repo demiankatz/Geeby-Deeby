@@ -71,6 +71,10 @@ class EditItemController extends AbstractBase
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->adaptedInto = $this->getDbTable('itemsadaptations')
+                ->getAdaptedFrom($view->itemObj->Item_ID);
+            $view->adaptedFrom = $this->getDbTable('itemsadaptations')
+                ->getAdaptedInto($view->itemObj->Item_ID);
             $view->translatedInto = $this->getDbTable('itemstranslations')
                 ->getTranslatedFrom($view->itemObj->Item_ID);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
@@ -93,6 +97,33 @@ class EditItemController extends AbstractBase
         return $view;
     }
 
+    /**
+     * Deal with adaptations
+     *
+     * @return mixed
+     */
+    public function adaptationAction()
+    {
+        return $this->handleGenericLink(
+            'itemsadaptations', 'Source_Item_ID', 'Adapted_Item_ID',
+            'adaptedInto', 'getAdaptedFrom',
+            'geeby-deeby/edit-item/adapted-into-list.phtml'
+        );
+    }
+
+    /**
+     * Deal with adaptation sources
+     *
+     * @return mixed
+     */
+    public function adaptedfromAction()
+    {
+        return $this->handleGenericLink(
+            'itemsadaptations', 'Adapted_Item_ID', 'Source_Item_ID',
+            'adaptedFrom', 'getAdaptedInto',
+            'geeby-deeby/edit-item/adapted-from-list.phtml'
+        );
+    }
     /**
      * Deal with translations
      *
