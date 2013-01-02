@@ -1,0 +1,17 @@
+<? if (isset($item_alt_titles) && count($item_alt_titles) > 0): ?>
+  <? foreach ($item_alt_titles as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <?=$this->escapeHtml($current['Item_AltName'])?><?=(strlen($current['Note']) > 0) ? '(' . $this->escapeHtml($current['Note']) . ')' : ''?>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteAltTitle(<?=$current['Sequence_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No alternate titles set.
+<? endif; ?>

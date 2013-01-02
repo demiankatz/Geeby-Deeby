@@ -83,6 +83,8 @@ class EditItemController extends AbstractBase
                 ->getSeriesDescribedByItem($view->itemObj->Item_ID);
             $view->translatedInto = $this->getDbTable('itemstranslations')
                 ->getTranslatedFrom($view->itemObj->Item_ID);
+            $view->item_alt_titles = $this->getDbTable('itemsalttitles')
+                ->getAltTitles($view->itemObj->Item_ID);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
             $view->setTemplate('geeby-deeby/edit-item/edit-full');
@@ -172,6 +174,33 @@ class EditItemController extends AbstractBase
             'geeby-deeby/edit-item/adapted-from-list.phtml'
         );
     }
+
+    /**
+     * Work with alternate titles
+     *
+     * @return mixed
+     */
+    public function alttitleAction()
+    {
+        // Special case: new publisher:
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('itemsalttitles');
+            $row = $table->createRow();
+            $row->Item_ID = $this->params()->fromRoute('id');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $row->Item_AltName = $this->params()->fromPost('title');
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'itemsalttitles', 'Item_ID', 'Sequence_ID',
+                'item_alt_titles', 'getAltTitles',
+                'geeby-deeby/edit-item/alt-title-list.phtml'
+            );
+        }
+    }
+
     /**
      * Deal with translations
      *

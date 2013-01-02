@@ -24,6 +24,7 @@ return array(
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
                 'item' => 'GeebyDeeby\Db\Table\Item',
                 'itemsadaptations' => 'GeebyDeeby\Db\Table\ItemsAdaptations',
+                'itemsalttitles' => 'GeebyDeeby\Db\Table\ItemsAltTitles',
                 'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
