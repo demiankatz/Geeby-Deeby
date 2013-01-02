@@ -75,6 +75,12 @@ class EditItemController extends AbstractBase
                 ->getAdaptedFrom($view->itemObj->Item_ID);
             $view->adaptedFrom = $this->getDbTable('itemsadaptations')
                 ->getAdaptedInto($view->itemObj->Item_ID);
+            $view->itemsBib = $this->getDbTable('itemsbibliography')
+                ->getItemsDescribedByItem($view->itemObj->Item_ID);
+            $view->peopleBib = $this->getDbTable('peoplebibliography')
+                ->getPeopleDescribedByItem($view->itemObj->Item_ID);
+            $view->seriesBib = $this->getDbTable('seriesbibliography')
+                ->getSeriesDescribedByItem($view->itemObj->Item_ID);
             $view->translatedInto = $this->getDbTable('itemstranslations')
                 ->getTranslatedFrom($view->itemObj->Item_ID);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
@@ -95,6 +101,48 @@ class EditItemController extends AbstractBase
         }
 
         return $view;
+    }
+
+    /**
+     * Deal with item references
+     *
+     * @return mixed
+     */
+    public function aboutitemAction()
+    {
+        return $this->handleGenericLink(
+            'itemsbibliography', 'Bib_Item_ID', 'Item_ID',
+            'itemsBib', 'getItemsDescribedByItem',
+            'geeby-deeby/edit-item/item-ref-list.phtml'
+        );
+    }
+
+    /**
+     * Deal with series references
+     *
+     * @return mixed
+     */
+    public function aboutseriesAction()
+    {
+        return $this->handleGenericLink(
+            'seriesbibliography', 'Item_ID', 'Series_ID',
+            'seriesBib', 'getSeriesDescribedByItem',
+            'geeby-deeby/edit-item/series-ref-list.phtml'
+        );
+    }
+
+    /**
+     * Deal with person references
+     *
+     * @return mixed
+     */
+    public function aboutpersonAction()
+    {
+        return $this->handleGenericLink(
+            'peoplebibliography', 'Item_ID', 'Person_ID',
+            'peopleBib', 'getPeopleDescribedByItem',
+            'geeby-deeby/edit-item/person-ref-list.phtml'
+        );
     }
 
     /**

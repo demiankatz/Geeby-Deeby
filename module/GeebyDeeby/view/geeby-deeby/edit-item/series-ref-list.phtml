@@ -1,0 +1,19 @@
+<? if (isset($seriesBib) && count($seriesBib) > 0): ?>
+  <? foreach ($seriesBib as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <a href="<?=$this->url('edit/series', array('id' => $current['Series_ID']))?>#bib-tab">
+            <?=$this->escapeHtml($current['Series_Name'])?>
+          </a>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteSeriesReference(<?=$current['Series_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No relevant series.
+<? endif; ?>
