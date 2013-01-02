@@ -1,4 +1,4 @@
-<? if (isset($fileTypes) && !empty($fileTypes)): ?>
+<? if (isset($fileTypes) && count($fileTypes) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>File_Type_ID">
     <? foreach ($fileTypes as $current): ?>
       <option value="<?=$current['File_Type_ID']?>"<?=($current['File_Type_ID'] == $selected) ? ' selected="selected"' : ''?>>

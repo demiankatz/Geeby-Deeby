@@ -1,4 +1,4 @@
-<? if (isset($countries) && !empty($countries)): ?>
+<? if (isset($countries) && count($countries) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Country_ID">
     <? foreach ($countries as $current): ?>
       <option value="<?=$current['Country_ID']?>"<?=(isset($selected) && $current['Country_ID'] == $selected) ? ' selected="selected"' : ''?>>

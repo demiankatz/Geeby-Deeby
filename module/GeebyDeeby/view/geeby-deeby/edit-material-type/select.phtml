@@ -1,4 +1,4 @@
-<? if (isset($materials) && !empty($materials)): ?>
+<? if (isset($materials) && count($materials) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Material_Type_ID">
     <? foreach ($materials as $current): ?>
       <option value="<?=$current['Material_Type_ID']?>"<?=(isset($selected) && $current['Material_Type_ID'] == $selected) ? ' selected="selected"' : ''?>>
