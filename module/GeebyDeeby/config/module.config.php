@@ -27,6 +27,7 @@ return array(
                 'itemsalttitles' => 'GeebyDeeby\Db\Table\ItemsAltTitles',
                 'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
+                'itemsincollections' => 'GeebyDeeby\Db\Table\ItemsInCollections',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
                 'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
                 'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',

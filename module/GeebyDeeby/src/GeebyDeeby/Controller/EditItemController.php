@@ -81,6 +81,8 @@ class EditItemController extends AbstractBase
                 ->getPeopleDescribedByItem($view->itemObj->Item_ID);
             $view->seriesBib = $this->getDbTable('seriesbibliography')
                 ->getSeriesDescribedByItem($view->itemObj->Item_ID);
+            $view->item_list = $this->getDbTable('itemsincollections')
+                ->getItemsForCollection($view->itemObj->Item_ID);
             $view->translatedInto = $this->getDbTable('itemstranslations')
                 ->getTranslatedFrom($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
@@ -199,6 +201,40 @@ class EditItemController extends AbstractBase
                 'geeby-deeby/edit-item/alt-title-list.phtml'
             );
         }
+    }
+
+    /**
+     * Deal with attached items
+     *
+     * @return mixed
+     */
+    public function attachmentAction()
+    {
+        return $this->handleGenericLink(
+            'itemsincollections', 'Collection_Item_ID', 'Item_ID',
+            'item_list', 'getItemsForCollection',
+            'geeby-deeby/edit-item/list.phtml'
+        );
+    }
+
+    /**
+     * Set the order of an attached item
+     *
+     * @return mixed
+     */
+    public function attachmentorderAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $collection = $this->params()->fromRoute('id');
+            $item = $this->params()->fromPost('attach_id');
+            $pos = $this->params()->fromPost('pos');
+            $this->getDbTable('itemsincollections')->update(
+                array('Position' => $pos),
+                array('Item_ID' => $item, 'Collection_Item_ID' => $collection)
+            );
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
     }
 
     /**

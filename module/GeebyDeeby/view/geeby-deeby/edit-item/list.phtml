@@ -6,7 +6,7 @@
     <? foreach ($item_list as $current): ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="order<?=$current['Item_ID']?>" />
+          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="attachment<?=$current['Item_ID']?>" />
           <button onclick="changeAttachmentOrder(<?=$current['Item_ID']?>);">Set</button>
         </td>
         <td>

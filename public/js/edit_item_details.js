@@ -1074,8 +1074,7 @@ function changeImageOrder(image_id)
 function redrawAttachmentList()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getAttachments&id=' +
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Attachment';
     $('#item_list').load(url);
 }
 
@@ -1093,12 +1092,8 @@ function addAttachedItem()
     }
 
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=item&method=addAttachment';
-    var details = {
-        attach_id: attachID,
-        item_id: itemID
-    };
-    $.post(url, details, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Attachment/' + encodeURIComponent(attachID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Clear the form:
@@ -1110,7 +1105,7 @@ function addAttachedItem()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Remove an attached item:
@@ -1122,8 +1117,8 @@ function removeAttachment(attachID)
     }
 
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteAttachment';
-    $.post(url, {attach_id: attachID, item_id: itemID}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Attachment/' + encodeURIComponent(attachID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -1132,7 +1127,7 @@ function removeAttachment(attachID)
             // Remove failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Change the position of an item within the series:
@@ -1152,10 +1147,9 @@ function changeAttachmentOrder(attachID)
     }
 
     // Save and update based on selected relationship:
-    var url = 'ajax.php?module=item&method=renumberAttachment';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AttachmentOrder';
     var details = {
         attach_id: attachID,
-        item_id: itemID,
         pos: pos
     };
     $.post(url, details, function(data) {
