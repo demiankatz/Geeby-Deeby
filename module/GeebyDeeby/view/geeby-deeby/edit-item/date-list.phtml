@@ -1,0 +1,17 @@
+<? if (isset($releaseDates) && count($releaseDates) > 0): ?>
+  <? foreach ($releaseDates as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <?=$this->formatReleaseDate($current)?>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteReleaseDate(<?=$this->escapeHtml($current['Year'])?>, <?=$this->escapeHtml($current['Month'])?>, <?=$this->escapeHtml($current['Day'])?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No release dates set.
+<? endif; ?>

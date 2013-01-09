@@ -30,6 +30,7 @@ return array(
                 'itemsincollections' => 'GeebyDeeby\Db\Table\ItemsInCollections',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
                 'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
+                'itemsreleasedates' => 'GeebyDeeby\Db\Table\ItemsReleaseDates',
                 'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',
                 'language' => 'GeebyDeeby\Db\Table\Language',
                 'link' => 'GeebyDeeby\Db\Table\Link',
@@ -511,6 +512,11 @@ return array(
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
+        ),
+    ),
+    'view_helpers' => array(
+        'invokables' => array(
+            'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
         ),
     ),
     'view_manager' => array(

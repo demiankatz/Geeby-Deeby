@@ -727,8 +727,7 @@ function deleteTranslatedFrom(relatedID)
 function redrawReleaseDates()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getDates&id=' +
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Dates';
     $('#date_list').load(url);
 }
 
@@ -766,9 +765,9 @@ function saveReleaseDate()
     }
 
     // Save the date:
-    var url = 'ajax.php?module=item&method=addDate';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AddDate';
     var params =
-        {item_id: itemID, year: year, month: month, day: day, note_id: noteID};
+        {year: year, month: month, day: day, note_id: noteID};
     $.post(url, params, function(data) {
         // If save was successful...
         if (data.success) {
@@ -790,8 +789,8 @@ function deleteReleaseDate(year, month, day)
     }
 
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteDate';
-    var params = {item_id: itemID, year: year, month: month, day: day};
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/DeleteDate';
+    var params = {year: year, month: month, day: day};
     $.post(url, params, function(data) {
         // If delete was successful...
         if (data.success) {

@@ -87,6 +87,8 @@ class EditItemController extends AbstractBase
                 ->getTranslatedFrom($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->itemObj->Item_ID);
+            $view->releaseDates = $this->getDbTable('itemsreleasedates')
+                ->getDatesForItem($view->itemObj->Item_ID);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
             $view->setTemplate('geeby-deeby/edit-item/edit-full');
@@ -231,6 +233,64 @@ class EditItemController extends AbstractBase
             $this->getDbTable('itemsincollections')->update(
                 array('Position' => $pos),
                 array('Item_ID' => $item, 'Collection_Item_ID' => $collection)
+            );
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Get list of dates
+     *
+     * @return mixed
+     */
+    public function datesAction()
+    {
+        $table = $this->getDbTable('itemsreleasedates');
+        $view = $this->createViewModel();
+        $primary = $this->params()->fromRoute('id');
+        $view->releaseDates = $table->getDatesForItem($primary);
+        $view->setTemplate('geeby-deeby/edit-item/date-list.phtml');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Add a date
+     *
+     * @return mixed
+     */
+    public function adddateAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('itemsreleasedates');
+            $row = $table->createRow();
+            $row->Item_ID = $this->params()->fromRoute('id');
+            $row->Year = $this->params()->fromPost('year');
+            $row->Month = $this->params()->fromPost('month');
+            $row->Day = $this->params()->fromPost('day');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Remove a date
+     *
+     * @return mixed
+     */
+    public function deletedateAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $this->getDbTable('itemsreleasedates')->delete(
+                array(
+                    'Item_ID' => $this->params()->fromRoute('id'),
+                    'Year' => $this->params()->fromPost('year'),
+                    'Month' => $this->params()->fromPost('month'),
+                    'Day' => $this->params()->fromPost('day'),
+                )
             );
             return $this->jsonReportSuccess();
         }
