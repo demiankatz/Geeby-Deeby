@@ -1,0 +1,11 @@
+<? if (isset($roles) && count($roles) > 0): ?>
+  <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Role_ID">
+    <? foreach ($roles as $current): ?>
+      <option value="<?=$current['Role_ID']?>"<?=(isset($selected) && $current['Role_ID'] == $selected) ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current['Role_Name'])?>
+      </option>
+    <? endforeach; ?>
+  </select>
+<? else: ?>
+  Please define roles.
+<? endif; ?>

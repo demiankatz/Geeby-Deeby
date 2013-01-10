@@ -126,7 +126,7 @@
         </tr>
         <tr>
           <th>Role:</th>
-          <td>{include file="role_select.tpl"}</td>
+          <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml')?></td>
         </tr>
         <tr>
           <th>Note:</th>
@@ -139,7 +139,7 @@
       </table>
     </div>
     <div id="credits">
-      {include file="item_credits.tpl"}
+      <?=$this->render('geeby-deeby/edit-item/credits.phtml')?>
     </div>
   </div>
 

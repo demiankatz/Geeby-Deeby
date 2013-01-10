@@ -1,0 +1,28 @@
+<? if (!isset($credits) || count($credits) < 1): ?>
+  No credits.
+<? else: ?>
+  <table class="list_item">
+    <tr><th>Order</th><th colspan="2">Credit</th></tr>
+    <? foreach ($credits as $current): ?>
+      <tr>
+        <td>
+          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="credit_order<?=$this->escapeHtml($current['Person_ID'])?>_<?=$this->escapeHtml($current['Role_ID'])?>" />
+          <button onclick="changeCreditOrder(<?=$this->escapeHtml($current['Person_ID'])?>, <?=$this->escapeHtml($current['Role_ID'])?>);">Set</button>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="removeCredit(<?=$this->escapeHtml($current['Person_ID'])?>, <?=$this->escapeHtml($current['Role_ID'])?>); return false;">
+          </a>
+        </td>
+        <td>
+          <?=$this->escapeHtml($current['Role_Name'])?>:
+          <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
+            <?=$this->escapeHtml($current['First_Name'] . ' ' . $current['Middle_Name'] . ' ' . $current['Last_Name'])?>
+          </a>
+          <? if (!empty($current['Note'])): ?>
+            (<?=$this->escapeHtml($current['Note'])?>)
+          <? endif; ?>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>

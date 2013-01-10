@@ -862,8 +862,7 @@ function deleteDescription(descType)
 function redrawCredits()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getCredits&id=' +
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Credits';
     $('#credits').load(url);
 }
 
@@ -893,9 +892,9 @@ function saveCredit()
     }
 
     // Save the credit:
-    var url = 'ajax.php?module=item&method=addCredit';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AddCredit';
     var params =
-        {item_id: itemID, person_id: person, role_id: role, note_id: noteID, pos: pos};
+        {person_id: person, role_id: role, note_id: noteID, pos: pos};
     $.post(url, params, function(data) {
         // If save was successful...
         if (data.success) {
@@ -917,8 +916,8 @@ function removeCredit(person, role)
     }
 
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteCredit';
-    var params = {item_id: itemID, person_id: person, role_id: role};
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/DeleteCredit';
+    var params = {person_id: person, role_id: role};
     $.post(url, params, function(data) {
         // If delete was successful...
         if (data.success) {
@@ -953,9 +952,9 @@ function changeCreditOrder(person, role)
     }
 
     // Renumber the credit:
-    var url = 'ajax.php?module=item&method=renumberCredit';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/CreditOrder';
     var params =
-        {item_id: itemID, person_id: person, role_id: role, pos: pos};
+        {person_id: person, role_id: role, pos: pos};
     $.post(url, params, function(data) {
         // If save was successful...
         if (data.success) {
