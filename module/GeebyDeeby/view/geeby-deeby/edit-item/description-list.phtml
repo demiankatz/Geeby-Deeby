@@ -1,0 +1,18 @@
+<? if (isset($descriptions) && count($descriptions) > 0): ?>
+  <? foreach ($descriptions as $current): ?>
+  <table class="list_item">
+    <tr>
+      <td>
+        <? /* Note: Description is not escaped since it may contain HTML! */ ?>
+        <?=$current['Description']?> (Source: <?=$this->descriptionSource()->getName($current['Source'])?>)
+      </td>
+      <td>
+        <a class="ui-icon ui-icon-trash" href="#" onclick="deleteDescription(&quot;<?=$this->escapeHtml($current['Source'])?>&quot;); return false;">
+        </a>
+      </td>
+    </tr>
+  </table>
+  <? endforeach; ?>
+<? else: ?>
+  No descriptions set.
+<? endif; ?>

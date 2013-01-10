@@ -150,9 +150,9 @@
           <th>Description Type:</th>
           <td>
             <select id='DescriptionType'>
-              {foreach from=$descriptionTypes item="currentDesc" key="currentVal"}
-                <option value="{$currentVal|escape}">{$currentDesc|escape}</option>
-              {/foreach}
+              <? foreach ($this->descriptionSource()->getList() as $currentVal => $currentDesc): ?>
+                <option value="<?=$this->escapeHtml($currentVal)?>"><?=$this->escapeHtml($currentDesc)?></option>
+              <? endforeach; ?>
             </select>
           </td>
         </tr>
@@ -169,7 +169,7 @@
       </table>
     </div>
     <div id="desc_list">
-      {include file="item_descriptions.tpl"}
+      <?=$this->render('geeby-deeby/edit-item/description-list.phtml')?>
     </div>
   </div>
 

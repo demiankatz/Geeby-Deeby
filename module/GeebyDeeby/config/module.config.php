@@ -26,6 +26,7 @@ return array(
                 'itemsadaptations' => 'GeebyDeeby\Db\Table\ItemsAdaptations',
                 'itemsalttitles' => 'GeebyDeeby\Db\Table\ItemsAltTitles',
                 'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
+                'itemsdescriptions' => 'GeebyDeeby\Db\Table\ItemsDescriptions',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
                 'itemsincollections' => 'GeebyDeeby\Db\Table\ItemsInCollections',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
@@ -516,6 +517,7 @@ return array(
     ),
     'view_helpers' => array(
         'invokables' => array(
+            'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
         ),
     ),

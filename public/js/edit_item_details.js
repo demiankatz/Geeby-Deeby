@@ -808,8 +808,7 @@ function deleteReleaseDate(year, month, day)
 function redrawDescriptions()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getDescriptions&id=' +
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Description';
     $('#desc_list').load(url);
 }
 
@@ -823,8 +822,8 @@ function saveDescription()
     var desc = $('#Description').val();
 
     // Save the date:
-    var url = 'ajax.php?module=item&method=addDescription';
-    $.post(url, {item_id: itemID, source: descType, desc: desc}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Description/' + encodeURIComponent(descType);
+    $.post(url, {desc: desc}, function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
@@ -845,8 +844,8 @@ function deleteDescription(descType)
     }
 
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteDescription';
-    $.post(url, {item_id: itemID, source: descType}, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Description/' + encodeURIComponent(descType);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If delete was successful...
         if (data.success) {
             // Update the list.
@@ -855,7 +854,7 @@ function deleteDescription(descType)
             // Delete failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Redraw credit list:

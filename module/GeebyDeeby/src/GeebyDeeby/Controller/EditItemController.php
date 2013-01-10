@@ -85,6 +85,8 @@ class EditItemController extends AbstractBase
                 ->getItemsForCollection($view->itemObj->Item_ID);
             $view->translatedInto = $this->getDbTable('itemstranslations')
                 ->getTranslatedFrom($view->itemObj->Item_ID);
+            $view->descriptions = $this->getDbTable('itemsdescriptions')
+                ->getDescriptions($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->itemObj->Item_ID);
             $view->releaseDates = $this->getDbTable('itemsreleasedates')
@@ -295,6 +297,35 @@ class EditItemController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Work with descriptions
+     *
+     * @return mixed
+     */
+    public function descriptionAction()
+    {
+        // Special case: new description:
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('itemsdescriptions');
+            $row = $table->createRow();
+            $row->Item_ID = $this->params()->fromRoute('id');
+            $row->Source = $this->params()->fromRoute('extra');
+            $row->Description = $this->params()->fromPost('desc');
+            try {
+                $table->insert((array)$row);
+            } catch (\Exception $e) {
+                return $this->jsonDie($e->getMessage());
+            }
+            return $this->jsonReportSuccess();
+        } else {
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'itemsdescriptions', 'Item_ID', 'Source', 'descriptions',
+                'getDescriptions', 'geeby-deeby/edit-item/description-list.phtml'
+            );
+        }
     }
 
     /**
