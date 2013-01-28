@@ -1,0 +1,17 @@
+<? if (isset($item_platforms) && count($item_platforms) > 0): ?>
+  <? foreach ($item_platforms as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <?=$this->escapeHtml($current['Platform'])?>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deletePlatform(<?=$current['Platform_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach ?>
+<? else: ?>
+  No platforms set.
+<? endif; ?>

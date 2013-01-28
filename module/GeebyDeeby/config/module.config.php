@@ -33,6 +33,7 @@ return array(
                 'itemsincollections' => 'GeebyDeeby\Db\Table\ItemsInCollections',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
                 'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
+                'itemsplatforms' => 'GeebyDeeby\Db\Table\ItemsPlatforms',
                 'itemsreleasedates' => 'GeebyDeeby\Db\Table\ItemsReleaseDates',
                 'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',
                 'language' => 'GeebyDeeby\Db\Table\Language',
