@@ -972,8 +972,7 @@ function changeCreditOrder(person, role)
 function redrawImages()
 {
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=getImages&id=' +
-        encodeURIComponent(itemID);
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Image';
     $('#image_list').load(url);
 }
 
@@ -995,9 +994,9 @@ function saveImage()
     var thumb = $('#thumb_path').val();
 
     // Save the image:
-    var url = 'ajax.php?module=item&method=addImage';
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Image/NEW';
     var params =
-        {item_id: itemID, image: image, thumb: thumb, note_id: noteID, pos: pos};
+        {image: image, thumb: thumb, note_id: noteID, pos: pos};
     $.post(url, params, function(data) {
         // If save was successful...
         if (data.success) {
@@ -1019,9 +1018,8 @@ function removeImage(image_id, role)
     }
 
     var itemID = $('#Item_ID').val();
-    var url = 'ajax.php?module=item&method=deleteImage';
-    var params = {item_id: itemID, image_id: image_id};
-    $.post(url, params, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Image/' + encodeURIComponent(image_id);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
         // If delete was successful...
         if (data.success) {
             // Update the list.
@@ -1030,7 +1028,7 @@ function removeImage(image_id, role)
             // Delete failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }, 'json');
+    }});
 }
 
 /* Renumber an image:
@@ -1051,10 +1049,8 @@ function changeImageOrder(image_id)
     }
 
     // Renumber the image:
-    var url = 'ajax.php?module=item&method=renumberImage';
-    var params =
-        {item_id: itemID, image_id: image_id, pos: pos};
-    $.post(url, params, function(data) {
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/ImageOrder/' + encodeURIComponent(image_id);
+    $.post(url, {pos: pos}, function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.

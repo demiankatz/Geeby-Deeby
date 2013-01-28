@@ -29,6 +29,7 @@ return array(
                 'itemscredits' => 'GeebyDeeby\Db\Table\ItemsCredits',
                 'itemsdescriptions' => 'GeebyDeeby\Db\Table\ItemsDescriptions',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
+                'itemsimages' => 'GeebyDeeby\Db\Table\ItemsImages',
                 'itemsincollections' => 'GeebyDeeby\Db\Table\ItemsInCollections',
                 'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
                 'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',

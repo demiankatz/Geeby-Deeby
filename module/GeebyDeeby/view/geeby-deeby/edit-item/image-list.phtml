@@ -1,0 +1,31 @@
+<? if (!isset($images) || count($images) < 1): ?>
+  No images.
+<? else: ?>
+  <table class="list_item">
+    <tr><th>Order</th><th colspan="2">Image</th><th>Details</th></tr>
+    <? foreach ($images as $current): ?>
+      <tr>
+        <td>
+          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="image_order<?=$this->escapeHtml($current['Sequence_ID'])?>" />
+          <button onclick="changeImageOrder(<?=$this->escapeHtml($current['Sequence_ID'])?>);">Set</button>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="removeImage(<?=$this->escapeHtml($current['Sequence_ID'])?>); return false;">
+          </a>
+        </td>
+        <td>
+          <a target="_imagePopup" href="<?=$this->escapeHtml($current['Image_Path'])?>">
+            <img src="<?=$this->escapeHtml($current['Thumb_Path'])?>" />
+          </a>
+        </td>
+        <td>
+          <b>Image Path:</b> <?=$this->escapeHtml($current['Image_Path'])?><br />
+          <b>Thumb Path:</b> <?=$this->escapeHtml($current['Thumb_Path'])?><br />
+          <? if (!empty($current['Note'])): ?>
+            <b>Note:</b> <?=$this->escapeHtml($current['Note'])?>
+          <? endif; ?>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>
