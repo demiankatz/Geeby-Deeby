@@ -1,0 +1,17 @@
+<? if (isset($ISBNs) && count($ISBNs) > 0): ?>
+  <? foreach ($ISBNs as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <? if (!empty($current['ISBN'])): ?><?=$this->escapeHtml($current['ISBN'])?> / <? endif; ?><?=$this->escapeHtml($current['ISBN13'])?><? if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<? endif; ?>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteISBN(<?=$current['Sequence_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No ISBNs set.
+<? endif; ?>

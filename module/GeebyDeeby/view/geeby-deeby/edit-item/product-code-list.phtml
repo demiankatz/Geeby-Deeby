@@ -1,0 +1,17 @@
+<? if (isset($productCodes) && count($productCodes) > 0): ?>
+  <? foreach ($productCodes as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <?=$this->escapeHtml($current['Product_Code'])?><? if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<? endif; ?>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteProductCode(<?=$current['Sequence_ID']?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No product codes set.
+<? endif; ?>
