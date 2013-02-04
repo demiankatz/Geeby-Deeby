@@ -46,8 +46,11 @@ class SeriesController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
+        if (null === $id) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'list');
+        }
         $table = $this->getDbTable('series');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
+        $rowObj = $table->getByPrimaryKey($id);
         if (!is_object($rowObj)) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
@@ -56,6 +59,20 @@ class SeriesController extends AbstractBase
         );
         $view->items = $this->getDbTable('itemsinseries')->getItemsForSeries($id);
         return $view;
+    }
+
+    /**
+     * List series action
+     *
+     * @return mixed
+     */
+    public function listAction()
+    {
+        return $this->createViewModel(
+            array(
+                'series' => $this->getDbTable('series')->getList()
+            )
+        );
     }
 
     /**
