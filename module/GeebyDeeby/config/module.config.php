@@ -438,6 +438,19 @@ return array(
                     ),
                 ),
             ),
+            'item' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Item[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Item',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
             'login' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -517,12 +530,14 @@ return array(
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
+            'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
         ),
     ),
     'view_helpers' => array(
         'invokables' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
+            'fixtitle' => 'GeebyDeeby\View\Helper\FixTitle',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
         ),
     ),
