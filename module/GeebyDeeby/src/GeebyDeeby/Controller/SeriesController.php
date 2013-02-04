@@ -51,9 +51,11 @@ class SeriesController extends AbstractBase
         if (!is_object($rowObj)) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        return $this->createViewModel(
+        $view = $this->createViewModel(
             array('series' => $rowObj->toArray())
         );
+        $view->items = $this->getDbTable('itemsinseries')->getItemsForSeries($id);
+        return $view;
     }
 
     /**

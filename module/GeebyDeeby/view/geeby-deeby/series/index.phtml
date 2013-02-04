@@ -3,4 +3,18 @@
     $this->headTitle('Series - ' . $title . ' - ');
 ?>
 <h1><?=$this->escapeHtml($title)?></h1>
-<p>Details coming soon.</p>
+<? if (count($items) < 1): ?>
+  <p>No items listed in this series yet.</p>
+<? else: ?>
+  <? $matType = ''; ?>
+  <? foreach ($items as $item): ?>
+    <? if ($matType != $item['Material_Type_Name']): ?>
+      <? $matType = $item['Material_Type_Name'] ?>
+      <h2><?=$this->escapeHtml($matType)?></h2>
+    <? endif; ?>
+    <?=$item['Position'] > 0 ? $item['Position'] . '. ' : ''?>
+    <a href="<?=$this->url('item', array('id' => $item['Item_ID']))?>">
+      <?=$this->escapeHtml($this->fixtitle($item['Item_Name']))?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>
