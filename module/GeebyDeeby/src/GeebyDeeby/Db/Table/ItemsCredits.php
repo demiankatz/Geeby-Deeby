@@ -48,6 +48,37 @@ class ItemsCredits extends Gateway
     }
 
     /**
+     * Get a list of credits attached to the specified person.
+     *
+     * @var int $personID Person ID
+     *
+     * @return mixed
+     */
+    public function getCreditsForPerson($personID)
+    {
+        $callback = function ($select) use ($personID) {
+            $select->join(
+                array('i' => 'Items'),
+                'Items_Credits.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('r' => 'Roles'),
+                'Items_Credits.Role_ID = r.Role_ID'
+            );
+            $select->join(
+                array('n' => 'Notes'),
+                'Items_Credits.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->order(
+                array('Role_Name', 'Item_Name')
+            );
+            $select->where->equalTo('Person_ID', $personID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of credits attached to the specified item.
      *
      * @var int $itemID Item ID

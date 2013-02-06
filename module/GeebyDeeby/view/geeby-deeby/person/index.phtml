@@ -3,4 +3,13 @@
     $this->headTitle('Person - ' . $title . ' - ');
 ?>
 <h1><?=$this->escapeHtml($title)?></h1>
-<p>Details coming soon.</p>
+<? $role = false; foreach ($credits as $credit): ?>
+  <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; ?>
+    <h2><?=$this->escapeHtml($role)?></h2>
+  <? endif; ?>
+  <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
+    <?=$this->fixtitle($credit['Item_Name'])?>
+  </a>
+  <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
+  <br />
+<? endforeach; ?>
