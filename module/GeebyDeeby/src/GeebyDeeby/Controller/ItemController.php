@@ -51,9 +51,11 @@ class ItemController extends AbstractBase
         if (!is_object($rowObj)) {
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
         }
-        return $this->createViewModel(
+        $view = $this->createViewModel(
             array('item' => $rowObj->toArray())
         );
+        $view->credits = $this->getDbTable('itemscredits')->getCreditsForItem($id);
+        return $view;
     }
 
     /**
