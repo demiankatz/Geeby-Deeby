@@ -473,6 +473,19 @@ return array(
                     ),
                 ),
             ),
+            'person' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Person[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Person',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
             'series' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -544,6 +557,7 @@ return array(
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',
+            'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
             'GeebyDeeby\Controller\Series' => 'GeebyDeeby\Controller\SeriesController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
         ),
@@ -553,6 +567,7 @@ return array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'fixtitle' => 'GeebyDeeby\View\Helper\FixTitle',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
+            'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
         ),
     ),
     'view_manager' => array(
