@@ -3,9 +3,31 @@
     $this->headTitle('Person - ' . $title . ' - ');
 ?>
 <h1><?=$this->escapeHtml($title)?></h1>
+
+<? $realNameCount = count($realNames); if ($realNameCount > 0): ?>
+  <p><b>Pseudonym For:</b>
+    <? $i = 0; foreach ($realNames as $realName): $i++; ?>
+      <a href="<?=$this->url('person', array('id' => $realName['Person_ID']))?>"><?=$this->showperson($realName)?></a><?=$i < $realNameCount ? '; ' : ''?>
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
+
+<? $pseudoCount = count($pseudonyms); if ($pseudoCount > 0): ?>
+  <p><b><?=$pseudoCount > 1 ? 'Pseudonyms' : 'Pseudonym'?>:</b>
+    <? $i = 0; foreach ($pseudonyms as $pseudonym): $i++; ?>
+      <a href="<?=$this->url('person', array('id' => $pseudonym['Person_ID']))?>"><?=$this->showperson($pseudonym)?></a><?=$i < $pseudoCount ? '; ' : ''?>
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
+
+<? if (!empty($person['Biography'])): ?>
+  <? /* Don't escape biography -- contains HTML. */ ?>
+  <p><?=$person['Biography']?></p>
+<? endif; ?>
+
 <? $role = $series = false; foreach ($credits as $credit): ?>
   <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; $series = false; ?>
-    <h2><?=$this->escapeHtml($role)?></h2>
+    <h2>Items with "<?=$this->escapeHtml($title)?>" as <?=$this->escapeHtml($role)?></h2>
   <? endif; ?>
   <? if ($series !== $credit['Series_Name']): $series = $credit['Series_Name']; ?>
     <h3 class="series"><a href="<?=$this->url('series', array('id' => $credit['Series_ID']))?>">
