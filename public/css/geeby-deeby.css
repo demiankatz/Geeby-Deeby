@@ -108,7 +108,7 @@ input.number {
     width: 50px;
 }
 
-h3.filetype, h3.series {
+h3.filetype, h3.materialType, h3.series {
     margin-left: 2em;
 }
 

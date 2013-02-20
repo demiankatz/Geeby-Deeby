@@ -62,6 +62,8 @@ class PersonController extends AbstractBase
         $view->pseudonyms = $pseudo->getPseudonyms($id);
         $view->realNames = $pseudo->getRealNames($id);
         $view->files = $this->getDbTable('peoplefiles')->getFilesForPerson($id);
+        $view->bibliography = $this->getDbTable('peoplebibliography')
+            ->getItemsDescribingPerson($id);
         return $view;
     }
 

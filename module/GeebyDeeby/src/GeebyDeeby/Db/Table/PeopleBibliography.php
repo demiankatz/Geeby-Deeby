@@ -47,6 +47,30 @@ class PeopleBibliography extends Gateway
     }
 
     /**
+     * Get a list of items describing the specified person.
+     *
+     * @var int $personID Person ID
+     *
+     * @return mixed
+     */
+    public function getItemsDescribingPerson($personID)
+    {
+        $callback = function ($select) use ($personID) {
+            $select->join(
+                array('i' => 'Items'),
+                'People_Bibliography.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('mt' => 'Material_Types'),
+                'i.Material_Type_ID = mt.Material_Type_ID'
+            );
+            $select->order(array('Material_Type_Name', 'Item_Name'));
+            $select->where->equalTo('Person_ID', $personID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of people described by the specified item.
      *
      * @var int $itemID Item ID
