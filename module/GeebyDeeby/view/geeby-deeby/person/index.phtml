@@ -43,3 +43,20 @@
     <br />
   </span>
 <? endforeach; ?>
+
+<? if (count($files) > 0): ?>
+  <h2>Related Documents</h2>
+  <? $type = false; foreach ($files as $file): ?>
+    <? if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
+      <h3 class="filetype"><?=$this->escapeHtml($type)?></h3>
+    <? endif; ?>
+    <p class="file">
+      <a target="_new" href="<?=$this->escapeHtml($file['File_Path'])?>">
+        <?=$this->escapeHtml($file['File_Name'])?>
+      </a>
+      <? if (!empty($file['Description'])): ?>
+        <br /><?=$file['Description']?>
+      <? endif; ?>
+    </p>
+  <? endforeach; ?>
+<? endif; ?>

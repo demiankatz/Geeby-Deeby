@@ -65,4 +65,28 @@ class PeopleFiles extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of files for the specified person.
+     *
+     * @var int $personID Person ID
+     *
+     * @return mixed
+     */
+    public function getFilesForPerson($personID)
+    {
+        $callback = function ($select) use ($personID) {
+            $select->join(
+                array('f' => 'Files'),
+                'People_Files.File_ID = f.File_ID'
+            );
+            $select->join(
+                array('ft' => 'File_Types'),
+                'f.File_Type_ID = ft.File_Type_ID'
+            );
+            $select->order(array('File_Type', 'File_Name'));
+            $select->where->equalTo('Person_ID', $personID);
+        };
+        return $this->select($callback);
+    }
 }

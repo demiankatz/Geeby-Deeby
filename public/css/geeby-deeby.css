@@ -108,10 +108,10 @@ input.number {
     width: 50px;
 }
 
-h3.series {
+h3.filetype, h3.series {
     margin-left: 2em;
 }
 
-span.item {
+p.file, span.item {
     margin-left: 4em;
 }
