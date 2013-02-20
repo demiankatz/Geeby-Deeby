@@ -1,10 +1,11 @@
 <?
     $title = $this->showperson($person);
     $this->headTitle('Person - ' . $title . ' - ');
+    $displayedSomething = false;
 ?>
 <h1><?=$this->escapeHtml($title)?></h1>
 
-<? $realNameCount = count($realNames); if ($realNameCount > 0): ?>
+<? $realNameCount = count($realNames); if ($realNameCount > 0): $displayedSomething = true; ?>
   <p><b>Pseudonym For:</b>
     <? $i = 0; foreach ($realNames as $realName): $i++; ?>
       <a href="<?=$this->url('person', array('id' => $realName['Person_ID']))?>"><?=$this->showperson($realName)?></a><?=$i < $realNameCount ? '; ' : ''?>
@@ -12,7 +13,7 @@
   </p>
 <? endif; ?>
 
-<? $pseudoCount = count($pseudonyms); if ($pseudoCount > 0): ?>
+<? $pseudoCount = count($pseudonyms); if ($pseudoCount > 0): $displayedSomething = true; ?>
   <p><b><?=$pseudoCount > 1 ? 'Pseudonyms' : 'Pseudonym'?>:</b>
     <? $i = 0; foreach ($pseudonyms as $pseudonym): $i++; ?>
       <a href="<?=$this->url('person', array('id' => $pseudonym['Person_ID']))?>"><?=$this->showperson($pseudonym)?></a><?=$i < $pseudoCount ? '; ' : ''?>
@@ -20,31 +21,33 @@
   </p>
 <? endif; ?>
 
-<? if (!empty($person['Biography'])): ?>
+<? if (!empty($person['Biography'])): $displayedSomething = true; ?>
   <? /* Don't escape biography -- contains HTML. */ ?>
   <p><?=$person['Biography']?></p>
 <? endif; ?>
 
-<? $role = $series = false; foreach ($credits as $credit): ?>
-  <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; $series = false; ?>
-    <h2>Items with "<?=$this->escapeHtml($title)?>" as <?=$this->escapeHtml($role)?></h2>
-  <? endif; ?>
-  <? if ($series !== $credit['Series_Name']): $series = $credit['Series_Name']; ?>
-    <h3 class="series"><a href="<?=$this->url('series', array('id' => $credit['Series_ID']))?>">
-      <?=$this->fixtitle($series);?>
-    </a></h3>
-  <? endif; ?>
-  <span class="item">
-    <?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?>
-    <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
-      <?=$this->fixtitle($credit['Item_Name'])?>
-    </a>
-    <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
-    <br />
-  </span>
-<? endforeach; ?>
+<? if (count($credits) > 0): $displayedSomething = true; ?>
+  <? $role = $series = false; foreach ($credits as $credit): ?>
+    <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; $series = false; ?>
+      <h2>Items with "<?=$this->escapeHtml($title)?>" as <?=$this->escapeHtml($role)?></h2>
+    <? endif; ?>
+    <? if ($series !== $credit['Series_Name']): $series = $credit['Series_Name']; ?>
+      <h3 class="series"><a href="<?=$this->url('series', array('id' => $credit['Series_ID']))?>">
+        <?=$this->fixtitle($series);?>
+      </a></h3>
+    <? endif; ?>
+    <span class="item">
+      <?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?>
+      <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
+        <?=$this->fixtitle($credit['Item_Name'])?>
+      </a>
+      <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
+      <br />
+    </span>
+  <? endforeach; ?>
+<? endif; ?>
 
-<? if (count($files) > 0): ?>
+<? if (count($files) > 0): $displayedSomething = true;?>
   <h2>Related Documents</h2>
   <? $type = false; foreach ($files as $file): ?>
     <? if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
@@ -61,7 +64,7 @@
   <? endforeach; ?>
 <? endif; ?>
 
-<? if (count($bibliography) > 0): ?>
+<? if (count($bibliography) > 0): $displayedSomething = true;?>
   <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
   <? $type = false; foreach ($bibliography as $bib): ?>
     <? if ($type !== $bib['Material_Type_Name']): $type = $bib['Material_Type_Name']; ?>
@@ -71,7 +74,7 @@
   <? endforeach; ?>
 <? endif; ?>
 
-<? if (count($links) > 0): ?>
+<? if (count($links) > 0): $displayedSomething = true;?>
   <h2>Related Links</h2>
   <? foreach ($links as $link): ?>
     <p class="link">
@@ -82,3 +85,5 @@
     </p>
   <? endforeach; ?>
 <? endif; ?>
+
+<? if (!$displayedSomething): ?><p>No further information on this person is available at the moment.</p><? endif; ?>
