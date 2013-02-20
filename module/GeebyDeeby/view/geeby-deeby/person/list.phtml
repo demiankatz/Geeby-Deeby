@@ -1,0 +1,13 @@
+<?
+    $this->headTitle(($bioMode ? 'Biography' : 'Person') . ' List - ');
+?>
+<h1><?=$bioMode ? 'Biography' : 'Person'?> List</h1>
+<? if (count($people) < 1): ?>
+  <p>No <?=$bioMode ? 'biographies' : 'people'?> listed in this database yet.</p>
+<? else: ?>
+  <? foreach ($people as $current): $name = $this->showperson($current); ?>
+    <a href="<?=$this->url('person', array('id' => $current['Person_ID']))?>">
+      <?=$this->escapeHtml($name)?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>

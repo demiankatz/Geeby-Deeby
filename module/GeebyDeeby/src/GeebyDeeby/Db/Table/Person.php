@@ -49,11 +49,16 @@ class Person extends Gateway
     /**
      * Get a list of categories.
      *
+     * @param bool $biosOnly Should we filter to only people with biographies?
+     *
      * @return mixed
      */
-    public function getList()
+    public function getList($biosOnly = false)
     {
-        $callback = function ($select) {
+        $callback = function ($select) use ($biosOnly) {
+            if ($biosOnly) {
+                $select->where->notEqualTo('Biography', '');
+            }
             $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
         };
         return $this->select($callback);

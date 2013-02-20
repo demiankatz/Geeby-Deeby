@@ -473,6 +473,17 @@ return array(
                     ),
                 ),
             ),
+            'people' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/People[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Person',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'person' => array(
                 'type'    => 'Segment',
                 'options' => array(

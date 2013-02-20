@@ -69,6 +69,23 @@ class PersonController extends AbstractBase
     }
 
     /**
+     * Person list
+     *
+     * @return mixed
+     */
+    public function listAction()
+    {
+        $extra = $this->params()->fromRoute('extra');
+        $bios = (strtolower($extra) == 'bios');
+        return $this->createViewModel(
+            array(
+                'bioMode' => $bios,
+                'people' => $this->getDbTable('person')->getList($bios)
+            )
+        );
+    }
+
+    /**
      * Not found page
      *
      * @return mixed
