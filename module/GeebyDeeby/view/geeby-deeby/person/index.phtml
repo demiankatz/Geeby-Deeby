@@ -3,13 +3,21 @@
     $this->headTitle('Person - ' . $title . ' - ');
 ?>
 <h1><?=$this->escapeHtml($title)?></h1>
-<? $role = false; foreach ($credits as $credit): ?>
-  <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; ?>
+<? $role = $series = false; foreach ($credits as $credit): ?>
+  <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; $series = false; ?>
     <h2><?=$this->escapeHtml($role)?></h2>
   <? endif; ?>
-  <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
-    <?=$this->fixtitle($credit['Item_Name'])?>
-  </a>
-  <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
-  <br />
+  <? if ($series !== $credit['Series_Name']): $series = $credit['Series_Name']; ?>
+    <h3 class="series"><a href="<?=$this->url('series', array('id' => $credit['Series_ID']))?>">
+      <?=$this->fixtitle($series);?>
+    </a></h3>
+  <? endif; ?>
+  <span class="item">
+    <?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?>
+    <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
+      <?=$this->fixtitle($credit['Item_Name'])?>
+    </a>
+    <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
+    <br />
+  </span>
 <? endforeach; ?>

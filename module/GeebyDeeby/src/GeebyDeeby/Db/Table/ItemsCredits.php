@@ -62,6 +62,14 @@ class ItemsCredits extends Gateway
                 'Items_Credits.Item_ID = i.Item_ID'
             );
             $select->join(
+                array('iis' => 'Items_In_Series'),
+                'i.Item_ID = iis.Item_ID'
+            );
+            $select->join(
+                array('s' => 'Series'),
+                'iis.Series_ID = s.Series_ID'
+            );
+            $select->join(
                 array('r' => 'Roles'),
                 'Items_Credits.Role_ID = r.Role_ID'
             );
@@ -71,7 +79,7 @@ class ItemsCredits extends Gateway
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->order(
-                array('Role_Name', 'Item_Name')
+                array('Role_Name', 'Series_Name', 'iis.Position', 'Item_Name')
             );
             $select->where->equalTo('Person_ID', $personID);
         };
