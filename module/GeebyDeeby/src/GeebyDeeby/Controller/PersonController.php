@@ -64,6 +64,7 @@ class PersonController extends AbstractBase
         $view->files = $this->getDbTable('peoplefiles')->getFilesForPerson($id);
         $view->bibliography = $this->getDbTable('peoplebibliography')
             ->getItemsDescribingPerson($id);
+        $view->links = $this->getDbTable('peoplelinks')->getLinksForPerson($id);
         return $view;
     }
 

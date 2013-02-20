@@ -47,6 +47,25 @@ class PeopleLinks extends Gateway
     }
 
     /**
+     * Get a list of links for the specified person.
+     *
+     * @var int $personID Person ID
+     *
+     * @return mixed
+     */
+    public function getLinksForPerson($personID)
+    {
+        $callback = function ($select) use ($personID) {
+            $select->join(
+                array('l' => 'Links'), 'People_Links.Link_ID = l.Link_ID'
+            );
+            $select->order(array('Link_Name'));
+            $select->where->equalTo('Person_ID', $personID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of people for the specified link.
      *
      * @var int $linkID Link ID

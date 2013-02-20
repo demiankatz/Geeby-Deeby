@@ -108,10 +108,14 @@ input.number {
     width: 50px;
 }
 
-h3.filetype, h3.materialType, h3.series {
+h3.filetype, h3.materialType, h3.series, .link {
     margin-left: 2em;
 }
 
 p.file, span.item {
     margin-left: 4em;
+}
+
+.link .url {
+    color: green;
 }

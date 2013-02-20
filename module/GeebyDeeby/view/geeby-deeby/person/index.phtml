@@ -70,3 +70,15 @@
     <span class="item"><a href="<?=$this->url('item', array('id' => $bib['Item_ID']))?>"><?=$this->fixtitle($bib['Item_Name'])?></a></span><br />
   <? endforeach; ?>
 <? endif; ?>
+
+<? if (count($links) > 0): ?>
+  <h2>Related Links</h2>
+  <? foreach ($links as $link): ?>
+    <p class="link">
+      <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />
+      <? if (!empty($link['Description'])): ?><?=$link['Description']?><br /><? endif; ?>
+      <span class="url"><?=$this->escapeHtml($link['URL'])?></span>
+      (last verified: <?=$this->escapeHtml($link['Date_Checked'])?>)
+    </p>
+  <? endforeach; ?>
+<? endif; ?>
