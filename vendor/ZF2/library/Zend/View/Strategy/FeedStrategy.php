@@ -3,9 +3,8 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_View
  */
 
 namespace Zend\View\Strategy;
@@ -18,11 +17,6 @@ use Zend\View\Model;
 use Zend\View\Renderer\FeedRenderer;
 use Zend\View\ViewEvent;
 
-/**
- * @category   Zend
- * @package    Zend_View
- * @subpackage Strategy
- */
 class FeedStrategy implements ListenerAggregateInterface
 {
     /**
@@ -84,33 +78,13 @@ class FeedStrategy implements ListenerAggregateInterface
     {
         $model = $e->getModel();
 
-        $request = $e->getRequest();
-        if (!$request instanceof HttpRequest) {
-            // Not an HTTP request; cannot autodetermine
-            return ($model instanceof Model\FeedModel) ? $this->renderer : null;
+        if (!$model instanceof Model\FeedModel) {
+            // no FeedModel present; do nothing
+            return;
         }
 
-        $headers = $request->getHeaders();
-        if (!$headers->has('accept')) {
-            return ($model instanceof Model\FeedModel) ? $this->renderer : null;
-        }
-
-        $accept  = $headers->get('accept');
-        if (($match = $accept->match('application/rss+xml, application/atom+xml')) == false) {
-            return ($model instanceof Model\FeedModel) ? $this->renderer : null;
-        }
-
-        if ($match->getTypeString() == 'application/rss+xml') {
-            $this->renderer->setFeedType('rss');
-            return $this->renderer;
-        }
-
-        if ($match->getTypeString() == 'application/atom+xml') {
-            $this->renderer->setFeedType('atom');
-            return $this->renderer;
-        }
-
-        return ($model instanceof Model\FeedModel) ? $this->renderer : null;
+        // FeedModel found
+        return $this->renderer;
     }
 
     /**

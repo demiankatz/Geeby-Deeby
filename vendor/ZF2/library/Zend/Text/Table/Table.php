@@ -3,9 +3,8 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Text
  */
 
 namespace Zend\Text\Table;
@@ -16,9 +15,6 @@ use Zend\Text\Table\Decorator\DecoratorInterface as Decorator;
 
 /**
  * Zend\Text\Table\Table enables developers to create tables out of characters
- *
- * @category  Zend
- * @package   Zend_Text_Table
  */
 class Table
 {
@@ -122,7 +118,7 @@ class Table
 
         // If no decorator was given, use default unicode decorator
         if ($this->decorator === null) {
-            if (self::getOutputCharset() === 'utf-8') {
+            if (static::getOutputCharset() === 'utf-8') {
                 $this->setDecorator('unicode');
             } else {
                 $this->setDecorator('ascii');
@@ -267,7 +263,7 @@ class Table
      */
     public static function setInputCharset($charset)
     {
-        self::$inputCharset = strtolower($charset);
+        static::$inputCharset = strtolower($charset);
     }
 
     /**
@@ -277,7 +273,7 @@ class Table
      */
     public static function getInputCharset()
     {
-        return self::$inputCharset;
+        return static::$inputCharset;
     }
 
     /**
@@ -287,7 +283,7 @@ class Table
      */
     public static function setOutputCharset($charset)
     {
-        self::$outputCharset = strtolower($charset);
+        static::$outputCharset = strtolower($charset);
     }
 
     /**
@@ -297,7 +293,7 @@ class Table
      */
     public static function getOutputCharset()
     {
-        return self::$outputCharset;
+        return static::$outputCharset;
     }
 
     /**

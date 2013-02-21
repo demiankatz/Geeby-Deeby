@@ -3,9 +3,8 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Mvc
  */
 
 namespace Zend\Mvc\Router\Http;
@@ -18,12 +17,15 @@ use Zend\Stdlib\RequestInterface as Request;
 /**
  * Segment route.
  *
- * @package    Zend_Mvc_Router
- * @subpackage Http
- * @see        http://manuals.rubyonrails.com/read/chapter/65
+ * @see        http://guides.rubyonrails.org/routing.html
  */
 class Segment implements RouteInterface
 {
+    /**
+     * @var array Cache for the encode output
+     */
+    protected static $cacheEncode = array();
+
     /**
      * Map of allowed special chars in path segments.
      *
@@ -36,7 +38,7 @@ class Segment implements RouteInterface
      *
      * @var array
      */
-    private static $urlencodeCorrectionMap = array(
+    protected static $urlencodeCorrectionMap = array(
         '%21' => "!", // sub-delims
         '%24' => "$", // sub-delims
         '%26' => "&", // sub-delims
@@ -44,16 +46,16 @@ class Segment implements RouteInterface
         '%28' => "(", // sub-delims
         '%29' => ")", // sub-delims
         '%2A' => "*", // sub-delims
-//      '%2B' => "+", // sub-delims - special value for php/urlencode
+        '%2B' => "+", // sub-delims
         '%2C' => ",", // sub-delims
-//      '%2D' => "-", // unreserved - not touched by urlencode
-//      '%2E' => ".", // unreserved - not touched by urlencode
+//      '%2D' => "-", // unreserved - not touched by rawurlencode
+//      '%2E' => ".", // unreserved - not touched by rawurlencode
         '%3A' => ":", // pchar
         '%3B' => ";", // sub-delims
         '%3D' => "=", // sub-delims
         '%40' => "@", // pchar
-//      '%5F' => "_", // unreserved - not touched by urlencode
-        '%7E' => "~", // unreserved
+//      '%5F' => "_", // unreserved - not touched by rawurlencode
+//      '%7E' => "~", // unreserved - not touched by rawurlencode
     );
 
     /**
@@ -265,8 +267,8 @@ class Segment implements RouteInterface
      *
      * @param  array   $parts
      * @param  array   $mergedParams
-     * @param  boolean $isOptional
-     * @param  boolean $hasChild
+     * @param  bool $isOptional
+     * @param  bool $hasChild
      * @return string
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
@@ -406,11 +408,13 @@ class Segment implements RouteInterface
      * @param string $value
      * @return string
      */
-    private function encode($value)
+    protected function encode($value)
     {
-        $encoded = urlencode($value);
-        $encoded = strtr($encoded, self::$urlencodeCorrectionMap);
-        return $encoded;
+        if (!isset(static::$cacheEncode[$value])) {
+            static::$cacheEncode[$value] = rawurlencode($value);
+            static::$cacheEncode[$value] = strtr(static::$cacheEncode[$value], static::$urlencodeCorrectionMap);
+        }
+        return static::$cacheEncode[$value];
     }
 
     /**
@@ -419,8 +423,8 @@ class Segment implements RouteInterface
      * @param string $value
      * @return string
      */
-    private function decode($value)
+    protected function decode($value)
     {
-        return urldecode($value);
+        return rawurldecode($value);
     }
 }

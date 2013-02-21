@@ -3,9 +3,8 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Mvc
  */
 
 namespace Zend\Mvc\Router\Http;
@@ -18,9 +17,7 @@ use Zend\Stdlib\RequestInterface as Request;
 /**
  * Regex route.
  *
- * @package    Zend_Mvc_Router
- * @subpackage Http
- * @see        http://manuals.rubyonrails.com/read/chapter/65
+ * @see        http://guides.rubyonrails.org/routing.html
  */
 class Regex implements RouteInterface
 {
@@ -72,7 +69,7 @@ class Regex implements RouteInterface
      * factory(): defined by RouteInterface interface.
      *
      * @see    Route::factory()
-     * @param  array|\Traversable $options
+     * @param  array|Traversable $options
      * @throws \Zend\Mvc\Router\Exception\InvalidArgumentException
      * @return Regex
      */
@@ -131,7 +128,7 @@ class Regex implements RouteInterface
             if (is_numeric($key) || is_int($key) || $value === '') {
                 unset($matches[$key]);
             } else {
-                $matches[$key] = urldecode($value);
+                $matches[$key] = rawurldecode($value);
             }
         }
 
@@ -156,7 +153,7 @@ class Regex implements RouteInterface
             $spec = '%' . $key . '%';
 
             if (strpos($url, $spec) !== false) {
-                $url = str_replace($spec, urlencode($value), $url);
+                $url = str_replace($spec, rawurlencode($value), $url);
 
                 $this->assembledParams[] = $key;
             }

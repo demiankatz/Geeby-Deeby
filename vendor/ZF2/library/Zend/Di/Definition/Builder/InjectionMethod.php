@@ -3,18 +3,14 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Di
  */
 
 namespace Zend\Di\Definition\Builder;
 
 /**
  * Definitions for an injection endpoint method
- *
- * @category   Zend
- * @package    Zend_Di
  */
 class InjectionMethod
 {
@@ -51,14 +47,16 @@ class InjectionMethod
      * @param  string          $name
      * @param  string|null     $class
      * @param  mixed|null      $isRequired
+     * @param  mixed|null      $default
      * @return InjectionMethod
      */
-    public function addParameter($name, $class = null, $isRequired = null)
+    public function addParameter($name, $class = null, $isRequired = null, $default = null)
     {
         $this->parameters[] = array(
             $name,
             $class,
-            ($isRequired == null) ? true : false
+            ($isRequired == null) ? true : false,
+            $default,
         );
 
         return $this;
@@ -71,5 +69,4 @@ class InjectionMethod
     {
         return $this->parameters;
     }
-
 }

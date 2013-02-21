@@ -3,18 +3,14 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Stdlib
  */
 
 namespace Zend\Stdlib;
 
 /**
  * Wrapper for glob with fallback if GLOB_BRACE is not available.
- *
- * @category   Zend
- * @package    Zend_Stdlib
  */
 abstract class Glob
 {
@@ -36,16 +32,16 @@ abstract class Glob
      * @see    http://docs.php.net/glob
      * @param  string  $pattern
      * @param  integer $flags
-     * @param  boolean $forceFallback
+     * @param  bool $forceFallback
      * @return array|false
      */
     public static function glob($pattern, $flags, $forceFallback = false)
     {
         if (!defined('GLOB_BRACE') || $forceFallback) {
-            return self::fallbackGlob($pattern, $flags);
-        } else {
-            return self::systemGlob($pattern, $flags);
+            return static::fallbackGlob($pattern, $flags);
         }
+
+        return static::systemGlob($pattern, $flags);
     }
 
     /**
@@ -92,7 +88,7 @@ abstract class Glob
     protected static function fallbackGlob($pattern, $flags)
     {
         if (!$flags & self::GLOB_BRACE) {
-            return self::systemGlob($pattern, $flags);
+            return static::systemGlob($pattern, $flags);
         }
 
         $flags &= ~self::GLOB_BRACE;
@@ -119,22 +115,22 @@ abstract class Glob
         }
 
         if ($begin === false) {
-            return self::systemGlob($pattern, $flags);
+            return static::systemGlob($pattern, $flags);
         }
 
-        $next = self::nextBraceSub($pattern, $begin + 1, $flags);
+        $next = static::nextBraceSub($pattern, $begin + 1, $flags);
 
         if ($next === null) {
-            return self::systemGlob($pattern, $flags);
+            return static::systemGlob($pattern, $flags);
         }
 
         $rest = $next;
 
         while ($pattern[$rest] !== '}') {
-            $rest = self::nextBraceSub($pattern, $rest + 1, $flags);
+            $rest = static::nextBraceSub($pattern, $rest + 1, $flags);
 
             if ($rest === null) {
-                return self::systemGlob($pattern, $flags);
+                return static::systemGlob($pattern, $flags);
             }
         }
 
@@ -145,7 +141,7 @@ abstract class Glob
                         . substr($pattern, $p, $next - $p)
                         . substr($pattern, $rest + 1);
 
-            $result = self::fallbackGlob($subPattern, $flags | self::GLOB_BRACE);
+            $result = static::fallbackGlob($subPattern, $flags | self::GLOB_BRACE);
 
             if ($result) {
                 $paths = array_merge($paths, $result);
@@ -156,7 +152,7 @@ abstract class Glob
             }
 
             $p    = $next + 1;
-            $next = self::nextBraceSub($pattern, $p, $flags);
+            $next = static::nextBraceSub($pattern, $p, $flags);
         }
 
         return array_unique($paths);

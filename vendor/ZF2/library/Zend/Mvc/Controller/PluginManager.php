@@ -3,9 +3,8 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Mvc
  */
 
 namespace Zend\Mvc\Controller;
@@ -20,10 +19,6 @@ use Zend\Stdlib\DispatchableInterface;
  *
  * Registers a number of default plugins, and contains an initializer for
  * injecting plugins with the current controller.
- *
- * @category   Zend
- * @package    Zend_Mvc
- * @subpackage Controller
  */
 class PluginManager extends AbstractPluginManager
 {
@@ -33,13 +28,15 @@ class PluginManager extends AbstractPluginManager
      * @var array
      */
     protected $invokableClasses = array(
-        'flashmessenger'  => 'Zend\Mvc\Controller\Plugin\FlashMessenger',
-        'forward'         => 'Zend\Mvc\Controller\Plugin\Forward',
-        'layout'          => 'Zend\Mvc\Controller\Plugin\Layout',
-        'params'          => 'Zend\Mvc\Controller\Plugin\Params',
-        'postredirectget' => 'Zend\Mvc\Controller\Plugin\PostRedirectGet',
-        'redirect'        => 'Zend\Mvc\Controller\Plugin\Redirect',
-        'url'             => 'Zend\Mvc\Controller\Plugin\Url',
+        'acceptableviewmodelselector' => 'Zend\Mvc\Controller\Plugin\AcceptableViewModelSelector',
+        'filepostredirectget'         => 'Zend\Mvc\Controller\Plugin\FilePostRedirectGet',
+        'flashmessenger'              => 'Zend\Mvc\Controller\Plugin\FlashMessenger',
+        'forward'                     => 'Zend\Mvc\Controller\Plugin\Forward',
+        'layout'                      => 'Zend\Mvc\Controller\Plugin\Layout',
+        'params'                      => 'Zend\Mvc\Controller\Plugin\Params',
+        'postredirectget'             => 'Zend\Mvc\Controller\Plugin\PostRedirectGet',
+        'redirect'                    => 'Zend\Mvc\Controller\Plugin\Redirect',
+        'url'                         => 'Zend\Mvc\Controller\Plugin\Url',
     );
 
     /**
@@ -48,7 +45,8 @@ class PluginManager extends AbstractPluginManager
      * @var array
      */
     protected $aliases = array(
-        'prg'             => 'postredirectget',
+        'prg'     => 'postredirectget',
+        'fileprg' => 'filepostredirectget',
     );
 
     /**
@@ -62,12 +60,22 @@ class PluginManager extends AbstractPluginManager
      * After invoking parent constructor, add an initializer to inject the
      * attached controller, if any, to the currently requested plugin.
      *
-     * @param  null|ConfigInterface $configuration
+     * @param null|ConfigInterface $configuration
      */
     public function __construct(ConfigInterface $configuration = null)
     {
         parent::__construct($configuration);
-        $this->addInitializer(array($this, 'injectController'));
+
+        $this->setFactory('identity', function ($plugins) {
+            $services = $plugins->getServiceLocator();
+            $plugin   = new Plugin\Identity();
+            if (!$services->has('Zend\Authentication\AuthenticationService')) {
+                return $plugin;
+            }
+            $plugin->setAuthenticationService($services->get('Zend\Authentication\AuthenticationService'));
+
+            return $plugin;
+        });
     }
 
     /**
@@ -89,6 +97,7 @@ class PluginManager extends AbstractPluginManager
     {
         $plugin = parent::get($name, $options, $usePeeringServiceManagers);
         $this->injectController($plugin);
+
         return $plugin;
     }
 
@@ -101,6 +110,7 @@ class PluginManager extends AbstractPluginManager
     public function setController(DispatchableInterface $controller)
     {
         $this->controller = $controller;
+
         return $this;
     }
 
@@ -142,7 +152,7 @@ class PluginManager extends AbstractPluginManager
      *
      * Any plugin is considered valid in this context.
      *
-     * @param  mixed $plugin
+     * @param  mixed                            $plugin
      * @return void
      * @throws Exception\InvalidPluginException
      */

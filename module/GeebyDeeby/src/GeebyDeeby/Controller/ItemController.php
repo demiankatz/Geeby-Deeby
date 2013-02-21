@@ -59,6 +59,18 @@ class ItemController extends AbstractBase
     }
 
     /**
+     * Item list
+     *
+     * @return mixed
+     */
+    public function listAction()
+    {
+        return $this->createViewModel(
+            array('items' => $this->getDbTable('item')->getList())
+        );
+    }
+
+    /**
      * Not found page
      *
      * @return mixed

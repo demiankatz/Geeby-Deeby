@@ -3,9 +3,8 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Stdlib
  */
 
 namespace Zend\Stdlib;
@@ -20,9 +19,6 @@ use WeakRef;
  * A handler for a event, event, filterchain, etc. Abstracts PHP callbacks,
  * primarily to allow for lazy-loading and ensuring availability of default
  * arguments (currying).
- *
- * @category   Zend
- * @package    Zend_Stdlib
  */
 class CallbackHandler
 {
@@ -39,13 +35,13 @@ class CallbackHandler
 
     /**
      * PHP version is greater as 5.4rc1?
-     * @var boolean
+     * @var bool
      */
     protected static $isPhp54;
 
     /**
      * Is pecl/weakref extension installed?
-     * @var boolean
+     * @var bool
      */
     protected static $hasWeakRefExtension;
 
@@ -81,12 +77,12 @@ class CallbackHandler
             throw new Exception\InvalidCallbackException('Invalid callback provided; not callable');
         }
 
-        if (null === self::$hasWeakRefExtension) {
-            self::$hasWeakRefExtension = class_exists('WeakRef');
+        if (null === static::$hasWeakRefExtension) {
+            static::$hasWeakRefExtension = class_exists('WeakRef');
         }
 
         // If pecl/weakref is not installed, simply store the callback and return
-        if (!self::$hasWeakRefExtension) {
+        if (!static::$hasWeakRefExtension) {
             $this->callback = $callback;
             return;
         }
@@ -172,13 +168,13 @@ class CallbackHandler
         }
 
         // Minor performance tweak, if the callback gets called more than once
-        if (!isset(self::$isPhp54)) {
-            self::$isPhp54 = version_compare(PHP_VERSION, '5.4.0rc1', '>=');
+        if (!isset(static::$isPhp54)) {
+            static::$isPhp54 = version_compare(PHP_VERSION, '5.4.0rc1', '>=');
         }
 
         $argCount = count($args);
 
-        if (self::$isPhp54 && is_string($callback)) {
+        if (static::$isPhp54 && is_string($callback)) {
             $result = $this->validateStringCallbackFor54($callback);
 
             if ($result !== true && $argCount <= 3) {
@@ -193,19 +189,19 @@ class CallbackHandler
         // reached
         switch ($argCount) {
             case 0:
-                if (self::$isPhp54) {
+                if (static::$isPhp54) {
                     return $callback();
                 }
                 return call_user_func($callback);
             case 1:
-                if (self::$isPhp54) {
+                if (static::$isPhp54) {
                     return $callback(array_shift($args));
                 }
                 return call_user_func($callback, array_shift($args));
             case 2:
                 $arg1 = array_shift($args);
                 $arg2 = array_shift($args);
-                if (self::$isPhp54) {
+                if (static::$isPhp54) {
                     return $callback($arg1, $arg2);
                 }
                 return call_user_func($callback, $arg1, $arg2);
@@ -213,7 +209,7 @@ class CallbackHandler
                 $arg1 = array_shift($args);
                 $arg2 = array_shift($args);
                 $arg3 = array_shift($args);
-                if (self::$isPhp54) {
+                if (static::$isPhp54) {
                     return $callback($arg1, $arg2, $arg3);
                 }
                 return call_user_func($callback, $arg1, $arg2, $arg3);

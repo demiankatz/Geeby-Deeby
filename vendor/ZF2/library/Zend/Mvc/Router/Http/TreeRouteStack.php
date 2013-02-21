@@ -3,9 +3,8 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Mvc
  */
 
 namespace Zend\Mvc\Router\Http;
@@ -19,9 +18,6 @@ use Zend\Uri\Http as HttpUri;
 
 /**
  * Tree search implementation.
- *
- * @package    Zend_Mvc_Router
- * @subpackage Http
  */
 class TreeRouteStack extends SimpleRouteStack
 {
@@ -85,7 +81,7 @@ class TreeRouteStack extends SimpleRouteStack
      * routeFromArray(): defined by SimpleRouteStack.
      *
      * @see    SimpleRouteStack::routeFromArray()
-     * @param  array|\Traversable $specs
+     * @param  array|Traversable $specs
      * @return RouteInterface
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
@@ -152,9 +148,9 @@ class TreeRouteStack extends SimpleRouteStack
                 if (($match = $route->match($request, $baseUrlLength)) instanceof RouteMatch && $match->getLength() === $pathLength) {
                     $match->setMatchedRouteName($name);
 
-                    foreach ($this->defaultParams as $name => $value) {
-                        if ($match->getParam($name) === null) {
-                            $match->setParam($name, $value);
+                    foreach ($this->defaultParams as $paramName => $value) {
+                        if ($match->getParam($paramName) === null) {
+                            $match->setParam($paramName, $value);
                         }
                     }
 
@@ -197,43 +193,45 @@ class TreeRouteStack extends SimpleRouteStack
             unset($options['name']);
         }
 
-        if (!isset($options['only_return_path']) || !$options['only_return_path']) {
-            if (!isset($options['uri'])) {
-                $uri = new HttpUri();
-
-                if (isset($options['force_canonical']) && $options['force_canonical']) {
-                    if ($this->requestUri === null) {
-                        throw new Exception\RuntimeException('Request URI has not been set');
-                    }
-
-                    $uri->setScheme($this->requestUri->getScheme())
-                        ->setHost($this->requestUri->getHost())
-                        ->setPort($this->requestUri->getPort());
-                }
-
-                $options['uri'] = $uri;
-            } else {
-                $uri = $options['uri'];
-            }
-
-            $path = $this->baseUrl . $route->assemble(array_merge($this->defaultParams, $params), $options);
-
-            if ((isset($options['force_canonical']) && $options['force_canonical']) || $uri->getHost() !== null) {
-                if ($uri->getScheme() === null) {
-                    if ($this->requestUri === null) {
-                        throw new Exception\RuntimeException('Request URI has not been set');
-                    }
-
-                    $uri->setScheme($this->requestUri->getScheme());
-                }
-
-                return $uri->setPath($path)->normalize()->toString();
-            } elseif (!$uri->isAbsolute() && $uri->isValidRelative()) {
-                return $uri->setPath($path)->normalize()->toString();
-            }
+        if (isset($options['only_return_path']) && $options['only_return_path']) {
+            return $this->baseUrl . $route->assemble(array_merge($this->defaultParams, $params), $options);
         }
 
-        return $this->baseUrl . $route->assemble(array_merge($this->defaultParams, $params), $options);
+        if (!isset($options['uri'])) {
+            $uri = new HttpUri();
+
+            if (isset($options['force_canonical']) && $options['force_canonical']) {
+                if ($this->requestUri === null) {
+                    throw new Exception\RuntimeException('Request URI has not been set');
+                }
+
+                $uri->setScheme($this->requestUri->getScheme())
+                    ->setHost($this->requestUri->getHost())
+                    ->setPort($this->requestUri->getPort());
+            }
+
+            $options['uri'] = $uri;
+        } else {
+            $uri = $options['uri'];
+        }
+
+        $path = $this->baseUrl . $route->assemble(array_merge($this->defaultParams, $params), $options);
+
+        if ((isset($options['force_canonical']) && $options['force_canonical']) || $uri->getHost() !== null) {
+            if ($uri->getScheme() === null) {
+                if ($this->requestUri === null) {
+                    throw new Exception\RuntimeException('Request URI has not been set');
+                }
+
+                $uri->setScheme($this->requestUri->getScheme());
+            }
+
+            return $uri->setPath($path)->normalize()->toString();
+        } elseif (!$uri->isAbsolute() && $uri->isValidRelative()) {
+            return $uri->setPath($path)->normalize()->toString();
+        }
+
+        return $path;
     }
 
     /**

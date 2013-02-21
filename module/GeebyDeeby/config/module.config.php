@@ -451,6 +451,17 @@ return array(
                     ),
                 ),
             ),
+            'items' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Items[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Item',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'login' => array(
                 'type'    => 'Literal',
                 'options' => array(

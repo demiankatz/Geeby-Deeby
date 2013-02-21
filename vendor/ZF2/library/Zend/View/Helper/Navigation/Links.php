@@ -3,9 +3,8 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_View
  */
 
 namespace Zend\View\Helper\Navigation;
@@ -21,10 +20,6 @@ use Zend\View\Exception;
 
 /**
  * Helper for printing <link> elements
- *
- * @category   Zend
- * @package    Zend_View
- * @subpackage Helper
  */
 class Links extends AbstractHelper
 {
@@ -218,14 +213,14 @@ class Links extends AbstractHelper
         }
 
         $result = array('rel' => array(), 'rev' => array());
-        $native = array_values(self::$RELATIONS);
+        $native = array_values(static::$RELATIONS);
 
         foreach (array_keys($result) as $rel) {
             $meth = 'getDefined' . ucfirst($rel);
             $types = array_merge($native, array_diff($page->$meth(), $native));
 
             foreach ($types as $type) {
-                if (!$relFlag = array_search($type, self::$RELATIONS)) {
+                if (!$relFlag = array_search($type, static::$RELATIONS)) {
                     $relFlag = self::RENDER_CUSTOM;
                 }
                 if (!($flag & $relFlag)) {

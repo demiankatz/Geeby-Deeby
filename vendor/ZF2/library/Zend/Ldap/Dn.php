@@ -3,18 +3,14 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
- * @package   Zend_Ldap
  */
 
 namespace Zend\Ldap;
 
 /**
  * Zend\Ldap\Dn provides an API for DN manipulation
- *
- * @category   Zend
- * @package    Zend_Ldap
  */
 class Dn implements \ArrayAccess
 {
@@ -54,9 +50,9 @@ class Dn implements \ArrayAccess
     public static function factory($dn, $caseFold = null)
     {
         if (is_array($dn)) {
-            return self::fromArray($dn, $caseFold);
+            return static::fromArray($dn, $caseFold);
         } elseif (is_string($dn)) {
-            return self::fromString($dn, $caseFold);
+            return static::fromString($dn, $caseFold);
         }
         throw new Exception\LdapException(null, 'Invalid argument type for $dn');
     }
@@ -75,9 +71,9 @@ class Dn implements \ArrayAccess
         if (empty($dn)) {
             $dnArray = array();
         } else {
-            $dnArray = self::explodeDn((string)$dn);
+            $dnArray = static::explodeDn((string) $dn);
         }
-        return new self($dnArray, $caseFold);
+        return new static($dnArray, $caseFold);
     }
 
     /**
@@ -90,7 +86,7 @@ class Dn implements \ArrayAccess
      */
     public static function fromArray(array $dn, $caseFold = null)
     {
-        return new self($dn, $caseFold);
+        return new static($dn, $caseFold);
     }
 
     /**
@@ -114,8 +110,8 @@ class Dn implements \ArrayAccess
      */
     public function getRdn($caseFold = null)
     {
-        $caseFold = self::sanitizeCaseFold($caseFold, $this->caseFold);
-        return self::caseFoldRdn($this->get(0, 1, $caseFold), null);
+        $caseFold = static::sanitizeCaseFold($caseFold, $this->caseFold);
+        return static::caseFoldRdn($this->get(0, 1, $caseFold), null);
     }
 
     /**
@@ -127,8 +123,8 @@ class Dn implements \ArrayAccess
      */
     public function getRdnString($caseFold = null)
     {
-        $caseFold = self::sanitizeCaseFold($caseFold, $this->caseFold);
-        return self::implodeRdn($this->getRdn(), $caseFold);
+        $caseFold = static::sanitizeCaseFold($caseFold, $this->caseFold);
+        return static::implodeRdn($this->getRdn(), $caseFold);
     }
 
     /**
@@ -145,7 +141,7 @@ class Dn implements \ArrayAccess
             throw new Exception\LdapException(null, 'Cannot retrieve parent DN with given $levelUp');
         }
         $newDn = array_slice($this->dn, $levelUp);
-        return new self($newDn, $this->caseFold);
+        return new static($newDn, $this->caseFold);
     }
 
     /**
@@ -159,16 +155,16 @@ class Dn implements \ArrayAccess
      */
     public function get($index, $length = 1, $caseFold = null)
     {
-        $caseFold = self::sanitizeCaseFold($caseFold, $this->caseFold);
+        $caseFold = static::sanitizeCaseFold($caseFold, $this->caseFold);
         $this->assertIndex($index);
         $length = (int) $length;
         if ($length <= 0) {
             $length = 1;
         }
         if ($length === 1) {
-            return self::caseFoldRdn($this->dn[$index], $caseFold);
+            return static::caseFoldRdn($this->dn[$index], $caseFold);
         }
-        return self::caseFoldDn(array_slice($this->dn, $index, $length, false), $caseFold);
+        return static::caseFoldDn(array_slice($this->dn, $index, $length, false), $caseFold);
     }
 
     /**
@@ -182,7 +178,7 @@ class Dn implements \ArrayAccess
     public function set($index, array $value)
     {
         $this->assertIndex($index);
-        self::assertRdn($value);
+        static::assertRdn($value);
         $this->dn[$index] = $value;
         return $this;
     }
@@ -214,7 +210,7 @@ class Dn implements \ArrayAccess
      */
     public function append(array $value)
     {
-        self::assertRdn($value);
+        static::assertRdn($value);
         $this->dn[] = $value;
         return $this;
     }
@@ -227,7 +223,7 @@ class Dn implements \ArrayAccess
      */
     public function prepend(array $value)
     {
-        self::assertRdn($value);
+        static::assertRdn($value);
         array_unshift($this->dn, $value);
         return $this;
     }
@@ -243,7 +239,7 @@ class Dn implements \ArrayAccess
     public function insert($index, array $value)
     {
         $this->assertIndex($index);
-        self::assertRdn($value);
+        static::assertRdn($value);
         $first    = array_slice($this->dn, 0, $index + 1);
         $second   = array_slice($this->dn, $index + 1);
         $this->dn = array_merge($first, array($value), $second);
@@ -254,7 +250,7 @@ class Dn implements \ArrayAccess
      * Assert index is correct and usable
      *
      * @param  mixed $index
-     * @return boolean
+     * @return bool
      * @throws Exception\LdapException
      */
     protected function assertIndex($index)
@@ -272,7 +268,7 @@ class Dn implements \ArrayAccess
      * Assert if value is in a correct RDN format
      *
      * @param  array $value
-     * @return boolean
+     * @return bool
      * @throws Exception\LdapException
      */
     protected static function assertRdn(array $value)
@@ -295,7 +291,7 @@ class Dn implements \ArrayAccess
      */
     public function setCaseFold($caseFold)
     {
-        $this->caseFold = self::sanitizeCaseFold($caseFold, self::$defaultCaseFold);
+        $this->caseFold = static::sanitizeCaseFold($caseFold, static::$defaultCaseFold);
     }
 
     /**
@@ -307,8 +303,8 @@ class Dn implements \ArrayAccess
      */
     public function toString($caseFold = null)
     {
-        $caseFold = self::sanitizeCaseFold($caseFold, $this->caseFold);
-        return self::implodeDn($this->dn, $caseFold);
+        $caseFold = static::sanitizeCaseFold($caseFold, $this->caseFold);
+        return static::implodeDn($this->dn, $caseFold);
     }
 
     /**
@@ -319,12 +315,12 @@ class Dn implements \ArrayAccess
      */
     public function toArray($caseFold = null)
     {
-        $caseFold = self::sanitizeCaseFold($caseFold, $this->caseFold);
+        $caseFold = static::sanitizeCaseFold($caseFold, $this->caseFold);
 
         if ($caseFold === self::ATTR_CASEFOLD_NONE) {
             return $this->dn;
         }
-        return self::caseFoldDn($this->dn, $caseFold);
+        return static::caseFoldDn($this->dn, $caseFold);
     }
 
     /**
@@ -358,7 +354,7 @@ class Dn implements \ArrayAccess
     {
         $return = array();
         foreach ($dn as $part) {
-            $return[] = self::caseFoldRdn($part, $caseFold);
+            $return[] = static::caseFoldRdn($part, $caseFold);
         }
         return $return;
     }
@@ -377,7 +373,7 @@ class Dn implements \ArrayAccess
      * Required by the ArrayAccess implementation
      *
      * @param  int $offset
-     * @return boolean
+     * @return bool
      */
     public function offsetExists($offset)
     {
@@ -430,7 +426,7 @@ class Dn implements \ArrayAccess
      */
     public static function setDefaultCaseFold($caseFold)
     {
-        self::$defaultCaseFold = self::sanitizeCaseFold($caseFold, self::ATTR_CASEFOLD_NONE);
+        static::$defaultCaseFold = static::sanitizeCaseFold($caseFold, self::ATTR_CASEFOLD_NONE);
     }
 
     /**
@@ -484,10 +480,10 @@ class Dn implements \ArrayAccess
             // Convert all leading and trailing spaces to sequences of \20.
             if (preg_match('/^(\s*)(.+?)(\s*)$/', $val, $matches)) {
                 $val = $matches[2];
-                for ($i = 0; $i < strlen($matches[1]); $i++) {
+                for ($i = 0, $len = strlen($matches[1]); $i < $len; $i++) {
                     $val = '\20' . $val;
                 }
-                for ($i = 0; $i < strlen($matches[3]); $i++) {
+                for ($i = 0, $len = strlen($matches[3]); $i < $len; $i++) {
                     $val = $val . '\20';
                 }
             }
@@ -556,7 +552,7 @@ class Dn implements \ArrayAccess
             throw new Exception\LdapException(null, 'DN is malformed');
         }
         $ret = array();
-        for ($i = 0; $i < count($k); $i++) {
+        for ($i = 0, $count = count($k); $i < $count; $i++) {
             if (is_array($k[$i]) && is_array($v[$i]) && (count($k[$i]) === count($v[$i]))) {
                 $multi = array();
                 for ($j = 0; $j < count($k[$i]); $j++) {
@@ -583,7 +579,7 @@ class Dn implements \ArrayAccess
      * @param  array  $keys     An optional array to receive DN keys (e.g. CN, OU, DC, ...)
      * @param  array  $vals     An optional array to receive DN values
      * @param  string $caseFold
-     * @return boolean True if the DN was successfully parsed or false if the string is not a valid DN.
+     * @return bool True if the DN was successfully parsed or false if the string is not a valid DN.
      */
     public static function checkDn(
         $dn, array &$keys = null, array &$vals = null,
@@ -635,7 +631,7 @@ class Dn implements \ArrayAccess
                     if ($ch === '\\') {
                         $state = 3;
                     } elseif ($ch === ',' || $ch === ';' || $ch === 0 || $ch === '+') {
-                        $value = self::unescapeValue(trim(substr($dn, $vo, $di - $vo)));
+                        $value = static::unescapeValue(trim(substr($dn, $vo, $di - $vo)));
                         if (is_array($multi)) {
                             $va[count($va) - 1][] = $value;
                         } else {
@@ -685,11 +681,11 @@ class Dn implements \ArrayAccess
      */
     public static function implodeRdn(array $part, $caseFold = null)
     {
-        self::assertRdn($part);
-        $part     = self::caseFoldRdn($part, $caseFold);
+        static::assertRdn($part);
+        $part     = static::caseFoldRdn($part, $caseFold);
         $rdnParts = array();
         foreach ($part as $key => $value) {
-            $value            = self::escapeValue($value);
+            $value            = static::escapeValue($value);
             $keyId            = strtolower($key);
             $rdnParts[$keyId] = implode('=', array($key, $value));
         }
@@ -720,7 +716,7 @@ class Dn implements \ArrayAccess
     {
         $parts = array();
         foreach ($dnArray as $p) {
-            $parts[] = self::implodeRdn($p, $caseFold);
+            $parts[] = static::implodeRdn($p, $caseFold);
         }
 
         return implode($separator, $parts);
@@ -731,7 +727,7 @@ class Dn implements \ArrayAccess
      *
      * @param  string|Dn $childDn
      * @param  string|Dn $parentDn
-     * @return boolean
+     * @return bool
      */
     public static function isChildOf($childDn, $parentDn)
     {
@@ -741,12 +737,12 @@ class Dn implements \ArrayAccess
             if ($childDn instanceof Dn) {
                 $cdn = $childDn->toArray(DN::ATTR_CASEFOLD_LOWER);
             } else {
-                $cdn = self::explodeDn($childDn, $keys, $vals, DN::ATTR_CASEFOLD_LOWER);
+                $cdn = static::explodeDn($childDn, $keys, $vals, DN::ATTR_CASEFOLD_LOWER);
             }
             if ($parentDn instanceof Dn) {
                 $pdn = $parentDn->toArray(DN::ATTR_CASEFOLD_LOWER);
             } else {
-                $pdn = self::explodeDn($parentDn, $keys, $vals, DN::ATTR_CASEFOLD_LOWER);
+                $pdn = static::explodeDn($parentDn, $keys, $vals, DN::ATTR_CASEFOLD_LOWER);
             }
         } catch (Exception\LdapException $e) {
             return false;
@@ -756,7 +752,7 @@ class Dn implements \ArrayAccess
         if ($startIndex < 0) {
             return false;
         }
-        for ($i = 0; $i < count($pdn); $i++) {
+        for ($i = 0, $count = count($pdn); $i < $count; $i++) {
             if ($cdn[$i + $startIndex] != $pdn[$i]) {
                 return false;
             }
