@@ -45,15 +45,36 @@
       </td>
     </tr>
   <? endif; ?>
-</table>
 
-<? $role = false; foreach ($credits as $credit): ?>
-  <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; ?>
-    <h2><?=$this->escapeHtml($role)?></h2>
+  <?
+    if (count($credits) > 0) {
+      $groupedCredits = array();
+      foreach ($credits as $credit) {
+        if (!isset($groupedCredits[$credit['Role_Name']])) {
+          $groupedCredits[$credit['Role_Name']] = array();
+        }
+        $groupedCredits[$credit['Role_Name']][] = $credit;
+      }
+    } else {
+      $groupedCredits = array();
+    }
+  ?>
+
+  <? if (count($groupedCredits) > 0): ?>
+    <? foreach ($groupedCredits as $role => $group): ?>
+      <tr>
+        <th><?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's') ?>:</th>
+        <td>
+          <? foreach ($group as $credit): ?>
+            <a href="<?=$this->url('person', array('id' => $credit['Person_ID']))?>">
+              <?=$this->showperson($credit)?>
+            </a>
+            <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
+            <br />
+          <? endforeach; ?>
+        </td>
+      </tr>
+    <? endforeach; ?>
   <? endif; ?>
-  <a href="<?=$this->url('person', array('id' => $credit['Person_ID']))?>">
-    <?=$this->showperson($credit)?>
-  </a>
-  <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
-  <br />
-<? endforeach; ?>
+
+</table>
