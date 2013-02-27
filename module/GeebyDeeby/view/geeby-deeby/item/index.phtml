@@ -16,6 +16,25 @@
   <div style="clear: left;"><!-- empty --></div>
 <? endif; ?>
 
+<table class="item">
+  <? if (count($series) > 0): ?>
+    <tr>
+      <th>Series:</th>
+      <td>
+        <? foreach ($series as $current): ?>
+          <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+            <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+          </a>
+          <? if ($current['Position'] > 0): ?>
+            #<?=$this->escapeHtml($current['Position'])?>
+          <? endif; ?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+</table>
+
 <? $role = false; foreach ($credits as $credit): ?>
   <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; ?>
     <h2><?=$this->escapeHtml($role)?></h2>

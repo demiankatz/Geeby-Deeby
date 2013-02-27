@@ -124,3 +124,10 @@ table.image {
     width: auto;
     float: left;
 }
+
+table.item {
+    width: auto;
+}
+table.item td, table.item th {
+    text-align: left;
+}

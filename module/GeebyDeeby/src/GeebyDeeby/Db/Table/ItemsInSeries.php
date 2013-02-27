@@ -72,4 +72,26 @@ class ItemsInSeries extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of series for the specified item.
+     *
+     * @var int $itemID Item ID
+     *
+     * @return mixed
+     */
+    public function getSeriesForItem($itemID)
+    {
+        $callback = function ($select) use ($itemID) {
+            $select->join(
+                array('s' => 'Series'),
+                'Items_In_Series.Series_ID = s.Series_ID'
+            );
+            $select->order(
+                array('s.Series_Name', 'Position')
+            );
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return $this->select($callback);
+    }
 }
