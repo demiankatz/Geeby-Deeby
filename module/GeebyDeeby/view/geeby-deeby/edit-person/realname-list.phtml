@@ -4,7 +4,7 @@
       <tr>
         <td>
           <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
-            <?=$this->escapeHtml($current['Last_Name'] . ', ' . $current['First_Name'] . ' ' . $current['Middle_Name'])?>
+            <?=$this->showPerson($current)?>
           </a>
         </td>
         <td>
