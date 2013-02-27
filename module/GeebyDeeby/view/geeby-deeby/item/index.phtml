@@ -33,6 +33,18 @@
       </td>
     </tr>
   <? endif; ?>
+  <? $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
+    <tr>
+      <th>Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($altTitles as $altTitle): ?>
+          <?=$this->escapeHtml($this->fixtitle($altTitle['Item_AltName']))?>
+          <? if (!empty($altTitle['Note'])): ?>(<?=$this->escapeHtml($altTitle['Note'])?>)<? endif; ?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
 </table>
 
 <? $role = false; foreach ($credits as $credit): ?>

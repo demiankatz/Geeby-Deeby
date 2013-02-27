@@ -57,6 +57,7 @@ class ItemController extends AbstractBase
         $view->credits = $this->getDbTable('itemscredits')->getCreditsForItem($id);
         $view->images = $this->getDbTable('itemsimages')->getImagesForItem($id);
         $view->series = $this->getDbTable('itemsinseries')->getSeriesForItem($id);
+        $view->altTitles = $this->getDbTable('itemsalttitles')->getAltTitles($id);
         return $view;
     }
 
