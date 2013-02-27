@@ -3,6 +3,19 @@
     $this->headTitle('Item - ' . $title . ' - ');
 ?>
 <h1><?=$this->escapeHtml($title)?></h1>
+
+<? if (count($images) > 0): ?>
+  <? foreach ($images as $image): ?>
+    <table class="image">
+      <tr><td align="center"><a target="_new" href="<?=$this->escapeHtml($image['Image_Path'])?>"><img src="<?=$this->escapeHtml($image['Thumb_Path'])?>" /></a></td></tr>
+      <? if (!empty($image['Note'])): ?>
+        <tr><td align="center">(<?=$this->escapeHtml($image['Note'])?>)</td></tr>
+      <? endif; ?>
+    </table>
+  <? endforeach; ?>
+  <div style="clear: left;"><!-- empty --></div>
+<? endif; ?>
+
 <? $role = false; foreach ($credits as $credit): ?>
   <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; ?>
     <h2><?=$this->escapeHtml($role)?></h2>

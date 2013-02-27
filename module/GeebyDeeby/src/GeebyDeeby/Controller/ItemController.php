@@ -55,6 +55,7 @@ class ItemController extends AbstractBase
             array('item' => $rowObj->toArray())
         );
         $view->credits = $this->getDbTable('itemscredits')->getCreditsForItem($id);
+        $view->images = $this->getDbTable('itemsimages')->getImagesForItem($id);
         return $view;
     }
 

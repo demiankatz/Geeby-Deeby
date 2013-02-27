@@ -119,3 +119,8 @@ p.file, span.item {
 .link .url {
     color: green;
 }
+
+table.image {
+    width: auto;
+    float: left;
+}
