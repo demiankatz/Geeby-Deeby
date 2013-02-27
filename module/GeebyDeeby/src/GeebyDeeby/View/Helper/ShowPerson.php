@@ -52,6 +52,13 @@ class ShowPerson extends \Zend\View\Helper\AbstractHelper
         if (!empty($first)) {
             $text .= ', ' . $first;
         }
+        if (!empty($person['Extra_Details'])) {
+            // We don't want spaces before commas:
+            if (substr($person['Extra_Details'], 0, 1) !== ',') {
+                $text .= ' ';
+            }
+            $text .= $person['Extra_Details'];
+        }
         return $text;
     }
 }
