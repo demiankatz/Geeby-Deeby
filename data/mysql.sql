@@ -16,6 +16,20 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `Authorities`
+--
+
+DROP TABLE IF EXISTS `Authorities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Authorities` (
+  `Authority_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Authority_Name` tinytext NOT NULL,
+  PRIMARY KEY (`Authority_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Categories`
 --
 
@@ -475,7 +489,9 @@ CREATE TABLE `People` (
   `First_Name` tinytext,
   `Middle_Name` tinytext,
   `Last_Name` tinytext,
+  `Extra_Details` tinytext,
   `Biography` text,
+  `Authority_ID` int,
   PRIMARY KEY (`Person_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -48,9 +48,11 @@ class EditPersonController extends AbstractBase
         $view = $this->getGenericList(
             'person', 'people', 'geeby-deeby/edit-person/render-people'
         );
-        // If this is not an AJAX request, we also want to display roles:
+        // If this is not an AJAX request, we also want to display roles
+        // and authorities:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->roles = $this->rolelistAction()->roles;
+            $view->authorities = $this->authoritylistAction()->authorities;
         }
         return $view;
     }
@@ -64,9 +66,11 @@ class EditPersonController extends AbstractBase
     {
         $assignMap = array(
             'first' => 'First_Name', 'middle' => 'Middle_Name',
-            'last' => 'Last_Name', 'bio' => 'Biography'
+            'last' => 'Last_Name', 'extra' => 'Extra_Details',
+            'bio' => 'Biography', 'authority' => 'Authority_ID'
         );
         $view = $this->handleGenericItem('person', $assignMap, 'person');
+        $view->authorities = $this->authoritylistAction()->authorities;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->pseudonyms = $this->getDbTable('pseudonyms')
@@ -104,6 +108,29 @@ class EditPersonController extends AbstractBase
             'realnames', 'getRealNames',
             'geeby-deeby/edit-person/realname-list.phtml'
         );
+    }
+
+    /**
+     * Display a list of authorities
+     *
+     * @return mixed
+     */
+    public function authoritylistAction()
+    {
+        return $this->getGenericList(
+            'authority', 'authorities', 'geeby-deeby/edit-person/render-authorities'
+        );
+    }
+
+    /**
+     * Operate on a single authority
+     *
+     * @return mixed
+     */
+    public function authorityAction()
+    {
+        $assignMap = array('authority' => 'Authority_Name');
+        return $this->handleGenericItem('authority', $assignMap, 'authority');
     }
 
     /**

@@ -14,6 +14,14 @@
       <td><input type="text" id="Last_Name" value="<?=$this->escapeHtml(isset($person['Last_Name']) ? $person['Last_Name'] : '')?>" /></td>
     </tr>
     <tr>
+      <th>Extra Details (birth/death dates, etc.):</th>
+      <td><input type="text" id="Extra_Details" value="<?=$this->escapeHtml(isset($person['Extra_Details']) ? $person['Extra_Details'] : '')?>" /></td>
+    </tr>
+    <tr>
+      <th>Authority Source:</th>
+      <td><?=$this->render('geeby-deeby/edit-person/authority-select.phtml', array('authorities' => $authorities, 'selected' => $person['Authority_ID']))?></td>
+    </tr>
+    <tr>
       <th>Biography:</th>
       <td><textarea id="Biography"><?=$this->escapeHtml(isset($person['Biography']) ? $person['Biography'] : '')?></textarea></td>
     </tr>

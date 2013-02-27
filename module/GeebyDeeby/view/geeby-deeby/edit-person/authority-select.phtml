@@ -1,0 +1,8 @@
+<select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Authority_ID">
+  <option value="">None</option>
+  <? foreach ($authorities as $current): ?>
+    <option value="<?=$current['Authority_ID']?>"<?=(isset($selected) && $current['Authority_ID'] == $selected) ? ' selected="selected"' : ''?>>
+      <?=$this->escapeHtml($current['Authority_Name'])?>
+    </option>
+  <? endforeach; ?>
+</select>

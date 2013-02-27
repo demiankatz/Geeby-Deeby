@@ -18,6 +18,7 @@ return array(
         'dbPass' => 'gbdb', // database password
         'db_table_plugin_manager' => array(
             'invokables' => array(
+                'authority' => 'GeebyDeeby\Db\Table\Authority',
                 'category' => 'GeebyDeeby\Db\Table\Category',
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'file' => 'GeebyDeeby\Db\Table\File',
@@ -338,6 +339,27 @@ return array(
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'person_authority' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/PersonAuthority[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditPerson',
+                                'action'        => 'authority',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'person_authority_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/PersonAuthorityList',
+                            'defaults' => array(
+                                'controller'    => 'EditPerson',
+                                'action'        => 'authoritylist',
                             ),
                         ),
                     ),

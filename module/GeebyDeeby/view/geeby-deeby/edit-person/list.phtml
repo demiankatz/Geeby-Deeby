@@ -10,6 +10,11 @@
       <div id="people_list"><?=$this->render('geeby-deeby/edit-person/render-people.phtml')?></div>
     </td>
     <td>
+      <p><b>Authorities:</b></p>
+      <button id="add_authority" type="button" onclick="editAuthority('NEW');">Add Authority</button>
+      <br /><br />
+      <div id="authority_list"><?=$this->render('geeby-deeby/edit-person/render-authorities.phtml')?></div>
+
       <p><b>Roles:</b></p>
       <button id="add_role" type="button" onclick="editRole('NEW');">Add Role</button>
       <br /><br />
