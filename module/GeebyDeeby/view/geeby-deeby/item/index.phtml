@@ -46,6 +46,17 @@
     </tr>
   <? endif; ?>
 
+  <? $platformCount = count($platforms); if ($platformCount > 0): ?>
+    <tr>
+      <th>Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($platforms as $platform): ?>
+          <a href="<?=$this->url('platform', array('id' => $platform['Platform_ID']))?>"><?=$this->escapeHtml($platform['Platform'])?></a><br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
   <?
     if (count($credits) > 0) {
       $groupedCredits = array();

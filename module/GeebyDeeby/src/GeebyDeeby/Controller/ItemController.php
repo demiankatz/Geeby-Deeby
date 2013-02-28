@@ -60,6 +60,8 @@ class ItemController extends AbstractBase
         $view->images = $this->getDbTable('itemsimages')->getImagesForItem($id);
         $view->series = $this->getDbTable('itemsinseries')->getSeriesForItem($id);
         $view->altTitles = $this->getDbTable('itemsalttitles')->getAltTitles($id);
+        $view->platforms = $this->getDbTable('itemsplatforms')
+            ->getPlatformsForItem($id);
         return $view;
     }
 
