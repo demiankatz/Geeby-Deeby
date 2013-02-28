@@ -57,6 +57,32 @@
     </tr>
   <? endif; ?>
 
+  <? if (count($containedIn) > 0): ?>
+    <tr>
+      <th>Contained In:</th>
+      <td>
+        <? foreach ($containedIn as $current): ?>
+          <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
+          </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?>)<br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? if (count($contains) > 0): ?>
+    <tr>
+      <th>Contains:</th>
+      <td>
+        <? foreach ($contains as $current): ?>
+          <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
+          </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?>)<br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
   <?
     if (count($credits) > 0) {
       $groupedCredits = array();

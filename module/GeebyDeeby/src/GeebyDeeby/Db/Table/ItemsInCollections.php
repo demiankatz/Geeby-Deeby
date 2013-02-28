@@ -48,6 +48,32 @@ class ItemsInCollections extends Gateway
     }
 
     /**
+     * Get a list of collections for the specified item.
+     *
+     * @var int $itemID Item ID
+     *
+     * @return mixed
+     */
+    public function getCollectionsForItem($itemID)
+    {
+        $callback = function ($select) use ($itemID) {
+            $select->join(
+                array('i' => 'Items'),
+                'Items_In_Collections.Collection_Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('mt' => 'Material_Types'),
+                'i.Material_Type_ID = mt.Material_Type_ID'
+            );
+            $select->order(
+                array('mt.Material_Type_Name', 'i.Item_Name')
+            );
+            $select->where->equalTo('Items_In_Collections.Item_ID', $itemID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of items for the specified collection.
      *
      * @var int $collectionID Item ID

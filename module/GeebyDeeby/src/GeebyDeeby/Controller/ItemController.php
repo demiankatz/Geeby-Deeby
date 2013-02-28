@@ -62,6 +62,9 @@ class ItemController extends AbstractBase
         $view->altTitles = $this->getDbTable('itemsalttitles')->getAltTitles($id);
         $view->platforms = $this->getDbTable('itemsplatforms')
             ->getPlatformsForItem($id);
+        $collections = $this->getDbTable('itemsincollections');
+        $view->contains = $collections->getItemsForCollection($id);
+        $view->containedIn = $collections->getCollectionsForItem($id);
         return $view;
     }
 
