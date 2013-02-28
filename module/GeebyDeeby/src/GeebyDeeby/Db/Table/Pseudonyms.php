@@ -49,7 +49,7 @@ class Pseudonyms extends Gateway
     /**
      * Get a list of pseudonyms for a real name.
      *
-     * @var int $personID Real person ID
+     * @param int $personID Real person ID
      *
      * @return mixed
      */
@@ -69,7 +69,7 @@ class Pseudonyms extends Gateway
     /**
      * Get a list of real names for a pseudonym.
      *
-     * @var int $personID Pseudonym ID
+     * @param int $personID Pseudonym ID
      *
      * @return mixed
      */
@@ -84,5 +84,24 @@ class Pseudonyms extends Gateway
             $select->where->equalTo('Pseudo_Person_ID', $personID);
         };
         return $this->select($callback);
+    }
+
+    /**
+     * Get a batch of real name information keyed by ID.
+     *
+     * @param Iterable $people Collection of people to look up
+     *
+     * @return array
+     */
+    public function getRealNamesBatch($people)
+    {
+        $retVal = array();
+        foreach ($people as $person) {
+            $id = $person['Person_ID'];
+            if (!isset($retVal[$id])) {
+                $retVal[$id] = $this->getRealNames($id)->toArray();
+            }
+        }
+        return $retVal;
     }
 }
