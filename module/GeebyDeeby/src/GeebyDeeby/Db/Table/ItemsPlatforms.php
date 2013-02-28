@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Items_Platforms
@@ -44,6 +45,34 @@ class ItemsPlatforms extends Gateway
     public function __construct()
     {
         parent::__construct('Items_Platforms');
+    }
+
+    /**
+     * Get items for the specified platform.
+     *
+     * @var int $platformID Platform ID
+     */
+    public function getItemsForPlatform($platformID)
+    {
+        $callback = function ($select) use ($platformID) {
+            $select->join(
+                array('i' => 'Items'),
+                'Items_Platforms.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('iis' => 'Items_In_Series'),
+                'i.Item_ID = iis.Item_ID'
+            );
+            $select->join(
+                array('s' => 'Series'),
+                'iis.Series_ID = s.Series_ID'
+            );
+            $select->order(
+                array('Series_Name', 'iis.Position', 'Item_Name')
+            );
+            $select->where->equalTo('Platform_ID', $platformID);
+        };
+        return $this->select($callback);
     }
 
     /**
