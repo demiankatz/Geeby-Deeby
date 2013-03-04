@@ -83,6 +83,32 @@
     </tr>
   <? endif; ?>
 
+  <? if (count($translatedFrom) > 0): ?>
+    <tr>
+      <th>Translated From:</th>
+      <td>
+        <? foreach ($translatedFrom as $current): ?>
+          <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
+          </a> (<?=$this->escapeHtml($current['Language_Name'])?>)<br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? if (count($translatedInto) > 0): ?>
+    <tr>
+      <th>Translated Into:</th>
+      <td>
+        <? foreach ($translatedInto as $current): ?>
+          <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
+          </a> (<?=$this->escapeHtml($current['Language_Name'])?>)<br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
   <?
     if (count($credits) > 0) {
       $groupedCredits = array();

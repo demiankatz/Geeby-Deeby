@@ -65,6 +65,13 @@ class ItemController extends AbstractBase
         $collections = $this->getDbTable('itemsincollections');
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);
+        $trans = $this->getDbTable('itemstranslations');
+        // The variable/function names are a bit unintuitive here --
+        // $view->translatedInto is a list of books that $id was translated into;
+        // we obtain these by calling $trans->getTranslatedFrom(), which gives
+        // us a list of books that $id was translated from.
+        $view->translatedInto = $trans->getTranslatedFrom($id, true);
+        $view->translatedFrom = $trans->getTranslatedInto($id, true);
         return $view;
     }
 

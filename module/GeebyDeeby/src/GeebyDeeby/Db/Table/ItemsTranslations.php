@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Expression;
 
 /**
  * Table Definition for Items_Translations
@@ -47,21 +48,52 @@ class ItemsTranslations extends Gateway
     }
 
     /**
+     * Support method to add language information to a query.
+     *
+     * @param \Zend\Db\Sql\Select $select Query to modify
+     *
+     * @return void
+     */
+    public static function addLanguageToSelect($select)
+    {
+        $select->join(
+            array('iis' => 'Items_In_Series'), 'iis.Item_ID = i.Item_ID', array()
+        );
+        $select->join(
+            array('s' => 'Series'), 's.Series_ID = iis.Series_ID', array()
+        );
+        $select->join(
+            array('l' => 'Languages'), 'l.Language_ID = s.Language_ID',
+            array(
+                'Language_Name' => new Expression(
+                    'min(?)', array('Language_Name'),
+                    array(Expression::TYPE_IDENTIFIER)
+                )
+            )
+        );
+        $select->group('i.Item_ID');
+    }
+
+    /**
      * Get a list of items translated from the specified item.
      *
-     * @var int $itemID Item ID
+     * @var int  $itemID      Item ID
+     * @var bool $includeLang Should we also load language information?
      *
      * @return mixed
      */
-    public function getTranslatedFrom($itemID)
+    public function getTranslatedFrom($itemID, $includeLang = false)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID, $includeLang) {
             $select->join(
                 array('i' => 'Items'),
                 'Items_Translations.Trans_Item_ID = i.Item_ID'
             );
             $select->where->equalTo('Source_Item_ID', $itemID);
             $select->order('i.Item_Name');
+            if ($includeLang) {
+                ItemsTranslations::addLanguageToSelect($select);
+            }
         };
         return $this->select($callback);
     }
@@ -69,19 +101,23 @@ class ItemsTranslations extends Gateway
     /**
      * Get a list of items translated into the specified item.
      *
-     * @var int $itemID Item ID
+     * @var int  $itemID      Item ID
+     * @var bool $includeLang Should we also load language information?
      *
      * @return mixed
      */
-    public function getTranslatedInto($itemID)
+    public function getTranslatedInto($itemID, $includeLang = false)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID, $includeLang) {
             $select->join(
                 array('i' => 'Items'),
                 'Items_Translations.Source_Item_ID = i.Item_ID'
             );
             $select->where->equalTo('Trans_Item_ID', $itemID);
             $select->order('i.Item_Name');
+            if ($includeLang) {
+                ItemsTranslations::addLanguageToSelect($select);
+            }
         };
         return $this->select($callback);
     }
