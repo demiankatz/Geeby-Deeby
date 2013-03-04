@@ -60,6 +60,10 @@ class ItemsAdaptations extends Gateway
                 array('i' => 'Items'),
                 'Items_Adaptations.Adapted_Item_ID = i.Item_ID'
             );
+            $select->join(
+                array('mt' => 'Material_Types'),
+                'i.Material_Type_ID = mt.Material_Type_ID'
+            );
             $select->where->equalTo('Source_Item_ID', $itemID);
             $select->order('i.Item_Name');
         };
@@ -79,6 +83,10 @@ class ItemsAdaptations extends Gateway
             $select->join(
                 array('i' => 'Items'),
                 'Items_Adaptations.Source_Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('mt' => 'Material_Types'),
+                'i.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->where->equalTo('Adapted_Item_ID', $itemID);
             $select->order('i.Item_Name');
