@@ -75,6 +75,7 @@ class ItemController extends AbstractBase
         $view->translatedFrom = $trans->getTranslatedInto($id, true);
         $view->adaptedInto = $adapt->getAdaptedFrom($id);
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
+        $view->dates = $this->getDbTable('itemsreleasedates')->getDatesForItem($id);
         return $view;
     }
 
