@@ -38,6 +38,7 @@ return array(
                 'itemsplatforms' => 'GeebyDeeby\Db\Table\ItemsPlatforms',
                 'itemsproductcodes' => 'GeebyDeeby\Db\Table\ItemsProductCodes',
                 'itemsreleasedates' => 'GeebyDeeby\Db\Table\ItemsReleaseDates',
+                'itemsreviews' => 'GeebyDeeby\Db\Table\ItemsReviews',
                 'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',
                 'language' => 'GeebyDeeby\Db\Table\Language',
                 'link' => 'GeebyDeeby\Db\Table\Link',

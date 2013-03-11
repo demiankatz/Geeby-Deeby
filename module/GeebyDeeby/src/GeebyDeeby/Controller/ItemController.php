@@ -80,6 +80,7 @@ class ItemController extends AbstractBase
         $view->codes = $this->getDbTable('itemsproductcodes')->getProductCodes($id);
         $view->descriptions = $this->getDbTable('itemsdescriptions')
             ->getDescriptions($id);
+        $view->reviews = $this->getDbTable('itemsreviews')->getReviews($id);
         return $view;
     }
 

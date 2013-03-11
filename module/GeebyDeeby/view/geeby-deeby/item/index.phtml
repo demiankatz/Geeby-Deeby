@@ -225,4 +225,15 @@
       </tr>
     <? endforeach; ?>
   <? endif; ?>
+
+  <? if (count($reviews) > 0): ?>
+    <? foreach ($reviews as $review): ?>
+      <tr>
+        <th><?=$this->escapeHtml($review['Username'])?>'s Thoughts:</th>
+        <td>
+          <?=$review['Review']?>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  <? endif; ?>
 </table>
