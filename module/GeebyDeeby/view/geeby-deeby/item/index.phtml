@@ -241,4 +241,12 @@
       </tr>
     <? endforeach; ?>
   <? endif; ?>
+
+  <? if (!empty($item['Item_Errata'])): ?>
+    <tr><th>Errata:</th><td><?=$item['Item_Errata']?></td></tr>
+  <? endif; ?>
+
+  <? if (!empty($item['Item_Thanks'])): ?>
+    <tr><th>Special Thanks:</th><td><?=$item['Item_Thanks']?></td></tr>
+  <? endif; ?>
 </table>
