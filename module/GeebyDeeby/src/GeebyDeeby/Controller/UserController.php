@@ -39,21 +39,34 @@ namespace GeebyDeeby\Controller;
 class UserController extends AbstractBase
 {
     /**
+     * Get a view model containing a user object (or return false if user missing)
+     *
+     * @return mixed
+     */
+    protected function getViewModelWithUser()
+    {
+        $id = $this->params()->fromRoute('id');
+        $table = $this->getDbTable('user');
+        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
+        if (!is_object($rowObj)) {
+            return false;
+        }
+        return $this->createViewModel(
+            array('user' => $rowObj->toArray())
+        );
+    }
+
+    /**
      * "Show user" page
      *
      * @return mixed
      */
     public function indexAction()
     {
-        $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('user');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view = $this->createViewModel(
-            array('user' => $rowObj->toArray())
-        );
         return $view;
     }
 
@@ -77,5 +90,20 @@ class UserController extends AbstractBase
     public function notfoundAction()
     {
         return $this->createViewModel();
+    }
+
+    /**
+     * Reviews page
+     *
+     * @return mixed
+     */
+    public function reviewsAction()
+    {
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
+        }
+        // TODO -- get reviews
+        return $view;
     }
 }

@@ -232,6 +232,11 @@
         <th><?=$this->escapeHtml($review['Username'])?>'s Thoughts:</th>
         <td>
           <?=$review['Review']?>
+          <p>
+            <a href="<?=$this->url('user', array('id' => $review['User_ID'], 'action' => 'Reviews'))?>">
+              More reviews by <?=$this->escapeHtml($review['Username'])?>
+            </a>
+          </p>
         </td>
       </tr>
     <? endforeach; ?>
