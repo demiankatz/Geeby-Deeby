@@ -6,7 +6,7 @@
   <p>No items listed in this database yet.</p>
 <? else: ?>
   <? $currentLetter = false; foreach ($items as $current): ?>
-    <? $first = substr($current['Item_Name'], 0, 1); if ($currentLetter !== $first): $currentLetter = $first; ?>
+    <? $first = $this->firstletter($current['Item_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <? endif; ?>
     <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">

@@ -6,7 +6,7 @@
   <p>No series listed in this database yet.</p>
 <? else: ?>
   <? $currentLetter = false; foreach ($series as $current): ?>
-    <? $first = substr($current['Series_Name'], 0, 1); if ($currentLetter !== $first): $currentLetter = $first; ?>
+    <? $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <? endif; ?>
     <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">

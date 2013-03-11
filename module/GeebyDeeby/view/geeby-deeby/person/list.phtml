@@ -6,7 +6,7 @@
   <p>No <?=$bioMode ? 'biographies' : 'people'?> listed in this database yet.</p>
 <? else: ?>
   <? $currentLetter = false; foreach ($people as $current): ?>
-    <? $first = substr($current['Last_Name'], 0, 1); if ($currentLetter !== $first): $currentLetter = $first; ?>
+    <? $first = $this->firstletter($current['Last_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <? endif; ?>
     <a href="<?=$this->url('person', array('id' => $current['Person_ID']))?>">

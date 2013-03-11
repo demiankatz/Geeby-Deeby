@@ -660,6 +660,7 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
+            'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
             'fixtitle' => 'GeebyDeeby\View\Helper\FixTitle',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',

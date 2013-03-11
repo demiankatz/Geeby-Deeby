@@ -6,7 +6,7 @@
   <p>No platforms listed in this database yet.</p>
 <? else: ?>
   <? $currentLetter = false; foreach ($platforms as $current): ?>
-    <? $first = substr($current['Platform'], 0, 1); if ($currentLetter !== $first): $currentLetter = $first; ?>
+    <? $first = $this->firstletter($current['Platform']); if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <? endif; ?>
     <a href="<?=$this->url('platform', array('id' => $current['Platform_ID']))?>">
