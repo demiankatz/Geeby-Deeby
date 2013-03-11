@@ -179,4 +179,33 @@
       </td>
     </tr>
   <? endif; ?>
+
+  <? $isbnCount = count($isbns); if ($isbnCount > 0): ?>
+    <tr>
+      <th>ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($isbns as $isbn): ?>
+          <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn['ISBN13']))?>">
+            <?=empty($isbn['ISBN']) ? '' : $this->escapeHtml($isbn['ISBN']) . ' / '?>
+            <?=$this->escapeHtml($isbn['ISBN13'])?>
+          </a>
+          <?=!empty($isbn['Note']) ? '(' . $this->escapeHtml($isbn['Note']) . ')' : ''?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? $codeCount = count($codes); if ($codeCount > 0): ?>
+    <tr>
+      <th>Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($codes as $code): ?>
+          <?=$this->escapeHtml($code['Product_Code'])?>
+          <?=!empty($code['Note']) ? '(' . $this->escapeHtml($code['Note']) . ')' : ''?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
 </table>

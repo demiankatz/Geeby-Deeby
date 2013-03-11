@@ -76,7 +76,24 @@ class ItemController extends AbstractBase
         $view->adaptedInto = $adapt->getAdaptedFrom($id);
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
         $view->dates = $this->getDbTable('itemsreleasedates')->getDatesForItem($id);
+        $view->isbns = $this->getDbTable('itemsisbns')->getISBNs($id);
+        $view->codes = $this->getDbTable('itemsproductcodes')->getProductCodes($id);
         return $view;
+    }
+
+    /**
+     * ISBN details
+     *
+     * @return mixed
+     */
+    public function isbndetailsAction()
+    {
+        $isbn = $this->params()->fromRoute('extra');
+        return $this->createViewModel(
+            array(
+                'isbn' => new \VuFind\Code\ISBN($isbn)
+            )
+        );
     }
 
     /**
