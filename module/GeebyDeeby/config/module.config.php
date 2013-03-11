@@ -579,6 +579,30 @@ return array(
                     ),
                 ),
             ),
+            'user' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/User[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'User',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
+            'users' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Users[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'User',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
         ),
     ),
     'service_manager' => array(
@@ -630,6 +654,7 @@ return array(
             'GeebyDeeby\Controller\Platform' => 'GeebyDeeby\Controller\PlatformController',
             'GeebyDeeby\Controller\Series' => 'GeebyDeeby\Controller\SeriesController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
+            'GeebyDeeby\Controller\User' => 'GeebyDeeby\Controller\UserController',
         ),
     ),
     'view_helpers' => array(

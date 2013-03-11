@@ -1,0 +1,16 @@
+<?
+    $this->headTitle('User List - ');
+?>
+<h1>User List</h1>
+<? if (count($users) < 1): ?>
+  <p>No users listed in this database yet.</p>
+<? else: ?>
+  <? $currentLetter = false; foreach ($users as $current): ?>
+    <? $first = substr($current['Username'], 0, 1); if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+    <? endif; ?>
+    <a href="<?=$this->url('user', array('id' => $current['User_ID']))?>">
+      <?=$this->escapeHtml($this->fixtitle($current['Username']))?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>
