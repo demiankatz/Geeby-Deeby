@@ -208,4 +208,12 @@
       </td>
     </tr>
   <? endif; ?>
+
+  <? if (!empty($item['Item_Length'])): ?>
+    <tr><th>Length:</th><td><?=$this->escapeHtml($item['Item_Length'])?></td></tr>
+  <? endif; ?>
+
+  <? if (!empty($item['Item_Endings'])): ?>
+    <tr><th>Number of Endings:</th><td><?=$this->escapeHtml($item['Item_Endings'])?></td></tr>
+  <? endif; ?>
 </table>
