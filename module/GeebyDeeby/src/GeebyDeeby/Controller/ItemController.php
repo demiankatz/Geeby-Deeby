@@ -78,6 +78,8 @@ class ItemController extends AbstractBase
         $view->dates = $this->getDbTable('itemsreleasedates')->getDatesForItem($id);
         $view->isbns = $this->getDbTable('itemsisbns')->getISBNs($id);
         $view->codes = $this->getDbTable('itemsproductcodes')->getProductCodes($id);
+        $view->descriptions = $this->getDbTable('itemsdescriptions')
+            ->getDescriptions($id);
         return $view;
     }
 

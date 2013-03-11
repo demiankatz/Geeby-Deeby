@@ -216,4 +216,13 @@
   <? if (!empty($item['Item_Endings'])): ?>
     <tr><th>Number of Endings:</th><td><?=$this->escapeHtml($item['Item_Endings'])?></td></tr>
   <? endif; ?>
+
+  <? if (count($descriptions) > 0): ?>
+    <? foreach ($descriptions as $desc): ?>
+      <tr>
+        <th><?=$this->escapeHtml($this->descriptionsource()->getName($desc['Source']))?>:</th>
+        <td><?=$desc['Description']?></td>
+      </tr>
+    <? endforeach; ?>
+  <? endif; ?>
 </table>
