@@ -249,4 +249,39 @@
   <? if (!empty($item['Item_Thanks'])): ?>
     <tr><th>Special Thanks:</th><td><?=$item['Item_Thanks']?></td></tr>
   <? endif; ?>
+
+  <? if (count($owners) > 0): ?>
+    <tr>
+      <th>Users Who Own This Item:</th>
+      <td>
+        <? $prevUser = false; foreach ($owners as $owner): $separator = $prevUser; ?><? if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><? if ($separator): ?>, <? endif; ?><a href="<?=$this->url('user', array('id' => $owner['User_ID'], 'action' => 'Collection'))?>"><?=$this->escapeHtml($prevUser)?></a><? endif; ?><? if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<? endif; ?><? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? if (count($buyers) > 0): ?>
+    <tr>
+      <th>Users Who Want This Item:</th>
+      <td>
+        <? $prevUser = false; foreach ($buyers as $buyer): $separator = $prevUser; ?><? if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><? if ($separator): ?>, <? endif; ?><a href="<?=$this->url('user', array('id' => $buyer['User_ID'], 'action' => 'Collection'))?>"><?=$this->escapeHtml($prevUser)?></a><? endif; ?><? if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<? endif; ?><? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? if (count($sellers) > 0): ?>
+    <tr>
+      <th>Users with Extra Copies:</th>
+      <td>
+        <? $prevUser = false; foreach ($sellers as $seller): $separator = $prevUser; ?>
+          <? if ($prevUser !== $seller['Username']): $prevUser = $seller['Username'];?>
+            <? if ($separator): ?><br /><? endif; ?>
+            <a href="<?=$this->url('user', array('id' => $seller['User_ID'], 'action' => 'Collection'))?>">
+              <?=$this->escapeHtml($prevUser)?>
+            </a>
+          <? endif; ?>
+          <? if (!empty($seller['Collection_Note'])): ?> - <?=$this->escapeHtml($seller['Collection_Note'])?><? endif; ?>
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
 </table>

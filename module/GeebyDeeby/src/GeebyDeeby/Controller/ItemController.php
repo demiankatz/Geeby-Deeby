@@ -81,6 +81,10 @@ class ItemController extends AbstractBase
         $view->descriptions = $this->getDbTable('itemsdescriptions')
             ->getDescriptions($id);
         $view->reviews = $this->getDbTable('itemsreviews')->getReviews($id);
+        $collections = $this->getDbTable('collections');
+        $view->buyers = $collections->getForItem($id, 'want');
+        $view->owners = $collections->getForItem($id, 'have');
+        $view->sellers = $collections->getForItem($id, 'extra');
         return $view;
     }
 

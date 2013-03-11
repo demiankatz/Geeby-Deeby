@@ -20,6 +20,7 @@ return array(
             'invokables' => array(
                 'authority' => 'GeebyDeeby\Db\Table\Authority',
                 'category' => 'GeebyDeeby\Db\Table\Category',
+                'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'file' => 'GeebyDeeby\Db\Table\File',
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
