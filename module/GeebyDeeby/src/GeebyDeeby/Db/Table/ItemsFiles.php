@@ -65,4 +65,28 @@ class ItemsFiles extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of files for the specified item.
+     *
+     * @var int $itemID Item ID
+     *
+     * @return mixed
+     */
+    public function getFilesForItem($itemID)
+    {
+        $callback = function ($select) use ($itemID) {
+            $select->join(
+                array('f' => 'Files'),
+                'Items_Files.File_ID = f.File_ID'
+            );
+            $select->join(
+                array('ft' => 'File_Types'),
+                'f.File_Type_ID = ft.File_Type_ID'
+            );
+            $select->order(array('File_Type', 'File_Name'));
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return $this->select($callback);
+    }
 }

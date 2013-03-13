@@ -85,6 +85,10 @@ class ItemController extends AbstractBase
         $view->buyers = $collections->getForItem($id, 'want');
         $view->owners = $collections->getForItem($id, 'have');
         $view->sellers = $collections->getForItem($id, 'extra');
+        $view->files = $this->getDbTable('itemsfiles')->getFilesForItem($id);
+        $view->bibliography = $this->getDbTable('itemsbibliography')
+            ->getItemsDescribingItem($id);
+        $view->links = $this->getDbTable('itemslinks')->getLinksForItem($id);
         return $view;
     }
 
