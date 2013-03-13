@@ -70,4 +70,37 @@ class ItemsReviews extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of items reviewed by the specified user.
+     *
+     * @var int    $userID   User ID
+     * @var string $approved 'y' to get only approved items, 'n' for only unapproved
+     * items, null for all items
+     */
+    public function getReviewsByUser($userID, $approved = 'y')
+    {
+        $callback = function ($select) use ($userID, $approved) {
+            $select->join(
+                array('i' => 'Items'),
+                'Items_Reviews.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('iis' => 'Items_In_Series'),
+                'i.Item_ID = iis.Item_ID'
+            );
+            $select->join(
+                array('s' => 'Series'),
+                'iis.Series_ID = s.Series_ID'
+            );
+            $select->order(
+                array('Series_Name', 's.Series_ID', 'iis.Position', 'Item_Name')
+            );
+            if (null !== $approved) {
+                $select->where->equalTo('Approved', $approved);
+            }
+            $select->where->equalTo('User_ID', $userID);
+        };
+        return $this->select($callback);
+    }
 }

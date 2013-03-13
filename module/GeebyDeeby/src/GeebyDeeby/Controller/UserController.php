@@ -147,7 +147,8 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        // TODO -- get reviews
+        $view->reviews = $this->getDbTable('itemsreviews')
+            ->getReviewsByUser($view->user['User_ID']);
         return $view;
     }
 }
