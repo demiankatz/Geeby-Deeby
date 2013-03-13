@@ -57,6 +57,22 @@ class UserController extends AbstractBase
     }
 
     /**
+     * Extra books in collection page
+     *
+     * @return mixed
+     */
+    public function extrasAction()
+    {
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
+        }
+        $view->extras = $this->getDbTable('collections')
+            ->getForUser($view->user['User_ID'], 'extra');
+        return $view;
+    }
+
+    /**
      * "Show user" page
      *
      * @return mixed

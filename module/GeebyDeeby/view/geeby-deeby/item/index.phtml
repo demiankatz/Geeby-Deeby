@@ -275,7 +275,7 @@
         <? $prevUser = false; foreach ($sellers as $seller): $separator = $prevUser; ?>
           <? if ($prevUser !== $seller['Username']): $prevUser = $seller['Username'];?>
             <? if ($separator): ?><br /><? endif; ?>
-            <a href="<?=$this->url('user', array('id' => $seller['User_ID'], 'action' => 'Collection'))?>">
+            <a href="<?=$this->url('user', array('id' => $seller['User_ID'], 'action' => 'Extras'))?>">
               <?=$this->escapeHtml($prevUser)?>
             </a>
           <? endif; ?>

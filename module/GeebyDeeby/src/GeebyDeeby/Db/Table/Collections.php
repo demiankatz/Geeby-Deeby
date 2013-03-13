@@ -69,4 +69,38 @@ class Collections extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of items on a user's collection list(s).
+     *
+     * @param int    $userID User ID
+     * @param string $type   List type ('extra', 'have', 'want' or null for all)
+     *
+     * @return mixed
+     */
+    public function getForUser($userID, $type = null)
+    {
+        $callback = function ($select) use ($userID, $type) {
+            $select->join(
+                array('i' => 'Items'),
+                'Collections.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('iis' => 'Items_In_Series'),
+                'i.Item_ID = iis.Item_ID'
+            );
+            $select->join(
+                array('s' => 'Series'),
+                'iis.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
+            );
+            $select->order(
+                array('Series_Name', 's.Series_ID', 'Position', 'Item_Name')
+            );
+            $select->where->equalTo('Collections.User_ID', $userID);
+            if (null !== $type) {
+                $select->where->equalTo('Collection_Status', $type);
+            }
+        };
+        return $this->select($callback);
+    }
 }

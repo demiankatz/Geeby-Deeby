@@ -108,7 +108,7 @@ input.number {
     width: 50px;
 }
 
-h3.filetype, h3.materialType, h3.series, .link {
+h3.filetype, h3.materialType, h3.series, .link, p.extraitem {
     margin-left: 2em;
 }
 
@@ -130,4 +130,11 @@ table.item {
 }
 table.item td, table.item th {
     text-align: left;
+}
+
+.disclaimer {
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid black;
+    background-color: white;
 }
