@@ -55,7 +55,7 @@ class ItemsReviews extends Gateway
      *
      * @return mixed
      */
-    public function getReviews($itemID, $approved = 'y')
+    public function getReviewsForItem($itemID, $approved = 'y')
     {
         $callback = function ($select) use ($itemID, $approved) {
             $select->order('Username');
