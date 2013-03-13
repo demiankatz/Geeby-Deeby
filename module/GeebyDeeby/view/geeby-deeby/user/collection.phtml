@@ -1,0 +1,48 @@
+<?
+    $title = $user['Username'];
+    $this->headTitle('Have/Want Lists - ' . $title . ' - ');
+?>
+<h1>Have/Want Lists - <?=$this->escapeHtml($title)?></h1>
+
+<p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>
+
+<? if (count($collection) < 1): ?>
+  <p>No items listed.</p>
+<? else: ?>
+  <? foreach ($collection as $language => $series_data): ?>
+    <h2 class="language">Items in <?=$this->escapeHtml($language)?></h2>
+    <table class="collection">
+      <? foreach ($series_data as $series => $parts): ?>
+        <tr>
+          <td class="series"><a href="<?=$this->url('series', array('id' => $series))?>"><?=$this->escapeHtml($this->fixtitle($seriesNames[$series]))?></a></td>
+          <td class="want">
+            <b>Wants:</b>
+            <? if (!isset($parts['want']) || count($parts['want']) < 1): ?>
+              None.
+            <? else: ?>
+              <? $count = count($parts['want']); foreach ($parts['want'] as $i => $current): ?>
+                <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+                  <?=$this->escapeHtml($current['Position'] == 0 ? $this->fixtitle($current['Item_Name']) : $current['Position'])?>
+                </a><?=empty($current['Collection_Note']) ? '' : '(' . $this->escapeHtml($current['Collection_Note']) . ')'?><?=($i + 1 < $count) ? ', ' : ''?>
+              <? endforeach; ?>
+            <? endif; ?>
+          </td>
+          <td class="have">
+            <b>Has:</b>
+            <? if (!isset($parts['have']) || count($parts['have']) < 1): ?>
+              None.
+            <? else: ?>
+              <? $count = count($parts['have']); foreach ($parts['have'] as $i => $current): ?>
+                <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+                  <?=$this->escapeHtml($current['Position'] == 0 ? $this->fixtitle($current['Item_Name']) : $current['Position'])?>
+                </a><?=empty($current['Collection_Note']) ? '' : '(' . $this->escapeHtml($current['Collection_Note']) . ')'?><?=($i + 1 < $count) ? ', ' : ''?>
+              <? endforeach; ?>
+            <? endif; ?>
+          </td>
+        </tr>
+      <? endforeach; ?>
+    </table>
+  <? endforeach; ?>
+<? endif; ?>
+
+<br />

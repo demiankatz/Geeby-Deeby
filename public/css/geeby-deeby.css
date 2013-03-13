@@ -138,3 +138,15 @@ table.item td, table.item th {
     border: 1px solid black;
     background-color: white;
 }
+
+.collection, .collection td {
+    border: 1px solid black;
+}
+
+.collection .series {
+    width: 15%;
+}
+
+.collection .have, .collection .want {
+    width: 40%;
+}

@@ -57,6 +57,34 @@ class UserController extends AbstractBase
     }
 
     /**
+     * Collection have/want page
+     *
+     * @return mixed
+     */
+    public function collectionAction()
+    {
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
+        }
+        $collection = $this->getDbTable('collections')
+            ->getForUser($view->user['User_ID'], array('have', 'want'), true);
+        // Format the data for more convenient display:
+        $formatted = array();
+        $seriesNames = array();
+        foreach ($collection as $current) {
+            $lang = $current['Language_Name'];
+            $series = $current['Series_ID'];
+            $seriesNames[$series] = $current['Series_Name'];
+            $type = $current['Collection_Status'];
+            $formatted[$lang][$series][$type][] = $current;
+        }
+        $view->collection = $formatted;
+        $view->seriesNames = $seriesNames;
+        return $view;
+    }
+
+    /**
      * Extra books in collection page
      *
      * @return mixed

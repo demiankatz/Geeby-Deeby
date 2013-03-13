@@ -73,14 +73,16 @@ class Collections extends Gateway
     /**
      * Get a list of items on a user's collection list(s).
      *
-     * @param int    $userID User ID
-     * @param string $type   List type ('extra', 'have', 'want' or null for all)
+     * @param int          $userID      User ID
+     * @param string|array $type        List type ('extra', 'have', 'want' -- or
+     * array of these values -- or null for all)
+     * @param bool         $groupByLang Should we group by language?
      *
      * @return mixed
      */
-    public function getForUser($userID, $type = null)
+    public function getForUser($userID, $type = null, $groupByLang = false)
     {
-        $callback = function ($select) use ($userID, $type) {
+        $callback = function ($select) use ($userID, $type, $groupByLang) {
             $select->join(
                 array('i' => 'Items'),
                 'Collections.Item_ID = i.Item_ID'
@@ -93,12 +95,28 @@ class Collections extends Gateway
                 array('s' => 'Series'),
                 'iis.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
             );
-            $select->order(
-                array('Series_Name', 's.Series_ID', 'Position', 'Item_Name')
-            );
+            if ($groupByLang) {
+                $select->join(
+                    array('l' => 'Languages'), 's.Language_ID = l.Language_ID'
+                );
+                $order = array(
+                    'Language_Name', 'Series_Name', 's.Series_ID',
+                    'Collection_Status', 'Position','Item_Name'
+                );
+            } else {
+                $order = array(
+                    'Series_Name', 's.Series_ID', 'Collection_Status', 'Position',
+                    'Item_Name'
+                );
+            }
+            $select->order($order);
             $select->where->equalTo('Collections.User_ID', $userID);
             if (null !== $type) {
-                $select->where->equalTo('Collection_Status', $type);
+                if (is_array($type)) {
+                    $select->where->in('Collection_Status', $type);
+                } else {
+                    $select->where->equalTo('Collection_Status', $type);
+                }
             }
         };
         return $this->select($callback);
