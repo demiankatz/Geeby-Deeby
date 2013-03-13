@@ -31,9 +31,9 @@
     <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; $series = false; ?>
       <h2>Items with "<?=$this->escapeHtml($title)?>" as <?=$this->escapeHtml($role)?></h2>
     <? endif; ?>
-    <? if ($series !== $credit['Series_Name']): $series = $credit['Series_Name']; ?>
-      <h3 class="series"><a href="<?=$this->url('series', array('id' => $credit['Series_ID']))?>">
-        <?=$this->fixtitle($series);?>
+    <? if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
+      <h3 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+        <?=$this->fixtitle($credit['Series_Name']);?>
       </a></h3>
     <? endif; ?>
     <span class="item">

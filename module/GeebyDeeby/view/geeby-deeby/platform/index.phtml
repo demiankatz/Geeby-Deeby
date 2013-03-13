@@ -7,9 +7,9 @@
 
 <? if (count($items) > 0): $displayedSomething = true; ?>
   <? $series = false; foreach ($items as $credit): ?>
-    <? if ($series !== $credit['Series_Name']): $series = $credit['Series_Name']; ?>
-      <h2 class="series"><a href="<?=$this->url('series', array('id' => $credit['Series_ID']))?>">
-        <?=$this->fixtitle($series);?>
+    <? if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
+      <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+        <?=$this->fixtitle($credit['Series_Name']);?>
       </a></h2>
     <? endif; ?>
     <span class="item">

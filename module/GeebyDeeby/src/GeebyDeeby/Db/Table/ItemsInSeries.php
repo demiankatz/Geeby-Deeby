@@ -88,7 +88,7 @@ class ItemsInSeries extends Gateway
                 'Items_In_Series.Series_ID = s.Series_ID'
             );
             $select->order(
-                array('s.Series_Name', 'Position')
+                array('s.Series_Name', 's.Series_ID', 'Position')
             );
             $select->where->equalTo('Item_ID', $itemID);
         };

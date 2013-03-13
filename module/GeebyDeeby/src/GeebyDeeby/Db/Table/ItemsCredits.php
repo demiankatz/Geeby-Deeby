@@ -79,7 +79,10 @@ class ItemsCredits extends Gateway
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->order(
-                array('Role_Name', 'Series_Name', 'iis.Position', 'Item_Name')
+                array(
+                    'Role_Name', 'Series_Name', 's.Series_ID', 'iis.Position',
+                    'Item_Name'
+                )
             );
             $select->where->equalTo('Person_ID', $personID);
         };

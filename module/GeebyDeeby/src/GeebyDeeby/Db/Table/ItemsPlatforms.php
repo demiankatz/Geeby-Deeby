@@ -68,7 +68,7 @@ class ItemsPlatforms extends Gateway
                 'iis.Series_ID = s.Series_ID'
             );
             $select->order(
-                array('Series_Name', 'iis.Position', 'Item_Name')
+                array('Series_Name', 's.Series_ID', 'iis.Position', 'Item_Name')
             );
             $select->where->equalTo('Platform_ID', $platformID);
         };
