@@ -60,6 +60,10 @@ class SeriesTranslations extends Gateway
                 array('s' => 'Series'),
                 'Series_Translations.Trans_Series_ID = s.Series_ID'
             );
+            $select->join(
+                array('l' => 'Languages'),
+                'l.Language_ID = s.Language_ID'
+            );
             $select->where->equalTo('Source_Series_ID', $seriesID);
             $select->order('s.Series_Name');
         };
@@ -79,6 +83,10 @@ class SeriesTranslations extends Gateway
             $select->join(
                 array('s' => 'Series'),
                 'Series_Translations.Source_Series_ID = s.Series_ID'
+            );
+            $select->join(
+                array('l' => 'Languages'),
+                'l.Language_ID = s.Language_ID'
             );
             $select->where->equalTo('Trans_Series_ID', $seriesID);
             $select->order('s.Series_Name');

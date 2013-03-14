@@ -11,6 +11,7 @@
 
 <table class="series">
   <tr><th>Language:</th><td><?=$this->escapeHtml($language['Language_Name'])?></td></tr>
+
   <? $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
     <tr>
       <th>Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
@@ -23,6 +24,7 @@
       </td>
     </tr>
   <? endif; ?>
+
   <? $pubCount = count($publishers); if ($pubCount > 0): ?>
     <tr>
       <th>Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
@@ -46,6 +48,7 @@
       </td>
     </tr>
   <? endif; ?>
+
   <? $catCount = count($categories); if ($catCount > 0): ?>
     <tr>
       <th><?=$catCount > 1 ? 'Categories' : 'Category'?>:</th>
@@ -54,6 +57,32 @@
           <a href="<?=$this->url('category', array('id' => $category['Category_ID']))?>">
             <?=$this->escapeHtml($category['Category'])?>
           </a><br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? if (count($translatedFrom) > 0): ?>
+    <tr>
+      <th>Translated From:</th>
+      <td>
+        <? foreach ($translatedFrom as $current): ?>
+          <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+            <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+          </a> (<?=$this->escapeHtml($current['Language_Name'])?>)<br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? if (count($translatedInto) > 0): ?>
+    <tr>
+      <th>Translated Into:</th>
+      <td>
+        <? foreach ($translatedInto as $current): ?>
+          <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+            <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+          </a> (<?=$this->escapeHtml($current['Language_Name'])?>)<br />
         <? endforeach; ?>
       </td>
     </tr>
