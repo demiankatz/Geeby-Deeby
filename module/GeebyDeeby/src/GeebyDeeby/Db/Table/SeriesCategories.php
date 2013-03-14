@@ -60,6 +60,7 @@ class SeriesCategories extends Gateway
                 array('c' => 'Categories'),
                 'Series_Categories.Category_ID = c.Category_ID'
             );
+            $select->order('Category');
             $select->where->equalTo('Series_ID', $seriesID);
         };
         return $this->select($callback);
