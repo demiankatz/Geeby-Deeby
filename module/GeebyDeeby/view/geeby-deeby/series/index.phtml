@@ -46,6 +46,18 @@
       </td>
     </tr>
   <? endif; ?>
+  <? $catCount = count($categories); if ($catCount > 0): ?>
+    <tr>
+      <th><?=$catCount > 1 ? 'Categories' : 'Category'?>:</th>
+      <td>
+        <? foreach ($categories as $category): ?>
+          <a href="<?=$this->url('category', array('id' => $category['Category_ID']))?>">
+            <?=$this->escapeHtml($category['Category'])?>
+          </a><br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
 </table>
 
 <? if (count($items) < 1): ?>

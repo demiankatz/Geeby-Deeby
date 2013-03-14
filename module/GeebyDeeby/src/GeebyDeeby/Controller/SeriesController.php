@@ -85,6 +85,8 @@ class SeriesController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
         $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
+        $view->categories = $this->getDbTable('seriescategories')
+            ->getCategories($id);
         $view->items = $this->getDbTable('itemsinseries')->getItemsForSeries($id);
         $view->language = $this->getDbTable('language')
             ->getByPrimaryKey($view->series['Language_ID']);

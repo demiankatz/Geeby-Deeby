@@ -56,6 +56,10 @@ class SeriesCategories extends Gateway
     public function getCategories($seriesID)
     {
         $callback = function ($select) use ($seriesID) {
+            $select->join(
+                array('c' => 'Categories'),
+                'Series_Categories.Category_ID = c.Category_ID'
+            );
             $select->where->equalTo('Series_ID', $seriesID);
         };
         return $this->select($callback);
