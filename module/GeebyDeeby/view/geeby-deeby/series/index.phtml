@@ -89,6 +89,10 @@
   <? endif; ?>
 </table>
 
+<? if (!empty($series['Series_Description'])): ?>
+  <p><?=$series['Series_Description']?></p>
+<? endif; ?>
+
 <? if (count($items) < 1): ?>
   <p>No items listed in this series yet.</p>
 <? else: ?>
