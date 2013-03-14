@@ -39,6 +39,24 @@ namespace GeebyDeeby\Controller;
 class SeriesController extends AbstractBase
 {
     /**
+     * Get a view model containing a series object (or return false if missing)
+     *
+     * @return mixed
+     */
+    protected function getViewModelWithSeries()
+    {
+        $id = $this->params()->fromRoute('id');
+        $table = $this->getDbTable('series');
+        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
+        if (!is_object($rowObj)) {
+            return false;
+        }
+        return $this->createViewModel(
+            array('series' => $rowObj->toArray())
+        );
+    }
+
+    /**
      * "Show series" page
      *
      * @return mixed
@@ -49,14 +67,10 @@ class SeriesController extends AbstractBase
         if (null === $id) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'list');
         }
-        $table = $this->getDbTable('series');
-        $rowObj = $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $view = $this->getViewModelWithSeries();
+        if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        $view = $this->createViewModel(
-            array('series' => $rowObj->toArray())
-        );
         $view->items = $this->getDbTable('itemsinseries')->getItemsForSeries($id);
         return $view;
     }
