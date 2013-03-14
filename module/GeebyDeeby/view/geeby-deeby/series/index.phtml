@@ -23,6 +23,29 @@
       </td>
     </tr>
   <? endif; ?>
+  <? $pubCount = count($publishers); if ($pubCount > 0): ?>
+    <tr>
+      <th>Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($publishers as $publisher): ?>
+          <a href="<?=$this->url('publisher', array('id' => $publisher['Publisher_ID']))?>">
+            <?=$this->escapeHtml($publisher['Publisher_Name'])?>
+          </a>
+          <? if (!empty($publisher['Imprint'])): ?>
+            (<?=$this->escapeHtml($publisher['Imprint'])?> imprint)
+          <? endif; ?>
+          --
+          <a href="<?=$this->url('country', array('id' => $publisher['Country_ID']))?>">
+            <?=$this->escapeHtml($publisher['Country_Name'])?>
+          </a>
+          <? if (!empty($publisher['Note'])): ?>
+            (<?=$this->escapeHtml($publisher['Note'])?>)
+          <? endif; ?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
 </table>
 
 <? if (count($items) < 1): ?>

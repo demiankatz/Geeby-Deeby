@@ -88,6 +88,8 @@ class SeriesController extends AbstractBase
         $view->items = $this->getDbTable('itemsinseries')->getItemsForSeries($id);
         $view->language = $this->getDbTable('language')
             ->getByPrimaryKey($view->series['Language_ID']);
+        $view->publishers = $this->getDbTable('seriespublishers')
+            ->getPublishers($id);
         return $view;
     }
 
