@@ -85,6 +85,30 @@ return array(
                     ),
                 ),
             ),
+            'country' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Country[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Country',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
+            'countries' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Countries[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Country',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'edit' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -636,6 +660,7 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
+            'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
