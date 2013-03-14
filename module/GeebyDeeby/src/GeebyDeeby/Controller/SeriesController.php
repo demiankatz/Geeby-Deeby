@@ -57,6 +57,19 @@ class SeriesController extends AbstractBase
     }
 
     /**
+     * "Show series images" page
+     *
+     * @return mixed
+     */
+    public function imagesAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        $view->images = $this->getDbTable('itemsinseries')
+            ->getImagesForSeries($view->series['Series_ID']);
+        return $view;
+    }
+
+    /**
      * "Show series" page
      *
      * @return mixed

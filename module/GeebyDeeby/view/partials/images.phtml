@@ -1,7 +1,17 @@
 <? if (count($images) > 0): ?>
   <? foreach ($images as $image): ?>
+    <?
+      if (!isset($linkType) || $linkType == 'image') {
+        $openAnchor = '<a target="_new" href="' . $this->escapeHtml($image['Image_Path']) . '">';
+      } else if ($linkType == 'item') {
+        $openAnchor = '<a href="' . $this->url('item', array('id' => $image['Item_ID'])) . '">';
+      } else {
+        // unsupported option:
+        $openAnchor = '<a>';
+      }
+    ?>
     <table class="image">
-      <tr><td align="center"><a target="_new" href="<?=$this->escapeHtml($image['Image_Path'])?>"><img src="<?=$this->escapeHtml($image['Thumb_Path'])?>" /></a></td></tr>
+      <tr><td align="center"><?=$openAnchor?><img src="<?=$this->escapeHtml($image['Thumb_Path'])?>" /></a></td></tr>
       <? if (!empty($image['Note'])): ?>
         <tr><td align="center">(<?=$this->escapeHtml($image['Note'])?>)</td></tr>
       <? endif; ?>

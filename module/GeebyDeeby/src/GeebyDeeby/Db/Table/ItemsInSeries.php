@@ -48,6 +48,40 @@ class ItemsInSeries extends Gateway
     }
 
     /**
+     * Get image information for the specified series.
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getImagesForSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->join(
+                array('i' => 'Items'),
+                'Items_In_Series.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('mt' => 'Material_Types'),
+                'i.Material_Type_ID = mt.Material_Type_ID'
+            );
+            $select->join(array('ii' => 'Items_Images'), 'i.item_ID = ii.item_ID');
+            $select->join(
+                array('n' => 'Notes'), 'ii.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->order(
+                array(
+                    'mt.Material_Type_Name', 'Items_In_Series.Position',
+                    'i.Item_Name', 'ii.Position'
+                )
+            );
+            $select->where->equalTo('Series_ID', $seriesID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of items for the specified series.
      *
      * @var int $seriesID Series ID

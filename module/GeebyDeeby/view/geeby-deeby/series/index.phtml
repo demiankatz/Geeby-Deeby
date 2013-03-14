@@ -3,6 +3,12 @@
     $this->headTitle('Series - ' . $title . ' - ');
 ?>
 <h1><?=$this->escapeHtml($title)?></h1>
+
+<p>
+  <a href="<?=$this->url('series')?>">[List All Series]</a>
+  <a href="<?=$this->url('series', array('id' => $series['Series_ID'], 'extra' => 'Images'))?>">[List Series Images]</a>
+</p>
+
 <? if (count($items) < 1): ?>
   <p>No items listed in this series yet.</p>
 <? else: ?>
