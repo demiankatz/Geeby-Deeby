@@ -1,0 +1,16 @@
+<?
+    $this->headTitle('Category List - ');
+?>
+<h1>Category List</h1>
+<? if (count($categories) < 1): ?>
+  <p>No categories listed in this database yet.</p>
+<? else: ?>
+  <? $currentLetter = false; foreach ($categories as $current): ?>
+    <? $first = $this->firstletter($current['Category']); if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+    <? endif; ?>
+    <a href="<?=$this->url('category', array('id' => $current['Category_ID']))?>">
+      <?=$this->escapeHtml($this->fixtitle($current['Category']))?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>

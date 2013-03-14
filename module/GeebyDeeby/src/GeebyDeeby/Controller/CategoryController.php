@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Series_Categories
+ * Category controller
  *
  * PHP version 5
  *
@@ -20,64 +20,64 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Controller;
 
 /**
- * Table Definition for Series_Categories
+ * Category controller
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class SeriesCategories extends Gateway
+class CategoryController extends AbstractBase
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct('Series_Categories');
-    }
-
-    /**
-     * Get a list of categories for the specified series.
-     *
-     * @var int $seriesID Series ID
+     * "Show category" page
      *
      * @return mixed
      */
-    public function getCategories($seriesID)
+    public function indexAction()
     {
-        $callback = function ($select) use ($seriesID) {
-            $select->where->equalTo('Series_ID', $seriesID);
-        };
-        return $this->select($callback);
+        $id = $this->params()->fromRoute('id');
+        $table = $this->getDbTable('category');
+        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
+        if (!is_object($rowObj)) {
+            return $this->forwardTo(__NAMESPACE__ . '\Category', 'notfound');
+        }
+        $view = $this->createViewModel(
+            array('category' => $rowObj->toArray())
+        );
+        $view->series = $this->getDbTable('seriescategories')
+            ->getSeriesForCategory($id);
+        return $view;
     }
 
     /**
-     * Get a list of series for the specified category.
-     *
-     * @var int $catID Category ID
+     * Category list
      *
      * @return mixed
      */
-    public function getSeriesForCategory($catID)
+    public function listAction()
     {
-        $callback = function ($select) use ($catID) {
-            $select->join(
-                array('s' => 'Series'),
-                'Series_Categories.Series_ID = s.Series_ID'
-            );
-            $select->order('s.Series_Name');
-            $select->where->equalTo('Category_ID', $catID);
-        };
-        return $this->select($callback);
+        return $this->createViewModel(
+            array('categories' => $this->getDbTable('category')->getList())
+        );
+    }
+
+    /**
+     * Not found page
+     *
+     * @return mixed
+     */
+    public function notfoundAction()
+    {
+        return $this->createViewModel();
     }
 }
