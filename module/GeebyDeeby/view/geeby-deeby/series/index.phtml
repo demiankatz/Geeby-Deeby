@@ -9,6 +9,10 @@
   <a href="<?=$this->url('series', array('id' => $series['Series_ID'], 'extra' => 'Images'))?>">[List Series Images]</a>
 </p>
 
+<table class="series">
+  <tr><th>Language:</th><td><?=$this->escapeHtml($language['Language_Name'])?></td></tr>
+</table>
+
 <? if (count($items) < 1): ?>
   <p>No items listed in this series yet.</p>
 <? else: ?>
