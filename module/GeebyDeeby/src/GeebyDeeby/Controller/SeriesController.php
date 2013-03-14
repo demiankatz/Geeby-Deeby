@@ -99,6 +99,10 @@ class SeriesController extends AbstractBase
         // us a list of books that $id was translated from.
         $view->translatedInto = $trans->getTranslatedFrom($id, true);
         $view->translatedFrom = $trans->getTranslatedInto($id, true);
+        $view->files = $this->getDbTable('seriesfiles')->getFilesForSeries($id);
+        $view->bibliography = $this->getDbTable('seriesbibliography')
+            ->getItemsDescribingSeries($id);
+        $view->links = $this->getDbTable('serieslinks')->getLinksForSeries($id);
         return $view;
     }
 

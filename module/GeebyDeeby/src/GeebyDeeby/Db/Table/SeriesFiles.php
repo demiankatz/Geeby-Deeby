@@ -65,4 +65,28 @@ class SeriesFiles extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of files for the specified series.
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getFilesForSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->join(
+                array('f' => 'Files'),
+                'Series_Files.File_ID = f.File_ID'
+            );
+            $select->join(
+                array('ft' => 'File_Types'),
+                'f.File_Type_ID = ft.File_Type_ID'
+            );
+            $select->order(array('File_Type', 'File_Name'));
+            $select->where->equalTo('Series_ID', $seriesID);
+        };
+        return $this->select($callback);
+    }
 }

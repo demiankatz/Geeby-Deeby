@@ -108,3 +108,42 @@
     </a><br />
   <? endforeach; ?>
 <? endif; ?>
+
+<? if (count($files) > 0): ?>
+  <h2>Related Documents</h2>
+  <? $type = false; foreach ($files as $file): ?>
+    <? if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
+      <h3 class="filetype"><?=$this->escapeHtml($type)?></h3>
+    <? endif; ?>
+    <p class="file">
+      <a target="_new" href="<?=$this->escapeHtml($file['File_Path'])?>">
+        <?=$this->escapeHtml($file['File_Name'])?>
+      </a>
+      <? if (!empty($file['Description'])): ?>
+        <br /><?=$file['Description']?>
+      <? endif; ?>
+    </p>
+  <? endforeach; ?>
+<? endif; ?>
+
+<? if (count($bibliography) > 0): ?>
+  <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
+  <? $type = false; foreach ($bibliography as $bib): ?>
+    <? if ($type !== $bib['Material_Type_Name']): $type = $bib['Material_Type_Name']; ?>
+      <h3 class="materialType"><?=$this->escapeHtml($type)?></h3>
+    <? endif; ?>
+    <span class="item"><a href="<?=$this->url('item', array('id' => $bib['Item_ID']))?>"><?=$this->fixtitle($bib['Item_Name'])?></a></span><br />
+  <? endforeach; ?>
+<? endif; ?>
+
+<? if (count($links) > 0): ?>
+  <h2>Related Links</h2>
+  <? foreach ($links as $link): ?>
+    <p class="link">
+      <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />
+      <? if (!empty($link['Description'])): ?><?=$link['Description']?><br /><? endif; ?>
+      <span class="url"><?=$this->escapeHtml($link['URL'])?></span>
+      (last verified: <?=$this->escapeHtml($link['Date_Checked'])?>)
+    </p>
+  <? endforeach; ?>
+<? endif; ?>

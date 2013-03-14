@@ -47,6 +47,30 @@ class SeriesBibliography extends Gateway
     }
 
     /**
+     * Get a list of items describing the specified series.
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getItemsDescribingSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->join(
+                array('i' => 'Items'),
+                'Series_Bibliography.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('mt' => 'Material_Types'),
+                'i.Material_Type_ID = mt.Material_Type_ID'
+            );
+            $select->order(array('Material_Type_Name', 'Item_Name'));
+            $select->where->equalTo('Series_ID', $seriesID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of series described by the specified item.
      *
      * @var int $itemID Item ID

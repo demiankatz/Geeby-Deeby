@@ -47,6 +47,25 @@ class SeriesLinks extends Gateway
     }
 
     /**
+     * Get a list of links for the specified series.
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getLinksForSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->join(
+                array('l' => 'Links'), 'Series_Links.Link_ID = l.Link_ID'
+            );
+            $select->order(array('Link_Name'));
+            $select->where->equalTo('Series_ID', $seriesID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of series for the specified link.
      *
      * @var int $linkID Link ID
