@@ -11,6 +11,18 @@
 
 <table class="series">
   <tr><th>Language:</th><td><?=$this->escapeHtml($language['Language_Name'])?></td></tr>
+  <? $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
+    <tr>
+      <th>Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($altTitles as $altTitle): ?>
+          <?=$this->escapeHtml($this->fixtitle($altTitle['Series_AltName']))?>
+          <? if (!empty($altTitle['Note'])): ?>(<?=$this->escapeHtml($altTitle['Note'])?>)<? endif; ?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
 </table>
 
 <? if (count($items) < 1): ?>
