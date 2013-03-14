@@ -580,6 +580,30 @@ return array(
                     ),
                 ),
             ),
+            'publisher' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Publisher[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Publisher',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
+            'publishers' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Publishers[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Publisher',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'series' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -678,6 +702,7 @@ return array(
             'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',
             'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
             'GeebyDeeby\Controller\Platform' => 'GeebyDeeby\Controller\PlatformController',
+            'GeebyDeeby\Controller\Publisher' => 'GeebyDeeby\Controller\PublisherController',
             'GeebyDeeby\Controller\Series' => 'GeebyDeeby\Controller\SeriesController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
             'GeebyDeeby\Controller\User' => 'GeebyDeeby\Controller\UserController',

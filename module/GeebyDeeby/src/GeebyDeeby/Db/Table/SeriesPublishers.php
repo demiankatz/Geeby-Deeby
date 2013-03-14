@@ -58,15 +58,31 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($countryID) {
             $select->join(
-                array('c' => 'Countries'),
-                'Series_Publishers.Country_ID = c.Country_ID'
+                array('s' => 'Series'),
+                'Series_Publishers.Series_ID = s.Series_ID'
             );
+            $select->order('s.Series_Name');
+            $select->where->equalTo('Country_ID', $countryID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get a list of series for the specified publisher.
+     *
+     * @var int $publisherID Publisher ID
+     *
+     * @return mixed
+     */
+    public function getSeriesForPublisher($publisherID)
+    {
+        $callback = function ($select) use ($publisherID) {
             $select->join(
                 array('s' => 'Series'),
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');
-            $select->where->equalTo('c.Country_ID', $countryID);
+            $select->where->equalTo('Publisher_ID', $publisherID);
         };
         return $this->select($callback);
     }

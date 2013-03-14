@@ -1,0 +1,16 @@
+<?
+    $this->headTitle('Publisher List - ');
+?>
+<h1>Publisher List</h1>
+<? if (count($publishers) < 1): ?>
+  <p>No publishers listed in this database yet.</p>
+<? else: ?>
+  <? $currentLetter = false; foreach ($publishers as $current): ?>
+    <? $first = $this->firstletter($current['Publisher_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+    <? endif; ?>
+    <a href="<?=$this->url('publisher', array('id' => $current['Publisher_ID']))?>">
+      <?=$this->escapeHtml($this->fixtitle($current['Publisher_Name']))?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>
