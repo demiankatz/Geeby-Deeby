@@ -125,10 +125,12 @@ table.image {
     float: left;
 }
 
-table.item, table.series {
+table.item, table.series, table.user {
     width: auto;
 }
-table.item td, table.item th, table.series td, table.series th {
+table.item td, table.item th,
+table.series td, table.series th,
+table.user td, table.user th {
     text-align: left;
 }
 

@@ -4,4 +4,31 @@
 ?>
 <h1><?=$this->escapeHtml($title)?></h1>
 
-<p>Details coming soon.</p>
+<p><a href="<?=$this->url('users')?>">[List All Users]</a></p>
+
+<table class="user">
+  <tr>
+    <th>Full Name:</th>
+    <td>
+      <? if ($user['Person_ID'] > 0): ?>
+        <a href="<?=$this->url('person', array('id' => $user['Person_ID']))?>">
+      <? endif; ?>
+      <?=$this->escapeHtml($user['Name'])?>
+      <? if ($user['Person_ID'] > 0): ?>
+        </a>
+      <? endif; ?>
+    </td>
+  </tr>
+  <? if (!empty($user['Address'])): ?>
+    <tr>
+      <th>Email Address:</th>
+      <td>
+        <? if ($this->layout()->loggedIn): ?>
+          <a href="mailto:<?=$this->escapeHtml($user['Address'])?>"><?=$this->escapeHtml($user['Address'])?></a>
+        <? else: ?>
+          Please <a href="<?=$this->url('login')?>">log in</a> to see this user's email address.
+        <? endif; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+</table>
