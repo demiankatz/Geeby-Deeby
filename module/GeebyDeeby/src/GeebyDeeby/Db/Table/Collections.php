@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Expression;
 
 /**
  * Table Definition for Collections
@@ -120,5 +121,30 @@ class Collections extends Gateway
             }
         };
         return $this->select($callback);
+    }
+
+    /**
+     * Get statistics on a user's collection.
+     *
+     * @param int $userID User ID
+     *
+     * @return array
+     */
+    public function getUserStatistics($userID)
+    {
+        $callback = function ($select) use ($userID) {
+            $count = new Expression(
+                'count(?)', array('Item_ID'), array(Expression::TYPE_IDENTIFIER)
+            );
+            $select->columns(array('Collection_Status', 'Count' => $count));
+            $select->group('Collection_Status');
+            $select->where->equalTo('User_ID', $userID);
+        };
+        $result = $this->select($callback);
+        $retVal = array('have' => 0, 'want' => 0, 'extra' => 0);
+        foreach ($result as $current) {
+            $retVal[$current['Collection_Status']] = $current['Count'];
+        }
+        return $retVal;
     }
 }

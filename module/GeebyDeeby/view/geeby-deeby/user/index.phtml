@@ -31,4 +31,16 @@
       </td>
     </tr>
   <? endif; ?>
+  <tr>
+    <th>Collections:</th>
+    <td>
+      <a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Collection'))?>">View Have/Want Lists</a>
+      (<?=$this->stats['have']?> items owned, <?=$this->stats['want']?> items wanted)
+      [<a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Sellers'))?>">List Potential Sellers</a>]
+      <br />
+      <a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Extras'))?>">View Sale/Trade Lists</a>
+      (<?=$this->stats['extra']?> items for sale/trade)
+      [<a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Buyers'))?>">List Potential Buyers</a>]
+    </td>
+  </tr>
 </table>

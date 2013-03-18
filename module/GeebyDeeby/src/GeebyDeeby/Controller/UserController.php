@@ -85,6 +85,16 @@ class UserController extends AbstractBase
     }
 
     /**
+     * Potential buyers page
+     *
+     * @return mixed
+     */
+    public function buyersAction()
+    {
+        // TODO
+    }
+
+    /**
      * Comments page
      *
      * @return mixed
@@ -127,6 +137,8 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
+        $view->stats = $this->getDbTable('collections')
+            ->getUserStatistics($view->user['User_ID']);
         return $view;
     }
 
@@ -166,5 +178,15 @@ class UserController extends AbstractBase
         $view->reviews = $this->getDbTable('itemsreviews')
             ->getReviewsByUser($view->user['User_ID']);
         return $view;
+    }
+
+    /**
+     * Potential sellers page
+     *
+     * @return mixed
+     */
+    public function sellersAction()
+    {
+        // TODO
     }
 }
