@@ -72,6 +72,24 @@ class ItemsReviews extends Gateway
     }
 
     /**
+     * Get a list of item IDs reviewed by the specified user.
+     *
+     * @var int    $userID   User ID
+     * @var string $approved 'y' to get only approved items, 'n' for only unapproved
+     * items, null for all items
+     */
+    public function getReviewIDsByUser($userID, $approved = 'y')
+    {
+        $callback = function ($select) use ($userID, $approved) {
+            if (null !== $approved) {
+                $select->where->equalTo('Approved', $approved);
+            }
+            $select->where->equalTo('User_ID', $userID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of items reviewed by the specified user.
      *
      * @var int    $userID   User ID

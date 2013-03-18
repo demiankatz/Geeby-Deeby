@@ -139,6 +139,10 @@ class UserController extends AbstractBase
         }
         $view->stats = $this->getDbTable('collections')
             ->getUserStatistics($view->user['User_ID']);
+        $view->comments = $this->getDbTable('seriesreviews')
+            ->getReviewsByUser($view->user['User_ID']);
+        $view->reviews = $this->getDbTable('itemsreviews')
+            ->getReviewIDsByUser($view->user['User_ID']);
         return $view;
     }
 
