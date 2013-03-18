@@ -65,11 +65,27 @@ class IndexController extends AbstractBase
             $result = $this->getAuth()->authenticate($adapter);
             if ($result->isValid()) {
                 $followup = $this->followup()->retrieve();
-                return isset($followup->url)
-                    ? $this->redirect()->toUrl($followup->url)
-                    : $this->redirect()->toRoute('home');
+                if (isset($followup->url)) {
+                    $url = $followup->url;
+                    unset($followup->url);
+                    return $this->redirect()->toUrl($url);
+                }
+                return $this->redirect()->toRoute('home');
             }
             $view->msg = 'Invalid credentials; please try again.';
+        } else {
+            $followup = $this->followup()->retrieve();
+
+            // Never redirect back to the login screen after login!
+            if ($followup->url == $this->getServerUrl()) {
+                unset($followup->url);
+            }
+
+            // Set followup to referer if not already set:
+            $referer = $this->getRequest()->getServer()->get('HTTP_REFERER');
+            if (!empty($referer) && !isset($followup->url)) {
+                $this->followup()->store(array(), $referer);
+            }
         }
         return $view;
     }
@@ -82,6 +98,9 @@ class IndexController extends AbstractBase
     public function logoutAction()
     {
         $this->getAuth()->clearIdentity();
-        return $this->redirect()->toRoute('home');
+        $referer = $this->getRequest()->getServer()->get('HTTP_REFERER');
+        return empty($referer)
+            ? $this->redirect()->toRoute('home')
+            : $this->redirect()->toUrl($referer);
     }
 }
