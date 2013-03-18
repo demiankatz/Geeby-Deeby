@@ -85,6 +85,22 @@ class UserController extends AbstractBase
     }
 
     /**
+     * Comments page
+     *
+     * @return mixed
+     */
+    public function commentsAction()
+    {
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
+        }
+        $view->comments = $this->getDbTable('seriesreviews')
+            ->getReviewsByUser($view->user['User_ID']);
+        return $view;
+    }
+
+    /**
      * Extra books in collection page
      *
      * @return mixed
