@@ -1,0 +1,7 @@
+<div class="headerControls">
+  <? if (isset($loggedIn) && $loggedIn): ?>
+    <a href="<?=$this->url('logout')?>">Log Out</a>
+  <? else: ?>
+    <a href="<?=$this->url('login')?>">Log In</a>
+  <? endif; ?>
+</div>
