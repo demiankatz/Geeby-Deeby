@@ -58,6 +58,7 @@ return array(
                 'seriesalttitles' => 'GeebyDeeby\Db\Table\SeriesAltTitles',
                 'seriesbibliography' => 'GeebyDeeby\Db\Table\SeriesBibliography',
                 'seriescategories' => 'GeebyDeeby\Db\Table\SeriesCategories',
+                'seriesreviews' => 'GeebyDeeby\Db\Table\SeriesReviews',
                 'seriesfiles' => 'GeebyDeeby\Db\Table\SeriesFiles',
                 'serieslinks' => 'GeebyDeeby\Db\Table\SeriesLinks',
                 'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',

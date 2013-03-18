@@ -103,6 +103,8 @@ class SeriesController extends AbstractBase
         $view->bibliography = $this->getDbTable('seriesbibliography')
             ->getItemsDescribingSeries($id);
         $view->links = $this->getDbTable('serieslinks')->getLinksForSeries($id);
+        $view->comments = $this->getDbTable('seriesreviews')
+            ->getReviewsForSeries($id);
         return $view;
     }
 

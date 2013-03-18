@@ -150,3 +150,7 @@ table.item td, table.item th, table.series td, table.series th {
 .collection .have, .collection .want {
     width: 40%;
 }
+
+.review_signature {
+    margin-left: 5em;
+}
