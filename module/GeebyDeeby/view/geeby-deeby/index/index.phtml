@@ -1,10 +1,27 @@
 <h1><?=$this->escapeHtml($this->layout()->siteTitle)?></h1>
-<p><a href="<?=$this->url('categories')?>">List Categories</a></p>
-<p><a href="<?=$this->url('countries')?>">List Countries</a></p>
+<h2>Database</h2>
+<p>List Series
+  [<a href="<?=$this->url('series')?>">by name</a>,
+  <a href="<?=$this->url('categories')?>">by category</a>,
+  <a href="<?=$this->url('countries')?>">by country</a>,
+  <? /* TODO: by language, by material type */ ?>
+  <a href="<?=$this->url('publishers')?>">by publisher</a>]
+</p>
+<p>List People
+  [<a href="<?=$this->url('people')?>">by name</a>,
+  <a href="<?=$this->url('people', array('extra' => 'Bios'))?>">with biographical notes</a>]
+</p>
+<p>List Items
+  [<a href="<?=$this->url('items')?>">by name</a>,
+  <a href="<?=$this->url('items', array('extra' => 'ByYear'))?>">by year</a>,
+  <? /* TODO: with reviews */ ?>
+  <a href="<?=$this->url('platforms')?>">by platform</a>]
+</p>
 <p><a href="<?=$this->url('files')?>">List Files</a></p>
-<p>List Items [<a href="<?=$this->url('items')?>">all</a>, <a href="<?=$this->url('items', array('extra' => 'ByYear'))?>">by year</a>]</p>
-<p>List People [<a href="<?=$this->url('people')?>">all</a>, <a href="<?=$this->url('people', array('extra' => 'Bios'))?>">with biographies</a>]
-<p><a href="<?=$this->url('platforms')?>">List Platforms</a></p>
-<p><a href="<?=$this->url('publishers')?>">List Publishers</a></p>
-<p><a href="<?=$this->url('series')?>">List Series</a></p>
-<p><a href="<?=$this->url('users')?>">List Users</a></p>
+<? /* TODO: List Links */ ?>
+
+<h2>Users</h2>
+<p>
+  <a href="<?=$this->url('users')?>">List Registered Users</a><br />
+  <? /* TODO: browse recent reviews */ ?>
+</p>
