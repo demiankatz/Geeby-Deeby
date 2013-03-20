@@ -39,7 +39,9 @@ function savePerson()
     var first = $('#First_Name').val();
     var middle = $('#Middle_Name').val();
     var last = $('#Last_Name').val();
+    var extra = $('#Extra_Details').val();
     var bio = $('#Biography').val();
+    var authority = $('#Authority_ID').val();
     
     // Validate form:
     if (last.length == 0) {
@@ -53,7 +55,8 @@ function savePerson()
     
     // Use AJAX to save the values:
     var url = basePath + '/edit/Person/' + encodeURIComponent(personID);
-    $.post(url, {id: personID, first: first, middle: middle, last: last, bio: bio}, function(data) {
+    var details = {first: first, middle: middle, last: last, bio: bio, extra: extra, authority: authority};
+    $.post(url, details, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

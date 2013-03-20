@@ -19,7 +19,7 @@
     </tr>
     <tr>
       <th>Authority Source:</th>
-      <td><?=$this->render('geeby-deeby/edit-person/authority-select.phtml', array('authorities' => $authorities, 'selected' => $person['Authority_ID']))?></td>
+      <td><?=$this->render('geeby-deeby/edit-person/authority-select.phtml', array('authorities' => $authorities, 'selected' => isset($person['Authority_ID']) ? $person['Authority_ID'] : null))?></td>
     </tr>
     <tr>
       <th>Biography:</th>
