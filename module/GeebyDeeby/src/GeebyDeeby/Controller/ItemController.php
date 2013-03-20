@@ -39,6 +39,20 @@ namespace GeebyDeeby\Controller;
 class ItemController extends AbstractBase
 {
     /**
+     * "List items by year" page
+     *
+     * @return mixed
+     */
+    public function byyearAction()
+    {
+        return $this->createViewModel(
+            array(
+                'items' => $this->getDbTable('itemsreleasedates')->getItemsByYear()
+            )
+        );
+    }
+
+    /**
      * "Show item" page
      *
      * @return mixed
@@ -114,6 +128,12 @@ class ItemController extends AbstractBase
      */
     public function listAction()
     {
+        // Special case: sort by year:
+        if ($this->params()->fromRoute('extra') == 'ByYear') {
+            return $this->forwardTo(__NAMESPACE__ . '\Item', 'byyear');
+        }
+
+        // Standard case: all items:
         return $this->createViewModel(
             array('items' => $this->getDbTable('item')->getList())
         );

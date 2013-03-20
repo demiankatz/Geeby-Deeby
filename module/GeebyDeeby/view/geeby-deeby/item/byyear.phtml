@@ -1,0 +1,20 @@
+<?
+    $this->headTitle('Item List By Year - ');
+?>
+<h1>Item List By Year</h1>
+<? if (count($items) < 1): ?>
+  <p>No items listed in this database yet.</p>
+<? else: ?>
+  <? $currentYear = false; foreach ($items as $current): ?>
+    <? if ($currentYear !== $current['Year']): $currentYear = $current['Year']; ?>
+      <h2><?=$this->escapeHtml($current['Year'] == -1 ? 'Never Published' : $current['Year'])?></h2>
+    <? endif; ?>
+    <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+      <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
+    </a>
+    <? if (!empty($current['Note'])): ?>
+      (<?=$this->escapeHtml($current['Note'])?>)
+    <? endif; ?>
+    <br />
+  <? endforeach; ?>
+<? endif; ?>
