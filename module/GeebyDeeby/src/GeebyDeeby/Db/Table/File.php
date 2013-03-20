@@ -58,4 +58,33 @@ class File extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of files grouped by type.
+     *
+     * @param array $include Array of file type IDs to retrieve (null to retrieve
+     * all except those in $exclude)
+     * @param array $exclude Array of file type IDs to exclude from results (null
+     * to retrieve everything in $include, or everything if $include is null)
+     *
+     * @return mixed
+     */
+    public function getFilesByType($include = null, $exclude = null)
+    {
+        $callback = function ($select) use ($include, $exclude) {
+            $select->join(
+                array('ft' => 'File_Types'), 'Files.File_Type_ID = ft.File_Type_ID'
+            );
+            if (null !== $include) {
+                $select->where->in('ft.File_Type_ID', $include);
+            }
+            if (null !== $exclude) {
+                foreach ($exclude as $x) {
+                    $select->where->notEqualTo('ft.File_Type_ID', $x);
+                }
+            }
+            $select->order(array('File_Type', 'File_Name'));
+        };
+        return $this->select($callback);
+    }
 }

@@ -1,0 +1,18 @@
+<?
+    $this->headTitle('File List - ');
+?>
+<h1>File List</h1>
+<? if (count($files) < 1): ?>
+  <p>No files listed in this database yet.</p>
+<? else: ?>
+  <? foreach ($files as $group => $fileList): ?>
+    <h2><?=$this->escapeHtml($this->fixtitle($group))?></h2>
+    <p>
+      <? foreach ($fileList as $file): ?>
+        <a href="<?=$this->escapeHtml($file['File_Path'])?>">
+          <?=$this->escapeHtml($this->fixtitle($file['File_Name']))?>
+        </a><br />
+      <? endforeach; ?>
+    </p>
+  <? endforeach; ?>
+<? endif; ?>

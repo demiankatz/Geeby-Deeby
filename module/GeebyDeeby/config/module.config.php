@@ -68,6 +68,11 @@ return array(
                 'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
             ),
         ),
+        'file_groups' => array(
+            // Fill this array with 'Group Name' => array(id1, id2, id3, ...)
+            // if you wish to create custom file groupings on the "List Files"
+            // page.  Leave it empty to group by standard File Type values.
+        ),
     ),
     'controller_plugins' => array(
         'invokables' => array(
@@ -511,6 +516,17 @@ return array(
                     ),
                 ),
             ),
+            'files' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Files[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'File',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'item' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -724,6 +740,7 @@ return array(
             'GeebyDeeby\Controller\EditPlatform' => 'GeebyDeeby\Controller\EditPlatformController',
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
+            'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',
             'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
