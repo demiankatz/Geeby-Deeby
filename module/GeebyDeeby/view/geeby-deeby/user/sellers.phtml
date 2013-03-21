@@ -1,0 +1,33 @@
+<?
+    $title = $user['Username'];
+    $this->headTitle('Potential Sellers - ' . $title . ' - ');
+?>
+<h1>Potential Sellers - <?=$this->escapeHtml($title)?></h1>
+
+<p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>
+
+<? if (count($sellers) < 1): ?>
+  <p>No sellers available.</p>
+<? else: ?>
+  <?=$this->render('geeby-deeby/user/sale-disclaimer.phtml')?>
+
+  <? $series = $seller = false; foreach ($sellers as $extra): $series = false; ?>
+    <? if ($seller !== $extra['User_ID']): $seller = $extra['User_ID']; ?>
+      <h2 class="user"><a href="<?=$this->url('user', array('id' => $seller))?>">
+        <?=$this->fixtitle($extra['Username']);?>
+      </a></h2>
+    <? endif; ?>
+    <? if ($series !== $extra['Series_ID']): $series = $extra['Series_ID']; ?>
+      <h3 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+        <?=$this->fixtitle($extra['Series_Name']);?>
+      </a></h3>
+    <? endif; ?>
+    <p class="extraitem">
+      <?=$extra['Position'] > 0 ? $this->escapeHtml($extra['Position']) . '. ' : ''?>
+      <a href="<?=$this->url('item', array('id' => $extra['Item_ID']))?>">
+        <?=$this->fixtitle($extra['Item_Name'])?>
+      </a>
+      <? if (!empty($extra['Collection_Note'])): ?><br /><?=$this->escapeHtml($extra['Collection_Note'])?><? endif; ?>
+    </p>
+  <? endforeach; ?>
+<? endif; ?>

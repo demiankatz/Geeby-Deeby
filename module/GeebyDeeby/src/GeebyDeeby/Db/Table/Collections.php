@@ -124,6 +124,54 @@ class Collections extends Gateway
     }
 
     /**
+     * Find items from other users' lists that have $desiredStatus and match items on
+     * $userID's lists that have $userStatus.
+     *
+     * @param int    $userID        User ID
+     * @param string $userStatus    The user's status that should be matched against
+     * $desiredStatus
+     * @param string $desiredStatus The status for which to retrieve matching items
+     *
+     * @return mixed
+     */
+    public function compareCollections($userID, $userStatus, $desiredStatus)
+    {
+        $callback = function ($select) use ($userID, $userStatus, $desiredStatus) {
+            $select->join(
+                array('i' => 'Items'),
+                'Collections.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('u' => 'Users'),
+                'Collections.User_ID = u.User_ID'
+            );
+            $select->join(
+                array('Other' => 'Collections'),
+                'Other.Item_ID = Collections.Item_ID AND '
+                . 'Other.Series_ID = Collections.Series_ID',
+                array()
+            );
+            $select->join(
+                array('iis' => 'Items_In_Series'),
+                'i.Item_ID = iis.Item_ID'
+            );
+            $select->join(
+                array('s' => 'Series'),
+                'iis.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
+            );
+            $order = array(
+                'Username', 'Series_Name', 's.Series_ID', 'Position', 'Item_Name'
+            );
+            $select->order($order);
+            $select->where->equalTo('Other.User_ID', $userID);
+            $select->where->notEqualTo('Collections.User_ID', $userID);
+            $select->where->equalTo('Other.Collection_Status', $userStatus);
+            $select->where->equalTo('Collections.Collection_Status', $desiredStatus);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get statistics on a user's collection.
      *
      * @param int $userID User ID

@@ -91,7 +91,14 @@ class UserController extends AbstractBase
      */
     public function buyersAction()
     {
-        // TODO
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
+        }
+        $view->buyers = $this->getDbTable('collections')->compareCollections(
+            $view->user['User_ID'], 'extra', 'want'
+        );
+        return $view;
     }
 
     /**
@@ -191,6 +198,13 @@ class UserController extends AbstractBase
      */
     public function sellersAction()
     {
-        // TODO
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
+        }
+        $view->sellers = $this->getDbTable('collections')->compareCollections(
+            $view->user['User_ID'], 'want', 'extra'
+        );
+        return $view;
     }
 }
