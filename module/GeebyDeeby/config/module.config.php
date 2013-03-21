@@ -551,6 +551,30 @@ return array(
                     ),
                 ),
             ),
+            'language' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Language[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Language',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
+            'languages' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Languages[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Language',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'login' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -743,6 +767,7 @@ return array(
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',
+            'GeebyDeeby\Controller\Language' => 'GeebyDeeby\Controller\LanguageController',
             'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
             'GeebyDeeby\Controller\Platform' => 'GeebyDeeby\Controller\PlatformController',
             'GeebyDeeby\Controller\Publisher' => 'GeebyDeeby\Controller\PublisherController',

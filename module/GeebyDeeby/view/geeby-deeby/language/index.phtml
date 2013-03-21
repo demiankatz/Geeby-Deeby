@@ -1,0 +1,19 @@
+<?
+    $title = $language['Language_Name'];
+    $this->headTitle('Language - ' . $title . ' - ');
+    $displayedSomething = false;
+?>
+<h1><?=$this->escapeHtml($title)?></h1>
+
+<? if (count($series) < 1): ?>
+  <p>No information is available about this language.</p>
+<? else: ?>
+  <? $currentLetter = false; foreach ($series as $current): ?>
+    <? $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+    <? endif; ?>
+    <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+      <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>

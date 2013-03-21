@@ -60,6 +60,22 @@ class Series extends Gateway
     }
 
     /**
+     * Get a list of series in the specified language.
+     *
+     * @param int $langID Language ID
+     *
+     * @return mixed
+     */
+    public function getSeriesForLanguage($langID)
+    {
+        $callback = function ($select) use ($langID) {
+            $select->where->equalTo('Language_ID', $langID);
+            $select->order('Series_Name');
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get autocomplete suggestions.
      *
      * @param string $query The user query.
