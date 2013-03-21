@@ -57,6 +57,18 @@ class SeriesController extends AbstractBase
     }
 
     /**
+     * Comments page
+     *
+     * @return mixed
+     */
+    public function commentsAction()
+    {
+        $view = $this->createViewModel();
+        $view->comments = $this->getDbTable('seriesreviews')->getReviewsByUser(null);
+        return $view;
+    }
+
+    /**
      * "Show series images" page
      *
      * @return mixed
@@ -79,6 +91,9 @@ class SeriesController extends AbstractBase
         $id = $this->params()->fromRoute('id');
         if (null === $id) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'list');
+        }
+        if ($id == 'Comments') {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'comments');
         }
         $view = $this->getViewModelWithSeries();
         if (!$view) {

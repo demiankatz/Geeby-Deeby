@@ -133,6 +133,11 @@ class ItemController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'byyear');
         }
 
+        // Special case: with reviews:
+        if ($this->params()->fromRoute('extra') == 'Reviews') {
+            return $this->forwardTo(__NAMESPACE__ . '\Item', 'reviews');
+        }
+
         // Standard case: all items:
         return $this->createViewModel(
             array('items' => $this->getDbTable('item')->getList())
@@ -147,5 +152,17 @@ class ItemController extends AbstractBase
     public function notfoundAction()
     {
         return $this->createViewModel();
+    }
+
+    /**
+     * Reviews page
+     *
+     * @return mixed
+     */
+    public function reviewsAction()
+    {
+        $view = $this->createViewModel();
+        $view->reviews = $this->getDbTable('itemsreviews')->getReviewsByUser(null);
+        return $view;
     }
 }

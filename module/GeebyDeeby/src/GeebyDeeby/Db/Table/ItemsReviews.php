@@ -92,7 +92,7 @@ class ItemsReviews extends Gateway
     /**
      * Get a list of items reviewed by the specified user.
      *
-     * @var int    $userID   User ID
+     * @var int    $userID   User ID (null for all users)
      * @var string $approved 'y' to get only approved items, 'n' for only unapproved
      * items, null for all items
      */
@@ -117,7 +117,9 @@ class ItemsReviews extends Gateway
             if (null !== $approved) {
                 $select->where->equalTo('Approved', $approved);
             }
-            $select->where->equalTo('User_ID', $userID);
+            if (null !== $userID) {
+                $select->where->equalTo('User_ID', $userID);
+            }
         };
         return $this->select($callback);
     }

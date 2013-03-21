@@ -6,7 +6,8 @@
   <a href="<?=$this->url('countries')?>">by country</a>,
   <a href="<?=$this->url('languages')?>">by language</a>,
   <? /* TODO: by material type */ ?>
-  <a href="<?=$this->url('publishers')?>">by publisher</a>]
+  <a href="<?=$this->url('publishers')?>">by publisher</a>,
+  <a href="<?=$this->url('series', array('extra' => 'Comments'))?>">with comments</a>]
 </p>
 <p>List People
   [<a href="<?=$this->url('people')?>">by name</a>,
@@ -14,9 +15,9 @@
 </p>
 <p>List Items
   [<a href="<?=$this->url('items')?>">by name</a>,
+  <a href="<?=$this->url('platforms')?>">by platform</a>,
   <a href="<?=$this->url('items', array('extra' => 'ByYear'))?>">by year</a>,
-  <? /* TODO: with reviews */ ?>
-  <a href="<?=$this->url('platforms')?>">by platform</a>]
+  <a href="<?=$this->url('items', array('extra' => 'Reviews'))?>">with reviews</a>]
 </p>
 <p><a href="<?=$this->url('files')?>">List Files</a></p>
 <? /* TODO: List Links */ ?>

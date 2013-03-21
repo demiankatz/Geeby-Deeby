@@ -74,7 +74,7 @@ class SeriesReviews extends Gateway
     /**
      * Get a list of series reviewed by the specified user.
      *
-     * @var int    $userID   User ID
+     * @var int    $userID   User ID (null for all reviews)
      * @var string $approved 'y' to get only approved items, 'n' for only unapproved
      * items, null for all items
      */
@@ -91,7 +91,9 @@ class SeriesReviews extends Gateway
             if (null !== $approved) {
                 $select->where->equalTo('Approved', $approved);
             }
-            $select->where->equalTo('User_ID', $userID);
+            if (null !== $userID) {
+                $select->where->equalTo('User_ID', $userID);
+            }
         };
         return $this->select($callback);
     }
