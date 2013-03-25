@@ -95,8 +95,7 @@ class SearchController extends AbstractBase
         case 'isbn':
         case 'keyword':
         case 'person':
-        // TODO -- remaining search option:
-        //case 'title':
+        case 'title':
             return $this->forwardTo(__NAMESPACE__ . '\Search', $type);
         }
 
@@ -131,6 +130,28 @@ class SearchController extends AbstractBase
         $tokens = $this->tokenize($q);
         $view = $this->createViewModel();
         $view->people = $this->getDbTable('person')->keywordSearch($tokens);
+        return $view;
+    }
+
+    /**
+     * Title results
+     *
+     * @return mixed
+     */
+    public function titleAction()
+    {
+        // Rather than tokenizing, we'll do a substring search after normalizing
+        // for leading articles:
+        $q = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+            ->stripLeadingArticles($this->layout()->query);
+        $tokens = array($q);
+        $view = $this->createViewModel();
+        $view->series = $this->getDbTable('series')->keywordSearch($tokens);
+        $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
+            ->keywordSearch($tokens);
+        $view->items = $this->getDbTable('item')->keywordSearch($tokens);
+        $view->itemsAltTitles = $this->getDbTable('itemsalttitles')
+            ->keywordSearch($tokens);
         return $view;
     }
 }
