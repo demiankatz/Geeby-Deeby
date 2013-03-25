@@ -1,0 +1,15 @@
+<?
+    $this->headTitle('Search Results - Person - ');
+?>
+<h1>Search Results - Person</h1>
+<? if (count($people) > 0): ?>
+  <p>
+    <? foreach ($people as $current): ?>
+      <a href="<?=$this->url('person', array('id' => $current['Person_ID']))?>">
+        <?=$this->escapeHtml($this->showperson($current))?>
+      </a><br />
+    <? endforeach; ?>
+  </p>
+<? else: ?>
+  <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
+<? endif; ?>

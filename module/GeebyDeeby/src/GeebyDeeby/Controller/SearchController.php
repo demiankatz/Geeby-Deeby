@@ -94,8 +94,8 @@ class SearchController extends AbstractBase
         switch ($type) {
         case 'isbn':
         case 'keyword':
-        // TODO -- remaining search options:
-        //case 'person':
+        case 'person':
+        // TODO -- remaining search option:
         //case 'title':
             return $this->forwardTo(__NAMESPACE__ . '\Search', $type);
         }
@@ -116,6 +116,21 @@ class SearchController extends AbstractBase
         $q = $this->layout()->query;
         $view = $this->createViewModel();
         $view->results = $this->getDbTable('itemsisbns')->searchForItems($q);
+        return $view;
+    }
+
+    /**
+     * Person results
+     *
+     * @return mixed
+     */
+    public function personAction()
+    {
+        // Strip commas to prevent problems:
+        $q = str_replace(',', ' ', $this->layout()->query);
+        $tokens = $this->tokenize($q);
+        $view = $this->createViewModel();
+        $view->people = $this->getDbTable('person')->keywordSearch($tokens);
         return $view;
     }
 }
