@@ -669,6 +669,17 @@ return array(
                     ),
                 ),
             ),
+            'search' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/Search',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Search',
+                        'action'        => 'index',
+                    ),
+                ),
+            ),
             'series' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -771,6 +782,7 @@ return array(
             'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
             'GeebyDeeby\Controller\Platform' => 'GeebyDeeby\Controller\PlatformController',
             'GeebyDeeby\Controller\Publisher' => 'GeebyDeeby\Controller\PublisherController',
+            'GeebyDeeby\Controller\Search' => 'GeebyDeeby\Controller\SearchController',
             'GeebyDeeby\Controller\Series' => 'GeebyDeeby\Controller\SeriesController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
             'GeebyDeeby\Controller\User' => 'GeebyDeeby\Controller\UserController',

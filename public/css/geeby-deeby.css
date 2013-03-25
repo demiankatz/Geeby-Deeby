@@ -39,6 +39,11 @@ td, th {
     font-size: smaller;
 }
 
+.searchbox {
+    float: right;
+    clear: right;
+}
+
 .headerControls {
     float: right;
     text-align: right;

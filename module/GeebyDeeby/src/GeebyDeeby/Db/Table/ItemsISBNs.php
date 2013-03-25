@@ -67,4 +67,24 @@ class ItemsISBNs extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Find items matching an ISBN search query.
+     *
+     * @var string $q Query
+     *
+     * @return mixed
+     */
+    public function searchForItems($q)
+    {
+        $callback = function ($select) use ($q) {
+            $select->join(
+                array('i' => 'Items'), 'Items_ISBNs.Item_ID = i.Item_ID'
+            );
+            $select->order('Item_Name');
+            $select->where->like('ISBN', $q . '%');
+            $select->where->OR->like('ISBN13', $q . '%');
+        };
+        return $this->select($callback);
+    }
 }
