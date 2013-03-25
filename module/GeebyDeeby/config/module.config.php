@@ -755,6 +755,7 @@ return array(
             },
         ),
         'invokables' => array(
+            'GeebyDeeby\Articles' => 'GeebyDeeby\Articles',
             'GeebyDeeby\Authentication' => 'Zend\Authentication\AuthenticationService',
         ),
     ),
@@ -789,10 +790,16 @@ return array(
         ),
     ),
     'view_helpers' => array(
+        'factories' => array(
+            'fixtitle' => function ($sm) {
+                return new \GeebyDeeby\View\Helper\FixTitle(
+                    $sm->getServiceLocator()->get('GeebyDeeby\Articles')
+                );
+            },
+        ),
         'invokables' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
-            'fixtitle' => 'GeebyDeeby\View\Helper\FixTitle',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
         ),

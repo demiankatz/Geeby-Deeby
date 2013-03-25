@@ -39,32 +39,20 @@ namespace GeebyDeeby\View\Helper;
 class FixTitle extends \Zend\View\Helper\AbstractHelper
 {
     /**
-     * List of articles (and other non-sorting prefixes).
+     * Articles object.
      *
-     * @var array
+     * @var \GeebyDeeby\Articles
      */
     protected $articles;
 
     /**
-     * List of articles/non-sorting prefixes that shouldn't be followed with a space.
-     *
-     * @var array
-     */
-    protected $unspacedArticles;
-
-    /**
      * Constructor
+     *
+     * @param \GeebyDeeby\Articles $articles Articles object
      */
-    public function __construct()
+    public function __construct(\GeebyDeeby\Articles $articles)
     {
-        $this->articles = array(
-            'The','Los','Il','La','Le','L\'','El','De', 
-            'Het','Een','Os','O','Un','Une','As','Uma',
-            'An','A','¡','Les','"', 'I', 'Ein', 'Lo',
-            'Un','Das','Die','Der','Den','Det','Et', 
-            'Las','¿','¡La "', 'Els'
-        );
-        $this->unspacedArticles = array("¡", "¿", "L'", '"', '¡La "');
+        $this->articles = $articles;
     }
 
     /**
@@ -74,21 +62,8 @@ class FixTitle extends \Zend\View\Helper\AbstractHelper
      *
      * @return string
      */
-    function __invoke($title)
+    public function __invoke($title)
     {
-        foreach ($this->articles as $art) {
-            $suffix = ", " . $art;
-            if (in_array($art, $this->unspacedArticles)) {
-                $prefix = $art;
-            } else {
-                $prefix = $art . " ";
-            }
-            $suflen = strlen($suffix);
-            if (substr($title, strlen($title)-$suflen) == $suffix) {
-                return $prefix . substr($title, 0, strlen($title) - $suflen);
-            }
-        }
-        // If we've reached this point, there was no article... return now!
-        return $title;
+        return $this->articles->formatTrailingArticles($title);
     }
 }
