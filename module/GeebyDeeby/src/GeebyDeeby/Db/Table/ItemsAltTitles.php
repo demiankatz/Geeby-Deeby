@@ -67,4 +67,22 @@ class ItemsAltTitles extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return mixed
+     */
+    public function keywordSearch($tokens)
+    {
+        $callback = function ($select) use ($tokens) {
+            foreach ($tokens as $token) {
+                $select->where->like('Item_AltName', '%' . $token . '%');
+            }
+            $select->order('Item_AltName');
+        };
+        return $this->select($callback);
+    }
 }

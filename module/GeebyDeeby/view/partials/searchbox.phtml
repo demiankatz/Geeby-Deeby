@@ -2,7 +2,7 @@
   <form action=<?=$this->url('search')?> method="post">
     <b>Search:</b>
     <select name="SearchType">
-      <? foreach (array(/*'Title', 'Person', 'Keyword', */'ISBN') as $current): ?>
+      <? foreach (array(/*'Title', 'Person', */'Keyword', 'ISBN') as $current): ?>
         <option value="<?=$this->escapeHtml($current)?>"<?=isset($this->layout()->type) && strtolower($this->layout()->type) == strtolower($current) ? ' selected="selected"' : ''?>><?=$this->escapeHtml($current)?></option>
       <? endforeach; ?>
     </select>

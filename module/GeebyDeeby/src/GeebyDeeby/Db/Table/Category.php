@@ -58,4 +58,22 @@ class Category extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return mixed
+     */
+    public function keywordSearch($tokens)
+    {
+        $callback = function ($select) use ($tokens) {
+            foreach ($tokens as $token) {
+                $select->where->like('Category', '%' . $token . '%');
+            }
+            $select->order('Category');
+        };
+        return $this->select($callback);
+    }
 }

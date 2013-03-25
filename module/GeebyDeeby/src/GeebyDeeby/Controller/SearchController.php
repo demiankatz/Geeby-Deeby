@@ -39,6 +39,39 @@ namespace GeebyDeeby\Controller;
 class SearchController extends AbstractBase
 {
     /**
+     * Tokenize a search query.
+     *
+     * @param string $q Query to tokenize
+     *
+     * @return array
+     */
+    protected function tokenize($q)
+    {
+        $q = preg_replace('/\s+/', ' ', $q);
+        return explode(' ', $q);
+    }
+
+    /**
+     * Keyword results
+     *
+     * @return mixed
+     */
+    public function keywordAction()
+    {
+        $tokens = $this->tokenize($this->layout()->query);
+        $view = $this->createViewModel();
+        $view->series = $this->getDbTable('series')->keywordSearch($tokens);
+        $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
+            ->keywordSearch($tokens);
+        $view->items = $this->getDbTable('item')->keywordSearch($tokens);
+        $view->itemsAltTitles = $this->getDbTable('itemsalttitles')
+            ->keywordSearch($tokens);
+        $view->categories = $this->getDbTable('category')->keywordSearch($tokens);
+        $view->people = $this->getDbTable('person')->keywordSearch($tokens);
+        return $view;
+    }
+
+    /**
      * Search results routing action
      *
      * @return mixed
@@ -60,8 +93,8 @@ class SearchController extends AbstractBase
         $type = strtolower($this->layout()->type);
         switch ($type) {
         case 'isbn':
+        case 'keyword':
         // TODO -- remaining search options:
-        //case 'keyword':
         //case 'person':
         //case 'title':
             return $this->forwardTo(__NAMESPACE__ . '\Search', $type);

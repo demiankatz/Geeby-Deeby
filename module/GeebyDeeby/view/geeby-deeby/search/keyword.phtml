@@ -1,0 +1,68 @@
+<?
+    $this->headTitle('Search Results - Keyword - ');
+    $empty = true;
+?>
+<h1>Search Results - Keyword</h1>
+<? if (count($series) > 0): $empty = false; ?>
+  <h2>Series</h2>
+  <p>
+    <? foreach ($series as $current): ?>
+      <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+        <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+      </a><br />
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
+<? if (count($seriesAltTitles) > 0): $empty = false; ?>
+  <h2>Series Alternate Titles</h2>
+  <p>
+    <? foreach ($seriesAltTitles as $current): ?>
+      <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+        <?=$this->escapeHtml($this->fixtitle($current['Series_AltName']))?>
+      </a><br />
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
+<? if (count($items) > 0): $empty = false; ?>
+  <h2>Items</h2>
+  <p>
+    <? foreach ($items as $current): ?>
+      <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+        <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
+      </a><br />
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
+<? if (count($itemsAltTitles) > 0): $empty = false; ?>
+  <h2>Item Alternate Titles</h2>
+  <p>
+    <? foreach ($itemsAltTitles as $current): ?>
+      <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+        <?=$this->escapeHtml($this->fixtitle($current['Item_AltName']))?>
+      </a><br />
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
+<? if (count($categories) > 0): $empty = false; ?>
+  <h2>Categories</h2>
+  <p>
+    <? foreach ($categories as $current): ?>
+      <a href="<?=$this->url('category', array('id' => $current['Category_ID']))?>">
+        <?=$this->escapeHtml($this->fixtitle($current['Category']))?>
+      </a><br />
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
+<? if (count($people) > 0): $empty = false; ?>
+  <h2>People</h2>
+  <p>
+    <? foreach ($people as $current): ?>
+      <a href="<?=$this->url('person', array('id' => $current['Person_ID']))?>">
+        <?=$this->escapeHtml($this->showperson($current))?>
+      </a><br />
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
+<? if ($empty): ?>
+  <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
+<? endif; ?>

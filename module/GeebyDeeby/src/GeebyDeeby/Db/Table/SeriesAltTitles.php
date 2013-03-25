@@ -67,4 +67,22 @@ class SeriesAltTitles extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return mixed
+     */
+    public function keywordSearch($tokens)
+    {
+        $callback = function ($select) use ($tokens) {
+            foreach ($tokens as $token) {
+                $select->where->like('Series_AltName', '%' . $token . '%');
+            }
+            $select->order('Series_AltName');
+        };
+        return $this->select($callback);
+    }
 }

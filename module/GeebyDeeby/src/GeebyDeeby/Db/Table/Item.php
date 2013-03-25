@@ -78,4 +78,22 @@ class Item extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return mixed
+     */
+    public function keywordSearch($tokens)
+    {
+        $callback = function ($select) use ($tokens) {
+            foreach ($tokens as $token) {
+                $select->where->like('Item_Name', '%' . $token . '%');
+            }
+            $select->order('Item_Name');
+        };
+        return $this->select($callback);
+    }
 }

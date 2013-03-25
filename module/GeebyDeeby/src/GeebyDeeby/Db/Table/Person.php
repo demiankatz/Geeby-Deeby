@@ -97,4 +97,27 @@ class Person extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return mixed
+     */
+    public function keywordSearch($tokens)
+    {
+        $callback = function ($select) use ($tokens) {
+            foreach ($tokens as $token) {
+                $nest = $select->where->NEST;
+                $nest->like('First_Name', '%' . $token . '%');
+                $nest->OR->like('Middle_Name', '%' . $token . '%');
+                $nest->OR->like('Last_Name', '%' . $token . '%');
+                $nest->OR->like('Extra_Details', '%' . $token . '%');
+                $nest->UNNEST;
+            }
+            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
+        };
+        return $this->select($callback);
+    }
 }
