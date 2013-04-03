@@ -62,14 +62,19 @@ class Link extends Gateway
     /**
      * Get a list of links grouped by type.
      *
+     * @param string $typeFilter A filter for matching certain types (null for all)
+     *
      * @return mixed
      */
-    public function getListByType()
+    public function getListByType($typeFilter = null)
     {
-        $callback = function ($select) {
+        $callback = function ($select) use ($typeFilter) {
             $select->join(
                 array('lt' => 'Link_Types'), 'Links.Link_Type_ID = lt.Link_Type_ID'
             );
+            if (null !== $typeFilter) {
+                $select->where->like('Link_Type', $typeFilter . '%');
+            }
             $select->order(array('Link_Type', 'Link_Name'));
         };
         return $this->select($callback);

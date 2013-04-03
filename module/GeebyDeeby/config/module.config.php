@@ -73,6 +73,19 @@ return array(
             // if you wish to create custom file groupings on the "List Files"
             // page.  Leave it empty to group by standard File Type values.
         ),
+        'link_groups' => array(
+            // Fill this array with 'Group Name' => array(
+            //     'desc' => string value (HTML description to show on page)
+            //     'title' => string value (page title override)
+            //     'typeMatch' => string value (prefix to use for filtering by
+            //                                  link type)
+            //     'typeTrim' => int value (number of characters to strip from
+            //                              left side of link type name)
+            // ), ...
+            // if you wish to create custom link groupings. These custom groups
+            // may be accessed by adding the group name as a subdirectory of the
+            // main /Links URL. (e.g. http://mysite.org/Links/MyGroupName).
+        ),
     ),
     'controller_plugins' => array(
         'invokables' => array(

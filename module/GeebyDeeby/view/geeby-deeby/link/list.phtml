@@ -1,13 +1,14 @@
 <?
-    $this->headTitle('Link List - ');
+    $this->headTitle($title . ' - ');
 ?>
-<h1>Link List</h1>
+<h1><?=$this->escapeHtml($title)?></h1>
+<? if (!empty($desc)): ?><?=$desc?><? endif; ?>
 <? if (count($links) < 1): ?>
   <p>No links listed in this database yet.</p>
 <? else: ?>
   <? $type = false; foreach ($links as $link): ?>
     <? if ($type != $link['Link_Type']): $type = $link['Link_Type']; ?>
-      <h2><?=$this->escapeHtml($type)?></h2>
+      <h2><?=$this->escapeHtml(substr($type, $typeTrim))?></h2>
     <? endif; ?>
     <p class="link">
       <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />

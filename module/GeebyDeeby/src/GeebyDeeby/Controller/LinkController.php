@@ -45,23 +45,31 @@ class LinkController extends AbstractBase
      */
     public function listAction()
     {
-        /* TODO -- finish this:
         // Get link group configuration:
         $config = $this->getServiceLocator()->get('config');
         $groups = isset($config['geeby-deeby']['link_groups'])
             ? $config['geeby-deeby']['link_groups'] : array();
         $extra = $this->params()->fromRoute('extra');
-        $activeGroup = ($extra && isset($groups[$extra]))
+        $group = ($extra && isset($groups[$extra]))
             ? $groups[$extra] : false;
-         */
 
         // Initialize values:
         $table = $this->getDbTable('link');
 
         // Retrieve the relevant links:
-        $links = $table->getListByType();
+        $links = $table->getListByType(
+            isset($group['typeMatch']) ? $group['typeMatch'] : null
+        );
 
         // Send back the details:
-        return $this->createViewModel(array('links' => $links));
+        return $this->createViewModel(
+            array(
+                'links' => $links,
+                'title' => isset($group['title'])
+                    ? $group['title'] : 'Link List',
+                'desc' => isset($group['desc']) ? $group['desc'] : '',
+                'typeTrim' => isset($group['typeTrim']) ? $group['typeTrim'] : 0,
+            )
+        );
     }
 }
