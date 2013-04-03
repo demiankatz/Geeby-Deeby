@@ -47,13 +47,33 @@ class SeriesMaterialTypes extends Gateway
     }
 
     /**
-     * Get a list of material types for the specified series.
+     * Get a list of series for the specified material type.
      *
-     * @var int $seriesID Series ID
+     * @var int $typeID Material Type ID
      *
      * @return mixed
      */
-    public function getMaterials($seriesID)
+    public function getSeriesForMaterialType($typeID)
+    {
+        $callback = function ($select) use ($typeID) {
+            $select->join(
+                array('s' => 'Series'),
+                'Series_Material_Types.Series_ID = s.Series_ID'
+            );
+            $select->order('s.Series_Name');
+            $select->where->equalTo('Material_Type_ID', $typeID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get a list of material types for the specified series.
+     *
+     * @var int $seriesID Series ID (null for all series)
+     *
+     * @return mixed
+     */
+    public function getMaterials($seriesID = null)
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
@@ -61,7 +81,9 @@ class SeriesMaterialTypes extends Gateway
                 'Series_Material_Types.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->order('mt.Material_Type_Name');
-            $select->where->equalTo('Series_ID', $seriesID);
+            if (null !== $seriesID) {
+                $select->where->equalTo('Series_ID', $seriesID);
+            }
         };
         return $this->select($callback);
     }

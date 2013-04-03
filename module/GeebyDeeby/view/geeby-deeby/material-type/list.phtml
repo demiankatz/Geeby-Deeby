@@ -1,0 +1,16 @@
+<?
+    $this->headTitle('Material Type List - ');
+?>
+<h1>Material Type List</h1>
+<? if (count($materialTypes) < 1): ?>
+  <p>No material types listed in this database yet.</p>
+<? else: ?>
+  <? $currentLetter = false; foreach ($materialTypes as $current): ?>
+    <? $first = $this->firstletter($current['Material_Type_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+    <? endif; ?>
+    <a href="<?=$this->url('material', array('id' => $current['Material_Type_ID']))?>">
+      <?=$this->escapeHtml($current['Material_Type_Name'])?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>
