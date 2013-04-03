@@ -1,0 +1,19 @@
+<?
+    $this->headTitle('Link List - ');
+?>
+<h1>Link List</h1>
+<? if (count($links) < 1): ?>
+  <p>No links listed in this database yet.</p>
+<? else: ?>
+  <? $type = false; foreach ($links as $link): ?>
+    <? if ($type != $link['Link_Type']): $type = $link['Link_Type']; ?>
+      <h2><?=$this->escapeHtml($type)?></h2>
+    <? endif; ?>
+    <p class="link">
+      <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />
+      <? if (!empty($link['Description'])): ?><?=$link['Description']?><br /><? endif; ?>
+      <span class="url"><?=$this->escapeHtml($link['URL'])?></span>
+      (last verified: <?=$this->escapeHtml($link['Date_Checked'])?>)
+    </p>
+  <? endforeach; ?>
+<? endif; ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Links
+ * Link controller
  *
  * PHP version 5
  *
@@ -20,58 +20,48 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Controller;
 
 /**
- * Table Definition for Links
+ * Link controller
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Link extends Gateway
+class LinkController extends AbstractBase
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct('Links', 'GeebyDeeby\Db\Row\Link');
-    }
-
-    /**
-     * Get a list of links.
+     * Link list
      *
      * @return mixed
      */
-    public function getList()
+    public function listAction()
     {
-        $callback = function ($select) {
-            $select->order(array('Link_Name'));
-        };
-        return $this->select($callback);
-    }
+        /* TODO -- finish this:
+        // Get link group configuration:
+        $config = $this->getServiceLocator()->get('config');
+        $groups = isset($config['geeby-deeby']['link_groups'])
+            ? $config['geeby-deeby']['link_groups'] : array();
+        $extra = $this->params()->fromRoute('extra');
+        $activeGroup = ($extra && isset($groups[$extra]))
+            ? $groups[$extra] : false;
+         */
 
-    /**
-     * Get a list of links grouped by type.
-     *
-     * @return mixed
-     */
-    public function getListByType()
-    {
-        $callback = function ($select) {
-            $select->join(
-                array('lt' => 'Link_Types'), 'Links.Link_Type_ID = lt.Link_Type_ID'
-            );
-            $select->order(array('Link_Type', 'Link_Name'));
-        };
-        return $this->select($callback);
+        // Initialize values:
+        $table = $this->getDbTable('link');
+
+        // Retrieve the relevant links:
+        $links = $table->getListByType();
+
+        // Send back the details:
+        return $this->createViewModel(array('links' => $links));
     }
 }

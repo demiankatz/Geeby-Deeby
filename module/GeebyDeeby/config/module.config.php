@@ -575,6 +575,17 @@ return array(
                     ),
                 ),
             ),
+            'links' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Links[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Link',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'login' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -804,6 +815,7 @@ return array(
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',
             'GeebyDeeby\Controller\Language' => 'GeebyDeeby\Controller\LanguageController',
+            'GeebyDeeby\Controller\Link' => 'GeebyDeeby\Controller\LinkController',
             'GeebyDeeby\Controller\MaterialType' => 'GeebyDeeby\Controller\MaterialTypeController',
             'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
             'GeebyDeeby\Controller\Platform' => 'GeebyDeeby\Controller\PlatformController',
