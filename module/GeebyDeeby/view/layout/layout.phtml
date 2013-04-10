@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <? echo $this->headTitle($this->layout()->siteTitle) ?>
+    <? echo $this->headTitle($this->config('siteTitle')) ?>
 
     <? echo $this->headLink()
            ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-autocomplete.css')

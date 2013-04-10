@@ -846,6 +846,10 @@ return array(
                     $sm->getServiceLocator()->get('GeebyDeeby\Authentication')
                 );
             },
+            'config' => function ($sm) {
+                $cfg = $sm->getServiceLocator()->get('Config');
+                return new \GeebyDeeby\View\Helper\Config($cfg['geeby-deeby']);
+            },
             'fixtitle' => function ($sm) {
                 return new \GeebyDeeby\View\Helper\FixTitle(
                     $sm->getServiceLocator()->get('GeebyDeeby\Articles')

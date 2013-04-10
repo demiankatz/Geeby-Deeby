@@ -1,6 +1,6 @@
 <div class="footer">
   <p>
-    <a href="<?=$this->basePath()?>"><?=$this->escapeHtml($this->layout()->siteTitle)?></a>
+    <a href="<?=$this->basePath()?>"><?=$this->escapeHtml($this->config('siteTitle'))?></a>
     (c) 1998-<?=$this->escapeHtml(date('Y'))?> Demian Katz
   </p>
   <p class="fineprint">
@@ -9,6 +9,6 @@
     are used here solely for the educational purpose of documenting the history
     and scope of interactive storytelling. No infringement is intended. If you
     have any questions or complaints, please contact <a 
-    href="mailto:<?=$this->escapeHtml($this->layout()->siteEmail)?>"><?=$this->escapeHtml($this->layout()->siteEmail)?></a>.
+    href="mailto:<?=$this->escapeHtml($this->config('siteEmail'))?>"><?=$this->escapeHtml($this->config('siteEmail'))?></a>.
   </p>
 </div>
