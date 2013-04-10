@@ -23,7 +23,7 @@
     <tr>
       <th>Email Address:</th>
       <td>
-        <? if ($this->layout()->loggedIn): ?>
+        <? if ($this->auth()->hasIdentity()): ?>
           <a href="mailto:<?=$this->escapeHtml($user['Address'])?>"><?=$this->escapeHtml($user['Address'])?></a>
         <? else: ?>
           Please <a href="<?=$this->url('login')?>">log in</a> to see this user's email address.

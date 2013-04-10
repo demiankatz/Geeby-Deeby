@@ -841,6 +841,11 @@ return array(
     ),
     'view_helpers' => array(
         'factories' => array(
+            'auth' => function ($sm) {
+                return new \GeebyDeeby\View\Helper\Auth(
+                    $sm->getServiceLocator()->get('GeebyDeeby\Authentication')
+                );
+            },
             'fixtitle' => function ($sm) {
                 return new \GeebyDeeby\View\Helper\FixTitle(
                     $sm->getServiceLocator()->get('GeebyDeeby\Articles')
