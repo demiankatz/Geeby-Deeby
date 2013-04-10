@@ -161,3 +161,17 @@ table.user td, table.user th {
 .review_signature {
     margin-left: 5em;
 }
+
+.controls {
+    margin: 10px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.controls a.button {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid black;
+    background-color: #DDDDDD;
+}
