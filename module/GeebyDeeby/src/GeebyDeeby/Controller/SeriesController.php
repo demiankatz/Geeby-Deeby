@@ -57,6 +57,54 @@ class SeriesController extends AbstractBase
     }
 
     /**
+     * "Submit comment" page
+     *
+     * @return mixed
+     */
+    public function commentAction()
+    {
+        // Make sure user is logged in.
+        if (!($user = $this->getCurrentUser())) {
+            return $this->forceLogin();
+        }
+
+        // Check for existing review.
+        $table = $this->getDbTable('seriesreviews');
+        $params = array(
+            'Series_ID' => $this->params()->fromRoute('id'),
+            'User_ID' => $user->User_ID
+        );
+
+        $existing = $table->select($params)->toArray();
+        $existing = count($existing) > 0 ? $existing[0] : false;
+
+        // Save comment if found.
+        if ($this->getRequest()->isPost()) {
+            $view = $this->createViewModel(
+                array('noChange' => false, 'series' => $params['Series_ID'])
+            );
+            $params['Approved'] = 'n';
+            $params['Review'] = $this->params()->fromPost('Review');
+            if ($params['Review'] == $existing['Review']) {
+                $view->noChange = true;
+            } else {
+                if ($existing) {
+                    $table->update($params);
+                } else {
+                    $table->insert($params);
+                }
+            }
+            $view->setTemplate('geeby-deeby/series/comment-submitted');
+            return $view;
+        }
+
+        // Send review to the view.
+        $review = $existing ? $existing['Review'] : '';
+
+        return $this->createViewModel(array('review' => $review));
+    }
+
+    /**
      * Comments page
      *
      * @return mixed
@@ -118,8 +166,18 @@ class SeriesController extends AbstractBase
         $view->bibliography = $this->getDbTable('seriesbibliography')
             ->getItemsDescribingSeries($id);
         $view->links = $this->getDbTable('serieslinks')->getLinksForSeries($id);
-        $view->comments = $this->getDbTable('seriesreviews')
-            ->getReviewsForSeries($id);
+        $reviews = $this->getDbTable('seriesreviews');
+        $view->comments = $reviews->getReviewsForSeries($id);
+        $user = $this->getCurrentUser();
+        if ($user) {
+            $view->userHasComment = (bool)count(
+                $reviews->select(
+                    array('User_ID' => $user->User_ID, 'Series_ID' => $id)
+                )
+            );
+        } else {
+            $view->userHasComment = false;
+        }
         return $view;
     }
 

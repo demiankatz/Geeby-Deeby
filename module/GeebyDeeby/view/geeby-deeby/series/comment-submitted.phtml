@@ -1,0 +1,12 @@
+<?
+    $this->headTitle('Comment Submitted - ');
+?>
+<h1>Comment Submitted</h1>
+
+<? if ($noChange): ?>
+  <p>You did not make any changes; nothing has been saved.</p>
+<? else: ?>
+  <p>Your comment has been saved. It will appear on the site once it has been approved by an administrator.</p>
+<? endif; ?>
+
+<p><a href="<?=$this->url('series', array('id' => $series))?>">Back to Series</a></p>

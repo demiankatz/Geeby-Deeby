@@ -150,11 +150,9 @@
 
 <h2>User Comments</h2>
 
-<? $editComment = false; ?>
 <? if (count($comments) > 0): ?>
   <? $currentUser = $this->auth()->getIdentity(); ?>
   <? foreach ($comments as $comment): ?>
-    <? if ($comment['User_ID'] == $currentUser): $editComment = true; endif; ?>
     <p><?=$comment['Review']?></p>
     <p class="review_signature">--<a href="<?=$this->url('user', array('id' => $comment['User_ID']))?>"><?=$this->escapeHtml($comment['Username'])?></a></p>
   <? endforeach; ?>
@@ -166,7 +164,7 @@
   <? if ($this->auth()->hasIdentity()): ?>
     <p>
       <a class="button" href="<?=$this->url('series', array('id' => $series['Series_ID'], 'extra' => 'Comment'))?>">
-        <?=$editComment ? 'Edit Comment' : 'Submit Comment'?>
+        <?=$userHasComment ? 'Edit Comment' : 'Submit Comment'?>
       </a>
     </p>
   <? else: ?>
