@@ -94,7 +94,18 @@ class ItemController extends AbstractBase
         $view->codes = $this->getDbTable('itemsproductcodes')->getProductCodes($id);
         $view->descriptions = $this->getDbTable('itemsdescriptions')
             ->getDescriptions($id);
-        $view->reviews = $this->getDbTable('itemsreviews')->getReviewsForItem($id);
+        $reviews = $this->getDbTable('itemsreviews');
+        $view->reviews = $reviews->getReviewsForItem($id);
+        $user = $this->getCurrentUser();
+        if ($user) {
+            $view->userHasReview = (bool)count(
+                $reviews->select(
+                    array('User_ID' => $user->User_ID, 'Item_ID' => $id)
+                )
+            );
+        } else {
+            $view->userHasReview = false;
+        }
         $collections = $this->getDbTable('collections');
         $view->buyers = $collections->getForItem($id, 'want');
         $view->owners = $collections->getForItem($id, 'have');
@@ -152,6 +163,54 @@ class ItemController extends AbstractBase
     public function notfoundAction()
     {
         return $this->createViewModel();
+    }
+
+    /**
+     * "Submit review" page
+     *
+     * @return mixed
+     */
+    public function reviewAction()
+    {
+        // Make sure user is logged in.
+        if (!($user = $this->getCurrentUser())) {
+            return $this->forceLogin();
+        }
+
+        // Check for existing review.
+        $table = $this->getDbTable('itemsreviews');
+        $params = array(
+            'Item_ID' => $this->params()->fromRoute('id'),
+            'User_ID' => $user->User_ID
+        );
+
+        $existing = $table->select($params)->toArray();
+        $existing = count($existing) > 0 ? $existing[0] : false;
+
+        // Save comment if found.
+        if ($this->getRequest()->isPost()) {
+            $view = $this->createViewModel(
+                array('noChange' => false, 'item' => $params['Item_ID'])
+            );
+            $params['Approved'] = 'n';
+            $params['Review'] = $this->params()->fromPost('Review');
+            if ($params['Review'] == $existing['Review']) {
+                $view->noChange = true;
+            } else {
+                if ($existing) {
+                    $table->update($params);
+                } else {
+                    $table->insert($params);
+                }
+            }
+            $view->setTemplate('geeby-deeby/item/review-submitted');
+            return $view;
+        }
+
+        // Send review to the view.
+        $review = $existing ? $existing['Review'] : '';
+
+        return $this->createViewModel(array('review' => $review));
     }
 
     /**

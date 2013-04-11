@@ -276,7 +276,18 @@
   <? endif; ?>
 </table>
 
-<? /* TODO: review/collection management buttons go here */ ?>
+<div class="controls">
+  <? if ($this->auth()->hasIdentity()): ?>
+    <p>
+      <a class="button" href="<?=$this->url('item', array('id' => $item['Item_ID'], 'extra' => 'Review'))?>">
+        <?=$userHasReview ? 'Edit Review' : 'Submit Review'?>
+      </a>
+    </p>
+    <? /* TODO: collection management buttons go here */ ?>
+  <? else: ?>
+    <p>Please <a href="<?=$this->url('login')?>">log in</a> to post a review.</p>
+  <? endif; ?>
+</div>
 
 <? if (count($files) > 0): ?>
   <h2>Related Documents</h2>
