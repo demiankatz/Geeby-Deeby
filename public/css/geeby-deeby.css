@@ -176,7 +176,14 @@ table.user td, table.user th {
     background-color: #DDDDDD;
 }
 
-table.reviews tr td, table.reviews tr th {
-    width: 49%;
+table.reviews tr th {
     text-align: left;
+}
+
+table.reviews tr td {
+    border: 1px solid black;
+}
+
+table.innerReviews tr td, table.innerReviews tr th {
+    border: 0;
 }

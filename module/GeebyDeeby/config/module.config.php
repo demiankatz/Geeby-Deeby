@@ -53,6 +53,7 @@ return array(
                 'platform' => 'GeebyDeeby\Db\Table\Platform',
                 'pseudonyms' => 'GeebyDeeby\Db\Table\Pseudonyms',
                 'publisher' => 'GeebyDeeby\Db\Table\Publisher',
+                'recentreviews' => 'GeebyDeeby\Db\Table\RecentReviews',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
                 'seriesalttitles' => 'GeebyDeeby\Db\Table\SeriesAltTitles',

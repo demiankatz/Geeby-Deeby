@@ -6,16 +6,52 @@
 <table class="reviews">
   <tr><th>New Item Reviews</th><th>New Series Comments</th></tr>
   <tr>
-    <td>
+    <td style="width: 50%;">
       <? if (count($reviews) < 1): ?>
         <p>No reviews available.</p>
-      <? else: // TODO ?>
+      <? else: ?>
+        <table class="innerReviews">
+          <tr><th>Date</th><th>Title</th><th>User</th></tr>
+          <? foreach ($reviews as $current): ?>
+            <tr>
+              <td><?=$this->escapeHtml($current['Added'])?></td>
+              <td>
+                <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+                  <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
+                </a>
+              </td>
+              <td>
+                <a href="<?=$this->url('user', array('id' => $current['User_ID']))?>">
+                  <?=$this->escapeHtml($current['Username'])?>
+                </a>
+              </td>
+            </tr>
+          <? endforeach; ?>
+        </table>
       <? endif; ?>
     </td>
     <td>
       <? if (count($comments) < 1): ?>
         <p>No comments available.</p>
-      <? else: // TODO ?>
+      <? else: ?>
+        <table class="innerReviews">
+          <tr><th>Date</th><th>Title</th><th>User</th></tr>
+          <? foreach ($comments as $current): ?>
+            <tr>
+              <td><?=$this->escapeHtml($current['Added'])?></td>
+              <td>
+                <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+                  <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+                </a>
+              </td>
+              <td>
+                <a href="<?=$this->url('user', array('id' => $current['User_ID']))?>">
+                  <?=$this->escapeHtml($current['Username'])?>
+                </a>
+              </td>
+            </tr>
+          <? endforeach; ?>
+        </table>
       <? endif; ?>
     </td>
   </tr>
