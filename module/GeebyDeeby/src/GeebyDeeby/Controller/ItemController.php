@@ -224,4 +224,96 @@ class ItemController extends AbstractBase
         $view->reviews = $this->getDbTable('itemsreviews')->getReviewsByUser(null);
         return $view;
     }
+
+    /**
+     * Edit have list action
+     *
+     * @return mixed
+     */
+    public function edithaveAction()
+    {
+        return $this->editList('have');
+    }
+
+    /**
+     * Edit want list action
+     *
+     * @return mixed
+     */
+    public function editwantAction()
+    {
+        return $this->editList('want');
+    }
+
+    /**
+     * Edit extra list action
+     *
+     * @return mixed
+     */
+    public function editextraAction()
+    {
+        return $this->editList('extra');
+    }
+
+    /**
+     * Edit a collection list
+     *
+     * @param string $list List to edit (have/want/extra)
+     *
+     * @return mixed
+     */
+    protected function editList($list)
+    {
+        // Make sure we are logged in:
+        if (!($user = $this->getCurrentUser())) {
+            return $this->forceLogin();
+        }
+
+        // Which item are we working with?
+        $item = $this->params()->fromRoute('id');
+
+        // Do we have a series ID?  If not, the user may need to pick one:
+        $series = $this->params()->fromPost('series');
+        if (null === $series) {
+            $seriesOptions = $this->getDbTable('itemsinseries')
+                ->getSeriesForItem($item)->toArray();
+            if (count($seriesOptions) > 1) {
+                $view = $this->createViewModel(array('series' => $seriesOptions));
+                $view->setTemplate('geeby-deeby/item/collection-pick-series');
+                return $view;
+            }
+            $series = $seriesOptions[0]['Series_ID'];
+        }
+
+        // Check for an existing entry:
+        $table = $this->getDbTable('collections');
+        $where = array(
+            'User_ID' => $user->User_ID, 'Item_ID' => $item,
+            'Series_ID' => $series, 'Collection_Status' => $list
+        );
+        $existing = $table->select($where)->toArray();
+        $existing = count($existing) > 0 ? $existing[0] : false;
+
+        // Has a comment been posted?  If so, process the request:
+        $comment = $this->params()->fromPost('comment');
+        if (null !== $comment) {
+            if (null !== $this->params()->fromPost('delete')) {
+                $table->delete($where);
+            } else {
+                if ($existing) {
+                    $table->update(array('Collection_Note' => $comment), $where);
+                } else {
+                    $table->insert(array('Collection_Note' => $comment) + $where);
+                }
+            }
+            return $this->redirect()->toRoute('item', array('id' => $item));
+        }
+
+        // If we go this far, we need to prompt the user for more information:
+        $view = $this->createViewModel(
+            array('list' => $list, 'existing' => $existing, 'series' => $series)
+        );
+        $view->setTemplate('geeby-deeby/item/collection-add');
+        return $view;
+    }
 }
