@@ -717,6 +717,17 @@ return array(
                     ),
                 ),
             ),
+            'reviews' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Reviews[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Reviews',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'search' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -833,6 +844,7 @@ return array(
             'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
             'GeebyDeeby\Controller\Platform' => 'GeebyDeeby\Controller\PlatformController',
             'GeebyDeeby\Controller\Publisher' => 'GeebyDeeby\Controller\PublisherController',
+            'GeebyDeeby\Controller\Reviews' => 'GeebyDeeby\Controller\ReviewsController',
             'GeebyDeeby\Controller\Search' => 'GeebyDeeby\Controller\SearchController',
             'GeebyDeeby\Controller\Series' => 'GeebyDeeby\Controller\SeriesController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
