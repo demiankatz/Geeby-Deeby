@@ -225,7 +225,7 @@ DROP TABLE IF EXISTS `Items_Descriptions`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Items_Descriptions` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Source` enum('LC','Cover','User') NOT NULL DEFAULT 'User',
+  `Source` enum('LC','Cover','User','Ad') NOT NULL DEFAULT 'User',
   `Description` text NOT NULL,
   PRIMARY KEY (`Item_ID`,`Source`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
