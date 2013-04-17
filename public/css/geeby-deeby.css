@@ -187,3 +187,11 @@ table.reviews tr td {
 table.innerReviews tr td, table.innerReviews tr th {
     border: 0;
 }
+
+table.signup {
+    width: auto;
+}
+
+table.signup tr th, table.signup tr td {
+    text-align: left;
+}

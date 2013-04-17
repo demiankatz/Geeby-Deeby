@@ -753,6 +753,17 @@ return array(
                     ),
                 ),
             ),
+            'signup' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Signup[/:action]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Signup',
+                        'action'        => 'index',
+                    ),
+                ),
+            ),
             'suggest' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -848,6 +859,7 @@ return array(
             'GeebyDeeby\Controller\Reviews' => 'GeebyDeeby\Controller\ReviewsController',
             'GeebyDeeby\Controller\Search' => 'GeebyDeeby\Controller\SearchController',
             'GeebyDeeby\Controller\Series' => 'GeebyDeeby\Controller\SeriesController',
+            'GeebyDeeby\Controller\Signup' => 'GeebyDeeby\Controller\SignupController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
             'GeebyDeeby\Controller\User' => 'GeebyDeeby\Controller\UserController',
         ),
