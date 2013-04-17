@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Bootstrap
+ * @package  Authentication
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
@@ -32,7 +32,7 @@ use Zend\Authentication\Result;
  * GeebyDeeby Authentication Adapter
  *
  * @category GeebyDeeby
- * @package  Bootstrap
+ * @package  Authentication
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
@@ -83,6 +83,9 @@ class Adapter implements \Zend\Authentication\Adapter\AdapterInterface
     public function authenticate()
     {
         $user = $this->table->passwordLogin($this->username, $this->password);
+        if (is_object($user) && $user->Person_ID === 0) {
+            throw new UnapprovedUserException('Unapproved User');
+        }
         return new Result(
             is_object($user) ? Result::SUCCESS : Result::FAILURE,
             is_object($user) ? $user->User_ID : null

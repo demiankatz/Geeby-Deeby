@@ -62,7 +62,12 @@ class IndexController extends AbstractBase
                 $this->params()->fromPost('user'),
                 $this->params()->fromPost('pass')
             );
-            $result = $this->getAuth()->authenticate($adapter);
+            try {
+                $result = $this->getAuth()->authenticate($adapter);
+            } catch (\GeebyDeeby\Authentication\UnapprovedUserException $e) {
+                $view->msg = 'Your account has not been approved yet.';
+                return $view;
+            }
             if ($result->isValid()) {
                 $followup = $this->followup()->retrieve();
                 if (isset($followup->url)) {
