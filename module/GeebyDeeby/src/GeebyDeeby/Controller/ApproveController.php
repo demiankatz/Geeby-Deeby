@@ -39,6 +39,42 @@ namespace GeebyDeeby\Controller;
 class ApproveController extends AbstractBase
 {
     /**
+     * Approve a user
+     *
+     * @return mixed
+     */
+    public function approveuserAction()
+    {
+        $id = $this->params()->fromPost('id');
+        if (null === $id) {
+            return $this->jsonDie('Missing ID value.');
+        }
+        $table = $this->getDbTable('user');
+        $where = array('User_ID' => $id);
+        $user = $table->select($where);
+        if (count($user) < 1) {
+            return $this->jsonDie('Problem loading user data.');
+        }
+        $row = current($user->toArray());
+        if ($row['Person_ID'] != 0) {
+            return $this->jsonDie('User already approved.');
+        }
+        $person_id = intval($this->params()->fromPost('person_id'));
+        if ($person_id === 0) {
+            return $this->jsonDie('Invalid Person ID.');
+        }
+        $row['Person_ID'] = $person_id;
+        $row['Username'] = $this->params()->fromPost('username');
+        $row['Name'] = $this->params()->fromPost('fullname');
+        $row['Address'] = $this->params()->fromPost('address');
+        $table->update($row, $where);
+        if (!$this->sendApprovalEmail($row['Address'])) {
+            return $this->jsonDie('Problem sending email; user approved anyway.');
+        }
+        return $this->jsonReportSuccess();
+    }
+
+    /**
      * Main approval action
      *
      * @return mixed
@@ -52,5 +88,51 @@ class ApproveController extends AbstractBase
         $view->pendingComments = $this->getDbTable('seriesreviews')
             ->getReviewsByUser(null, 'n');
         return $view;
+    }
+
+    /**
+     * Reject a user
+     *
+     * @return mixed
+     */
+    public function rejectuserAction()
+    {
+        $id = $this->params()->fromPost('id');
+        if (null === $id) {
+            return $this->jsonDie('Missing ID value.');
+        }
+        $table = $this->getDbTable('user');
+        $where = array('User_ID' => $id);
+        $user = $table->select($where);
+        if (count($user) < 1) {
+            return $this->jsonDie('Problem loading user data.');
+        }
+        $row = current($user->toArray());
+        if ($row['Person_ID'] != 0) {
+            return $this->jsonDie('User already approved.');
+        }
+        $table->delete($where);
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Send an account approval email.  Report success or failure.
+     *
+     * @param string $address Target email address.
+     *
+     * @return bool
+     */
+    public function sendApprovalEmail($address)
+    {
+        // If we don't have an address, report success -- we'll skip the email step:
+        $address = trim($address);
+        if (empty($address)) {
+            return true;
+        }
+        $view = $this->getServiceLocator()->get('viewmanager')->getRenderer();
+        $subject = $view->config('siteTitle') . " Membership";
+        $message = $view->render('emails/account-approval.phtml');
+        $from = "From: " . $view->config('siteEmail');
+        return @mail($address, $subject, $message, $from);
     }
 }
