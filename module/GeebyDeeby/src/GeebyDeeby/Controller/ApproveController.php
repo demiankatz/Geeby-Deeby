@@ -92,7 +92,7 @@ class ApproveController extends AbstractBase
         $view = $this->createViewModel();
         $view->newUsers = $this->getDbTable('user')->getUnapproved();
         $view->pendingReviews = $this->getDbTable('itemsreviews')
-            ->getReviewsByUser(null, 'n');
+            ->getReviewsByUser(null, 'n', false);
         $view->pendingComments = $this->getDbTable('seriesreviews')
             ->getReviewsByUser(null, 'n');
         return $view;

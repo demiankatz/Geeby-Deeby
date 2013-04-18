@@ -92,25 +92,30 @@ class ItemsReviews extends Gateway
     /**
      * Get a list of items reviewed by the specified user.
      *
-     * @var int    $userID   User ID (null for all users)
-     * @var string $approved 'y' to get only approved items, 'n' for only unapproved
-     * items, null for all items
+     * @param int    $userID   User ID (null for all users)
+     * @param string $approved 'y' to get only approved items, 'n' for only
+     * unapproved items, null for all items
+     * @param bool   $series   Include series information in result set?
+     *
+     * @return mixed
      */
-    public function getReviewsByUser($userID, $approved = 'y')
+    public function getReviewsByUser($userID, $approved = 'y', $series = true)
     {
-        $callback = function ($select) use ($userID, $approved) {
+        $callback = function ($select) use ($userID, $approved, $series) {
             $select->join(
                 array('i' => 'Items'),
                 'Items_Reviews.Item_ID = i.Item_ID'
             );
-            $select->join(
-                array('iis' => 'Items_In_Series'),
-                'i.Item_ID = iis.Item_ID'
-            );
-            $select->join(
-                array('s' => 'Series'),
-                'iis.Series_ID = s.Series_ID'
-            );
+            if ($series) {
+                $select->join(
+                    array('iis' => 'Items_In_Series'),
+                    'i.Item_ID = iis.Item_ID'
+                );
+                $select->join(
+                    array('s' => 'Series'),
+                    'iis.Series_ID = s.Series_ID'
+                );
+            }
             // If we don't already have a user in mind, let's pull in extra
             // user details in case we need them:
             if (null === $userID) {
@@ -118,9 +123,9 @@ class ItemsReviews extends Gateway
                     array('u' => 'Users'), 'Items_Reviews.User_ID = u.User_ID'
                 );
             }
-            $select->order(
-                array('Series_Name', 's.Series_ID', 'iis.Position', 'Item_Name')
-            );
+            // Different sort settings based on whether or not series are included:
+            $all = array('Series_Name', 's.Series_ID', 'iis.Position', 'Item_Name');
+            $select->order($series ? $all : array('Item_Name'));
             if (null !== $approved) {
                 $select->where->equalTo('Approved', $approved);
             }
