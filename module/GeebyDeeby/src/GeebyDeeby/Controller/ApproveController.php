@@ -46,9 +46,11 @@ class ApproveController extends AbstractBase
     public function indexAction()
     {
         $view = $this->createViewModel();
-        $view->newUsers = array();
-        $view->pendingReviews = array();
-        $view->pendingComments = array();
+        $view->newUsers = $this->getDbTable('user')->getUnapproved();
+        $view->pendingReviews = $this->getDbTable('itemsreviews')
+            ->getReviewsByUser(null, 'n');
+        $view->pendingComments = $this->getDbTable('seriesreviews')
+            ->getReviewsByUser(null, 'n');
         return $view;
     }
 }

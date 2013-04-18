@@ -111,6 +111,13 @@ class ItemsReviews extends Gateway
                 array('s' => 'Series'),
                 'iis.Series_ID = s.Series_ID'
             );
+            // If we don't already have a user in mind, let's pull in extra
+            // user details in case we need them:
+            if (null === $userID) {
+                $select->join(
+                    array('u' => 'Users'), 'Items_Reviews.User_ID = u.User_ID'
+                );
+            }
             $select->order(
                 array('Series_Name', 's.Series_ID', 'iis.Position', 'Item_Name')
             );
