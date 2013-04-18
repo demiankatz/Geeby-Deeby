@@ -45,6 +45,10 @@ class ApproveController extends AbstractBase
      */
     public function approveuserAction()
     {
+        $ok = $this->checkPermission('Approver');
+        if ($ok !== true) {
+            return $ok;
+        }
         $id = $this->params()->fromPost('id');
         if (null === $id) {
             return $this->jsonDie('Missing ID value.');
@@ -81,6 +85,10 @@ class ApproveController extends AbstractBase
      */
     public function indexAction()
     {
+        $ok = $this->checkPermission('Approver');
+        if ($ok !== true) {
+            return $ok;
+        }
         $view = $this->createViewModel();
         $view->newUsers = $this->getDbTable('user')->getUnapproved();
         $view->pendingReviews = $this->getDbTable('itemsreviews')
@@ -97,6 +105,10 @@ class ApproveController extends AbstractBase
      */
     public function rejectuserAction()
     {
+        $ok = $this->checkPermission('Approver');
+        if ($ok !== true) {
+            return $ok;
+        }
         $id = $this->params()->fromPost('id');
         if (null === $id) {
             return $this->jsonDie('Missing ID value.');
