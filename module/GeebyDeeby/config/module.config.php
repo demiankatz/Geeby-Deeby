@@ -832,6 +832,7 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
+            'GeebyDeeby\Controller\Approve' => 'GeebyDeeby\Controller\ApproveController',
             'GeebyDeeby\Controller\Category' => 'GeebyDeeby\Controller\CategoryController',
             'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',

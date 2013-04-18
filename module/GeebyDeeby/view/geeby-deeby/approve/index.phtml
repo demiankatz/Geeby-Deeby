@@ -1,0 +1,75 @@
+<? $this->headTitle('Approve New Users / Content - ') ?>
+<? $this->headScript()->prependFile($this->basePath() . '/js/approve.js') ?>
+<? $displayedSomething = false; ?>
+<h1>Approve New Users / Content</h1>
+<? if (count($newUsers) > 0): $displayedSomething = true; ?>
+  <h2>New Users</h2>
+  <table>
+    <tr>
+      <th>Username</th>
+      <th>Full Name</th>
+      <th>Email</th>
+      <th>Person Record</th>
+      <th>Options</th>
+    </tr>
+    <? foreach ($newUsers as $current): ?>
+      <tr id="NewUser_<?=$current['User_ID']?>">
+        <td><input type="text" id="Username_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Username'])?>"/></td>
+        <td><input type="text" id="Name_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Name'])?>"/></td>
+        <td><input type="text" id="Address_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Address'])?>"/></td>
+        <td><input class="Person_ID" id="Person_ID_<?=$current['User_ID']?>" value="-1 (normal user)"/></td>
+        <td id="UserButtons_<?=$current['User_ID']?>">
+          <button onclick="approveUser(<?=$current['User_ID']?>);">Approve</button>
+          <button onclick="rejectUser(<?=$current['User_ID']?>);">Reject<button>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>
+<? if (count($pendingReviews) > 0): $displayedSomething = true; ?>
+  <h2>New Item Reviews</h2>
+  <table class="approve">
+    <tr>
+      <th>Item / User</th>
+      <th>Review</th>
+      <th>Options</th>
+    </tr>
+    <? foreach ($pendingReviews as $current): ?>
+      <tr id="PendingReview_<?=$current['User_ID']?>_<?=$current['Item_ID']?>">
+        <td><?=$this->escapeHtml($current['Item_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
+        <td>
+          <textarea id="ReviewText_<?=$current['User_ID']?>_<?=$current['Item_ID']?>"><?=$this->escapeHtml($current['Review'])?></textarea>
+        </td>
+        <td id="ReviewButtons_<?=$current['User_ID']?>_<?=$current['Item_ID']?>">
+          <button onclick="approveReview(<?=$current['User_ID']?>, <?=$current['Item_ID']?>);">Approve</button>
+          <button onclick="rejectReview(<?=$current['User_ID']?>, <?=$current['Item_ID']?>);">Reject</button>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>
+<? if (count($pendingComments) > 0): $displayedSomething = true; ?>
+  <h2>New Series Comments</h2>
+  <table class="approve">
+    <tr>
+      <th>Series / User</th>
+      <th>Comment</th>
+      <th>Options</th>
+    </tr>
+    <? foreach ($pendingComments as $current): ?>
+      <tr id="PendingComment_<?=$current['User_ID']?>_<?=$current['Series_ID']?>">
+        <td><?=$this->escapeHtml($current['Series_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
+        <td>
+          <textarea id="CommentText_<?=$current['User_ID']?>_<?=$current['Series_ID']?>"><?=$this->escapeHtml($current['Review'])?></textarea>
+        </td>
+        <td id="CommentButtons_<?=$current['User_ID']?>_<?=$current['Series_ID']?>">
+          <button onclick="approveComment(<?=$current['User_ID']?>, <?=$current['Series_ID']?>);">Approve</button>
+          <button onclick="rejectComment(<?=$current['User_ID']?>, <?=$current['Series_ID']?>);">Reject</button>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>
+<? if (!$displayedSomething): ?>
+  <p>No pending approvals.</p>
+<? endif; ?>
