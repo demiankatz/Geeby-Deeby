@@ -134,7 +134,7 @@ class ApproveController extends AbstractBase
      *
      * @return bool
      */
-    public function sendApprovalEmail($address)
+    protected function sendApprovalEmail($address)
     {
         // If we don't have an address, report success -- we'll skip the email step:
         $address = trim($address);
