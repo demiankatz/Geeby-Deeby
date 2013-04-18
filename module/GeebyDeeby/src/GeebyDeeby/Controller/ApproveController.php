@@ -39,6 +39,26 @@ namespace GeebyDeeby\Controller;
 class ApproveController extends AbstractBase
 {
     /**
+     * Approve a comment
+     *
+     * @return mixed
+     */
+    public function approvecommentAction()
+    {
+        return $this->approveReview('series');
+    }
+
+    /**
+     * Approve a review
+     *
+     * @return mixed
+     */
+    public function approvereviewAction()
+    {
+        return $this->approveReview('item');
+    }
+
+    /**
      * Approve a user
      *
      * @return mixed
@@ -99,6 +119,26 @@ class ApproveController extends AbstractBase
     }
 
     /**
+     * Reject a comment
+     *
+     * @return mixed
+     */
+    public function rejectcommentAction()
+    {
+        return $this->rejectReview('series');
+    }
+
+    /**
+     * Reject a review
+     *
+     * @return mixed
+     */
+    public function rejectreviewAction()
+    {
+        return $this->rejectReview('item');
+    }
+
+    /**
      * Reject a user
      *
      * @return mixed
@@ -124,6 +164,55 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('User already approved.');
         }
         $table->delete($where);
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Approve a review or comment.
+     *
+     * @param string $type Review type: 'item' or 'series'
+     *
+     * @return mixed
+     */
+    public function approveReview($type)
+    {
+        return $this->jsonDie('TODO');
+    }
+
+    /**
+     * Reject a review or comment.
+     *
+     * @param string $type Review type: 'item' or 'series'
+     *
+     * @return mixed
+     */
+    public function rejectReview($type)
+    {
+        $userId = $this->params()->fromPost('user_id');
+        $itemId = $this->params()->fromPost($type . '_id');
+        if (null === $userId) {
+            return $this->jsonDie('Missing User ID value.');
+        }
+        if (null === $itemId) {
+            return $this->jsonDie('Missing ' . ucwords($type) . ' ID value.');
+        }
+
+        $userWhere = array('User_ID' => $userId);
+        $user = $this->getDbTable('user')->select($userWhere);
+        if (count($user) < 1) {
+            return $this->jsonDie('Problem loading user data.');
+        }
+
+        $itemWhere = array(ucwords($type) . '_ID' => $itemId);
+        $item = $this->getDbTable($type)->select($itemWhere);
+        if (count($item) < 1) {
+            return $this->jsonDie('Problem loading item data.');
+        }
+
+        $table = $this->getDbTable(
+            $type == 'item' ? 'itemsreviews' : 'seriesreviews'
+        );
+        $table->delete($itemWhere + $userWhere);
         return $this->jsonReportSuccess();
     }
 
