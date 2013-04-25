@@ -176,7 +176,41 @@ class ApproveController extends AbstractBase
      */
     public function approveReview($type)
     {
-        return $this->jsonDie('TODO');
+        $ok = $this->checkPermission('Approver');
+        if ($ok !== true) {
+            return $ok;
+        }
+        $userId = $this->params()->fromPost('user_id');
+        $itemId = $this->params()->fromPost($type . '_id');
+        $text = $this->params()->fromPost('text');
+        if (null === $userId) {
+            return $this->jsonDie('Missing User ID value.');
+        }
+        if (null === $itemId) {
+            return $this->jsonDie('Missing ' . ucwords($type) . ' ID value.');
+        }
+        if (empty($text)) {
+            return $this->jsonDie('Text must not be blank.');
+        }
+
+        $userWhere = array('User_ID' => $userId);
+        $user = $this->getDbTable('user')->select($userWhere);
+        if (count($user) < 1) {
+            return $this->jsonDie('Problem loading user data.');
+        }
+
+        $itemWhere = array(ucwords($type) . '_ID' => $itemId);
+        $item = $this->getDbTable($type)->select($itemWhere);
+        if (count($item) < 1) {
+            return $this->jsonDie('Problem loading item data.');
+        }
+
+        $table = $this->getDbTable(
+            $type == 'item' ? 'itemsreviews' : 'seriesreviews'
+        );
+        $value = array('Review' => $text, 'Approved' => 'y');
+        $table->update($value, $itemWhere + $userWhere + array('Approved' => 'n'));
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -188,6 +222,10 @@ class ApproveController extends AbstractBase
      */
     public function rejectReview($type)
     {
+        $ok = $this->checkPermission('Approver');
+        if ($ok !== true) {
+            return $ok;
+        }
         $userId = $this->params()->fromPost('user_id');
         $itemId = $this->params()->fromPost($type . '_id');
         if (null === $userId) {
@@ -212,7 +250,7 @@ class ApproveController extends AbstractBase
         $table = $this->getDbTable(
             $type == 'item' ? 'itemsreviews' : 'seriesreviews'
         );
-        $table->delete($itemWhere + $userWhere);
+        $table->delete($itemWhere + $userWhere + array('Approved' => 'n'));
         return $this->jsonReportSuccess();
     }
 
