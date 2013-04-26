@@ -1,0 +1,14 @@
+<?
+    $this->headTitle('FAQs - ');
+?>
+<h1>FAQs</h1>
+<? if (count($faqs) < 1): ?>
+  <p>No FAQs listed in this database yet.</p>
+<? else: ?>
+  <? $currentCat = false; foreach ($faqs as $current): ?>
+    <? $cat = $current['FAQ_Category_Name']; if ($currentCat !== $cat): $currentCat = $cat; ?>
+      <h2><?=$cat?></h2>
+    <? endif; ?>
+    <p><b><?=$current['FAQ_Category_ID'] . '.' . $current['FAQ_ID'] . ' ' . $current['FAQ_Name']?></b></p><blockquote><?=$current['FAQ_Body']?></blockquote>
+  <? endforeach; ?>
+<? endif; ?>

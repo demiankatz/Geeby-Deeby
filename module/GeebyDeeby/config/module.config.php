@@ -22,6 +22,7 @@ return array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
                 'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
+                'faqs' => 'GeebyDeeby\Db\Table\FAQs',
                 'file' => 'GeebyDeeby\Db\Table\File',
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
                 'item' => 'GeebyDeeby\Db\Table\Item',
@@ -530,6 +531,17 @@ return array(
                     ),
                 ),
             ),
+            'faqs' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/FAQs[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'FAQs',
+                        'action'        => 'index',
+                    ),
+                ),
+            ),
             'files' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -848,6 +860,7 @@ return array(
             'GeebyDeeby\Controller\EditPlatform' => 'GeebyDeeby\Controller\EditPlatformController',
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
+            'GeebyDeeby\Controller\FAQs' => 'GeebyDeeby\Controller\FAQsController',
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',
