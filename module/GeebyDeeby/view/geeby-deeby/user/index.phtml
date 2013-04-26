@@ -60,4 +60,12 @@
     </td>
   </tr>
 </table>
-<? /* TODO: account management controls */ ?>
+<? if ($this->auth()->hasIdentity() && $this->auth()->getIdentity() == $user['User_ID']): ?>
+  <div class="controls">
+    <p>
+      <a class="button" href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Edit'))?>">
+        Edit Account Details
+      </a>
+    </p>
+  </div>
+<? endif; ?>

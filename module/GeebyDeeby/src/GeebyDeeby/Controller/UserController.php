@@ -118,6 +118,56 @@ class UserController extends AbstractBase
     }
 
     /**
+     * Edit account details
+     *
+     * @return mixed
+     */
+    public function editAction()
+    {
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
+        }
+        // Make sure user is logged in.
+        if (!($user = $this->getCurrentUser())
+            || $view->user['User_ID'] != $user->User_ID
+        ) {
+            return $this->forceLogin();
+        }
+        if (null !== $this->params()->fromPost('submit')) {
+            $view->fullname = $this->params()->fromPost('Fullname');
+            $view->address = $this->params()->fromPost('Address');
+            $password1 = $this->params()->fromPost('Password1');
+            $password2 = $this->params()->fromPost('Password2');
+            if ($view->fullname == '') {
+                $view->error = 'Please fill out all required fields.';
+            } else if ($password1 != $password2
+                || strpos($view->address, '://') !== false // block spam addresses
+            ) {
+                $view->error = 'Your passwords did not match. Please try again.';
+            } else {
+                $table = $this->getDbTable('user');
+                $update = array(
+                    'Name' => $view->fullname, 'Address' => $view->address
+                );
+                if (!empty($password1)) {
+                    $update['Password'] = $password1;
+                }
+                $table->update(
+                    $update, array('User_ID' => $view->user['User_ID'])
+                );
+                return $this->redirect()->toRoute(
+                    'user', array('id' => $view->user['User_ID'])
+                );
+            }
+        } else {
+            $view->fullname = $view->user['Name'];
+            $view->address = $view->user['Address'];
+        }
+        return $view;
+    }
+
+    /**
      * Extra books in collection page
      *
      * @return mixed
