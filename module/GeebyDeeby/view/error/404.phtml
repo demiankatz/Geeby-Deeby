@@ -46,6 +46,8 @@ if (isset($this->controller_class)
 
 <?php endif ?>
 
+<h2>Try returning to the <a href="<?=$this->url('home')?>">home page</a> and starting over.</h2>
+
 <?php if (isset($this->display_exceptions) && $this->display_exceptions): ?>
 
 <?php if(isset($this->exception) && $this->exception instanceof Exception): ?>
