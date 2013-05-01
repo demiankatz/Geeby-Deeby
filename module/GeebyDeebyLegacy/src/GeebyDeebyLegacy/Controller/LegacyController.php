@@ -48,6 +48,34 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
         $path = explode('/', $this->params()->fromRoute('filename'));
         $file = array_pop($path);
         switch ($file) {
+        case 'list_articles.php':
+        case 'list_autos.php':
+        case 'list_scans.php':
+            return $this->redirect()->toRoute('files');
+        case 'list_categories.php':
+            return $this->redirect()->toRoute('categories');
+        case 'list_countries.php':
+            return $this->redirect()->toRoute('countries');
+        case 'list_items.php':
+            return $this->redirect()->toRoute('items');
+        case 'list_languages.php':
+            return $this->redirect()->toRoute('languages');
+        case 'list_people.php':
+            return $this->redirect()->toRoute('people');
+        case 'list_people_bios.php':
+            return $this->redirect()->toRoute('people', array('extra' => 'Bios'));
+        case 'list_publishers.php':
+            return $this->redirect()->toRoute('publishers');
+        case 'list_series.php':
+            return $this->redirect()->toRoute('series');
+        case 'list_types.php':
+            return $this->redirect()->toRoute('materials');
+        case 'list_users.php':
+            return $this->redirect()->toRoute('users');
+        case 'list_years.php':
+            return $this->redirect()->toRoute('items', array('extra' => 'ByYear'));
+        case 'new_reviews.php':
+            return $this->redirect()->toRoute('reviews');
         case 'show_series.php':
             return $this->redirect()->toRoute(
                 'series', array('id' => $this->params()->fromQuery('id'))
