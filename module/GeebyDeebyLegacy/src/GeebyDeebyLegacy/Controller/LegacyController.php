@@ -51,6 +51,7 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
         case 'list_articles.php':
         case 'list_autos.php':
         case 'list_scans.php':
+        case 'show_ads.php': // TODO: make this visual again
             return $this->redirect()->toRoute('files');
         case 'list_categories.php':
             return $this->redirect()->toRoute('categories');
@@ -76,10 +77,59 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
             return $this->redirect()->toRoute('items', array('extra' => 'ByYear'));
         case 'new_reviews.php':
             return $this->redirect()->toRoute('reviews');
-        case 'show_series.php':
+        case 'show_category.php':
             return $this->redirect()->toRoute(
-                'series', array('id' => $this->params()->fromQuery('id'))
+                'category', array('id' => $this->params()->fromQuery('id'))
             );
+        case 'show_checklist.php':
+            // TODO
+            break;
+        case 'show_country.php':
+            return $this->redirect()->toRoute(
+                'country', array('id' => $this->params()->fromQuery('id'))
+            );
+        case 'show_faqs.php':
+            return $this->redirect()->toRoute('faqs');
+        case 'show_isbn_links.php':
+            return $this->redirect()->toRoute(
+                'item', array(
+                    'id' => 'Unknown',
+                    'action' => 'ISBNDetails',
+                    'extra' => $this->params()->fromQuery('isbn')
+                )
+            );
+        case 'show_item.php':
+            return $this->redirect()
+                ->toRoute('item', array('id' => $this->params()->fromQuery('id')));
+        case 'show_language.php':
+            return $this->redirect()->toRoute(
+                'language', array('id' => $this->params()->fromQuery('id'))
+            );
+        case 'show_links.php':
+            return $this->redirect()->toRoute('links');
+        case 'show_person.php':
+            return $this->redirect()->toRoute(
+                'person', array('id' => $this->params()->fromQuery('id'))
+            );
+        case 'show_platform.php':
+            return $this->redirect()->toRoute(
+                'platform', array('id' => $this->params()->fromQuery('id'))
+            );
+        case 'show_publisher.php':
+            return $this->redirect()->toRoute(
+                'publisher', array('id' => $this->params()->fromQuery('id'))
+            );
+        case 'show_series.php':
+            return $this->redirect()
+                ->toRoute('series', array('id' => $this->params()->fromQuery('id')));
+        case 'show_user_reviews.php':
+            $id = $this->params()->fromQuery('id', 'all');
+            if ($id === 'all') {
+                return $this->redirect()
+                    ->toRoute('items', array('extra' => 'Reviews'));
+            }
+            return $this->redirect()
+                ->toRoute('user', array('id' => $id, 'extra' => 'Reviews'));
         }
         return $this->forwardTo(__NAMESPACE__ . '\Legacy', 'notfound');
     }
