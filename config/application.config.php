@@ -1,7 +1,7 @@
 <?php
 return array(
     'modules' => array(
-        'GeebyDeeby',
+        'GeebyDeeby', 'GeebyDeebyLegacy'
     ),
     'module_listener_options' => array(
         'config_glob_paths'    => array(
