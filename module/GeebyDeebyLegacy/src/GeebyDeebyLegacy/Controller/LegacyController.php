@@ -49,10 +49,9 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
         $file = array_pop($path);
         switch ($file) {
         case 'show_series.php':
-            $this->redirect()->toRoute(
+            return $this->redirect()->toRoute(
                 'series', array('id' => $this->params()->fromQuery('id'))
             );
-            break;
         }
         return $this->forwardTo(__NAMESPACE__ . '\Legacy', 'notfound');
     }

@@ -15,7 +15,7 @@ return array(
                 'options' => array(
                     'route'    => '/:filename',
                     'constraints' => array(
-                        'filename' => '.*(.cgi|.htm|.php)',
+                        'filename' => '.*(.cgi|.html?|.php)',
                     ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeebyLegacy\Controller',
