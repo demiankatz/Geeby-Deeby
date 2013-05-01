@@ -122,6 +122,42 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
         case 'show_series.php':
             return $this->redirect()
                 ->toRoute('series', array('id' => $this->params()->fromQuery('id')));
+        case 'show_series_images.php':
+            return $this->redirect()->toRoute(
+                'series', array(
+                    'id' => $this->params()->fromQuery('id'),
+                    'extra' => 'Images'
+                )
+            );
+        case 'show_type.php':
+            return $this->redirect()->toRoute(
+                'material', array('id' => $this->params()->fromQuery('id'))
+            );
+        case 'show_user.php':
+            return $this->redirect()->toRoute(
+                'user', array('id' => $this->params()->fromQuery('id'))
+            );
+        case 'show_user_buyers.php':
+            return $this->redirect()->toRoute(
+                'user', array(
+                    'id' => $this->params()->fromQuery('id'),
+                    'extra' => 'Buyers'
+                )
+            );
+        case 'show_user_collection.php':
+            return $this->redirect()->toRoute(
+                'user', array(
+                    'id' => $this->params()->fromQuery('id'),
+                    'extra' => 'Collection'
+                )
+            );
+        case 'show_user_comments.php':
+            return $this->redirect()->toRoute(
+                'user', array(
+                    'id' => $this->params()->fromQuery('id'),
+                    'extra' => 'Comments'
+                )
+            );
         case 'show_user_reviews.php':
             $id = $this->params()->fromQuery('id', 'all');
             if ($id === 'all') {
@@ -130,6 +166,20 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
             }
             return $this->redirect()
                 ->toRoute('user', array('id' => $id, 'extra' => 'Reviews'));
+        case 'show_user_sales.php':
+            return $this->redirect()->toRoute(
+                'user', array(
+                    'id' => $this->params()->fromQuery('id'),
+                    'extra' => 'Extras'
+                )
+            );
+        case 'show_user_sellers.php':
+            return $this->redirect()->toRoute(
+                'user', array(
+                    'id' => $this->params()->fromQuery('id'),
+                    'extra' => 'Sellers'
+                )
+            );
         }
         return $this->forwardTo(__NAMESPACE__ . '\Legacy', 'notfound');
     }
