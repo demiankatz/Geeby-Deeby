@@ -314,21 +314,6 @@ CREATE TABLE `Items_In_Collections` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Items_In_Series`
---
-
-DROP TABLE IF EXISTS `Items_In_Series`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_In_Series` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Series_ID` int(11) NOT NULL DEFAULT '0',
-  `Position` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`,`Series_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Items_Links`
 --
 
