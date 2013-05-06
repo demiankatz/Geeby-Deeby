@@ -124,7 +124,7 @@ class SeriesController extends AbstractBase
     public function imagesAction()
     {
         $view = $this->getViewModelWithSeries();
-        $view->images = $this->getDbTable('itemsinseries')
+        $view->images = $this->getDbTable('edition')
             ->getImagesForSeries($view->series['Series_ID']);
         return $view;
     }
@@ -150,7 +150,7 @@ class SeriesController extends AbstractBase
         $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
-        $view->items = $this->getDbTable('itemsinseries')->getItemsForSeries($id);
+        $view->items = $this->getDbTable('edition')->getItemsForSeries($id);
         $view->language = $this->getDbTable('language')
             ->getByPrimaryKey($view->series['Language_ID']);
         $view->publishers = $this->getDbTable('seriespublishers')
