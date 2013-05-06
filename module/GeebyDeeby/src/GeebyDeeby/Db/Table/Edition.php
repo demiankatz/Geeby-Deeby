@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Items_In_Series
+ * Table Definition for Editions
  *
  * PHP version 5
  *
@@ -26,10 +26,9 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
-use Zend\Db\Sql\Select;
 
 /**
- * Table Definition for Items_In_Series
+ * Table Definition for Editions
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -37,14 +36,65 @@ use Zend\Db\Sql\Select;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ItemsInSeries extends Gateway
+class Edition extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('Items_In_Series');
+        parent::__construct('Editions', 'GeebyDeeby\Db\Row\Edition');
+    }
+
+    /**
+     * Get a list of editions.
+     *
+     * @return mixed
+     */
+    public function getList()
+    {
+        $callback = function ($select) {
+            $select->order('Edition_Name');
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get autocomplete suggestions.
+     *
+     * @param string $query The user query.
+     * @param mixed  $limit Limit on returned rows (false for no limit).
+     *
+     * @return mixed
+     */
+    public function getSuggestions($query, $limit = false)
+    {
+        $callback = function ($select) use ($query, $limit) {
+            if ($limit !== false) {
+                $select->limit($limit);
+            }
+            $select->where->like('Edition_Name', $query . '%');
+            $select->order('Edition_Name');
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return mixed
+     */
+    public function keywordSearch($tokens)
+    {
+        $callback = function ($select) use ($tokens) {
+            foreach ($tokens as $token) {
+                $select->where->like('Edition_Name', '%' . $token . '%');
+            }
+            $select->order('Edition_Name');
+        };
+        return $this->select($callback);
     }
 
     /**
@@ -58,8 +108,7 @@ class ItemsInSeries extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('i' => 'Items'),
-                'Items_In_Series.Item_ID = i.Item_ID'
+                array('i' => 'Items'), 'Editions.Item_ID = i.Item_ID'
             );
             $select->join(
                 array('mt' => 'Material_Types'),
@@ -72,7 +121,7 @@ class ItemsInSeries extends Gateway
             );
             $select->order(
                 array(
-                    'mt.Material_Type_Name', 'Items_In_Series.Position',
+                    'mt.Material_Type_Name', 'Editions.Position',
                     'i.Item_Name', 'ii.Position'
                 )
             );
@@ -92,8 +141,7 @@ class ItemsInSeries extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('i' => 'Items'),
-                'Items_In_Series.Item_ID = i.Item_ID'
+                array('i' => 'Items'), 'Editions.Item_ID = i.Item_ID'
             );
             $select->join(
                 array('mt' => 'Material_Types'),
@@ -118,33 +166,12 @@ class ItemsInSeries extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('s' => 'Series'),
-                'Items_In_Series.Series_ID = s.Series_ID'
+                array('s' => 'Series'), 'Editions.Series_ID = s.Series_ID'
             );
             $select->order(
                 array('s.Series_Name', 's.Series_ID', 'Position')
             );
             $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
-    }
-
-    /**
-     * Get all item/series data.
-     *
-     * @return mixed
-     */
-    public function getAll()
-    {
-        $callback = function ($select) {
-            $select->join(
-                array('s' => 'Series'),
-                'Items_In_Series.Series_ID = s.Series_ID'
-            );
-            $select->join(
-                array('i' => 'Items'),
-                'Items_In_Series.Item_ID = i.Item_ID'
-            );
         };
         return $this->select($callback);
     }

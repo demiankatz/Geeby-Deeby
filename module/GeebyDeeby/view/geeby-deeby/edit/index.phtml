@@ -18,7 +18,7 @@
   </ul>
 <? endif; ?>
 
-<? if ($approver || $userEditor): ?>
+<? if ($approver || $userEditor || $dataManager): ?>
   <h2>Extra Tools</h2>
   <ul>
     <? if ($approver): ?>
@@ -26,6 +26,9 @@
     <? endif; ?>
     <? if ($userEditor): ?>
       <li>Edit Users (not implemented yet)</li>
+    <? endif; ?>
+    <? if ($dataManager): ?>
+      <li><a target='_migrate' href='<?=$this->url('edit/migrate')?>'>Migrate Old Data</a></li>
     <? endif; ?>
   </ul>
 <? endif; ?>

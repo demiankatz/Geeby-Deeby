@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit controller
+ * Row Definition for Editions
  *
  * PHP version 5
  *
@@ -20,52 +20,55 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Controller;
+namespace GeebyDeeby\Db\Row;
 
 /**
- * Edit controller
+ * Row Definition for Editions
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditController extends AbstractBase
+class Edition extends ServiceLocatorAwareGateway
 {
     /**
-     * Default edit menu
+     * Constructor
      *
-     * @return mixed
+     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function indexAction()
+    public function __construct($adapter)
     {
-        if (!($user = $this->getCurrentUser())) {
-            return $this->forceLogin();
-        }
-
-        return $this->createViewModel(
-            array(
-                'contentEditor' => $user->hasPermission('Content_Editor'),
-                'approver' => $user->hasPermission('Approver'),
-                'userEditor' => $user->hasPermission('User_Editor'),
-                'dataManager' => $user->hasPermission('Data_Manager')
-            )
-        );
+        parent::__construct('Edition_ID', 'Editions', $adapter);
     }
 
     /**
-     * Display access denied message
+     * Validate the fields in the current object.  Return error message if problem
+     * found, boolean false if no errors were found.
      *
-     * @return mixed
+     * @return string|bool
      */
-    public function deniedAction()
+    public function validate()
     {
-        return $this->createViewModel();
+        if (empty($this->Edition_Name)) {
+            return 'Edition name cannot be blank.';
+        }
+        return false;
+    }
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName()
+    {
+        return $this->Edition_Name;
     }
 }
