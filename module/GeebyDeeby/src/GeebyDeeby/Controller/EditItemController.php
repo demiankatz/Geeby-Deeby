@@ -110,11 +110,13 @@ class EditItemController extends AbstractBase
 
         // Process series ID linkage if necessary:
         if ($this->getRequest()->isPost()) {
-            if ($series = $this->params()->fromPost('series_id', false)) {
-                $this->getDbTable('itemsinseries')->insert(
+            if ($seriesID = $this->params()->fromPost('series_id', false)) {
+                $series = $this->getDbTable('series')->getByPrimaryKey($seriesID);
+                $this->getDbTable('edition')->insert(
                     array(
+                        'Edition_Name' => $series->Series_Name . ' edition',
                         'Item_ID' => $view->affectedRow->Item_ID,
-                        'Series_ID' => $series
+                        'Series_ID' => $seriesID
                     )
                 );
             }
