@@ -107,20 +107,9 @@ class Edition extends Gateway
      */
     public function getItemsForSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
-            $select->join(
-                array('i' => 'Items'), 'Editions.Item_ID = i.Item_ID'
-            );
-            $select->join(
-                array('mt' => 'Material_Types'),
-                'i.Material_Type_ID = mt.Material_Type_ID'
-            );
-            $select->order(
-                array('mt.Material_Type_Name', 'Position', 'i.Item_Name')
-            );
-            $select->where->equalTo('Series_ID', $seriesID);
-        };
-        return $this->select($callback);
+        // Proxy item table (so handleGenericLink() can be used in
+        // EditSeriesController):
+        return $this->getDbTable('item')->getItemsForSeries($seriesID);
     }
 
     /**

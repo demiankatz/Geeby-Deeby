@@ -71,7 +71,7 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbTable('materialtype')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
-            $view->item_list = $this->getDbTable('edition')
+            $view->item_list = $this->getDbTable('item')
                 ->getItemsForSeries($view->seriesObj->Series_ID);
             $view->series_alt_titles = $this->getDbTable('seriesalttitles')
                 ->getAltTitles($view->seriesObj->Series_ID);
