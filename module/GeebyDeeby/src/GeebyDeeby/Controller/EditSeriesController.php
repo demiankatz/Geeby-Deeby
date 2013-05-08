@@ -96,6 +96,10 @@ class EditSeriesController extends AbstractBase
      */
     public function categoriesAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('seriescategories');
             $series = $this->params()->fromRoute('id');
@@ -132,6 +136,10 @@ class EditSeriesController extends AbstractBase
     {
         // Special case: new publisher:
         if ($this->getRequest()->isPost()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
             $table = $this->getDbTable('seriesalttitles');
             $row = $table->createRow();
             $row->Series_ID = $this->params()->fromRoute('id');
@@ -161,6 +169,10 @@ class EditSeriesController extends AbstractBase
     {
         // Special case: new publisher:
         if ($this->getRequest()->isPost()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
             $table = $this->getDbTable('seriespublishers');
             $row = $table->createRow();
             $row->Series_ID = $this->params()->fromRoute('id');
@@ -216,6 +228,10 @@ class EditSeriesController extends AbstractBase
      */
     public function itemorderAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
