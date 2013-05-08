@@ -90,7 +90,7 @@
 </table>
 
 <? if (!empty($series['Series_Description'])): ?>
-  <p><?=$series['Series_Description']?></p>
+  <p><?=nl2br($series['Series_Description'])?></p>
 <? endif; ?>
 
 <? if (count($items) < 1): ?>
