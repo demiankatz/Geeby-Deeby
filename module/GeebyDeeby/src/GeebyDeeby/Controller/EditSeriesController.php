@@ -187,6 +187,13 @@ class EditSeriesController extends AbstractBase
      */
     public function itemAction()
     {
+        // Special case: delete editions differently from other links:
+        if ($this->getRequest()->isDelete()) {
+            $this->getDbTable('edition')
+                ->delete(array('Edition_ID' => $this->params()->fromRoute('extra')));
+            return $this->jsonReportSuccess();
+        }
+
         $series = $this->getDbTable('series')->getByPrimaryKey(
             $this->params()->fromRoute('id')
         );
