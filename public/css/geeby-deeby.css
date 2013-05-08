@@ -195,3 +195,9 @@ table.signup {
 table.signup tr th, table.signup tr td {
     text-align: left;
 }
+
+.siteTitle {
+    font-size: 150%;
+    font-weight: bold;
+    float: left;
+}
