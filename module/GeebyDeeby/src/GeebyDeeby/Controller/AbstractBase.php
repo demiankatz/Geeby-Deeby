@@ -252,6 +252,10 @@ class AbstractBase extends AbstractActionController
     public function handleGenericLink($tableName, $primaryColumn, $secondaryColumn,
         $listVariable, $listMethod, $listTemplate, $extraFields = array()
     ) {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         $primary = $this->params()->fromRoute('id');
         $secondary = $this->params()->fromRoute('extra');
         $table = $this->getDbTable($tableName);
