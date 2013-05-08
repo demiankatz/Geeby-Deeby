@@ -69,4 +69,48 @@ class ItemsImages extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get image information for the specified series.
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getImagesForSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->columns(array('Thumb_Path', 'Item_ID'));
+            $select->join(
+                array('i' => 'Items'), 'Items_Images.Item_ID = i.Item_ID',
+                array()
+            );
+            $select->join(
+                array('eds' => 'Editions'), 'eds.item_ID = i.item_ID', array()
+            );
+            $select->join(
+                array('mt' => 'Material_Types'),
+                'i.Material_Type_ID = mt.Material_Type_ID',
+                array()
+            );
+            $select->join(
+                array('n' => 'Notes'), 'Items_Images.Note_ID = n.Note_ID',
+                array('Note'), Select::JOIN_LEFT
+            );
+            $select->order(
+                array(
+                    'mt.Material_Type_Name', 'eds.Position',
+                    'i.Item_Name', 'Items_Images.Position'
+                )
+            );
+            $select->group(
+                array(
+                    'Thumb_Path', 'eds.Position', 'Items_Images.Position',
+                    'Items_Images.Item_ID', 'Note'
+                )
+            );
+            $select->where->equalTo('Series_ID', $seriesID);
+        };
+        return $this->select($callback);
+    }
 }

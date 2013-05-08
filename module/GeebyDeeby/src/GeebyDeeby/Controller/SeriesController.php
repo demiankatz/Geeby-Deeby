@@ -124,7 +124,7 @@ class SeriesController extends AbstractBase
     public function imagesAction()
     {
         $view = $this->getViewModelWithSeries();
-        $view->images = $this->getDbTable('edition')
+        $view->images = $this->getDbTable('itemsimages')
             ->getImagesForSeries($view->series['Series_ID']);
         return $view;
     }
