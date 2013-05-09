@@ -246,7 +246,7 @@ class ItemController extends AbstractBase
     }
 
     /**
-     * Edit extra list action
+     * Edit sale/trade list action
      *
      * @return mixed
      */
