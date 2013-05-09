@@ -89,8 +89,7 @@ class Collections extends Gateway
                 'Collections.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('eds' => 'Editions'),
-                'i.Item_ID = eds.Item_ID'
+                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
             );
             $select->join(
                 array('s' => 'Series'),
@@ -100,17 +99,18 @@ class Collections extends Gateway
                 $select->join(
                     array('l' => 'Languages'), 's.Language_ID = l.Language_ID'
                 );
-                $order = array(
+                $fields = array(
                     'Language_Name', 'Series_Name', 's.Series_ID',
                     'Collection_Status', 'Position','Item_Name'
                 );
             } else {
-                $order = array(
+                $fields = array(
                     'Series_Name', 's.Series_ID', 'Collection_Status', 'Position',
                     'Item_Name'
                 );
             }
-            $select->order($order);
+            $select->order($fields);
+            $select->group($fields + array('i.Item_ID'));
             $select->where->equalTo('Collections.User_ID', $userID);
             if (null !== $type) {
                 if (is_array($type)) {
@@ -149,20 +149,20 @@ class Collections extends Gateway
                 array('Other' => 'Collections'),
                 'Other.Item_ID = Collections.Item_ID AND '
                 . 'Other.Series_ID = Collections.Series_ID',
-                array()
+                array('Other_Note' => 'Collection_Note')
             );
             $select->join(
-                array('eds' => 'Editions'),
-                'i.Item_ID = eds.Item_ID'
+                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
             );
             $select->join(
                 array('s' => 'Series'),
                 'eds.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
             );
-            $order = array(
+            $fields = array(
                 'Username', 'Series_Name', 's.Series_ID', 'Position', 'Item_Name'
             );
-            $select->order($order);
+            $select->order($fields);
+            $select->group($fields + array('i.Item_ID'));
             $select->where->equalTo('Other.User_ID', $userID);
             $select->where->notEqualTo('Collections.User_ID', $userID);
             $select->where->equalTo('Other.Collection_Status', $userStatus);
