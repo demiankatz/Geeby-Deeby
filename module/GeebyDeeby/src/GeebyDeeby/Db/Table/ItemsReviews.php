@@ -115,6 +115,12 @@ class ItemsReviews extends Gateway
                     array('s' => 'Series'),
                     'eds.Series_ID = s.Series_ID'
                 );
+                $select->group(
+                    array(
+                        'Items_Reviews.Item_ID', 'Items_Reviews.User_ID',
+                        's.Series_ID', 'eds.Position'
+                    )
+                );
             }
             // If we don't already have a user in mind, let's pull in extra
             // user details in case we need them:

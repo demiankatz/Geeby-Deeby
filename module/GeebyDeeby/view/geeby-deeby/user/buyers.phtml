@@ -9,8 +9,8 @@
 <? if (count($buyers) < 1): ?>
   <p>No buyers available.</p>
 <? else: ?>
-  <? $series = $seller = false; foreach ($buyers as $extra): $series = false; ?>
-    <? if ($seller !== $extra['User_ID']): $seller = $extra['User_ID']; ?>
+  <? $series = $seller = false; foreach ($buyers as $extra): ?>
+    <? if ($seller !== $extra['User_ID']): $series = false; $seller = $extra['User_ID']; ?>
       <h2 class="user"><a href="<?=$this->url('user', array('id' => $seller))?>">
         <?=$this->fixtitle($extra['Username']);?>
       </a></h2>
@@ -25,7 +25,8 @@
       <a href="<?=$this->url('item', array('id' => $extra['Item_ID']))?>">
         <?=$this->fixtitle($extra['Item_Name'])?>
       </a>
-      <? if (!empty($extra['Collection_Note'])): ?><br /><?=$this->escapeHtml($extra['Collection_Note'])?><? endif; ?>
+      <? if (!empty($extra['Collection_Note'])): ?><br /><b>Buyer's Note:</b> <?=$this->escapeHtml($extra['Collection_Note'])?><? endif; ?>
+      <? if (!empty($extra['Other_Note'])): ?><br /><b>Seller's Note:</b> <?=$this->escapeHtml($extra['Other_Note'])?><? endif; ?>
     </p>
   <? endforeach; ?>
 <? endif; ?>

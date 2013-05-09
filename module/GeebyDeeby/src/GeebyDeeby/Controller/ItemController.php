@@ -72,7 +72,7 @@ class ItemController extends AbstractBase
         $view->realNames = $this->getDbTable('pseudonyms')
             ->getRealNamesBatch($view->credits);
         $view->images = $this->getDbTable('itemsimages')->getImagesForItem($id);
-        $view->series = $this->getDbTable('edition')->getSeriesForItem($id);
+        $view->series = $this->getDbTable('series')->getSeriesForItem($id);
         $view->altTitles = $this->getDbTable('itemsalttitles')->getAltTitles($id);
         $view->platforms = $this->getDbTable('itemsplatforms')
             ->getPlatformsForItem($id);
@@ -275,8 +275,8 @@ class ItemController extends AbstractBase
         // Do we have a series ID?  If not, the user may need to pick one:
         $series = $this->params()->fromPost('series');
         if (null === $series) {
-            $seriesOptions = $this->getDbTable('edition')
-                ->getSeriesForItem($item)->toArray();
+            $seriesOptions = $this->getDbTable('series')
+                ->getSeriesForItem($item, false)->toArray();
             if (count($seriesOptions) > 1) {
                 $view = $this->createViewModel(array('series' => $seriesOptions));
                 $view->setTemplate('geeby-deeby/item/collection-pick-series');
