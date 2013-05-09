@@ -11,8 +11,8 @@
 <? else: ?>
   <?=$this->render('geeby-deeby/user/sale-disclaimer.phtml')?>
 
-  <? $series = $seller = false; foreach ($sellers as $extra): $series = false; ?>
-    <? if ($seller !== $extra['User_ID']): $seller = $extra['User_ID']; ?>
+  <? $series = $seller = false; foreach ($sellers as $extra): ?>
+    <? if ($seller !== $extra['User_ID']): $series = false; $seller = $extra['User_ID']; ?>
       <h2 class="user"><a href="<?=$this->url('user', array('id' => $seller))?>">
         <?=$this->fixtitle($extra['Username']);?>
       </a></h2>
