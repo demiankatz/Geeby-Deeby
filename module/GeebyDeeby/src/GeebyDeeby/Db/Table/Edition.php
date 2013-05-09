@@ -111,25 +111,4 @@ class Edition extends Gateway
         // EditSeriesController):
         return $this->getDbTable('item')->getItemsForSeries($seriesID);
     }
-
-    /**
-     * Get a list of series for the specified item.
-     *
-     * @var int $itemID Item ID
-     *
-     * @return mixed
-     */
-    public function getSeriesForItem($itemID)
-    {
-        $callback = function ($select) use ($itemID) {
-            $select->join(
-                array('s' => 'Series'), 'Editions.Series_ID = s.Series_ID'
-            );
-            $select->order(
-                array('s.Series_Name', 's.Series_ID', 'Position')
-            );
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
-    }
 }
