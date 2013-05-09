@@ -8,6 +8,25 @@
  */
 
 return array(
+    'controllers' => array(
+        'invokables' => array(
+            'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
+        ),
+    ),
+    'router' => array(
+        'routes' => array(
+            'about' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/About',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\About',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+        ),
+    ),
     'view_manager' => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
