@@ -39,6 +39,26 @@ namespace GeebyDeeby\Controller;
 class ItemController extends AbstractBase
 {
     /**
+     * Get a view model containing an item object (or return false if missing)
+     *
+     * @param array $extras Extra parameters to send to view model
+     *
+     * @return mixed
+     */
+    protected function getViewModelWithItem($extras = array())
+    {
+        $id = $this->params()->fromRoute('id');
+        $table = $this->getDbTable('item');
+        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
+        if (!is_object($rowObj)) {
+            return false;
+        }
+        return $this->createViewModel(
+            array('item' => $rowObj->toArray()) + $extras
+        );
+    }
+
+    /**
      * "List items by year" page
      *
      * @return mixed
@@ -59,15 +79,11 @@ class ItemController extends AbstractBase
      */
     public function indexAction()
     {
-        $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('item');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $view = $this->getViewModelWithItem();
+        if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
         }
-        $view = $this->createViewModel(
-            array('item' => $rowObj->toArray())
-        );
+        $id = $view->item['Item_ID'];
         $view->credits = $this->getDbTable('itemscredits')->getCreditsForItem($id);
         $view->realNames = $this->getDbTable('pseudonyms')
             ->getRealNamesBatch($view->credits);
@@ -210,7 +226,11 @@ class ItemController extends AbstractBase
         // Send review to the view.
         $review = $existing ? $existing['Review'] : '';
 
-        return $this->createViewModel(array('review' => $review));
+        $view = $this->getViewModelWithItem(array('review' => $review));
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
+        }
+        return $view;
     }
 
     /**
@@ -246,7 +266,7 @@ class ItemController extends AbstractBase
     }
 
     /**
-     * Edit extra list action
+     * Edit sale/trade list action
      *
      * @return mixed
      */
