@@ -213,11 +213,13 @@ class EditSeriesController extends AbstractBase
         $series = $this->getDbTable('series')->getByPrimaryKey(
             $this->params()->fromRoute('id')
         );
+        $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+            ->articleAwareAppend($series->Series_Name, ' edition');
         return $this->handleGenericLink(
             'edition', 'Series_ID', 'Item_ID',
             'item_list', 'getItemsForSeries',
             'geeby-deeby/edit-series/item-list.phtml',
-            array('Edition_Name' => $series->Series_Name . ' edition')
+            array('Edition_Name' => $edName)
         );
     }
 

@@ -112,9 +112,11 @@ class EditItemController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             if ($seriesID = $this->params()->fromPost('series_id', false)) {
                 $series = $this->getDbTable('series')->getByPrimaryKey($seriesID);
+                $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+                    ->articleAwareAppend($series->Series_Name, ' edition');
                 $this->getDbTable('edition')->insert(
                     array(
-                        'Edition_Name' => $series->Series_Name . ' edition',
+                        'Edition_Name' => $edName,
                         'Item_ID' => $view->affectedRow->Item_ID,
                         'Series_ID' => $seriesID
                     )
