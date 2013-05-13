@@ -105,6 +105,8 @@ class EditItemController extends AbstractBase
                 ->getDatesForItem($view->itemObj->Item_ID);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
+            $view->editions = $this->getDbTable('edition')
+                ->getEditionsForItem($view->itemObj->Item_ID);
             $view->setTemplate('geeby-deeby/edit-item/edit-full');
         }
 
