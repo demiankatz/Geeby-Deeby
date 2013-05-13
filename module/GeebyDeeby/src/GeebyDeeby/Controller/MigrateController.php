@@ -50,7 +50,12 @@ class MigrateController extends AbstractBase
             return $ok;
         }
         $messages = array();
-        $migrated = $this->migrateItemsInSeriesToEditions();
+        try {
+            $migrated = $this->migrateItemsInSeriesToEditions();
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
+            // Table no longer exists -- no migration necessary
+            $migrated = 0;
+        }
         if ($migrated > 0) {
             $messages[] = 'Migrated ' . $migrated . ' rows from Items_In_Series.';
         }
