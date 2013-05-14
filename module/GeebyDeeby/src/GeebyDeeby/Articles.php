@@ -93,6 +93,28 @@ class Articles
     }
 
     /**
+     * Append a string to another string without disturbing trailing articles.
+     *
+     * @param string $title Title to append to
+     * @param string $extra Text to append
+     *
+     * @return string
+     */
+    public function articleAwareAppend($title, $extra)
+    {
+        foreach ($this->articles as $art) {
+            $suffix = ", " . $art;
+            $suflen = strlen($suffix);
+            if (substr($title, strlen($title)-$suflen) == $suffix) {
+                return substr($title, 0, strlen($title) - $suflen)
+                    . $extra . $suffix;
+            }
+        }
+        // If we've reached this point, there was no article... return now!
+        return $title . $extra;
+    }
+
+    /**
      * Format a title to remove leading articles.
      *
      * @param string $title Title to strip

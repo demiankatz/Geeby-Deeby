@@ -50,7 +50,12 @@ class MigrateController extends AbstractBase
             return $ok;
         }
         $messages = array();
-        $migrated = $this->migrateItemsInSeriesToEditions();
+        try {
+            $migrated = $this->migrateItemsInSeriesToEditions();
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
+            // Table no longer exists -- no migration necessary
+            $migrated = 0;
+        }
         if ($migrated > 0) {
             $messages[] = 'Migrated ' . $migrated . ' rows from Items_In_Series.';
         }
@@ -69,7 +74,9 @@ class MigrateController extends AbstractBase
         $count = 0;
         foreach ($iis->getAll() as $current) {
             $row = $eds->createRow();
-            $row->Edition_Name = $current->Series_Name . ' edition';
+            $row->Edition_Name = $this->getServiceLocator()
+                ->get('GeebyDeeby\Articles')
+                ->articleAwareAppend($current->Series_Name, ' edition');
             $row->Item_ID = $current->Item_ID;
             $row->Series_ID = $current->Series_ID;
             $row->Position = $current->Position;

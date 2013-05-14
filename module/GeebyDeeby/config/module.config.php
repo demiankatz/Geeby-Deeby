@@ -231,6 +231,18 @@ return array(
                             ),
                         ),
                     ),
+                    'edition' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Edition[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditEdition',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
                     'file' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -861,6 +873,7 @@ return array(
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
+            'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
