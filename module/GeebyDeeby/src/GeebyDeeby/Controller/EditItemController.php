@@ -305,6 +305,20 @@ class EditItemController extends AbstractBase
     }
 
     /**
+     * Deal with editions
+     *
+     * @return mixed
+     */
+    public function editionsAction()
+    {
+        return $this->handleGenericLink(
+            'edition', 'Item_ID', 'Edition_ID',
+            'editions', 'getEditionsForItem',
+            'geeby-deeby/edit-item/edition-list.phtml'
+        );
+    }
+
+    /**
      * Set the order of an attached item
      *
      * @return mixed

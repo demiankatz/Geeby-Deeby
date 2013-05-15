@@ -1,3 +1,4 @@
 <? foreach ($editions as $current): ?>
+  <input type="radio" class="selectedEdition" name="selectedEdition" value="<?=$current['Edition_ID']?>" />
   <a href="<?=$this->url('edit/edition', array('id' => $current['Edition_ID']))?>"><?=$this->escapeHtml($current['Edition_Name'])?></a><br />
 <? endforeach; ?>

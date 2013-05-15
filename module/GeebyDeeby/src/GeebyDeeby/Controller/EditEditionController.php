@@ -82,4 +82,31 @@ class EditEditionController extends AbstractBase
         }
         return $view;
     }
+
+    /**
+     * Copy an edition
+     *
+     * @return mixed
+     */
+    public function copyAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $editionId = $this->params()->fromRoute('id');
+            $table = $this->getDbTable('edition');
+            $old = $table->getByPrimaryKey($editionId);
+            if (!$old) {
+                return $this->jsonDie('Cannot load edition ' . $editionId);
+            }
+            $new = $table->createRow();
+            foreach ($old->toArray() as $key => $value) {
+                if ($key != 'Edition_ID') {
+                    $new->$key = $value;
+                }
+            }
+            $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
+            $new->save();
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
+    }
 }
