@@ -74,6 +74,27 @@ class EditionsReleaseDates extends Gateway
     }
 
     /**
+     * Get a list of dates for the specified edition.
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getDatesForEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->join(
+                array('n' => 'Notes'),
+                'Editions_Release_Dates.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->order(array('Year', 'Month', 'Day'));
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of items sorted by publication date.
      *
      * @return mixed
