@@ -59,12 +59,12 @@ class EditionsReleaseDates extends Gateway
         $callback = function ($select) use ($itemID) {
             $select->join(
                 array('n' => 'Notes'),
-                'Items_Release_Dates.Note_ID = n.Note_ID',
+                'Editions_Release_Dates.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
                 array('eds' => 'Editions'),
-                'Editions_Release_Dates.Item_ID = eds.Edition_ID'
+                'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
             );
             $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
             $select->order(array('Year', 'Month', 'Day', 'Edition_Name'));
@@ -83,7 +83,7 @@ class EditionsReleaseDates extends Gateway
         $callback = function ($select) {
             $select->join(
                 array('eds' => 'Editions'),
-                'Editions_Release_Dates.Item_ID = eds.Edition_ID'
+                'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
             );
             $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
             $select->join(
