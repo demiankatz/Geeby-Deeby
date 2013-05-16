@@ -46,47 +46,4 @@ class ItemsReleaseDates extends Gateway
     {
         parent::__construct('Items_Release_Dates');
     }
-
-    /**
-     * Get a list of dates for the specified item.
-     *
-     * @var int $itemID Item ID
-     *
-     * @return mixed
-     */
-    public function getDatesForItem($itemID)
-    {
-        $callback = function ($select) use ($itemID) {
-            $select->join(
-                array('n' => 'Notes'),
-                'Items_Release_Dates.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
-            );
-            $select->order(array('Year', 'Month', 'Day'));
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
-    }
-
-    /**
-     * Get a list of items sorted by publication date.
-     *
-     * @return mixed
-     */
-    public function getItemsByYear()
-    {
-        $callback = function ($select) {
-            $select->join(
-                array('i' => 'Items'),
-                'Items_Release_Dates.Item_ID = i.Item_ID'
-            );
-            $select->join(
-                array('n' => 'Notes'),
-                'Items_Release_Dates.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
-            );
-            $select->order(array('Year', 'Item_Name'));
-        };
-        return $this->select($callback);
-    }
 }
