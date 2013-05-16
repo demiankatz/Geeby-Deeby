@@ -65,11 +65,58 @@ class ItemController extends AbstractBase
      */
     public function byyearAction()
     {
-        return $this->createViewModel(
-            array(
-                'items' => $this->getDbTable('itemsreleasedates')->getItemsByYear()
-            )
-        );
+        $raw = $this->getDbTable('editionsreleasedates')->getItemsByYear();
+
+        // Sort out information about editions:
+        $editionsByItem = array();
+        $sortedData = array();
+        foreach ($raw as $current) {
+            if (!isset($editionsByItem[$current->Item_ID])) {
+                $editionsByItem[$current->Item_ID] = array();
+            }
+            $editionsByItem[$current->Item_ID][$current->Edition_ID] = 1;
+            $dateKey = $current->Year . '|' . $current->Month . '|' . $current->Day
+                . '|' . $current->Item_ID;
+            if (!isset($sortedData[$dateKey])) {
+                $sortedData[$dateKey] = array();
+            }
+            $sortedData[$dateKey][] = $current;
+        }
+
+        $callback = function ($i) {
+            return count(array_keys($i));
+        };
+        $editionsByItem = array_map($callback, $editionsByItem);
+
+        // Use the information collected above to decide what edition information
+        // to display to the user:
+        $items = array();
+        foreach ($sortedData as $currentSet) {
+            $editions = array();
+            foreach ($currentSet as $current) {
+                $editions[] = $current['Edition_ID'];
+            }
+            $editions = array_unique($editions);
+            $prependEdition
+                = (count($editions) != $editionsByItem[$current['Item_ID']]);
+            $last = false;
+            foreach ($currentSet as $current) {
+                if ($prependEdition) {
+                    $current['Note'] = empty($current['Note'])
+                        ? $current['Edition_Name']
+                        : $current['Edition_Name'] . ' - ' . $current['Note'];
+                } else {
+                    if ($last) {
+                        if ($last['Note'] == $current['Note']) {
+                            continue;
+                        }
+                    }
+                }
+                $items[] = $last = $current;
+            }
+        }
+
+        return $this->createViewModel(array('items' => $items));
     }
 
     /**
