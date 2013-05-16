@@ -1,0 +1,9 @@
+<? $this->headTitle('Podcast - '); ?>
+<? if (!$details): ?>
+  <h1>Not found</h1>
+  <p>The episode you requested does not exist.</p>
+<? else: ?>
+  <h1><?=$this->escapeHtml($details['title'])?></h1>
+
+  <p><i>Coming soon.</i></p>
+<? endif; ?>

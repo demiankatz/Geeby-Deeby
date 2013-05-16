@@ -11,6 +11,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
+            'GeebyDeeby\Controller\Podcast' => 'GeebyDeebyLocal\Controller\PodcastController',
         ),
     ),
     'router' => array(
@@ -22,6 +23,36 @@ return array(
                     'defaults' => array(
                         'controller' => 'GeebyDeeby\Controller\About',
                         'action'     => 'index',
+                    ),
+                ),
+            ),
+            'podcast' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/Podcast',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\Podcast',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+            'podcast-about' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/Podcast/About',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\Podcast',
+                        'action'     => 'about',
+                    ),
+                ),
+            ),
+            'podcast-rss' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/Podcast/RSS',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\Podcast',
+                        'action'     => 'rss',
                     ),
                 ),
             ),
