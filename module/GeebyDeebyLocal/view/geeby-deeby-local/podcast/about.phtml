@@ -5,5 +5,12 @@
 <? else: ?>
   <h1><?=$this->escapeHtml($details['title'])?></h1>
 
-  <p><i>Coming soon.</i></p>
+  <p><?=$this->escapeHtml($details['description'])?></p>
+
+  <? if ($prev): ?>
+    <p>Previous episode: <a href="<?=$this->url('podcast-about')?>?file=<?=urlencode($prev['filename'])?>"><?=$this->escapeHtml($prev['title'])?></a></p>
+  <? endif; ?>
+  <? if ($next): ?>
+    <p>Next episode: <a href="<?=$this->url('podcast-about')?>?file=<?=urlencode($next['filename'])?>"><?=$this->escapeHtml($next['title'])?></a></p>
+  <? endif; ?>
 <? endif; ?>

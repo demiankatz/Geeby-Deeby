@@ -71,13 +71,20 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         $episode = $this->params()->fromQuery('file');
         $details = false;
-        foreach ($this->getPodcastMetadata() as $i => $current) {
+        $meta = $this->getPodcastMetadata();
+        foreach ($meta as $i => $current) {
             if ($current['filename'] == $episode) {
                 $details = $current;
                 break;
             }
         }
-        return $this->createViewModel(array('details' => $details));
+        return $this->createViewModel(
+            array(
+                'prev' => $details && isset($meta[$i - 1]) ? $meta[$i - 1] : false,
+                'details' => $details,
+                'next' => $details && isset($meta[$i + 1]) ? $meta[$i + 1] : false,
+            )
+        );
     }
 
     /**
