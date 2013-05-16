@@ -164,7 +164,7 @@
       <th>Release Date<?=$dateCount > 1 ? 's' : ''?>:</th>
       <td>
         <? foreach ($dates as $date): ?>
-          <?=$this->escapeHtml($this->formatReleaseDate($date))?><br />
+          <?=$this->escapeHtml($this->formatReleaseDate($date, count($editions) > 1))?><br />
         <? endforeach; ?>
       </td>
     </tr>
