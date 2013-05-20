@@ -98,29 +98,32 @@ class EditionsCredits extends Gateway
      */
     public function getCreditsForItem($itemID)
     {
-        /* TODO
         $callback = function ($select) use ($itemID) {
             $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Credits.Edition_ID = eds.Edition_ID',
+                array('Item_ID', 'Edition_Name')
+            );
+            $select->join(
                 array('p' => 'People'),
-                'Items_Credits.Person_ID = p.Person_ID'
+                'Editions_Credits.Person_ID = p.Person_ID'
             );
             $select->join(
                 array('r' => 'Roles'),
-                'Items_Credits.Role_ID = r.Role_ID'
+                'Editions_Credits.Role_ID = r.Role_ID'
             );
             $select->join(
                 array('n' => 'Notes'),
-                'Items_Credits.Note_ID = n.Note_ID',
+                'Editions_Credits.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->order(
-                array(
-                    'Role_Name', 'Position', 'Last_Name', 'First_Name', 'Middle_Name'
-                )
+            $fields = array(
+                'Role_Name', 'Editions_Credits.Position', 'Last_Name',
+                'First_Name', 'Middle_Name'
             );
+            $select->order($fields);
             $select->where->equalTo('Item_ID', $itemID);
         };
         return $this->select($callback);
-         */
     }
 }

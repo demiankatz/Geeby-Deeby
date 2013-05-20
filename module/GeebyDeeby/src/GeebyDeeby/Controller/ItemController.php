@@ -131,7 +131,7 @@ class ItemController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
         }
         $id = $view->item['Item_ID'];
-        $view->credits = $this->getDbTable('itemscredits')->getCreditsForItem($id);
+        $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
         $view->realNames = $this->getDbTable('pseudonyms')
             ->getRealNamesBatch($view->credits);
         $view->images = $this->getDbTable('itemsimages')->getImagesForItem($id);

@@ -132,7 +132,10 @@
         if (!isset($groupedCredits[$credit['Role_Name']])) {
           $groupedCredits[$credit['Role_Name']] = array();
         }
-        $groupedCredits[$credit['Role_Name']][] = $credit;
+        if (!isset($groupedCredits[$credit['Role_Name']][$credit['Person_ID']])) {
+          $groupedCredits[$credit['Role_Name']][$credit['Person_ID']] = array();
+        }
+        $groupedCredits[$credit['Role_Name']][$credit['Person_ID']][] = $credit;
       }
     } else {
       $groupedCredits = array();
@@ -144,15 +147,32 @@
       <tr>
         <th><?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's') ?>:</th>
         <td>
-          <? foreach ($group as $credit): ?>
+          <? foreach ($group as $person => $credits): ?>
+            <? 
+                $notes = array();
+                if (count($credits) != count($editions)) {
+                    foreach ($credits as $credit) {
+                        $note = $this->fixtitle($credit['Edition_Name']);
+                        if (!empty($credit['Note'])) {
+                            $note .= ' - ' . $credit['Note'];
+                        }
+                        $notes[] = $note;
+                    }
+                } else {
+                    foreach ($credits as $credit) {
+                        if (!empty($credit['Note'])) {
+                            $notes[] = $credit['Note'];
+                        }
+                    }
+                }
+            ?>
             <a href="<?=$this->url('person', array('id' => $credit['Person_ID']))?>">
               <?=$this->showperson($credit)?>
             </a>
             <? $realNameCount = count($this->realNames[$credit['Person_ID']]); if ($realNameCount > 0): ?>
               (pseudonym used by <?=$realNameCount == 1 ? '<a href="' . $this->url('person', array('id' => $this->realNames[$credit['Person_ID']][0]['Person_ID'])) . '">' . $this->showperson($this->realNames[$credit['Person_ID']][0]) . '</a>' : 'multiple people' ?>)
             <? endif; ?>
-            <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
-            <br />
+            <? if (!empty($notes)): ?>(<?=$this->escapeHtml(implode(', ', array_unique($notes)))?>)<? endif; ?><br />
           <? endforeach; ?>
         </td>
       </tr>
