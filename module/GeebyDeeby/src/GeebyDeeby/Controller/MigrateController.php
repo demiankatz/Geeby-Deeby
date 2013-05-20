@@ -69,6 +69,16 @@ class MigrateController extends AbstractBase
             $messages[] = 'Migrated ' . $migrated
                 . ' release dates from Items_Release_Dates.';
         }
+        try {
+            $migrated = $this->migrateItemCreditsToEditions();
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
+            // Table no longer exists -- no migration necessary
+            $migrated = 0;
+        }
+        if ($migrated > 0) {
+            $messages[] = 'Migrated ' . $migrated
+                . ' credits from Items_Credits.';
+        }
         return $this->createViewModel(array('messages' => $messages));
     }
 
@@ -98,6 +108,32 @@ class MigrateController extends AbstractBase
                     'Position' => $current->Position
                 )
             );
+            $count++;
+        }
+        return $count;
+    }
+
+    /**
+     * Migrate Items_Credits to Editions_Credits.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemCreditsToEditions()
+    {
+        $iCreds = $this->getDbTable('itemscredits');
+        $eCreds = $this->getDbTable('editionscredits');
+        $eds = $this->getDbTable('edition');
+        $count = 0;
+        foreach ($iCreds->select() as $current) {
+            $current = (array)$current;
+            $currentEds = $eds->getEditionsForItem($current['Item_ID']);
+            foreach ($currentEds as $currentEd) {
+                unset($current['Item_ID']);
+                $current['Edition_ID'] = $currentEd->Edition_ID;
+                $eCreds->insert($current);
+            }
+            unset($current['Edition_ID']);
+            $iCreds->delete($current);
             $count++;
         }
         return $count;
