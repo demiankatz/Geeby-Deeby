@@ -7,6 +7,10 @@
 
   <p><?=$this->escapeHtml($details['description'])?></p>
 
+  <p>Released on <?=date('M d, Y', strtotime($details['date']))?>.</p>
+
+  <p>Download: <a href="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['filename'])?>">MP3</a> (Duration: <?=$this->escapeHtml($details['duration'])?>)</p>
+
   <? if ($prev): ?>
     <p>Previous episode: <a href="<?=$this->url('podcast-about')?>?file=<?=urlencode($prev['filename'])?>"><?=$this->escapeHtml($prev['title'])?></a></p>
   <? endif; ?>

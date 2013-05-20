@@ -80,9 +80,9 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         }
         return $this->createViewModel(
             array(
-                'prev' => $details && isset($meta[$i - 1]) ? $meta[$i - 1] : false,
+                'prev' => $details && isset($meta[$i + 1]) ? $meta[$i + 1] : false,
                 'details' => $details,
-                'next' => $details && isset($meta[$i + 1]) ? $meta[$i + 1] : false,
+                'next' => $details && isset($meta[$i - 1]) ? $meta[$i - 1] : false,
             )
         );
     }
@@ -116,11 +116,11 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             $entry = $feed->createEntry();
             $entry->setTitle($current['title']);
             $entry->setLink($aboutUrl . '?file=' . urlencode($current['filename']));
-            $entry->setDateModified(time());
+            $entry->setDateModified(strtotime($current['date']));
             $filename = realpath(
                 __DIR__ . '/../../../../../public/mp3/' . $current['filename']
             );
-            $mp3 = $baseUrl . '/mp3/' . $current['filename'];
+            $mp3 = $baseUrl . 'mp3/' . $current['filename'];
             $size = filesize($filename);
             $entry->setEnclosure(
                 array('uri' => $mp3, 'length' => $size, 'type' => 'audio/mpeg')
@@ -146,6 +146,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         while (true) {
             $current = array(
                 'filename' => trim(fgets($handle)),
+                'date' => trim(fgets($handle)),
                 'title' => trim(fgets($handle)),
                 'author' => trim(fgets($handle)),
                 'duration' => trim(fgets($handle)),
