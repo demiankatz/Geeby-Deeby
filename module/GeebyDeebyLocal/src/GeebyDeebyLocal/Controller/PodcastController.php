@@ -114,16 +114,12 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         $aboutUrl = $serverUrl($this->url()->fromRoute('podcast-about'));
         foreach ($this->getPodcastMetadata() as $current) {
             $entry = $feed->createEntry();
-            $entry->setTitle($current['title']);
+            $entry->setTitle($current['category'] . ': ' . $current['title']);
             $entry->setLink($aboutUrl . '?file=' . urlencode($current['filename']));
             $entry->setDateModified(strtotime($current['date']));
-            $filename = realpath(
-                __DIR__ . '/../../../../../public/mp3/' . $current['filename']
-            );
             $mp3 = $baseUrl . 'mp3/' . $current['filename'];
-            $size = filesize($filename);
             $entry->setEnclosure(
-                array('uri' => $mp3, 'length' => $size, 'type' => 'audio/mpeg')
+                array('uri' => $mp3, 'length' => $current['size'], 'type' => 'audio/mpeg')
             );
             $entry->addItunesAuthor($current['author']);
             $entry->setItunesDuration($current['duration']);
@@ -147,6 +143,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             $current = array(
                 'filename' => trim(fgets($handle)),
                 'date' => trim(fgets($handle)),
+                'category' => trim(fgets($handle)),
                 'title' => trim(fgets($handle)),
                 'author' => trim(fgets($handle)),
                 'duration' => trim(fgets($handle)),
@@ -155,6 +152,11 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             if (empty($current['filename'])) {
                 break;
             }
+            $filename = realpath(
+                __DIR__ . '/../../../../../public/mp3/' . $current['filename']
+            );
+            $current['size'] = filesize($filename);
+            $current['image'] = str_replace('.mp3', '.jpg', $current['filename']);
             $result[] = $current;
             fgets($handle);
         }

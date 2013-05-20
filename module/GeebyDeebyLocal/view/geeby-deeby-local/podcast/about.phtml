@@ -3,13 +3,17 @@
   <h1>Not found</h1>
   <p>The episode you requested does not exist.</p>
 <? else: ?>
-  <h1><?=$this->escapeHtml($details['title'])?></h1>
+  <h1>The Spare Change Library</h1>
+
+  <img src="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['image'])?>" style="float: right;" />
+
+  <h2><?=$this->escapeHtml($details['category'] . ': ' . $details['title'])?></h2>
 
   <p><?=$this->escapeHtml($details['description'])?></p>
 
   <p>Released on <?=date('M d, Y', strtotime($details['date']))?>.</p>
 
-  <p>Download: <a href="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['filename'])?>">MP3</a> (Duration: <?=$this->escapeHtml($details['duration'])?>)</p>
+  <p>Download: <a href="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['filename'])?>">MP3</a> (<?=number_format(($details['size'] / 1024) / 1024, 2)?> MB, Duration: <?=$this->escapeHtml($details['duration'])?>)</p>
 
   <? if ($prev): ?>
     <p>Previous episode: <a href="<?=$this->url('podcast-about')?>?file=<?=urlencode($prev['filename'])?>"><?=$this->escapeHtml($prev['title'])?></a></p>
@@ -17,4 +21,8 @@
   <? if ($next): ?>
     <p>Next episode: <a href="<?=$this->url('podcast-about')?>?file=<?=urlencode($next['filename'])?>"><?=$this->escapeHtml($next['title'])?></a></p>
   <? endif; ?>
+
+  <p><a href="<?=$this->url('podcast')?>">About The Spare Change Library</a></p>
 <? endif; ?>
+
+<div style="clear: both;"><br /></div>
