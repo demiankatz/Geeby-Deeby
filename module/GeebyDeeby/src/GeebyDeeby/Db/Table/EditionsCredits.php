@@ -56,37 +56,36 @@ class EditionsCredits extends Gateway
      */
     public function getCreditsForPerson($personID)
     {
-        /* TODO
         $callback = function ($select) use ($personID) {
             $select->join(
-                array('i' => 'Items'),
-                'Items_Credits.Item_ID = i.Item_ID'
+                array('eds' => 'Editions'),
+                'Editions_Credits.Edition_ID = eds.Edition_ID',
+                array('Edition_Name', 'Position')
             );
             $select->join(
-                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
+                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
             );
             $select->join(
                 array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
             );
             $select->join(
                 array('r' => 'Roles'),
-                'Items_Credits.Role_ID = r.Role_ID'
+                'Editions_Credits.Role_ID = r.Role_ID'
             );
             $select->join(
                 array('n' => 'Notes'),
-                'Items_Credits.Note_ID = n.Note_ID',
+                'Editions_Credits.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $fields = array(
                 'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Position',
-                'Item_Name'
+                'Item_Name', 'Note'
             );
             $select->order($fields);
             $select->group($fields);
             $select->where->equalTo('Person_ID', $personID);
         };
         return $this->select($callback);
-         */
     }
 
     /**

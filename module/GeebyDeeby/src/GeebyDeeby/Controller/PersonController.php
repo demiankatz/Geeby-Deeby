@@ -57,7 +57,7 @@ class PersonController extends AbstractBase
         $view = $this->createViewModel(
             array('person' => $rowObj->toArray())
         );
-        $view->credits = $this->getDbTable('itemscredits')->getCreditsForPerson($id);
+        $view->credits = $this->getDbTable('editionscredits')->getCreditsForPerson($id);
         $pseudo = $this->getDbTable('pseudonyms');
         $view->pseudonyms = $pseudo->getPseudonyms($id);
         $view->realNames = $pseudo->getRealNames($id);
