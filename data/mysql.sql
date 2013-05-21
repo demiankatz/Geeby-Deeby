@@ -110,6 +110,22 @@ CREATE TABLE `Editions_Credits` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Editions_Full_Text`
+--
+
+DROP TABLE IF EXISTS `Editions_Full_Text`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Full_Text` (
+  `Sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Full_Text_Source_ID` int(11) NOT NULL DEFAULT '0',
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Full_Text_URL` tinytext NOT NULL,
+  PRIMARY KEY (`Sequence_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Editions_Release_Dates`
 --
 
@@ -184,6 +200,20 @@ CREATE TABLE `Files` (
   `Description` text,
   `File_Type_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`File_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Full_Text_Sources`
+--
+
+DROP TABLE IF EXISTS `Full_Text_Sources`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Full_Text_Sources` (
+  `Full_Text_Source_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Full_Text_Source_Name` tinytext,
+  PRIMARY KEY (`Full_Text_Source_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
