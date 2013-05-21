@@ -124,13 +124,14 @@ class EditionsCredits extends Gateway
     /**
      * Get a list of credits attached to the specified item.
      *
-     * @var int $itemID Item ID
+     * @var int  $itemID Item ID
+     * @var bool $group  Should we group by person/role?
      *
      * @return mixed
      */
-    public function getCreditsForItem($itemID)
+    public function getCreditsForItem($itemID, $group = false)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID, $group) {
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Credits.Edition_ID = eds.Edition_ID',
@@ -154,8 +155,63 @@ class EditionsCredits extends Gateway
                 'First_Name', 'Middle_Name'
             );
             $select->order($fields);
+            if ($group) {
+                $select->group(array('r.Role_ID', 'p.Person_ID', 'n.Note_ID'));
+            }
             $select->where->equalTo('Item_ID', $itemID);
         };
         return $this->select($callback);
+    }
+
+    /**
+     * Delete credits for all editions of an item.
+     *
+     * @param int   $item  Item ID
+     * @param array $where Fields to match
+     *
+     * @return void
+     */
+    public function deleteForItem($item, $where)
+    {
+        $table = $this->getDbTable('edition');
+        $eds = $table->getEditionsForItem($item);
+        foreach ($eds as $ed) {
+            $this->delete(array('Edition_ID' => $ed->Edition_ID) + $where);
+        }
+    }
+
+    /**
+     * Insert credits for all editions of an item.
+     *
+     * @param int   $item   Item ID
+     * @param array $fields Fields to insert
+     *
+     * @return void
+     */
+    public function insertForItem($item, $fields)
+    {
+        $table = $this->getDbTable('edition');
+        $eds = $table->getEditionsForItem($item);
+        foreach ($eds as $ed) {
+            $this->insert(array('Edition_ID' => $ed->Edition_ID) + $fields);
+        }
+    }
+
+    /**
+     * Update credits for all editions of an item.
+     *
+     * @param int   $item   Item ID
+     * @param array $fields Fields to change
+     * @param array $where  Fields to match
+     *
+     * @return void
+     */
+    public function updateForItem($item, $fields, $where)
+    {
+        $table = $this->getDbTable('edition');
+        $eds = $table->getEditionsForItem($item);
+        foreach ($eds as $ed) {
+            $this->update($fields, array('Edition_ID' => $ed->Edition_ID) + $where);
+        }
     }
 }
