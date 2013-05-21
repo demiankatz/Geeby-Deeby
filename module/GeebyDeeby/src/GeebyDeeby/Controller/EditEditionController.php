@@ -110,6 +110,7 @@ class EditEditionController extends AbstractBase
             }
             $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
             $new->save();
+            $new->copyCredits($editionId);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');

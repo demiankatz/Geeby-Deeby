@@ -71,4 +71,24 @@ class Edition extends ServiceLocatorAwareGateway
     {
         return $this->Edition_Name;
     }
+
+    /**
+     * Copy credits from another edition.
+     *
+     * @param int $editionId Edition to copy from
+     *
+     * @return void
+     */
+    public function copyCredits($editionId)
+    {
+        $creditTable = $this->getDbTable('editionscredits');
+        $credits = $creditTable->select(
+            array('Edition_ID' => $editionId)
+        );
+        foreach ($credits as $credit) {
+            $arr = (array)$credit;
+            $arr['Edition_ID'] = $this->Edition_ID;
+            $creditTable->insert($arr);
+        }
+    }
 }
