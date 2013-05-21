@@ -89,6 +89,39 @@ class EditionsCredits extends Gateway
     }
 
     /**
+     * Get a list of credits attached to the specified edition.
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getCreditsForEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->join(
+                array('p' => 'People'),
+                'Editions_Credits.Person_ID = p.Person_ID'
+            );
+            $select->join(
+                array('r' => 'Roles'),
+                'Editions_Credits.Role_ID = r.Role_ID'
+            );
+            $select->join(
+                array('n' => 'Notes'),
+                'Editions_Credits.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $fields = array(
+                'Role_Name', 'Position', 'Last_Name',
+                'First_Name', 'Middle_Name'
+            );
+            $select->order($fields);
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of credits attached to the specified item.
      *
      * @var int $itemID Item ID
