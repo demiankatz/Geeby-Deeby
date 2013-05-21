@@ -205,8 +205,12 @@ class EditSeriesController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $this->getDbTable('edition')
-                ->delete(array('Edition_ID' => $this->params()->fromRoute('extra')));
+            try {
+                $this->getDbTable('edition')
+                    ->safeDelete($this->params()->fromRoute('extra'));
+            } catch (\Exception $e) {
+                return $this->jsonDie($e->getMessage());
+            }
             return $this->jsonReportSuccess();
         }
 
