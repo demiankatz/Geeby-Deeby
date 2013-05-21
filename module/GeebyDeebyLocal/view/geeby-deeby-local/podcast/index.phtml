@@ -1,11 +1,21 @@
 <? $this->headTitle('Podcast - '); ?>
 <h1>The Spare Change Library</h1>
 
-<img src="<?=$this->url('home')?>images/spl-logo.png" />
+<img alt="Spare Change Library logo" src="<?=$this->url('home')?>images/spl-logo.png" />
 
-<p>The Dime Novel and Popular Literature Podcast</p>
+<p>The Spare Change Library is the dime novel and popular literature podcast, featuring audio editions of stories, as well as scholarship. The podcast is broken into "substreams" based on the content. We currently have two of these substreams: Mittie's Storytime (fiction) and Professor M's Lecture Series (scholarship). These are all available through a shared <a href="<?=$this->url('podcast-rss')?>">RSS feed</a>.</p>
 
-<a href="<?=$this->url('podcast-rss')?>">RSS feed</a>
+<p>The Spare Change Library is produced by Lancelot Darling & Friends (named after the hero of Mrs. Alex. McVeigh Miller's <i>The Bride of the Tomb</i>). For glimpses of behind-the-scenes action, check out the <a href="http://lancelotdarling.wordpress.com/">production blog</a>.</p>
+
+<h3>Mittie's Storytime</h3>
+
+<p>Mittie's Storytime is a collection of audio editions of fictional dime novels.</p>
+
+<h3>Professor M's Lecture Series</h3>
+
+<p>Professor M's Lecture Series is a collection of oral history about dime novels and popular literature.</p>
+
+<!-- ___ is a collection of audio editions of nonfiction popular literature. -->
 
 <h2>Latest Episode</h2>
 
@@ -14,3 +24,13 @@
 <p>Released on <?=date('M d, Y', strtotime($latest['date']))?>.</p>
 
 <p>Download: <a href="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($latest['filename'])?>">MP3</a> (<?=number_format(($latest['size'] / 1024) / 1024, 2)?> MB, Duration: <?=$this->escapeHtml($latest['duration'])?>)</p>
+
+<h2>Credits</h2>
+
+<h3>The Bride of the Tomb by Mrs. Alex. McVeigh Miller</h3>
+
+<p>The Spare Change Library thanks the following for The Bride of the Tomb episodes of Mittie's Storytime:<br />
+Principal Voice Talents: Laura Bang &amp; Demian Katz<br />
+Intro/Outro Narratives Voiced By: Chris Hallberg<br />
+Music: "The Guava Rag" by <a href="http://www.brettstuff.com/">Brett Donnelly</a><br />
+Executive Producer: Laura Bang</p>
