@@ -46,7 +46,9 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function indexAction()
     {
-        return $this->createViewModel();
+        return $this->createViewModel(
+            array('latest' => current($this->getPodcastMetadata(1)))
+        );
     }
 
     /**
@@ -112,7 +114,8 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
 
         $baseUrl = $serverUrl($this->url()->fromRoute('home'));
         $aboutUrl = $serverUrl($this->url()->fromRoute('podcast-about'));
-        foreach ($this->getPodcastMetadata() as $current) {
+        $filter = $this->params()->fromQuery('cat');
+        foreach ($this->getPodcastMetadata(0, $filter) as $current) {
             $entry = $feed->createEntry();
             $entry->setTitle($current['category'] . ': ' . $current['title']);
             $entry->setLink($aboutUrl . '?file=' . urlencode($current['filename']));
@@ -133,9 +136,12 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     /**
      * Load podcast metadata
      *
+     * @param int    $limit  Number of results to return (0 for no limit)
+     * @param string $filter Category to filter by (null for no filter)
+     *
      * @return array
      */
-    public function getPodcastMetadata()
+    public function getPodcastMetadata($limit = 0, $filter = null)
     {
         $handle = fopen(__DIR__ . '/../../../../../public/mp3/metadata', 'r');
         $result = array();
@@ -152,6 +158,9 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             if (empty($current['filename'])) {
                 break;
             }
+            if (null !== $filter && $current['category'] !== $filter) {
+                continue;
+            }
             $filename = realpath(
                 __DIR__ . '/../../../../../public/mp3/' . $current['filename']
             );
@@ -159,6 +168,9 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             $current['image'] = str_replace('.mp3', '.jpg', $current['filename']);
             $result[] = $current;
             fgets($handle);
+            if ($limit > 0 && count($result) == $limit) {
+                break;
+            }
         }
         return $result;
     }

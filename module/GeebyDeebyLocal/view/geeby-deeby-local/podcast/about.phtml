@@ -5,6 +5,8 @@
 <? else: ?>
   <h1>The Spare Change Library</h1>
 
+  <a href="<?=$this->url('podcast')?>"><img src="<?=$this->url('home')?>images/spl-logo.png" /></a>
+
   <img src="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['image'])?>" style="float: right;" />
 
   <h2><?=$this->escapeHtml($details['category'] . ': ' . $details['title'])?></h2>
