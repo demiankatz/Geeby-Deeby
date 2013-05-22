@@ -113,6 +113,8 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         $feed->setLanguage('en');
 
         $baseUrl = $serverUrl($this->url()->fromRoute('home'));
+        $feed->setItunesImage($baseUrl . 'mp3/SCL-Feed.jpg');
+
         $aboutUrl = $serverUrl($this->url()->fromRoute('podcast-about'));
         $filter = $this->params()->fromQuery('cat');
         foreach ($this->getPodcastMetadata(0, $filter) as $current) {
