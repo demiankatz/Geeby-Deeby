@@ -1,5 +1,5 @@
-<i>The Edward T. LeBlanc Memorial</i><br />
-<a class="siteTitle" href="<?=$this->url('home')?>">Dime Novel Bibliography</a><br />
+<div style="float: left; text-align: center; width: 251px;"><i>The Edward T. LeBlanc Memorial</i></div>
+<a style="clear: left;" class="siteTitle" href="<?=$this->url('home')?>"><img style="border: 0;" src="<?=$this->url('home')?>images/bib-logo.png" alt="Dime Novel Bibliography" /></a><br />
 <div class="headerControls">
   <? if ($this->auth()->hasIdentity()): ?>
     <a href="<?=$this->url('user', array('id' => $this->auth()->getIdentity()))?>">Account</a> ·
@@ -10,3 +10,4 @@
   <? endif; ?>
 </div>
 <?=$this->partial('partials/searchbox.phtml')?>
+<div style="clear: left;"><!-- empty --></div>
