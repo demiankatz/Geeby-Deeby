@@ -5,9 +5,9 @@
 <? else: ?>
   <h1>The Spare Change Library</h1>
 
-  <a href="<?=$this->url('podcast')?>"><img alt="Spare Change Library logo" src="<?=$this->url('home')?>images/spl-logo.png" /></a>
+  <!-- <a href="<?=$this->url('podcast')?>"><img alt="Spare Change Library logo" src="<?=$this->url('home')?>images/spl-logo.png" /></a> -->
 
-  <img alt="Cover" src="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['image'])?>" style="float: right;" />
+  <img alt="Cover" src="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['image'])?>" style="float: left; padding-right: 15px;" />
 
   <h2><?=$this->escapeHtml($details['category'] . ': ' . $details['title'])?></h2>
 
