@@ -27,9 +27,9 @@ return array(
                 ),
             ),
             'podcast' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
-                    'route'    => '/Podcast',
+                    'route'    => '/Podcast[/]',
                     'defaults' => array(
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'index',
@@ -37,9 +37,9 @@ return array(
                 ),
             ),
             'podcast-about' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
-                    'route'    => '/Podcast/About',
+                    'route'    => '/Podcast/About[/]',
                     'defaults' => array(
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'about',
@@ -47,9 +47,9 @@ return array(
                 ),
             ),
             'podcast-rss' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
-                    'route'    => '/Podcast/RSS',
+                    'route'    => '/Podcast/RSS[/]',
                     'defaults' => array(
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'rss',
