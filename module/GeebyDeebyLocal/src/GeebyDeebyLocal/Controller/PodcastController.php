@@ -65,6 +65,40 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
+     * Mittie's Storytime
+     *
+     * @return mixed
+     */
+    public function mittieAction()
+    {
+        return $this->createViewModel(
+            array(
+                'latest' =>
+                    current(
+                        $this->getPodcastMetadata(1, 'Mittie\'s Storytime')
+                    )
+            )
+        );
+    }
+
+    /**
+     * Professor M
+     *
+     * @return mixed
+     */
+    public function professorAction()
+    {
+        return $this->createViewModel(
+            array(
+                'latest' =>
+                    current(
+                        $this->getPodcastMetadata(1, 'Professor M\'s Lecture Series')
+                    )
+            )
+        );
+    }
+
+    /**
      * Show information about an episode
      *
      * @return mixed
@@ -168,6 +202,9 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             );
             $current['size'] = filesize($filename);
             $current['image'] = str_replace('.mp3', '.jpg', $current['filename']);
+            $firstWord = current(explode(' ', $current['category']));
+            $current['category_route'] = 'podcast-'
+                . strtolower(preg_replace('/[^a-zA-Z]/', '', $firstWord));
             $result[] = $current;
             fgets($handle);
             if ($limit > 0 && count($result) == $limit) {

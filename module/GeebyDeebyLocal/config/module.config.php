@@ -46,6 +46,26 @@ return array(
                     ),
                 ),
             ),
+            'podcast-mitties' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route'    => '/Podcast/Mittie[/]',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\Podcast',
+                        'action'     => 'mittie',
+                    ),
+                ),
+            ),
+            'podcast-professor' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route'    => '/Podcast/Professor[/]',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\Podcast',
+                        'action'     => 'professor',
+                    ),
+                ),
+            ),
             'podcast-rss' => array(
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
