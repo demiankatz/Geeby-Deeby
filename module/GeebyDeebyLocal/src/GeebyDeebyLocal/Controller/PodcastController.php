@@ -139,12 +139,20 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         $desc = 'The dime novel and popular literature podcast.';
         $feed->setDescription($desc);
         $feed->setItunesSummary($desc);
-        $feed->setLink($this->url()->fromRoute('podcast'));
+        $feed->setLink($serverUrl($this->url()->fromRoute('podcast')));
         $feed->setFeedLink(
             $serverUrl($this->url()->fromRoute('podcast-rss')), 'rss'
         );
-        $feed->setItunesCategories(array('Literature'));
+        $feed->setItunesCategories(array('Arts' => array('Literature')));
+        $feed->addItunesOwner(
+            array(
+                'name' => 'Lancelot Darling & Friends',
+                'email' => 'lancelot.darling@gmail.com'
+            )
+        );
         $feed->setLanguage('en');
+        $feed->setItunesExplicit('clean');
+        $feed->setLastBuildDate();
 
         $baseUrl = $serverUrl($this->url()->fromRoute('home'));
         $feed->setItunesImage($baseUrl . 'mp3/SCL-Feed.jpg');
