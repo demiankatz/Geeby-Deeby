@@ -202,3 +202,7 @@ table.signup tr th, table.signup tr td {
     font-weight: bold;
     float: left;
 }
+
+img {
+    border: 0;
+}
