@@ -79,8 +79,8 @@ class SearchController extends AbstractBase
     public function indexAction()
     {
         // Grab input and send it to the layout:
-        $this->layout()->type = $this->params()->fromPost('SearchType');
-        $this->layout()->query = $this->params()->fromPost('SearchQuery');
+        $this->layout()->type = $this->params()->fromQuery('SearchType');
+        $this->layout()->query = $this->params()->fromQuery('SearchQuery');
 
         // Validate query length:
         if (strlen($this->layout()->query) < 3) {
