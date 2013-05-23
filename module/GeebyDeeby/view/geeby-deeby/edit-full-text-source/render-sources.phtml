@@ -1,0 +1,7 @@
+<? if (count($fulltextsources) == 0): ?>
+  <p>No sources defined yet.</p>
+<? else: ?>
+  <? foreach ($fulltextsources as $current): ?>
+    <a href="#" onclick="editFullTextSource(<?=$current['Full_Text_Source_ID']?>); return false;"><?=$this->escapeHtml($current['Full_Text_Source_Name'])?></a><br />
+  <? endforeach; ?>
+<? endif; ?>
