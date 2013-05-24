@@ -76,6 +76,16 @@ return array(
                     ),
                 ),
             ),
+            'podcast-rss-lowercase-for-apple' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route'    => '/podcast/rss[/]',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\Podcast',
+                        'action'     => 'rss',
+                    ),
+                ),
+            ),
         ),
     ),
     'view_manager' => array(
