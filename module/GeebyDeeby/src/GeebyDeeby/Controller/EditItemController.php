@@ -76,8 +76,8 @@ class EditItemController extends AbstractBase
             $view->adaptedFrom = $this->getDbTable('itemsadaptations')
                 ->getAdaptedInto($view->itemObj->Item_ID);
             $view->roles = $this->getDbTable('role')->getList();
-            $view->credits= $this->getDbTable('itemscredits')
-                ->getCreditsForItem($view->itemObj->Item_ID);
+            $view->credits= $this->getDbTable('editionscredits')
+                ->getCreditsForItem($view->itemObj->Item_ID, true);
             $view->itemsBib = $this->getDbTable('itemsbibliography')
                 ->getItemsDescribedByItem($view->itemObj->Item_ID);
             $view->peopleBib = $this->getDbTable('peoplebibliography')
@@ -101,8 +101,6 @@ class EditItemController extends AbstractBase
             $view->platforms = $this->getDbTable('platform')->getList();
             $view->productCodes = $this->getDbTable('itemsproductcodes')
                 ->getProductCodes($view->itemObj->Item_ID);
-            $view->releaseDates = $this->getDbTable('itemsreleasedates')
-                ->getDatesForItem($view->itemObj->Item_ID);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
             $view->editions = $this->getDbTable('edition')
@@ -305,6 +303,20 @@ class EditItemController extends AbstractBase
     }
 
     /**
+     * Deal with editions
+     *
+     * @return mixed
+     */
+    public function editionsAction()
+    {
+        return $this->handleGenericLink(
+            'edition', 'Item_ID', 'Edition_ID',
+            'editions', 'getEditionsForItem',
+            'geeby-deeby/edit-item/edition-list.phtml'
+        );
+    }
+
+    /**
      * Set the order of an attached item
      *
      * @return mixed
@@ -318,64 +330,6 @@ class EditItemController extends AbstractBase
             $this->getDbTable('itemsincollections')->update(
                 array('Position' => $pos),
                 array('Item_ID' => $item, 'Collection_Item_ID' => $collection)
-            );
-            return $this->jsonReportSuccess();
-        }
-        return $this->jsonDie('Unexpected method');
-    }
-
-    /**
-     * Get list of dates
-     *
-     * @return mixed
-     */
-    public function datesAction()
-    {
-        $table = $this->getDbTable('itemsreleasedates');
-        $view = $this->createViewModel();
-        $primary = $this->params()->fromRoute('id');
-        $view->releaseDates = $table->getDatesForItem($primary);
-        $view->setTemplate('geeby-deeby/edit-item/date-list.phtml');
-        $view->setTerminal(true);
-        return $view;
-    }
-
-    /**
-     * Add a date
-     *
-     * @return mixed
-     */
-    public function adddateAction()
-    {
-        if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemsreleasedates');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Year = $this->params()->fromPost('year');
-            $row->Month = $this->params()->fromPost('month');
-            $row->Day = $this->params()->fromPost('day');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            $table->insert((array)$row);
-            return $this->jsonReportSuccess();
-        }
-        return $this->jsonDie('Unexpected method');
-    }
-
-    /**
-     * Remove a date
-     *
-     * @return mixed
-     */
-    public function deletedateAction()
-    {
-        if ($this->getRequest()->isPost()) {
-            $this->getDbTable('itemsreleasedates')->delete(
-                array(
-                    'Item_ID' => $this->params()->fromRoute('id'),
-                    'Year' => $this->params()->fromPost('year'),
-                    'Month' => $this->params()->fromPost('month'),
-                    'Day' => $this->params()->fromPost('day'),
-                )
             );
             return $this->jsonReportSuccess();
         }
@@ -446,10 +400,10 @@ class EditItemController extends AbstractBase
      */
     public function creditsAction()
     {
-        $table = $this->getDbTable('itemscredits');
+        $table = $this->getDbTable('editionscredits');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->credits = $table->getCreditsForItem($primary);
+        $view->credits = $table->getCreditsForItem($primary, true);
         $view->setTemplate('geeby-deeby/edit-item/credits.phtml');
         $view->setTerminal(true);
         return $view;
@@ -463,14 +417,15 @@ class EditItemController extends AbstractBase
     public function addcreditAction()
     {
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemscredits');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Person_ID = $this->params()->fromPost('person_id');
-            $row->Role_ID = $this->params()->fromPost('role_id');
-            $row->Position = $this->params()->fromPost('pos');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            $table->insert((array)$row);
+            $table = $this->getDbTable('editionscredits');
+            $item = $this->params()->fromRoute('id');
+            $row = array(
+                'Person_ID' => $this->params()->fromPost('person_id'),
+                'Role_ID' => $this->params()->fromPost('role_id'),
+                'Position' => $this->params()->fromPost('pos'),
+                'Note_ID' => $this->params()->fromPost('note_id')
+            );
+            $table->insertForItem($item, $row);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
@@ -484,9 +439,9 @@ class EditItemController extends AbstractBase
     public function deletecreditAction()
     {
         if ($this->getRequest()->isPost()) {
-            $this->getDbTable('itemscredits')->delete(
+            $this->getDbTable('editionscredits')->deleteForItem(
+                $this->params()->fromRoute('id'),
                 array(
-                    'Item_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $this->params()->fromPost('person_id'),
                     'Role_ID' => $this->params()->fromPost('role_id')
                 )
@@ -504,10 +459,10 @@ class EditItemController extends AbstractBase
     public function creditorderAction()
     {
         if ($this->getRequest()->isPost()) {
-            $this->getDbTable('itemscredits')->update(
+            $this->getDbTable('editionscredits')->updateForItem(
+                $this->params()->fromRoute('id'),
                 array('Position' => $this->params()->fromPost('pos')),
                 array(
-                    'Item_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $this->params()->fromPost('person_id'),
                     'Role_ID' => $this->params()->fromPost('role_id')
                 )

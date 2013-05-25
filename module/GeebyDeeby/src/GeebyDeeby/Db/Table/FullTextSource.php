@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Items_Release_Dates
+ * Table Definition for Full_Text_Sources
  *
  * PHP version 5
  *
@@ -26,10 +26,9 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
-use Zend\Db\Sql\Select;
 
 /**
- * Table Definition for Items_Release_Dates
+ * Table Definition for Full_Text_Sources
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -37,13 +36,26 @@ use Zend\Db\Sql\Select;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ItemsReleaseDates extends Gateway
+class FullTextSource extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('Items_Release_Dates');
+        parent::__construct('Full_Text_Sources', 'GeebyDeeby\Db\Row\FullTextSource');
+    }
+
+    /**
+     * Get a list of types.
+     *
+     * @return mixed
+     */
+    public function getList()
+    {
+        $callback = function ($select) {
+            $select->order('Full_Text_Source_Name');
+        };
+        return $this->select($callback);
     }
 }

@@ -1,3 +1,7 @@
-<? foreach ($notes as $current): ?>
-  <a href="#" onclick="editNote(<?=$current['Note_ID']?>); return false;"><?=$this->escapeHtml($current['Note'])?></a><br />
-<? endforeach; ?>
+<? if (count($notes) == 0): ?>
+  <p>No notes defined yet.</p>
+<? else: ?>
+  <? foreach ($notes as $current): ?>
+    <a href="#" onclick="editNote(<?=$current['Note_ID']?>); return false;"><?=$this->escapeHtml($current['Note'])?></a><br />
+  <? endforeach; ?>
+<? endif; ?>

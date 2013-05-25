@@ -14,7 +14,6 @@
     <li><a href="#attached-tab"><span>Attached Items</span></a></li>
     <li><a href="#codes-tab"><span>Codes/ISBNs</span></a></li>
     <li><a href="#credits-tab"><span>Credits</span></a></li>
-    <li><a href="#release-tab"><span>Dates</span></a></li>
     <li><a href="#desc-tab"><span>Descriptions</span></a></li>
     <li><a href="#images-tab"><span>Images</span></a></li>
     <li><a href="#platforms-tab"><span>Platforms</span></a></li>
@@ -23,6 +22,7 @@
   </ul>
 
   <div id="editions-tab" class="edit_tab_contents">
+    <button onclick="return copyEdition();">Copy Selected Edition</button>
     <div id="edition_list">
       <?=$this->render('geeby-deeby/edit-item/edition-list.phtml')?>
     </div>
@@ -122,6 +122,8 @@
   </div>
 
   <div id="credits-tab" class="edit_tab_contents">
+    <p class="disclaimer">Credits added/removed here will affect ALL editions of this item;
+    to affect a single edition, select it from the Editions tab first.</p>
     <div class="edit_container">
       <table class="edit">
         <tr>
@@ -218,38 +220,6 @@
     <b>Platforms:</b>
     <div id="platform_list">
     <?=$this->render('geeby-deeby/edit-item/platform-list.phtml')?>
-    </div>
-  </div>
-
-  <div id="release-tab" class="edit_tab_contents">
-    <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th>Month:<br /><span class="note">(1-12, 0 for unknown)</span></th>
-          <td><input type="text" id="releaseMonth" /></td>
-        </tr>
-        <tr>
-          <th>Day:<br /><span class="note">(1-31, 0 for unknown)</span></th>
-          <td><input type="text" id="releaseDay" /></td>
-        </tr>
-        <tr>
-          <th>Year:<br /><span class="note">(-1 for unreleased)</span></th>
-          <td><input type="text" id="releaseYear" /></td>
-        </tr>
-        <tr>
-          <th>Note:</th>
-          <td><input id="releaseNote" class="Note_ID" /></td>
-        </tr>
-        <tr>
-          <th></th>
-          <td>
-            <button onclick="saveReleaseDate();">Add</button>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div id="date_list">
-      <?=$this->render('geeby-deeby/edit-item/date-list.phtml')?>
     </div>
   </div>
 

@@ -722,87 +722,6 @@ function deleteTranslatedFrom(relatedID)
     }});
 }
 
-/* Redraw date list:
- */
-function redrawReleaseDates()
-{
-    var itemID = $('#Item_ID').val();
-    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Dates';
-    $('#date_list').load(url);
-}
-
-/* Add a release date:
- */
-function saveReleaseDate()
-{
-    // Extract the basic values:
-    var itemID = $('#Item_ID').val();
-    var noteID = parseInt($('#releaseNote').val());
-    if (isNaN(noteID)) {
-        noteID = '';
-    }
-    var year = parseInt($('#releaseYear').val());
-    if (isNaN(year)) {
-        year = 0;
-    }
-    var month = parseInt($('#releaseMonth').val());
-    if (isNaN(month)) {
-        month = 0;
-    }
-    var day = parseInt($('#releaseDay').val());
-    if (isNaN(day)) {
-        day = 0;
-    }
-
-    // Validate month and day:
-    if (month > 12) {
-        alert('Please enter a valid month.');
-        return;
-    }
-    if (day > 31) {
-        alert('Please enter a valid day.');
-        return;
-    }
-
-    // Save the date:
-    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/AddDate';
-    var params =
-        {year: year, month: month, day: day, note_id: noteID};
-    $.post(url, params, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            redrawReleaseDates();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
-
-/* Remove a release date:
- */
-function deleteReleaseDate(year, month, day)
-{
-    if (!confirm("Are you sure?")) {
-        return;
-    }
-
-    var itemID = $('#Item_ID').val();
-    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/DeleteDate';
-    var params = {year: year, month: month, day: day};
-    $.post(url, params, function(data) {
-        // If delete was successful...
-        if (data.success) {
-            // Update the list.
-            redrawReleaseDates();
-        } else {
-            // Delete failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
-
 /* Redraw description list:
  */
 function redrawDescriptions()
@@ -1150,6 +1069,38 @@ function changeAttachmentOrder(attachID)
         if (data.success) {
             // Update the list.
             redrawAttachmentList();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Redraw the list of editions:
+ */
+function redrawEditions()
+{
+    var itemID = $('#Item_ID').val();
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Editions';
+    $('#edition_list').load(url);
+}
+
+/* Copy an edition
+ */
+function copyEdition()
+{
+    var radio = $('.selectedEdition:checked').val();
+    if (!radio) {
+        alert("Please select an edition.");
+        return;
+    }
+    // Save and update based on selected relationship:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(radio) + '/Copy';
+    $.post(url, {}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawEditions();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);

@@ -23,9 +23,12 @@ return array(
                 'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'edition' => 'GeebyDeeby\Db\Table\Edition',
+                'editionscredits' => 'GeebyDeeby\Db\Table\EditionsCredits',
+                'editionsreleasedates' => 'GeebyDeeby\Db\Table\EditionsReleaseDates',
                 'faqs' => 'GeebyDeeby\Db\Table\FAQs',
                 'file' => 'GeebyDeeby\Db\Table\File',
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
+                'fulltextsource' => 'GeebyDeeby\Db\Table\FullTextSource',
                 'item' => 'GeebyDeeby\Db\Table\Item',
                 'itemsadaptations' => 'GeebyDeeby\Db\Table\ItemsAdaptations',
                 'itemsalttitles' => 'GeebyDeeby\Db\Table\ItemsAltTitles',
@@ -283,6 +286,28 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditFile',
                                 'action'        => 'typelist',
+                            ),
+                        ),
+                    ),
+                    'fulltextsource' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/FullTextSource[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditFullTextSource',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'fulltextsource_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/FullTextSourceList',
+                            'defaults' => array(
+                                'controller'    => 'EditFullTextSource',
+                                'action'        => 'list',
                             ),
                         ),
                     ),
@@ -875,6 +900,7 @@ return array(
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
+            'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',

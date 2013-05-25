@@ -93,6 +93,56 @@ CREATE TABLE `Editions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Editions_Credits`
+--
+
+DROP TABLE IF EXISTS `Editions_Credits`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Credits` (
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Person_ID` int(11) NOT NULL DEFAULT '0',
+  `Role_ID` int(11) NOT NULL DEFAULT '0',
+  `Position` int(11) DEFAULT NULL,
+  `Note_ID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Edition_ID`,`Person_ID`,`Role_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Editions_Full_Text`
+--
+
+DROP TABLE IF EXISTS `Editions_Full_Text`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Full_Text` (
+  `Sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Full_Text_Source_ID` int(11) NOT NULL DEFAULT '0',
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Full_Text_URL` tinytext NOT NULL,
+  PRIMARY KEY (`Sequence_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Editions_Release_Dates`
+--
+
+DROP TABLE IF EXISTS `Editions_Release_Dates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Release_Dates` (
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Year` int(11) NOT NULL DEFAULT '0',
+  `Month` int(11) NOT NULL DEFAULT '0',
+  `Day` int(11) NOT NULL DEFAULT '0',
+  `Note_ID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Edition_ID`,`Month`,`Day`,`Year`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `FAQ_Categories`
 --
 
@@ -150,6 +200,20 @@ CREATE TABLE `Files` (
   `Description` text,
   `File_Type_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`File_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Full_Text_Sources`
+--
+
+DROP TABLE IF EXISTS `Full_Text_Sources`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Full_Text_Sources` (
+  `Full_Text_Source_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Full_Text_Source_Name` tinytext,
+  PRIMARY KEY (`Full_Text_Source_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -213,23 +277,6 @@ CREATE TABLE `Items_Bibliography` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Bib_Item_ID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Item_ID`,`Bib_Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Items_Credits`
---
-
-DROP TABLE IF EXISTS `Items_Credits`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Credits` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Person_ID` int(11) NOT NULL DEFAULT '0',
-  `Role_ID` int(11) NOT NULL DEFAULT '0',
-  `Position` int(11) DEFAULT NULL,
-  `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Item_ID`,`Person_ID`,`Role_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -354,23 +401,6 @@ CREATE TABLE `Items_Product_Codes` (
   `Product_Code` tinytext NOT NULL,
   `Note_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Items_Release_Dates`
---
-
-DROP TABLE IF EXISTS `Items_Release_Dates`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Release_Dates` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Year` int(11) NOT NULL DEFAULT '0',
-  `Month` int(11) NOT NULL DEFAULT '0',
-  `Day` int(11) NOT NULL DEFAULT '0',
-  `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Item_ID`,`Month`,`Day`,`Year`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

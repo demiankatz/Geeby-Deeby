@@ -59,11 +59,12 @@ class FormatReleaseDate extends \Zend\View\Helper\AbstractHelper
     /**
      * Format date information for display
      *
-     * @param array $arr Date information
+     * @param array $arr         Date information
+     * @param bool  $showEdition Show edition information
      *
      * @return string
      */
-    public function __invoke($arr)
+    public function __invoke($arr, $showEdition = false)
     {
         $str = '';
 
@@ -93,8 +94,13 @@ class FormatReleaseDate extends \Zend\View\Helper\AbstractHelper
         }
 
         // Add the note, if any:
-        if (!empty($arr['Note'])) {
-            $str .= " ({$arr['Note']})";
+        $note = $arr['Note'];
+        if ($showEdition) {
+            $note = empty($note)
+                ? $arr['Edition_Name'] : $arr['Edition_Name'] . ' - ' . $note;
+        }
+        if (!empty($note)) {
+            $str .= " ({$note})";
         }
 
         return $str;

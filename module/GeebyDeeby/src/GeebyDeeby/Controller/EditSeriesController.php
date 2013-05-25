@@ -205,8 +205,12 @@ class EditSeriesController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $this->getDbTable('edition')
-                ->delete(array('Edition_ID' => $this->params()->fromRoute('extra')));
+            try {
+                $this->getDbTable('edition')
+                    ->safeDelete($this->params()->fromRoute('extra'));
+            } catch (\Exception $e) {
+                return $this->jsonDie($e->getMessage());
+            }
             return $this->jsonReportSuccess();
         }
 
@@ -215,11 +219,25 @@ class EditSeriesController extends AbstractBase
         );
         $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
             ->articleAwareAppend($series->Series_Name, ' edition');
+        $insertCallback = function ($new, $row, $sm) {
+            $edsTable = $sm->get('GeebyDeeby\DbTablePluginManager')
+                ->get('edition');
+            $rows = $edsTable->select(array('Item_ID' => $row['Item_ID']));
+            foreach ($rows as $row) {
+                $row = $row->toArray();
+                if ($row['Edition_ID'] != $new) {
+                    break;
+                }
+            }
+            if (isset($row['Edition_ID']) && $row['Edition_ID'] != $new) {
+                $edsTable->getByPrimaryKey($new)->copyCredits($row['Edition_ID']);
+            }
+        };
         return $this->handleGenericLink(
             'edition', 'Series_ID', 'Item_ID',
             'item_list', 'getItemsForSeries',
             'geeby-deeby/edit-series/item-list.phtml',
-            array('Edition_Name' => $edName)
+            array('Edition_Name' => $edName), $insertCallback
         );
     }
 

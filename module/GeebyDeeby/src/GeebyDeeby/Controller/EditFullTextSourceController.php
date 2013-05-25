@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Items_Release_Dates
+ * Edit full text source controller
  *
  * PHP version 5
  *
@@ -20,30 +20,47 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
-use Zend\Db\Sql\Select;
+namespace GeebyDeeby\Controller;
 
 /**
- * Table Definition for Items_Release_Dates
+ * Edit full text source controller
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ItemsReleaseDates extends Gateway
+class EditFullTextSourceController extends AbstractBase
 {
     /**
-     * Constructor
+     * Display a list of sources
+     *
+     * @return mixed
      */
-    public function __construct()
+    public function listAction()
     {
-        parent::__construct('Items_Release_Dates');
+        return $this->getGenericList(
+            'fulltextsource', 'fulltextsources',
+            'geeby-deeby/edit-full-text-source/render-sources'
+        );
+    }
+
+    /**
+     * Operate on a single source
+     *
+     * @return mixed
+     */
+    public function indexAction()
+    {
+        $assignMap = array('fulltextsource' => 'Full_Text_Source_Name');
+        return $this->handleGenericItem(
+            'fulltextsource', $assignMap, 'fulltextsource'
+        );
     }
 }

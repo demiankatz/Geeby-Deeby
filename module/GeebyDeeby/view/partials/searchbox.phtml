@@ -1,5 +1,5 @@
 <div class="searchbox">
-  <form action=<?=$this->url('search')?> method="post">
+  <form action=<?=$this->url('search')?> method="get">
     <b>Search:</b>
     <select name="SearchType">
       <? foreach (array('Title', 'Person', 'Keyword', 'ISBN') as $current): ?>
