@@ -69,12 +69,16 @@ class EditEditionController extends AbstractBase
         if (isset($view->edition['Item_ID']) && !empty($view->edition['Item_ID'])) {
             $view->item = $this->getDbTable('item')
                 ->getByPrimaryKey($view->edition['Item_ID']);
+            $view->itemAltTitles = $this->getDbTable('itemsalttitles')
+                ->getAltTitles($view->edition['Item_ID']);
         }
         if (isset($view->edition['Series_ID'])
             && !empty($view->edition['Series_ID'])
         ) {
             $view->series = $this->getDbTable('series')
                 ->getByPrimaryKey($view->edition['Series_ID']);
+            $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
+                ->getAltTitles($view->edition['Series_ID']);
         }
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -86,6 +90,67 @@ class EditEditionController extends AbstractBase
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
         }
         return $view;
+    }
+
+    /**
+     * Set a preferred item title
+     *
+     * @return mixed
+     */
+    public function setpreferreditemtitleAction()
+    {
+        if (!$this->getRequest()->isPost()) {
+            return $this->jsonDie('Unexpected method.');
+        }
+
+        $editionId = $this->params()->fromRoute('id');
+        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $title = $this->params()->fromPost('title_id', 'NEW');
+        $titleText = trim($this->params()->fromPost('title_text'));
+
+        if ($title == 'NEW') {
+            if (empty($titleText)) {
+                return $this->jsonDie('Title cannot be empty.');
+            } else {
+                $table = $this->getDbTable('itemsalttitles');
+                $row = $table->createRow();
+                $row->Item_ID = $edition->Item_ID;
+                if (empty($row->Item_ID)) {
+                    return $this->jsonDie('Edition must be attached to an Item.');
+                }
+                $row->Item_AltName = $titleText;
+                $table->insert((array)$row);
+                $results = $table->select((array)$row);
+                foreach ($results as $result) {
+                    $result = (array)$result;
+                    $title = $result['Sequence_ID'];
+                }
+                if (empty($title)) {
+                    return $this->jsonDie('Problem inserting title.');
+                }
+            }
+        }
+        $edition->Preferred_Item_AltName_ID = $title;
+        $edition->save();
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Clear a preferred item title
+     *
+     * @return mixed
+     */
+    public function clearpreferreditemtitleAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $editionId = $this->params()->fromRoute('id');
+            $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+            $edition->Preferred_Item_AltName_ID = null;
+            $edition->save();
+            return $this->jsonReportSuccess();
+        } else {
+            return $this->jsonDie('Unexpected method.');
+        }
     }
 
     /**

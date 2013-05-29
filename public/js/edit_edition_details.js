@@ -169,6 +169,77 @@ function saveCredit()
     }, 'json');
 }
 
+/* Redraw the item alternate title list:
+ */
+function redrawItemAltTitles()
+{
+    // TODO: real redraw
+    alert('Success');
+}
+
+/* Clear the preferred item alternate title:
+ */
+function deleteItemAltTitle()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+
+    // Save the credit:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/ClearPreferredItemTitle';
+    $.post(url, {}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawItemAltTitles();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Set the preferred item alternate title:
+ */
+function saveItemAltTitle()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+    var titleID = $('#Preferred_Item_Title_ID').val();
+    var titleText = false;
+    if (titleID == 'NEW') {
+        titleText = $('#Preferred_Item_Title_Text').val();
+        if (titleText.length < 1) {
+            alert('Title cannot be blank.');
+            return;
+        }
+    } else {
+        titleID = parseInt(titleID);
+        if (isNaN(titleID) || titleID < 1) {
+            alert('Invalid title selection.');
+            return;
+        }
+    }
+
+    // Save the credit:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredItemTitle';
+    var params = {};
+    if (titleText) {
+        params.title_text = titleText;
+    } else {
+        params.title_id = titleID;
+    }
+    $.post(url, params, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawItemAltTitles();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
 /* Remove a credit:
  */
 function removeCredit(person, role)

@@ -10,6 +10,7 @@
   <ul>
     <li><a href="#credits-tab"><span>Credits</span></a></li>
     <li><a href="#release-tab"><span>Dates</span></a></li>
+    <li><a href="#preferred-titles"><span>Preferred Titles</span></a></li>
   </ul>
 
   <div id="credits-tab" class="edit_tab_contents">
@@ -73,6 +74,18 @@
     </div>
     <div id="date_list">
       <?=$this->render('geeby-deeby/edit-edition/date-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="preferred-titles" class="edit_tab_contents">
+    <div class="edit_container">
+      <h3>Preferred Item Title</h3>
+      <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', array('itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']))?>
+      <input type="text" id="Preferred_Item_Title_Text" size="50" />
+      <button onclick="saveItemAltTitle()">Save</button>
+      <button onclick="deleteItemAltTitle()">Clear</button>
+    </div>
+    <div id="date_list">
     </div>
   </div>
 </div>
