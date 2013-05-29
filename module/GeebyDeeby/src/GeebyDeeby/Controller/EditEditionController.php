@@ -88,6 +88,8 @@ class EditEditionController extends AbstractBase
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
                 ->getDatesForEdition($view->edition['Edition_ID']);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
+            $view->fullText = $this->getDbTable('editionsfulltext')
+                ->getFullTextForEdition($view->edition['Edition_ID']);
         }
         return $view;
     }
