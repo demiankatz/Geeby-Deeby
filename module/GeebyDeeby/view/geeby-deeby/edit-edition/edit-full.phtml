@@ -86,6 +86,14 @@
       <input type="text" id="Preferred_Item_Title_Text" size="50" />
       <button onclick="saveItemAltTitle()">Save</button>
       <button onclick="deleteItemAltTitle()">Clear</button>
+
+      <h3>Preferred Series Title</h3>
+      <div id="series-alt-title-select-container">
+        <?=$this->render('geeby-deeby/edit-edition/series-alt-title-select.phtml', array('seriesAltTitles' => $seriesAltTitles, 'selected' => $edition['Preferred_Series_AltName_ID']))?>
+      </div>
+      <input type="text" id="Preferred_Series_Title_Text" size="50" />
+      <button onclick="saveSeriesAltTitle()">Save</button>
+      <button onclick="deleteSeriesAltTitle()">Clear</button>
     </div>
     <div id="date_list">
     </div>

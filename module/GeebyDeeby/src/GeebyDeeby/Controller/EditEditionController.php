@@ -180,6 +180,93 @@ class EditEditionController extends AbstractBase
     }
 
     /**
+     * Get drop-down of series alt titles
+     *
+     * @return mixed
+     */
+    public function seriesalttitlesAction()
+    {
+        $view = $this->createViewModel();
+        $view->edition = $this->getDbTable('edition')
+            ->getByPrimaryKey($this->params()->fromRoute('id'));
+        $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
+            ->getAltTitles($view->edition['Series_ID']);
+        $view->selected = $view->edition['Preferred_Series_AltName_ID'];
+        $view->setTemplate('geeby-deeby/edit-edition/series-alt-title-select.phtml');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Set a preferred series title
+     *
+     * @return mixed
+     */
+    public function setpreferredseriestitleAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if (!$this->getRequest()->isPost()) {
+            return $this->jsonDie('Unexpected method.');
+        }
+
+        $editionId = $this->params()->fromRoute('id');
+        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $title = $this->params()->fromPost('title_id', 'NEW');
+        $titleText = trim($this->params()->fromPost('title_text'));
+
+        if ($title == 'NEW') {
+            if (empty($titleText)) {
+                return $this->jsonDie('Title cannot be empty.');
+            } else {
+                $table = $this->getDbTable('seriesalttitles');
+                $row = $table->createRow();
+                $row->Series_ID = $edition->Series_ID;
+                if (empty($row->Series_ID)) {
+                    return $this->jsonDie('Edition must be attached to a Series.');
+                }
+                $row->Series_AltName = $titleText;
+                $table->insert((array)$row);
+                $results = $table->select((array)$row);
+                foreach ($results as $result) {
+                    $result = (array)$result;
+                    $title = $result['Sequence_ID'];
+                }
+                if (empty($title)) {
+                    return $this->jsonDie('Problem inserting title.');
+                }
+            }
+        }
+        $edition->Preferred_Series_AltName_ID = $title;
+        $edition->save();
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Clear a preferred series title
+     *
+     * @return mixed
+     */
+    public function clearpreferredseriestitleAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            $editionId = $this->params()->fromRoute('id');
+            $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+            $edition->Preferred_Series_AltName_ID = null;
+            $edition->save();
+            return $this->jsonReportSuccess();
+        } else {
+            return $this->jsonDie('Unexpected method.');
+        }
+    }
+
+    /**
      * Copy an edition
      *
      * @return mixed

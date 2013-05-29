@@ -37,6 +37,7 @@ function saveEdition()
         $('#save_edition_status').html('');
         // Redraw alt titles:
         redrawItemAltTitles();
+        redrawSeriesAltTitles();
     }, 'json');
 }
 
@@ -224,7 +225,7 @@ function saveItemAltTitle()
         }
     }
 
-    // Save the credit:
+    // Save the title:
     var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredItemTitle';
     var params = {};
     if (titleText) {
@@ -237,6 +238,79 @@ function saveItemAltTitle()
         if (data.success) {
             // Update the list.
             redrawItemAltTitles();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Redraw the series alternate title list:
+ */
+function redrawSeriesAltTitles()
+{
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/SeriesAltTitles';
+    $('#series-alt-title-select-container').load(url);
+    $('#Preferred_Series_Title_Text').val('');
+}
+
+/* Clear the preferred series alternate title:
+ */
+function deleteSeriesAltTitle()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+
+    // Save the credit:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/ClearPreferredSeriesTitle';
+    $.post(url, {}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawSeriesAltTitles();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Set the preferred series alternate title:
+ */
+function saveSeriesAltTitle()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+    var titleID = $('#Preferred_Series_Title_ID').val();
+    var titleText = false;
+    if (titleID == 'NEW') {
+        titleText = $('#Preferred_Series_Title_Text').val();
+        if (titleText.length < 1) {
+            alert('Title cannot be blank.');
+            return;
+        }
+    } else {
+        titleID = parseInt(titleID);
+        if (isNaN(titleID) || titleID < 1) {
+            alert('Invalid title selection.');
+            return;
+        }
+    }
+
+    // Save the title:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredSeriesTitle';
+    var params = {};
+    if (titleText) {
+        params.title_text = titleText;
+    } else {
+        params.title_id = titleID;
+    }
+    $.post(url, params, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawSeriesAltTitles();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
