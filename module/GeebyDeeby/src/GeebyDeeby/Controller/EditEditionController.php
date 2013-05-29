@@ -99,6 +99,10 @@ class EditEditionController extends AbstractBase
      */
     public function setpreferreditemtitleAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if (!$this->getRequest()->isPost()) {
             return $this->jsonDie('Unexpected method.');
         }
@@ -142,6 +146,10 @@ class EditEditionController extends AbstractBase
      */
     public function clearpreferreditemtitleAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $editionId = $this->params()->fromRoute('id');
             $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
@@ -160,6 +168,10 @@ class EditEditionController extends AbstractBase
      */
     public function copyAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $editionId = $this->params()->fromRoute('id');
             $table = $this->getDbTable('edition');
@@ -204,6 +216,10 @@ class EditEditionController extends AbstractBase
      */
     public function adddateAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('editionsreleasedates');
             $row = $table->createRow();
@@ -225,6 +241,10 @@ class EditEditionController extends AbstractBase
      */
     public function deletedateAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $this->getDbTable('editionsreleasedates')->delete(
                 array(
@@ -262,6 +282,10 @@ class EditEditionController extends AbstractBase
      */
     public function addcreditAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('editionscredits');
             $row = $table->createRow();
@@ -283,6 +307,10 @@ class EditEditionController extends AbstractBase
      */
     public function deletecreditAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $this->getDbTable('editionscredits')->delete(
                 array(
@@ -303,6 +331,10 @@ class EditEditionController extends AbstractBase
      */
     public function creditorderAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $this->getDbTable('editionscredits')->update(
                 array('Position' => $this->params()->fromPost('pos')),
