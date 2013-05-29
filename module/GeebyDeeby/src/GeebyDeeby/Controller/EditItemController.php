@@ -266,7 +266,7 @@ class EditItemController extends AbstractBase
      */
     public function alttitleAction()
     {
-        // Special case: new publisher:
+        // Special case: new title:
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('itemsalttitles');
             $row = $table->createRow();

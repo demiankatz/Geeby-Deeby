@@ -134,7 +134,7 @@ class EditSeriesController extends AbstractBase
      */
     public function alttitleAction()
     {
-        // Special case: new publisher:
+        // Special case: new title:
         if ($this->getRequest()->isPost()) {
             $ok = $this->checkPermission('Content_Editor');
             if ($ok !== true) {
