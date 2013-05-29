@@ -35,6 +35,8 @@ function saveEdition()
         // Restore save button:
         $('#save_edition').show();
         $('#save_edition_status').html('');
+        // Redraw alt titles:
+        redrawItemAltTitles();
     }, 'json');
 }
 
@@ -173,8 +175,10 @@ function saveCredit()
  */
 function redrawItemAltTitles()
 {
-    // TODO: real redraw
-    alert('Success');
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/ItemAltTitles';
+    $('#item-alt-title-select-container').load(url);
+    $('#Preferred_Item_Title_Text').val('');
 }
 
 /* Clear the preferred item alternate title:

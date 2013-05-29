@@ -93,6 +93,24 @@ class EditEditionController extends AbstractBase
     }
 
     /**
+     * Get drop-down of item alt titles
+     *
+     * @return mixed
+     */
+    public function itemalttitlesAction()
+    {
+        $view = $this->createViewModel();
+        $view->edition = $this->getDbTable('edition')
+            ->getByPrimaryKey($this->params()->fromRoute('id'));
+        $view->itemAltTitles = $this->getDbTable('itemsalttitles')
+            ->getAltTitles($view->edition['Item_ID']);
+        $view->selected = $view->edition['Preferred_Item_AltName_ID'];
+        $view->setTemplate('geeby-deeby/edit-edition/item-alt-title-select.phtml');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
      * Set a preferred item title
      *
      * @return mixed

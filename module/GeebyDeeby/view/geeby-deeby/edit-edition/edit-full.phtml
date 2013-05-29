@@ -80,7 +80,9 @@
   <div id="preferred-titles" class="edit_tab_contents">
     <div class="edit_container">
       <h3>Preferred Item Title</h3>
-      <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', array('itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']))?>
+      <div id="item-alt-title-select-container">
+        <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', array('itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']))?>
+      </div>
       <input type="text" id="Preferred_Item_Title_Text" size="50" />
       <button onclick="saveItemAltTitle()">Save</button>
       <button onclick="deleteItemAltTitle()">Clear</button>
