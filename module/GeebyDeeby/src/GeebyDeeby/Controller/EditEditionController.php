@@ -90,6 +90,8 @@ class EditEditionController extends AbstractBase
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
             $view->fullText = $this->getDbTable('editionsfulltext')
                 ->getFullTextForEdition($view->edition['Edition_ID']);
+            $view->fullTextSources = $this->getDbTable('fulltextsource')
+                ->getList();
         }
         return $view;
     }
@@ -454,5 +456,52 @@ class EditEditionController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Deal with full text
+     *
+     * @return mixed
+     */
+    public function fulltextAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        $table = $this->getDbTable('editionsfulltext');
+        if ($this->getRequest()->isPost()) {
+            $insert = array(
+                'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
+                'Edition_ID' => $this->params()->fromRoute('id'),
+                'Full_Text_URL' => trim($this->params()->fromPost('url'))
+            );
+            if (empty($insert['Full_Text_URL'])) {
+                return $this->jsonDie('URL must not be empty.');
+            }
+            $table->insert($insert);
+            return $this->jsonReportSuccess();
+        } else if ($this->getRequest()->isDelete()) {
+            $delete = $this->params()->fromRoute('extra');
+            $table->delete(array('Sequence_ID' => $delete));
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method.');
+    }
+
+    /**
+     * Get list of full text
+     *
+     * @return mixed
+     */
+    public function fulltextlistAction()
+    {
+        $view = $this->createViewModel();
+        $primary = $this->params()->fromRoute('id');
+            $view->fullText = $this->getDbTable('editionsfulltext')
+                ->getFullTextForEdition($primary);
+        $view->setTemplate('geeby-deeby/edit-edition/fulltext-list.phtml');
+        $view->setTerminal(true);
+        return $view;
     }
 }
