@@ -67,4 +67,31 @@ class EditionsFullText extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of full text links for a particular item.
+     *
+     * @param int $item Item ID
+     *
+     * @return mixed
+     */
+    public function getFullTextForItem($item)
+    {
+        $callback = function ($select) use ($item) {
+            $select->join(
+                array('fts' => 'Full_Text_Sources'),
+                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID'
+            );
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+            );
+            $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
+            $fields
+                = array('Full_Text_Source_Name', 'Edition_Name', 'Full_Text_URL');
+            $select->order($fields);
+            $select->where->equalTo('i.Item_ID', $item);
+        };
+        return $this->select($callback);
+    }
 }
