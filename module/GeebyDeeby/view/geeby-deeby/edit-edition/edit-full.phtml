@@ -10,6 +10,7 @@
   <ul>
     <li><a href="#credits-tab"><span>Credits</span></a></li>
     <li><a href="#release-tab"><span>Dates</span></a></li>
+    <li><a href="#fulltext-tab"><span>Full Text Links</span></a></li>
     <li><a href="#preferred-titles"><span>Preferred Titles</span></a></li>
   </ul>
 
@@ -77,13 +78,39 @@
     </div>
   </div>
 
+  <div id="fulltext-tab" class="edit_tab_contents">
+    <div class="edit_container">
+      Add full text:
+      <select id="Full_Text_Source_ID">
+        <? foreach ($this->fullTextSources as $current): ?>
+          <option value="<?=$current['Full_Text_Source_ID']?>"><?=$this->escapeHtml($current['Full_Text_Source_Name'])?></option>
+        <? endforeach; ?>
+      </select>
+      <input type="text" id="Full_Text_URL" size="50" />
+      <button onclick="saveFullText()">Save</button>
+    </div>
+    <div id="fulltext_list">
+      <?=$this->render('geeby-deeby/edit-edition/fulltext-list.phtml')?>
+    </div>
+  </div>
+
   <div id="preferred-titles" class="edit_tab_contents">
     <div class="edit_container">
       <h3>Preferred Item Title</h3>
-      <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', array('itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']))?>
+      <div id="item-alt-title-select-container">
+        <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', array('itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']))?>
+      </div>
       <input type="text" id="Preferred_Item_Title_Text" size="50" />
       <button onclick="saveItemAltTitle()">Save</button>
       <button onclick="deleteItemAltTitle()">Clear</button>
+
+      <h3>Preferred Series Title</h3>
+      <div id="series-alt-title-select-container">
+        <?=$this->render('geeby-deeby/edit-edition/series-alt-title-select.phtml', array('seriesAltTitles' => $seriesAltTitles, 'selected' => $edition['Preferred_Series_AltName_ID']))?>
+      </div>
+      <input type="text" id="Preferred_Series_Title_Text" size="50" />
+      <button onclick="saveSeriesAltTitle()">Save</button>
+      <button onclick="deleteSeriesAltTitle()">Clear</button>
     </div>
     <div id="date_list">
     </div>

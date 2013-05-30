@@ -7,6 +7,21 @@
 <?=$this->render('partials/images.phtml')?>
 
 <table class="item">
+  <? if (count($fullText) > 0): ?>
+    <tr>
+      <th>Online Full Text:</th>
+      <td>
+        <? foreach ($fullText as $current): ?>
+          <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
+            <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
+            <? if (count($editions) > 1): ?>
+              (<?=$this->escapeHtml($current['Edition_Name'])?>)
+            <? endif; ?>
+          </a><br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
   <? if (count($series) > 0): ?>
     <tr>
       <th>Series:</th>

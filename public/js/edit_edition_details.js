@@ -35,6 +35,9 @@ function saveEdition()
         // Restore save button:
         $('#save_edition').show();
         $('#save_edition_status').html('');
+        // Redraw alt titles:
+        redrawItemAltTitles();
+        redrawSeriesAltTitles();
     }, 'json');
 }
 
@@ -173,8 +176,10 @@ function saveCredit()
  */
 function redrawItemAltTitles()
 {
-    // TODO: real redraw
-    alert('Success');
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/ItemAltTitles';
+    $('#item-alt-title-select-container').load(url);
+    $('#Preferred_Item_Title_Text').val('');
 }
 
 /* Clear the preferred item alternate title:
@@ -220,7 +225,7 @@ function saveItemAltTitle()
         }
     }
 
-    // Save the credit:
+    // Save the title:
     var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredItemTitle';
     var params = {};
     if (titleText) {
@@ -233,6 +238,79 @@ function saveItemAltTitle()
         if (data.success) {
             // Update the list.
             redrawItemAltTitles();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Redraw the series alternate title list:
+ */
+function redrawSeriesAltTitles()
+{
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/SeriesAltTitles';
+    $('#series-alt-title-select-container').load(url);
+    $('#Preferred_Series_Title_Text').val('');
+}
+
+/* Clear the preferred series alternate title:
+ */
+function deleteSeriesAltTitle()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+
+    // Save the credit:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/ClearPreferredSeriesTitle';
+    $.post(url, {}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawSeriesAltTitles();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Set the preferred series alternate title:
+ */
+function saveSeriesAltTitle()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+    var titleID = $('#Preferred_Series_Title_ID').val();
+    var titleText = false;
+    if (titleID == 'NEW') {
+        titleText = $('#Preferred_Series_Title_Text').val();
+        if (titleText.length < 1) {
+            alert('Title cannot be blank.');
+            return;
+        }
+    } else {
+        titleID = parseInt(titleID);
+        if (isNaN(titleID) || titleID < 1) {
+            alert('Invalid title selection.');
+            return;
+        }
+    }
+
+    // Save the title:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredSeriesTitle';
+    var params = {};
+    if (titleText) {
+        params.title_text = titleText;
+    } else {
+        params.title_id = titleID;
+    }
+    $.post(url, params, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawSeriesAltTitles();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
@@ -298,6 +376,65 @@ function changeCreditOrder(person, role)
             alert('Error: ' + data.msg);
         }
     }, 'json');
+}
+
+/* Save a full text URL:
+ */
+function saveFullText()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+    var source_id = $('#Full_Text_Source_ID').val();
+    var fulltext_url = $('#Full_Text_URL').val();
+    if (fulltext_url.length < 1) {
+        alert('URL cannot be blank.');
+        return;
+    }
+
+    // Save the title:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/FullText';
+    var params = {source_id: source_id, url: fulltext_url};
+    $.post(url, params, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawFullText();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Remove a release date:
+ */
+function deleteFullText(id)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/FullText/' + encodeURIComponent(id);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
+        // If delete was successful...
+        if (data.success) {
+            // Update the list.
+            redrawFullText();
+        } else {
+            // Delete failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }});
+}
+
+/* Redraw credit list:
+ */
+function redrawFullText()
+{
+    var editionID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/FullTextList';
+    $('#fulltext_list').load(url);
 }
 
 // Activate page controls on domready:

@@ -1,0 +1,17 @@
+<? if (isset($fullText) && count($fullText) > 0): ?>
+  <? foreach ($fullText as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>: <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>"><?=$this->escapeHtml($current['Full_Text_URL'])?></a>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteFullText(<?=$this->escapeHtml($current['Sequence_ID'])?>); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No full text set.
+<? endif; ?>

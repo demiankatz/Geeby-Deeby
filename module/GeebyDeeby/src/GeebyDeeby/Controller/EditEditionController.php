@@ -88,7 +88,29 @@ class EditEditionController extends AbstractBase
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
                 ->getDatesForEdition($view->edition['Edition_ID']);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
+            $view->fullText = $this->getDbTable('editionsfulltext')
+                ->getFullTextForEdition($view->edition['Edition_ID']);
+            $view->fullTextSources = $this->getDbTable('fulltextsource')
+                ->getList();
         }
+        return $view;
+    }
+
+    /**
+     * Get drop-down of item alt titles
+     *
+     * @return mixed
+     */
+    public function itemalttitlesAction()
+    {
+        $view = $this->createViewModel();
+        $view->edition = $this->getDbTable('edition')
+            ->getByPrimaryKey($this->params()->fromRoute('id'));
+        $view->itemAltTitles = $this->getDbTable('itemsalttitles')
+            ->getAltTitles($view->edition['Item_ID']);
+        $view->selected = $view->edition['Preferred_Item_AltName_ID'];
+        $view->setTemplate('geeby-deeby/edit-edition/item-alt-title-select.phtml');
+        $view->setTerminal(true);
         return $view;
     }
 
@@ -99,6 +121,10 @@ class EditEditionController extends AbstractBase
      */
     public function setpreferreditemtitleAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if (!$this->getRequest()->isPost()) {
             return $this->jsonDie('Unexpected method.');
         }
@@ -142,10 +168,101 @@ class EditEditionController extends AbstractBase
      */
     public function clearpreferreditemtitleAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $editionId = $this->params()->fromRoute('id');
             $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
             $edition->Preferred_Item_AltName_ID = null;
+            $edition->save();
+            return $this->jsonReportSuccess();
+        } else {
+            return $this->jsonDie('Unexpected method.');
+        }
+    }
+
+    /**
+     * Get drop-down of series alt titles
+     *
+     * @return mixed
+     */
+    public function seriesalttitlesAction()
+    {
+        $view = $this->createViewModel();
+        $view->edition = $this->getDbTable('edition')
+            ->getByPrimaryKey($this->params()->fromRoute('id'));
+        $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
+            ->getAltTitles($view->edition['Series_ID']);
+        $view->selected = $view->edition['Preferred_Series_AltName_ID'];
+        $view->setTemplate('geeby-deeby/edit-edition/series-alt-title-select.phtml');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Set a preferred series title
+     *
+     * @return mixed
+     */
+    public function setpreferredseriestitleAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if (!$this->getRequest()->isPost()) {
+            return $this->jsonDie('Unexpected method.');
+        }
+
+        $editionId = $this->params()->fromRoute('id');
+        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $title = $this->params()->fromPost('title_id', 'NEW');
+        $titleText = trim($this->params()->fromPost('title_text'));
+
+        if ($title == 'NEW') {
+            if (empty($titleText)) {
+                return $this->jsonDie('Title cannot be empty.');
+            } else {
+                $table = $this->getDbTable('seriesalttitles');
+                $row = $table->createRow();
+                $row->Series_ID = $edition->Series_ID;
+                if (empty($row->Series_ID)) {
+                    return $this->jsonDie('Edition must be attached to a Series.');
+                }
+                $row->Series_AltName = $titleText;
+                $table->insert((array)$row);
+                $results = $table->select((array)$row);
+                foreach ($results as $result) {
+                    $result = (array)$result;
+                    $title = $result['Sequence_ID'];
+                }
+                if (empty($title)) {
+                    return $this->jsonDie('Problem inserting title.');
+                }
+            }
+        }
+        $edition->Preferred_Series_AltName_ID = $title;
+        $edition->save();
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Clear a preferred series title
+     *
+     * @return mixed
+     */
+    public function clearpreferredseriestitleAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            $editionId = $this->params()->fromRoute('id');
+            $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+            $edition->Preferred_Series_AltName_ID = null;
             $edition->save();
             return $this->jsonReportSuccess();
         } else {
@@ -160,6 +277,10 @@ class EditEditionController extends AbstractBase
      */
     public function copyAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $editionId = $this->params()->fromRoute('id');
             $table = $this->getDbTable('edition');
@@ -204,6 +325,10 @@ class EditEditionController extends AbstractBase
      */
     public function adddateAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('editionsreleasedates');
             $row = $table->createRow();
@@ -225,6 +350,10 @@ class EditEditionController extends AbstractBase
      */
     public function deletedateAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $this->getDbTable('editionsreleasedates')->delete(
                 array(
@@ -262,6 +391,10 @@ class EditEditionController extends AbstractBase
      */
     public function addcreditAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('editionscredits');
             $row = $table->createRow();
@@ -283,6 +416,10 @@ class EditEditionController extends AbstractBase
      */
     public function deletecreditAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $this->getDbTable('editionscredits')->delete(
                 array(
@@ -303,6 +440,10 @@ class EditEditionController extends AbstractBase
      */
     public function creditorderAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $this->getDbTable('editionscredits')->update(
                 array('Position' => $this->params()->fromPost('pos')),
@@ -315,5 +456,52 @@ class EditEditionController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Deal with full text
+     *
+     * @return mixed
+     */
+    public function fulltextAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        $table = $this->getDbTable('editionsfulltext');
+        if ($this->getRequest()->isPost()) {
+            $insert = array(
+                'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
+                'Edition_ID' => $this->params()->fromRoute('id'),
+                'Full_Text_URL' => trim($this->params()->fromPost('url'))
+            );
+            if (empty($insert['Full_Text_URL'])) {
+                return $this->jsonDie('URL must not be empty.');
+            }
+            $table->insert($insert);
+            return $this->jsonReportSuccess();
+        } else if ($this->getRequest()->isDelete()) {
+            $delete = $this->params()->fromRoute('extra');
+            $table->delete(array('Sequence_ID' => $delete));
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method.');
+    }
+
+    /**
+     * Get list of full text
+     *
+     * @return mixed
+     */
+    public function fulltextlistAction()
+    {
+        $view = $this->createViewModel();
+        $primary = $this->params()->fromRoute('id');
+            $view->fullText = $this->getDbTable('editionsfulltext')
+                ->getFullTextForEdition($primary);
+        $view->setTemplate('geeby-deeby/edit-edition/fulltext-list.phtml');
+        $view->setTerminal(true);
+        return $view;
     }
 }

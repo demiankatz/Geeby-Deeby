@@ -24,6 +24,7 @@ return array(
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'edition' => 'GeebyDeeby\Db\Table\Edition',
                 'editionscredits' => 'GeebyDeeby\Db\Table\EditionsCredits',
+                'editionsfulltext' => 'GeebyDeeby\Db\Table\EditionsFullText',
                 'editionsreleasedates' => 'GeebyDeeby\Db\Table\EditionsReleaseDates',
                 'faqs' => 'GeebyDeeby\Db\Table\FAQs',
                 'file' => 'GeebyDeeby\Db\Table\File',
