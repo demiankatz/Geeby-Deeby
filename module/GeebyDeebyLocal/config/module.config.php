@@ -89,6 +89,7 @@ return array(
         ),
     ),
     'view_manager' => array(
+        'display_exceptions' => false,
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
