@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Series
@@ -127,6 +128,11 @@ class Series extends Gateway
             $select->join(
                 array('eds' => 'Editions'), 'Series.Series_ID = eds.Series_ID',
                 $includePosition ? array('Position') : array()
+            );
+            $select->join(
+                array('sat' => 'Series_AltTitles'),
+                'eds.Preferred_Series_AltName_ID = sat.Sequence_ID',
+                array('Series_AltName'), Select::JOIN_LEFT
             );
             $fields = array('Series_Name', 'Series_ID');
             if ($includePosition) {
