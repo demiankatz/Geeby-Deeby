@@ -106,6 +106,11 @@ class EditionsReleaseDates extends Gateway
                 array('eds' => 'Editions'),
                 'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
             );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
             $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
             $select->join(
                 array('n' => 'Notes'),

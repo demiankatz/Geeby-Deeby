@@ -22,7 +22,7 @@
             <? else: ?>
               <? $count = count($parts['want']); foreach ($parts['want'] as $i => $current): ?>
                 <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
-                  <?=$this->escapeHtml($current['Position'] == 0 ? $this->fixtitle($current['Item_Name']) : $current['Position'])?>
+                  <?=$this->escapeHtml($current['Position'] == 0 ? $this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']) : $current['Position'])?>
                 </a><?=empty($current['Collection_Note']) ? '' : '(' . $this->escapeHtml($current['Collection_Note']) . ')'?><?=($i + 1 < $count) ? ', ' : ''?>
               <? endforeach; ?>
             <? endif; ?>
@@ -34,7 +34,7 @@
             <? else: ?>
               <? $count = count($parts['have']); foreach ($parts['have'] as $i => $current): ?>
                 <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
-                  <?=$this->escapeHtml($current['Position'] == 0 ? $this->fixtitle($current['Item_Name']) : $current['Position'])?>
+                  <?=$this->escapeHtml($current['Position'] == 0 ? $this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']) : $current['Position'])?>
                 </a><?=empty($current['Collection_Note']) ? '' : '(' . $this->escapeHtml($current['Collection_Note']) . ')'?><?=($i + 1 < $count) ? ', ' : ''?>
               <? endforeach; ?>
             <? endif; ?>

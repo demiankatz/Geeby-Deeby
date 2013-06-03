@@ -27,6 +27,7 @@
  */
 namespace GeebyDeeby\Db\Table;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Collections
@@ -92,6 +93,11 @@ class Collections extends Gateway
                 array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
             );
             $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
+            $select->join(
                 array('s' => 'Series'),
                 'eds.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
             );
@@ -153,6 +159,11 @@ class Collections extends Gateway
             );
             $select->join(
                 array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
+            );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
             );
             $select->join(
                 array('s' => 'Series'),
