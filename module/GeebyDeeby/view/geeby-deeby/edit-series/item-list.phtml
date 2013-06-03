@@ -15,7 +15,7 @@
         </td>
         <td>
           <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>">
-            <?=$this->escapeHtml($current['Item_Name'])?>
+            <?=$this->escapeHtml(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])?>
           </a>
           (<?=$this->escapeHtml($current['Material_Type_Name'])?>)
         </td>

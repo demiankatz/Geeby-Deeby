@@ -28,7 +28,7 @@
       <td>
         <? foreach ($series as $current): ?>
           <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
-            <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+            <?=$this->escapeHtml($this->fixtitle(empty($current['Series_AltName']) ? $current['Series_Name'] : $current['Series_AltName']))?>
           </a>
           <? if ($current['Position'] > 0): ?>
             #<?=$this->escapeHtml($current['Position'])?>

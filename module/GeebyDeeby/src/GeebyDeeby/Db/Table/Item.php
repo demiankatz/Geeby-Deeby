@@ -27,6 +27,7 @@
  */
 namespace GeebyDeeby\Db\Table;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Items
@@ -121,6 +122,11 @@ class Item extends Gateway
             $select->join(
                 array('mt' => 'Material_Types'),
                 'Items.Material_Type_ID = mt.Material_Type_ID'
+            );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
             );
             $select->order(
                 array('mt.Material_Type_Name', 'Position', 'Item_Name')

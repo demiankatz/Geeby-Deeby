@@ -26,7 +26,6 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
-use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Items_Credits

@@ -39,7 +39,7 @@
     <span class="item">
       <?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?>
       <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
-        <?=$this->fixtitle($credit['Item_Name'])?>
+        <?=$this->escapeHtml(isset($credit['Item_AltName']) && !empty($credit['Item_AltName']) ? $credit['Item_AltName'] : $credit['Item_Name'])?>
       </a>
       <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
       <br />
