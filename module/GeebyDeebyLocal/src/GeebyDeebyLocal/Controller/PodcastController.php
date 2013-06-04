@@ -199,6 +199,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
                 'duration' => trim(fgets($handle)),
                 'description' => trim(fgets($handle))
             );
+            fgets($handle);
             if (empty($current['filename'])) {
                 break;
             }
@@ -217,7 +218,6 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             $current['credits'] = file_exists($credits)
                 ? file_get_contents($credits) : false;
             $result[] = $current;
-            fgets($handle);
             if ($limit > 0 && count($result) == $limit) {
                 break;
             }
