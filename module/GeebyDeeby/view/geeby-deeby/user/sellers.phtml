@@ -25,7 +25,7 @@
     <p class="extraitem">
       <?=$extra['Position'] > 0 ? $this->escapeHtml($extra['Position']) . '. ' : ''?>
       <a href="<?=$this->url('item', array('id' => $extra['Item_ID']))?>">
-        <?=$this->fixtitle(isset($extra['Item_AltName']) && !empty($extra['Item_AltName']) ? $extra['Item_AltName'] : $extra['Item_Name'])?>
+        <?=$this->escapeHtml($this->fixtitle(isset($extra['Item_AltName']) && !empty($extra['Item_AltName']) ? $extra['Item_AltName'] : $extra['Item_Name']))?>
       </a>
       <? if (!empty($extra['Collection_Note'])): ?><br /><b>Seller's Note:</b> <?=$this->escapeHtml($extra['Collection_Note'])?><? endif; ?>
       <? if (!empty($extra['Other_Note'])): ?><br /><b>Buyer's Note:</b> <?=$this->escapeHtml($extra['Other_Note'])?><? endif; ?>
