@@ -12,7 +12,7 @@
 
   <p><?=$this->escapeHtml($details['description'])?></p>
 
-  <p>Released on <?=date('M d, Y', strtotime($details['date']))?>.</p>
+  <p>Released on <?=date('F j, Y', strtotime($details['date']))?>.</p>
 
   <p>Download: <a href="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['filename'])?>">MP3</a> (<?=number_format(($details['size'] / 1024) / 1024, 2)?> MB, Duration: <?=$this->escapeHtml($details['duration'])?>)</p>
 
