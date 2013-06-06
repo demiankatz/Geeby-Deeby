@@ -10,7 +10,7 @@
       <h2><?=$this->escapeHtml($current['Year'] == -1 ? 'Never Published' : $current['Year'])?></h2>
     <? endif; ?>
     <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
-      <?=$this->escapeHtml(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])?>
+      <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
     </a>
     <? if (!empty($current['Note'])): ?>
       (<?=$this->escapeHtml($current['Note'])?>)

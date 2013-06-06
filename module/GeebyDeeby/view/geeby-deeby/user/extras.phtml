@@ -20,7 +20,7 @@
     <p class="extraitem">
       <?=$extra['Position'] > 0 ? $this->escapeHtml($extra['Position']) . '. ' : ''?>
       <a href="<?=$this->url('item', array('id' => $extra['Item_ID']))?>">
-        <?=$this->fixtitle(isset($extra['Item_AltName']) && !empty($extra['Item_AltName']) ? $extra['Item_AltName'] : $extra['Item_Name'])?>
+        <?=$this->escapeHtml($this->fixtitle(isset($extra['Item_AltName']) && !empty($extra['Item_AltName']) ? $extra['Item_AltName'] : $extra['Item_Name']))?>
       </a>
       <? if (!empty($extra['Collection_Note'])): ?><br /><?=$this->escapeHtml($extra['Collection_Note'])?><? endif; ?>
     </p>

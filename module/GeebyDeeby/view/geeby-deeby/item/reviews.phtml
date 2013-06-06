@@ -13,7 +13,7 @@
     <span class="item">
       <?=$review['Position'] > 0 ? $this->escapeHtml($review['Position']) . '. ' : ''?>
       <a href="<?=$this->url('item', array('id' => $review['Item_ID']))?>">
-        <?=$this->escapeHtml(isset($review['Item_AltName']) && !empty($review['Item_AltName']) ? $review['Item_AltName'] : $review['Item_Name'])?>
+        <?=$this->escapeHtml($this->fixtitle(isset($review['Item_AltName']) && !empty($review['Item_AltName']) ? $review['Item_AltName'] : $review['Item_Name']))?>
       </a>
       <br />
     </span>
