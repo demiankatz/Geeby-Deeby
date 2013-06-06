@@ -33,7 +33,9 @@ function saveMaterial()
     // Obtain values from form:
     var materialID = $('#Material_Type_ID').val();
     var material = $('#Material_Type_Name').val();
-    
+    var material_plural = $('#Material_Type_Plural_Name').val();
+    var material_default = $('#Default').is(':checked');
+
     // Validate form:
     if (material.length == 0) {
         alert('Material type cannot be blank.');
@@ -46,7 +48,7 @@ function saveMaterial()
     
     // Use AJAX to save the values:
     var url = basePath + '/edit/MaterialType/' + encodeURIComponent(materialID);
-    $.post(url, {material: material}, function(data) {
+    $.post(url, {material: material, material_plural: material_plural, default: material_default ? 1 : 0}, function(data) {
         // If save was successful...
         if (data.success) {
             // Close the dialog box.

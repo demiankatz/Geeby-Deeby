@@ -98,8 +98,8 @@
 <? else: ?>
   <? $matType = ''; ?>
   <? foreach ($items as $item): ?>
-    <? if ($matType != $item['Material_Type_Name']): ?>
-      <? $matType = $item['Material_Type_Name'] ?>
+    <? if ($matType != $item['Material_Type_Plural_Name']): ?>
+      <? $matType = $item['Material_Type_Plural_Name'] ?>
       <h2><?=$this->escapeHtml($matType)?></h2>
     <? endif; ?>
     <?=$item['Position'] > 0 ? $item['Position'] . '. ' : ''?>
@@ -129,7 +129,7 @@
 <? if (count($bibliography) > 0): ?>
   <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
   <? $type = false; foreach ($bibliography as $bib): ?>
-    <? if ($type !== $bib['Material_Type_Name']): $type = $bib['Material_Type_Name']; ?>
+    <? if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
       <h3 class="materialType"><?=$this->escapeHtml($type)?></h3>
     <? endif; ?>
     <span class="item"><a href="<?=$this->url('item', array('id' => $bib['Item_ID']))?>"><?=$this->fixtitle($bib['Item_Name'])?></a></span><br />
