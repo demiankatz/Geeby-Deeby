@@ -4,9 +4,7 @@
       <tr>
         <td>
           <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>#bib-tab">
-            <?=$this->escapeHtml($current['Last_Name'])?>,
-            <?=$this->escapeHtml($current['First_Name'])?>
-            <?=$this->escapeHtml($current['Middle_Name'])?>
+            <?=$this->escapeHtml($this->showperson($current))?>
           </a>
         </td>
         <td>
