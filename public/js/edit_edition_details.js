@@ -38,6 +38,7 @@ function saveEdition()
         // Redraw alt titles:
         redrawItemAltTitles();
         redrawSeriesAltTitles();
+        redrawNextAndPrev();
     }, 'json');
 }
 
@@ -243,6 +244,15 @@ function saveItemAltTitle()
             alert('Error: ' + data.msg);
         }
     }, 'json');
+}
+
+/* Redraw the next and previous links:
+ */
+function redrawNextAndPrev()
+{
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/NextAndPrev';
+    $('#nextAndPrev').load(url);
 }
 
 /* Redraw the series alternate title list:

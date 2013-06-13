@@ -92,6 +92,8 @@ class EditEditionController extends AbstractBase
                 ->getFullTextForEdition($view->edition['Edition_ID']);
             $view->fullTextSources = $this->getDbTable('fulltextsource')
                 ->getList();
+            $view->next = $view->editionObj->getNextInSeries();
+            $view->previous = $view->editionObj->getPreviousInSeries();
         }
         return $view;
     }
@@ -314,6 +316,24 @@ class EditEditionController extends AbstractBase
         $primary = $this->params()->fromRoute('id');
         $view->releaseDates = $table->getDatesForEdition($primary);
         $view->setTemplate('geeby-deeby/edit-edition/date-list.phtml');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Get next/previous links
+     *
+     * @return mixed
+     */
+    public function nextandprevAction()
+    {
+        $table = $this->getDbTable('edition');
+        $view = $this->createViewModel();
+        $primary = $this->params()->fromRoute('id');
+        $edition = $table->getByPrimaryKey($primary);
+        $view->next = $edition->getNextInSeries();
+        $view->previous = $edition->getPreviousInSeries();
+        $view->setTemplate('geeby-deeby/edit-edition/next-and-prev.phtml');
         $view->setTerminal(true);
         return $view;
     }
