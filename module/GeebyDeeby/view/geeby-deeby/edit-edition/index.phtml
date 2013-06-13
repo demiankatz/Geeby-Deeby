@@ -20,4 +20,9 @@
   </table>
   <button id="save_edition" onclick="saveEdition();">Save</button>
   <div id="save_edition_status"></div>
+  <div id="nextAndPrev">
+    <? if (isset($next) || isset($previous)): ?>
+      <?=$this->render('geeby-deeby/edit-edition/next-and-prev.phtml')?>
+    <? endif; ?>
+  </div>
 </div>

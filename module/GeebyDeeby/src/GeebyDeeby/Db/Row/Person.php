@@ -69,7 +69,8 @@ class Person extends RowGateway
      */
     public function getDisplayName()
     {
-        $n = $this->First_Name . ' ' . $this->Middle_Name . ' ' . $this->Last_Name;
-        return trim(preg_replace('/\s+/', ' ', $n));
+        $n = $this->First_Name . ' ' . $this->Middle_Name . ' ' . $this->Last_Name
+            . ' ' . $this->Extra_Details;
+        return trim(preg_replace(array('/\s+/', '/\s+,/'), array(' ', ','), $n));
     }
 }
