@@ -59,8 +59,6 @@ class EditItemController extends AbstractBase
     {
         $assignMap = array(
             'name' => 'Item_Name',
-            'len' => 'Item_Length',
-            'endings' => 'Item_Endings',
             'errata' => 'Item_Errata',
             'thanks' => 'Item_Thanks',
             'material' => 'Material_Type_ID'
@@ -118,7 +116,9 @@ class EditItemController extends AbstractBase
                     array(
                         'Edition_Name' => $edName,
                         'Item_ID' => $view->affectedRow->Item_ID,
-                        'Series_ID' => $seriesID
+                        'Series_ID' => $seriesID,
+                        'Edition_Length' => $this->params()->fromPost('len'),
+                        'Edition_Endings' => $this->params()->fromPost('endings')
                     )
                 );
             }

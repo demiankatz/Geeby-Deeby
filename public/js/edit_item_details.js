@@ -5,8 +5,6 @@ function saveItem()
     // Obtain values from form:
     var itemID = $('#Item_ID').val();
     var itemName = $('#Item_Name').val();
-    var len = $('#Item_Length').val();
-    var endings = $('#Item_Endings').val();
     var errata = $('#Item_Errata').val();
     var thanks = $('#Item_Thanks').val();
     var material = $('#Material_Type_ID').val();
@@ -25,8 +23,6 @@ function saveItem()
     var url = basePath + '/edit/Item/' + encodeURIComponent(itemID);
     var details = {
         name: itemName,
-        len: len,
-        endings: endings,
         errata: errata,
         thanks: thanks,
         material: material

@@ -17,6 +17,14 @@
       <th>Series:</th>
       <td><input type="text" class="Series_ID" id="Series_ID" value="<?=isset($edition['Series_ID']) ? $this->escapeHtml($edition['Series_ID'] . ': ' . $series['Series_Name']) : ''?>" /></td>
     </tr>
+    <tr>
+      <th>Length:</th>
+      <td><input type="text" id="Edition_Length" value="<?=isset($edition['Edition_Length']) ? $this->escapeHtml($edition['Edition_Length']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Endings:</th>
+      <td><input type="text" id="Edition_Endings" value="<?=isset($edition['Edition_Endings']) ? $this->escapeHtml($edition['Edition_Endings']) : ''?>" /></td>
+    </tr>
   </table>
   <button id="save_edition" onclick="saveEdition();">Save</button>
   <div id="save_edition_status"></div>

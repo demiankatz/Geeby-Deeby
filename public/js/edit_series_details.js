@@ -518,11 +518,14 @@ function saveItem()
     var seriesID = $('#Series_ID').val();
     var itemID = $('#Item_ID').val();
     var itemName = $('#Item_Name').val();
-    var len = $('#Item_Length').val();
-    var endings = $('#Item_Endings').val();
     var errata = $('#Item_Errata').val();
     var thanks = $('#Item_Thanks').val();
     var material = $('#Material_Type_ID').val();
+
+    // Length and endings are actually Edition fields, but we load the data here
+    // for convenience when creating items.
+    var len = $('#Item_Length').val();
+    var endings = $('#Item_Endings').val();
 
     // Validate form:
     if (itemName.length == 0) {
