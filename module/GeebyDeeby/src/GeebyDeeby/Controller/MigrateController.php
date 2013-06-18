@@ -79,6 +79,11 @@ class MigrateController extends AbstractBase
             $messages[] = 'Migrated ' . $migrated
                 . ' credits from Items_Credits.';
         }
+        $migrated = $this->migrateItemLengthAndEndingsToEditions();
+        if ($migrated > 0) {
+            $messages[] = 'Migrated ' . $migrated
+                . ' length/ending values from Items.';
+        }
         return $this->createViewModel(array('messages' => $messages));
     }
 
@@ -161,6 +166,33 @@ class MigrateController extends AbstractBase
             unset($current['Edition_ID']);
             $iDates->delete($current);
             $count++;
+        }
+        return $count;
+    }
+
+    /**
+     * Migrate key Items fields to Editions.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemLengthAndEndingsToEditions()
+    {
+        $i = $this->getDbTable('item');
+        $e = $this->getDbTable('edition');
+        $count = 0;
+        foreach ($i->getList() as $current) {
+            if (!empty($current->Item_Length) || !empty($current->Item_Endings)) {
+                $currentEds = $e->getEditionsForItem($current['Item_ID']);
+                foreach ($currentEds as $currentEd) {
+                    $currentEd->Edition_Length = $current->Item_Length;
+                    $currentEd->Edition_Endings = $current->Item_Endings;
+                    $currentEd->save();
+                }
+                $current->Item_Length = null;
+                $current->Item_Endings = null;
+                $current->save();
+                $count++;
+            }
         }
         return $count;
     }

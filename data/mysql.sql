@@ -90,6 +90,8 @@ CREATE TABLE `Editions` (
   `Position` int(11) NOT NULL DEFAULT '0',
   `Preferred_Item_AltName_ID` int(11) DEFAULT NULL,
   `Preferred_Series_AltName_ID` int(11) DEFAULT NULL,
+  `Edition_Length` tinytext,
+  `Edition_Endings` tinytext,
   PRIMARY KEY (`Edition_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -229,8 +231,6 @@ DROP TABLE IF EXISTS `Items`;
 CREATE TABLE `Items` (
   `Item_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Item_Name` tinytext NOT NULL,
-  `Item_Length` tinytext,
-  `Item_Endings` tinytext,
   `Item_Errata` text,
   `Item_Thanks` tinytext,
   `Material_Type_ID` int(11) NOT NULL DEFAULT '0',
