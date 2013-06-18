@@ -96,8 +96,9 @@ class FormatReleaseDate extends \Zend\View\Helper\AbstractHelper
         // Add the note, if any:
         $note = $arr['Note'];
         if ($showEdition) {
-            $note = empty($note)
-                ? $arr['Edition_Name'] : $arr['Edition_Name'] . ' - ' . $note;
+            $fixTitle = $this->getView()->plugin('fixtitle');
+            $name = $fixTitle($arr['Edition_Name']);
+            $note = empty($note) ? $name : $name . ' - ' . $note;
         }
         if (!empty($note)) {
             $str .= " ({$note})";
