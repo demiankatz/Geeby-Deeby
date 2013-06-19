@@ -345,23 +345,6 @@ CREATE TABLE `Items_Files` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Items_ISBNs`
---
-
-DROP TABLE IF EXISTS `Items_ISBNs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_ISBNs` (
-  `Sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `ISBN` char(10) DEFAULT NULL,
-  `Note_ID` int(11) DEFAULT NULL,
-  `ISBN13` char(13) DEFAULT NULL,
-  PRIMARY KEY (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Items_Images`
 --
 
@@ -420,22 +403,6 @@ CREATE TABLE `Items_Platforms` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Platform_ID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Item_ID`,`Platform_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Items_Product_Codes`
---
-
-DROP TABLE IF EXISTS `Items_Product_Codes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Product_Codes` (
-  `Sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Product_Code` tinytext NOT NULL,
-  `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Sequence_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

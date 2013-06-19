@@ -46,25 +46,4 @@ class ItemsISBNs extends Gateway
     {
         parent::__construct('Items_ISBNs');
     }
-
-    /**
-     * Get a list of ISBNs for the specified item.
-     *
-     * @var int $itemID Item ID
-     *
-     * @return mixed
-     */
-    public function getISBNs($itemID)
-    {
-        $callback = function ($select) use ($itemID) {
-            $select->join(
-                array('n' => 'Notes'),
-                'Items_ISBNs.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
-            );
-            $select->order('ISBN13');
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
-    }
 }
