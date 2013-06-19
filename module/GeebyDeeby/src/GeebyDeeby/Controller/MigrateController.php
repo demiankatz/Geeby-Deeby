@@ -111,29 +111,49 @@ class MigrateController extends AbstractBase
     }
 
     /**
+     * Generic method for migrating from an item table to an edition table.
+     *
+     * @param string $inTable    Name of input table service
+     * @param string $outTable   Name of output table service
+     * @param string $primaryKey Name of primary key of input table (null to ignore)
+     *
+     * @return int Number of rows migrated
+     */
+    protected function genericItemToEditionMigration($inTable, $outTable,
+        $primaryKey = null
+    ) {
+        $in = $this->getDbTable($inTable);
+        $out = $this->getDbTable($outTable);
+        $eds = $this->getDbTable('edition');
+        $count = 0;
+        foreach ($in->select() as $current) {
+            $current = (array)$current;
+            $currentEds = $eds->getEditionsForItem($current['Item_ID']);
+            foreach ($currentEds as $currentEd) {
+                unset($current['Item_ID']);
+                if (null !== $primaryKey) {
+                    unset($current[$primaryKey]);
+                }
+                $current['Edition_ID'] = $currentEd->Edition_ID;
+                $out->insert($current);
+            }
+            unset($current['Edition_ID']);
+            $in->delete($current);
+            $count++;
+        }
+        return $count;
+    }
+
+    /**
      * Migrate Items_Credits to Editions_Credits.
      *
      * @return int Number of rows migrated
      */
     protected function migrateItemCreditsToEditions()
     {
-        $iCreds = $this->getDbTable('itemscredits');
-        $eCreds = $this->getDbTable('editionscredits');
-        $eds = $this->getDbTable('edition');
-        $count = 0;
-        foreach ($iCreds->select() as $current) {
-            $current = (array)$current;
-            $currentEds = $eds->getEditionsForItem($current['Item_ID']);
-            foreach ($currentEds as $currentEd) {
-                unset($current['Item_ID']);
-                $current['Edition_ID'] = $currentEd->Edition_ID;
-                $eCreds->insert($current);
-            }
-            unset($current['Edition_ID']);
-            $iCreds->delete($current);
-            $count++;
-        }
-        return $count;
+        return $this->genericItemToEditionMigration(
+            'itemscredits', 'editionscredits'
+        );
     }
 
     /**
@@ -143,23 +163,9 @@ class MigrateController extends AbstractBase
      */
     protected function migrateItemDatesToEditions()
     {
-        $iDates = $this->getDbTable('itemsreleasedates');
-        $eDates = $this->getDbTable('editionsreleasedates');
-        $eds = $this->getDbTable('edition');
-        $count = 0;
-        foreach ($iDates->select() as $current) {
-            $current = (array)$current;
-            $currentEds = $eds->getEditionsForItem($current['Item_ID']);
-            foreach ($currentEds as $currentEd) {
-                unset($current['Item_ID']);
-                $current['Edition_ID'] = $currentEd->Edition_ID;
-                $eDates->insert($current);
-            }
-            unset($current['Edition_ID']);
-            $iDates->delete($current);
-            $count++;
-        }
-        return $count;
+        return $this->genericItemToEditionMigration(
+            'itemsreleasedates', 'editionsreleasedates'
+        );
     }
 
     /**
@@ -196,8 +202,9 @@ class MigrateController extends AbstractBase
      */
     protected function migrateItemISBNsToEditions()
     {
-        // TODO
-        return 0;
+        return $this->genericItemToEditionMigration(
+            'itemsisbns', 'editionsisbns', 'Sequence_ID'
+        );
     }
 
     /**
@@ -207,7 +214,8 @@ class MigrateController extends AbstractBase
      */
     protected function migrateItemProductCodesToEditions()
     {
-        // TODO
-        return 0;
+        return $this->genericItemToEditionMigration(
+            'itemsproductcodes', 'editionsproductcodes', 'Sequence_ID'
+        );
     }
 }

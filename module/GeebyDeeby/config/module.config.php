@@ -25,6 +25,8 @@ return array(
                 'edition' => 'GeebyDeeby\Db\Table\Edition',
                 'editionscredits' => 'GeebyDeeby\Db\Table\EditionsCredits',
                 'editionsfulltext' => 'GeebyDeeby\Db\Table\EditionsFullText',
+                'editionsisbns' => 'GeebyDeeby\Db\Table\EditionsISBNs',
+                'editionsproductcodes' => 'GeebyDeeby\Db\Table\EditionsProductCodes',
                 'editionsreleasedates' => 'GeebyDeeby\Db\Table\EditionsReleaseDates',
                 'faqs' => 'GeebyDeeby\Db\Table\FAQs',
                 'file' => 'GeebyDeeby\Db\Table\File',

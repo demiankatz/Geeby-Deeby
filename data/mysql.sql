@@ -130,6 +130,39 @@ CREATE TABLE `Editions_Full_Text` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Editions_ISBNs`
+--
+
+DROP TABLE IF EXISTS `Editions_ISBNs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_ISBNs` (
+  `Sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `ISBN` char(10) DEFAULT NULL,
+  `Note_ID` int(11) DEFAULT NULL,
+  `ISBN13` char(13) DEFAULT NULL,
+  PRIMARY KEY (`Sequence_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Editions_Product_Codes`
+--
+
+DROP TABLE IF EXISTS `Editions_Product_Codes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Product_Codes` (
+  `Sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Product_Code` tinytext NOT NULL,
+  `Note_ID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Sequence_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Editions_Release_Dates`
 --
 
