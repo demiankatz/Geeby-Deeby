@@ -87,6 +87,10 @@ class EditEditionController extends AbstractBase
             $view->roles = $this->getDbTable('role')->getList();
             $view->credits= $this->getDbTable('editionscredits')
                 ->getCreditsForEdition($view->edition['Edition_ID']);
+            $view->ISBNs = $this->getDbTable('editionsisbns')
+                ->getISBNsForEdition($view->edition['Edition_ID']);
+            $view->productCodes = $this->getDbTable('editionsproductcodes')
+                ->getProductCodesForEdition($view->edition['Edition_ID']);
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
                 ->getDatesForEdition($view->edition['Edition_ID']);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
@@ -525,5 +529,67 @@ class EditEditionController extends AbstractBase
         $view->setTemplate('geeby-deeby/edit-edition/fulltext-list.phtml');
         $view->setTerminal(true);
         return $view;
+    }
+
+    /**
+     * Work with ISBNs
+     *
+     * @return mixed
+     */
+    public function isbnAction()
+    {
+        // Special case: new ISBN:
+        if ($this->getRequest()->isPost()) {
+            $isbn = new \VuFind\Code\ISBN($this->params()->fromPost('isbn'));
+            if (!$isbn->isValid()) {
+                return $this->jsonDie('Invalid ISBN -- cannot save.');
+            }
+            $table = $this->getDbTable('editionsisbns');
+            $row = $table->createRow();
+            $row->Edition_ID = $this->params()->fromRoute('id');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $isbn10 = $isbn->get10();
+            if (!empty($isbn10)) {
+                $row->ISBN = $isbn10;
+            }
+            $row->ISBN13 = $isbn->get13();
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'editionsisbns', 'Edition_ID', 'Sequence_ID', 'ISBNs',
+                'getISBNsForEdition', 'geeby-deeby/edit-edition/isbn-list.phtml'
+            );
+        }
+    }
+
+    /**
+     * Work with product codes
+     *
+     * @return mixed
+     */
+    public function productcodeAction()
+    {
+        // Special case: new code:
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('editionsproductcodes');
+            $row = $table->createRow();
+            $row->Edition_ID = $this->params()->fromRoute('id');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $row->Product_Code = $this->params()->fromPost('code');
+            if (empty($row->Product_Code)) {
+                return $this->jsonDie('Product code must not be empty.');
+            }
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'editionsproductcodes', 'Edition_ID', 'Sequence_ID',
+                'productCodes', 'getProductCodesForEdition',
+                'geeby-deeby/edit-edition/product-code-list.phtml'
+            );
+        }
     }
 }

@@ -48,6 +48,27 @@ class EditionsProductCodes extends Gateway
     }
 
     /**
+     * Get a list of product codes for the specified edition.
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getProductCodesForEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->join(
+                array('n' => 'Notes'),
+                'Editions_Product_Codes.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->order('Product_Code');
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of product codes for the specified item.
      *
      * @var int $itemID Item ID

@@ -48,6 +48,27 @@ class EditionsISBNs extends Gateway
     }
 
     /**
+     * Get a list of ISBNs for the specified edition.
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getISBNsForEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->join(
+                array('n' => 'Notes'),
+                'Editions_ISBNs.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->order('ISBN13');
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of ISBNs for the specified item.
      *
      * @var int $itemID Item ID
