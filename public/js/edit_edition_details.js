@@ -5,6 +5,7 @@ function saveEdition()
     // Obtain values from form:
     var editionID = $('#Edition_ID').val();
     var editionName = $('#Edition_Name').val();
+    var desc = $('#Edition_Description').val();
     var pos = $('#Position').val();
     var itemID = $('#Item_ID').val();
     var seriesID = $('#Series_ID').val();
@@ -25,6 +26,7 @@ function saveEdition()
     var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID);
     var details = {
         name: editionName,
+        desc: desc,
         item_id: itemID,
         series_id: seriesID,
         position: pos,

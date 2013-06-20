@@ -59,6 +59,7 @@ class EditEditionController extends AbstractBase
     {
         $assignMap = array(
             'name' => 'Edition_Name',
+            'desc' => 'Edition_Description',
             'item_id' => 'Item_ID',
             'series_id' => 'Series_ID',
             'position' => 'Position',

@@ -6,6 +6,10 @@
       <td><input type="text" id="Edition_Name" value="<?=isset($edition['Edition_Name']) ? $this->escapeHtml($edition['Edition_Name']) : ''?>" /></td>
     </tr>
     <tr>
+      <th>Description:</th>
+      <td><textarea id="Edition_Description"><?=isset($edition['Edition_Description']) ? $this->escapeHtml($edition['Edition_Description']) : ''?></textarea></td>
+    </tr>
+    <tr>
       <th>Position:</th>
       <td><input type="text" id="Position" value="<?=isset($edition['Position']) ? $this->escapeHtml($edition['Position']) : ''?>" /></td>
     </tr>

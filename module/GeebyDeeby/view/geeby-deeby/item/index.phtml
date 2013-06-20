@@ -249,6 +249,7 @@
 
   <?
     $lengths = $endings = array();
+    $descCount = 0;
     foreach ($editions as $ed) {
         $name = $this->fixtitle($ed['Edition_Name']);
         if (!empty($ed['Edition_Length'])) {
@@ -263,8 +264,23 @@
             }
             $endings[$ed['Edition_Endings']][] = $name;
         }
+        if (!empty($ed['Edition_Description'])) {
+            $descCount++;
+        }
     }
   ?>
+
+  <? if ($descCount > 0): ?>
+    <tr><th>Edition Description<?=$descCount>1 ? 's' : ''?>:</th><td>
+      <? $displayedCount = 0; foreach ($editions as $ed): ?>
+        <? if (!empty($ed['Edition_Description'])): $displayedCount++; ?>
+          <? if ($displayedCount > 1): ?><br /><? endif; ?>
+          <i><?=$this->escapeHtml($this->fixtitle($ed['Edition_Name']))?>:</i><br />
+          <?=$ed['Edition_Description']?><br />
+        <? endif; ?>
+      <? endforeach; ?>
+    </td></tr>
+  <? endif; ?>
 
   <? if (!empty($lengths)): ?>
     <tr><th>Length:</th><td>
