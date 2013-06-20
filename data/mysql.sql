@@ -147,6 +147,22 @@ CREATE TABLE `Editions_ISBNs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Editions_OCLC_Numbers`
+--
+
+DROP TABLE IF EXISTS `Editions_OCLC_Numbers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_OCLC_Numbers` (
+  `Sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `OCLC_Number` tinytext NOT NULL,
+  `Note_ID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Sequence_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Editions_Product_Codes`
 --
 

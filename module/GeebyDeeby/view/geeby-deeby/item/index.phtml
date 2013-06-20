@@ -221,6 +221,19 @@
     </tr>
   <? endif; ?>
 
+  <? $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions); $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
+    <tr>
+      <th>OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($oclcNumbers as $number => $note): ?>
+          <?=$this->escapeHtml($number)?>
+          <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
   <? $codes = $this->groupeditions($codes, 'Product_Code', $editions); $codeCount = count($codes); if ($codeCount > 0): ?>
     <tr>
       <th>Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>

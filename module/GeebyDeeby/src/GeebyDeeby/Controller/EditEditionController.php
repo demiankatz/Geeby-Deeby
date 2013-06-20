@@ -89,6 +89,8 @@ class EditEditionController extends AbstractBase
                 ->getCreditsForEdition($view->edition['Edition_ID']);
             $view->ISBNs = $this->getDbTable('editionsisbns')
                 ->getISBNsForEdition($view->edition['Edition_ID']);
+            $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
+                ->getOCLCNumbersForEdition($view->edition['Edition_ID']);
             $view->productCodes = $this->getDbTable('editionsproductcodes')
                 ->getProductCodesForEdition($view->edition['Edition_ID']);
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
@@ -540,6 +542,10 @@ class EditEditionController extends AbstractBase
     {
         // Special case: new ISBN:
         if ($this->getRequest()->isPost()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
             $isbn = new \VuFind\Code\ISBN($this->params()->fromPost('isbn'));
             if (!$isbn->isValid()) {
                 return $this->jsonDie('Invalid ISBN -- cannot save.');
@@ -565,6 +571,39 @@ class EditEditionController extends AbstractBase
     }
 
     /**
+     * Work with OCLC numbers
+     *
+     * @return mixed
+     */
+    public function oclcnumberAction()
+    {
+        // Special case: new code:
+        if ($this->getRequest()->isPost()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
+            $table = $this->getDbTable('editionsoclcnumbers');
+            $row = $table->createRow();
+            $row->Edition_ID = $this->params()->fromRoute('id');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $row->OCLC_Number = $this->params()->fromPost('oclc_number');
+            if (empty($row->OCLC_Number)) {
+                return $this->jsonDie('OCLC number must not be empty.');
+            }
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'editionsoclcnumbers', 'Edition_ID', 'Sequence_ID',
+                'oclcNumbers', 'getOCLCNumbersForEdition',
+                'geeby-deeby/edit-edition/oclc-number-list.phtml'
+            );
+        }
+    }
+
+    /**
      * Work with product codes
      *
      * @return mixed
@@ -573,6 +612,10 @@ class EditEditionController extends AbstractBase
     {
         // Special case: new code:
         if ($this->getRequest()->isPost()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
             $table = $this->getDbTable('editionsproductcodes');
             $row = $table->createRow();
             $row->Edition_ID = $this->params()->fromRoute('id');
