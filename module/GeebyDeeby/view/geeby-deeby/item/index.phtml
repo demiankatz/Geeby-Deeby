@@ -205,29 +205,42 @@
     </tr>
   <? endif; ?>
 
-  <? $isbnCount = count($isbns); if ($isbnCount > 0): ?>
+  <? $isbns = $this->groupeditions($isbns, 'ISBN13', $editions); $isbnCount = count($isbns); if ($isbnCount > 0): ?>
     <tr>
       <th>ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
       <td>
-        <? foreach ($isbns as $isbn): ?>
-          <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn['ISBN13']))?>">
-            <?=empty($isbn['ISBN']) ? '' : $this->escapeHtml($isbn['ISBN']) . ' / '?>
-            <?=$this->escapeHtml($isbn['ISBN13'])?>
+        <? foreach ($isbns as $isbn => $note): ?>
+          <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn))?>">
+            <? $isbnConverter = new \VuFind\Code\ISBN($isbn); $isbn10 = $isbnConverter->get10(); ?>
+            <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn : $isbn)?>
           </a>
-          <?=!empty($isbn['Note']) ? '(' . $this->escapeHtml($isbn['Note']) . ')' : ''?>
+          <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
           <br />
         <? endforeach; ?>
       </td>
     </tr>
   <? endif; ?>
 
-  <? $codeCount = count($codes); if ($codeCount > 0): ?>
+  <? $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions); $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
+    <tr>
+      <th>OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($oclcNumbers as $number => $note): ?>
+          <?=$this->escapeHtml($number)?>
+          <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? $codes = $this->groupeditions($codes, 'Product_Code', $editions); $codeCount = count($codes); if ($codeCount > 0): ?>
     <tr>
       <th>Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
       <td>
-        <? foreach ($codes as $code): ?>
-          <?=$this->escapeHtml($code['Product_Code'])?>
-          <?=!empty($code['Note']) ? '(' . $this->escapeHtml($code['Note']) . ')' : ''?>
+        <? foreach ($codes as $code => $note): ?>
+          <?=$this->escapeHtml($code)?>
+          <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
           <br />
         <? endforeach; ?>
       </td>
@@ -236,6 +249,7 @@
 
   <?
     $lengths = $endings = array();
+    $descCount = 0;
     foreach ($editions as $ed) {
         $name = $this->fixtitle($ed['Edition_Name']);
         if (!empty($ed['Edition_Length'])) {
@@ -250,8 +264,23 @@
             }
             $endings[$ed['Edition_Endings']][] = $name;
         }
+        if (!empty($ed['Edition_Description'])) {
+            $descCount++;
+        }
     }
   ?>
+
+  <? if ($descCount > 0): ?>
+    <tr><th>Edition Description<?=$descCount>1 ? 's' : ''?>:</th><td>
+      <? $displayedCount = 0; foreach ($editions as $ed): ?>
+        <? if (!empty($ed['Edition_Description'])): $displayedCount++; ?>
+          <? if ($displayedCount > 1): ?><br /><? endif; ?>
+          <i><?=$this->escapeHtml($this->fixtitle($ed['Edition_Name']))?>:</i><br />
+          <?=$ed['Edition_Description']?><br />
+        <? endif; ?>
+      <? endforeach; ?>
+    </td></tr>
+  <? endif; ?>
 
   <? if (!empty($lengths)): ?>
     <tr><th>Length:</th><td>

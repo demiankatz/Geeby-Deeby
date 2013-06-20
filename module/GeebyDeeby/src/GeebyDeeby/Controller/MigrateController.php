@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+use Zend\Db\Adapter\Exception\InvalidQueryException;
 
 /**
  * Migration controller
@@ -50,39 +51,30 @@ class MigrateController extends AbstractBase
             return $ok;
         }
         $messages = array();
-        try {
-            $migrated = $this->migrateItemsInSeriesToEditions();
-        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
-            // Table no longer exists -- no migration necessary
-            $migrated = 0;
-        }
-        if ($migrated > 0) {
-            $messages[] = 'Migrated ' . $migrated . ' rows from Items_In_Series.';
-        }
-        try {
-            $migrated = $this->migrateItemDatesToEditions();
-        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
-            // Table no longer exists -- no migration necessary
-            $migrated = 0;
-        }
-        if ($migrated > 0) {
-            $messages[] = 'Migrated ' . $migrated
-                . ' release dates from Items_Release_Dates.';
-        }
-        try {
-            $migrated = $this->migrateItemCreditsToEditions();
-        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
-            // Table no longer exists -- no migration necessary
-            $migrated = 0;
-        }
-        if ($migrated > 0) {
-            $messages[] = 'Migrated ' . $migrated
-                . ' credits from Items_Credits.';
-        }
-        $migrated = $this->migrateItemLengthAndEndingsToEditions();
-        if ($migrated > 0) {
-            $messages[] = 'Migrated ' . $migrated
-                . ' length/ending values from Items.';
+        $migrations = array(
+            'migrateItemsInSeriesToEditions' =>
+                'rows from Items_In_Series.',
+            'migrateItemDatesToEditions' =>
+                'release dates from Items_Release_Dates.',
+            'migrateItemCreditsToEditions' =>
+                'credits from Items_Credits.',
+            'migrateItemLengthAndEndingsToEditions' =>
+                'length/ending values from Items.',
+            'migrateItemISBNsToEditions' =>
+                'ISBNs from Items_ISBNs',
+            'migrateItemProductCodesToEditions' =>
+                'product codes from Items_Product_Codes',
+        );
+        foreach ($migrations as $method => $msg) {
+            try {
+                $migrated = call_user_func(array($this, $method));
+            } catch (InvalidQueryException $e) {
+                // Table no longer exists -- no migration necessary
+                $migrated = 0;
+            }
+            if ($migrated > 0) {
+                $messages[] = 'Migrated ' . $migrated . ' ' . $msg;
+            }
         }
         return $this->createViewModel(array('messages' => $messages));
     }
@@ -119,29 +111,49 @@ class MigrateController extends AbstractBase
     }
 
     /**
+     * Generic method for migrating from an item table to an edition table.
+     *
+     * @param string $inTable    Name of input table service
+     * @param string $outTable   Name of output table service
+     * @param string $primaryKey Name of primary key of input table (null to ignore)
+     *
+     * @return int Number of rows migrated
+     */
+    protected function genericItemToEditionMigration($inTable, $outTable,
+        $primaryKey = null
+    ) {
+        $in = $this->getDbTable($inTable);
+        $out = $this->getDbTable($outTable);
+        $eds = $this->getDbTable('edition');
+        $count = 0;
+        foreach ($in->select() as $current) {
+            $current = (array)$current;
+            $currentEds = $eds->getEditionsForItem($current['Item_ID']);
+            foreach ($currentEds as $currentEd) {
+                unset($current['Item_ID']);
+                if (null !== $primaryKey) {
+                    unset($current[$primaryKey]);
+                }
+                $current['Edition_ID'] = $currentEd->Edition_ID;
+                $out->insert($current);
+            }
+            unset($current['Edition_ID']);
+            $in->delete($current);
+            $count++;
+        }
+        return $count;
+    }
+
+    /**
      * Migrate Items_Credits to Editions_Credits.
      *
      * @return int Number of rows migrated
      */
     protected function migrateItemCreditsToEditions()
     {
-        $iCreds = $this->getDbTable('itemscredits');
-        $eCreds = $this->getDbTable('editionscredits');
-        $eds = $this->getDbTable('edition');
-        $count = 0;
-        foreach ($iCreds->select() as $current) {
-            $current = (array)$current;
-            $currentEds = $eds->getEditionsForItem($current['Item_ID']);
-            foreach ($currentEds as $currentEd) {
-                unset($current['Item_ID']);
-                $current['Edition_ID'] = $currentEd->Edition_ID;
-                $eCreds->insert($current);
-            }
-            unset($current['Edition_ID']);
-            $iCreds->delete($current);
-            $count++;
-        }
-        return $count;
+        return $this->genericItemToEditionMigration(
+            'itemscredits', 'editionscredits'
+        );
     }
 
     /**
@@ -151,23 +163,9 @@ class MigrateController extends AbstractBase
      */
     protected function migrateItemDatesToEditions()
     {
-        $iDates = $this->getDbTable('itemsreleasedates');
-        $eDates = $this->getDbTable('editionsreleasedates');
-        $eds = $this->getDbTable('edition');
-        $count = 0;
-        foreach ($iDates->select() as $current) {
-            $current = (array)$current;
-            $currentEds = $eds->getEditionsForItem($current['Item_ID']);
-            foreach ($currentEds as $currentEd) {
-                unset($current['Item_ID']);
-                $current['Edition_ID'] = $currentEd->Edition_ID;
-                $eDates->insert($current);
-            }
-            unset($current['Edition_ID']);
-            $iDates->delete($current);
-            $count++;
-        }
-        return $count;
+        return $this->genericItemToEditionMigration(
+            'itemsreleasedates', 'editionsreleasedates'
+        );
     }
 
     /**
@@ -195,5 +193,29 @@ class MigrateController extends AbstractBase
             }
         }
         return $count;
+    }
+
+    /**
+     * Migrate Item ISBNs to Editions.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemISBNsToEditions()
+    {
+        return $this->genericItemToEditionMigration(
+            'itemsisbns', 'editionsisbns', 'Sequence_ID'
+        );
+    }
+
+    /**
+     * Migrate Item product codes to Editions.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemProductCodesToEditions()
+    {
+        return $this->genericItemToEditionMigration(
+            'itemsproductcodes', 'editionsproductcodes', 'Sequence_ID'
+        );
     }
 }

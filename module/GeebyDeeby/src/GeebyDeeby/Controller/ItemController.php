@@ -154,8 +154,11 @@ class ItemController extends AbstractBase
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
         $view->editions = $this->getDbTable('edition')->getEditionsForItem($id);
         $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
-        $view->isbns = $this->getDbTable('itemsisbns')->getISBNs($id);
-        $view->codes = $this->getDbTable('itemsproductcodes')->getProductCodes($id);
+        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
+        $view->codes = $this->getDbTable('editionsproductcodes')
+            ->getProductCodesForItem($id);
+        $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
+            ->getOCLCNumbersForItem($id);
         $view->descriptions = $this->getDbTable('itemsdescriptions')
             ->getDescriptions($id);
         $reviews = $this->getDbTable('itemsreviews');
