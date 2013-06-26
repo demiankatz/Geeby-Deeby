@@ -1,0 +1,11 @@
+<div id="editForm">
+  <input type="hidden" id="Tag_Type_ID" value="<?=$tagType['Tag_Type_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Subject/Tag Type:</th>
+      <td><input type="text" id="Tag_Type" value="<?=isset($tagType['Tag_Type']) ? $this->escapeHtml($tagType['Tag_Type']) : ''?>" /></td>
+    </tr>
+  </table>
+  <button id="save_tag_type" onclick="saveTagType();">Save</button>
+  <div id="save_tag_type_status"></div>
+</div>
