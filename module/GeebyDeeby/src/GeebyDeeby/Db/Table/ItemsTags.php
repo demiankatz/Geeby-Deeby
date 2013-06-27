@@ -1,6 +1,6 @@
 <?php
 /**
- * Row Definition for Tags
+ * Table Definition for Items_Tags
  *
  * PHP version 5
  *
@@ -20,55 +20,46 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Row;
+namespace GeebyDeeby\Db\Table;
 
 /**
- * Row Definition for Tags
+ * Table Definition for Items_Tags
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Tag extends RowGateway
+class ItemsTags extends Gateway
 {
     /**
      * Constructor
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function __construct($adapter)
+    public function __construct()
     {
-        parent::__construct('Tag_ID', 'Tags', $adapter);
+        parent::__construct('Items_Tags');
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get a list of tags for the specified item.
      *
-     * @return string|bool
-     */
-    public function validate()
-    {
-        if (empty($this->Tag)) {
-            return 'Name cannot be blank.';
-        }
-        return false;
-    }
-
-    /**
-     * Get the display name to represent the row to a user.
+     * @var int $itemID Item ID
      *
-     * @return string
+     * @return mixed
      */
-    public function getDisplayName()
+    public function getTags($itemID)
     {
-        return $this->Tag;
+        $callback = function ($select) use ($itemID) {
+            $select->join(array('t' => 'Tags'), 't.Tag_ID = Items_Tags.Tag_ID');
+            $select->order('Tag');
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return $this->select($callback);
     }
 }

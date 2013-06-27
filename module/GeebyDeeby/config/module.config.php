@@ -49,6 +49,7 @@ return array(
                 'itemsproductcodes' => 'GeebyDeeby\Db\Table\ItemsProductCodes',
                 'itemsreleasedates' => 'GeebyDeeby\Db\Table\ItemsReleaseDates',
                 'itemsreviews' => 'GeebyDeeby\Db\Table\ItemsReviews',
+                'itemstags' => 'GeebyDeeby\Db\Table\ItemsTags',
                 'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',
                 'language' => 'GeebyDeeby\Db\Table\Language',
                 'link' => 'GeebyDeeby\Db\Table\Link',

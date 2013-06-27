@@ -1,0 +1,17 @@
+<? if (isset($tags) && count($tags) > 0): ?>
+  <? foreach ($tags as $current): ?>
+  <table class="list_item">
+    <tr>
+      <td>
+        <?=$this->escapeHtml($current['Tag'])?>
+      </td>
+      <td>
+        <a class="ui-icon ui-icon-trash" href="#" onclick="deleteTag(<?=$this->escapeHtml($current['Tag_ID'])?>); return false;">
+        </a>
+      </td>
+    </tr>
+  </table>
+  <? endforeach; ?>
+<? else: ?>
+  No tags set.
+<? endif; ?>

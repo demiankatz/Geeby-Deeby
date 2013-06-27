@@ -169,6 +169,65 @@ function deletePlatform(platID)
     }});
 }
 
+/* Redraw the tag list:
+ */
+function redrawTags()
+{
+    var itemID = $('#Item_ID').val();
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Tag';
+    $('#tag_list').load(url);
+}
+
+/* Save the current tag:
+ */
+function addTag()
+{
+    var itemID = $('#Item_ID').val();
+    var tagID = parseInt($('#Tag_ID').val());
+
+    // Save and update:
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Tag/' + encodeURIComponent(tagID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawTags();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }});
+}
+
+/* Remove a tag from the item:
+ */
+function deleteTag(tagID)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+
+    // Validate user selection:
+    if (isNaN(tagID)) {
+        alert("Please choose a valid tag.");
+        return;
+    }
+
+    // Save and update:
+    var itemID = $('#Item_ID').val();
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Tag/' + encodeURIComponent(tagID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawTags();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }});
+}
+
 /* Redraw the adaptation list:
  */
 function redrawAdaptations()
@@ -987,4 +1046,9 @@ $(document).ready(function(){
         highlight: false
     };
     $('.Series_ID').autocomplete(options);
+    options = {
+        url: basePath + "/Suggest/Tag",
+        highlight: false
+    };
+    $('.Tag_ID').autocomplete(options);
 });

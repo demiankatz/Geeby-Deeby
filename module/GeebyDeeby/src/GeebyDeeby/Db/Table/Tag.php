@@ -58,4 +58,42 @@ class Tag extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get autocomplete suggestions.
+     *
+     * @param string $query The user query.
+     * @param mixed  $limit Limit on returned rows (false for no limit).
+     *
+     * @return mixed
+     */
+    public function getSuggestions($query, $limit = false)
+    {
+        $callback = function ($select) use ($query, $limit) {
+            if ($limit !== false) {
+                $select->limit($limit);
+            }
+            $select->where->like('Tag', $query . '%');
+            $select->order('Tag');
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return mixed
+     */
+    public function keywordSearch($tokens)
+    {
+        $callback = function ($select) use ($tokens) {
+            foreach ($tokens as $token) {
+                $select->where->like('Tag', '%' . $token . '%');
+            }
+            $select->order('Tag');
+        };
+        return $this->select($callback);
+    }
 }
