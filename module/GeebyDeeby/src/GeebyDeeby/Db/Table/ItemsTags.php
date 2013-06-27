@@ -47,6 +47,34 @@ class ItemsTags extends Gateway
     }
 
     /**
+     * Get items for the specified tag.
+     *
+     * @var int $tagID Tag ID
+     */
+    public function getItemsForTag($tagID)
+    {
+        $callback = function ($select) use ($tagID) {
+            $select->join(
+                array('i' => 'Items'),
+                'Items_Tags.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID',
+                array('Position')
+            );
+            $select->join(
+                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
+            );
+            $select->group(array('i.Item_ID', 'eds.Position'));
+            $select->order(
+                array('Series_Name', 's.Series_ID', 'eds.Position', 'Item_Name')
+            );
+            $select->where->equalTo('Tag_ID', $tagID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of tags for the specified item.
      *
      * @var int $itemID Item ID

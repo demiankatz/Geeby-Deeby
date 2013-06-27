@@ -1,0 +1,27 @@
+<?
+    $title = $tag['Tag'];
+    $this->headTitle('Subject/Tag - ' . $title . ' - ');
+    $displayedSomething = false;
+?>
+<h1><?=$this->escapeHtml($title)?></h1>
+
+<? if (count($items) > 0): $displayedSomething = true; ?>
+  <? $series = false; foreach ($items as $credit): ?>
+    <? if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
+      <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+        <?=$this->fixtitle($credit['Series_Name']);?>
+      </a></h2>
+    <? endif; ?>
+    <span class="item">
+      <?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?>
+      <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
+        <?=$this->fixtitle($credit['Item_Name'])?>
+      </a>
+      <br />
+    </span>
+  <? endforeach; ?>
+<? endif; ?>
+
+<? if (!$displayedSomething): ?>
+  <p>No information is available about this subject/tag.</p>
+<? endif; ?>
