@@ -68,6 +68,7 @@ class SearchController extends AbstractBase
             ->keywordSearch($tokens);
         $view->categories = $this->getDbTable('category')->keywordSearch($tokens);
         $view->people = $this->getDbTable('person')->keywordSearch($tokens);
+        $view->tags = $this->getDbTable('tag')->keywordSearch($tokens);
         return $view;
     }
 
