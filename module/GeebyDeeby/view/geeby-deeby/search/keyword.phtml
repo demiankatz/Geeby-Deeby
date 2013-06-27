@@ -63,6 +63,16 @@
     <? endforeach; ?>
   </p>
 <? endif; ?>
+<? if (count($tags) > 0): $empty = false; ?>
+  <h2>Subjects/Tags</h2>
+  <p>
+    <? foreach ($tags as $current): ?>
+      <a href="<?=$this->url('tag', array('id' => $current['Tag_ID']))?>">
+        <?=$this->escapeHtml($current['Tag'])?>
+      </a><br />
+    <? endforeach; ?>
+  </p>
+<? endif; ?>
 <? if ($empty): ?>
   <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
 <? endif; ?>

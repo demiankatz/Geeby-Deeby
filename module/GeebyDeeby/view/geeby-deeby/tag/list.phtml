@@ -1,0 +1,16 @@
+<?
+    $this->headTitle('Subject/Tag List - ');
+?>
+<h1>Subject/Tag List</h1>
+<? if (count($tags) < 1): ?>
+  <p>No subjects/tags listed in this database yet.</p>
+<? else: ?>
+  <? $currentLetter = false; foreach ($tags as $current): ?>
+    <? $first = $this->firstletter($current['Tag']); if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+    <? endif; ?>
+    <a href="<?=$this->url('tag', array('id' => $current['Tag_ID']))?>">
+      <?=$this->escapeHtml($this->escapeHtml($current['Tag']))?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>

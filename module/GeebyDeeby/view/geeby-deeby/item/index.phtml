@@ -62,6 +62,17 @@
     </tr>
   <? endif; ?>
 
+  <? $tagCount = count($tags); if ($tagCount > 0): ?>
+    <tr>
+      <th>Subject<?=$tagCount > 1 ? 's' : ''?> / Tag<?=$tagCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($tags as $tag): ?>
+          <a href="<?=$this->url('tag', array('id' => $tag['Tag_ID']))?>"><?=$this->escapeHtml($tag['Tag'])?></a><br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
   <? if (count($containedIn) > 0): ?>
     <tr>
       <th>Contained In:</th>

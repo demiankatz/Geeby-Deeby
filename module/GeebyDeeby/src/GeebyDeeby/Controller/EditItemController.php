@@ -90,6 +90,8 @@ class EditItemController extends AbstractBase
                 ->getTranslatedFrom($view->itemObj->Item_ID);
             $view->descriptions = $this->getDbTable('itemsdescriptions')
                 ->getDescriptions($view->itemObj->Item_ID);
+            $view->tags = $this->getDbTable('itemstags')
+                ->getTags($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->itemObj->Item_ID);
             $view->item_platforms = $this->getDbTable('itemsplatforms')
@@ -446,6 +448,19 @@ class EditItemController extends AbstractBase
                 'getDescriptions', 'geeby-deeby/edit-item/description-list.phtml'
             );
         }
+    }
+
+    /**
+     * Deal with translations
+     *
+     * @return mixed
+     */
+    public function tagAction()
+    {
+        return $this->handleGenericLink(
+            'itemstags', 'Item_ID', 'Tag_ID', 'tags', 'getTags',
+            'geeby-deeby/edit-item/tag-list.phtml'
+        );
     }
 
     /**

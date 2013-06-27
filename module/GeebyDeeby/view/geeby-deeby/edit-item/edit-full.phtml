@@ -17,6 +17,7 @@
     <li><a href="#images-tab"><span>Images</span></a></li>
     <li><a href="#platforms-tab"><span>Platforms</span></a></li>
     <li><a href="#bib-tab"><span>References</span></a></li>
+    <li><a href="#tags-tab"><span>Subjects/Tags</span></a></li>
     <li><a href="#translations-tab"><span>Translations</span></a></li>
   </ul>
 
@@ -190,6 +191,24 @@
     <b>Platforms:</b>
     <div id="platform_list">
     <?=$this->render('geeby-deeby/edit-item/platform-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="tags-tab" class="edit_tab_contents">
+    <div class="edit_container">
+      <table class="edit">
+        <tr>
+          <th>Subject/Tag:</th>
+          <td><input id="Tag_ID" class="Tag_ID" /></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td><button onclick="addTag();">Add</button></td>
+        </tr>
+      </table>
+    </div>
+    <div id="tag_list">
+      <?=$this->render('geeby-deeby/edit-item/tag-list.phtml')?>
     </div>
   </div>
 

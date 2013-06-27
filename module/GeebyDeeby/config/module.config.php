@@ -49,6 +49,7 @@ return array(
                 'itemsproductcodes' => 'GeebyDeeby\Db\Table\ItemsProductCodes',
                 'itemsreleasedates' => 'GeebyDeeby\Db\Table\ItemsReleaseDates',
                 'itemsreviews' => 'GeebyDeeby\Db\Table\ItemsReviews',
+                'itemstags' => 'GeebyDeeby\Db\Table\ItemsTags',
                 'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',
                 'language' => 'GeebyDeeby\Db\Table\Language',
                 'link' => 'GeebyDeeby\Db\Table\Link',
@@ -74,6 +75,8 @@ return array(
                 'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',
                 'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
                 'seriestranslations' => 'GeebyDeeby\Db\Table\SeriesTranslations',
+                'tag' => 'GeebyDeeby\Db\Table\Tag',
+                'tagtype' => 'GeebyDeeby\Db\Table\TagType',
                 'user' => 'GeebyDeeby\Db\Table\User',
                 'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
             ),
@@ -581,6 +584,49 @@ return array(
                             ),
                         ),
                     ),
+                    'tag' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Tag[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditTag',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'tag_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/TagList',
+                            'defaults' => array(
+                                'controller'    => 'EditTag',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'tag_type' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/TagType[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditTag',
+                                'action'        => 'type',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'tag_type_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/TagTypeList',
+                            'defaults' => array(
+                                'controller'    => 'EditTag',
+                                'action'        => 'typelist',
+                            ),
+                        ),
+                    ),
                 ),
             ),
             'faqs' => array(
@@ -839,6 +885,30 @@ return array(
                     ),
                 ),
             ),
+            'tag' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Tag[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Tag',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
+            'tags' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Tags[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Tag',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'user' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -914,6 +984,7 @@ return array(
             'GeebyDeeby\Controller\EditPlatform' => 'GeebyDeeby\Controller\EditPlatformController',
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
+            'GeebyDeeby\Controller\EditTag' => 'GeebyDeeby\Controller\EditTagController',
             'GeebyDeeby\Controller\FAQs' => 'GeebyDeeby\Controller\FAQsController',
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
@@ -930,6 +1001,7 @@ return array(
             'GeebyDeeby\Controller\Series' => 'GeebyDeeby\Controller\SeriesController',
             'GeebyDeeby\Controller\Signup' => 'GeebyDeeby\Controller\SignupController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
+            'GeebyDeeby\Controller\Tag' => 'GeebyDeeby\Controller\TagController',
             'GeebyDeeby\Controller\User' => 'GeebyDeeby\Controller\UserController',
         ),
     ),
