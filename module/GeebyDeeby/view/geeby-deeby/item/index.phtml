@@ -207,7 +207,7 @@
 
   <? $dateCount = count($dates); if ($dateCount > 0): ?>
     <tr>
-      <th>Release Date<?=$dateCount > 1 ? 's' : ''?>:</th>
+      <th>Date<?=$dateCount > 1 ? 's' : ''?>:</th>
       <td>
         <? foreach ($dates as $date): ?>
           <?=$this->escapeHtml($this->formatReleaseDate($date, count($editions) > 1))?><br />

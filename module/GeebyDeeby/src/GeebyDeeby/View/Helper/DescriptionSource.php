@@ -53,7 +53,7 @@ class DescriptionSource extends \Zend\View\Helper\AbstractHelper
         $this->descriptionTypes = array(
             'User' => 'User Summary',
             'LC' => 'LC Cataloging in Publication Summary',
-            'Cover' => 'Back Cover Text',
+            'Cover' => 'Cover Text',
             'Ad' => 'Advertisement Blurb',
         );
     }
