@@ -127,7 +127,6 @@ function addPublisher()
         publisher_id: publisherID,
         country_id: countryID,
         note_id: noteID,
-        imprint: $('#Imprint').val()
     };
     $.post(url, details, function(data) {
         // If save was successful...
@@ -136,7 +135,6 @@ function addPublisher()
             $('#Publisher_ID').val('');
             $('#Country_ID').val('');
             $('#Publisher_Note_ID').val('');
-            $('#Imprint').val('');
 
             // Update the publisher list.
             redrawPublishers();
