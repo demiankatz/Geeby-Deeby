@@ -648,6 +648,21 @@ CREATE TABLE `Publishers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Publishers_Imprints`
+--
+
+DROP TABLE IF EXISTS `Publishers_Imprints`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Publishers_Imprints` (
+  `Imprint_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Publisher_ID` int(11) NOT NULL,
+  `Imprint_Name` tinytext NOT NULL,
+  PRIMARY KEY (`Imprint_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Recent_Reviews`
 --
 
@@ -794,6 +809,7 @@ CREATE TABLE `Series_Publishers` (
   `Country_ID` int(11) NOT NULL DEFAULT '0',
   `Imprint` tinytext NOT NULL,
   `Note_ID` int(11) DEFAULT NULL,
+  `Imprint_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Series_Publisher_ID`),
   KEY `SERIES` (`Series_ID`),
   KEY `PUBLISHER` (`Publisher_ID`),
