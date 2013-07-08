@@ -4,7 +4,7 @@
       <tr>
         <td>
           <?=$this->escapeHtml($current['Publisher_Name'])?>
-          (<?=(strlen($current['Imprint']) > 0) ? $this->escapeHtml($current['Imprint']) . ': ' : ''?><?=$this->escapeHtml($current['Country_Name'])?><?=(strlen($current['Note']) > 0) ? ' - ' . $this->escapeHtml($current['Note']) : '' ?>)
+          (<?=(strlen($current['Imprint_Name']) > 0) ? $this->escapeHtml($current['Imprint_Name']) . ': ' : ''?><?=$this->escapeHtml($current['Country_Name'])?><?=(strlen($current['Note']) > 0) ? ' - ' . $this->escapeHtml($current['Note']) : '' ?>)
         </td>
         <td>
           <a class="ui-icon ui-icon-trash" href="#" onclick="deletePublisher(<?=$current['Series_Publisher_ID']?>); return false;">

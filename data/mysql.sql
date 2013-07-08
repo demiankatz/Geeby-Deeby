@@ -807,7 +807,6 @@ CREATE TABLE `Series_Publishers` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Publisher_ID` int(11) NOT NULL DEFAULT '0',
   `Country_ID` int(11) NOT NULL DEFAULT '0',
-  `Imprint` tinytext NOT NULL,
   `Note_ID` int(11) DEFAULT NULL,
   `Imprint_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Series_Publisher_ID`),

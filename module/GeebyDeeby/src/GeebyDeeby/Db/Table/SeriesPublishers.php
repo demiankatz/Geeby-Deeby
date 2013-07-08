@@ -108,6 +108,11 @@ class SeriesPublishers extends Gateway
                 'Series_Publishers.Country_ID = c.Country_ID'
             );
             $select->join(
+                array('pi' => 'Publishers_Imprints'),
+                'Series_Publishers.Imprint_ID = pi.Imprint_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
                 array('n' => 'Notes'),
                 'Series_Publishers.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
