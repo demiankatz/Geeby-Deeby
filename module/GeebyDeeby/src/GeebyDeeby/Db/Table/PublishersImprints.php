@@ -46,4 +46,20 @@ class PublishersImprints extends Gateway
     {
         parent::__construct('Publishers_Imprints');
     }
+
+    /**
+     * Get a list of imprints for the specified publisher.
+     *
+     * @var int $pubID Publisher ID
+     *
+     * @return mixed
+     */
+    public function getImprintsForPublisher($pubID)
+    {
+        $callback = function ($select) use ($pubID) {
+            $select->order('Imprint_Name');
+            $select->where->equalTo('Publisher_ID', $pubID);
+        };
+        return $this->select($callback);
+    }
 }

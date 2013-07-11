@@ -1,3 +1,3 @@
 <? foreach ($publishers as $current): ?>
-  <a href="#" onclick="editPublisher(<?=$current['Publisher_ID']?>); return false;"><?=$this->escapeHtml($current['Publisher_Name'])?></a><br />
+  <a href="<?=$this->url('edit/publisher', array('id' => $current['Publisher_ID']))?>"><?=$this->escapeHtml($current['Publisher_Name'])?></a><br />
 <? endforeach; ?>

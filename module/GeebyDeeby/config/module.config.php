@@ -545,11 +545,12 @@ return array(
                     'publisher' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Publisher[/:id]',
+                            'route'    => '/Publisher[/:id][/:action][/:extra]',
                             'defaults' => array(
                                 'controller'    => 'EditPublisher',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null
                             ),
                         ),
                     ),

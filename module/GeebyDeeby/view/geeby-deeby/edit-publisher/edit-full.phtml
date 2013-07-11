@@ -1,0 +1,20 @@
+<? $this->headTitle('Publisher Editor - ') ?>
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_publisher_details.js') ?>
+<h1>Edit Publisher</h1>
+<div class="edit_container" style="width: 800px;">
+  <?=$this->render('geeby-deeby/edit-publisher/index.phtml')?>
+</div>
+<hr />
+<div id="tabs">
+  <ul>
+    <li><a href="#imprints-tab"><span>Imprints</span></a></li>
+  </ul>
+
+  <div id="imprint-tab" class="edit_tab_contents">
+    <b>Imprint:</b> <input type="text" id="Imprint" />
+    <button onclick="addImprint();">Add</button>
+    <div id="imprint_list">
+      <?=$this->render('geeby-deeby/edit-publisher/imprint-list.phtml')?>
+    </div>
+  </div>
+</div>
