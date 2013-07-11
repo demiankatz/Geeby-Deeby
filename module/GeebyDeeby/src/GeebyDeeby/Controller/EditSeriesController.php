@@ -174,12 +174,49 @@ class EditSeriesController extends AbstractBase
     }
 
     /**
+     * Support method for publisherAction()
+     *
+     * @return mixed
+     */
+    protected function modifyPublisher()
+    {
+        $rowId = $this->params()->fromRoute('extra');
+        $table = $this->getDbTable('seriespublishers');
+        if ($this->getRequest()->isPost()) {
+            $imprint = $this->params()->fromPost('imprint');
+            $fields = array('Imprint_ID' => $imprint);
+            $table->update($fields, array('Series_Publisher_ID' => $rowId));
+            return $this->jsonReportSuccess();
+        }
+        $view = $this->createViewModel();
+        $view->row = $table->getByPrimaryKey($rowId);
+        $view->imprints = $this->getDbTable('publishersimprints')
+            ->getImprintsForPublisher($view->row->Publisher_ID);
+        $view->setTemplate('geeby-deeby/edit-series/modify-publisher');
+
+        // If this is an AJAX request, render the core list only, not the
+        // framing layout and buttons.
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $view->setTerminal(true);
+        }
+
+        return $view;
+    }
+
+    /**
      * Work with publishers
      *
      * @return mixed
      */
     public function publisherAction()
     {
+        // Modify the publisher if it's a GET/POST and has an extra set.
+        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+            && null !== $this->params()->fromRoute('extra')
+        ) {
+            return $this->modifyPublisher();
+        }
+
         // Special case: new publisher:
         if ($this->getRequest()->isPost()) {
             $ok = $this->checkPermission('Content_Editor');

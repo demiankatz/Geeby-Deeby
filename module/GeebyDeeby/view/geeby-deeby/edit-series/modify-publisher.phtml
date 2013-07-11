@@ -1,0 +1,11 @@
+<div id="modifyPublisherForm">
+  <input type="hidden" id="Series_Publisher_ID" value="<?=$row['Series_Publisher_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Imprint:</th>
+      <td><?=$this->render('geeby-deeby/edit-publisher/imprint-select.phtml', array('imprints' => $imprints, 'selected' => $row['Imprint_ID']))?></td>
+    </tr>
+  </table>
+  <button id="save_modified_publisher" onclick="saveModifiedPublisher();">Save</button>
+  <div id="save_modified_publisher_status"></div>
+</div>
