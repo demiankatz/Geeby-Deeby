@@ -47,7 +47,7 @@ class Country extends Gateway
     }
 
     /**
-     * Get a list of categories.
+     * Get a list of countries.
      *
      * @return mixed
      */
