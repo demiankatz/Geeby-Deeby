@@ -213,6 +213,7 @@ class EditSeriesController extends AbstractBase
         // Modify the publisher if it's a GET/POST and has an extra set.
         if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
             && null !== $this->params()->fromRoute('extra')
+            && 'NEW' !== $this->params()->fromRoute('extra')
         ) {
             return $this->modifyPublisher();
         }
@@ -227,7 +228,6 @@ class EditSeriesController extends AbstractBase
             $row = $table->createRow();
             $row->Series_ID = $this->params()->fromRoute('id');
             $row->Publisher_ID = $this->params()->fromPost('publisher_id');
-            $row->Country_ID = $this->params()->fromPost('country_id');
             $row->Note_ID = $this->params()->fromPost('note_id');
             $row->save();
             return $this->jsonReportSuccess();

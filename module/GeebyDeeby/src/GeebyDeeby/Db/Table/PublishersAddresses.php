@@ -57,7 +57,15 @@ class PublishersAddresses extends Gateway
     public function getAddressesForPublisher($pubID)
     {
         $callback = function ($select) use ($pubID) {
-            $select->order('Address_Name');
+            $select->join(
+                array('ci' => 'Cities'), 'Publishers_Addresses.City_ID = ci.City_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('c' => 'Countries'),
+                'Publishers_Addresses.Country_ID = c.Country_ID'
+            );
+            $select->order(array('Country_Name', 'City_Name', 'Street'));
             $select->where->equalTo('Publisher_ID', $pubID);
         };
         return $this->select($callback);

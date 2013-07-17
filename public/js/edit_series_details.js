@@ -105,16 +105,11 @@ function addPublisher()
 {
     var seriesID = $('#Series_ID').val();
     var publisherID = parseInt($('#Publisher_ID').val());
-    var countryID = parseInt($('#Country_ID').val());
     var noteID = parseInt($('#Publisher_Note_ID').val());
 
     // Validate user selection:
     if (isNaN(publisherID)) {
         alert("Please choose a valid publisher.");
-        return;
-    }
-    if (isNaN(countryID)) {
-        alert("Please choose a valid country.");
         return;
     }
     if (isNaN(noteID)) {
@@ -125,7 +120,6 @@ function addPublisher()
     var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Publisher/NEW';
     var details = {
         publisher_id: publisherID,
-        country_id: countryID,
         note_id: noteID,
     };
     $.post(url, details, function(data) {
@@ -133,7 +127,6 @@ function addPublisher()
         if (data.success) {
             // Clear the form:
             $('#Publisher_ID').val('');
-            $('#Country_ID').val('');
             $('#Publisher_Note_ID').val('');
 
             // Update the publisher list.

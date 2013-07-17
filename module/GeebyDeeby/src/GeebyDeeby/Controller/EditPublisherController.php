@@ -61,11 +61,61 @@ class EditPublisherController extends AbstractBase
         $view = $this->handleGenericItem('publisher', $assignMap, 'publisher');
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->cities = $this->getDbTable('city')->getList();
+            $view->countries = $this->getDbTable('country')->getList();
+            $view->addresses = $this->getDbTable('publishersaddresses')
+                ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
             $view->imprints = $this->getDbTable('publishersimprints')
                 ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
             $view->setTemplate('geeby-deeby/edit-publisher/edit-full');
         }
         return $view;
+    }
+
+    /**
+     * Work with addresses
+     *
+     * @return mixed
+     */
+    public function addressAction()
+    {
+        // Special case: new address:
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('publishersaddresses');
+            $row = $table->createRow();
+            $row->Publisher_ID = $this->params()->fromRoute('id');
+            $row->Country_ID = $this->params()->fromPost('country');
+            $row->City_ID = $this->params()->fromPost('city');
+            if (empty($row->City_ID)) {
+                $row->City_ID = null;
+            }
+            $row->Street = $this->params()->fromPost('street');
+            if (empty($row->Country_ID)) {
+                return $this->jsonDie('Country must be specified.');
+            }
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Prevent deletion of imprints that are linked up:
+            if ($this->getRequest()->isDelete()) {
+                $extra = $this->params()->fromRoute('extra');
+                $result = $this->getDbTable('seriespublishers')->select(
+                    array('Address_ID' => $extra)
+                );
+                if (count($result) > 0) {
+                    $row = $result->current();
+                    $msg = 'You cannot delete this address; it is used by Series '
+                        . $row->Series_ID . '.';
+                    return $this->jsonDie($msg);
+                }
+            }
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'publishersaddresses', 'Publisher_ID', 'Address_ID',
+                'addresses', 'getAddressesForPublisher',
+                'geeby-deeby/edit-publisher/address-list.phtml'
+            );
+        }
     }
 
     /**
@@ -75,7 +125,7 @@ class EditPublisherController extends AbstractBase
      */
     public function imprintAction()
     {
-        // Special case: new title:
+        // Special case: new imprint:
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('publishersimprints');
             $row = $table->createRow();

@@ -103,6 +103,72 @@ function deleteImprint(rowID)
     }});
 }
 
+/* Redraw the address list:
+ */
+function redrawAddresses()
+{
+    var pubID = $('#Publisher_ID').val();
+    var url = basePath + '/edit/Publisher/' + encodeURIComponent(pubID) + '/Address';
+    $('#address_list').load(url);
+}
+
+/* Save the current address:
+ */
+function addAddress()
+{
+    var pubID = $('#Publisher_ID').val();
+
+    // Save and update:
+    var url = basePath + '/edit/Publisher/' + encodeURIComponent(pubID) + '/Address/NEW';
+    var details = {
+        country: $('#Country_ID').val(),
+        city: $('#City_ID').val(),
+        street: $('#Street').val()
+    };
+    $.post(url, details, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Clear the form:
+            $('#Street').val('');
+
+            // Update the list.
+            redrawAddresses();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Remove an address from the publisher:
+ */
+function deleteAddress(rowID)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+
+    // Validate user selection:
+    if (isNaN(rowID)) {
+        alert("Please choose a valid address.");
+        return;
+    }
+
+    // Save and update:
+    var pubID = $('#Publisher_ID').val();
+    var url = basePath + '/edit/Publisher/' + encodeURIComponent(pubID) + '/Address/' + encodeURIComponent(rowID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawAddresses();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }});
+}
+
 // Activate page controls on domready:
 $(document).ready(function(){
     // Turn on tabs
