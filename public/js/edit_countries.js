@@ -66,3 +66,69 @@ function saveCountry()
         }
     }, 'json');
 }
+
+/* Pop up a dialog to edit a country:
+ */
+function editCity(id)
+{
+    // Open the edit dialog box:
+    var url = basePath + '/edit/City/' + encodeURIComponent(id);
+    editBox = $('<div>Loading...</div>').load(url).dialog({
+        title: (id === 'NEW' ? "Add City" : ("Edit City " + id)),
+        modal: true,
+        autoOpen: true,
+        width: 500,
+        height: 400,
+        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
+        close: function() { $('#editForm').remove(); }
+    });
+}
+
+/* Redraw the cities on the screen:
+ */
+function redrawCities()
+{
+    var url = basePath + '/edit/CityList';
+    $('#city_list').load(url);
+}
+
+/* Save the city inside the provided form element:
+ */
+function saveCity()
+{
+    // Obtain values from form:
+    var cityID = $('#City_ID').val();
+    var city = $('#City_Name').val();
+    
+    // Validate form:
+    if (city.length == 0) {
+        alert('City cannot be blank.');
+        return;
+    }
+    
+    // Hide save button and display status message to avoid duplicate submission:
+    $('#save_city').hide();
+    $('#save_city_status').html('Saving...');
+    
+    // Use AJAX to save the values:
+    var url = basePath + '/edit/City/' + encodeURIComponent(cityID);
+    $.post(url, {city: city}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Close the dialog box.
+            if (editBox) {
+                editBox.dialog('close');
+                editBox.dialog('destroy');
+                editBox = false;
+            }
+            
+            // Update the city list.
+            redrawCities();
+        } else {
+            // Save failed -- display error message and restore save button:
+            alert('Error: ' + data.msg);
+            $('#save_city').show();
+            $('#save_city_status').html('');
+        }
+    }, 'json');
+}

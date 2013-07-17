@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit country controller
+ * Edit city controller
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Controller;
 
 /**
- * Edit country controller
+ * Edit city controller
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,24 +36,18 @@ namespace GeebyDeeby\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditCountryController extends AbstractBase
+class EditCityController extends AbstractBase
 {
     /**
-     * Display a list of countries
+     * Display a list of cities
      *
      * @return mixed
      */
     public function listAction()
     {
-        $view = $this->getGenericList(
-            'country', 'countries', 'geeby-deeby/edit-country/render-countries'
+        return $this->getGenericList(
+            'city', 'cities', 'geeby-deeby/edit-city/render-cities'
         );
-        // If this is not an AJAX request, we also want to display cities:
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->cities
-                = $this->forwardTo(__NAMESPACE__ . '\EditCity', 'list')->cities;
-        }
-        return $view;
     }
 
     /**
@@ -63,7 +57,7 @@ class EditCountryController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array('country' => 'Country_Name');
-        return $this->handleGenericItem('country', $assignMap, 'country');
+        $assignMap = array('city' => 'City_Name');
+        return $this->handleGenericItem('city', $assignMap, 'city');
     }
 }

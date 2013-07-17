@@ -45,6 +45,20 @@ CREATE TABLE `Categories` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Cities`
+--
+
+DROP TABLE IF EXISTS `Cities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Cities` (
+  `City_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `City_Name` tinytext NOT NULL,
+  PRIMARY KEY (`City_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Collections`
 --
 

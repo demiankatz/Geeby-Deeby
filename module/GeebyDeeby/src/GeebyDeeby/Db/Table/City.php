@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit country controller
+ * Table Definition for Cities
  *
  * PHP version 5
  *
@@ -20,50 +20,42 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Controller;
+namespace GeebyDeeby\Db\Table;
 
 /**
- * Edit country controller
+ * Table Definition for Cities
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditCountryController extends AbstractBase
+class City extends Gateway
 {
     /**
-     * Display a list of countries
-     *
-     * @return mixed
+     * Constructor
      */
-    public function listAction()
+    public function __construct()
     {
-        $view = $this->getGenericList(
-            'country', 'countries', 'geeby-deeby/edit-country/render-countries'
-        );
-        // If this is not an AJAX request, we also want to display cities:
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->cities
-                = $this->forwardTo(__NAMESPACE__ . '\EditCity', 'list')->cities;
-        }
-        return $view;
+        parent::__construct('Cities', 'GeebyDeeby\Db\Row\City');
     }
 
     /**
-     * Operate on a single category
+     * Get a list of cities.
      *
      * @return mixed
      */
-    public function indexAction()
+    public function getList()
     {
-        $assignMap = array('country' => 'Country_Name');
-        return $this->handleGenericItem('country', $assignMap, 'country');
+        $callback = function ($select) {
+            $select->order('City_Name');
+        };
+        return $this->select($callback);
     }
 }

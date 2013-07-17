@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit country controller
+ * Row Definition for Cities
  *
  * PHP version 5
  *
@@ -20,50 +20,45 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Controller;
+namespace GeebyDeeby\Db\Row;
 
 /**
- * Edit country controller
+ * Row Definition for Cities
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditCountryController extends AbstractBase
+class City extends RowGateway
 {
     /**
-     * Display a list of countries
+     * Constructor
      *
-     * @return mixed
+     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function listAction()
+    public function __construct($adapter)
     {
-        $view = $this->getGenericList(
-            'country', 'countries', 'geeby-deeby/edit-country/render-countries'
-        );
-        // If this is not an AJAX request, we also want to display cities:
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->cities
-                = $this->forwardTo(__NAMESPACE__ . '\EditCity', 'list')->cities;
-        }
-        return $view;
+        parent::__construct('City_ID', 'Cities', $adapter);
     }
 
     /**
-     * Operate on a single category
+     * Validate the fields in the current object.  Return error message if problem
+     * found, boolean false if no errors were found.
      *
-     * @return mixed
+     * @return string|bool
      */
-    public function indexAction()
+    public function validate()
     {
-        $assignMap = array('country' => 'Country_Name');
-        return $this->handleGenericItem('country', $assignMap, 'country');
+        if (empty($this->City_Name)) {
+            return 'City name cannot be blank.';
+        }
+        return false;
     }
 }
