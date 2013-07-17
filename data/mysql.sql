@@ -662,6 +662,23 @@ CREATE TABLE `Publishers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Publishers_Addresses`
+--
+
+DROP TABLE IF EXISTS `Publishers_Addresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Publishers_Addresses` (
+  `Address_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Publisher_ID` int(11) NOT NULL,
+  `Country_ID` int(11) NOT NULL,
+  `City_ID` int(11) DEFAULT NULL,
+  `Street` tinytext DEFAULT '',
+  PRIMARY KEY (`Address_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Publishers_Imprints`
 --
 
@@ -820,13 +837,12 @@ CREATE TABLE `Series_Publishers` (
   `Series_Publisher_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Publisher_ID` int(11) NOT NULL DEFAULT '0',
-  `Country_ID` int(11) NOT NULL DEFAULT '0',
   `Note_ID` int(11) DEFAULT NULL,
   `Imprint_ID` int(11) DEFAULT NULL,
+  `Address_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Series_Publisher_ID`),
   KEY `SERIES` (`Series_ID`),
   KEY `PUBLISHER` (`Publisher_ID`),
-  KEY `COUNTRY` (`Country_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

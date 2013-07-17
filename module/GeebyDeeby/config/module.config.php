@@ -64,6 +64,7 @@ return array(
                 'platform' => 'GeebyDeeby\Db\Table\Platform',
                 'pseudonyms' => 'GeebyDeeby\Db\Table\Pseudonyms',
                 'publisher' => 'GeebyDeeby\Db\Table\Publisher',
+                'publishersaddresses' => 'GeebyDeeby\Db\Table\PublishersAddresses',
                 'publishersimprints' => 'GeebyDeeby\Db\Table\PublishersImprints',
                 'recentreviews' => 'GeebyDeeby\Db\Table\RecentReviews',
                 'role' => 'GeebyDeeby\Db\Table\Role',

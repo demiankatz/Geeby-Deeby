@@ -66,6 +66,8 @@ class MigrateController extends AbstractBase
                 'product codes from Items_Product_Codes',
             'migratePublisherImprints' =>
                 'imprints from Series_Publishers',
+            'migratePublisherCountries' =>
+                'countries from Series_Publishers',
         );
         foreach ($migrations as $method => $msg) {
             try {
@@ -231,7 +233,7 @@ class MigrateController extends AbstractBase
         $sp = $this->getDbTable('seriespublishers');
         $count = 0;
         foreach ($sp->select() as $current) {
-            if (empty($current->Imprint)) {
+            if (!isset($current->Imprint) || empty($current->Imprint)) {
                 continue;
             }
             $current->Imprint_ID = $this->getImprintID($current);
@@ -265,5 +267,51 @@ class MigrateController extends AbstractBase
         // No row found -- create one!
         $pi->insert($imprint);
         return $this->getImprintID($current);
+    }
+
+    /**
+     * Migrate countries from Series_Publishers.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migratePublisherCountries()
+    {
+        $sp = $this->getDbTable('seriespublishers');
+        $count = 0;
+        foreach ($sp->select() as $current) {
+            if (!isset($current->Country_ID) || empty($current->Country_ID)) {
+                continue;
+            }
+            $current->Address_ID = $this->getAddressID($current);
+            $current->Country_ID = 0;
+            $current->save();
+            $count++;
+        }
+        return $count;
+    }
+
+    /**
+     * Support method for migratePublisherCountries -- create or retrieve country ID
+     * for provided Series_Publishers row.
+     *
+     * @param \VuFind\Db\Row\SeriesPublishers $current Series_Publishers row
+     *
+     * @return string
+     */
+    protected function getAddressID($current)
+    {
+        $pi = $this->getDbTable('publishersaddresses');
+        $address = array(
+            'Publisher_ID' => $current->Publisher_ID,
+            'Country_ID' => $current->Country_ID
+        );
+        $row = $pi->select($address)->current();
+        if (isset($row['Address_ID'])) {
+            return $row['Address_ID'];
+        }
+
+        // No row found -- create one!
+        $pi->insert($address);
+        return $this->getAddressID($current);
     }
 }
