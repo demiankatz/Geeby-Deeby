@@ -184,12 +184,17 @@ class EditSeriesController extends AbstractBase
         $table = $this->getDbTable('seriespublishers');
         if ($this->getRequest()->isPost()) {
             $imprint = $this->params()->fromPost('imprint');
-            $fields = array('Imprint_ID' => $imprint);
+            $address = $this->params()->fromPost('address');
+            $fields = array(
+                'Imprint_ID' => $imprint, 'Address_ID' => $address
+            );
             $table->update($fields, array('Series_Publisher_ID' => $rowId));
             return $this->jsonReportSuccess();
         }
         $view = $this->createViewModel();
         $view->row = $table->getByPrimaryKey($rowId);
+        $view->addresses = $this->getDbTable('publishersaddresses')
+            ->getAddressesForPublisher($view->row->Publisher_ID);
         $view->imprints = $this->getDbTable('publishersimprints')
             ->getImprintsForPublisher($view->row->Publisher_ID);
         $view->setTemplate('geeby-deeby/edit-series/modify-publisher');

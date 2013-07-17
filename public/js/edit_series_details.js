@@ -586,6 +586,7 @@ function saveModifiedPublisher()
     // Obtain values from form:
     var seriesID = $('#Series_ID').val();
     var rowID = $('#Series_Publisher_ID').val();
+    var addressID = $('#Address_ID').val();
     var imprintID = $('#Imprint_ID').val();
 
     // Hide save button and display status message to avoid duplicate submission:
@@ -595,7 +596,7 @@ function saveModifiedPublisher()
     // Use AJAX to save the values:
     var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Publisher/' + encodeURIComponent(rowID);
     var details = {
-        imprint: imprintID
+        address: addressID, imprint: imprintID
     };
     $.post(url, details, function(data) {
         // If save failed, display error message.
