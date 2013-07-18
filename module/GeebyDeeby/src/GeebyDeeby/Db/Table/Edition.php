@@ -129,6 +129,52 @@ class Edition extends Gateway
     }
 
     /**
+     * Retrieve publishers for the specified item.
+     *
+     * @param int $itemID Item ID.
+     *
+     * @return mixed
+     */
+    public function getPublishersForItem($itemID)
+    {
+        $callback = function ($select) use ($itemID) {
+            $select->join(
+                array('sp' => 'Series_Publishers'),
+                'Editions.Preferred_Series_Publisher_ID = sp.Series_Publisher_ID'
+            );
+            $select->join(
+                array('p' => 'Publishers'),
+                'sp.Publisher_ID = p.Publisher_ID'
+            );
+            $select->join(
+                array('pa' => 'Publishers_Addresses'),
+                'sp.Address_ID = pa.Address_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('c' => 'Countries'), 'pa.Country_ID = c.Country_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('ci' => 'Cities'), 'pa.City_ID = ci.City_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('n' => 'Notes'), 'sp.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->where->equalTo('Item_ID', $itemID);
+            $select->order(
+                array(
+                    'Edition_Name',
+                    'Publisher_Name', 'Country_Name', 'City_Name', 'Street',
+                )
+            );
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Delete an edition if there are no attached data items.
      *
      * @param int $id ID of edition to delete
