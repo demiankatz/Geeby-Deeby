@@ -4,7 +4,16 @@
       <tr>
         <td>
           <a href="#" onclick="modifyPublisher(<?=$current['Series_Publisher_ID']?>); return false;"><?=$this->escapeHtml($current['Publisher_Name'])?></a>
-          (<?=(strlen($current['Imprint_Name']) > 0) ? $this->escapeHtml($current['Imprint_Name']) . ': ' : ''?><?=$this->escapeHtml($current['Country_Name'])?><?=(strlen($current['Note']) > 0) ? ' - ' . $this->escapeHtml($current['Note']) : '' ?>)
+          <? if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
+            (<?
+              $city = (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']);
+              $street = (empty($current['Street']) ? '' : ' -- ' . $current['Street']);
+              $address = $current['Country_Name'] . $city . $street;
+              echo strlen($current['Imprint_Name']) > 0 ? $this->escapeHtml($current['Imprint_Name']) . ((strlen($address) > 0 || strlen($current['Note']) > 0) ? ': ' : '') : '';
+              echo strlen($address) > 0 ? $this->escapeHtml($address) : '';
+              echo strlen($current['Note']) > 0 ? ((strlen($address) > 0 || strlen($current['Imprint_Name']) > 0) ? ' - ' : '') . $this->escapeHtml($current['Note']) : '';
+            ?>)
+          <? endif; ?>
         </td>
         <td>
           <a class="ui-icon ui-icon-gear" href="#" onclick="modifyPublisher(<?=$current['Series_Publisher_ID']?>); return false;">

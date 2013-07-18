@@ -119,8 +119,11 @@ class SeriesPublishers extends Gateway
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('c' => 'Countries'),
-                'pa.Country_ID = c.Country_ID',
+                array('c' => 'Countries'), 'pa.Country_ID = c.Country_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('ci' => 'Cities'), 'pa.City_ID = ci.City_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
