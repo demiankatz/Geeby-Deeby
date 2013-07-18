@@ -50,6 +50,31 @@ class SeriesPublishers extends Gateway
     }
 
     /**
+     * Get a list of series for the specified city.
+     *
+     * @var int $cityID City ID
+     *
+     * @return mixed
+     */
+    public function getSeriesForCity($cityID)
+    {
+        $callback = function ($select) use ($cityID) {
+            $select->join(
+                array('s' => 'Series'),
+                'Series_Publishers.Series_ID = s.Series_ID'
+            );
+            $select->join(
+                array('pa' => 'Publishers_Addresses'),
+                'Series_Publishers.Address_ID = pa.Address_ID'
+            );
+            $select->order('s.Series_Name');
+            $select->group('s.Series_ID');
+            $select->where->equalTo('pa.City_ID', $cityID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of series for the specified country.
      *
      * @var int $countryID Country ID
