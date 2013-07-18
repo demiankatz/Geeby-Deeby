@@ -237,6 +237,19 @@ class EditSeriesController extends AbstractBase
             $row->save();
             return $this->jsonReportSuccess();
         } else {
+            if ($this->getRequest()->isDelete()) {
+                $extra = $this->params()->fromRoute('extra');
+                $result = $this->getDbTable('edition')->select(
+                    array('Preferred_Series_Publisher_ID' => $extra)
+                );
+                if (count($result) > 0) {
+                    $ed = $result->current();
+                    $msg = 'You cannot delete this publisher; '
+                        . 'it is assigned to Edition '
+                        . $ed->Edition_ID . '.';
+                    return $this->jsonDie($msg);
+                }
+            }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
                 'seriespublishers', 'Series_ID', 'Series_Publisher_ID',
