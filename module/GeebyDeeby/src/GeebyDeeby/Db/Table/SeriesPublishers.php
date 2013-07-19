@@ -44,7 +44,34 @@ class SeriesPublishers extends Gateway
      */
     public function __construct()
     {
-        parent::__construct('Series_Publishers');
+        parent::__construct(
+            'Series_Publishers', 'GeebyDeeby\Db\Row\SeriesPublishers'
+        );
+    }
+
+    /**
+     * Get a list of series for the specified city.
+     *
+     * @var int $cityID City ID
+     *
+     * @return mixed
+     */
+    public function getSeriesForCity($cityID)
+    {
+        $callback = function ($select) use ($cityID) {
+            $select->join(
+                array('s' => 'Series'),
+                'Series_Publishers.Series_ID = s.Series_ID'
+            );
+            $select->join(
+                array('pa' => 'Publishers_Addresses'),
+                'Series_Publishers.Address_ID = pa.Address_ID'
+            );
+            $select->order('s.Series_Name');
+            $select->group('s.Series_ID');
+            $select->where->equalTo('pa.City_ID', $cityID);
+        };
+        return $this->select($callback);
     }
 
     /**
@@ -61,8 +88,13 @@ class SeriesPublishers extends Gateway
                 array('s' => 'Series'),
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
+            $select->join(
+                array('pa' => 'Publishers_Addresses'),
+                'Series_Publishers.Address_ID = pa.Address_ID'
+            );
             $select->order('s.Series_Name');
-            $select->where->equalTo('Country_ID', $countryID);
+            $select->group('s.Series_ID');
+            $select->where->equalTo('pa.Country_ID', $countryID);
         };
         return $this->select($callback);
     }
@@ -102,8 +134,22 @@ class SeriesPublishers extends Gateway
                 'Series_Publishers.Publisher_ID = p.Publisher_ID'
             );
             $select->join(
-                array('c' => 'Countries'),
-                'Series_Publishers.Country_ID = c.Country_ID'
+                array('pa' => 'Publishers_Addresses'),
+                'Series_Publishers.Address_ID = pa.Address_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('pi' => 'Publishers_Imprints'),
+                'Series_Publishers.Imprint_ID = pi.Imprint_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('c' => 'Countries'), 'pa.Country_ID = c.Country_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('ci' => 'Cities'), 'pa.City_ID = ci.City_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
                 array('n' => 'Notes'),

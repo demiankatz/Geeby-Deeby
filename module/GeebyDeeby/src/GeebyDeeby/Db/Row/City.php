@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Countries
+ * Row Definition for Cities
  *
  * PHP version 5
  *
@@ -20,42 +20,45 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Db\Row;
 
 /**
- * Table Definition for Countries
+ * Row Definition for Cities
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Country extends Gateway
+class City extends RowGateway
 {
     /**
      * Constructor
+     *
+     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function __construct()
+    public function __construct($adapter)
     {
-        parent::__construct('Countries', 'GeebyDeeby\Db\Row\Country');
+        parent::__construct('City_ID', 'Cities', $adapter);
     }
 
     /**
-     * Get a list of countries.
+     * Validate the fields in the current object.  Return error message if problem
+     * found, boolean false if no errors were found.
      *
-     * @return mixed
+     * @return string|bool
      */
-    public function getList()
+    public function validate()
     {
-        $callback = function ($select) {
-            $select->order('Country_Name');
-        };
-        return $this->select($callback);
+        if (empty($this->City_Name)) {
+            return 'City name cannot be blank.';
+        }
+        return false;
     }
 }

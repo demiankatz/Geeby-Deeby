@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Countries
+ * City controller
  *
  * PHP version 5
  *
@@ -20,42 +20,64 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Controller;
 
 /**
- * Table Definition for Countries
+ * City controller
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Country extends Gateway
+class CityController extends AbstractBase
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct('Countries', 'GeebyDeeby\Db\Row\Country');
-    }
-
-    /**
-     * Get a list of countries.
+     * "Show city" page
      *
      * @return mixed
      */
-    public function getList()
+    public function indexAction()
     {
-        $callback = function ($select) {
-            $select->order('Country_Name');
-        };
-        return $this->select($callback);
+        $id = $this->params()->fromRoute('id');
+        $table = $this->getDbTable('city');
+        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
+        if (!is_object($rowObj)) {
+            return $this->forwardTo(__NAMESPACE__ . '\City', 'notfound');
+        }
+        $view = $this->createViewModel(
+            array('city' => $rowObj->toArray())
+        );
+        $view->series = $this->getDbTable('seriespublishers')
+            ->getSeriesForCity($id);
+        return $view;
+    }
+
+    /**
+     * City list
+     *
+     * @return mixed
+     */
+    public function listAction()
+    {
+        return $this->createViewModel(
+            array('cities' => $this->getDbTable('city')->getList())
+        );
+    }
+
+    /**
+     * Not found page
+     *
+     * @return mixed
+     */
+    public function notfoundAction()
+    {
+        return $this->createViewModel();
     }
 }

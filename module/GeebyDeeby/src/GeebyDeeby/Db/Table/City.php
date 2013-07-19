@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Countries
+ * Table Definition for Cities
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Db\Table;
 
 /**
- * Table Definition for Countries
+ * Table Definition for Cities
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -36,25 +36,25 @@ namespace GeebyDeeby\Db\Table;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Country extends Gateway
+class City extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('Countries', 'GeebyDeeby\Db\Row\Country');
+        parent::__construct('Cities', 'GeebyDeeby\Db\Row\City');
     }
 
     /**
-     * Get a list of countries.
+     * Get a list of cities.
      *
      * @return mixed
      */
     public function getList()
     {
         $callback = function ($select) {
-            $select->order('Country_Name');
+            $select->order('City_Name');
         };
         return $this->select($callback);
     }

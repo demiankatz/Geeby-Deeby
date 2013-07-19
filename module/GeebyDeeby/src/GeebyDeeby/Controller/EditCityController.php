@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Countries
+ * Edit city controller
  *
  * PHP version 5
  *
@@ -20,42 +20,44 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Controller;
 
 /**
- * Table Definition for Countries
+ * Edit city controller
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Country extends Gateway
+class EditCityController extends AbstractBase
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct('Countries', 'GeebyDeeby\Db\Row\Country');
-    }
-
-    /**
-     * Get a list of countries.
+     * Display a list of cities
      *
      * @return mixed
      */
-    public function getList()
+    public function listAction()
     {
-        $callback = function ($select) {
-            $select->order('Country_Name');
-        };
-        return $this->select($callback);
+        return $this->getGenericList(
+            'city', 'cities', 'geeby-deeby/edit-city/render-cities'
+        );
+    }
+
+    /**
+     * Operate on a single category
+     *
+     * @return mixed
+     */
+    public function indexAction()
+    {
+        $assignMap = array('city' => 'City_Name');
+        return $this->handleGenericItem('city', $assignMap, 'city');
     }
 }

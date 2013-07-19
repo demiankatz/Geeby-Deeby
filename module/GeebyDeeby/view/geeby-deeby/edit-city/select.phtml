@@ -1,0 +1,12 @@
+<? if (isset($cities) && count($cities) > 0): ?>
+  <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>City_ID">
+    <option value="">-- no city set --</option>
+    <? foreach ($cities as $current): ?>
+      <option value="<?=$current['City_ID']?>"<?=(isset($selected) && $current['City_ID'] == $selected) ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current['City_Name'])?>
+      </option>
+    <? endforeach; ?>
+  </select>
+<? else: ?>
+  Please define cities.
+<? endif; ?>

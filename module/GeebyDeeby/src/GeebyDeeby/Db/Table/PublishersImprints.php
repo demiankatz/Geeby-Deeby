@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Countries
+ * Table Definition for Publishers_Imprints
  *
  * PHP version 5
  *
@@ -26,9 +26,10 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Select;
 
 /**
- * Table Definition for Countries
+ * Table Definition for Publishers_Imprints
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -36,25 +37,28 @@ namespace GeebyDeeby\Db\Table;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Country extends Gateway
+class PublishersImprints extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('Countries', 'GeebyDeeby\Db\Row\Country');
+        parent::__construct('Publishers_Imprints');
     }
 
     /**
-     * Get a list of countries.
+     * Get a list of imprints for the specified publisher.
+     *
+     * @var int $pubID Publisher ID
      *
      * @return mixed
      */
-    public function getList()
+    public function getImprintsForPublisher($pubID)
     {
-        $callback = function ($select) {
-            $select->order('Country_Name');
+        $callback = function ($select) use ($pubID) {
+            $select->order('Imprint_Name');
+            $select->where->equalTo('Publisher_ID', $pubID);
         };
         return $this->select($callback);
     }

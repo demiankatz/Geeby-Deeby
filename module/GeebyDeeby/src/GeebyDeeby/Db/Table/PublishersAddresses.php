@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Countries
+ * Table Definition for Publishers_Addresses
  *
  * PHP version 5
  *
@@ -26,9 +26,10 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Select;
 
 /**
- * Table Definition for Countries
+ * Table Definition for Publishers_Addresses
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -36,25 +37,36 @@ namespace GeebyDeeby\Db\Table;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Country extends Gateway
+class PublishersAddresses extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('Countries', 'GeebyDeeby\Db\Row\Country');
+        parent::__construct('Publishers_Addresses');
     }
 
     /**
-     * Get a list of countries.
+     * Get a list of addresses for the specified publisher.
+     *
+     * @var int $pubID Publisher ID
      *
      * @return mixed
      */
-    public function getList()
+    public function getAddressesForPublisher($pubID)
     {
-        $callback = function ($select) {
-            $select->order('Country_Name');
+        $callback = function ($select) use ($pubID) {
+            $select->join(
+                array('ci' => 'Cities'), 'Publishers_Addresses.City_ID = ci.City_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $select->join(
+                array('c' => 'Countries'),
+                'Publishers_Addresses.Country_ID = c.Country_ID'
+            );
+            $select->order(array('Country_Name', 'City_Name', 'Street'));
+            $select->where->equalTo('Publisher_ID', $pubID);
         };
         return $this->select($callback);
     }

@@ -39,15 +39,21 @@ namespace GeebyDeeby\Controller;
 class EditCountryController extends AbstractBase
 {
     /**
-     * Display a list of categories
+     * Display a list of countries
      *
      * @return mixed
      */
     public function listAction()
     {
-        return $this->getGenericList(
+        $view = $this->getGenericList(
             'country', 'countries', 'geeby-deeby/edit-country/render-countries'
         );
+        // If this is not an AJAX request, we also want to display cities:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->cities
+                = $this->forwardTo(__NAMESPACE__ . '\EditCity', 'list')->cities;
+        }
+        return $view;
     }
 
     /**

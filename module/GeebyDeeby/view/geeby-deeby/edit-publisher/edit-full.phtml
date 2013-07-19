@@ -1,0 +1,35 @@
+<? $this->headTitle('Publisher Editor - ') ?>
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_publisher_details.js') ?>
+<h1>Edit Publisher</h1>
+<div class="edit_container" style="width: 800px;">
+  <?=$this->render('geeby-deeby/edit-publisher/index.phtml')?>
+</div>
+<hr />
+<div id="tabs">
+  <ul>
+    <li><a href="#addr-tab"><span>Addresses</span></a></li>
+    <li><a href="#imprints-tab"><span>Imprints</span></a></li>
+  </ul>
+
+  <div id="addr-tab" class="edit_tab_contents">
+    <div class="edit_container">
+      <table class="edit">
+        <tr><th>Country:</th><td><?=$this->render('geeby-deeby/edit-country/select.phtml')?></td></tr>
+        <tr><th>City:</th><td><?=$this->render('geeby-deeby/edit-city/select.phtml')?></td></tr>
+        <tr><th>Street:</th><td><input type="text" id="Street" /></td></tr>
+        <tr><th></th><td><button onclick="addAddress();">Add</button></td></tr>
+      </table>
+    </div>
+    <div id="address_list">
+      <?=$this->render('geeby-deeby/edit-publisher/address-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="imprints-tab" class="edit_tab_contents">
+    <b>Imprint:</b> <input type="text" id="Imprint" />
+    <button onclick="addImprint();">Add</button>
+    <div id="imprint_list">
+      <?=$this->render('geeby-deeby/edit-publisher/imprint-list.phtml')?>
+    </div>
+  </div>
+</div>

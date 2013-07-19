@@ -1,9 +1,9 @@
-<? if (isset($series_publishers) && count($series_publishers) > 0): ?>
-  <? foreach ($series_publishers as $current): ?>
-    <table class="list_item">
-      <tr>
-        <td>
-          <a href="#" onclick="modifyPublisher(<?=$current['Series_Publisher_ID']?>); return false;"><?=$this->escapeHtml($current['Publisher_Name'])?></a>
+<select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Series_Publisher_ID">
+  <option value="">-- none --</option>
+  <? if (isset($publishers) && count($publishers) > 0): ?>
+    <? foreach ($publishers as $current): ?>
+      <option value="<?=$current['Series_Publisher_ID']?>"<?=(isset($selected) && $current['Series_Publisher_ID'] == $selected) ? ' selected="selected"' : ''?>>
+          <?=$this->escapeHtml($current['Publisher_Name'])?>
           <? if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
             (<?
               $city = (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']);
@@ -14,18 +14,7 @@
               echo strlen($current['Note']) > 0 ? ((strlen($address) > 0 || strlen($current['Imprint_Name']) > 0) ? ' - ' : '') . $this->escapeHtml($current['Note']) : '';
             ?>)
           <? endif; ?>
-        </td>
-        <td>
-          <a class="ui-icon ui-icon-gear" href="#" onclick="modifyPublisher(<?=$current['Series_Publisher_ID']?>); return false;">
-          </a>
-        </td>
-        <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deletePublisher(<?=$current['Series_Publisher_ID']?>); return false;">
-          </a>
-        </td>
-      </tr>
-    </table>
-  <? endforeach; ?>
-<? else: ?>
-  No publishers set.
-<? endif; ?>
+       </option>
+    <? endforeach; ?>
+  <? endif; ?>
+</select>

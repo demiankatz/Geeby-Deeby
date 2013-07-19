@@ -82,6 +82,8 @@ class EditEditionController extends AbstractBase
                 ->getByPrimaryKey($view->edition['Series_ID']);
             $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
                 ->getAltTitles($view->edition['Series_ID']);
+            $view->publishers = $this->getDbTable('seriespublishers')
+                ->getPublishers($view->edition['Series_ID']);
         }
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -105,6 +107,47 @@ class EditEditionController extends AbstractBase
             $view->previous = $view->editionObj->getPreviousInSeries();
         }
         return $view;
+    }
+
+    /**
+     * Get drop-down of series publishers
+     *
+     * @return mixed
+     */
+    public function seriespublishersAction()
+    {
+        $view = $this->createViewModel();
+        $view->edition = $this->getDbTable('edition')
+            ->getByPrimaryKey($this->params()->fromRoute('id'));
+        $view->publishers = $this->getDbTable('seriespublishers')
+            ->getPublishers($view->edition['Series_ID']);
+        $view->selected = $view->edition['Preferred_Series_Publisher_ID'];
+        $view->setTemplate('geeby-deeby/edit-edition/series-publisher-select.phtml');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Set a preferred publisher
+     *
+     * @return mixed
+     */
+    public function setpreferredpublisherAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if (!$this->getRequest()->isPost()) {
+            return $this->jsonDie('Unexpected method.');
+        }
+
+        $editionId = $this->params()->fromRoute('id');
+        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $pubId = $this->params()->fromPost('pub_id');
+        $edition->Preferred_Series_Publisher_ID = empty($pubId) ? null : $pubId;
+        $edition->save();
+        return $this->jsonReportSuccess();
     }
 
     /**
