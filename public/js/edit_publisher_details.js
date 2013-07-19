@@ -21,13 +21,6 @@ function savePublisher()
     $.post(url, {publisher: publisher}, function(data) {
         // If save was successful...
         if (data.success) {
-            // Close the dialog box.
-            if (editBox) {
-                editBox.dialog('close');
-                editBox.dialog('destroy');
-                editBox = false;
-            }
-            
             // Update the publisher list.
             redrawPublishers();
         } else {
