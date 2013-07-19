@@ -114,6 +114,7 @@ class SeriesPublishers extends Gateway
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');
+            $select->group('s.Series_ID');
             $select->where->equalTo('Publisher_ID', $publisherID);
         };
         return $this->select($callback);
