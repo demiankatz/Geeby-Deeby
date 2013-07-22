@@ -63,6 +63,13 @@ class CleanupController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
-        return $this->createViewModel();
+        $table = $this->getDbTable('editionsimages');
+        $thumbs = $table->getDuplicateThumbs();
+        $details = array();
+        foreach ($thumbs as $current) {
+            $details[$current['Thumb_Path']]
+                = $table->getEditionsForThumb($current['Thumb_Path']);
+        }
+        return $this->createViewModel(array('details' => $details));
     }
 }

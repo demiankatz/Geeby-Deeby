@@ -1,4 +1,51 @@
 <? $this->headTitle('Duplicate Image Cleanup - ') ?>
 <h1>Duplicate Image Cleanup</h1>
 
-<p>Coming soon.</p>
+<script>
+    function removeImage(obj)
+    {
+        var parts = $(obj).val().split('_');
+        var url = basePath + '/edit/Edition/' + parts[0] + '/Image/' + parts[1];
+        $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
+            // If delete was successful...
+            if (data.success) {
+                $('#box_' + parts.join('_')).hide();
+            } else {
+                // Delete failed -- display error message:
+                alert('Error: ' + data.msg);
+            }
+        }});
+    }
+
+    function processGroup(group)
+    {
+        var deleteUs = [];
+        $(".group" + group).each(function(i, obj) {
+            if ($(obj).is(':checked')) {
+                deleteUs[deleteUs.length] = removeImage(obj);
+            }
+        });
+    }
+</script>
+
+<? if (empty($details)): ?>
+  <p>No dupes found.</p>
+<? else: ?>
+  <table>
+  <? $group = 0; foreach ($details as $thumb => $current): $group++; ?>
+    <tr>
+      <td><img src="<?=$this->escapeHtml($thumb)?>" /><br /></td>
+      <td>
+        <? foreach ($current as $ed): ?>
+          <? $combinedId = $ed['Edition_ID'] . '_' . $ed['Sequence_ID']?>
+          <span id="box_<?=$combinedId?>">
+            <input type="checkbox" class="group<?=$group?>" value="<?=$combinedId?>" checked="checked" />
+            <?=$this->escapeHtml($this->fixTitle($ed['Edition_Name']))?><br />
+          </span>
+        <? endforeach; ?>
+        <button onclick="processGroup(<?=$group?>);">Delete Selected</button>
+      </td>
+    </tr>
+  <? endforeach; ?>
+  </table>
+<? endif; ?>
