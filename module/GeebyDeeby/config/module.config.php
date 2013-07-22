@@ -269,6 +269,19 @@ return array(
                             ),
                         ),
                     ),
+                    'cleanup' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/Cleanup',
+                            'defaults' => array(
+                                'controller'    => 'Cleanup',
+                                'action'        => 'index',
+                            ),
+                            'may_terminate' => true,
+                            'child_routes' => array(
+                            )
+                        ),
+                    ),
                     'country' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -1019,6 +1032,7 @@ return array(
             'GeebyDeeby\Controller\Approve' => 'GeebyDeeby\Controller\ApproveController',
             'GeebyDeeby\Controller\Category' => 'GeebyDeeby\Controller\CategoryController',
             'GeebyDeeby\Controller\City' => 'GeebyDeeby\Controller\CityController',
+            'GeebyDeeby\Controller\Cleanup' => 'GeebyDeeby\Controller\CleanupController',
             'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',

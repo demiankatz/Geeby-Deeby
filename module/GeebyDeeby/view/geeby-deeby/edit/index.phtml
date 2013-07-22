@@ -26,6 +26,9 @@
     <? if ($approver): ?>
       <li><a target='_approve' href='<?=$this->url('edit/approve')?>'>Approve Users / Content Submissions</a></li>
     <? endif; ?>
+    <? if ($dataManager): ?>
+      <li><a target='_cleanup' href='<?=$this->url('edit/cleanup')?>'>Data Cleanup</a></li>
+    <? endif; ?>
     <? if ($userEditor): ?>
       <li>Edit Users (not implemented yet)</li>
     <? endif; ?>
