@@ -277,9 +277,19 @@ return array(
                                 'controller'    => 'Cleanup',
                                 'action'        => 'index',
                             ),
-                            'may_terminate' => true,
-                            'child_routes' => array(
-                            )
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'imagedupes' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/ImageDupes',
+                                    'defaults' => array(
+                                        'controller'    => 'Cleanup',
+                                        'action'        => 'imagedupes',
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                     'country' => array(

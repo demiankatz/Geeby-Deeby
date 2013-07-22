@@ -51,4 +51,18 @@ class CleanupController extends AbstractBase
         }
         return $this->createViewModel();
     }
+
+    /**
+     * Duplicate image cleanup action
+     *
+     * @return mixed
+     */
+    public function imagedupesAction()
+    {
+        $ok = $this->checkPermission('Data_Manager');
+        if ($ok !== true) {
+            return $ok;
+        }
+        return $this->createViewModel();
+    }
 }
