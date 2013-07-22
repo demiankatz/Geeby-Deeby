@@ -60,6 +60,8 @@ class MigrateController extends AbstractBase
                 'credits from Items_Credits.',
             'migrateItemLengthAndEndingsToEditions' =>
                 'length/ending values from Items.',
+            'migrateItemImagesToEditions' =>
+                'Images from Items_Images',
             'migrateItemISBNsToEditions' =>
                 'ISBNs from Items_ISBNs',
             'migrateItemProductCodesToEditions' =>
@@ -208,6 +210,18 @@ class MigrateController extends AbstractBase
     {
         return $this->genericItemToEditionMigration(
             'itemsisbns', 'editionsisbns', 'Sequence_ID'
+        );
+    }
+
+    /**
+     * Migrate Item images to Editions.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemImagesToEditions()
+    {
+        return $this->genericItemToEditionMigration(
+            'itemsimages', 'editionsimages', 'Sequence_ID'
         );
     }
 

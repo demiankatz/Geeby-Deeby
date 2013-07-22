@@ -133,7 +133,7 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        $view->images = $this->getDbTable('itemsimages')
+        $view->images = $this->getDbTable('editionsimages')
             ->getImagesForSeries($view->series['Series_ID']);
         return $view;
     }
