@@ -44,10 +44,12 @@ class GroupEditions extends \Zend\View\Helper\AbstractHelper
      * @param array  $data       Data to work with
      * @param string $groupField Field to group data on
      * @param array  $editions   A list of all editions
+     * @param string $idField    An ID field to prepend to the $groupField with
+     * a pipe delimiter (optional)
      *
      * @return string
      */
-    public function __invoke($data, $groupField, $editions)
+    public function __invoke($data, $groupField, $editions, $idField = null)
     {
         $fixTitle = $this->getView()->plugin('fixtitle');
 
@@ -55,14 +57,18 @@ class GroupEditions extends \Zend\View\Helper\AbstractHelper
         $grouped = array();
         $editionsByGroup = array();
         foreach ($data as $current) {
-            if (!isset($grouped[$current[$groupField]])) {
-                $grouped[$current[$groupField]] = array();
+            $groupValue = $current[$groupField];
+            if (!empty($idField)) {
+                $groupValue = $current[$idField] . '|' . $groupValue;
             }
-            if (!isset($editionsByGroup[$current[$groupField]])) {
-                $editionsByGroup[$current[$groupField]] = array();
+            if (!isset($grouped[$groupValue])) {
+                $grouped[$groupValue] = array();
             }
-            $grouped[$current[$groupField]][] = $current;
-            $editionsByGroup[$current[$groupField]][$current['Edition_ID']] = 1;
+            if (!isset($editionsByGroup[$groupValue])) {
+                $editionsByGroup[$groupValue] = array();
+            }
+            $grouped[$groupValue][] = $current;
+            $editionsByGroup[$groupValue][$current['Edition_ID']] = 1;
         }
 
         // Format the grouped data:
@@ -72,7 +78,7 @@ class GroupEditions extends \Zend\View\Helper\AbstractHelper
             $showEds = (count($editionsByGroup[$value]) != $edCount && $edCount > 1);
             $notes = array();
             foreach ($details as $detail) {
-                $note = $detail['Note'];
+                $note = isset($detail['Note']) ? $detail['Note'] : '';
                 if ($showEds) {
                     $name = $fixTitle($detail['Edition_Name']);
                     $note = empty($note) ? $name : $name . ' - ' . $note;

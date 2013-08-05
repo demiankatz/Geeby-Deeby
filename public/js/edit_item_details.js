@@ -110,65 +110,6 @@ function deleteAltTitle(rowID)
     }});
 }
 
-/* Redraw the platform list:
- */
-function redrawPlatforms()
-{
-    var itemID = $('#Item_ID').val();
-    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Platform';
-    $('#platform_list').load(url);
-}
-
-/* Save the current platform:
- */
-function addPlatform()
-{
-    var itemID = $('#Item_ID').val();
-    var platID = parseInt($('#Platform_ID').val());
-
-    // Save and update:
-    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Platform/' + encodeURIComponent(platID);
-    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            redrawPlatforms();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }});
-}
-
-/* Remove a platform from the item:
- */
-function deletePlatform(platID)
-{
-    if (!confirm("Are you sure?")) {
-        return;
-    }
-
-    // Validate user selection:
-    if (isNaN(platID)) {
-        alert("Please choose a valid platform.");
-        return;
-    }
-
-    // Save and update:
-    var itemID = $('#Item_ID').val();
-    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Platform/' + encodeURIComponent(platID);
-    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            redrawPlatforms();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }});
-}
-
 /* Redraw the tag list:
  */
 function redrawTags()

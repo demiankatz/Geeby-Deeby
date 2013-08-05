@@ -13,6 +13,7 @@
     <li><a href="#release-tab"><span>Dates</span></a></li>
     <li><a href="#fulltext-tab"><span>Full Text Links</span></a></li>
     <li><a href="#images-tab"><span>Images</span></a></li>
+    <li><a href="#platforms-tab"><span>Platforms</span></a></li>
     <li><a href="#preferred-publisher"><span>Preferred Publisher</span></a></li>
     <li><a href="#preferred-titles"><span>Preferred Titles</span></a></li>
   </ul>
@@ -164,6 +165,16 @@
     </div>
     <div id="image_list">
       <?=$this->render('geeby-deeby/edit-edition/image-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="platforms-tab" class="edit_tab_contents">
+    <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
+    <button onclick="addPlatform();">Add Platform</button>
+    <br/>
+    <b>Platforms:</b>
+    <div id="platform_list">
+    <?=$this->render('geeby-deeby/edit-edition/platform-list.phtml')?>
     </div>
   </div>
 

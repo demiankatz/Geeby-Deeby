@@ -92,9 +92,6 @@ class EditItemController extends AbstractBase
                 ->getTags($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->itemObj->Item_ID);
-            $view->item_platforms = $this->getDbTable('itemsplatforms')
-                ->getPlatformsForItem($view->itemObj->Item_ID);
-            $view->platforms = $this->getDbTable('platform')->getList();
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
             $view->editions = $this->getDbTable('edition')
@@ -429,20 +426,6 @@ class EditItemController extends AbstractBase
             'itemstranslations', 'Trans_Item_ID', 'Source_Item_ID',
             'translatedFrom', 'getTranslatedInto',
             'geeby-deeby/edit-item/trans-from-list.phtml'
-        );
-    }
-
-    /**
-     * Deal with platforms
-     *
-     * @return mixed
-     */
-    public function platformAction()
-    {
-        return $this->handleGenericLink(
-            'itemsplatforms', 'Item_ID', 'Platform_ID',
-            'item_platforms', 'getPlatformsForItem',
-            'geeby-deeby/edit-item/platform-list.phtml'
         );
     }
 }

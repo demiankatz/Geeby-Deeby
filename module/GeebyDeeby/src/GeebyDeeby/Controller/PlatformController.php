@@ -54,7 +54,8 @@ class PlatformController extends AbstractBase
         $view = $this->createViewModel(
             array('platform' => $rowObj->toArray())
         );
-        $view->items = $this->getDbTable('itemsplatforms')->getItemsForPlatform($id);
+        $view->items = $this->getDbTable('editionsplatforms')
+            ->getItemsForPlatform($id);
         return $view;
     }
 

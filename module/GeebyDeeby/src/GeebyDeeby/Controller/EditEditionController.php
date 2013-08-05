@@ -96,6 +96,9 @@ class EditEditionController extends AbstractBase
                 ->getISBNsForEdition($view->edition['Edition_ID']);
             $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
                 ->getOCLCNumbersForEdition($view->edition['Edition_ID']);
+            $view->editionPlatforms = $this->getDbTable('editionsplatforms')
+                ->getPlatformsForEdition($view->edition['Edition_ID']);
+            $view->platforms = $this->getDbTable('platform')->getList();
             $view->productCodes = $this->getDbTable('editionsproductcodes')
                 ->getProductCodesForEdition($view->edition['Edition_ID']);
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
@@ -744,5 +747,19 @@ class EditEditionController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Deal with platforms
+     *
+     * @return mixed
+     */
+    public function platformAction()
+    {
+        return $this->handleGenericLink(
+            'editionsplatforms', 'Edition_ID', 'Platform_ID',
+            'editionPlatforms', 'getPlatformsForEdition',
+            'geeby-deeby/edit-edition/platform-list.phtml'
+        );
     }
 }
