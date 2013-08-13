@@ -123,6 +123,25 @@ class SeriesController extends AbstractBase
     }
 
     /**
+     * "Show series full text" page
+     *
+     * @return mixed
+     */
+    public function fulltextAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        $fuzzy = $this->params()->fromQuery('fuzzy', false);
+        $view->fuzzy = $fuzzy;
+        $view->fulltext = $this->getDbTable('editionsfulltext')
+            ->getItemsWithFullText($view->series['Series_ID'], $fuzzy);
+        $view->setTemplate('geeby-deeby/item/fulltext');
+        return $view;
+    }
+
+    /**
      * "Show series images" page
      *
      * @return mixed

@@ -216,6 +216,11 @@ class ItemController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'byyear');
         }
 
+        // Special case: with full text:
+        if ($this->params()->fromRoute('extra') == 'FullText') {
+            return $this->forwardTo(__NAMESPACE__ . '\Item', 'fulltext');
+        }
+
         // Special case: with reviews:
         if ($this->params()->fromRoute('extra') == 'Reviews') {
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'reviews');
@@ -286,6 +291,21 @@ class ItemController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
         }
+        return $view;
+    }
+
+    /**
+     * Full text page
+     *
+     * @return mixed
+     */
+    public function fulltextAction()
+    {
+        $fuzzy = $this->params()->fromQuery('fuzzy', false);
+        $view = $this->createViewModel();
+        $view->fuzzy = $fuzzy;
+        $view->fulltext = $this->getDbTable('editionsfulltext')
+            ->getItemsWithFullText(null, $fuzzy);
         return $view;
     }
 

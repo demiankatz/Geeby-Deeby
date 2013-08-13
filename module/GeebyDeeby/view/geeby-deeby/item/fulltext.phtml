@@ -1,0 +1,29 @@
+<?
+    $this->headTitle('Items with Full Text - ');
+?>
+<h1>Items with Full Text</h1>
+
+<? if ($fuzzy): ?>
+  <p>Showing fuzzy matches; switch to <a href="?fuzzy=0">exact matches</a> to only show links where the online text exactly matches the listed edition.</p>
+<? else: ?>
+  <p>Showing exact matches; switch to <a href="?fuzzy=1">fuzzy matches</a> to add links to listings where online text comes from a different edition.</p>
+<? endif; ?>
+
+<? if (count($fulltext) > 0): ?>
+  <? $series = false; foreach ($fulltext as $current): ?>
+    <? if ($series !== $current['Series_ID']): $series = $current['Series_ID']; ?>
+      <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+        <?=$this->fixtitle($current['Series_Name']);?>
+      </a></h2>
+    <? endif; ?>
+    <span class="item">
+      <?=$current['Position'] > 0 ? $this->escapeHtml($current['Position']) . '. ' : ''?>
+      <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+        <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
+      </a>
+      <br />
+    </span>
+  <? endforeach; ?>
+<? else: ?>
+  <p>No full text listed.</p>
+<? endif; ?>
