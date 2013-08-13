@@ -1,0 +1,23 @@
+<?
+    $this->headTitle('Items with Full Text - ');
+?>
+<h1>Items with Full Text</h1>
+
+<? if (count($fulltext) > 0): ?>
+  <? $series = false; foreach ($fulltext as $current): ?>
+    <? if ($series !== $current['Series_ID']): $series = $current['Series_ID']; ?>
+      <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+        <?=$this->fixtitle($current['Series_Name']);?>
+      </a></h2>
+    <? endif; ?>
+    <span class="item">
+      <?=$current['Position'] > 0 ? $this->escapeHtml($current['Position']) . '. ' : ''?>
+      <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+        <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
+      </a>
+      <br />
+    </span>
+  <? endforeach; ?>
+<? else: ?>
+  <p>No full text listed.</p>
+<? endif; ?>

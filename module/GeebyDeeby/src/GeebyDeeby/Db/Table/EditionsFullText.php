@@ -94,4 +94,43 @@ class EditionsFullText extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of items with full text.
+     *
+     * @param int $series Series ID (optional limiter)
+     *
+     * @return mixed
+     */
+    public function getItemsWithFullText($series = null)
+    {
+        $callback = function ($select) use ($series) {
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+            );
+            $select->join(
+                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
+            $select->join(
+                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
+            );
+            if (null !== $series) {
+                $select->where->equalTo('eds.Series_ID', $series);
+            }
+            $select->group(
+                array(
+                    'eds.Item_ID', 'eds.Series_ID', 'eds.Position'
+                )
+            );
+            $ord = array('Series_Name', 's.Series_ID', 'eds.Position', 'Item_Name');
+            $select->order($ord);
+        };
+        return $this->select($callback);
+    }
 }
