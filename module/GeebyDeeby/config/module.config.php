@@ -26,8 +26,10 @@ return array(
                 'edition' => 'GeebyDeeby\Db\Table\Edition',
                 'editionscredits' => 'GeebyDeeby\Db\Table\EditionsCredits',
                 'editionsfulltext' => 'GeebyDeeby\Db\Table\EditionsFullText',
+                'editionsimages' => 'GeebyDeeby\Db\Table\EditionsImages',
                 'editionsisbns' => 'GeebyDeeby\Db\Table\EditionsISBNs',
                 'editionsoclcnumbers' => 'GeebyDeeby\Db\Table\EditionsOCLCNumbers',
+                'editionsplatforms' => 'GeebyDeeby\Db\Table\EditionsPlatforms',
                 'editionsproductcodes' => 'GeebyDeeby\Db\Table\EditionsProductCodes',
                 'editionsreleasedates' => 'GeebyDeeby\Db\Table\EditionsReleaseDates',
                 'faqs' => 'GeebyDeeby\Db\Table\FAQs',
@@ -265,6 +267,29 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditCity',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'cleanup' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/Cleanup',
+                            'defaults' => array(
+                                'controller'    => 'Cleanup',
+                                'action'        => 'index',
+                            ),
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'imagedupes' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/ImageDupes',
+                                    'defaults' => array(
+                                        'controller'    => 'Cleanup',
+                                        'action'        => 'imagedupes',
+                                    ),
+                                ),
                             ),
                         ),
                     ),
@@ -1018,6 +1043,7 @@ return array(
             'GeebyDeeby\Controller\Approve' => 'GeebyDeeby\Controller\ApproveController',
             'GeebyDeeby\Controller\Category' => 'GeebyDeeby\Controller\CategoryController',
             'GeebyDeeby\Controller\City' => 'GeebyDeeby\Controller\CityController',
+            'GeebyDeeby\Controller\Cleanup' => 'GeebyDeeby\Controller\CleanupController',
             'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',

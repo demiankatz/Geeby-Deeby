@@ -60,10 +60,14 @@ class MigrateController extends AbstractBase
                 'credits from Items_Credits.',
             'migrateItemLengthAndEndingsToEditions' =>
                 'length/ending values from Items.',
+            'migrateItemImagesToEditions' =>
+                'Images from Items_Images',
             'migrateItemISBNsToEditions' =>
                 'ISBNs from Items_ISBNs',
             'migrateItemProductCodesToEditions' =>
                 'product codes from Items_Product_Codes',
+            'migrateItemPlatformsToEditions' =>
+                'platforms from Items_Platforms',
             'migratePublisherImprints' =>
                 'imprints from Series_Publishers',
             'migratePublisherCountries' =>
@@ -212,6 +216,18 @@ class MigrateController extends AbstractBase
     }
 
     /**
+     * Migrate Item images to Editions.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemImagesToEditions()
+    {
+        return $this->genericItemToEditionMigration(
+            'itemsimages', 'editionsimages', 'Sequence_ID'
+        );
+    }
+
+    /**
      * Migrate Item product codes to Editions.
      *
      * @return int Number of rows migrated
@@ -220,6 +236,18 @@ class MigrateController extends AbstractBase
     {
         return $this->genericItemToEditionMigration(
             'itemsproductcodes', 'editionsproductcodes', 'Sequence_ID'
+        );
+    }
+
+    /**
+     * Migrate Item platforms to Editions.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemPlatformsToEditions()
+    {
+        return $this->genericItemToEditionMigration(
+            'itemsplatforms', 'editionsplatforms'
         );
     }
 

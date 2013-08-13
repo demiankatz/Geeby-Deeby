@@ -82,8 +82,6 @@ class EditItemController extends AbstractBase
                 ->getPeopleDescribedByItem($view->itemObj->Item_ID);
             $view->seriesBib = $this->getDbTable('seriesbibliography')
                 ->getSeriesDescribedByItem($view->itemObj->Item_ID);
-            $view->images = $this->getDbTable('itemsimages')
-                ->getImagesForItem($view->itemObj->Item_ID);
             $view->item_list = $this->getDbTable('itemsincollections')
                 ->getItemsForCollection($view->itemObj->Item_ID);
             $view->translatedInto = $this->getDbTable('itemstranslations')
@@ -94,9 +92,6 @@ class EditItemController extends AbstractBase
                 ->getTags($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->itemObj->Item_ID);
-            $view->item_platforms = $this->getDbTable('itemsplatforms')
-                ->getPlatformsForItem($view->itemObj->Item_ID);
-            $view->platforms = $this->getDbTable('platform')->getList();
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
             $view->editions = $this->getDbTable('edition')
@@ -286,63 +281,6 @@ class EditItemController extends AbstractBase
     }
 
     /**
-     * Work with images
-     *
-     * @return mixed
-     */
-    public function imageAction()
-    {
-        // Special case: new publisher:
-        if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemsimages');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            $row->Image_Path = $this->params()->fromPost('image');
-            if (empty($row->Image_Path)) {
-                return $this->jsonDie('Image path must be set.');
-            }
-            $row->Thumb_Path = $this->params()->fromPost('thumb');
-            // Build thumb path if none was provided:
-            if (empty($row->Thumb_Path)) {
-                $parts = explode('.', $row->Image_Path);
-                $nextToLast = count($parts) - 2;
-                $parts[$nextToLast] .= 'thumb';
-                $row->Thumb_Path = implode('.', $parts);
-            }
-            $row->Position = $this->params()->fromPost('pos');
-            $table->insert((array)$row);
-            return $this->jsonReportSuccess();
-        } else {
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'itemsimages', 'Item_ID', 'Sequence_ID',
-                'images', 'getImagesForItem',
-                'geeby-deeby/edit-item/image-list.phtml'
-            );
-        }
-    }
-
-    /**
-     * Set the order of an attached image
-     *
-     * @return mixed
-     */
-    public function imageorderAction()
-    {
-        if ($this->getRequest()->isPost()) {
-            $collection = $this->params()->fromRoute('id');
-            $image = $this->params()->fromRoute('extra');
-            $pos = $this->params()->fromPost('pos');
-            $this->getDbTable('itemsimages')->update(
-                array('Position' => $pos), array('Sequence_ID' => $image)
-            );
-            return $this->jsonReportSuccess();
-        }
-        return $this->jsonDie('Unexpected method');
-    }
-
-    /**
      * Get list of credits
      *
      * @return mixed
@@ -488,20 +426,6 @@ class EditItemController extends AbstractBase
             'itemstranslations', 'Trans_Item_ID', 'Source_Item_ID',
             'translatedFrom', 'getTranslatedInto',
             'geeby-deeby/edit-item/trans-from-list.phtml'
-        );
-    }
-
-    /**
-     * Deal with platforms
-     *
-     * @return mixed
-     */
-    public function platformAction()
-    {
-        return $this->handleGenericLink(
-            'itemsplatforms', 'Item_ID', 'Platform_ID',
-            'item_platforms', 'getPlatformsForItem',
-            'geeby-deeby/edit-item/platform-list.phtml'
         );
     }
 }

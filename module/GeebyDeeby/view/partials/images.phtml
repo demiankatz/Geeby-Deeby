@@ -12,9 +12,19 @@
     ?>
     <table class="image">
       <tr><td align="center"><?=$openAnchor?><img src="<?=$this->escapeHtml($image['Thumb_Path'])?>" /></a></td></tr>
-      <? if (!empty($image['Note'])): ?>
-        <tr><td align="center">(<?=$this->escapeHtml($image['Note'])?>)</td></tr>
-      <? endif; ?>
+      <?
+        $note = '';
+        if (isset($editions) && count($editions) > 1) {
+            $note = $this->fixtitle($image['Edition_Name']);
+        }
+        if (!empty($image['Note'])) {
+            if (!empty($note)) {
+                $note .= ' - ';
+            }
+            $note .= $image['Note'];
+        }
+      ?>
+      <tr><td align="center"><?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : '<br />'?></td></tr>
     </table>
   <? endforeach; ?>
   <div style="clear: left;"><!-- empty --></div>

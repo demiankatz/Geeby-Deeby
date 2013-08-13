@@ -146,6 +146,24 @@ CREATE TABLE `Editions_Full_Text` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Editions_Images`
+--
+
+DROP TABLE IF EXISTS `Editions_Images`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Images` (
+  `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Image_Path` tinytext NOT NULL,
+  `Thumb_Path` tinytext NOT NULL,
+  `Position` int(11) DEFAULT NULL,
+  `Note_ID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Sequence_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Editions_ISBNs`
 --
 
@@ -175,6 +193,20 @@ CREATE TABLE `Editions_OCLC_Numbers` (
   `OCLC_Number` tinytext NOT NULL,
   `Note_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Sequence_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Editions_Platforms`
+--
+
+DROP TABLE IF EXISTS `Editions_Platforms`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Platforms` (
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Platform_ID` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Edition_ID`,`Platform_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -377,25 +409,6 @@ CREATE TABLE `Items_Files` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Items_Images`
---
-
-DROP TABLE IF EXISTS `Items_Images`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Images` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Image_Path` tinytext NOT NULL,
-  `Thumb_Path` tinytext NOT NULL,
-  `Position` int(11) DEFAULT NULL,
-  `Note_ID` int(11) DEFAULT NULL,
-  `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`Sequence_ID`),
-  UNIQUE KEY `Sequence_ID` (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Items_In_Collections`
 --
 
@@ -421,20 +434,6 @@ CREATE TABLE `Items_Links` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Link_ID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Item_ID`,`Link_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Items_Platforms`
---
-
-DROP TABLE IF EXISTS `Items_Platforms`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Platforms` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Platform_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`,`Platform_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -12,6 +12,8 @@
     <li><a href="#codes-tab"><span>Codes/ISBNs</span></a></li>
     <li><a href="#release-tab"><span>Dates</span></a></li>
     <li><a href="#fulltext-tab"><span>Full Text Links</span></a></li>
+    <li><a href="#images-tab"><span>Images</span></a></li>
+    <li><a href="#platforms-tab"><span>Platforms</span></a></li>
     <li><a href="#preferred-publisher"><span>Preferred Publisher</span></a></li>
     <li><a href="#preferred-titles"><span>Preferred Titles</span></a></li>
   </ul>
@@ -133,6 +135,46 @@
     </div>
     <div id="fulltext_list">
       <?=$this->render('geeby-deeby/edit-edition/fulltext-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="images-tab" class="edit_tab_contents">
+    <div class="edit_container">
+      <table class="edit">
+        <tr>
+          <th>Image Path:</th>
+          <td><input type="text" id="image_path" /></td>
+        </tr>
+        <tr>
+          <th>Thumb Path:<br /><span class="note">(leave blank to add &quot;thumb&quot; to image filename)</span></th>
+          <td><input type="text" id="thumb_path" /></td>
+        </tr>
+        <tr>
+          <th>Position:</th>
+          <td><input type="text" id="image_position" /></td>
+        </tr>
+        <tr>
+          <th>Note:</th>
+          <td><input id="image_note" class="Note_ID" /></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td><button onclick="saveImage();">Add</button></td>
+        </tr>
+      </table>
+    </div>
+    <div id="image_list">
+      <?=$this->render('geeby-deeby/edit-edition/image-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="platforms-tab" class="edit_tab_contents">
+    <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
+    <button onclick="addPlatform();">Add Platform</button>
+    <br/>
+    <b>Platforms:</b>
+    <div id="platform_list">
+    <?=$this->render('geeby-deeby/edit-edition/platform-list.phtml')?>
     </div>
   </div>
 
