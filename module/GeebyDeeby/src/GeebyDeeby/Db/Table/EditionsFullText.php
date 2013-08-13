@@ -102,13 +102,23 @@ class EditionsFullText extends Gateway
      *
      * @return mixed
      */
-    public function getItemsWithFullText($series = null)
+    public function getItemsWithFullText($series = null, $fuzzy = false)
     {
-        $callback = function ($select) use ($series) {
-            $select->join(
-                array('eds' => 'Editions'),
-                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
-            );
+        $callback = function ($select) use ($series, $fuzzy) {
+            if ($fuzzy) {
+                $select->join(
+                    array('eds2' => 'Editions'),
+                    'Editions_Full_Text.Edition_ID = eds2.Edition_ID'
+                );
+                $select->join(
+                    array('eds' => 'Editions'), 'eds2.Item_ID = eds.Item_ID'
+                );
+            } else {
+                $select->join(
+                    array('eds' => 'Editions'),
+                    'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+                );
+            }
             $select->join(
                 array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
             );

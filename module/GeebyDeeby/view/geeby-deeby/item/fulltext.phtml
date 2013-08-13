@@ -3,6 +3,12 @@
 ?>
 <h1>Items with Full Text</h1>
 
+<? if ($fuzzy): ?>
+  <p>Showing fuzzy matches; switch to <a href="?fuzzy=0">exact matches</a> to only show links where the online text exactly matches the listed edition.</p>
+<? else: ?>
+  <p>Showing exact matches; switch to <a href="?fuzzy=1">fuzzy matches</a> to add links to listings where online text comes from a different edition.</p>
+<? endif; ?>
+
 <? if (count($fulltext) > 0): ?>
   <? $series = false; foreach ($fulltext as $current): ?>
     <? if ($series !== $current['Series_ID']): $series = $current['Series_ID']; ?>

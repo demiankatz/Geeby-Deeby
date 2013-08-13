@@ -301,9 +301,11 @@ class ItemController extends AbstractBase
      */
     public function fulltextAction()
     {
+        $fuzzy = $this->params()->fromQuery('fuzzy', false);
         $view = $this->createViewModel();
+        $view->fuzzy = $fuzzy;
         $view->fulltext = $this->getDbTable('editionsfulltext')
-            ->getItemsWithFullText();
+            ->getItemsWithFullText(null, $fuzzy);
         return $view;
     }
 
