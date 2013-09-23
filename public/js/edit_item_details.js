@@ -752,6 +752,7 @@ function redrawAttachmentList()
 function addAttachedItem()
 {
     var itemID = $('#Item_ID').val();
+    var noteID = parseInt($('#Attachment_Note').val());
     var attachID = parseInt($('#attachment_name').val());
 
     // Validate user selection:
@@ -762,11 +763,12 @@ function addAttachedItem()
 
     // Save and update based on selected relationship:
     var url = basePath + '/edit/Item/' + encodeURIComponent(itemID) + '/Attachment/' + encodeURIComponent(attachID);
-    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
+    $.post(url, {note_id: noteID}, function(data) {
         // If save was successful...
         if (data.success) {
             // Clear the form:
             $('#attachment_name').val('');
+            $('#Attachment_Note').val('');
 
             // Update the list.
             redrawAttachmentList();
@@ -774,7 +776,7 @@ function addAttachedItem()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }});
+    }, 'json');
 }
 
 /* Remove an attached item:

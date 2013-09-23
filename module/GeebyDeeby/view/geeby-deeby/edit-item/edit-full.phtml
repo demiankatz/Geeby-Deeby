@@ -61,8 +61,22 @@
   </div>
 
   <div id="attached-tab" class="edit_tab_contents">
-    <input id="attachment_name" class="Item_ID" />
-    <button onclick="addAttachedItem();">Add Item</button>
+    <div class="edit_container">
+      <table class="edit">
+        <tr>
+          <th>Title:</th>
+          <td><input id="attachment_name" class="Item_ID" /></td>
+        </tr>
+        <tr>
+          <th>Note:</th>
+          <td><input id="Attachment_Note" class="Note_ID" /></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td><button onclick="addAttachedItem();">Add Item</button></td>
+        </tr>
+      </table>
+    </div>
     <div id="item_list">
       <?=$this->render('geeby-deeby/edit-item/list.phtml')?>
     </div>
