@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Controller;
+use Zend\Cache\StorageFactory;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
@@ -57,7 +58,17 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function progressAction()
     {
-        $stats = $this->getProgressStatistics();
+        $dir = __DIR__ . '/../../../../../data/cache';
+        $opts = array('cache_dir' => $dir, 'ttl' => 60 * 60 * 24);
+        $settings = array(
+            'adapter' => array('name' => 'filesystem', 'options' => $opts),
+            'plugins' => array('serializer')
+        );
+        $cache = StorageFactory::factory($settings);
+        if (!($stats = $cache->getItem('progressStats'))) {
+            $stats = $this->getProgressStatistics();
+            $cache->setItem('progressStats', $stats);
+        }
         return $this->createViewModel(array('progress' => $stats));
     }
 
