@@ -42,6 +42,16 @@ use Zend\Db\Sql\Select;
 class AboutController extends \GeebyDeeby\Controller\AbstractBase
 {
     /**
+     * Credits page
+     *
+     * @return mixed
+     */
+    public function creditsAction()
+    {
+        return $this->createViewModel();
+    }
+
+    /**
      * About page
      *
      * @return mixed

@@ -26,6 +26,16 @@ return array(
                     ),
                 ),
             ),
+            'about-credits' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/About/Credits',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\About',
+                        'action'     => 'credits',
+                    ),
+                ),
+            ),
             'about-progress' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
