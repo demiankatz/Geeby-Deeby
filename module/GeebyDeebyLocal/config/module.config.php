@@ -26,6 +26,16 @@ return array(
                     ),
                 ),
             ),
+            'about-progress' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/About/Progress',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\About',
+                        'action'     => 'progress',
+                    ),
+                ),
+            ),
             'podcast' => array(
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(

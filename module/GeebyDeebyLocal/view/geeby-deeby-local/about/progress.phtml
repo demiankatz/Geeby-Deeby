@@ -1,0 +1,17 @@
+<? $this->headTitle('Progress - '); ?>
+<h1>Progress</h1>
+
+<p>Data entry from the LeBlanc Bibliographies is currently in progress. This page summarizes the status of the listings.
+Note that "Complete" is measured relative only to the original <a href="http://digital.library.villanova.edu/Collection/vudl:283769">LeBlanc Listings</a>;
+series that have gaps in the original listings or that were not included in LeBlanc's research will be listed here as complete even if there are
+unlisted titles within the database.</p>
+
+<table border="1">
+  <tr><th style="text-align: left;">Series Title</th><th style="text-align: left;">Status</th></tr>
+<? foreach ($progress as $current): ?>
+  <tr>
+    <td><a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>"><?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?></a></td>
+    <td><? if ($current['Complete']): ?><span style="color: green;">Complete</span><? elseif ($current['Item_Count'] == 0): ?><span style="color: red;">Not Started</span><? else: ?><span style="color: black;">Partial - <?=$current['Item_Count']?> item<?=$current['Item_Count'] > 1 ? 's' : ''?> listed</span><? endif; ?></td>
+  </tr>
+<? endforeach; ?>
+</table>

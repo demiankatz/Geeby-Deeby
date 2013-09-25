@@ -26,6 +26,8 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Controller;
+use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 
 /**
  * About controller
@@ -46,5 +48,48 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
     public function indexAction()
     {
         return $this->createViewModel();
+    }
+
+    /**
+     * Progress page
+     *
+     * @return mixed
+     */
+    public function progressAction()
+    {
+        $stats = $this->getProgressStatistics();
+        return $this->createViewModel(array('progress' => $stats));
+    }
+
+    /**
+     * Retrieve progress statistics.
+     *
+     * @return array
+     */
+    protected function getProgressStatistics()
+    {
+        $s = $this->getDbTable('series');
+        $callback = function ($select) {
+            $select->columns(
+                array(
+                    'Series_ID' => 'Series_ID',
+                    'Series_Name' => 'Series_Name',
+                    'Item_Count' => new Expression(
+                        'count(distinct(?))', array('Item_ID'),
+                        array(Expression::TYPE_IDENTIFIER)
+                    ),
+                    'Complete' => new Expression(
+                        'if (Series_Description like \'%in progress%\', 0, 1)'
+                    ),
+                )
+            );
+            $select->join(
+                array('e' => 'Editions'),
+                'Series.Series_ID = e.Series_ID', array(), Select::JOIN_LEFT
+            );
+            $select->group(array('Series.Series_ID'));
+            $select->order(array('Series.Series_Name'));
+        };
+        return $s->select($callback)->toArray();
     }
 }
