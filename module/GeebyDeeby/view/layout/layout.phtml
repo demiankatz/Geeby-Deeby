@@ -9,6 +9,7 @@
            ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-autocomplete.css')
            ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-1.7.2.custom.css')
            ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
+           ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
     ?>
 
     <?
@@ -17,14 +18,18 @@
     ?>
 
     <? echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
-           ->prependFile($this->basePath() . '/js/jquery-ui-autocomplete.js')
-           ->prependFile($this->basePath() . '/js/jquery-ui-1.7.2.custom.min.js')
+           ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+           ->prependFile($this->basePath() . '/js/jquery-ui.js')
            ->prependFile($this->basePath() . '/js/jquery.js');
     ?>
   </head>
   <body>
-    <?=$this->render('partials/header.phtml')?>
-    <? echo $this->content; ?>
-    <?=$this->render('partials/footer.phtml')?>
+    <div class="container">
+      <header class="clearfix">
+        <?=$this->render('partials/header.phtml')?>
+      </header>
+      <? echo $this->content; ?>
+      <?=$this->render('partials/footer.phtml')?>
+    </div>
   </body>
 </html>

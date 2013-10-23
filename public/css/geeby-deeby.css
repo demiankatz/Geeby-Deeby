@@ -1,203 +1,224 @@
-a {
-    text-decoration:none;
-    color:#774E03;
-}
+/* --- GENERAL --- */
 
-a:hover {
-    color:#D79110;
-}
+a {color:#774E03;text-decoration:none}
+a:hover {color:#D79110}
 
 body {
-    font-size: 10pt;
-    font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
-    background-color: #F3E3C6;
+  background-color:#F3E3C6;
+  font-family:Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
+  font-size:10pt;
 }
 
 h1 {
-    font-size: 150%;
-    padding-bottom: 10px;
-    border-bottom: 1px solid black;
+  border-bottom:1px solid black;
+  font-size:150%;
+  margin-bottom:0;
+  margin-top:5px;
+  padding-bottom:10px;
 }
+h2 {font-size:125%}
+.error {color:red}
 
-h2 {
-    font-size: 125%;
+/* --- HEADER --- */
+
+header {
+  margin:10px 0;
 }
-
-table {
-    width: 100%;
+.headerRight {
+  display:table;
+  float:right;
+  padding:0;
 }
-
-td, th {
-    vertical-align: top;
+.account-links {
+  display:inline;
+  float:left;
+  margin-top:3px;
+  padding-right:4px;
 }
-
-.error {
-    color: red;
-}
-
-.fineprint {
-    font-size: smaller;
-}
-
 .searchbox {
-    float: right;
-    clear: right;
+  display:inline;
+  float:left;
+}
+.searchbox input,
+.searchbox select {
+  border:1px solid #999;
+  height:24px;
+}
+.searchbox input[type=text] {
+  padding:0 4px;
+}
+.siteTitle {
+  font-size:150%;
+  font-weight:bold;
+  float:left;
+}
+@media (max-width:991px) {
+  header {text-align:center}
+  .headerRight {float:none;margin:0 auto}
+  .account-links,.searchbox {display:inline}
+  .siteTitle {margin-bottom:10px;width:100%}
+}
+@media (max-width:650px) {
+  header {border-bottom:1px solid #000}
+  .siteTitle {margin-bottom:0}
+  .account-links,.searchbox {
+    display:block;
+    float:none;
+    margin:6px 0 12px 0;
+    width:100%;
+  }
+  .account-links .last {display:none}
 }
 
-.headerControls {
-    float: right;
-    text-align: right;
-    width: 150px;
+/* --- SEARCH --- */
+.results h2 {
+  border-bottom:1px solid #000;
+  margin:6px 0;
+  padding-bottom:6px;
+}
+.results .result .number {
+  font-family:Courier;
+}
+.results .result a {
+  font-family:Arial;
+  margin-bottom:6px;
+}
+@media (max-width:991px) {
+  .results h2 {border-top:1px solid #000;padding-top:7px}
+  .results [class*=col-]:first-child h2 {border-top:0;padding-top:0}
 }
 
-.footer {
-    border-top: 1px solid black;
-}
-
-table.edit {
-    width: 100%;
-}
-
+/* --- TABLES --- */
+table {width:100%}
+td, th {vertical-align:top}
+table.edit {width:100%}
 table.edit tr th {
-    font-weight: bold;
-    text-align: right;
-    padding-right: 5px;
-    width: 30%;
+  font-weight:bold;
+  text-align:right;
+  padding-right:5px;
+  width:30%;
 }
-
 table.edit tr th span.note {
-    font-weight: normal;
-    font-size: 80%;
-    line-height: 80%;
+  font-weight:normal;
+  font-size:80%;
+  line-height:80%;
 }
-
 table.edit tr td input {
-    width: 100%;
-    font-size: 10pt;
+  width:100%;
+  font-size:10pt;
 }
-
 table.edit tr td textarea {
-    width: 100%;
-    min-width: 300px;
-    height: 150px;
-    font-size: 10pt;
+  width:100%;
+  min-width:300px;
+  height:150px;
+  font-size:10pt;
 }
-
 .edit_container {
-    width: 500px;
+  width:500px;
 }
-
 table.approve tr td textarea {
-    width: 100%;
-    min-width: 500px;
-    height: 200px;
-    font-size: 10pt;
+  width:100%;
+  min-width:500px;
+  height:200px;
+  font-size:10pt;
 }
-
 table.list_item {
-    width: auto;
-    padding: 0px;
+  width:auto;
+  padding:0px;
 }
-
 table.list_item tr td {
-    padding: 0px;
-    margin: 0px;
+  padding:0px;
+  margin:0px;
 }
-
 .edit_tab_contents {
-    height: 300px;
-    overflow: auto;
+  height:300px;
+  overflow:auto;
 }
-
 input.number {
-    width: 50px;
+  width:50px;
 }
 
 h3.filetype, h3.materialType, h3.series, .link, p.extraitem {
-    margin-left: 2em;
+  margin-left:2em;
 }
 
 p.file, span.item {
-    margin-left: 4em;
+  margin-left:4em;
 }
 
 .link .url {
-    color: green;
+  color:green;
 }
 
 table.image {
-    width: auto;
-    float: left;
+  width:auto;
+  float:left;
 }
 
 table.item, table.series, table.user {
-    width: auto;
+  width:auto;
 }
 table.item td, table.item th,
 table.series td, table.series th,
 table.user td, table.user th {
-    text-align: left;
+  text-align:left;
 }
 
 .disclaimer {
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid black;
-    background-color: white;
+  margin:10px;
+  padding:5px;
+  border:1px solid black;
+  background-color:white;
 }
 
 .collection, .collection td {
-    border: 1px solid black;
+  border:1px solid black;
 }
 
 .collection .series {
-    width: 15%;
+  width:15%;
 }
 
 .collection .have, .collection .want {
-    width: 40%;
+  width:40%;
 }
 
 .review_signature {
-    margin-left: 5em;
+  margin-left:5em;
 }
 
 .controls {
-    margin: 10px;
-    padding: 10px;
-    background-color: white;
-    border: 1px solid black;
+  margin:10px;
+  padding:10px;
+  background-color:white;
+  border:1px solid black;
 }
 
 .controls a.button {
-    margin: 5px;
-    padding: 5px;
-    border: 1px solid black;
-    background-color: #DDDDDD;
+  margin:5px;
+  padding:5px;
+  border:1px solid black;
+  background-color:#DDDDDD;
 }
 
 table.reviews tr th {
-    text-align: left;
+  text-align:left;
 }
 
 table.reviews tr td {
-    border: 1px solid black;
+  border:1px solid black;
 }
 
 table.innerReviews tr td, table.innerReviews tr th {
-    border: 0;
+  border:0;
 }
+table.signup {width:auto}
+table.signup tr th, table.signup tr td {text-align:left}
 
-table.signup {
-    width: auto;
-}
-
-table.signup tr th, table.signup tr td {
-    text-align: left;
-}
-
-.siteTitle {
-    font-size: 150%;
-    font-weight: bold;
-    float: left;
+/* --- FOOTER --- */
+.fineprint {font-size:85%}
+.footer {
+  border-top:1px solid black;
+  margin-top:10px;
+  padding-top:10px;
 }
