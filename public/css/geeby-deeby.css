@@ -4,25 +4,36 @@ a {color:#774E03;text-decoration:none}
 a:hover {color:#D79110}
 
 body {
-  background-color:#F3E3C6;
+  background:#F3D69C;
   font-family:Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
   font-size:10pt;
 }
-
-h1 {
-  border-bottom:1px solid black;
-  font-size:150%;
-  margin-bottom:0;
-  margin-top:5px;
-  padding-bottom:10px;
+.container.main {
+  background:#F3E3C6;
+  padding:0;
 }
-h2 {font-size:125%}
+.content {
+  border:1px solid #774E03;
+  border-width:0 1px;
+  margin:0;
+  padding:6px 15px;
+}
+h1 {
+  background:#774E03;
+  color:#FFF;
+  font:150% 'Josefin Slab';
+  margin:0;
+  padding:8px 15px 10px 15px;
+}
+h2 {font:125% 'Josefin Slab';}
 .error {color:red}
 
 /* --- HEADER --- */
 
 header {
-  margin:10px 0;
+  background:#F9F0E0;
+  border-bottom:2px solid #774E03;
+  padding:8px 0;
 }
 .headerRight {
   display:table;
@@ -48,8 +59,7 @@ header {
   padding:0 4px;
 }
 .siteTitle {
-  font-size:150%;
-  font-weight:bold;
+  font:150% 'Josefin Slab';
   float:left;
 }
 @media (max-width:991px) {
@@ -59,7 +69,6 @@ header {
   .siteTitle {margin-bottom:10px;width:100%}
 }
 @media (max-width:650px) {
-  header {border-bottom:1px solid #000}
   .siteTitle {margin-bottom:0}
   .account-links,.searchbox {
     display:block;
@@ -71,10 +80,11 @@ header {
 }
 
 /* --- SEARCH --- */
+
 .results h2 {
-  border-bottom:1px solid #000;
-  margin:6px 0;
-  padding-bottom:6px;
+  background:#F9F0E0;
+  margin:-6px -15px 6px -30px;
+  padding:6px 0 6px 30px;
 }
 .results .result .number {
   font-family:Courier;
@@ -188,17 +198,16 @@ table.user td, table.user th {
 }
 
 .controls {
-  margin:10px;
+  background:#774E03;
   padding:10px;
-  background-color:white;
-  border:1px solid black;
 }
-
+.controls p {margin-bottom:0}
 .controls a.button {
+  background:#FFF;
+  border:1px solid #000;
+  color:#000;
   margin:5px;
-  padding:5px;
-  border:1px solid black;
-  background-color:#DDDDDD;
+  padding:5px 8px;
 }
 
 table.reviews tr th {
@@ -216,9 +225,9 @@ table.signup {width:auto}
 table.signup tr th, table.signup tr td {text-align:left}
 
 /* --- FOOTER --- */
-.fineprint {font-size:85%}
-.footer {
-  border-top:1px solid black;
-  margin-top:10px;
+.fineprint {font-size:85%;margin-bottom:0}
+footer {
+  background:#F3D69C;
+  color:#000;
   padding-top:10px;
 }
