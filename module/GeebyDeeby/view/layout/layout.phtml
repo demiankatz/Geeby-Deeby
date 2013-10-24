@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <? echo $this->headTitle($this->config('siteTitle')) ?>
+    <? echo $this->headTitle($this->layout()->title .' - '. $this->config('siteTitle')) ?>
 
     <? echo $this->headLink()
             ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-autocomplete.css')
@@ -18,7 +18,7 @@
       $this->headScript()->prependScript("basePath = '" . rtrim($this->basePath(), '/') . "';");
     ?>
 
-    <? echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+    <? echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9'))
            ->prependFile($this->basePath() . '/js/bootstrap.min.js')
            ->prependFile($this->basePath() . '/js/jquery-ui.js')
            ->prependFile($this->basePath() . '/js/jquery.js');
@@ -31,7 +31,10 @@
       </div>
     </header>
     <div class="container main">
-      <? echo $this->content; ?>
+      <h1><?=$this->layout()->title ?></h1>
+      <div class="content">
+        <? echo $this->content; ?>
+      </div>
       <footer>
         <?=$this->render('partials/footer.phtml')?>
       </footer>

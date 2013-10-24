@@ -1,39 +1,54 @@
 /* --- GENERAL --- */
-
-a {color:#774E03;text-decoration:none}
-a:hover {color:#D79110}
-
 body {
   background:#F3D69C;
   font-family:Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
-  font-size:10pt;
+  font-size:15px;
 }
 .container.main {
   background:#F3E3C6;
   padding:0;
 }
 .content {
-  border:1px solid #774E03;
-  border-width:0 1px;
+  border:2px solid #774E03;
+  border-width:0 2px 2px 2px;
   margin:0;
   padding:6px 15px;
 }
+
+a {color:#774E03;text-decoration:none}
+a:hover {color:#BB8B32}
 h1 {
   background:#774E03;
   color:#FFF;
   font:150% 'Josefin Slab';
   margin:0;
-  padding:8px 15px 10px 15px;
+  padding:8px 15px 10px 17px;
 }
-h2 {font:125% 'Josefin Slab';}
+h2 {font:125% 'Josefin Slab'}
+h3 {font:125% 'Josefin Slab';margin:10px 0 8px 0}
+input {border:1px solid #999;padding:1px 6px}
+input[type="button"],
+input[type="submit"],
+button {
+  background:#DDD;
+  background-image:linear-gradient(to bottom, #FFF, #DDD 85%, #BBB);
+}
+input[type="text"],
+input[type="number"],
+input[type="password"] {
+  box-shadow:inset 0 1px 4px rgba(0,0,0,.11);
+}
+
 .error {color:red}
 
 /* --- HEADER --- */
-
 header {
   background:#F9F0E0;
   border-bottom:2px solid #774E03;
   padding:8px 0;
+}
+@media (min-width:992px) {
+  header .container {padding-right:0}
 }
 .headerRight {
   display:table;
@@ -50,18 +65,25 @@ header {
   display:inline;
   float:left;
 }
+.searchbox form {
+  margin-top:1px;
+  vertical-align:middle;
+}
 .searchbox input,
 .searchbox select {
   border:1px solid #999;
-  height:24px;
+  height:25px;
 }
 .searchbox input[type=text] {
   padding:0 4px;
 }
 .siteTitle {
+  color:#4D3301;
   font:150% 'Josefin Slab';
   float:left;
 }
+.siteTitle:hover {color:#774E03}
+
 @media (max-width:991px) {
   header {text-align:center}
   .headerRight {float:none;margin:0 auto}
@@ -80,15 +102,13 @@ header {
 }
 
 /* --- SEARCH --- */
-
-.results h2 {
+.content h2 {
   background:#F9F0E0;
-  margin:-6px -15px 6px -30px;
-  padding:6px 0 6px 30px;
+  padding:6px 15px;
+  margin:-6px -15px 6px -15px;
 }
-.results .result .number {
-  font-family:Courier;
-}
+.content > p:first-child {margin-bottom:12px}
+.number {font-family:Courier}
 .results .result a {
   font-family:Arial;
   margin-bottom:6px;
@@ -98,82 +118,15 @@ header {
   .results [class*=col-]:first-child h2 {border-top:0;padding-top:0}
 }
 
-/* --- TABLES --- */
-table {width:100%}
-td, th {vertical-align:top}
-table.edit {width:100%}
-table.edit tr th {
-  font-weight:bold;
-  text-align:right;
-  padding-right:5px;
-  width:30%;
+/* --- RECORD --- */
+table th {
+  padding:1px 1em;
+  vertical-align:top;
 }
-table.edit tr th span.note {
-  font-weight:normal;
-  font-size:80%;
-  line-height:80%;
-}
-table.edit tr td input {
-  width:100%;
-  font-size:10pt;
-}
-table.edit tr td textarea {
-  width:100%;
-  min-width:300px;
-  height:150px;
-  font-size:10pt;
-}
-.edit_container {
-  width:500px;
-}
-table.approve tr td textarea {
-  width:100%;
-  min-width:500px;
-  height:200px;
-  font-size:10pt;
-}
-table.list_item {
-  width:auto;
-  padding:0px;
-}
-table.list_item tr td {
-  padding:0px;
-  margin:0px;
-}
-.edit_tab_contents {
-  height:300px;
-  overflow:auto;
-}
-input.number {
-  width:50px;
-}
-
-h3.filetype, h3.materialType, h3.series, .link, p.extraitem {
-  margin-left:2em;
-}
-
-p.file, span.item {
-  margin-left:4em;
-}
-
+table td {padding-bottom:6px}
 .link .url {
   color:green;
 }
-
-table.image {
-  width:auto;
-  float:left;
-}
-
-table.item, table.series, table.user {
-  width:auto;
-}
-table.item td, table.item th,
-table.series td, table.series th,
-table.user td, table.user th {
-  text-align:left;
-}
-
 .disclaimer {
   margin:10px;
   padding:5px;
@@ -199,35 +152,25 @@ table.user td, table.user th {
 
 .controls {
   background:#774E03;
+  color:#F3D69C;
+  margin:6px -15px 0 -15px;
   padding:10px;
 }
+.controls a {color:#F9F0E0}
 .controls p {margin-bottom:0}
 .controls a.button {
   background:#FFF;
-  border:1px solid #000;
-  color:#000;
+  border:1px solid #4D3301;
+  color:#4D3301;
   margin:5px;
   padding:5px 8px;
 }
-
-table.reviews tr th {
-  text-align:left;
-}
-
-table.reviews tr td {
-  border:1px solid black;
-}
-
-table.innerReviews tr td, table.innerReviews tr th {
-  border:0;
-}
-table.signup {width:auto}
-table.signup tr th, table.signup tr td {text-align:left}
 
 /* --- FOOTER --- */
 .fineprint {font-size:85%;margin-bottom:0}
 footer {
   background:#F3D69C;
-  color:#000;
+  color:#431;
+  font-size:10pt;
   padding-top:10px;
 }

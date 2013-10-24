@@ -1,10 +1,8 @@
 <?
-    $title = $this->showperson($person);
+    $this->layout()->title = $title = $this->showperson($person);
     $this->headTitle('Person - ' . $title . ' - ');
     $displayedSomething = false;
 ?>
-<h1><?=$this->escapeHtml($title)?></h1>
-
 <? $realNameCount = count($realNames); if ($realNameCount > 0): $displayedSomething = true; ?>
   <p><b>Pseudonym For:</b>
     <? $i = 0; foreach ($realNames as $realName): $i++; ?>
@@ -37,7 +35,7 @@
       </a></h3>
     <? endif; ?>
     <span class="item">
-      <?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?>
+      <span class="number"><?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?></span>
       <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
         <?=$this->escapeHtml($this->fixtitle(isset($credit['Item_AltName']) && !empty($credit['Item_AltName']) ? $credit['Item_AltName'] : $credit['Item_Name']))?>
       </a>

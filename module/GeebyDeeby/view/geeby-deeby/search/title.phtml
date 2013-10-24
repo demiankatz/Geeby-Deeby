@@ -1,5 +1,5 @@
 <?
-    $this->headTitle('Search Results - Title - ');
+    $this->layout()->title = 'Search Results - Title';
     $empty = true;
     $lists = array(
       'Series' => $series,
@@ -8,8 +8,7 @@
       'Item Alternate Titles' => $itemsAltTitles,
     );
 ?>
-<h1>Search Results - Title</h1>
-<div class="content results row">
+<div class="results row">
   <? foreach($lists as $title=>$results): ?>
     <? if (count($results) > 0): $empty = false; ?>
       <? $prefix = explode(' ', $title); ?>
