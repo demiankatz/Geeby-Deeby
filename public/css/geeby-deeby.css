@@ -26,6 +26,7 @@ h1 {
 }
 h2 {font:125% 'Josefin Slab'}
 h3 {font:125% 'Josefin Slab';margin:10px 0 8px 0}
+hr {border-color:#774E03}
 input {border:1px solid #999;padding:1px 6px}
 input[type="button"],
 input[type="submit"],
@@ -40,6 +41,13 @@ input[type="password"] {
 }
 
 .error {color:red}
+.nav-tabs {border-color:#774E03}
+.nav-tabs>li>a:hover,
+.nav-tabs>li.active>a:hover,
+.nav-tabs>li.active>a {background:#F9F0E0;border-color:#774E03;color:#774E03}
+.nav-tabs>li.active>a:hover,
+.nav-tabs>li.active>a {border-bottom-color:#F9F0E0;color:#4D3301}
+.tab-content {background:#F9F0E0;border:1px solid #774E03;border-top:0;padding:1em}
 
 /* --- HEADER --- */
 header {
