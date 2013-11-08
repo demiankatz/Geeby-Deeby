@@ -1,10 +1,8 @@
 <?
     $title = $category['Category'];
-    $this->headTitle('Category - ' . $title . ' - ');
+    $this->layout()->title = 'Category - ' . $title;
     $displayedSomething = false;
 ?>
-<h1><?=$this->escapeHtml($title)?></h1>
-
 <? if (!empty($category['Description'])): ?>
   <p><?=$category['Description']?></p>
 <? endif; ?>

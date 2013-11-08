@@ -1,7 +1,6 @@
 <?
-    $this->headTitle('Items with Reviews - ');
+    $this->layout()->title = 'Items with Reviews';
 ?>
-<h1>Items with Reviews</h1>
 
 <? if (count($reviews) > 0): ?>
   <? $series = false; foreach ($reviews as $review): ?>

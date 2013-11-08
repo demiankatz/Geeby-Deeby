@@ -1,10 +1,8 @@
 <?
     $title = $materialType['Material_Type_Name'];
-    $this->headTitle('Material Type - ' . $title . ' - ');
+    $this->layout()->title = 'Material Type - ' . $title;
     $displayedSomething = false;
 ?>
-<h1><?=$this->escapeHtml($title)?></h1>
-
 <? if (count($series) < 1): ?>
   <p>No information is available about this material type.</p>
 <? else: ?>

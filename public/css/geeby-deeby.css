@@ -113,8 +113,9 @@ header {
 .content h2 {
   background:#F9F0E0;
   padding:6px 15px;
-  margin:-6px -15px 6px -15px;
+  margin:6px -15px 6px -15px;
 }
+.content h2:first-child {margin-top:-6px}
 .content > p:first-child {margin-bottom:12px}
 .number {font-family:Courier}
 .results .result a {

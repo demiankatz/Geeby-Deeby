@@ -1,7 +1,6 @@
 <?
-    $this->headTitle('Subject/Tag List - ');
+    $this->layout()->title = 'Subject/Tag List';
 ?>
-<h1>Subject/Tag List</h1>
 <? if (count($tags) < 1): ?>
   <p>No subjects/tags listed in this database yet.</p>
 <? else: ?>

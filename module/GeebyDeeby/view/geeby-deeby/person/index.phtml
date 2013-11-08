@@ -1,6 +1,6 @@
 <?
-    $this->layout()->title = $title = $this->showperson($person);
-    $this->headTitle('Person - ' . $title . ' - ');
+    $title = $this->showperson($person);
+    $this->layout()->title = 'Person - ' . $title;
     $displayedSomething = false;
 ?>
 <? $realNameCount = count($realNames); if ($realNameCount > 0): $displayedSomething = true; ?>

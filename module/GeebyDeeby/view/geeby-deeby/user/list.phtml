@@ -1,7 +1,6 @@
 <?
-    $this->headTitle('User List - ');
+    $this->layout()->title = 'User List';
 ?>
-<h1>User List</h1>
 <? if (count($users) < 1): ?>
   <p>No users listed in this database yet.</p>
 <? else: ?>

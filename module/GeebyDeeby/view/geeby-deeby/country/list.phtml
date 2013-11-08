@@ -1,7 +1,6 @@
 <?
-    $this->headTitle('Country List - ');
+    $this->layout()->title = 'Country List';
 ?>
-<h1>Country List</h1>
 <? if (count($countries) < 1): ?>
   <p>No countries listed in this database yet.</p>
 <? else: ?>

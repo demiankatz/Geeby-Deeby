@@ -1,7 +1,6 @@
-<? $this->headTitle('Edition Editor - ') ?>
+<? $this->layout()->title = 'Edit Edition' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/edit_edition_details.js') ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/ui.tabs.paging.js') ?>
-<h1>Edit Edition</h1>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-edition/index.phtml')?>
 </div>

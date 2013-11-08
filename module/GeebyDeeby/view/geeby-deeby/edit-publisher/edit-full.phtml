@@ -1,6 +1,5 @@
-<? $this->headTitle('Publisher Editor - ') ?>
+<? $this->layout()->title = 'Edit Publisher Editor' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/edit_publisher_details.js') ?>
-<h1>Edit Publisher</h1>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-publisher/index.phtml')?>
 </div>

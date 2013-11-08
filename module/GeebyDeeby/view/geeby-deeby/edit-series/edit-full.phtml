@@ -1,6 +1,5 @@
-<? $this->headTitle('Series Editor - ') ?>
+<? $this->layout()->title = 'Edit Series' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/edit_series_details.js') ?>
-<h1>Edit Series</h1>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-series/index.phtml')?>
 </div>
