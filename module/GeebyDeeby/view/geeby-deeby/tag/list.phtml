@@ -4,9 +4,16 @@
 <? if (count($tags) < 1): ?>
   <p>No subjects/tags listed in this database yet.</p>
 <? else: ?>
-  <? $currentLetter = false; foreach ($tags as $current): ?>
-    <? $first = $this->firstletter($current['Tag']); if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+  <h2>
+    <?=$this->firstLetterMenu($tags, 'Tag'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($tags as $i=>$current): ?>
+    <? $first = $this->firstletter($current['Tag']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
     <? endif; ?>
     <a href="<?=$this->url('tag', array('id' => $current['Tag_ID']))?>">
       <?=$this->escapeHtml($this->escapeHtml($current['Tag']))?>

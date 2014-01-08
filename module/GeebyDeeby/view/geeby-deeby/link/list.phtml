@@ -5,9 +5,15 @@
 <? if (count($links) < 1): ?>
   <p>No links listed in this database yet.</p>
 <? else: ?>
-  <? $type = false; foreach ($links as $link): ?>
+  <h2>
+    <?=$this->firstLetterMenu($links, 'Link_Type'); ?>
+  </h2>
+  <? $type = false; foreach ($links as $i=>$link): ?>
     <? if ($type != $link['Link_Type']): $type = $link['Link_Type']; ?>
-      <h2><?=$this->escapeHtml(substr($type, $typeTrim))?></h2>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml(substr($type, $typeTrim))?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
     <? endif; ?>
     <p class="link">
       <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />

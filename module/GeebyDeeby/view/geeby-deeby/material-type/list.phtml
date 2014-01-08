@@ -4,9 +4,16 @@
 <? if (count($materialTypes) < 1): ?>
   <p>No material types listed in this database yet.</p>
 <? else: ?>
-  <? $currentLetter = false; foreach ($materialTypes as $current): ?>
-    <? $first = $this->firstletter($current['Material_Type_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+  <h2>
+    <?=$this->firstLetterMenu($materialTypes, 'Material_Type_Name'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($materialTypes as $i=>$current): ?>
+    <? $first = $this->firstletter($current['Material_Type_Name']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
     <? endif; ?>
     <a href="<?=$this->url('material', array('id' => $current['Material_Type_ID']))?>">
       <?=$this->escapeHtml($current['Material_Type_Name'])?>

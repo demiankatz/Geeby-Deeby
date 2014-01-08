@@ -4,16 +4,16 @@
   <?=$this->render('geeby-deeby/edit-series/index.phtml')?>
 </div>
 <hr />
-<div id="tabs">
-  <ul>
-    <li><a href="#items-tab"><span>Attached Items</span></a></li>
-    <li><a href="#alt-titles-tab"><span>Alternate Titles</span></a></li>
-    <li><a href="#categories-tab"><span>Categories</span></a></li>
-    <li><a href="#material-tab"><span>Material Types</span></a></li>
-    <li><a href="#publishers-tab"><span>Publishers</span></a></li>
-    <li><a href="#translations-tab"><span>Translations</span></a></li>
-  </ul>
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#items-tab"><span>Attached Items</span></a></li>
+  <li><a href="#alt-titles-tab"><span>Alternate Titles</span></a></li>
+  <li><a href="#categories-tab"><span>Categories</span></a></li>
+  <li><a href="#material-tab"><span>Material Types</span></a></li>
+  <li><a href="#publishers-tab"><span>Publishers</span></a></li>
+  <li><a href="#translations-tab"><span>Translations</span></a></li>
+</ul>
 
+<div class="tab-content">
   <div id="material-tab" class="edit_tab_contents">
     <?=$this->render('geeby-deeby/edit-material-type/select.phtml', array('materials' => $materials, 'idPrefix'=>'Series_'))?> <button onclick="addMaterial();">Add</button>
     <div id="material_list">

@@ -1,22 +1,21 @@
 <? $this->layout()->title = 'Edit Edition' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/edit_edition_details.js') ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/ui.tabs.paging.js') ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-edition/index.phtml')?>
 </div>
 <hr />
-<div id="tabs">
-  <ul>
-    <li><a href="#credits-tab"><span>Credits</span></a></li>
-    <li><a href="#codes-tab"><span>Codes/ISBNs</span></a></li>
-    <li><a href="#release-tab"><span>Dates</span></a></li>
-    <li><a href="#fulltext-tab"><span>Full Text Links</span></a></li>
-    <li><a href="#images-tab"><span>Images</span></a></li>
-    <li><a href="#platforms-tab"><span>Platforms</span></a></li>
-    <li><a href="#preferred-publisher"><span>Preferred Publisher</span></a></li>
-    <li><a href="#preferred-titles"><span>Preferred Titles</span></a></li>
-  </ul>
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#credits-tab"><span>Credits</span></a></li>
+  <li><a href="#codes-tab"><span>Codes/ISBNs</span></a></li>
+  <li><a href="#release-tab"><span>Dates</span></a></li>
+  <li><a href="#fulltext-tab"><span>Full Text Links</span></a></li>
+  <li><a href="#images-tab"><span>Images</span></a></li>
+  <li><a href="#platforms-tab"><span>Platforms</span></a></li>
+  <li><a href="#preferred-publisher"><span>Preferred Publisher</span></a></li>
+  <li><a href="#preferred-titles"><span>Preferred Titles</span></a></li>
+</ul>
 
+<div class="tab-content">
   <div id="credits-tab" class="edit_tab_contents">
     <p class="disclaimer">Credits added/removed here will affect only this edition of the item;
     to affect ALL editions, please go back to the Item Editor first.</p>

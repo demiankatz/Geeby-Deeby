@@ -4,9 +4,16 @@
 <? if (count($platforms) < 1): ?>
   <p>No platforms listed in this database yet.</p>
 <? else: ?>
-  <? $currentLetter = false; foreach ($platforms as $current): ?>
-    <? $first = $this->firstletter($current['Platform']); if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+  <h2>
+    <?=$this->firstLetterMenu($platforms, 'Platform'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($platforms as $i=>$current): ?>
+    <? $first = $this->firstletter($current['Platform']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
     <? endif; ?>
     <a href="<?=$this->url('platform', array('id' => $current['Platform_ID']))?>">
       <?=$this->escapeHtml($this->fixtitle($current['Platform']))?>

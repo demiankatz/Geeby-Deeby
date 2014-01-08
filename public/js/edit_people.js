@@ -5,21 +5,24 @@
 // Global reference to current open edit box.
 var editBox = false;
 
+function lightbox(title, url) {
+  $('#modal .modal-body').html('Loading...');
+  $('#modal .modal-title').html(title);
+  $('#modal .modal-body').load(url);
+  editBox = $('#modal').modal();
+}
+
+function addTriggersPerson() {
+  $('#people_list a.person').click(function(){editPerson(this.href.split('/').pop());return false});
+}
+
 /* Pop up a dialog to edit a person:
  */
 function editPerson(id)
 {
-    // Open the edit dialog box:
-    var url = basePath + '/edit/Person/' + encodeURIComponent(id);
-    editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === 'NEW' ? "Add Person" : ("Edit Person " + id)),
-        modal: true,
-        autoOpen: true,
-        width: 500,
-        height: 400,
-        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { $('#editForm').remove(); }
-    });
+  // Open the edit dialog box:
+  var url = basePath + '/edit/Person/' + encodeURIComponent(id);
+  lightbox(id === 'NEW' ? "Add Person" : ("Edit Person " + id), url);
 }
 
 /* Redraw the people on the screen:
@@ -27,7 +30,7 @@ function editPerson(id)
 function redrawPeople()
 {
     var url = basePath + '/edit/PersonList';
-    $('#people_list').load(url);
+    $('#people_list').load(url, addTriggersPerson);
 }
 
 /* Save the person inside the provided form element:
@@ -61,8 +64,7 @@ function savePerson()
         if (data.success) {
             // Close the dialog box.
             if (editBox) {
-                editBox.dialog('close');
-                editBox.dialog('destroy');
+                editBox.modal('hide');
                 editBox = false;
             }
             
@@ -143,21 +145,17 @@ function saveRole()
     }, 'json');
 }
 
+function addTriggersAuthority() {
+  $('#authority_list a').click(function(){editAuthority(this.href.split('/').pop());return false});
+}
+
 /* Pop up a dialog to edit an authority:
  */
 function editAuthority(id)
 {
-    // Open the edit dialog box:
-    var url = basePath + '/edit/PersonAuthority/' + encodeURIComponent(id);
-    editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === 'NEW' ? "Add Authority" : ("Edit Authority " + id)),
-        modal: true,
-        autoOpen: true,
-        width: 500,
-        height: 400,
-        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { $('#editForm').remove(); }
-    });
+  // Open the edit dialog box:
+  var url = basePath + '/edit/PersonAuthority/' + encodeURIComponent(id);
+  lightbox(id === 'NEW' ? "Add Authority" : ("Edit Authority " + id), url);
 }
 
 /* Redraw the authorities on the screen:
@@ -166,6 +164,7 @@ function redrawAuthorities()
 {
     var url = basePath + '/edit/PersonAuthorityList';
     $('#authority_list').load(url);
+    addTriggersAuthority();
 }
 
 /* Save the authority inside the provided form element:
@@ -208,3 +207,8 @@ function saveAuthority()
         }
     }, 'json');
 }
+
+$(document).ready(function() {
+  addTriggersPerson();
+  addTriggersAuthority();
+});

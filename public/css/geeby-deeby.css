@@ -30,16 +30,36 @@ hr {border-color:#774E03}
 input {border:1px solid #999;padding:1px 6px}
 input[type="button"],
 input[type="submit"],
-button {
+button,.btn,.btn-default {
   background:#DDD;
   background-image:linear-gradient(to bottom, #FFF, #DDD 85%, #BBB);
+  border:1px solid #999;
+  border-radius:0;
+  height:25px;
+  padding:2px 6px;
 }
+input[type="button"]:hover,
+input[type="submit"]:hover,
+button:hover,.btn:hover,.btn-default:hover {
+  background:#EEE;
+}
+.btn-primary {
+  background:#774E03;
+  background-image:linear-gradient(to bottom, rgba(255,255,255,.2), rgba(255,255,255,0) 85%, rgba(0,0,0,.2));
+  border-color:#774E03;
+}
+.btn-primary:hover {background:#774E03;border-color:#552C01}
 input[type="text"],
 input[type="number"],
-input[type="password"] {
+input[type="password"],
+textarea {
   box-shadow:inset 0 1px 4px rgba(0,0,0,.11);
+  min-width:205px;
+  padding:2px 4px 0 4px;
 }
 
+.alert {background:#774E03;border-color:#4D3301;color:#FFF}
+.alert a {color:#FFF}.alert a:hover {color:#F3D69C}
 .error {color:red}
 .nav-tabs {border-color:#774E03}
 .nav-tabs>li>a:hover,
@@ -66,7 +86,7 @@ header {
 .account-links {
   display:inline;
   float:left;
-  margin-top:3px;
+  margin-top:4px;
   padding-right:4px;
 }
 .searchbox {
@@ -76,14 +96,6 @@ header {
 .searchbox form {
   margin-top:1px;
   vertical-align:middle;
-}
-.searchbox input,
-.searchbox select {
-  border:1px solid #999;
-  height:25px;
-}
-.searchbox input[type=text] {
-  padding:0 4px;
 }
 .siteTitle {
   color:#4D3301;
@@ -183,3 +195,6 @@ footer {
   font-size:10pt;
   padding-top:10px;
 }
+
+/* --- MODAL --- */
+#modal .modal-title {font-family:'Josefin Slab'}

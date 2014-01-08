@@ -1,12 +1,19 @@
 <?
-    $this->layout()->title = 'City List');
+    $this->layout()->title = 'City List';
 ?>
 <? if (count($cities) < 1): ?>
   <p>No cities listed in this database yet.</p>
 <? else: ?>
-  <? $currentLetter = false; foreach ($cities as $current): ?>
-    <? $first = $this->firstletter($current['City_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+  <h2>
+    <?=$this->firstLetterMenu($cities, 'City_Name'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($cities as $i=>$current): ?>
+    <? $first = $this->firstletter($current['City_Name']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
     <? endif; ?>
     <a href="<?=$this->url('city', array('id' => $current['City_ID']))?>">
       <?=$this->escapeHtml($this->fixtitle($current['City_Name']))?>

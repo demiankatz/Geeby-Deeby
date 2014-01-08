@@ -1,5 +1,25 @@
-<? foreach ($people as $current): ?>
-  <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
+<? if (count($people) < 1): ?>
+  <p>No people listed in this database yet.</p>
+<? else: ?>
+  <? $currentLetter = false; ?>
+  <? foreach ($people as $count=>$current): ?>
+    <? $first = $this->firstletter($current['Last_Name']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if($count === 0): ?>
+        <h2>
+          <?=$this->escapeHtml($currentLetter)?>
+          <? $letters = range($first === 'A' ? 'B':'A', 'Z'); ?>
+          <? foreach($letters as $l): ?>
+            <a href="#<?=$l ?>"><?=$l ?></a>
+          <? endforeach ?>
+        </h2>
+      <? else: ?>
+        <a id="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <?endif?>
+    <? endif; ?>
+  <a class="person" href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
     <?=$this->showPerson($current)?>
   </a><br />
-<? endforeach; ?>
+  <? endforeach; ?>
+<? endif; ?>

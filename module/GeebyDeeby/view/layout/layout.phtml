@@ -34,6 +34,7 @@
       <h1><?=$this->layout()->title ?></h1>
       <div class="content">
         <? echo $this->content; ?>
+        <?=$this->render('partials/modal.phtml')?>
       </div>
       <footer>
         <?=$this->render('partials/footer.phtml')?>

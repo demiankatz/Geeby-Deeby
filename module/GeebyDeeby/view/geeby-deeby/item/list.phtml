@@ -4,9 +4,16 @@
 <? if (count($items) < 1): ?>
   <p>No items listed in this database yet.</p>
 <? else: ?>
-  <? $currentLetter = false; foreach ($items as $current): ?>
-    <? $first = $this->firstletter($current['Item_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+  <h2>
+    <?=$this->firstLetterMenu($items, 'Item_Name'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($items as $i=>$current): ?>
+    <? $first = $this->firstletter($current['Item_Name']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
     <? endif; ?>
     <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
       <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
