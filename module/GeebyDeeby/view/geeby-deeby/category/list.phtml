@@ -14,7 +14,7 @@
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
       <? endif ?>
     <? endif; ?>
-    <a href="<?=$this->url('categories', array('id' => $current['Category_ID']))?>">
+    <a href="<?=$this->url('category', array('id' => $current['Category_ID']))?>">
       <?=$this->escapeHtml($this->fixtitle($current['Category']))?>
     </a><br />
   <? endforeach; ?>

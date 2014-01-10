@@ -9,7 +9,7 @@
   <li><a href="#imprints-tab"><span>Imprints</span></a></li>
 </ul>
 <div class="tab-content">
-  <div id="addr-tab" class="edit_tab_contents">
+  <div id="addr-tab" class="tab-pane active">
     <div class="edit_container">
       <table class="edit">
         <tr><th>Country:</th><td><?=$this->render('geeby-deeby/edit-country/select.phtml')?></td></tr>
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <div id="imprints-tab" class="edit_tab_contents">
+  <div id="imprints-tab" class="tab-pane">
     <b>Imprint:</b> <input type="text" id="Imprint" />
     <button onclick="addImprint();">Add</button>
     <div id="imprint_list">
