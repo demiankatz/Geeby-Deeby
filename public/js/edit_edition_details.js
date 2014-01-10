@@ -854,39 +854,45 @@ function deletePlatform(platID)
 }
 
 // Load data and setup autocomplete.
-$.ajax({
-  url: basePath + "/Suggest/Item", 
-  success: function(data) {
-    $('.Item_ID').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
-});
-$.ajax({
-  url: basePath + "/Suggest/Note", 
-  success: function(data) {
-    $('.Note_ID').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
-});
-$.ajax({
-  url: basePath + "/Suggest/Person", 
-  success: function(data) {
-    $('.Person_ID').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
-});
-$.ajax({
-  url: basePath + "/Suggest/Series", 
-  success: function(data) {
-    $('.Series_ID').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
+$(document).ready(function() {
+  $('.Item_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Item?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Note_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Note?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Person_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Person?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Series_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Series?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
 });

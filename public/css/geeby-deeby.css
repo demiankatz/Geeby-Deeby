@@ -191,6 +191,11 @@ table td {padding-bottom:6px}
 .ui-autocomplete {
   max-width: 500px;
 }
+.ui-autocomplete .ui-menu-item a:hover {
+  background:transparent;
+  border:none;
+  cursor:pointer;
+}
 
 /* --- FOOTER --- */
 .fineprint {font-size:85%;margin-bottom:0}

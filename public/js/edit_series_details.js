@@ -619,39 +619,45 @@ function saveModifiedPublisher()
 }
 
 // Load data and setup autocomplete.
-$.ajax({
-  url: basePath + "/Suggest/Publisher", 
-  success: function(data) {
-    $('#Publisher_ID').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
-});
-$.ajax({
-  url: basePath + "/Suggest/Series", 
-  success: function(data) {
-    $('#trans_name').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
-});
-$.ajax({
-  url: basePath + "/Suggest/Item", 
-  success: function(data) {
-    $('#item_name').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
-});
-$.ajax({
-  url: basePath + "/Suggest/Note", 
-  success: function(data) {
-    $('.Note_ID').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
+$(document).ready(function() {
+  $('#Publisher_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Publisher?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('#trans_name').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Series?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('#item_name').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Item?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Note_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Note?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
 });

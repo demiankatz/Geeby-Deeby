@@ -219,12 +219,15 @@ function rejectComment(userID, seriesID)
 }
 
 // Load data and setup autocomplete.
-$.ajax({
-  url: basePath + "/Suggest/Person", 
-  success: function(data) {
-    $('.Person_ID').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
+$(document).ready(function() {
+  $('.Person_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Person?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
 });
