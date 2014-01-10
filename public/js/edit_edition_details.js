@@ -853,31 +853,40 @@ function deletePlatform(platID)
     }});
 }
 
-// Activate page controls on domready:
-$(document).ready(function(){
-    // Turn on tabs
-    $("#tabs").tabs();
-    $("#tabs").tabs('paging', {cycle: true});
-
-    // Turn on autocomplete
-    var options = {
-        url: basePath + "/Suggest/Item",
-        highlight: false
-    };
-    $('.Item_ID').autocomplete(options);
-    options = {
-        url: basePath + "/Suggest/Note",
-        highlight: false
-    };
-    $('.Note_ID').autocomplete(options);
-    options = {
-        url: basePath + "/Suggest/Person",
-        highlight: false
-    };
-    $('.Person_ID').autocomplete(options);
-    options = {
-        url: basePath + "/Suggest/Series",
-        highlight: false
-    };
-    $('.Series_ID').autocomplete(options);
+// Load data and setup autocomplete.
+$.ajax({
+  url: basePath + "/Suggest/Item", 
+  success: function(data) {
+    $('.Item_ID').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
+});
+$.ajax({
+  url: basePath + "/Suggest/Note", 
+  success: function(data) {
+    $('.Note_ID').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
+});
+$.ajax({
+  url: basePath + "/Suggest/Person", 
+  success: function(data) {
+    $('.Person_ID').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
+});
+$.ajax({
+  url: basePath + "/Suggest/Series", 
+  success: function(data) {
+    $('.Series_ID').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
 });

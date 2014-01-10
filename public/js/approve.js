@@ -218,11 +218,13 @@ function rejectComment(userID, seriesID)
     }, 'json');
 }
 
-// Activate page controls on domready:
-$(document).ready(function(){
-    options = {
-        url: basePath + "/Suggest/Person",
-        highlight: false
-    };
-    $('.Person_ID').autocomplete(options);
+// Load data and setup autocomplete.
+$.ajax({
+  url: basePath + "/Suggest/Person", 
+  success: function(data) {
+    $('.Person_ID').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
 });

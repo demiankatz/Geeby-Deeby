@@ -618,30 +618,40 @@ function saveModifiedPublisher()
     }, 'json');
 }
 
-// Activate page controls on domready:
-$(document).ready(function(){
-    // Turn on tabs
-    $("#tabs").tabs();
-
-    // Turn on autocomplete
-    var options = {
-        url: basePath + "/Suggest/Publisher",
-        highlight: false
-    };
-    $('#Publisher_ID').autocomplete(options);
-    var options = {
-        url: basePath + "/Suggest/Series",
-        highlight: false
-    };
-    $('#trans_name').autocomplete(options);
-    var options = {
-        url: basePath + "/Suggest/Item",
-        highlight: false
-    };
-    $('#item_name').autocomplete(options);
-    var options = {
-        url: basePath + "/Suggest/Note",
-        highlight: false
-    };
-    $('.Note_ID').autocomplete(options);
+// Load data and setup autocomplete.
+$.ajax({
+  url: basePath + "/Suggest/Publisher", 
+  success: function(data) {
+    $('#Publisher_ID').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
+});
+$.ajax({
+  url: basePath + "/Suggest/Series", 
+  success: function(data) {
+    $('#trans_name').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
+});
+$.ajax({
+  url: basePath + "/Suggest/Item", 
+  success: function(data) {
+    $('#item_name').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
+});
+$.ajax({
+  url: basePath + "/Suggest/Note", 
+  success: function(data) {
+    $('.Note_ID').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
 });

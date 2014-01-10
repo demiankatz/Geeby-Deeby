@@ -151,11 +151,13 @@ function deletePseudonym(relatedID)
     }});
 }
 
-// Activate autocomplete when DOM is ready:
-$(document).ready(function(){
-    var options = {
-        url: basePath + "/Suggest/Person",
-        highlight: false
-    };
-    $('#pseudo_name').autocomplete(options);
+// Load data and setup autocomplete.
+$.ajax({
+  url: basePath + "/Suggest/Person", 
+  success: function(data) {
+    $('#pseudo_name').autocomplete({
+      source: data.split('\n'),
+      highlight: false
+    });
+  }
 });
