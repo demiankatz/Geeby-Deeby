@@ -4,7 +4,7 @@
   <h2>
     <?=$this->firstLetterMenu($people, 'Last_Name'); ?>
   </h2>
-  <? $currentLetter = false; foreach ($tags as $i=>$current): ?>
+  <? $currentLetter = false; foreach ($people as $i=>$current): ?>
     <? $first = $this->firstletter($current['Last_Name']); ?>
     <? if ($currentLetter !== $first): $currentLetter = $first; ?>
       <? if ($i > 0): ?>
