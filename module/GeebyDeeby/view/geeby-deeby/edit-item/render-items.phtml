@@ -1,3 +1,17 @@
-<? foreach ($items as $current): ?>
-  <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>"><?=$this->escapeHtml($current['Item_Name'])?></a><br />
-<? endforeach; ?>
+<? if (count($items) < 1): ?>
+  <p>No items listed in this database yet.</p>
+<? else: ?>
+  <h2>
+    <?=$this->firstLetterMenu($items, 'Item_Name'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($tags as $i=>$current): ?>
+    <? $first = $this->firstletter($current['Item_Name']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
+    <? endif; ?>
+    <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>"><?=$this->escapeHtml($current['Item_Name'])?></a><br />
+  <? endforeach; ?>
+<? endif; ?>

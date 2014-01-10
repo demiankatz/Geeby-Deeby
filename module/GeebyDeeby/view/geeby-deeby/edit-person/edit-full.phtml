@@ -1,6 +1,5 @@
-<? $this->headTitle('Person Editor - ') ?>
+<? $this->layout()->title = 'Edit Person' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/edit_person.js') ?>
-<h1>Edit Person</h1>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-person/index.phtml')?>
 </div>
@@ -13,19 +12,18 @@
 <input id="pseudo_name" />
 <button onclick="saveRelationship();">Add Relationship</button>
 </div>
-<table>
-  <tr>
-    <td>
-      <b>Pseudonym For:</b>
-      <div id="realname_list">
-        <?=$this->render('geeby-deeby/edit-person/realname-list.phtml')?>
-      </div>
-    </td>
-    <td>
-      <b>Pseudonym(s):</b>
-      <div id="pseudonym_list">
-        <?=$this->render('geeby-deeby/edit-person/pseudonym-list.phtml')?>
-      </div>
-    </td>
-  </tr>
-</table>
+<hr/>
+<div class="row">
+  <div class="col-md-3">
+    <b>Pseudonym For:</b>
+    <div id="realname_list">
+      <?=$this->render('geeby-deeby/edit-person/realname-list.phtml')?>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <b>Pseudonym(s):</b>
+    <div id="pseudonym_list">
+      <?=$this->render('geeby-deeby/edit-person/pseudonym-list.phtml')?>
+    </div>
+  </div
+</div>

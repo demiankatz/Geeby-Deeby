@@ -1,8 +1,6 @@
 <?
-    $this->headTitle('Edit ' . ucwords($list) . ' List - ');
+    $this->layout()->title = 'Edit ' . ucwords($list) . ' List';
 ?>
-<h1>Edit <?=ucwords($list)?> List</h1>
-
 <? if ($existing): ?>
   <p class="disclaimer">This item is already on your <?=$list?> list.  If you wish, you may add or edit the
   comment and click Submit to save the changes.  Alternatively, you can click Delete to remove the item

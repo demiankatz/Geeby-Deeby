@@ -1,11 +1,8 @@
 <?
     $title = $this->fixtitle($item['Item_Name']);
-    $this->headTitle('Item - ' . $title . ' - ');
+    $this->layout()->title = 'Item - ' . $title;
 ?>
-<h1><?=$this->escapeHtml($title)?></h1>
-
 <?=$this->render('partials/images.phtml')?>
-
 <table class="item">
   <? if (count($fullText) > 0): ?>
     <tr>
