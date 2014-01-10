@@ -152,12 +152,15 @@ function deletePseudonym(relatedID)
 }
 
 // Load data and setup autocomplete.
-$.ajax({
-  url: basePath + "/Suggest/Person", 
-  success: function(data) {
-    $('#pseudo_name').autocomplete({
-      source: data.split('\n'),
-      highlight: false
-    });
-  }
+$(document).ready(function() {
+  $('#pseudo_name').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Person?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  })
 });
