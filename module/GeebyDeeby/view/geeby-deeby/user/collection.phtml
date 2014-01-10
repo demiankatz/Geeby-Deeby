@@ -9,7 +9,7 @@
 <? else: ?>
   <? foreach ($collection as $language => $series_data): ?>
     <h2 class="language">Items in <?=$this->escapeHtml($language)?></h2>
-    <table class="collection">
+    <table class="table table-striped">
       <? foreach ($series_data as $series => $parts): ?>
         <tr>
           <td class="series"><a href="<?=$this->url('series', array('id' => $series))?>"><?=$this->escapeHtml($this->fixtitle($seriesNames[$series]))?></a></td>
