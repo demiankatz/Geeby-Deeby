@@ -2,10 +2,10 @@
   <p>No tags listed in this database yet.</p>
 <? else: ?>
   <h2>
-    <?=$this->firstLetterMenu($tags, 'Publisher_Name'); ?>
+    <?=$this->firstLetterMenu($tags, 'Tag'); ?>
   </h2>
   <? $currentLetter = false; foreach ($tags as $i=>$current): ?>
-    <? $first = $this->firstletter($current['Publisher_Name']); ?>
+    <? $first = $this->firstletter($current['Tag']); ?>
     <? if ($currentLetter !== $first): $currentLetter = $first; ?>
       <? if ($i > 0): ?>
         <a name="<?=$this->escapeHtml($currentLetter)?>"/>
