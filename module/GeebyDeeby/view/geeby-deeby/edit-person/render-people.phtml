@@ -12,6 +12,8 @@
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
       <? endif; ?>
     <? endif; ?>
-    <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>"><?=$this->escapeHtml($current['Last_Name'])?></a><br />
+    <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
+      <?=$this->escapeHtml($this->showperson($current))?>
+    </a><br />
   <? endforeach; ?>
 <? endif; ?>
