@@ -32,20 +32,26 @@
 <h2 style="text-align:center">Previous Episodes</h2>
 <div class="row" style="text-align:center">
   <div class="col-sm-6">
-    <? next($episodes['mittie']) ?>
-    <? while($this->latest = current($episodes['mittie'])): ?>
-      <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
-      <hr/>
+    <? if(count($episodes['mittie']) > 1): ?>
       <? next($episodes['mittie']) ?>
-    <? endwhile; ?>
+      <? while($this->latest = current($episodes['mittie'])): ?>
+        <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+        <hr/>
+        <? next($episodes['mittie']) ?>
+      <? endwhile; ?>
+      <a href="<?=$this->url('podcast-mitties')?>">More...</a>
+    <? endif; ?>
   </div>
   <div class="col-sm-6">
-    <? next($episodes['professor']) ?>
-    <? while($this->latest = current($episodes['professor'])): ?>
-      <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
-      <hr/>
+    <? if(count($episodes['professor']) > 1): ?>
       <? next($episodes['professor']) ?>
-    <? endwhile; ?>
+      <? while($this->latest = current($episodes['professor'])): ?>
+        <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+        <hr/>
+        <? next($episodes['professor']) ?>
+      <? endwhile; ?>
+      <a href="<?=$this->url('podcast-professor')?>">More...</a>
+    <? endif; ?>
   </div>
 </div>
 
