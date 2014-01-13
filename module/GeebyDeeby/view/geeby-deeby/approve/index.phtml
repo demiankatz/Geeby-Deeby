@@ -1,7 +1,6 @@
-<? $this->headTitle('Approve New Users / Content - ') ?>
+<? $this->layout()->title = 'Approve New Users / Content' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/approve.js') ?>
 <? $displayedSomething = false; ?>
-<h1>Approve New Users / Content</h1>
 <? if (count($newUsers) > 0): $displayedSomething = true; ?>
   <h2>New Users</h2>
   <table>

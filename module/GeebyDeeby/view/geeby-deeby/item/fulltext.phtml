@@ -1,8 +1,6 @@
 <?
-    $this->headTitle('Items with Full Text - ');
+    $this->layout()->title = 'Items with Full Text'
 ?>
-<h1>Items with Full Text</h1>
-
 <? if ($fuzzy): ?>
   <p>Showing fuzzy matches; switch to <a href="?fuzzy=0">exact matches</a> to only show links where the online text exactly matches the listed edition.</p>
 <? else: ?>

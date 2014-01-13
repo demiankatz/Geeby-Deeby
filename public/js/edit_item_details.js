@@ -867,36 +867,66 @@ function copyEdition()
     }, 'json');
 }
 
-// Activate page controls on domready:
-$(document).ready(function(){
-    // Turn on tabs
-    $("#tabs").tabs();
-    $("#tabs").tabs('paging', {cycle: true});
-
-    // Turn on autocomplete
-    var options = {
-        url: basePath + "/Suggest/Item",
-        highlight: false
-    };
-    $('.Item_ID').autocomplete(options);
-    options = {
-        url: basePath + "/Suggest/Note",
-        highlight: false
-    };
-    $('.Note_ID').autocomplete(options);
-    options = {
-        url: basePath + "/Suggest/Person",
-        highlight: false
-    };
-    $('.Person_ID').autocomplete(options);
-    options = {
-        url: basePath + "/Suggest/Series",
-        highlight: false
-    };
-    $('.Series_ID').autocomplete(options);
-    options = {
-        url: basePath + "/Suggest/Tag",
-        highlight: false
-    };
-    $('.Tag_ID').autocomplete(options);
+// Load data and setup autocomplete.
+$(document).ready(function() {
+  $('#pseudo_name').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Person?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Item_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Item?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Note_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Note?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Person_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Person?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Series_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Series?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Tag_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Tag?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
 });

@@ -1,10 +1,8 @@
 <?
     $title = $publisher['Publisher_Name'];
-    $this->headTitle('Publisher - ' . $title . ' - ');
+    $this->layout()->title = 'Publisher - ' . $title;
     $displayedSomething = false;
 ?>
-<h1><?=$this->escapeHtml($title)?></h1>
-
 <? if (count($series) < 1): ?>
   <p>No information is available about this publisher.</p>
 <? else: ?>

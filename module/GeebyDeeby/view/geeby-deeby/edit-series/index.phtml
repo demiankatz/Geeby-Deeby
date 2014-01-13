@@ -1,13 +1,13 @@
-<div id="editForm">
+<div id="editForm" style="width:100%">
   <input type="hidden" id="Series_ID" value="<?=$series['Series_ID']?>" />
-  <table class="edit">
+  <table class="edit" style="width:100%">
     <tr>
-      <th>Series Name:</th>
+      <th width="20%">Series Name:</th>
       <td><input type="text" id="Series_Name" value="<?=isset($series['Series_Name']) ? $this->escapeHtml($series['Series_Name']) : ''?>" /></td>
     </tr>
     <tr>
       <th>Description:</th>
-      <td><textarea id="Series_Description"><?=isset($series['Series_Description']) ? $this->escapeHtml($series['Series_Description']) : ''?></textarea></td>
+      <td><textarea style="width:100%" rows="6" id="Series_Description"><?=isset($series['Series_Description']) ? $this->escapeHtml($series['Series_Description']) : ''?></textarea></td>
     </tr>
     <tr>
       <th>Language:</th>

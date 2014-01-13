@@ -618,30 +618,46 @@ function saveModifiedPublisher()
     }, 'json');
 }
 
-// Activate page controls on domready:
-$(document).ready(function(){
-    // Turn on tabs
-    $("#tabs").tabs();
-
-    // Turn on autocomplete
-    var options = {
-        url: basePath + "/Suggest/Publisher",
-        highlight: false
-    };
-    $('#Publisher_ID').autocomplete(options);
-    var options = {
-        url: basePath + "/Suggest/Series",
-        highlight: false
-    };
-    $('#trans_name').autocomplete(options);
-    var options = {
-        url: basePath + "/Suggest/Item",
-        highlight: false
-    };
-    $('#item_name').autocomplete(options);
-    var options = {
-        url: basePath + "/Suggest/Note",
-        highlight: false
-    };
-    $('.Note_ID').autocomplete(options);
+// Load data and setup autocomplete.
+$(document).ready(function() {
+  $('#Publisher_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Publisher?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('#trans_name').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Series?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('#item_name').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Item?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
+  $('.Note_ID').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: basePath + "/Suggest/Note?q=" + request.term, 
+        success: function(data) {
+          response(data.split('\n').slice(0, -1));
+        }
+      });
+    }
+  });
 });

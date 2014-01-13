@@ -1,4 +1,4 @@
-<h1>Main Menu</h1>
+<? $this->layout()->title = 'Main Menu' ?>
 <h2>Database</h2>
 <p>List Series
   [<a href="<?=$this->url('series')?>">by name</a>,
@@ -26,12 +26,8 @@
 <p><a href="<?=$this->url('links')?>">List Links</a></p>
 
 <h2>Users</h2>
-<p>
-  <a href="<?=$this->url('users')?>">List Registered Users</a><br />
-  <a href="<?=$this->url('reviews')?>">Browse Recent Reviews</a>
-</p>
+<p><a href="<?=$this->url('users')?>">List Registered Users</a></p>
+<p><a href="<?=$this->url('reviews')?>">Browse Recent Reviews</a></p>
 
 <h2>Frequently Asked Questions</h2>
-<p>
-  <a href="<?=$this->url('faqs')?>">List All</a>
-</p>
+<p><a href="<?=$this->url('faqs')?>">List All</a></p>

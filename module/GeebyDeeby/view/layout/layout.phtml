@@ -3,12 +3,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <? echo $this->headTitle($this->config('siteTitle')) ?>
+    <? echo $this->headTitle($this->layout()->title .' - '. $this->config('siteTitle')) ?>
 
     <? echo $this->headLink()
-           ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-autocomplete.css')
-           ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-1.7.2.custom.css')
-           ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
+            ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-1.7.2.custom.css')
+            ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
+            ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+            ->prependStylesheet($this->basePath() . '/css/fonts.css')
     ?>
 
     <?
@@ -16,15 +17,27 @@
       $this->headScript()->prependScript("basePath = '" . rtrim($this->basePath(), '/') . "';");
     ?>
 
-    <? echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
-           ->prependFile($this->basePath() . '/js/jquery-ui-autocomplete.js')
-           ->prependFile($this->basePath() . '/js/jquery-ui-1.7.2.custom.min.js')
+    <? echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9'))
+           ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+           ->prependFile($this->basePath() . '/js/jquery-ui.js')
            ->prependFile($this->basePath() . '/js/jquery.js');
     ?>
   </head>
   <body>
-    <?=$this->render('partials/header.phtml')?>
-    <? echo $this->content; ?>
-    <?=$this->render('partials/footer.phtml')?>
+    <header>
+      <div class="container">
+        <?=$this->render('partials/header.phtml')?>
+      </div>
+    </header>
+    <div class="container main">
+      <h1><?=$this->layout()->title ?></h1>
+      <div class="content">
+        <? echo $this->content; ?>
+        <?=$this->render('partials/modal.phtml')?>
+      </div>
+      <footer>
+        <?=$this->render('partials/footer.phtml')?>
+      </footer>
+    </div>
   </body>
 </html>

@@ -1,9 +1,7 @@
 <?
     $title = $user['Username'];
-    $this->headTitle('Have/Want Lists - ' . $title . ' - ');
+    $this->layout()->title = 'Have/Want Lists - ' . $title;
 ?>
-<h1>Have/Want Lists - <?=$this->escapeHtml($title)?></h1>
-
 <p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>
 
 <? if (count($collection) < 1): ?>
@@ -11,7 +9,7 @@
 <? else: ?>
   <? foreach ($collection as $language => $series_data): ?>
     <h2 class="language">Items in <?=$this->escapeHtml($language)?></h2>
-    <table class="collection">
+    <table class="table table-striped">
       <? foreach ($series_data as $series => $parts): ?>
         <tr>
           <td class="series"><a href="<?=$this->url('series', array('id' => $series))?>"><?=$this->escapeHtml($this->fixtitle($seriesNames[$series]))?></a></td>
