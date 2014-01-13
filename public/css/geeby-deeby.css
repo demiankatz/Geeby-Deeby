@@ -5,10 +5,10 @@ body {
   font-size:15px;
 }
 .container.main {
-  background:#F3E3C6;
   padding:0;
 }
 .content {
+  background:#F3E3C6;
   border:2px solid #774E03;
   border-width:0 2px 2px 2px;
   margin:0;
@@ -203,21 +203,28 @@ footer {
   background:#F3D69C;
   color:#431;
   font-size:10pt;
-  padding-top:10px;
+  padding:10px 2px;
+}
+.media-icon {
+  margin:2px -2px 0 2px;
+  height:16px;
+  width:16px;
+  vertical-align:top;
+  z-index:3;
 }
 
 table.signup tr th, table.signup tr td {
-    text-align: left;
+  text-align: left;
 }
 
 .siteTitle {
-    font-size: 150%;
-    font-weight: bold;
-    float: left;
+  font-size: 150%;
+  font-weight: bold;
+  float: left;
 }
 
 img {
-    border: 0;
+  border: 0;
 }
 
 /* --- MODAL --- */
