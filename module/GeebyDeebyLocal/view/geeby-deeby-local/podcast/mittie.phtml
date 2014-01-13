@@ -9,11 +9,13 @@
 <h2>Latest Episode</h2>
 <? $this->latest = current($episodes) ?>
 <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
-    
-<h2>Previous Episodes</h2>
-<? next($episodes) ?>
-<? while($this->latest = current($episodes)): ?>
-  <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
-  <hr/>
+
+<? if(count($episodes) > 1): ?>
+  <h2>Previous Episodes</h2>
   <? next($episodes) ?>
-<? endwhile; ?>
+  <? while($this->latest = current($episodes)): ?>
+    <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+    <hr/>
+    <? next($episodes) ?>
+  <? endwhile; ?>
+<? endif; ?>
