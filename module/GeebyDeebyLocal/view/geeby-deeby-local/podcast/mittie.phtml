@@ -1,8 +1,19 @@
 <? $this->layout()->title = 'Mittie\'s Storytime' ?>
 
-<img src="/images/mittie-text.png" alt="Mittie's Storytime" />
+<div style="text-align:center">
+  <img src="/images/mittie-text.png" style="display:block;margin:auto" alt="Mittie's Storytime" />
 
-<p>Mittie's Storytime is a collection of audio editions of dime novel fiction.
-It is part of the <a href="<?=$this->url('podcast')?>">Spare Change Library</a>.</p>
+  <p>Mittie's Storytime is a collection of audio editions of dime novel fiction. It is part of the <a href="<?=$this->url('podcast')?>">Spare Change Library</a>.</p>
+</div>
 
-<?=$this->partial('geeby-deeby-local/podcast/latest.phtml')?>
+<h2>Latest Episode</h2>
+<? $this->latest = current($episodes) ?>
+<?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+    
+<h2>Previous Episodes</h2>
+<? next($episodes) ?>
+<? while($this->latest = current($episodes)): ?>
+  <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+  <hr/>
+  <? next($episodes) ?>
+<? endwhile; ?>

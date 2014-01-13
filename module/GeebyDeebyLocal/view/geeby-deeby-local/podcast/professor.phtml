@@ -1,8 +1,19 @@
 <? $this->layout()->title = 'Professor M\'s Lecture Series' ?>
 
-<img src="/images/professor-text.png" alt="Professor M's Lecture Series" />
+<div style="text-align:center">
+  <img src="/images/professor-text.png" alt="Professor M's Lecture Series" />
 
-<p>Professor M's Lecture Series is a collection of oral history about dime novels and popular literature.
-It is part of the <a href="<?=$this->url('podcast')?>">Spare Change Library</a>.</p>
+  <p>Professor M's Lecture Series is a collection of oral history about dime novels and popular literature. It is part of the <a href="<?=$this->url('podcast')?>">Spare Change Library</a>.</p>
+</div>
 
-<?=$this->partial('geeby-deeby-local/podcast/latest.phtml')?>
+<h2>Latest Episode</h2>
+<? $this->latest = current($episodes) ?>
+<?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+    
+<h2>Previous Episodes</h2>
+<? next($episodes['professor']) ?>
+<? while($this->latest = current($episodes)): ?>
+  <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+  <hr/>
+  <? next($episodes['professor']) ?>
+<? endwhile; ?>

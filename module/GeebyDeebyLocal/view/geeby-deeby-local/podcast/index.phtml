@@ -2,25 +2,51 @@
 
 <p>The Spare Change Library is the dime novel and popular literature podcast, featuring audio editions of stories, as well as scholarship. The podcast is broken into "substreams" based on the content. We currently have two of these substreams: Mittie's Storytime (fiction) and Professor M's Lecture Series (scholarship). These are all available through a shared <a href="<?=$this->url('podcast-rss')?>">RSS feed</a>.</p>
 
-<p>The Spare Change Library is produced by Lancelot Darling & Friends (named after the hero of Mrs. Alex. McVeigh Miller's <i>The Bride of the Tomb</i>).</p>
+<p>The Spare Change Library is produced by Lancelot Darling &amp; Friends (named after the hero of Mrs. Alex. McVeigh Miller's <i>The Bride of the Tomb</i>).</p>
 
 <p>For glimpses of behind-the-scenes action, check out the <a href="http://lancelotdarling.wordpress.com/">production blog</a>.</p>
 
 <!-- <div style="text-align: center;"><img alt="Spare Change Library logo" src="<?=$this->url('home')?>images/spl-logo.png" /></div> -->
 
-<table style="width: 100%;">
-<tr><td style="width: 50%; text-align: center;">
-<a href="<?=$this->url('podcast-mitties')?>"><img src="/images/mittie-text.png" alt="Mittie's Storytime" /></a>
-</td><td style="text-align: center;">
-<a href="<?=$this->url('podcast-professor')?>"><img src="/images/professor-text.png" alt="Professor M's Lecture Series" /></a>
-</td></tr>
-<tr><td style="text-align: center;">
-<p><a href="<?=$this->url('podcast-mitties')?>">Mittie's Storytime</a> is a collection of audio editions of dime novel fiction.</p>
-</td><td style="text-align: center;">
-<p><a href="<?=$this->url('podcast-professor')?>">Professor M's Lecture Series</a> is a collection of oral history about dime novels and popular literature.</p>
-</td></tr>
-</table>
+<div class="row" style="text-align:center">
+  <div class="col-sm-6">
+    <a href="<?=$this->url('podcast-mitties')?>"><img src="/images/mittie-text.png" alt="Mittie's Storytime" /></a>
+    <p><a href="<?=$this->url('podcast-mitties')?>">Mittie's Storytime</a> is a collection of audio editions of dime novel fiction.</p>
+  </div>
+  <div class="col-sm-6">
+    <a href="<?=$this->url('podcast-professor')?>"><img src="/images/professor-text.png" alt="Professor M's Lecture Series" /></a>
+    <p><a href="<?=$this->url('podcast-professor')?>">Professor M's Lecture Series</a> is a collection of oral history about dime novels and popular literature.</p>
+  </div>
+</div>
+<h2 style="text-align:center">Latest Episodes</h2>
+<div class="row" style="text-align:center">
+  <div class="col-sm-6">
+    <? $this->latest = current($episodes['mittie']) ?>
+    <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+  </div>
+  <div class="col-sm-6">
+    <? $this->latest = current($episodes['professor']) ?>
+    <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+  </div>
+</div>
+<h2 style="text-align:center">Previous Episodes</h2>
+<div class="row" style="text-align:center">
+  <div class="col-sm-6">
+    <? next($episodes['mittie']) ?>
+    <? while($this->latest = current($episodes['mittie'])): ?>
+      <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+      <hr/>
+      <? next($episodes['mittie']) ?>
+    <? endwhile; ?>
+  </div>
+  <div class="col-sm-6">
+    <? next($episodes['professor']) ?>
+    <? while($this->latest = current($episodes['professor'])): ?>
+      <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
+      <hr/>
+      <? next($episodes['professor']) ?>
+    <? endwhile; ?>
+  </div>
+</div>
 
 <!-- ___ is a collection of audio editions of nonfiction popular literature. -->
-
-<?=$this->partial('geeby-deeby-local/podcast/latest.phtml')?>

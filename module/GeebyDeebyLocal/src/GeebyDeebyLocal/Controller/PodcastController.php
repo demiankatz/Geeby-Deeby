@@ -47,7 +47,10 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     public function indexAction()
     {
         return $this->createViewModel(
-            array('latest' => current($this->getPodcastMetadata(1)))
+            array('episodes' => array(
+                'mittie'    => $this->getPodcastMetadata(4, 'Mittie\'s Storytime'),
+                'professor' => $this->getPodcastMetadata(4, 'Professor M\'s Lecture Series'),
+            ))
         );
     }
 
@@ -73,10 +76,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         return $this->createViewModel(
             array(
-                'latest' =>
-                    current(
-                        $this->getPodcastMetadata(1, 'Mittie\'s Storytime')
-                    )
+              'episodes' => $this->getPodcastMetadata(0, 'Mittie\'s Storytime')
             )
         );
     }
@@ -90,10 +90,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         return $this->createViewModel(
             array(
-                'latest' =>
-                    current(
-                        $this->getPodcastMetadata(1, 'Professor M\'s Lecture Series')
-                    )
+              'episodes' => $this->getPodcastMetadata(0, 'Professor M\'s Lecture Series')
             )
         );
     }
