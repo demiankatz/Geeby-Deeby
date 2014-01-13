@@ -1,13 +1,15 @@
-<div class="footer">
-  <p>
-    Comments/questions/corrections?  Contact <a href="mailto:demian.katz@villanova.edu">Demian Katz</a>
-    or read <a href="<?=$this->url('about')?>">About the Project</a>.<br />
-    Want to learn more?  View the <a href="http://exhibits.library.villanova.edu/dime-novels">online exhibit</a> or listen to our <a href="<?=$this->url('podcast')?>">podcast</a>.<br />
-    Follow us on <a href="https://www.facebook.com/dimenovels"><img src="/images/facebook.png" /></a> <a href="https://www.facebook.com/dimenovels">Facebook</a> and <a href="https://twitter.com/DimeNovelBiblio"><img src="/images/twitter.png" /></a> <a href="https://twitter.com/DimeNovelBiblio">Twitter</a>.<br />
-    <a href="<?=$this->basePath()?>"><?=$this->escapeHtml($this->layout()->siteTitle)?></a>
-    Site &copy; 2012-<?=$this->escapeHtml(date('Y'))?> dimenovels.org. All rights reserved.<br />
-    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />
-    Bibliography content and podcast licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.<br />
-    Powered by <a href="https://github.com/demiankatz/Geeby-Deeby">Geeby-Deeby</a>.
-  </p>
+<div class="grid">
+  <div class="col-sm-6">
+    <p>Comments/questions/corrections?  Contact <a href="mailto:demian.katz@villanova.edu">Demian Katz</a>
+    or read <a href="<?=$this->url('about')?>">About the Project</a>.</p>
+    <p>Want to learn more?  View the <a href="http://exhibits.library.villanova.edu/dime-novels">online exhibit</a> or listen to our <a href="<?=$this->url('podcast')?>">podcast</a>.</p>
+    <p>Follow us on <a href="https://www.facebook.com/dimenovels"><img class="media-icon" src="<?=$this->url('home')?>/images/facebook.png"/></a> <a href="https://www.facebook.com/dimenovels">Facebook</a> and <a href="https://twitter.com/DimeNovelBiblio"><img class="media-icon" src="<?=$this->url('home')?>/images/twitter.png"/></a> <a href="https://twitter.com/DimeNovelBiblio">Twitter</a>.</p>
+    <p><a href="<?=$this->basePath()?>"><?=$this->escapeHtml($this->layout()->siteTitle)?></a>
+    Site &copy; 2012-<?=$this->escapeHtml(date('Y'))?> dimenovels.org. All rights reserved.</p>
+  </div>
+  <div class="col-sm-6" style="text-align:right">
+    <p>Bibliography content and podcast licensed under a<br/><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</p>
+    <p><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a></p>
+    <p>Powered by <a href="https://github.com/demiankatz/Geeby-Deeby">Geeby-Deeby</a>.</p>
+  </div>
 </div>
