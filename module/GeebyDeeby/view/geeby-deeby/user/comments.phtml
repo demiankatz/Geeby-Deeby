@@ -1,9 +1,7 @@
 <?
     $title = $user['Username'];
-    $this->headTitle('User Comments - ' . $title . ' - ');
+    $this->layout()->title = 'User Comments - ' . $title;
 ?>
-<h1>User Comments - <?=$this->escapeHtml($title)?></h1>
-
 <? if (count($comments) > 0): ?>
   <? $currentLetter = false; foreach ($comments as $current): ?>
     <? $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>

@@ -1,9 +1,7 @@
 <?
     $title = 'ISBN Details';
-    $this->headTitle($title . ' - ');
+    $this->layout()->title = $title;
 ?>
-<h1><?=$this->escapeHtml($title)?></h1>
-
 <? if (!$isbn->isValid()): ?>
   <p>Invalid ISBN!</p>
 <? else: ?>

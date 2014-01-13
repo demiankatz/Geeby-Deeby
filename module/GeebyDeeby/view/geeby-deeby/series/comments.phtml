@@ -1,8 +1,6 @@
 <?
-    $this->headTitle('Series with Comments - ');
+    $this->layout()->title = 'Series with Comments';
 ?>
-<h1>Series with Comments</h1>
-
 <? if (count($comments) > 0): ?>
   <? $currentLetter = false; foreach ($comments as $current): ?>
     <? $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>

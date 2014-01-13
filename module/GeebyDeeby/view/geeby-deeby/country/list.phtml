@@ -1,13 +1,19 @@
 <?
-    $this->headTitle('Country List - ');
+    $this->layout()->title = 'Country List';
 ?>
-<h1>Country List</h1>
 <? if (count($countries) < 1): ?>
   <p>No countries listed in this database yet.</p>
 <? else: ?>
-  <? $currentLetter = false; foreach ($countries as $current): ?>
-    <? $first = $this->firstletter($current['Country_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <h2><?=$this->escapeHtml($currentLetter)?></h2>
+  <h2>
+    <?=$this->firstLetterMenu($countries, 'Country_Name'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($countries as $i=>$current): ?>
+    <? $first = $this->firstletter($current['Country_Name']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
     <? endif; ?>
     <a href="<?=$this->url('country', array('id' => $current['Country_ID']))?>">
       <?=$this->escapeHtml($this->fixtitle($current['Country_Name']))?>

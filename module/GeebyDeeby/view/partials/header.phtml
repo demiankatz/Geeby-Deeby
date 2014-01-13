@@ -1,12 +1,14 @@
 <a style="clear: left;" class="siteTitle" href="<?=$this->url('home')?>"><img style="border: 0;" src="<?=$this->url('home')?>images/bib-logo.png" alt="The Edward T. LeBlanc Memorial Dime Novel Bibliography" /></a><br />
-<div class="headerControls">
-  <? if ($this->auth()->hasIdentity()): ?>
-    <a href="<?=$this->url('user', array('id' => $this->auth()->getIdentity()))?>">Account</a> ·
-    <a href="<?=$this->url('logout')?>">Log Out</a>
-  <? else: ?>
-    <a href="<?=$this->url('signup')?>">Sign Up</a> ·
-    <a href="<?=$this->url('login')?>">Log In</a>
-  <? endif; ?>
+<div class="headerRight">
+  <div class="account-links">
+    <? if ($this->auth()->hasIdentity()): ?>
+      <a href="<?=$this->url('user', array('id' => $this->auth()->getIdentity()))?>">Account</a> &bull;
+      <a href="<?=$this->url('logout')?>">Log Out</a> <span class="last"> &bull;</span>
+    <? else: ?>
+      <a href="<?=$this->url('signup')?>">Sign Up</a> &bull;
+      <a href="<?=$this->url('login')?>">Log In</a><span class="last"> &bull;</span>
+    <? endif; ?>
+  </div>
+  <?=$this->partial('partials/searchbox.phtml')?>
 </div>
-<?=$this->partial('partials/searchbox.phtml')?>
 <div style="clear: left;"><!-- empty --></div>

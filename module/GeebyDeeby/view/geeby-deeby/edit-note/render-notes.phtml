@@ -1,7 +1,19 @@
 <? if (count($notes) == 0): ?>
   <p>No notes defined yet.</p>
 <? else: ?>
-  <? foreach ($notes as $current): ?>
-    <a href="#" onclick="editNote(<?=$current['Note_ID']?>); return false;"><?=$this->escapeHtml($current['Note'])?></a><br />
+  <h2>
+    <?=$this->firstLetterMenu($notes, 'Note'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($notes as $i=>$current): ?>
+    <? $first = $this->firstletter($current['Note']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
+    <? endif; ?>
+    <a href="#" onClick="editNote(<?=$current['Note_ID'] ?>);return false">
+      <?=$this->escapeHtml($this->fixtitle($current['Note']))?>
+    </a><br />
   <? endforeach; ?>
 <? endif; ?>

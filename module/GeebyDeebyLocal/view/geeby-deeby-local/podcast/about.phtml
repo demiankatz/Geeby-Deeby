@@ -1,9 +1,8 @@
-<? $this->headTitle('Podcast - '); ?>
 <? if (!$details): ?>
-  <h1>Not found</h1>
+  <? $this->layout()->title = 'Not Found' ?>
   <p>The episode you requested does not exist.</p>
 <? else: ?>
-  <h1>The Spare Change Library</h1>
+  <? $this->layout()->title = 'The Spare Change Library' ?>
   <!-- <a href="<?=$this->url('podcast')?>"><img alt="Spare Change Library logo" src="<?=$this->url('home')?>images/spl-logo.png" /></a> -->
 
   <img alt="Cover" src="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($details['image'])?>" style="float: left; padding-right: 15px;" />

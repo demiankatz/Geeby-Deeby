@@ -1102,6 +1102,7 @@ return array(
         'invokables' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
+            'firstLetterMenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',

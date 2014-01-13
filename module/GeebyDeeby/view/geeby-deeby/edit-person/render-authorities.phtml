@@ -1,4 +1,4 @@
 <? foreach ($authorities as $current): ?>
-  <a href="#" onclick="editAuthority(<?=$this->escapeHtml($current['Authority_ID'])?>); return false;"><?=$this->escapeHtml($current['Authority_Name'])?></a><br />
+  <a href="#" onClick="editAuthority(<?=$current['Authority_ID'] ?>);return false"><?=$this->escapeHtml($current['Authority_Name'])?></a><br />
 <? endforeach; ?>
 <? if (count($authorities) == 0): ?>No authorities defined.<? endif; ?>

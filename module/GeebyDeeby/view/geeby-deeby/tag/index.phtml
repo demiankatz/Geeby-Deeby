@@ -1,10 +1,8 @@
 <?
     $title = $tag['Tag'];
-    $this->headTitle('Subject/Tag - ' . $title . ' - ');
+    $this->layout()->title = 'Subject/Tag - ' . $title;
     $displayedSomething = false;
 ?>
-<h1><?=$this->escapeHtml($title)?></h1>
-
 <? if (count($items) > 0): $displayedSomething = true; ?>
   <? $series = false; foreach ($items as $credit): ?>
     <? if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
