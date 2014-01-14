@@ -3,7 +3,7 @@
   <? foreach ($this->items as $i=>$current): ?>
     <div class="result row">
       <span class="number col-md-1"><?=$i+1 ?></span>
-      <a class="col-md-10" href="<?=$this->url('item', array('id' => $current[$this->prefix.'_ID']))?>">
+      <a class="col-md-10" href="<?=$this->url(strtolower($this->prefix), array('id' => $current[$this->prefix.'_ID']))?>">
         <?=$this->escapeHtml($this->fixtitle($current[$this->prefix.'_Name'] ?: $current[$this->prefix.'_AltName']))?>
       </a>
     </div>
