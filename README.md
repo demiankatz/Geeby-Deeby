@@ -1,13 +1,13 @@
 Geeby-Deeby
 ===========
 
-A bibliography and collection management system developed as the foundation for gamebooks.org.
+A bibliography and collection management system developed as the foundation for gamebooks.org and dimenovels.org.
 
 Installation
 ============
-The easiest way to get Geeby-Deeby running is to create a symbol link to /public in your system's /var/www.
+The easiest way to get Geeby-Deeby running is to create a symbolic link to /public in your system's /var/www.
 
-After that, you'll have to create a database:
+After that, you'll have to create a database using the script found in data/mysql.sql:
 
 Defaults:
 >
