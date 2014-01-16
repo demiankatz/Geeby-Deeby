@@ -1,36 +1,52 @@
-<div id="editEditionForm">
+<div id="editEditionForm" class="form-horizontal" role="form">
   <input type="hidden" id="Edition_ID" value="<?=$edition['Edition_ID']?>" />
-  <table class="edit">
-    <tr>
-      <th>Edition Name:</th>
-      <td><input type="text" id="Edition_Name" value="<?=isset($edition['Edition_Name']) ? $this->escapeHtml($edition['Edition_Name']) : ''?>" /></td>
-    </tr>
-    <tr>
-      <th>Description:</th>
-      <td><textarea id="Edition_Description"><?=isset($edition['Edition_Description']) ? $this->escapeHtml($edition['Edition_Description']) : ''?></textarea></td>
-    </tr>
-    <tr>
-      <th>Position:</th>
-      <td><input type="text" id="Position" value="<?=isset($edition['Position']) ? $this->escapeHtml($edition['Position']) : ''?>" /></td>
-    </tr>
-    <tr>
-      <th>Item:</th>
-      <td><input type="text" class="Item_ID" id="Item_ID" value="<?=isset($edition['Item_ID']) ? $this->escapeHtml($edition['Item_ID'] . ': ' . $item['Item_Name']) : ''?>" /></td>
-    </tr>
-    <tr>
-      <th>Series:</th>
-      <td><input type="text" class="Series_ID" id="Series_ID" value="<?=isset($edition['Series_ID']) ? $this->escapeHtml($edition['Series_ID'] . ': ' . $series['Series_Name']) : ''?>" /></td>
-    </tr>
-    <tr>
-      <th>Length:</th>
-      <td><input type="text" id="Edition_Length" value="<?=isset($edition['Edition_Length']) ? $this->escapeHtml($edition['Edition_Length']) : ''?>" /></td>
-    </tr>
-    <tr>
-      <th>Endings:</th>
-      <td><input type="text" id="Edition_Endings" value="<?=isset($edition['Edition_Endings']) ? $this->escapeHtml($edition['Edition_Endings']) : ''?>" /></td>
-    </tr>
-  </table>
-  <button id="save_edition" onclick="saveEdition();">Save</button>
+  <div class="form-group">
+    <label for="Edition_Name" class="col-sm-2 control-label">Edition Name:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" id="Edition_Name" value="<?=isset($edition['Edition_Name']) ? $this->escapeHtml($edition['Edition_Name']) : ''?>" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Edition_Description" class="col-sm-2 control-label">Description:</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" id="Edition_Description" rows="3"><?=isset($edition['Edition_Description']) ? $this->escapeHtml($edition['Edition_Description']) : ''?></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Position" class="col-sm-2 control-label">Position:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" id="Position" value="<?=isset($edition['Position']) ? $this->escapeHtml($edition['Position']) : ''?>" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Item_ID" class="col-sm-2 control-label">Item:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" class="Item_ID" id="Item_ID" value="<?=isset($edition['Item_ID']) ? $this->escapeHtml($edition['Item_ID'] . ': ' . $item['Item_Name']) : ''?>" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Series_ID" class="col-sm-2 control-label">Series:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" class="Series_ID" id="Series_ID" value="<?=isset($edition['Series_ID']) ? $this->escapeHtml($edition['Series_ID'] . ': ' . $series['Series_Name']) : ''?>" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Edition_Length" class="col-sm-2 control-label">Length:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" id="Edition_Length" value="<?=isset($edition['Edition_Length']) ? $this->escapeHtml($edition['Edition_Length']) : ''?>" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Edition_Endings" class="col-sm-2 control-label">Endings:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" id="Edition_Endings" value="<?=isset($edition['Edition_Endings']) ? $this->escapeHtml($edition['Edition_Endings']) : ''?>" />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button id="save_edition" onclick="saveEdition();">Save</button>
+    </div>
+  </div>
   <div id="save_edition_status"></div>
   <div id="nextAndPrev">
     <? if (isset($next) || isset($previous)): ?>

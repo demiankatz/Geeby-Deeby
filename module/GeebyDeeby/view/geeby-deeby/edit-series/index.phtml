@@ -1,19 +1,27 @@
-<div id="editForm" style="width:100%">
+<div id="editForm" class="form-horizontal" role="form">
   <input type="hidden" id="Series_ID" value="<?=$series['Series_ID']?>" />
-  <table class="edit" style="width:100%">
-    <tr>
-      <th width="20%">Series Name:</th>
-      <td><input type="text" id="Series_Name" value="<?=isset($series['Series_Name']) ? $this->escapeHtml($series['Series_Name']) : ''?>" /></td>
-    </tr>
-    <tr>
-      <th>Description:</th>
-      <td><textarea style="width:100%" rows="6" id="Series_Description"><?=isset($series['Series_Description']) ? $this->escapeHtml($series['Series_Description']) : ''?></textarea></td>
-    </tr>
-    <tr>
-      <th>Language:</th>
-      <td><?=$this->render('geeby-deeby/edit-language/select.phtml', array('languages' => $languages, 'selected' => isset($series['Language_ID']) ? $series['Language_ID'] : null))?></td>
-    </tr>
-  </table>
-  <button id="save_series" onclick="saveSeries();">Save</button>
+  <div class="form-group">
+    <label for="Series_Name" class="col-sm-2 control-label">Series Name:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" id="Series_Name" value="<?=isset($series['Series_Name']) ? $this->escapeHtml($series['Series_Name']) : ''?>" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Series_Description" class="col-sm-2 control-label">Description:</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" style="width:100%" rows="6" id="Series_Description"><?=isset($series['Series_Description']) ? $this->escapeHtml($series['Series_Description']) : ''?></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Language:</label>
+    <div class="col-sm-10">
+      <?=$this->render('geeby-deeby/edit-language/select.phtml', array('languages' => $languages, 'selected' => isset($series['Language_ID']) ? $series['Language_ID'] : null))?>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button id="save_series" onclick="saveSeries();">Save</button>
+    </div>
+  </div>
   <div id="save_series_status"></div>
 </div>
