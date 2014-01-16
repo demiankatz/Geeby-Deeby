@@ -1,34 +1,47 @@
-<div id="editItemForm">
+<div id="editItemForm" class="form-horizontal" role="form">
   <input type="hidden" id="Item_ID" value="<?=$item['Item_ID']?>" />
-  <table class="edit">
-    <tr>
-      <th>Material Type:</th>
-      <td><?=$this->render('geeby-deeby/edit-material-type/select.phtml', array('materials' => $materials, 'selected' => isset($item['Material_Type_ID']) ? $item['Material_Type_ID'] : null))?></td>
-    </tr>
-    <tr>
-      <th>Item Name:</th>
-      <td><input type="text" id="Item_Name" value="<?=isset($item['Item_Name']) ? $this->escapeHtml($item['Item_Name']) : ''?>" /></td>
-    </tr>
-    <? // Only show length/endings when creating a new item: ?>
-    <? if (!isset($item['Item_ID']) || !is_numeric($item['Item_ID'])): ?>
-      <tr>
-        <th>Length:</th>
-        <td><input type="text" id="Item_Length" value="<?=isset($item['Item_Length']) ? $this->escapeHtml($item['Item_Length']) : ''?>" /></td>
-      </tr>
-      <tr style="display: none;">
-        <th>Endings:</th>
-        <td><input type="text" id="Item_Endings" value="<?=isset($item['Item_Endings']) ? $this->escapeHtml($item['Item_Endings']) : ''?>" /></td>
-      </tr>
-    <? endif; ?>
-    <tr>
-      <th>Errata:</th>
-      <td><textarea id="Item_Errata"><?=isset($item['Item_Errata']) ? $this->escapeHtml($item['Item_Errata']) : ''?></textarea></td>
-    </tr>
-    <tr>
-      <th>Thanks:</th>
-      <td><input type="text" id="Item_Thanks" value="<?=isset($item['Item_Thanks']) ? $this->escapeHtml($item['Item_Thanks']) : ''?>" /></td>
-    </tr>
-  </table>
-  <button id="save_item" onclick="saveItem();">Save</button>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Material Type:</label>
+    <div class="col-sm-10">
+      <?=$this->render('geeby-deeby/edit-material-type/select.phtml', array('materials' => $materials, 'selected' => isset($item['Material_Type_ID']) ? $item['Material_Type_ID'] : null))?>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Item_Name" class="col-sm-2 control-label">Item Name:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" id="Item_Name" value="<?=isset($item['Item_Name']) ? $this->escapeHtml($item['Item_Name']) : ''?>" />
+    </div>
+  </div>
+  <? if (!isset($item['Item_ID']) || !is_numeric($item['Item_ID'])): ?>
+    <div class="form-group">
+      <label for="Item_Length" class="col-sm-2 control-label">Length:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="text" id="Item_Length" value="<?=isset($item['Item_Length']) ? $this->escapeHtml($item['Item_Length']) : ''?>" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="Item_Endings" class="col-sm-2 control-label">Endings:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="text" id="Item_Endings" value="<?=isset($item['Item_Endings']) ? $this->escapeHtml($item['Item_Endings']) : ''?>" />
+      </div>
+    </div>
+  <? endif; ?>
+  <div class="form-group">
+    <label for="Item_Errata" class="col-sm-2 control-label">Errata:</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" rows="3" id="Item_Errata"><?=isset($item['Item_Errata']) ? $this->escapeHtml($item['Item_Errata']) : ''?></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Item_Thanks" class="col-sm-2 control-label">Thanks:</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" id="Item_Thanks" value="<?=isset($item['Item_Thanks']) ? $this->escapeHtml($item['Item_Thanks']) : ''?>" />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button id="save_item" onclick="saveItem();">Save</button>
+    </div>
+  </div>
   <div id="save_item_status"></div>
 </div>

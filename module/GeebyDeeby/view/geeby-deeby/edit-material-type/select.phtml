@@ -1,5 +1,5 @@
 <? if (isset($materials) && count($materials) > 0): ?>
-  <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Material_Type_ID">
+  <select class="form-control" id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Material_Type_ID">
     <? foreach ($materials as $current): ?>
       <? $isSelected = (isset($selected) && !empty($selected)) ? ($current['Material_Type_ID'] == $selected) : ($current['Default'] == 1) ?>
       <option value="<?=$current['Material_Type_ID']?>"<?=$isSelected ? ' selected="selected"' : ''?>>

@@ -1,5 +1,5 @@
 <? if (isset($languages) && count($languages) > 0): ?>
-  <select id="Language_ID">
+  <select class="form-control" id="Language_ID">
     <? foreach ($languages as $current): ?>
       <option value="<?=$current['Language_ID']?>"<?=($current['Language_ID'] == $selected) ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['Language_Name'])?>
