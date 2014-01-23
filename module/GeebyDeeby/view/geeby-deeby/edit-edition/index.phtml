@@ -1,7 +1,7 @@
 <div id="editEditionForm" class="form-horizontal" role="form">
   <input type="hidden" id="Edition_ID" value="<?=$edition['Edition_ID']?>" />
   <div class="form-group">
-    <label for="" class="col-sm-2 control-label">Edition Name:</label>
+    <label for="Edition_Name" class="col-sm-2 control-label">Edition Name:</label>
     <div class="col-sm-10">
       <input class="form-control" type="text" id="Edition_Name" value="<?=isset($edition['Edition_Name']) ? $this->escapeHtml($edition['Edition_Name']) : ''?>" />
     </div>
