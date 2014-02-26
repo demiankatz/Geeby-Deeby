@@ -12,7 +12,7 @@ body {
   background:#F3E3C6;
   border:2px solid #774E03;
   border-width:0 2px 2px 2px;
-  margin:0;
+  margin-top:-10px;
   padding:6px 15px;
 }
 
@@ -22,7 +22,7 @@ h1 {
   background:#774E03;
   color:#FFF;
   font:150% 'Josefin Slab';
-  margin:0;
+  margin-top:-25px;
   padding:8px 15px 10px 17px;
 }
 h2 {font:125% 'Josefin Slab'}
