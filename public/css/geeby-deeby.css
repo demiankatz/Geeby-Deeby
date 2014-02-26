@@ -73,7 +73,7 @@ textarea {
 header {
   background:#F9F0E0;
   border-bottom:2px solid #774E03;
-  padding:8px 0 33px 0;
+  padding:8px 0 34px 0;
 }
 @media (min-width:992px) {
   header .container {padding-right:0}
@@ -137,6 +137,10 @@ header {
 @media (max-width:991px) {
   .results h2 {border-top:1px solid #000;padding-top:7px}
   .results [class*=col-]:first-child h2 {border-top:0;padding-top:0}
+}
+
+.container.main {
+  margin-top:-25px;
 }
 
 /* --- RECORD --- */
