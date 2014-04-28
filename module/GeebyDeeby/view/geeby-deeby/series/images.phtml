@@ -5,5 +5,7 @@
 <? if (count($images) < 1): ?>
   <p>No images available for this series.</p>
 <? else: ?>
-  <?=$this->render('partials/images.phtml', array('images' => $images, 'linkType' => 'item'))?>
+  <div class="row">
+    <?=$this->render('partials/images.phtml', array('images' => $images, 'linkType' => 'item'))?>
+  </div>
 <? endif; ?>
