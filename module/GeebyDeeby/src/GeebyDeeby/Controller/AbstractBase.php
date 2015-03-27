@@ -334,7 +334,7 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Get the full URL to one of VuFind's routes.
+     * Get the full URL to a route.
      *
      * @param bool|string $route Boolean true for current URL, otherwise name of
      * route to render as URL

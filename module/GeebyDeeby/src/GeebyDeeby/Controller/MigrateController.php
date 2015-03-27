@@ -276,7 +276,7 @@ class MigrateController extends AbstractBase
      * Support method for migratePublisherImprints -- create or retrieve imprint ID
      * for provided Series_Publishers row.
      *
-     * @param \VuFind\Db\Row\SeriesPublishers $current Series_Publishers row
+     * @param \GeebyDeeby\Db\Row\SeriesPublishers $current Series_Publishers row
      *
      * @return string
      */
@@ -322,7 +322,7 @@ class MigrateController extends AbstractBase
      * Support method for migratePublisherCountries -- create or retrieve country ID
      * for provided Series_Publishers row.
      *
-     * @param \VuFind\Db\Row\SeriesPublishers $current Series_Publishers row
+     * @param \GeebyDeeby\Db\Row\SeriesPublishers $current Series_Publishers row
      *
      * @return string
      */
