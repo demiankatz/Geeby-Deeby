@@ -336,16 +336,17 @@ class AbstractBase extends AbstractActionController
     /**
      * Get the full URL to a route.
      *
-     * @param bool|string $route Boolean true for current URL, otherwise name of
-     * route to render as URL
+     * @param bool|string $route       Boolean true for current URL, otherwise name
+     * of route to render as URL
+     * @param array       $routeParams Route parameters (optional)
      *
      * @return string
      */
-    public function getServerUrl($route = true)
+    public function getServerUrl($route = true, $routeParams = [])
     {
         $serverHelper = $this->getViewRenderer()->plugin('serverurl');
         return $serverHelper(
-            $route === true ? true : $this->url()->fromRoute($route)
+            $route === true ? true : $this->url()->fromRoute($route, $routeParams)
         );
     }
 
