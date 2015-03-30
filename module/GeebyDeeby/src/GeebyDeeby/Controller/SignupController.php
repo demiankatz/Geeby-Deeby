@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+use Zend\Crypt\Password\Bcrypt;
 
 /**
  * Signup controller
@@ -67,10 +68,11 @@ class SignupController extends AbstractBase
                 if (count($exists) > 0) {
                     $view->error = 'The username you selected is already in use.';
                 } else {
+                    $bcrypt = new Bcrypt();
                     $table->insert(
                         array(
                             'Username' => $view->user,
-                            'Password' => $password1,
+                            'Password_Hash' => $bcrypt->create($password1),
                             'Name' => $view->fullname,
                             'Address' => $view->address,
                             'Person_ID' => 0

@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Crypt\Password\Bcrypt;
 
 /**
  * Table Definition for Users
@@ -92,14 +93,9 @@ class User extends Gateway
      */
     public function passwordLogin($username, $password)
     {
-        $callback = function ($select) use ($username, $password) {
-            // Don't select all fields -- no need to risk exposing password data!
-            $select->columns(
-                array('User_ID', 'Username', 'Name', 'Address', 'Person_ID')
-            );
-            $select->where->equalTo('Username', $username);
-            $select->where->equalTo('Password', $password);
-        };
-        return $this->select($callback)->current();
+        $row = $this->select(['Username' => $username])->current();
+        $bcrypt = new Bcrypt();
+        return ($row && $bcrypt->verify($password, $row->Password_Hash))
+            ? $row : null;
     }
 }
