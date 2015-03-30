@@ -5,9 +5,11 @@ A bibliography and collection management system developed as the foundation for 
 
 Installation
 ============
-The easiest way to get Geeby-Deeby running is to create a symbolic link to /public in your system's /var/www.
+1. First, use "composer install" to load dependencies (see http://getcomposer.org for details).
 
-After that, you'll have to create a database using the script found in data/mysql.sql:
+2. The easiest way to get Geeby-Deeby running is to create a symbolic link to /public in your system's /var/www.
+
+3. After that, you'll have to create a database using the script found in data/mysql.sql:
 
 Defaults:
 >

@@ -934,7 +934,7 @@ DROP TABLE IF EXISTS `Users`;
 CREATE TABLE `Users` (
   `User_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Username` tinytext NOT NULL,
-  `Password` tinytext NOT NULL,
+  `Password_Hash` tinytext NOT NULL,
   `Name` tinytext NOT NULL,
   `Address` tinytext,
   `Person_ID` int(11) DEFAULT NULL,

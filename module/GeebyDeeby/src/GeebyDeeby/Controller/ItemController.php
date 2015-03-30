@@ -199,7 +199,7 @@ class ItemController extends AbstractBase
         $isbn = $this->params()->fromRoute('extra');
         return $this->createViewModel(
             array(
-                'isbn' => new \VuFind\Code\ISBN($isbn)
+                'isbn' => new \VuFindCode\ISBN($isbn)
             )
         );
     }

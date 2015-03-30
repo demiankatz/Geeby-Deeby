@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+use Zend\Crypt\Password\Bcrypt;
 
 /**
  * User controller
@@ -151,7 +152,8 @@ class UserController extends AbstractBase
                     'Name' => $view->fullname, 'Address' => $view->address
                 );
                 if (!empty($password1)) {
-                    $update['Password'] = $password1;
+                    $bcrypt = new Bcrypt();
+                    $update['Password_Hash'] = $bcrypt->create($password1);
                 }
                 $table->update(
                     $update, array('User_ID' => $view->user['User_ID'])

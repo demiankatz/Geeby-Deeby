@@ -23,7 +23,6 @@
  * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
  */
 namespace GeebyDeeby\Db\Row;
 use Zend\ServiceManager\ServiceLocatorAwareInterface,
@@ -36,7 +35,6 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface,
  * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
  */
 class ServiceLocatorAwareGateway extends RowGateway
     implements ServiceLocatorAwareInterface
@@ -53,7 +51,7 @@ class ServiceLocatorAwareGateway extends RowGateway
      *
      * @param string $table Table name
      *
-     * @return \VuFind\Db\Table\Gateway
+     * @return \GeebyDeeby\Db\Table\Gateway
      */
     public function getDbTable($table)
     {

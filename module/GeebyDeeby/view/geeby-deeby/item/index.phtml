@@ -224,7 +224,7 @@
           <td>
             <? foreach ($isbns as $isbn => $note): ?>
               <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn))?>">
-                <? $isbnConverter = new \VuFind\Code\ISBN($isbn); $isbn10 = $isbnConverter->get10(); ?>
+                <? $isbnConverter = new \VuFindCode\ISBN($isbn); $isbn10 = $isbnConverter->get10(); ?>
                 <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn : $isbn)?>
               </a>
               <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
