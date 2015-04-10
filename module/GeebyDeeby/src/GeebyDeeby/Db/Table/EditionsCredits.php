@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
 /**
@@ -50,11 +51,76 @@ class EditionsCredits extends Gateway
     /**
      * Get a list of credits attached to the specified person.
      *
+     * @var int    $personID Person ID
+     * @var string $sort     Type of sorting (series/title/year)
+     *
+     * @return mixed
+     */
+    public function getCreditsForPerson($personID, $sort = 'series')
+    {
+        // Special case: bringing series into the mix makes things more complex:
+        if ($sort == 'series') {
+            return $this->getSeriesCreditsForPerson($personID);
+        }
+        return $this->getItemCreditsForPerson($personID, $sort);
+    }
+
+    /**
+     * Get a list of credits attached to the specified person, sorted by
+     * item.
+     *
+     * @var int    $personID Person ID
+     * @var string $sort     Type of sorting (title or year)
+     *
+     * @return mixed
+     */
+    public function getItemCreditsForPerson($personID, $sort = 'title')
+    {
+        $callback = function ($select) use ($personID, $sort) {
+            $count = new Expression(
+                'count(?)', array('eds.Edition_ID'),
+                array(Expression::TYPE_IDENTIFIER)
+            );
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Credits.Edition_ID = eds.Edition_ID',
+                array('Edition_Count' => $count)
+            );
+            $select->join(
+                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+            );
+            $year = new Expression(
+                'min(?)', array('erd.Year'),
+                array(Expression::TYPE_IDENTIFIER)
+            );
+            $select->join(
+                array('erd' => 'Editions_Release_Dates'),
+                'eds.Edition_ID = erd.Edition_ID',
+                array('Earliest_Year' => $year), Select::JOIN_LEFT
+            );
+            $select->join(
+                array('r' => 'Roles'),
+                'Editions_Credits.Role_ID = r.Role_ID'
+            );
+            $sortFields = $sort === 'year'
+                ? array('Role_Name', 'Earliest_Year', 'Item_Name')
+                : array('Role_Name', 'Item_Name', 'Earliest_Year');
+            $select->order($sortFields);
+            $select->group(array('Role_Name', 'Item_Name'));
+            $select->where->equalTo('Person_ID', $personID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get a list of credits attached to the specified person, sorted by
+     * series.
+     *
      * @var int $personID Person ID
      *
      * @return mixed
      */
-    public function getCreditsForPerson($personID)
+    public function getSeriesCreditsForPerson($personID)
     {
         $callback = function ($select) use ($personID) {
             $select->join(
