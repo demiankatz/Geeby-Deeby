@@ -10,6 +10,6 @@
     "license": "GPL-2.0",
     "require": {
         "vufind-org/vufindcode": "*",
-        "zendframework/zendframework": "2.1.1"
+        "zendframework/zendframework": "2.1.4"
     }
 }
