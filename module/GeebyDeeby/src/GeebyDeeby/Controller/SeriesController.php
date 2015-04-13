@@ -26,6 +26,8 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 
 /**
  * Series controller
@@ -56,6 +58,83 @@ class SeriesController extends AbstractBase
         return $this->createViewModel(
             array('series' => $rowObj->toArray()) + $extras
         );
+    }
+
+    /**
+     * "Check for missing data" page
+     *
+     * @return mixed
+     */
+    public function checkAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        $seriesId = $view->series['Series_ID'];
+
+        // Check for missing credits
+        $editions = $this->getDbTable('edition');
+        $callback = function ($select) use ($seriesId) {
+            $select->join(
+                array('ec' => 'Editions_Credits'),
+                'Editions.Edition_ID = ec.Edition_ID',
+                [], Select::JOIN_LEFT
+            );
+            $select->join(
+                array('i' => 'Items'),
+                'Editions.Item_ID = i.Item_ID',
+                ['Item_Name'], Select::JOIN_LEFT
+            );
+            $select->where->isNull('ec.Person_ID');
+            $select->where(['Series_ID' => $seriesId]);
+            $select->order('Editions.Position');
+        };
+        $view->missingCredits = $editions->select($callback)->toArray();
+
+        // Check for missing dates
+        $callback = function ($select) use ($seriesId) {
+            $select->join(
+                array('d' => 'Editions_Release_Dates'),
+                'Editions.Edition_ID = d.Edition_ID',
+                [], Select::JOIN_LEFT
+            );
+            $select->join(
+                array('i' => 'Items'),
+                'Editions.Item_ID = i.Item_ID',
+                ['Item_Name'], Select::JOIN_LEFT
+            );
+            $select->where->isNull('d.Year');
+            $select->where(['Series_ID' => $seriesId]);
+            $select->order('Editions.Position');
+        };
+        $view->missingDates = $editions->select($callback)->toArray();
+
+        // Check for missing items
+        $callback = function ($select) use ($seriesId) {
+            $select->where(['Series_ID' => $seriesId]);
+            $select->columns(
+                [
+                    'Edition_ID' => new Expression(
+                        'min(?)', ['Edition_ID'], [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'Start' => new Expression(
+                        'min(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'End' => new Expression(
+                        'max(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'Total' => new Expression(
+                        'count(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'Different' => new Expression(
+                        'count(distinct(?))', ['Position'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                ]
+            );
+            $select->group('Series_ID');
+        };
+        $view->itemStats = current($editions->select($callback)->toArray());
+
+        return $view;
     }
 
     /**

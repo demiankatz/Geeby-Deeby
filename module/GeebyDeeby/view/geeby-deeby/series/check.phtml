@@ -1,0 +1,40 @@
+<?
+    $this->layout()->title = 'Check for Missing Data'
+?>
+
+<h2>Missing Credits</h2>
+<? if (empty($missingCredits)): ?>
+  <p>None.</p>
+<? else: ?>
+  <? foreach ($missingCredits as $current): ?>
+    <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
+      <? if (!empty($current['Position'])): ?>
+        #<?=$this->escapeHtml($current['Position'])?>
+      <? else: ?>
+        <?=$this->escapeHtml($this->fixTitle($current['Item_Name']))?>
+      <? endif; ?>
+    </a>
+  <? endforeach; ?>
+<? endif; ?>
+
+<h2>Missing Dates</h2>
+<? if (empty($missingDates)): ?>
+  <p>None.</p>
+<? else: ?>
+  <? foreach ($missingDates as $current): ?>
+    <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
+      <? if (!empty($current['Position'])): ?>
+        #<?=$this->escapeHtml($current['Position'])?>
+      <? else: ?>
+        <?=$this->escapeHtml($this->fixTitle($current['Item_Name']))?>
+      <? endif; ?>
+    </a>
+  <? endforeach; ?>
+<? endif; ?>
+
+<h2>Statistics</h2>
+
+<p>Series contains <?=$this->escapeHtml($itemStats['Total'])?> 
+total items representing <?=$this->escapeHtml($itemStats['Different'])?> 
+different numbers ranging from <?=$this->escapeHtml($itemStats['Start'])?> 
+to <?=$this->escapeHtml($itemStats['End'])?>.</p>
