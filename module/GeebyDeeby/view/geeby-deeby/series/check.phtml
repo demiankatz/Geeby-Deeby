@@ -34,7 +34,20 @@
 
 <h2>Statistics</h2>
 
-<p>Series contains <?=$this->escapeHtml($itemStats['Total'])?> 
-total items representing <?=$this->escapeHtml($itemStats['Different'])?> 
-different numbers ranging from <?=$this->escapeHtml($itemStats['Start'])?> 
-to <?=$this->escapeHtml($itemStats['End'])?>.</p>
+<? if (empty($dateStats['Start'])): ?>
+  <p>No date information.</p>
+<? elseif ($dateStats['Start'] == $dateStats['End']): ?>
+  <p>Series contains dates from <?=$this->escapeHtml($dateStats['End'])?>.</p>
+<? else: ?>
+  <p>Series contains dates ranging from <?=$this->escapeHtml($dateStats['Start'])?>
+  to <?=$this->escapeHtml($dateStats['End'])?>.</p>
+<? endif; ?>
+
+<? if (!empty($itemStats)): ?>
+  <p>Series contains <?=$this->escapeHtml($itemStats['Total'])?>
+  total items representing <?=$this->escapeHtml($itemStats['Different'])?>
+  different numbers ranging from <?=$this->escapeHtml($itemStats['Start'])?>
+  to <?=$this->escapeHtml($itemStats['End'])?>.</p>
+<? else: ?>
+  <p>No item information.</p>
+<? endif; ?>

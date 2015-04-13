@@ -107,6 +107,33 @@ class SeriesController extends AbstractBase
         };
         $view->missingDates = $editions->select($callback)->toArray();
 
+        // Get date range stats
+        $callback = function ($select) use ($seriesId) {
+            $select->where(['Series_ID' => $seriesId]);
+            $select->columns(
+                [
+                    'Edition_ID' => new Expression(
+                        'min(?)', ['Editions.Edition_ID'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                ]
+            );
+            $select->join(
+                array('d' => 'Editions_Release_Dates'),
+                'Editions.Edition_ID = d.Edition_ID',
+                [
+                    'Start' => new Expression(
+                        'min(?)', ['Year'], [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'End' => new Expression(
+                        'max(?)', ['Year'], [Expression::TYPE_IDENTIFIER]
+                    ),
+                ], Select::JOIN_LEFT
+            );
+            $select->group('Series_ID');
+        };
+        $view->dateStats = current($editions->select($callback)->toArray());
+        
         // Check for missing items
         $callback = function ($select) use ($seriesId) {
             $select->where(['Series_ID' => $seriesId]);
