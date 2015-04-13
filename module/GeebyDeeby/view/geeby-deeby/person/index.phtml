@@ -26,17 +26,13 @@
 
 <? if (count($credits) > 0): $displayedSomething = true; ?>
   <? $sorts = [ 'series', 'title', 'year' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
-  <div>
-    <ul class="pagination" style="float: right; margin: 0;">
+  <div class="pull-right" style="padding:12px 0;">
+    Sort by: 
+    <div class="pagination" style="margin-top:-4px;">
       <? foreach ($sorts as $current): ?>
-        <? if ($sort != $current): ?>
-          <li><a href="?sort=<?=urlencode($current)?>"><?=ucwords($current)?></a></li>
-        <? else: ?>
-          <li class="active"><a><?=ucwords($current)?></a></li>
-        <? endif; ?>
+        <a href="?sort=<?=urlencode($current)?>" class="btn btn-<?=$sort == $current ? 'primary' : 'default'?>"><?=ucwords($current)?></a>
       <? endforeach; ?>
-    </ul>
-    <div style="float: right; padding: 6px;">Sort by:</span></div>
+    </div>
   </div>
   <? $role = $series = $year = false; foreach ($credits as $credit): ?>
     <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; $series = false; ?>
