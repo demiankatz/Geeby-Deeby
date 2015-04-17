@@ -11,6 +11,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
+            'GeebyDeeby\Controller\Ontology' => 'GeebyDeebyLocal\Controller\OntologyController',
             'GeebyDeeby\Controller\Podcast' => 'GeebyDeebyLocal\Controller\PodcastController',
         ),
     ),
@@ -43,6 +44,16 @@ return array(
                     'defaults' => array(
                         'controller' => 'GeebyDeeby\Controller\About',
                         'action'     => 'progress',
+                    ),
+                ),
+            ),
+            'ontology' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route'    => '/ontology[/]',
+                    'defaults' => array(
+                        'controller' => 'GeebyDeeby\Controller\Ontology',
+                        'action'     => 'index',
                     ),
                 ),
             ),
