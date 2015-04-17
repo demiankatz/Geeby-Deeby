@@ -703,6 +703,19 @@ return array(
                     ),
                 ),
             ),
+            'edition' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Edition[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Edition',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
             'faqs' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -1052,6 +1065,7 @@ return array(
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
             'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
+            'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
