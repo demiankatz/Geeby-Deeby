@@ -129,15 +129,16 @@ class Edition extends Gateway
     }
 
     /**
-     * Retrieve publishers for the specified item.
+     * Retrieve publishers for the specified match.
      *
-     * @param int $itemID Item ID.
+     * @param string $field Field to match
+     * @param string $value Value to match
      *
      * @return mixed
      */
-    public function getPublishersForItem($itemID)
+    public function getPublishersForWhereClause($field, $value)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($field, $value) {
             $select->join(
                 array('sp' => 'Series_Publishers'),
                 'Editions.Preferred_Series_Publisher_ID = sp.Series_Publisher_ID'
@@ -163,7 +164,7 @@ class Edition extends Gateway
                 array('n' => 'Notes'), 'sp.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->where->equalTo('Item_ID', $itemID);
+            $select->where->equalTo($field, $value);
             $select->order(
                 array(
                     'Edition_Name',
@@ -172,6 +173,29 @@ class Edition extends Gateway
             );
         };
         return $this->select($callback);
+    }
+
+    /**
+     * Retrieve publishers for the specified edition.
+     *
+     * @param int $id Edition ID.
+     *
+     * @return mixed
+     */
+    public function getPublishersForEdition($id)
+    {
+        return $this->getPublishersForWhereClause('Edition_ID', $id);
+    }
+    /**
+     * Retrieve publishers for the specified item.
+     *
+     * @param int $itemID Item ID.
+     *
+     * @return mixed
+     */
+    public function getPublishersForItem($itemID)
+    {
+        return $this->getPublishersForWhereClause('Item_ID', $itemID);
     }
 
     /**
