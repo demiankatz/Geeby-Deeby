@@ -540,6 +540,7 @@ CREATE TABLE `Material_Types` (
   `Material_Type_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Material_Type_Name` tinytext NOT NULL,
   `Material_Type_Plural_Name` tinytext NOT NULL,
+  `Material_Type_RDF_Class` tinytext,
   `Default` smallint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Material_Type_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
