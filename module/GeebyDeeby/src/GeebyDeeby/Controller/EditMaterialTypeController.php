@@ -83,7 +83,8 @@ class EditMaterialTypeController extends AbstractBase
     {
         $assignMap = array(
             'material' => 'Material_Type_Name',
-            'material_plural' => 'Material_Type_Plural_Name'
+            'material_plural' => 'Material_Type_Plural_Name',
+            'material_rdf' => 'Material_Type_RDF_Class'
         );
         $response = $this->handleGenericItem('materialtype', $assignMap, 'material');
 
