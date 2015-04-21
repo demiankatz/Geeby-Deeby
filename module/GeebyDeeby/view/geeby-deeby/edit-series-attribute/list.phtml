@@ -1,0 +1,6 @@
+<? $this->layout()->title = 'Edit Series Attributes' ?>
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_attributes.js') ?>
+<p><b>Series Attributes:</b></p>
+<button id="add_series_attribute" type="button" onclick="editSeriesAttribute('NEW');">Add Series Attribute</button>
+<br /><br />
+<div id="series_attribute_list"><?=$this->render('geeby-deeby/edit-series-attribute/render-series-attributes.phtml')?></div>
