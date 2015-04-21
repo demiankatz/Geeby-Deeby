@@ -72,6 +72,8 @@ return array(
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
                 'seriesalttitles' => 'GeebyDeeby\Db\Table\SeriesAltTitles',
+                'seriesattribute' => 'GeebyDeeby\Db\Table\SeriesAttribute',
+                'seriesattributesvalues' => 'GeebyDeeby\Db\Table\SeriesAttributesValues',
                 'seriesbibliography' => 'GeebyDeeby\Db\Table\SeriesBibliography',
                 'seriescategories' => 'GeebyDeeby\Db\Table\SeriesCategories',
                 'seriesreviews' => 'GeebyDeeby\Db\Table\SeriesReviews',
@@ -658,6 +660,27 @@ return array(
                             ),
                         ),
                     ),
+                    'seriesattribute' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/SeriesAttribute[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditSeriesAttribute',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'seriesattribute_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/SeriesAttributeList',
+                            'defaults' => array(
+                                'controller'    => 'EditSeriesAttribute',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                     'tag' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -1075,6 +1098,7 @@ return array(
             'GeebyDeeby\Controller\EditPlatform' => 'GeebyDeeby\Controller\EditPlatformController',
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
+            'GeebyDeeby\Controller\EditSeriesAttribute' => 'GeebyDeeby\Controller\EditSeriesAttributeController',
             'GeebyDeeby\Controller\EditTag' => 'GeebyDeeby\Controller\EditTagController',
             'GeebyDeeby\Controller\FAQs' => 'GeebyDeeby\Controller\FAQsController',
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',

@@ -55,6 +55,9 @@ class SeriesController extends AbstractBase
         if (!is_object($rowObj)) {
             return false;
         }
+        $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
+            ->getAttributesForSeries($id);
+
         return $this->createViewModel(
             array('series' => $rowObj->toArray()) + $extras
         );
