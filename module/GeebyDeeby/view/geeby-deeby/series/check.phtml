@@ -48,6 +48,12 @@
   total items representing <?=$this->escapeHtml($itemStats['Different'])?>
   different numbers ranging from <?=$this->escapeHtml($itemStats['Start'])?>
   to <?=$this->escapeHtml($itemStats['End'])?>.</p>
+  <? if (!empty($itemStats['Dupes'])): ?>
+    <p>Duplicate numbers: <?=implode(', ', $itemStats['Dupes'])?></p>
+  <? endif; ?>
+  <? if (!empty($itemStats['Missing'])): ?>
+    <p>Missing numbers: <?=implode(', ', $itemStats['Missing'])?></p>
+  <? endif; ?>
 <? else: ?>
   <p>No item information.</p>
 <? endif; ?>
