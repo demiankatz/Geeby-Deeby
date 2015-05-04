@@ -2090,6 +2090,7 @@
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60444"/>
+        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/publisherOf"/>
     </owl:ObjectProperty>
     
 
@@ -3430,13 +3431,9 @@
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/manufacturerOf">
         <rdfs:label xml:lang="en">is manufacturer of</rdfs:label>
-        <rdfs:label xml:lang="en">is publisher of</rdfs:label>
         <skos:definition xml:lang="en">Relates an agent responsible for printing, duplicating,
             casting, etc., a resource in a published form to the resource.</skos:definition>
-        <skos:definition xml:lang="en">Relates an agent responsible for publishing, releasing, or
-            issuing a resource to the resource.</skos:definition>
         <RegAp:name xml:lang="en">manufacturerOf</RegAp:name>
-        <RegAp:name xml:lang="en">publisherOf</RegAp:name>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60646"/>
@@ -3764,7 +3761,17 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
     </owl:ObjectProperty>
     
+    <!-- http://rdaregistry.info/Elements/u/publisherOf -->
 
+    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/publisherOf">
+        <rdfs:label xml:lang="en">is publisher of</rdfs:label>
+        <skos:definition xml:lang="en">Relates an agent responsible for publishing, releasing, or
+            issuing a resource to the resource.</skos:definition>
+        <RegAp:name xml:lang="en">publisherOf</RegAp:name>
+        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
+        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
+        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60444"/>
+    </owl:ObjectProperty>
 
     <!-- http://rdaregistry.info/Elements/u/realIdentity -->
 
