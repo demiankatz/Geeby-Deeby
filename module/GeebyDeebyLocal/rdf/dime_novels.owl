@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 
 <rdf:RDF xmlns="http://dimenovels.org/ontology#"
-     xml:base="http://dimenovels.org/ontology"
-     xmlns:dc="http://purl.org/dc/elements/1.1/"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:dc2="dc:"
-     xmlns:skos2="skos:"
+     xmlns:RegAp="http://metadataregistry.org/uri/profile/RegAp/"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:RegAp="http://metadataregistry.org/uri/profile/RegAp/"
-     xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:dime="http://dimenovels.org/ontology#"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+	 xmlns:xsd:"http://www.w3.org/2001/XMLSchema#">
     <owl:Ontology rdf:about="http://dimenovels.org/ontology">
         <dc:date rdf:datatype="xsd:dateTime">May 04, 2015 11:38:41
             AM</dc:date>
@@ -146,13 +145,13 @@
 
     <!-- http://dimenovels.org/ontology#HasCopy -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasCopy"/>
+    <owl:ObjectProperty rdf:about="dime:HasCopy"/>
     
 
 
     <!-- http://dimenovels.org/ontology#HasIssue -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasIssue">
+    <owl:ObjectProperty rdf:about="dime:HasIssue">
         <rdfs:label>HasIssue</rdfs:label>
         <rdfs:subPropertyOf rdf:resource="owl:topObjectProperty"/>
     </owl:ObjectProperty>
@@ -161,15 +160,15 @@
 
     <!-- http://dimenovels.org/ontology#HasRealizationOfCreativeWork -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasRealizationOfCreativeWork">
-        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#IsRealizationOfCreativeWork"/>
+    <owl:ObjectProperty rdf:about="dime:HasRealizationOfCreativeWork">
+        <owl:inverseOf rdf:resource="dime:IsRealizationOfCreativeWork"/>
     </owl:ObjectProperty>
     
 
 
     <!-- http://dimenovels.org/ontology#HasSeries -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasSeries">
+    <owl:ObjectProperty rdf:about="dime:HasSeries">
         <rdfs:label>HasSeries</rdfs:label>
         <rdfs:subPropertyOf rdf:resource="owl:topObjectProperty"/>
     </owl:ObjectProperty>
@@ -178,23 +177,23 @@
 
     <!-- http://dimenovels.org/ontology#IsCopyOf -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsCopyOf">
-        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#HasCopy"/>
+    <owl:ObjectProperty rdf:about="dime:IsCopyOf">
+        <owl:inverseOf rdf:resource="dime:HasCopy"/>
     </owl:ObjectProperty>
     
 
 
     <!-- http://dimenovels.org/ontology#IsIssueOf -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsIssueOf">
-        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#HasIssue"/>
+    <owl:ObjectProperty rdf:about="dime:IsIssueOf">
+        <owl:inverseOf rdf:resource="dime:HasIssue"/>
     </owl:ObjectProperty>
     
 
 
     <!-- http://dimenovels.org/ontology#IsRealizationOfCreativeWork -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsRealizationOfCreativeWork">
+    <owl:ObjectProperty rdf:about="dime:IsRealizationOfCreativeWork">
         <rdfs:label>IsRealizationOfCreativeWork</rdfs:label>
         <rdfs:subPropertyOf rdf:resource="owl:topObjectProperty"/>
     </owl:ObjectProperty>
@@ -203,8 +202,8 @@
 
     <!-- http://dimenovels.org/ontology#IsSeriesOf -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsSeriesOf">
-        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#HasSeries"/>
+    <owl:ObjectProperty rdf:about="dime:IsSeriesOf">
+        <owl:inverseOf rdf:resource="dime:HasSeries"/>
     </owl:ObjectProperty>
     
 
@@ -310,22 +309,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60083 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60083">
-        <rdfs:label xml:lang="en">is electronic reproduction</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a digital resource resulting from the
-            reproduction of an analog resource.</skos:definition>
-        <RegAp:name xml:lang="en">electronicReproduction</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30016"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60272"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/electronicReproduction"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60091 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60091">
@@ -360,23 +343,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60100 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60100">
-        <rdfs:label xml:lang="en">is facsimile contained in</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a larger resource of which a part is a
-            discrete component that exactly reproduces another resource embodying the
-            resource.</skos:definition>
-        <RegAp:name xml:lang="en">facsimileContainedIn</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30019"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60101"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/facsimileContainedIn"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60101 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60101">
@@ -389,12 +355,8 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40009"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30020"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60100"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60192"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60193"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60194"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60249"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60317"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60714"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/containedIn"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10019"/>
@@ -473,42 +435,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60183 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60183">
-        <rdfs:label xml:lang="en">is insert</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource consisting of separately
-            issued material that is not an integral part of the larger resource into which it has
-            been inserted.</skos:definition>
-        <RegAp:name xml:lang="en">insert</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30022"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60249"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/insert"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60189 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60189">
-        <rdfs:label xml:lang="en">is freely translated as</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource created by freely
-            translating the source resource into another language, preserving the spirit of the
-            original, but not its linguistic details.</skos:definition>
-        <RegAp:name xml:lang="en">freelyTranslatedAs</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20119"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60243"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60250"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/freelyTranslatedAs"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10099"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60191 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60191">
@@ -529,24 +455,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60192 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60192">
-        <rdfs:label xml:lang="en">is subseries of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource in which the part
-            consistently appears; the title of the larger resource appears on all issues or parts of
-            the subseries.</skos:definition>
-        <RegAp:name xml:lang="en">subseriesOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60101"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60316"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/subseriesOf"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10101"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60193 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60193">
@@ -559,23 +467,6 @@
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60101"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/inSeries"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10102"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60194 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60194">
-        <rdfs:label xml:lang="en">is inserted in</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource into which material has been
-            inserted that is not an integral part of the publication.</skos:definition>
-        <RegAp:name xml:lang="en">insertedIn</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30025"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60101"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60183"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/insertedIn"/>
     </owl:ObjectProperty>
     
 
@@ -597,42 +488,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60207 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60207">
-        <rdfs:label xml:lang="en">is special issue</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that consists of a single
-            issue or a supplementary section of a serial or newspaper devoted to a special
-            subject.</skos:definition>
-        <RegAp:name xml:lang="en">specialIssue</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30030"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60249"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60317"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/specialIssue"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60214 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60214">
-        <rdfs:label xml:lang="en">is imitated as</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that copies the style or
-            content of the source resource.</skos:definition>
-        <RegAp:name xml:lang="en">imitatedAs</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20114"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60246"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60250"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/imitatedAs"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10117"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60216 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60216">
@@ -646,22 +501,6 @@
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60250"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/expandedAs"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10119"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60217 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60217">
-        <rdfs:label xml:lang="en">is facsimile</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that exactly reproduces
-            another resource embodying the resource.</skos:definition>
-        <RegAp:name xml:lang="en">facsimile</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30031"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60272"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/facsimile"/>
     </owl:ObjectProperty>
     
 
@@ -718,24 +557,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60243 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60243">
-        <rdfs:label xml:lang="en">is free translation of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that has been translated
-            freely, preserving the spirit of the original, but not its linguistic
-            details.</skos:definition>
-        <RegAp:name xml:lang="en">freeTranslationOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20140"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60305"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/freeTranslationOf"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10143"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60244 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60244">
@@ -767,24 +588,6 @@
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60250"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60303"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/revisedAs"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60246 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60246">
-        <rdfs:label xml:lang="en">is parodied as</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that imitates the style or
-            content of the source resource for comic effect.</skos:definition>
-        <RegAp:name xml:lang="en">parodiedAs</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20142"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60214"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60312"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/parodiedAs"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10144"/>
     </owl:ObjectProperty>
     
 
@@ -835,11 +638,7 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40034"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30033"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60183"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60207"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60240"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60300"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60316"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60714"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/http://rdaregistry.info/Elements/u/containerOf"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10147"/>
@@ -857,8 +656,6 @@
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20203"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60189"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60214"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60216"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60245"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60275"/>
@@ -926,9 +723,7 @@
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30039"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60083"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60191"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60217"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60271"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60297"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/reproducedAs"/>
@@ -1066,44 +861,7 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60168"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60191"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60301"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60469"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/reproductionOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60300 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60300">
-        <rdfs:label xml:lang="en">is facsimile container of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource used as the basis for an
-            exact reproduction that is a discrete component of a larger entity.</skos:definition>
-        <RegAp:name xml:lang="en">facsimileContainerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30046"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60100"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60249"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/facsimileContainerOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60301 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60301">
-        <rdfs:label xml:lang="en">is facsimile of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource used as the basis for an
-            exact reproduction.</skos:definition>
-        <RegAp:name xml:lang="en">facsimileOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40045"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30047"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60217"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60297"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/facsimileOf"/>
     </owl:ObjectProperty>
     
 
@@ -1135,11 +893,9 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20204"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60223"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60243"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60244"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60294"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60303"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60311"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60710"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/basedOn"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10190"/>
@@ -1181,76 +937,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60311 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60311">
-        <rdfs:label xml:lang="en">is imitation of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource whose style or content is
-            copied in a derivative resource.</skos:definition>
-        <RegAp:name xml:lang="en">imitationOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20195"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60214"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60305"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60312"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/imitationOf"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10196"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60312 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60312">
-        <rdfs:label xml:lang="en">is parody of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource whose style or content is
-            imitated for comic effect.</skos:definition>
-        <RegAp:name xml:lang="en">parodyOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20196"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60311"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/parodyOf"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10197"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60316 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60316">
-        <rdfs:label xml:lang="en">is subseries</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a serial or multipart resource that
-            consistently appears in a larger resource; the title of the larger resource appears on
-            all issues or parts of the subseries</skos:definition>
-        <RegAp:name xml:lang="en">subseries</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60249"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/subseries"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10080"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60317 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60317">
-        <rdfs:label xml:lang="en">is special issue of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a serial or newspaper containing a
-            single issue or a supplementary section devoted to a special subject, with or without
-            serial numbering, such as an anniversary number of a periodical or
-            newspaper.</skos:definition>
-        <RegAp:name xml:lang="en">specialIssueOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30101"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60101"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60374 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60374">
@@ -1268,32 +954,10 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40023"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30079"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60375"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60376"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60455"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60460"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60466"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60602"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/otherPFCAssociatedWithAResource"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10047"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60375 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60375">
-        <rdfs:label xml:lang="en">has dedicator</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent by whom a resource is
-            dedicated.</skos:definition>
-        <RegAp:name xml:lang="en">dedicator</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/dto</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60374"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60603"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/dedicator"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10048"/>
     </owl:ObjectProperty>
     
 
@@ -1355,25 +1019,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60394 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60394">
-        <rdfs:label xml:lang="en">has abridger</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent contributing to a resource by
-            shortening or condensing the original resource but leaving the nature and content of the
-            original resource substantially unchanged.</skos:definition>
-        <RegAp:name xml:lang="en">abridger</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/abr</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20049"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60398"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60622"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/abridger"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60396 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60396">
@@ -1408,7 +1053,6 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60385"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60393"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60394"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60396"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60626"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/contributor"/>
@@ -1470,25 +1114,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60418 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60418">
-        <rdfs:label xml:lang="en">has printer</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent involved in manufacturing a
-            resource of printed text, notated music, etc., from type or plates, such as a book,
-            newspaper, magazine, broadside, score, etc.</skos:definition>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/prt</skos:closeMatch>
-        <RegAp:name xml:lang="en">printer</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30078"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60443"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60646"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/printer"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60434 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60434">
@@ -1504,40 +1129,6 @@
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60447"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/author"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10061"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60438 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60438">
-        <rdfs:label xml:lang="en">has distributor</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent responsible for distributing a
-            resource.</skos:definition>
-        <RegAp:name xml:lang="en">distributor</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/dst</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30080"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/distributor"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60443 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60443">
-        <rdfs:label xml:lang="en">has manufacturer</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent responsible for printing,
-            duplicating, casting, etc., a resource in a published form.</skos:definition>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/mfr</skos:closeMatch>
-        <RegAp:name xml:lang="en">manufacturer</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30082"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60418"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60669"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/manufacturer"/>
     </owl:ObjectProperty>
     
 
@@ -1571,78 +1162,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60434"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/creator"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10065"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60455 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60455">
-        <rdfs:label xml:lang="en">has dedicatee</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent to whom a resource is
-            dedicated.</skos:definition>
-        <RegAp:name xml:lang="en">dedicatee</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/dte</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40025"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60374"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/dedicatee"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10069"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60460 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60460">
-        <rdfs:label xml:lang="en">has inscriber</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent who has written a statement of
-            dedication or gift on a resource.</skos:definition>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/ins</skos:closeMatch>
-        <RegAp:name xml:lang="en">inscriber</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40014"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60374"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60695"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/inscriber"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60466 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60466">
-        <rdfs:label xml:lang="en">has autographer</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent whose manuscript signature
-            appears on a resource.</skos:definition>
-        <RegAp:name xml:lang="en">autographer</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/ato</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40016"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60374"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60702"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/autographer"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60469 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60469">
-        <rdfs:label xml:lang="en">is electronic reproduction of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an analog resource used as the basis
-            for an electronic reproduction.</skos:definition>
-        <RegAp:name xml:lang="en">electronicReproductionOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40027"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30136"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60083"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60297"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/electronicReproductionOf"/>
     </owl:ObjectProperty>
     
 
@@ -1816,28 +1335,8 @@
         <RegAp:name xml:lang="en">otherAgentAssociatedWithAResourceOf</RegAp:name>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60603"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60604"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60689"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60695"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60702"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/otherAgentAssociatedWithAResource"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60603 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60603">
-        <rdfs:label xml:lang="en">is dedicator of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent by whom a resource is dedicated to the
-            resource.</skos:definition>
-        <RegAp:name xml:lang="en">dedicatorOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50132"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60602"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/dedicatorOf"/>
     </owl:ObjectProperty>
     
 
@@ -1893,23 +1392,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60622 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60622">
-        <rdfs:label xml:lang="en">is abridger of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent contributing to a resource by shortening or
-            condensing the original resource but leaving the nature and content of the original
-            resource substantially unchanged to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">abridgerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50157"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60626"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/abridgerOf"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60624 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60624">
@@ -1939,7 +1421,6 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60613"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60621"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60622"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60624"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/contributorOf"/>
     </owl:ObjectProperty>
@@ -1999,23 +1480,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60646 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60646">
-        <rdfs:label xml:lang="en">is printer of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent involved in manufacturing a resource of
-            printed text, notated music, etc., from type or plates, such as a book, newspaper,
-            magazine, broadside, score, etc. to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">printerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50179"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60669"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/printerOf"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60648 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60648">
@@ -2046,36 +1510,6 @@
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60434"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60672"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/authorOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60667 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60667">
-        <rdfs:label xml:lang="en">is distributor of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent responsible for distributing a resource to
-            the resource.</skos:definition>
-        <RegAp:name xml:lang="en">distributorOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60438"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/distributorOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60669 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60669">
-        <rdfs:label xml:lang="en">is manufacturer of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent responsible for printing, duplicating,
-            casting, etc., a resource in a published form to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">manufacturerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60646"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/manufacturerOf"/>
     </owl:ObjectProperty>
     
 
@@ -2141,40 +1575,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60689 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60689">
-        <rdfs:label xml:lang="en">is dedicatee of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent to whom a resource is dedicated to the
-            resource.</skos:definition>
-        <RegAp:name xml:lang="en">dedicateeOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50208"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50210"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60455"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60602"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/dedicateeOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60695 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60695">
-        <rdfs:label xml:lang="en">is inscriber of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent who has written a statement of dedication or
-            gift on a resource to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">inscriberOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50125"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60602"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/inscriberOf"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60697 -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60697">
@@ -2187,22 +1587,6 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60648"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/member"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60702 -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/P60702">
-        <rdfs:label xml:lang="en">is autographer of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent whose manuscript signature appears on a
-            resource to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">autographerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50129"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60602"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/autographerOf"/>
     </owl:ObjectProperty>
     
 
@@ -2327,40 +1711,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/abridger -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/abridger">
-        <rdfs:label xml:lang="en">has abridger</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent contributing to a resource by
-            shortening or condensing the original resource but leaving the nature and content of the
-            original resource substantially unchanged.</skos:definition>
-        <RegAp:name xml:lang="en">abridger</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/abr</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20049"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/abridgerOf"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/contributor"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/abridgerOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/abridgerOf">
-        <rdfs:label xml:lang="en">is abridger of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent contributing to a resource by shortening or
-            condensing the original resource but leaving the nature and content of the original
-            resource substantially unchanged to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">abridgerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50157"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/contributorOf"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/absorbedBy -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/absorbedBy">
@@ -2478,38 +1828,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/autographer -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/autographer">
-        <rdfs:label xml:lang="en">has autographer</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent whose manuscript signature
-            appears on a resource.</skos:definition>
-        <RegAp:name xml:lang="en">autographer</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/ato</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40016"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/autographerOf"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/otherPFCAssociatedWithAResource"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/autographerOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/autographerOf">
-        <rdfs:label xml:lang="en">is autographer of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent whose manuscript signature appears on a
-            resource to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">autographerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50129"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/otherAgentAssociatedWithAResource"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/basedOn -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/basedOn">
@@ -2521,11 +1839,9 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20204"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60223"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60243"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60244"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60294"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60303"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60311"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/derivativeResourceRelationshipWith"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10190"/>
     </owl:ObjectProperty>
@@ -2578,11 +1894,7 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40009"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30020"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60100"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60192"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60193"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60194"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60317"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/wholePartResourceRelationshipWith"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/http://rdaregistry.info/Elements/u/containerOf"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10019"/>
@@ -2671,7 +1983,6 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60385"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60393"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60394"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60396"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/contributorOf"/>
     </owl:ObjectProperty>
@@ -2690,7 +2001,6 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60613"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60621"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60622"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60624"/>
     </owl:ObjectProperty>
     
@@ -2793,72 +2103,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/dedicatee -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/dedicatee">
-        <rdfs:label xml:lang="en">has dedicatee</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent to whom a resource is
-            dedicated.</skos:definition>
-        <RegAp:name xml:lang="en">dedicatee</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/dte</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40025"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/otherPFCAssociatedWithAResource"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10069"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/dedicateeOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/dedicateeOf">
-        <rdfs:label xml:lang="en">is dedicatee of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent to whom a resource is dedicated to the
-            resource.</skos:definition>
-        <RegAp:name xml:lang="en">dedicateeOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50208"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50210"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/dedicatee"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/otherAgentAssociatedWithAResource"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/dedicator -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/dedicator">
-        <rdfs:label xml:lang="en">has dedicator</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent by whom a resource is
-            dedicated.</skos:definition>
-        <RegAp:name xml:lang="en">dedicator</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/dto</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/dedicatorOf"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/otherPFCAssociatedWithAResource"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10048"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/dedicatorOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/dedicatorOf">
-        <rdfs:label xml:lang="en">is dedicator of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent by whom a resource is dedicated to the
-            resource.</skos:definition>
-        <RegAp:name xml:lang="en">dedicatorOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50132"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/otherAgentAssociatedWithAResource"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/derivative -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/derivative">
@@ -2869,8 +2113,6 @@
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20203"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60189"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60214"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60216"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60245"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60275"/>
@@ -2896,35 +2138,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60305"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/derivativeResourceRelationshipWith"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10229"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/distributor -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/distributor">
-        <rdfs:label xml:lang="en">has distributor</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent responsible for distributing a
-            resource.</skos:definition>
-        <RegAp:name xml:lang="en">distributor</RegAp:name>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/dst</skos:closeMatch>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30080"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/distributorOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/distributorOf">
-        <rdfs:label xml:lang="en">is distributor of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent responsible for distributing a resource to
-            the resource.</skos:definition>
-        <RegAp:name xml:lang="en">distributorOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/distributor"/>
     </owl:ObjectProperty>
     
 
@@ -2991,38 +2204,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50156"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/contributorOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/electronicReproduction -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/electronicReproduction">
-        <rdfs:label xml:lang="en">is electronic reproduction</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a digital resource resulting from the
-            reproduction of an analog resource.</skos:definition>
-        <RegAp:name xml:lang="en">electronicReproduction</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30016"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/reproducedAs"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/electronicReproductionOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/electronicReproductionOf">
-        <rdfs:label xml:lang="en">is electronic reproduction of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an analog resource used as the basis
-            for an electronic reproduction.</skos:definition>
-        <RegAp:name xml:lang="en">electronicReproductionOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40027"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30136"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/electronicReproduction"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/reproductionOf"/>
     </owl:ObjectProperty>
     
 
@@ -3096,70 +2277,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/facsimile -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/facsimile">
-        <rdfs:label xml:lang="en">is facsimile</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that exactly reproduces
-            another resource embodying the resource.</skos:definition>
-        <RegAp:name xml:lang="en">facsimile</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30031"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/reproducedAs"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/facsimileContainedIn -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/facsimileContainedIn">
-        <rdfs:label xml:lang="en">is facsimile contained in</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a larger resource of which a part is a
-            discrete component that exactly reproduces another resource embodying the
-            resource.</skos:definition>
-        <RegAp:name xml:lang="en">facsimileContainedIn</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30019"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/containedIn"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/facsimileContainerOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/facsimileContainerOf">
-        <rdfs:label xml:lang="en">is facsimile container of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource used as the basis for an
-            exact reproduction that is a discrete component of a larger entity.</skos:definition>
-        <RegAp:name xml:lang="en">facsimileContainerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30046"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/facsimileContainedIn"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/http://rdaregistry.info/Elements/u/containerOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/facsimileOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/facsimileOf">
-        <rdfs:label xml:lang="en">is facsimile of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource used as the basis for an
-            exact reproduction.</skos:definition>
-        <RegAp:name xml:lang="en">facsimileOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40045"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30047"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/facsimile"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/reproductionOf"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/formerOwner -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/formerOwner">
@@ -3192,72 +2309,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60013"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/formerOwner"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/ownerOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/freeTranslationOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/freeTranslationOf">
-        <rdfs:label xml:lang="en">is free translation of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that has been translated
-            freely, preserving the spirit of the original, but not its linguistic
-            details.</skos:definition>
-        <RegAp:name xml:lang="en">freeTranslationOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20140"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/basedOn"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10143"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/freelyTranslatedAs -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/freelyTranslatedAs">
-        <rdfs:label xml:lang="en">is freely translated as</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource created by freely
-            translating the source resource into another language, preserving the spirit of the
-            original, but not its linguistic details.</skos:definition>
-        <RegAp:name xml:lang="en">freelyTranslatedAs</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20119"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/derivative"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/freeTranslationOf"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10099"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/identifierForTheResource -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/identifierForTheResource">
-        <rdfs:label xml:lang="en">has identifier for the resource</rdfs:label>
-        <rdfs:label xml:lang="en">is special issue of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a character string associated with a
-            resource that serves to differentiate that resource from other
-            resources.</skos:definition>
-        <skos:definition xml:lang="en">Relates a resource to a character string associated with a
-         resource that serves to differentiate that resource from other resources.</skos:definition>
-        <skos:definition xml:lang="en">Relates a resource to a serial or newspaper containing a
-            single issue or a supplementary section devoted to a special subject, with or without
-            serial numbering, such as an anniversary number of a periodical or
-            newspaper.</skos:definition>
-        <skos:definition xml:lang="en">Relates a resource to a serial or newspaper containing a single
-         issue or a supplementary section devoted to a special subject, with or without serial
-         numbering, such as an anniversary number of a periodical or newspaper.</skos:definition>
-        <RegAp:name xml:lang="en">identifierForTheResource</RegAp:name>
-        <RegAp:name xml:lang="en">specialIssueOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20002"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30004"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30101"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/containedIn"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10002"/>
     </owl:ObjectProperty>
     
 
@@ -3296,41 +2347,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/imitatedAs -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/imitatedAs">
-        <rdfs:label xml:lang="en">is imitated as</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that copies the style or
-            content of the source resource.</skos:definition>
-        <RegAp:name xml:lang="en">imitatedAs</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20114"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60246"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/derivative"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10117"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/imitationOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/imitationOf">
-        <rdfs:label xml:lang="en">is imitation of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource whose style or content is
-            copied in a derivative resource.</skos:definition>
-        <RegAp:name xml:lang="en">imitationOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20195"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60312"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/basedOn"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/imitatedAs"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10196"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/inSeries -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/inSeries">
@@ -3342,101 +2358,6 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/containedIn"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10102"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/inscriber -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/inscriber">
-        <rdfs:label xml:lang="en">has inscriber</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent who has written a statement of
-            dedication or gift on a resource.</skos:definition>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/ins</skos:closeMatch>
-        <RegAp:name xml:lang="en">inscriber</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40014"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/inscriberOf"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/otherPFCAssociatedWithAResource"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/inscriberOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/inscriberOf">
-        <rdfs:label xml:lang="en">is inscriber of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent who has written a statement of dedication or
-            gift on a resource to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">inscriberOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50125"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/otherAgentAssociatedWithAResource"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/insert -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/insert">
-        <rdfs:label xml:lang="en">is insert</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource consisting of separately
-            issued material that is not an integral part of the larger resource into which it has
-            been inserted.</skos:definition>
-        <RegAp:name xml:lang="en">insert</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30022"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/http://rdaregistry.info/Elements/u/containerOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/insertedIn -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/insertedIn">
-        <rdfs:label xml:lang="en">is inserted in</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource into which material has been
-            inserted that is not an integral part of the publication.</skos:definition>
-        <RegAp:name xml:lang="en">insertedIn</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30025"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/containedIn"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/insert"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/manufacturer -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/manufacturer">
-        <rdfs:label xml:lang="en">has manufacturer</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent responsible for printing,
-            duplicating, casting, etc., a resource in a published form.</skos:definition>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/mfr</skos:closeMatch>
-        <RegAp:name xml:lang="en">manufacturer</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30082"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60418"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/manufacturerOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/manufacturerOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/manufacturerOf">
-        <rdfs:label xml:lang="en">is manufacturer of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent responsible for printing, duplicating,
-            casting, etc., a resource in a published form to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">manufacturerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60646"/>
     </owl:ObjectProperty>
     
 
@@ -3526,11 +2447,7 @@
         <RegAp:name xml:lang="en">otherAgentAssociatedWithAResourceOf</RegAp:name>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60603"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60604"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60689"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60695"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60702"/>
     </owl:ObjectProperty>
     
 
@@ -3552,11 +2469,7 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40023"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30079"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60375"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60376"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60455"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60460"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60466"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/otherAgentAssociatedWithAResource"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10047"/>
     </owl:ObjectProperty>
@@ -3592,39 +2505,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60628"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60630"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/owner"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/parodiedAs -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/parodiedAs">
-        <rdfs:label xml:lang="en">is parodied as</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that imitates the style or
-            content of the source resource for comic effect.</skos:definition>
-        <RegAp:name xml:lang="en">parodiedAs</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20142"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/imitatedAs"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/parodyOf"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10144"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/parodyOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/parodyOf">
-        <rdfs:label xml:lang="en">is parody of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource whose style or content is
-            imitated for comic effect.</skos:definition>
-        <RegAp:name xml:lang="en">parodyOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20196"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/imitationOf"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10197"/>
     </owl:ObjectProperty>
     
 
@@ -3700,40 +2580,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/printer -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/printer">
-        <rdfs:label xml:lang="en">has printer</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to an agent involved in manufacturing a
-            resource of printed text, notated music, etc., from type or plates, such as a book,
-            newspaper, magazine, broadside, score, etc.</skos:definition>
-        <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/prt</skos:closeMatch>
-        <RegAp:name xml:lang="en">printer</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30078"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/manufacturer"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/printerOf"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/printerOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/printerOf">
-        <rdfs:label xml:lang="en">is printer of</rdfs:label>
-        <skos:definition xml:lang="en">Relates an agent involved in manufacturing a resource of
-            printed text, notated music, etc., from type or plates, such as a book, newspaper,
-            magazine, broadside, score, etc. to the resource.</skos:definition>
-        <RegAp:name xml:lang="en">printerOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50179"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/manufacturerOf"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/productOfASplit -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/productOfASplit">
@@ -3761,6 +2607,8 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
     </owl:ObjectProperty>
     
+
+
     <!-- http://rdaregistry.info/Elements/u/publisherOf -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/publisherOf">
@@ -3772,6 +2620,8 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60444"/>
     </owl:ObjectProperty>
+    
+
 
     <!-- http://rdaregistry.info/Elements/u/realIdentity -->
 
@@ -3900,8 +2750,6 @@
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30039"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60083"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60217"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60271"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/equivalent"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/reproductionOf"/>
@@ -3921,8 +2769,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30043"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60168"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60301"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60469"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/equivalent"/>
     </owl:ObjectProperty>
     
@@ -4071,23 +2917,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/specialIssue -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/specialIssue">
-        <rdfs:label xml:lang="en">is special issue</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource that consists of a single
-            issue or a supplementary section of a serial or newspaper devoted to a special
-            subject.</skos:definition>
-        <RegAp:name xml:lang="en">specialIssue</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30030"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/identifierForTheResource"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/http://rdaregistry.info/Elements/u/containerOf"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/splitInto -->
 
     <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/splitInto">
@@ -4100,39 +2929,6 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/succeededBy"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10211"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/subseries -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/subseries">
-        <rdfs:label xml:lang="en">is subseries</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a serial or multipart resource that
-            consistently appears in a larger resource; the title of the larger resource appears on
-            all issues or parts of the subseries</skos:definition>
-        <RegAp:name xml:lang="en">subseries</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/http://rdaregistry.info/Elements/u/containerOf"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10080"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/subseriesOf -->
-
-    <owl:ObjectProperty rdf:about="http://rdaregistry.info/Elements/u/subseriesOf">
-        <rdfs:label xml:lang="en">is subseries of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a resource in which the part
-            consistently appears; the title of the larger resource appears on all issues or parts of
-            the subseries.</skos:definition>
-        <RegAp:name xml:lang="en">subseriesOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/containedIn"/>
-        <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/subseries"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10101"/>
     </owl:ObjectProperty>
     
 
@@ -4259,11 +3055,7 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40034"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30033"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60183"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60207"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60240"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60300"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60316"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/wholePartResourceRelationshipWith"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10147"/>
     </owl:ObjectProperty>
@@ -4400,166 +3192,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60128 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60128">
-        <rdfs:label xml:lang="en">has note on publication statement</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing details on place of
-            publication, publisher, or date of publication, information on changes in the place of
-            publication, publisher, or publisher’s name, or on suspension of
-            publication.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnPublicationStatement</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30055"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnPublicationStatement"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60129 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60129">
-        <rdfs:label xml:lang="en">has note on frequency</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing details on the
-            currency of the contents, on the frequency of release of issues or parts of a serial or
-            the frequency of updates to an integrating resource, or on changes in
-            frequency.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnFrequency</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30056"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnFrequency"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60130 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60130">
-        <rdfs:label xml:lang="en">has note on statement of responsibility</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on an
-            agent not named in a statement of responsibility to whom responsibility for the
-            intellectual or artistic content of the resource has been attributed, on variant forms
-            of names appearing in the resource, on changes in statements of responsibility, or on
-            other details relating to a statement of responsibility.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnStatementOfResponsibility</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30057"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnStatementOfResponsibility"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60131 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60131">
-        <rdfs:label xml:lang="en">has note on series statement</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on complex
-            series statements, incorrect numbering within series, or changes in series
-            statements.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnSeriesStatement</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30058"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnSeriesStatement"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60132 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60132">
-        <rdfs:label xml:lang="en">has note on copyright date</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on
-            copyright dates not recorded as part of the copyright date element.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnCopyrightDate</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30059"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnCopyrightDate"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60134 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60134">
-        <rdfs:label xml:lang="en">has note on extent of resource</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on the
-            extent of a resource that is not recorded as part of the extent
-            element.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnExtentOfResource</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40011"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30061"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnExtentOfResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60135 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60135">
-        <rdfs:label xml:lang="en">has note on numbering of serials</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on the
-            numbering of the first and/or last issue or part, on complex or irregular numbering
-            (including numbering errors), or on the period covered by a volume, issue, part,
-            etc.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnNumberingOfSerials</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30062"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnNumberingOfSerials"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60136 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60136">
-        <rdfs:label xml:lang="en">has note on title</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on the
-            source from which a title was taken, the date the title was viewed, variations in
-            titles, inaccuracies, deletions, etc., or other information relating to a
-            title.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnTitle</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30063"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnTitle"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60137 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60137">
-        <rdfs:label xml:lang="en">has note on edition statement</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on the
-            source of an edition statement, on edition statements relating to issues, parts, etc.,
-            on changes in edition statements, or other information relating to an edition
-            statement.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnEditionStatement</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30064"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60470"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnEditionStatement"/>
-    </owl:DatatypeProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60324 -->
 
     <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60324">
@@ -4615,21 +3247,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30106"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/seriesStatement"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60329 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60329">
-        <rdfs:label xml:lang="en">has edition statement</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a statement identifying the edition to
-            which a resource belongs.</skos:definition>
-        <RegAp:name xml:lang="en">editionStatement</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30107"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/editionStatement"/>
     </owl:DatatypeProperty>
     
 
@@ -4706,22 +3323,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/P60359 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60359">
-        <rdfs:label xml:lang="en">has abbreviated title</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a title that has been abbreviated for
-            purposes of indexing or identification.</skos:definition>
-        <RegAp:name xml:lang="en">abbreviatedTitle</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30131"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60369"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/abbreviatedTitle"/>
-    </owl:DatatypeProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/P60366 -->
 
     <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60366">
@@ -4767,7 +3368,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30134"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60355"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60359"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60493"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60515"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60589"/>
@@ -4787,22 +3387,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20071"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60490 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60490">
-        <rdfs:label xml:lang="en">has contact information</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to information about an organization,
-            etc., from which a resource may be obtained.</skos:definition>
-        <RegAp:name xml:lang="en">contactInformation</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30141"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/contactInformation"/>
-        <rdfs:subPropertyOf rdf:resource="owl:topDataProperty"/>
     </owl:DatatypeProperty>
     
 
@@ -4940,7 +3524,7 @@
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30157"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/titlePropertOfSeries"/>
+        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/titleProperOfSeries"/>
         <rdfs:subPropertyOf rdf:resource="owl:topDataProperty"/>
     </owl:DatatypeProperty>
     
@@ -4974,21 +3558,6 @@
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60324"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/dateOfTermination"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/P60531 -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60531">
-        <rdfs:label xml:lang="en">has gender</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to the gender with which an agent
-            identifies.</skos:definition>
-        <RegAp:name xml:lang="en">gender</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50116"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/gender"/>
     </owl:DatatypeProperty>
     
 
@@ -5148,21 +3717,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/abbreviatedTitle -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/abbreviatedTitle">
-        <rdfs:label xml:lang="en">has abbreviated title</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a title that has been abbreviated for
-         purposes of indexing or identification.</skos:definition>
-        <RegAp:name xml:lang="en">abbreviatedTitle</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30131"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/title"/>
-    </owl:DatatypeProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/chronologicalDesignationOfFirstIssueOrPartOfSequence -->
 
     <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/chronologicalDesignationOfFirstIssueOrPartOfSequence">
@@ -5195,21 +3749,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30150"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/numberingOfSerials"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/contactInformation -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/contactInformation">
-        <rdfs:label xml:lang="en">has contact information</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to information about an organization, etc.,
-         from which a resource may be obtained.</skos:definition>
-        <RegAp:name xml:lang="en">contactInformation</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30141"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="owl:topDataProperty"/>
     </owl:DatatypeProperty>
     
 
@@ -5310,20 +3849,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/editionStatement -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/editionStatement">
-        <rdfs:label xml:lang="en">has edition statement</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a statement identifying the edition to
-         which a resource belongs.</skos:definition>
-        <RegAp:name xml:lang="en">editionStatement</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30107"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-    </owl:DatatypeProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/extent -->
 
     <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/extent">
@@ -5357,20 +3882,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/gender -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/gender">
-        <rdfs:label xml:lang="en">has gender</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to the gender with which an agent
-         identifies.</skos:definition>
-        <RegAp:name xml:lang="en">gender</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50116"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-    </owl:DatatypeProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/identifierForTheAgent -->
 
     <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/identifierForTheAgent">
@@ -5389,31 +3900,7 @@
 
     <!-- http://rdaregistry.info/Elements/u/identifierForTheResource -->
 
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/identifierForTheResource">
-        <rdfs:label xml:lang="en">has identifier for the resource</rdfs:label>
-        <rdfs:label xml:lang="en">is special issue of</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a character string associated with a
-            resource that serves to differentiate that resource from other
-            resources.</skos:definition>
-        <skos:definition xml:lang="en">Relates a resource to a character string associated with a
-         resource that serves to differentiate that resource from other resources.</skos:definition>
-        <skos:definition xml:lang="en">Relates a resource to a serial or newspaper containing a
-            single issue or a supplementary section devoted to a special subject, with or without
-            serial numbering, such as an anniversary number of a periodical or
-            newspaper.</skos:definition>
-        <skos:definition xml:lang="en">Relates a resource to a serial or newspaper containing a single
-         issue or a supplementary section devoted to a special subject, with or without serial
-         numbering, such as an anniversary number of a periodical or newspaper.</skos:definition>
-        <RegAp:name xml:lang="en">identifierForTheResource</RegAp:name>
-        <RegAp:name xml:lang="en">specialIssueOf</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20002"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30004"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30101"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/w/P10002"/>
-    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/identifierForTheResource"/>
     
 
 
@@ -5464,105 +3951,6 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/noteOnCopyrightDate -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnCopyrightDate">
-        <rdfs:label xml:lang="en">has note on copyright date</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on copyright
-         dates not recorded as part of the copyright date element.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnCopyrightDate</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30059"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/noteOnEditionStatement -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnEditionStatement">
-        <rdfs:label xml:lang="en">has note on edition statement</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on the
-         source of an edition statement, on edition statements relating to issues, parts, etc., on
-         changes in edition statements, or other information relating to an edition
-         statement.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnEditionStatement</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30064"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/noteOnExtentOfResource -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnExtentOfResource">
-        <rdfs:label xml:lang="en">has note on extent of resource</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on the
-         extent of a resource that is not recorded as part of the extent element.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnExtentOfResource</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40011"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30061"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/noteOnFrequency -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnFrequency">
-        <rdfs:label xml:lang="en">has note on frequency</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing details on the currency
-         of the contents, on the frequency of release of issues or parts of a serial or the
-         frequency of updates to an integrating resource, or on changes in
-         frequency.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnFrequency</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30056"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/noteOnNumberingOfSerials -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnNumberingOfSerials">
-        <rdfs:label xml:lang="en">has note on numbering of serials</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on the
-         numbering of the first and/or last issue or part, on complex or irregular numbering
-         (including numbering errors), or on the period covered by a volume, issue, part,
-         etc.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnNumberingOfSerials</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30062"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/noteOnPublicationStatement -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnPublicationStatement">
-        <rdfs:label xml:lang="en">has note on publication statement</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing details on place of
-         publication, publisher, or date of publication, information on changes in the place of
-         publication, publisher, or publisher’s name, or on suspension of
-         publication.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnPublicationStatement</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30055"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
     <!-- http://rdaregistry.info/Elements/u/noteOnResource -->
 
     <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnResource">
@@ -5573,56 +3961,6 @@
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20071"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/noteOnSeriesStatement -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnSeriesStatement">
-        <rdfs:label xml:lang="en">has note on series statement</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on complex
-         series statements, incorrect numbering within series, or changes in series
-         statements.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnSeriesStatement</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30058"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/noteOnStatementOfResponsibility -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnStatementOfResponsibility">
-        <rdfs:label xml:lang="en">has note on statement of responsibility</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on an agent
-         not named in a statement of responsibility to whom responsibility for the intellectual or
-         artistic content of the resource has been attributed, on variant forms of names appearing
-         in the resource, on changes in statements of responsibility, or on other details relating
-         to a statement of responsibility.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnStatementOfResponsibility</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30057"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://rdaregistry.info/Elements/u/noteOnTitle -->
-
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/noteOnTitle">
-        <rdfs:label xml:lang="en">has note on title</rdfs:label>
-        <skos:definition xml:lang="en">Relates a resource to a note providing information on the
-         source from which a title was taken, the date the title was viewed, variations in titles,
-         inaccuracies, deletions, etc., or other information relating to a title.</skos:definition>
-        <RegAp:name xml:lang="en">noteOnTitle</RegAp:name>
-        <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30063"/>
-        <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
-        <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/noteOnResource"/>
     </owl:DatatypeProperty>
     
 
@@ -5885,7 +4223,6 @@
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30134"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60355"/>
-        <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60359"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60493"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60515"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60589"/>
@@ -5908,9 +4245,9 @@
     
 
 
-    <!-- http://rdaregistry.info/Elements/u/titlePropertOfSeries -->
+    <!-- http://rdaregistry.info/Elements/u/titleProperOfSeries -->
 
-    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/titlePropertOfSeries">
+    <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/titleProperOfSeries">
         <rdfs:label xml:lang="en">has title proper of series</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to the chief name of a series (i.e., the
          title normally used when citing the series).</skos:definition>
@@ -5984,34 +4321,34 @@
 
     <!-- http://dimenovels.org/ontology#Copy -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Copy">
+    <owl:Class rdf:about="dime:Copy">
         <rdfs:label>Copy</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:subClassOf rdf:resource="dime:Publication"/>
     </owl:Class>
     
 
 
     <!-- http://dimenovels.org/ontology#Edition -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Edition">
+    <owl:Class rdf:about="dime:Edition">
         <rdfs:label>Edition</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:subClassOf rdf:resource="dime:Publication"/>
     </owl:Class>
     
 
 
     <!-- http://dimenovels.org/ontology#Issue -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Issue">
+    <owl:Class rdf:about="dime:Issue">
         <rdfs:label>Issue</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:subClassOf rdf:resource="dime:Publication"/>
     </owl:Class>
     
 
 
     <!-- http://dimenovels.org/ontology#Publication -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Publication">
+    <owl:Class rdf:about="dime:Publication">
         <rdfs:label>Publication</rdfs:label>
     </owl:Class>
     
@@ -6019,9 +4356,9 @@
 
     <!-- http://dimenovels.org/ontology#Series -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Series">
+    <owl:Class rdf:about="dime:Series">
         <rdfs:label>Series</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:subClassOf rdf:resource="dime:Publication"/>
     </owl:Class>
     
 
@@ -6030,7 +4367,7 @@
 
     <owl:Class rdf:about="http://schema.org/CreativeWork">
         <rdfs:label>CreativeWork</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:subClassOf rdf:resource="dime:Publication"/>
         <rdfs:comment>The most generic kind of creative work, including books, movies, photographs,
             software programs, etc.</rdfs:comment>
     </owl:Class>
@@ -6079,4 +4416,5 @@
 
 
 
-<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 3.5.1) http://owlapi.sourceforge.net -->
+
