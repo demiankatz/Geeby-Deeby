@@ -8,8 +8,7 @@
      xmlns:skos="http://www.w3.org/2004/02/skos/core#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:dime="http://dimenovels.org/ontology#"
-     xmlns:dc="http://purl.org/dc/elements/1.1/"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
     <owl:Ontology rdf:about="http://dimenovels.org/ontology">
         <dc:date rdf:datatype="xsd:dateTime">May 04, 2015 11:38:41
             AM</dc:date>
