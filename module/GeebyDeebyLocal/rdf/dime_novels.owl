@@ -28,105 +28,105 @@
     
 
 
-    <!-- RegAp:hasSubproperty -->
-
-    <owl:AnnotationProperty rdf:about="RegAp:hasSubproperty"/>
-    
-
-
-    <!-- RegAp:name -->
-
-    <owl:AnnotationProperty rdf:about="RegAp:name"/>
-    
-
-
-    <!-- RegAp:status -->
-
-    <owl:AnnotationProperty rdf:about="RegAp:status"/>
-    
-
-
-    <!-- dc:title -->
-
-    <owl:AnnotationProperty rdf:about="dc:title"/>
-    
-
-
     <!-- http://metadataregistry.org/uri/profile/RegAp/hasSubproperty -->
 
-    <owl:AnnotationProperty rdf:about="RegAp:hasSubproperty"/>
+    <owl:AnnotationProperty rdf:about="http://metadataregistry.org/uri/profile/RegAp/hasSubproperty"/>
     
 
 
     <!-- http://metadataregistry.org/uri/profile/RegAp/name -->
 
-    <owl:AnnotationProperty rdf:about="RegAp:name"/>
+    <owl:AnnotationProperty rdf:about="http://metadataregistry.org/uri/profile/RegAp/name"/>
     
 
 
     <!-- http://metadataregistry.org/uri/profile/RegAp/status -->
 
-    <owl:AnnotationProperty rdf:about="RegAp:status"/>
+    <owl:AnnotationProperty rdf:about="http://metadataregistry.org/uri/profile/RegAp/status"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/title -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/title"/>
+    
+
+
+    <!-- http://metadataregistry.org/uri/profile/RegAp/hasSubproperty -->
+
+    <owl:AnnotationProperty rdf:about="http://metadataregistry.org/uri/profile/RegAp/hasSubproperty"/>
+    
+
+
+    <!-- http://metadataregistry.org/uri/profile/RegAp/name -->
+
+    <owl:AnnotationProperty rdf:about="http://metadataregistry.org/uri/profile/RegAp/name"/>
+    
+
+
+    <!-- http://metadataregistry.org/uri/profile/RegAp/status -->
+
+    <owl:AnnotationProperty rdf:about="http://metadataregistry.org/uri/profile/RegAp/status"/>
     
 
 
     <!-- http://www.w3.org/2004/02/skos/core#broadMatch -->
 
-    <owl:AnnotationProperty rdf:about="skos:broadMatch"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#broadMatch"/>
     
 
 
     <!-- http://www.w3.org/2004/02/skos/core#closeMatch -->
 
-    <owl:AnnotationProperty rdf:about="skos:closeMatch"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#closeMatch"/>
     
 
 
     <!-- http://www.w3.org/2004/02/skos/core#definition -->
 
-    <owl:AnnotationProperty rdf:about="skos:definition"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#definition"/>
     
 
 
     <!-- http://www.w3.org/2004/02/skos/core#scopeNote -->
 
-    <owl:AnnotationProperty rdf:about="skos:scopeNote"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#scopeNote"/>
     
 
 
-    <!-- skos:broadMatch -->
+    <!-- http://www.w3.org/2004/02/skos/core#broadMatch -->
 
-    <owl:AnnotationProperty rdf:about="skos:broadMatch"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#broadMatch"/>
     
 
 
-    <!-- skos:closeMatch -->
+    <!-- http://www.w3.org/2004/02/skos/core#closeMatch -->
 
-    <owl:AnnotationProperty rdf:about="skos:closeMatch"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#closeMatch"/>
     
 
 
-    <!-- skos:definition -->
+    <!-- http://www.w3.org/2004/02/skos/core#definition -->
 
-    <owl:AnnotationProperty rdf:about="skos:definition"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#definition"/>
     
 
 
-    <!-- skos:note -->
+    <!-- http://www.w3.org/2004/02/skos/core#note -->
 
-    <owl:AnnotationProperty rdf:about="skos:note"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#note"/>
     
 
 
-    <!-- skos:prefLabel -->
+    <!-- http://www.w3.org/2004/02/skos/core#prefLabel -->
 
-    <owl:AnnotationProperty rdf:about="skos:prefLabel"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#prefLabel"/>
     
 
 
-    <!-- skos:scopeNote -->
+    <!-- http://www.w3.org/2004/02/skos/core#scopeNote -->
 
-    <owl:AnnotationProperty rdf:about="skos:scopeNote"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#scopeNote"/>
     
 
 
