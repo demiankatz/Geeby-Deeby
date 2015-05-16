@@ -7,7 +7,6 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:skos="http://www.w3.org/2004/02/skos/core#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:dime="http://dimenovels.org/ontology#"
      xmlns:dc="http://purl.org/dc/elements/1.1/">
     <owl:Ontology rdf:about="http://dimenovels.org/ontology">
         <dc:date rdf:datatype="xsd:dateTime">May 04, 2015 11:38:41
@@ -144,13 +143,13 @@
 
     <!-- http://dimenovels.org/ontology#HasCopy -->
 
-    <owl:ObjectProperty rdf:about="dime:HasCopy"/>
+    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasCopy"/>
     
 
 
     <!-- http://dimenovels.org/ontology#HasIssue -->
 
-    <owl:ObjectProperty rdf:about="dime:HasIssue">
+    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasIssue">
         <rdfs:label>HasIssue</rdfs:label>
         <rdfs:subPropertyOf rdf:resource="owl:topObjectProperty"/>
     </owl:ObjectProperty>
@@ -159,15 +158,15 @@
 
     <!-- http://dimenovels.org/ontology#HasRealizationOfCreativeWork -->
 
-    <owl:ObjectProperty rdf:about="dime:HasRealizationOfCreativeWork">
-        <owl:inverseOf rdf:resource="dime:IsRealizationOfCreativeWork"/>
+    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasRealizationOfCreativeWork">
+        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#IsRealizationOfCreativeWork"/>
     </owl:ObjectProperty>
     
 
 
     <!-- http://dimenovels.org/ontology#HasSeries -->
 
-    <owl:ObjectProperty rdf:about="dime:HasSeries">
+    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasSeries">
         <rdfs:label>HasSeries</rdfs:label>
         <rdfs:subPropertyOf rdf:resource="owl:topObjectProperty"/>
     </owl:ObjectProperty>
@@ -176,23 +175,23 @@
 
     <!-- http://dimenovels.org/ontology#IsCopyOf -->
 
-    <owl:ObjectProperty rdf:about="dime:IsCopyOf">
-        <owl:inverseOf rdf:resource="dime:HasCopy"/>
+    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsCopyOf">
+        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#HasCopy"/>
     </owl:ObjectProperty>
     
 
 
     <!-- http://dimenovels.org/ontology#IsIssueOf -->
 
-    <owl:ObjectProperty rdf:about="dime:IsIssueOf">
-        <owl:inverseOf rdf:resource="dime:HasIssue"/>
+    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsIssueOf">
+        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#HasIssue"/>
     </owl:ObjectProperty>
     
 
 
     <!-- http://dimenovels.org/ontology#IsRealizationOfCreativeWork -->
 
-    <owl:ObjectProperty rdf:about="dime:IsRealizationOfCreativeWork">
+    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsRealizationOfCreativeWork">
         <rdfs:label>IsRealizationOfCreativeWork</rdfs:label>
         <rdfs:subPropertyOf rdf:resource="owl:topObjectProperty"/>
     </owl:ObjectProperty>
@@ -201,8 +200,8 @@
 
     <!-- http://dimenovels.org/ontology#IsSeriesOf -->
 
-    <owl:ObjectProperty rdf:about="dime:IsSeriesOf">
-        <owl:inverseOf rdf:resource="dime:HasSeries"/>
+    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsSeriesOf">
+        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#HasSeries"/>
     </owl:ObjectProperty>
     
 
@@ -4320,34 +4319,34 @@
 
     <!-- http://dimenovels.org/ontology#Copy -->
 
-    <owl:Class rdf:about="dime:Copy">
+    <owl:Class rdf:about="http://dimenovels.org/ontology#Copy">
         <rdfs:label>Copy</rdfs:label>
-        <rdfs:subClassOf rdf:resource="dime:Publication"/>
+        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
     </owl:Class>
     
 
 
     <!-- http://dimenovels.org/ontology#Edition -->
 
-    <owl:Class rdf:about="dime:Edition">
+    <owl:Class rdf:about="http://dimenovels.org/ontology#Edition">
         <rdfs:label>Edition</rdfs:label>
-        <rdfs:subClassOf rdf:resource="dime:Publication"/>
+        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
     </owl:Class>
     
 
 
     <!-- http://dimenovels.org/ontology#Issue -->
 
-    <owl:Class rdf:about="dime:Issue">
+    <owl:Class rdf:about="http://dimenovels.org/ontology#Issue">
         <rdfs:label>Issue</rdfs:label>
-        <rdfs:subClassOf rdf:resource="dime:Publication"/>
+        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
     </owl:Class>
     
 
 
     <!-- http://dimenovels.org/ontology#Publication -->
 
-    <owl:Class rdf:about="dime:Publication">
+    <owl:Class rdf:about="http://dimenovels.org/ontology#Publication">
         <rdfs:label>Publication</rdfs:label>
     </owl:Class>
     
@@ -4355,9 +4354,9 @@
 
     <!-- http://dimenovels.org/ontology#Series -->
 
-    <owl:Class rdf:about="dime:Series">
+    <owl:Class rdf:about="http://dimenovels.org/ontology#Series">
         <rdfs:label>Series</rdfs:label>
-        <rdfs:subClassOf rdf:resource="dime:Publication"/>
+        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
     </owl:Class>
     
 
@@ -4366,7 +4365,7 @@
 
     <owl:Class rdf:about="http://schema.org/CreativeWork">
         <rdfs:label>CreativeWork</rdfs:label>
-        <rdfs:subClassOf rdf:resource="dime:Publication"/>
+        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
         <rdfs:comment>The most generic kind of creative work, including books, movies, photographs,
             software programs, etc.</rdfs:comment>
     </owl:Class>
