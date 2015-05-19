@@ -3226,6 +3226,16 @@
     
 
 
+    <!-- http://dimenovels.org/ontology#HasBeenReviewed -->
+
+    <owl:DatatypeProperty rdf:about="http://dimenovels.org/ontology#HasBeenReviewed">
+        <rdfs:label>has been reviewed</rdfs:label>
+        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- http://rdaregistry.info/Elements/u/P60052 -->
 
     <owl:DatatypeProperty rdf:about="http://rdaregistry.info/Elements/u/P60052">
