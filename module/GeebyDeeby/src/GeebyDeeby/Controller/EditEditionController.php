@@ -796,6 +796,11 @@ class EditEditionController extends AbstractBase
         $insertCallback = function ($new, $row, $sm) {
             $edsTable = $sm->get('GeebyDeeby\DbTablePluginManager')
                 ->get('edition');
+            $newObj = $edsTable->getByPrimaryKey($new);
+            if ($error = $newObj->validate()) {
+                $newObj->delete();
+                throw new \Exception($error);
+            }
             $rows = $edsTable->select(array('Item_ID' => $row['Item_ID']));
             foreach ($rows as $row) {
                 $row = $row->toArray();

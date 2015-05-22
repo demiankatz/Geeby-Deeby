@@ -229,6 +229,9 @@ class Edition extends Gateway
         if (count($this->getDbTable('editionsreleasedates')->select($select)) > 0) {
             throw new \Exception('Cannot delete - attached dates.');
         }
+        if (count($this->getDbTable('edition')->select(array('Parent_Edition_ID' => $id))) > 0) {
+            throw new \Exception('Cannot delete - has child editions.');
+        }
         $this->delete($select);
     }
 }
