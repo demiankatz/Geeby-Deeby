@@ -138,4 +138,31 @@ class Item extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of items for the specified edition.
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getItemsForEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->join(
+                array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
+                array('Position_in_Parent', 'Edition_ID')
+            );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
+            $select->order(
+                array('Position_in_Parent', 'Item_Name')
+            );
+            $select->where->equalTo('Parent_Edition_ID', $editionID);
+        };
+        return $this->select($callback);
+    }
 }

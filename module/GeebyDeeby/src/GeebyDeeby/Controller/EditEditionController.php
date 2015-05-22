@@ -68,10 +68,11 @@ class EditEditionController extends AbstractBase
         );
         $view = $this->handleGenericItem('edition', $assignMap, 'edition');
 
+        $itemTable = $this->getDbTable('item');
+
         // Add item/series details if necessary:
         if (isset($view->edition['Item_ID']) && !empty($view->edition['Item_ID'])) {
-            $view->item = $this->getDbTable('item')
-                ->getByPrimaryKey($view->edition['Item_ID']);
+            $view->item = $itemTable->getByPrimaryKey($view->edition['Item_ID']);
             $view->itemAltTitles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->edition['Item_ID']);
         }
@@ -110,6 +111,8 @@ class EditEditionController extends AbstractBase
                 ->getList();
             $view->next = $view->editionObj->getNextInSeries();
             $view->previous = $view->editionObj->getPreviousInSeries();
+            $view->item_list = $itemTable
+                ->getItemsForEdition($view->edition['Edition_ID']);
         }
         return $view;
     }
@@ -761,5 +764,77 @@ class EditEditionController extends AbstractBase
             'editionPlatforms', 'getPlatformsForEdition',
             'geeby-deeby/edit-edition/platform-list.phtml'
         );
+    }
+
+    /**
+     * Deal with items
+     *
+     * @return mixed
+     */
+    public function itemAction()
+    {
+        // Special case: delete editions differently from other links:
+        if ($this->getRequest()->isDelete()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
+            try {
+                $this->getDbTable('edition')
+                    ->safeDelete($this->params()->fromRoute('extra'));
+            } catch (\Exception $e) {
+                return $this->jsonDie($e->getMessage());
+            }
+            return $this->jsonReportSuccess();
+        }
+
+        $parentEdition = $this->getDbTable('edition')->getByPrimaryKey(
+            $this->params()->fromRoute('id')
+        );
+        $edName = $parentEdition->Edition_Name;
+        $seriesID = $parentEdition->Series_ID;
+        $insertCallback = function ($new, $row, $sm) {
+            $edsTable = $sm->get('GeebyDeeby\DbTablePluginManager')
+                ->get('edition');
+            $rows = $edsTable->select(array('Item_ID' => $row['Item_ID']));
+            foreach ($rows as $row) {
+                $row = $row->toArray();
+                if ($row['Edition_ID'] != $new) {
+                    break;
+                }
+            }
+            if (isset($row['Edition_ID']) && $row['Edition_ID'] != $new) {
+                $edsTable->getByPrimaryKey($new)->copyCredits($row['Edition_ID']);
+            }
+        };
+        return $this->handleGenericLink(
+            'edition', 'Parent_Edition_ID', 'Item_ID',
+            'item_list', 'getItemsForEdition',
+            'geeby-deeby/edit-edition/item-list.phtml',
+            array('Edition_Name' => $edName, 'Series_ID' => $seriesID),
+            $insertCallback
+        );
+    }
+
+    /**
+     * Set the order of an item
+     *
+     * @return mixed
+     */
+    public function itemorderAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            $edition = $this->params()->fromPost('edition_id');
+            $pos = $this->params()->fromPost('pos');
+            $this->getDbTable('edition')->update(
+                array('Position_in_Parent' => $pos), array('Edition_ID' => $edition)
+            );
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
     }
 }
