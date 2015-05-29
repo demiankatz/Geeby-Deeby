@@ -11,6 +11,9 @@ function saveEdition()
     var seriesID = $('#Series_ID').val();
     var len = $('#Edition_Length').val();
     var endings = $('#Edition_Endings').val();
+    var parent = $('#Parent_Edition_ID').val();
+    var parent_pos = $('#Position_In_Parent').val();
+    var extent = $('#Extent_In_Parent').val();
 
     // Validate form:
     if (editionName.length == 0) {
@@ -31,7 +34,10 @@ function saveEdition()
         series_id: seriesID,
         position: pos,
         len: len,
-        endings: endings
+        endings: endings,
+        parent_edition_id: parent,
+        position_in_parent: parent_pos,
+        extent_in_parent: extent
     };
     $.post(url, details, function(data) {
         // If save failed, display error message.

@@ -64,7 +64,10 @@ class EditEditionController extends AbstractBase
             'series_id' => 'Series_ID',
             'position' => 'Position',
             'len' => 'Edition_Length',
-            'endings' => 'Edition_Endings'
+            'endings' => 'Edition_Endings',
+            'parent_edition_id' => 'Parent_Edition_ID',
+            'position_in_parent' => 'Position_In_Parent',
+            'extent_in_parent' => 'Extent_In_Parent',
         );
         $view = $this->handleGenericItem('edition', $assignMap, 'edition');
 
