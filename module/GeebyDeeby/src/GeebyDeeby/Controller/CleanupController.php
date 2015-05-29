@@ -53,6 +53,58 @@ class CleanupController extends AbstractBase
     }
 
     /**
+     * Support method for processHierarchy() -- process a single parent-child
+     * pairing.
+     *
+     * @param int $parent Parent Item ID
+     * @param int $child  Child Item ID
+     *
+     * @return void
+     */
+    protected function processHierarchyItem($parent, $child)
+    {
+        // TODO: implement me
+        var_dump($parent, $child);
+    }
+
+    /**
+     * Support method for hierarchiesAction() -- process a single item.
+     *
+     * @param int $item Item ID
+     *
+     * @return void
+     */
+    protected function processHierarchy($item)
+    {
+        $table = $this->getDbTable('itemsincollections');
+        $targets = $table->getItemsForCollection($item);
+        foreach ($targets as $target) {
+            $this->processHierarchyItem($item, $target['Item_ID']);
+        }
+    }
+
+    /**
+     * Migrate item hierarchies to edition hierarchies
+     *
+     * @return mixed
+     */
+    public function hierarchiesAction()
+    {
+        $ok = $this->checkPermission('Data_Manager');
+        if ($ok !== true) {
+            return $ok;
+        }
+        $process = $this->params()->fromPost('items');
+        if (!empty($process)) {
+            foreach ($process as $id) {
+                $this->processHierarchy($id);
+            }
+        }
+        $table = $this->getDbTable('itemsincollections');
+        return $this->createViewModel(array('details' => $table->getAllCollections()));
+    }
+
+    /**
      * Duplicate image cleanup action
      *
      * @return mixed
