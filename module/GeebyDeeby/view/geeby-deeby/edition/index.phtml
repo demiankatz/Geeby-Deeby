@@ -51,6 +51,32 @@
         </tr>
       <? endif; ?>
 
+      <? if ($parent): ?>
+        <tr>
+          <th>Part of:</th>
+          <td>
+            <a href="<?=$this->url('edition', array('id' => $parent['Edition_ID']))?>">
+              <?=$this->escapeHtml($this->fixtitle(isset($parent['Item_AltName']) && !empty($parent['Item_AltName']) ? $parent['Item_AltName'] : $parent['Item_Name']))?>
+            </a><br />
+          </td>
+        </tr>
+      <? endif; ?>
+
+      <? if (count($children) > 0): ?>
+        <tr>
+          <th>Contents:</th>
+          <td>
+            <? foreach ($children as $item): ?>
+              <a href="<?=$this->url('edition', array('id' => $item['Edition_ID']))?>">
+                <?=$this->escapeHtml($this->fixtitle(isset($item['Item_AltName']) && !empty($item['Item_AltName']) ? $item['Item_AltName'] : $item['Item_Name']))?>
+              </a>
+              <? if (!empty($item['Extent_In_Parent'])): ?>(<?=$this->escapeHtml($item['Extent_In_Parent'])?>)<? endif; ?>
+              <br />
+            <? endforeach; ?>
+          </td>
+        </tr>
+      <? endif; ?>
+
       <?
         if (count($credits) > 0) {
           $groupedCredits = array();

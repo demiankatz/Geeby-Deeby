@@ -114,7 +114,10 @@ class EditionController extends AbstractBase
             ->getOCLCNumbersForEdition($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForEdition($id);
-        $view->publishers = $this->getDbTable('edition')->getPublishersForEdition($id);
+        $edTable = $this->getDbTable('edition');
+        $view->publishers = $edTable->getPublishersForEdition($id);
+        $view->parent = $edTable->getParentItemForEdition($id);
+        $view->children = $edTable->getItemsForEdition($id);
         return $view;
     }
 

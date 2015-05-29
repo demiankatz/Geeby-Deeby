@@ -249,7 +249,7 @@ class Item extends Gateway
         $callback = function ($select) use ($editionID) {
             $select->join(
                 array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
-                array('Position_in_Parent', 'Edition_ID')
+                array('Extent_In_Parent', 'Position_in_Parent', 'Edition_ID')
             );
             $select->join(
                 array('iat' => 'Items_AltTitles'),
