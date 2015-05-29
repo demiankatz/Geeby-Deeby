@@ -102,6 +102,32 @@
         </tr>
       <? endif; ?>
 
+      <? if (count($parents) > 0): ?>
+        <tr>
+          <th>Part of:</th>
+          <td>
+            <? foreach ($parents as $current): ?>
+              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+                <?=$this->escapeHtml($this->fixtitle(empty($current['Item_AltName']) ? $current['Item_Name'] : $current['Item_AltName']))?>
+              </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?>)<br />
+            <? endforeach; ?>
+          </td>
+        </tr>
+      <? endif; ?>
+
+      <? if (count($children) > 0): ?>
+        <tr>
+          <th>Contents:</th>
+          <td>
+            <? foreach ($children as $current): ?>
+              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+                <?=$this->escapeHtml($this->fixtitle(empty($current['Item_AltName']) ? $current['Item_Name'] : $current['Item_AltName']))?>
+              </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?><? if (!empty($current['Extent_In_Parent'])): ?>, <?=$this->escapeHtml($current['Extent_In_Parent'])?><? endif; ?>)<br />
+            <? endforeach; ?>
+          </td>
+        </tr>
+      <? endif; ?>
+
       <? if (count($translatedFrom) > 0): ?>
         <tr>
           <th>Translated From:</th>
