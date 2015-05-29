@@ -251,4 +251,18 @@ class Edition extends ServiceLocatorAwareGateway
         $results = $table->select($callback);
         return count($results) > 0 ? $results->current() : null;
     }
+
+    /**
+     * Save
+     *
+     * @return void
+     */
+    public function save()
+    {
+        // Ensure integrity of parent value.
+        if (empty($this->Parent_Edition_ID)) {
+            $this->Parent_Edition_ID = null;
+        }
+        parent::save();
+    }
 }
