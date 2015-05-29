@@ -156,14 +156,13 @@ class Item extends Gateway
             $select->columns(array()); // no columns needed from non-parent Items table
             $select->join(
                 array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
-                array()
+                array('Edition_ID', 'Edition_Name')
             );
             $select->join(
                 array('child_eds' => 'Editions'),
                 'eds.Edition_ID = child_eds.Parent_Edition_ID',
                 array(
-                    'Edition_ID', 'Edition_Name', 'Extent_In_Parent',
-                    'Position_In_Parent'
+                    'Extent_In_Parent', 'Position_In_Parent'
                 )
             );
             $select->join(
@@ -183,7 +182,7 @@ class Item extends Gateway
             );
             $select->order(
                 array(
-                    'child_eds.Edition_Name', 'child_eds.Edition_ID',
+                    'eds.Edition_Name', 'eds.Edition_ID',
                     'child_eds.Position_In_Parent', 'child_items.Item_Name'
                 )
             );
