@@ -122,11 +122,11 @@ class Edition extends ServiceLocatorAwareGateway
     /**
      * Create a copy of the current edition.
      *
-     * @param int $parent ID of parent of new copy (omit to keep current parent).
+     * @param array $overrides Fields to override durign copying.
      *
      * @return Edition
      */
-    public function copy($parent = null)
+    public function copy($overrides = array())
     {
             $table = $this->getDbTable('edition');
             $new = $table->createRow();
@@ -135,15 +135,12 @@ class Edition extends ServiceLocatorAwareGateway
                     $new->$key = $value;
                 }
             }
-            if ($parent !== null) {
-                $new->Parent_Edition_ID = $parent;
-            }
             $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
-            $new->save();
-            foreach ($this->getChildren() as $child) {
-                $child->copy($new->Edition_ID);
+            foreach ($overrides as $key => $value) {
+                $new->$key = $value;
             }
-            $new->copyCredits($this->Edition_ID);
+            $new->save();
+            $table->copyAssociatedInfo($this, $new);
             return $new;
     }
 

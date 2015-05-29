@@ -343,7 +343,7 @@ class EditSeriesController extends AbstractBase
                 }
             }
             if (isset($row['Edition_ID']) && $row['Edition_ID'] != $new) {
-                $edsTable->getByPrimaryKey($new)->copyCredits($row['Edition_ID']);
+                $edsTable->copyAssociatedInfo($row['Edition_ID'], $new);
             }
         };
         return $this->handleGenericLink(

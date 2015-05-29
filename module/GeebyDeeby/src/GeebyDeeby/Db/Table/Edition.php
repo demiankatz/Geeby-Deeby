@@ -234,4 +234,32 @@ class Edition extends Gateway
         }
         $this->delete($select);
     }
+
+    /**
+     * Copy information associated with one edition into another.
+     *
+     * @param int|\GeebyDeeby\Db\Row\Edition $from Source item (object or ID)
+     * @param int|\GeebyDeeby\Db\Row\Edition $to   Target item (object or ID)
+     *
+     * @return void
+     */
+    public function copyAssociatedInfo($from, $to)
+    {
+        if (!($from instanceof \GeebyDeeby\Db\Row\Edition)) {
+            $from = $this->getByPrimaryKey($from);
+        }
+        if (!($to instanceof \GeebyDeeby\Db\Row\Edition)) {
+            $to = $this->getByPrimaryKey($to);
+        }
+        foreach ($from->getChildren() as $child) {
+            $child->copy(
+                array(
+                    'Parent_Edition_ID' => $to->Edition_ID,
+                    'Series_ID' => $to->Series_ID,
+                    'Edition_Name' => $to->Edition_Name
+                )
+            );
+        }
+        $to->copyCredits($from->Edition_ID);
+    }
 }
