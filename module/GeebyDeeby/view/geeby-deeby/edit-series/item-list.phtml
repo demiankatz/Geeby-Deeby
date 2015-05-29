@@ -14,10 +14,10 @@
           </a>
         </td>
         <td>
-          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>">
-            <?=$this->escapeHtml(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])?>
-          </a>
+          <?=$this->escapeHtml(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])?>
           (<?=$this->escapeHtml($current['Material_Type_Name'])?>)
+          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>">[edit item]</a>
+          <a href="<?=$this->url('edit/edition', array('id' => $current['Edition_ID']))?>">[edit edition]</a>
         </td>
       </tr>
     <? endforeach; ?>
