@@ -353,16 +353,11 @@ class EditEditionController extends AbstractBase
             if (!$old) {
                 return $this->jsonDie('Cannot load edition ' . $editionId);
             }
-            $new = $table->createRow();
-            foreach ($old->toArray() as $key => $value) {
-                if ($key != 'Edition_ID') {
-                    $new->$key = $value;
-                }
+            if ($old->copy()) {
+                return $this->jsonReportSuccess();
+            } else {
+                return $this->jsonDie('Copy operation failed.');
             }
-            $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
-            $new->save();
-            $new->copyCredits($editionId);
-            return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
     }

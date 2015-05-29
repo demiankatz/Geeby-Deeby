@@ -120,6 +120,46 @@ class Edition extends ServiceLocatorAwareGateway
     }
 
     /**
+     * Create a copy of the current edition.
+     *
+     * @param int $parent ID of parent of new copy (omit to keep current parent).
+     *
+     * @return Edition
+     */
+    public function copy($parent = null)
+    {
+            $table = $this->getDbTable('edition');
+            $new = $table->createRow();
+            foreach ($this->toArray() as $key => $value) {
+                if ($key != 'Edition_ID') {
+                    $new->$key = $value;
+                }
+            }
+            if ($parent !== null) {
+                $new->Parent_Edition_ID = $parent;
+            }
+            $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
+            $new->save();
+            foreach ($this->getChildren() as $child) {
+                $child->copy($new->Edition_ID);
+            }
+            $new->copyCredits($this->Edition_ID);
+            return $new;
+    }
+
+    /**
+     * Get immediate children of this edition.
+     *
+     * @return mixed
+     */
+    public function getChildren()
+    {
+        return $this->getDbTable('edition')->select(
+            array('Parent_Edition_ID' => $this->Edition_ID)
+        );
+    }
+
+    /**
      * Copy credits from another edition.
      *
      * @param int $editionId Edition to copy from
