@@ -490,7 +490,9 @@
   <? foreach ($editions as $edition): ?>
     <a href="<?=$this->url('edition', array('id' => $edition['Edition_ID']))?>">
         <?=$this->escapeHtml($this->fixtitle($edition['Edition_Name']))?>
-    </a><br />
+    </a>
+    <? if (!empty($edition['Extent_In_Parent'])): ?>(<?=$this->escapeHtml($edition['Extent_In_Parent'])?>)<? endif; ?>
+    <br />
   <? endforeach; ?>
 <? endif; ?>
 

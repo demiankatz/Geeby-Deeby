@@ -31,10 +31,16 @@
             <? if ($edition['Position'] > 0): ?>
               #<?=$this->escapeHtml($edition['Position'])?>
             <? endif; ?>
-            <? if (!empty($item)): ?>
-              : <a href="<?=$this->url('item', array('id' => $item['Item_ID']))?>"><?=$this->escapeHtml($this->fixtitle(empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']))?></a>
-            <? endif; ?>
             <br />
+          </td>
+        </tr>
+      <? endif; ?>
+
+      <? if (!empty($item)): ?>
+        <tr>
+          <th>Item:</th>
+          <td>
+            <a href="<?=$this->url('item', array('id' => $item['Item_ID']))?>"><?=$this->escapeHtml($this->fixtitle(empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']))?></a>
           </td>
         </tr>
       <? endif; ?>
@@ -57,7 +63,9 @@
           <td>
             <a href="<?=$this->url('edition', array('id' => $parent['Edition_ID']))?>">
               <?=$this->escapeHtml($this->fixtitle(isset($parent['Item_AltName']) && !empty($parent['Item_AltName']) ? $parent['Item_AltName'] : $parent['Item_Name']))?>
-            </a><br />
+            </a>
+            <? if (!empty($edition['Extent_In_Parent'])): ?>(<?=$this->escapeHtml($edition['Extent_In_Parent'])?>)<? endif; ?>
+            <br />
           </td>
         </tr>
       <? endif; ?>
