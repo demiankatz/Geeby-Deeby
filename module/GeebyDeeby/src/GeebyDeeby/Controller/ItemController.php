@@ -141,8 +141,15 @@ class ItemController extends AbstractBase
             ->getPlatformsForItem($id);
         $view->tags = $this->getDbTable('itemstags')->getTags($id);
         $collections = $this->getDbTable('itemsincollections');
+        // Contains/containedIn are item-level relationships, while children/parents
+        // are edition-level relationships. These are very similar, but the edition
+        // relationships are preferred and more valuable.
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);
+        $itemTable = $this->getDbTable('item');
+        $view->children = $itemTable->getItemChildren($id);
+        $view->parents = $itemTable->getItemParents($id);
+
         $trans = $this->getDbTable('itemstranslations');
         $adapt = $this->getDbTable('itemsadaptations');
         // The variable/function names are a bit unintuitive here --

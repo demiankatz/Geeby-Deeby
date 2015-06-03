@@ -1,0 +1,13 @@
+<? $this->layout()->title = 'Hierarchy Migration' ?>
+
+<? if (empty($details)): ?>
+  <p>No hierarchies found.</p>
+<? else: ?>
+  <form method="post">
+    <? foreach ($details as $item): ?>
+      <input type="checkbox" name="items[]" value="<?=$item['Item_ID']?>" />
+      <?=$this->escapeHtml($item['Item_Name'])?><br />
+    <? endforeach; ?>
+    <input type="submit" />
+  </form>
+<? endif; ?>

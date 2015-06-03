@@ -7,10 +7,13 @@ function saveEdition()
     var editionName = $('#Edition_Name').val();
     var desc = $('#Edition_Description').val();
     var pos = $('#Position').val();
-    var itemID = $('#Item_ID').val();
+    var itemID = $('#Edition_Item_ID').val();
     var seriesID = $('#Series_ID').val();
     var len = $('#Edition_Length').val();
     var endings = $('#Edition_Endings').val();
+    var parent = $('#Parent_Edition_ID').val();
+    var parent_pos = $('#Position_In_Parent').val();
+    var extent = $('#Extent_In_Parent').val();
 
     // Validate form:
     if (editionName.length == 0) {
@@ -31,7 +34,10 @@ function saveEdition()
         series_id: seriesID,
         position: pos,
         len: len,
-        endings: endings
+        endings: endings,
+        parent_edition_id: parent,
+        position_in_parent: parent_pos,
+        extent_in_parent: extent
     };
     $.post(url, details, function(data) {
         // If save failed, display error message.
@@ -896,3 +902,176 @@ $(document).ready(function() {
     }
   });
 });
+
+
+/* Redraw the list of items linked to the edition:
+ */
+function redrawItemList()
+{
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/Item';
+    $('#item_list').load(url);
+}
+
+/* Add a new item to the edition:
+ */
+function addNewItem()
+{
+    // Open the edit dialog box:
+    var url = basePath + '/edit/Item/NEW';
+    editBox = $('<div>Loading...</div>').load(url).dialog({
+        title: "Add Item",
+        modal: true,
+        autoOpen: true,
+        width: 500,
+        height: 400,
+        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
+        close: function() { $('#editItemForm').remove(); }
+    });
+}
+
+/* Add an existing item to the edition:
+ */
+function addExistingItem()
+{
+    var edID = $('#Edition_ID').val();
+    var itemID = parseInt($('#item_name').val());
+
+    // Validate user selection:
+    if (isNaN(itemID)) {
+        alert("Please choose a valid item.");
+        return;
+    }
+
+    // Save and update based on selected relationship:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/Item/' + encodeURIComponent(itemID);
+    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Clear the form:
+            $('#item_name').val('');
+
+            // Update the list.
+            redrawItemList();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }});
+}
+
+/* Remove an item from the edition:
+ */
+function removeFromContents(itemID)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/Item/' + encodeURIComponent(itemID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawItemList();
+        } else {
+            // Remove failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }});
+}
+
+/* Change the position of an item within the contents of the edition:
+ */
+function changeContentsOrder(editionID)
+{
+    var mainEditionID = $('#Edition_ID').val();
+    var pos = parseInt($('#order' + editionID).val(), 10);
+
+    // Validate user selection:
+    if (isNaN(editionID)) {
+        alert("Please choose a valid item.");
+        return;
+    } else if (isNaN(pos)) {
+        alert("Please enter a valid number.");
+        return;
+    }
+
+    // Save and update based on selected relationship:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(mainEditionID) + '/ItemOrder';
+    var details = {
+        edition_id: editionID,
+        pos: pos
+    };
+    $.post(url, details, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawItemList();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Save the item inside the provided form element:
+ */
+function saveItem()
+{
+    // Obtain values from form:
+    var editionID = $('#Edition_ID').val();
+    var itemID = $('#Item_ID').val();
+    var itemName = $('#Item_Name').val();
+    var errata = $('#Item_Errata').val();
+    var thanks = $('#Item_Thanks').val();
+    var material = $('#Material_Type_ID').val();
+
+    // Length and endings are actually Edition fields, but we load the data here
+    // for convenience when creating items.
+    var len = $('#Item_Length').val();
+    var endings = $('#Item_Endings').val();
+
+    // Validate form:
+    if (itemName.length == 0) {
+        alert('Item name cannot be blank.');
+        return;
+    }
+
+    // Hide save button and display status message to avoid duplicate submission:
+    $('#save_item').hide();
+    $('#save_item_status').html('Saving...');
+
+    // Use AJAX to save the values:
+    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID);
+    var details = {
+        name: itemName,
+        len: len,
+        endings: endings,
+        errata: errata,
+        thanks: thanks,
+        material: material,
+        edition_id: editionID
+    };
+    $.post(url, details, function(data) {
+        // If save failed, display error message.
+        if (data.success) {
+            // Close the dialog box.
+            if (editBox) {
+                editBox.dialog('close');
+                editBox.dialog('destroy');
+                editBox = false;
+            }
+
+            // Redraw the item list:
+            redrawItemList();
+        } else {
+            alert('Error: ' + data.msg);
+
+            // Restore save button:
+            $('#save_item').show();
+            $('#save_item_status').html('');
+        }
+    }, 'json');
+}

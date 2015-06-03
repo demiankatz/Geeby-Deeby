@@ -283,6 +283,16 @@ return array(
                         ),
                         'may_terminate' => true,
                         'child_routes' => array(
+                            'hierarchies' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/Hierarchies',
+                                    'defaults' => array(
+                                        'controller'    => 'Cleanup',
+                                        'action'        => 'hierarchies',
+                                    ),
+                                ),
+                            ),
                             'imagedupes' => array(
                                 'type'    => 'Literal',
                                 'options' => array(

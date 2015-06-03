@@ -59,6 +59,14 @@ class Edition extends ServiceLocatorAwareGateway
         if (empty($this->Edition_Name)) {
             return 'Edition name cannot be blank.';
         }
+        if (in_array($this->Edition_ID, $this->getEditionParentChain())) {
+            return 'Edition can not be its own parent or grandparent.';
+        }
+        if (!empty($this->Item_ID)
+            && in_array($this->Item_ID, $this->getItemParentChain())
+        ) {
+            return 'Item can not be its own parent or grandparent.';
+        }
         return false;
     }
 
@@ -70,6 +78,82 @@ class Edition extends ServiceLocatorAwareGateway
     public function getDisplayName()
     {
         return $this->Edition_Name;
+    }
+
+    /**
+     * Get an array of all parent Edition IDs.
+     *
+     * @return array
+     */
+    public function getEditionParentChain()
+    {
+        $parents = array();
+        $nextParent = $this->Parent_Edition_ID;
+        $table = $this->getDbTable('edition');
+        while (true) {
+            // Circular parent detection:
+            if (empty($nextParent) || in_array($nextParent, $parents)) {
+                return $parents;
+            }
+            $parents[] = $nextParent;
+            $nextParent = $table->getByPrimaryKey($nextParent)->Parent_Edition_ID;
+        }
+    }
+
+    /**
+     * Get an array of all parent Item IDs.
+     *
+     * @return array
+     */
+    public function getItemParentChain()
+    {
+        $editions = $this->getEditionParentChain();
+        $items = array();
+        $table = $this->getDbTable('edition');
+        foreach ($editions as $edition) {
+            $obj = $table->getByPrimaryKey($edition);
+            if (!empty($obj->Item_ID)) {
+                $items[] = $obj->Item_ID;
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * Create a copy of the current edition.
+     *
+     * @param array $overrides Fields to override durign copying.
+     *
+     * @return Edition
+     */
+    public function copy($overrides = array())
+    {
+            $table = $this->getDbTable('edition');
+            $new = $table->createRow();
+            foreach ($this->toArray() as $key => $value) {
+                if ($key != 'Edition_ID') {
+                    $new->$key = $value;
+                }
+            }
+            $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
+            foreach ($overrides as $key => $value) {
+                $new->$key = $value;
+            }
+            $new->save();
+            $table->copyAssociatedInfo($this, $new);
+            return $new;
+    }
+
+    /**
+     * Get immediate children of this edition.
+     *
+     * @return mixed
+     */
+    public function getChildren()
+    {
+        return $this->getDbTable('edition')->select(
+            array('Parent_Edition_ID' => $this->Edition_ID)
+        );
     }
 
     /**
@@ -166,5 +250,19 @@ class Edition extends ServiceLocatorAwareGateway
         };
         $results = $table->select($callback);
         return count($results) > 0 ? $results->current() : null;
+    }
+
+    /**
+     * Save
+     *
+     * @return void
+     */
+    public function save()
+    {
+        // Ensure integrity of parent value.
+        if (empty($this->Parent_Edition_ID)) {
+            $this->Parent_Edition_ID = null;
+        }
+        parent::save();
     }
 }
