@@ -161,14 +161,31 @@ class Edition extends Gateway
     /**
      * Retrieve editions for the specified item.
      *
-     * @param int $itemID Item ID.
+     * @param int  $itemID         Item ID.
+     * @param bool $includeParents Should we include information on parent items?
      *
      * @return mixed
      */
-    public function getEditionsForItem($itemID)
+    public function getEditionsForItem($itemID, $includeParents = false)
     {
-        $callback = function ($select) use ($itemID) {
-            $select->where->equalTo('Item_ID', $itemID);
+        $callback = function ($select) use ($itemID, $includeParents) {
+            $select->where->equalTo('Editions.Item_ID', $itemID);
+            if ($includeParents) {
+                $select->join(
+                    array('pe' => 'Editions'),
+                    'Editions.Parent_Edition_ID = pe.Edition_ID',
+                    [], Select::JOIN_LEFT
+                );
+                $select->join(
+                    array('i' => 'Items'), 'pe.Item_ID = i.Item_ID',
+                    Select::SQL_STAR, Select::JOIN_LEFT
+                );
+                $select->join(
+                    array('iat' => 'Items_AltTitles'),
+                    'pe.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                    array('Item_AltName'), Select::JOIN_LEFT
+                );
+            }
             $select->order('Edition_Name');
         };
         return $this->select($callback);
