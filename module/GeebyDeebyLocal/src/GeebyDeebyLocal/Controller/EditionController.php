@@ -66,6 +66,10 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     {
         $class[] = 'dime:Edition';
         $edition = parent::addPrimaryResourceToGraph($graph, $view, $class);
+        foreach ($view->credits as $credit) {
+            $personUri = $this->getServerUrl('person', ['id' => $credit['Person_ID']]);
+            $edition->add('dime:HasCredit', $personUri);
+        }
         if (!empty($view->item)) {
             $itemUri = $this->getServerUrl('item', ['id' => $view->item['Item_ID']]);
             $itemType = $this->getDbTable('materialtype')->getByPrimaryKey(
@@ -74,6 +78,13 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             $predicate = $itemType['Material_Type_Name'] == 'Issue'
                 ? 'dime:IsEditionOf' : 'dime:IsRealizationOfCreativeWork';
             $edition->set($predicate, $itemUri);
+        }
+        if (isset($view->series)) {
+            $seriesUri = $this->getServerUrl('series', ['id' => $view->series['Series_ID']]);
+            $edition->add('rda:HasSeries', $seriesUri);
+            if ($view->edition['Position'] > 0) {
+                $edition->add('rda:numberingWithinSeries', (int)$view->edition['Position']);
+            }
         }
         foreach ($view->publishers as $publisher) {
             $pubUri = $this->getServerUrl('publisher', ['id' => $publisher['Publisher_ID']]);
@@ -86,6 +97,20 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         if ($view->parent) {
             $parentUri = $this->getServerUrl('edition', ['id' => $view->parent['Edition_ID']]);
             $edition->add('rda:containedIn', $parentUri);
+        }
+        if (!empty($view->edition['Edition_Length'])) {
+            $edition->add('rda:extent', $view->edition['Edition_Length']);
+        }
+        foreach ($view->dates as $date) {
+            if ($date['Year'] > 0) {
+                $dateStr = $date['Year'];
+                foreach (['Month', 'Day'] as $field) {
+                    if (!empty($date[$field])) {
+                        $dateStr .= '-' . substr('0' . $date[$field], -2);
+                    }
+                }
+                $edition->add('rda:dateOfPublication', ['type' => 'literal', 'value' => $dateStr, 'datatype' => 'xsd:date']);
+            }
         }
         return $edition;
     }
