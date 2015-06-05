@@ -39,17 +39,91 @@ namespace GeebyDeeby\Controller;
 class PublisherController extends AbstractBase
 {
     /**
-     * "Show publisher" page
+     * 303 redirect page
      *
      * @return mixed
      */
     public function indexAction()
     {
+        return $this->performRdfRedirect('publisher');
+    }
+
+    /**
+     * Build the primary resource in an RDF graph.
+     *
+     * @param \EasyRdf\Graph $graph Graph to populate
+     * @param object         $view  View model populated with information.
+     * @param mixed          $class Class(es) for resource.
+     *
+     * @return \EasyRdf\Resource
+     */
+    protected function addPrimaryResourceToGraph($graph, $view,
+        $class = 'foaf:Organization'
+    ) {
+        $uri = $this->getServerUrl(
+            'publisher', ['id' => $view->publisher['Publisher_ID']]
+        );
+        $pub = $graph->resource($uri, $class);
+        return $pub;
+    }
+
+    /**
+     * Build an RDF graph from the available data.
+     *
+     * @param object $view View model populated with information.
+     *
+     * @return \EasyRdf\Graph
+     */
+    protected function getGraphFromView($view)
+    {
+        $graph = new \EasyRdf\Graph();
+        $this->addPrimaryResourceToGraph($graph, $view);
+        return $graph;
+    }
+
+    /**
+     * RDF representation page
+     *
+     * @return mixed
+     */
+    public function rdfAction()
+    {
+        $view = $this->getPublisherViewModel();
+        if (!is_object($view)) {
+            $response = $this->getResponse();
+            $response->setStatusCode(404);
+            return $response;
+        }
+
+        return $this->getRdfResponse($this->getGraphFromView($view));
+     }
+
+    /**
+     * "Show publisher" page
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        $view = $this->getPublisherViewModel();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Publisher', 'notfound');
+        }
+        return $view;
+    }
+
+    /**
+     * Get view model for publisher (or return false if not found).
+     *
+     * @return mixed
+     */
+    protected function getPublisherViewModel()
+    {
         $id = $this->params()->fromRoute('id');
         $table = $this->getDbTable('publisher');
         $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
         if (!is_object($rowObj)) {
-            return $this->forwardTo(__NAMESPACE__ . '\Publisher', 'notfound');
+            return false;
         }
         $view = $this->createViewModel(
             array('publisher' => $rowObj->toArray())

@@ -39,34 +39,84 @@ namespace GeebyDeeby\Controller;
 class PersonController extends AbstractBase
 {
     /**
-     * "Show person" page
+     * 303 redirect page
      *
      * @return mixed
      */
     public function indexAction()
     {
+        return $this->performRdfRedirect('person');
+    }
+
+    /**
+     * Build the primary resource in an RDF graph.
+     *
+     * @param \EasyRdf\Graph $graph Graph to populate
+     * @param object         $view  View model populated with information.
+     * @param mixed          $class Class(es) for resource.
+     *
+     * @return \EasyRdf\Resource
+     */
+    protected function addPrimaryResourceToGraph($graph, $view,
+        $class = 'foaf:Person'
+    ) {
+        $id = $view->person['Person_ID'];
+        $uri = $this->getServerUrl('person', ['id' => $id]);
+        $person = $graph->resource($uri, $class);
+        $name = $view->person['First_Name'] . ' ' . $view->person['Middle_Name']
+            . ' ' . $view->person['Last_Name'];
+        $person->set('foaf:name', trim(preg_replace('/\s+/', ' ', $name)));
+        return $person;
+    }
+
+    /**
+     * Build an RDF graph from the available data.
+     *
+     * @param object $view View model populated with information.
+     *
+     * @return \EasyRdf\Graph
+     */
+    protected function getGraphFromView($view)
+    {
+        $graph = new \EasyRdf\Graph();
+        $this->addPrimaryResourceToGraph($graph, $view);
+        return $graph;
+    }
+
+    /**
+     * RDF representation page
+     *
+     * @return mixed
+     */
+    public function rdfAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $view = $this->getPersonViewModel($id);
+        if (!is_object($view)) {
+            $response = $this->getResponse();
+            $response->setStatusCode(404);
+            return $response;
+        }
+        return $this->getRdfResponse($this->getGraphFromView($view));
+    }
+
+    /**
+     * "Show person" page
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
         $id = $this->params()->fromRoute('id');
         if (null === $id) {
             return $this->forwardTo(__NAMESPACE__ . '\Person', 'list');
         }
-        $table = $this->getDbTable('person');
-        $rowObj = $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $view = $this->getPersonViewModel(
+            $id, $this->params()->fromQuery('sort', 'series')
+        );
+        if (!is_object($view)) {
             return $this->forwardTo(__NAMESPACE__ . '\Person', 'notfound');
         }
-        $view = $this->createViewModel(
-            array('person' => $rowObj->toArray())
-        );
-        $view->sort = $this->params()->fromQuery('sort', 'series');
-        $view->credits = $this->getDbTable('editionscredits')
-            ->getCreditsForPerson($id, $view->sort);
-        $pseudo = $this->getDbTable('pseudonyms');
-        $view->pseudonyms = $pseudo->getPseudonyms($id);
-        $view->realNames = $pseudo->getRealNames($id);
-        $view->files = $this->getDbTable('peoplefiles')->getFilesForPerson($id);
-        $view->bibliography = $this->getDbTable('peoplebibliography')
-            ->getItemsDescribingPerson($id);
-        $view->links = $this->getDbTable('peoplelinks')->getLinksForPerson($id);
         return $view;
     }
 
@@ -95,5 +145,36 @@ class PersonController extends AbstractBase
     public function notfoundAction()
     {
         return $this->createViewModel();
+    }
+
+    /**
+     * Get the view model representing the specified person (or false if
+     * invalid ID)
+     *
+     * @param int $id ID of person to load
+     *
+     * @return \Zend\View\Model\ViewModel|bool
+     */
+    protected function getPersonViewModel($id, $sort = 'title')
+    {
+        $table = $this->getDbTable('person');
+        $rowObj = $table->getByPrimaryKey($id);
+        if (!is_object($rowObj)) {
+            return false;
+        }
+        $view = $this->createViewModel(
+            array('person' => $rowObj->toArray())
+        );
+        $view->sort = $sort;
+        $view->credits = $this->getDbTable('editionscredits')
+            ->getCreditsForPerson($id, $view->sort);
+        $pseudo = $this->getDbTable('pseudonyms');
+        $view->pseudonyms = $pseudo->getPseudonyms($id);
+        $view->realNames = $pseudo->getRealNames($id);
+        $view->files = $this->getDbTable('peoplefiles')->getFilesForPerson($id);
+        $view->bibliography = $this->getDbTable('peoplebibliography')
+            ->getItemsDescribingPerson($id);
+        $view->links = $this->getDbTable('peoplelinks')->getLinksForPerson($id);
+        return $view;
     }
 }
