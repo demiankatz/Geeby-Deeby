@@ -298,15 +298,156 @@ class SeriesController extends AbstractBase
     {
         $id = $this->params()->fromRoute('id');
         if (null === $id) {
+            $action = $this->rdfRequested() ? 'RDF' : 'List';
+            $response = $this->redirect()->toRoute(
+                'series', ['id' => $action],
+                ['query' => $this->params()->fromQuery()]
+            );
+            $response->setStatusCode(303);
+            return $response;
+        }
+        if ($id == 'List') {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'list');
+        }
+        if ($id == 'RDF') {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'rdf');
         }
         if ($id == 'Comments') {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'comments');
         }
+        return $this->performRdfRedirect('series');
+    }
+
+    /**
+     * Return the RDF class(es) used for series, if any.
+     *
+     * @return array
+     */
+    protected function getSeriesRdfClass()
+    {
+        return array();
+    }
+
+    /**
+     * Create a series resource for inclusion in the list.
+     *
+     * @return \EasyRdf\Resource
+     */
+    protected function addSeriesToGraph($graph, $series)
+    {
+        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $id = $series->Series_ID;
+        $uri = $this->getServerUrl('series', ['id' => $id]);
+        $seriesResource = $graph->resource($uri, $this->getSeriesRdfClass());
+        $name = $series->Series_Name;
+        $seriesResource->set(
+            'dcterms:title', $articleHelper->formatTrailingArticles($name)
+        );
+        return $seriesResource;
+    }
+
+    /**
+     * Get an RDF graph of all series.
+     *
+     * @return \EasyRdf\Graph
+     */
+    protected function getRdfList()
+    {
+        $list = $this->getDbTable('series')->getList();
+        $graph = new \EasyRdf\Graph();
+        foreach ($list as $series) {
+            $this->addSeriesToGraph($graph, $series);
+        }
+        return $graph;
+    }
+
+    /**
+     * Build the primary resource in an RDF graph.
+     *
+     * @param \EasyRdf\Graph $graph Graph to populate
+     * @param object         $view  View model populated with information.
+     * @param mixed          $class Class(es) for resource.
+     *
+     * @return \EasyRdf\Resource
+     */
+    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    {
+        $id = $view->series['Series_ID'];
+        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $uri = $this->getServerUrl('series', ['id' => $id]);
+        $series = $graph->resource($uri, (array)$class + $this->getSeriesRdfClass());
+        foreach ($view->seriesAttributes as $current) {
+            if (!empty($current['Series_Attribute_RDF_Property'])) {
+                $series->set(
+                    $current['Series_Attribute_RDF_Property'],
+                    $current['Series_Attribute_Value']
+                );
+            }
+        }
+        $name = $view->series['Series_Name'];
+        $series->set('dcterms:title', $articleHelper->formatTrailingArticles($name));
+        return $series;
+    }
+
+    /**
+     * Build an RDF graph from the available data.
+     *
+     * @param object $view View model populated with information.
+     *
+     * @return \EasyRdf\Graph
+     */
+    protected function getGraphFromView($view)
+    {
+        $graph = new \EasyRdf\Graph();
+        $this->addPrimaryResourceToGraph($graph, $view);
+        return $graph;
+    }
+
+    /**
+     * RDF representation page
+     *
+     * @return mixed
+     */
+    public function rdfAction()
+    {
+        // Special case -- no ID means show series list:
+        $id = $this->params()->fromRoute('id');
+        if (null === $id) {
+            return $this->getRdfResponse($this->getRdfList());
+        }
+
+        $view = $this->getViewModelWithSeriesAndDetails();
+        if (!is_object($view)) {
+            $response = $this->getResponse();
+            $response->setStatusCode(404);
+            return $response;
+        }
+        return $this->getRdfResponse($this->getGraphFromView($view));
+    }
+
+    /**
+     * "Show item" page
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        return ($view = $this->getViewModelWithSeriesAndDetails())
+            ? $view : $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+    }
+
+    /**
+     * Get the view model representing the series and all relevant related details.
+     *
+     * @return \Zend\View\Model\ViewModel|bool
+     */
+    public function getViewModelWithSeriesAndDetails()
+    {
         $view = $this->getViewModelWithSeries();
         if (!$view) {
-            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+            return false;
         }
+        $id = $view->series['Series_ID'];
         $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);

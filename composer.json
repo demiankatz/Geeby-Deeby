@@ -9,6 +9,7 @@
     ],
     "license": "GPL-2.0",
     "require": {
+        "easyrdf/easyrdf": "dev-master",
         "vufind-org/vufindcode": "*",
         "zendframework/zendframework": "2.1.4"
     }
