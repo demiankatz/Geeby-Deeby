@@ -11,6 +11,12 @@ namespace GeebyDeebyLocal;
 
 class Module
 {
+    public function onBootstrap()
+    {
+        \EasyRdf\RdfNamespace::set('dime', 'http://dimenovels.org/ontology#');
+        \EasyRdf\RdfNamespace::set('rda', 'http://rdaregistry.info/Elements/u/P60549');
+    }
+
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
