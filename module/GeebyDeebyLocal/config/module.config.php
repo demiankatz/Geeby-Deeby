@@ -16,6 +16,7 @@ return array(
             'GeebyDeeby\Controller\Item' => 'GeebyDeebyLocal\Controller\ItemController',
             'GeebyDeeby\Controller\Ontology' => 'GeebyDeebyLocal\Controller\OntologyController',
             'GeebyDeeby\Controller\Podcast' => 'GeebyDeebyLocal\Controller\PodcastController',
+            'GeebyDeeby\Controller\Series' => 'GeebyDeebyLocal\Controller\SeriesController',
         ),
     ),
     'console' => array(
