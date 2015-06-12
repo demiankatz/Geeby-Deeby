@@ -39,24 +39,6 @@ namespace GeebyDeebyLocal\Controller;
 class SeriesController extends \GeebyDeeby\Controller\SeriesController
 {
     /**
-     * Get a view model containing a series object (or return false if missing)
-     *
-     * @param array $extras Extra parameters to send to view model
-     *
-     * @return mixed
-     */
-    protected function getViewModelWithSeries($extras = array())
-    {
-        $view = parent::getViewModelWithSeries($extras);
-        if (!$view) {
-            return $view;
-        }
-        // we don't want a geeby-deeby-local template here!!
-        $view->setTemplate('geeby-deeby/series/show');
-        return $view;
-    }
-
-    /**
      * Build the primary resource in an RDF graph.
      *
      * @param \EasyRdf\Graph $graph Graph to populate
@@ -75,5 +57,17 @@ class SeriesController extends \GeebyDeeby\Controller\SeriesController
             $series->add('dime:IsSeriesOf', $itemUri);
         }
         return $series;
+    }
+
+    /**
+     * Get the module namespace for use in template resolution. See
+     * \GeebyDeebyLocal\View\InjectTemplateListener. This allows us to extend core
+     * controllers without duplicating templates.
+     *
+     * @return string
+     */
+    public static function getModuleTemplateNamespace()
+    {
+        return 'geeby-deeby';
     }
 }

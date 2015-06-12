@@ -39,22 +39,6 @@ namespace GeebyDeebyLocal\Controller;
 class PublisherController extends \GeebyDeeby\Controller\PublisherController
 {
     /**
-     * Get view model for publisher (or return false if not found).
-     *
-     * @return mixed
-     */
-    protected function getPublisherViewModel()
-    {
-        $view = parent::getPublisherViewModel();
-        if (!$view) {
-            return $view;
-        }
-        // we don't want a geeby-deeby-local template here!!
-        $view->setTemplate('geeby-deeby/publisher/show');
-        return $view;
-    }
-
-    /**
      * Build the primary resource in an RDF graph.
      *
      * @param \EasyRdf\Graph $graph Graph to populate
@@ -68,5 +52,17 @@ class PublisherController extends \GeebyDeeby\Controller\PublisherController
         $person = parent::addPrimaryResourceToGraph($graph, $view, $class);
         $person->set('rda:preferredNameForTheAgent', $view->publisher['Publisher_Name']);
         return $person;
+    }
+
+    /**
+     * Get the module namespace for use in template resolution. See
+     * \GeebyDeebyLocal\View\InjectTemplateListener. This allows us to extend core
+     * controllers without duplicating templates.
+     *
+     * @return string
+     */
+    public static function getModuleTemplateNamespace()
+    {
+        return 'geeby-deeby';
     }
 }

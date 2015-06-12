@@ -8,11 +8,17 @@
  */
 
 namespace GeebyDeebyLocal;
+use Zend\Mvc\MvcEvent;
 
 class Module
 {
-    public function onBootstrap()
+    public function onBootstrap($event)
     {
+        $application  = $event->getApplication();
+        $events       = $application->getEventManager();
+        $sharedEvents = $events->getSharedManager();
+        $injectTemplateListener  = new \GeebyDeebyLocal\View\InjectTemplateListener();
+        $sharedEvents->attach('Zend\Stdlib\DispatchableInterface', MvcEvent::EVENT_DISPATCH, array($injectTemplateListener, 'injectTemplate'), -89);
         \EasyRdf\RdfNamespace::set('dime', 'http://dimenovels.org/ontology#');
         \EasyRdf\RdfNamespace::set('rda', 'http://rdaregistry.info/Elements/u/P60549');
     }

@@ -39,24 +39,6 @@ namespace GeebyDeebyLocal\Controller;
 class EditionController extends \GeebyDeeby\Controller\EditionController
 {
     /**
-     * Get a view model containing an edition object (or return false if missing)
-     *
-     * @param array $extras Extra parameters to send to view model
-     *
-     * @return mixed
-     */
-    protected function getViewModelWithEdition($extras = array())
-    {
-        $view = parent::getViewModelWithEdition($extras);
-        if (!$view) {
-            return $view;
-        }
-        // we don't want a geeby-deeby-local template here!!
-        $view->setTemplate('geeby-deeby/edition/show');
-        return $view;
-    }
-
-    /**
      * Build the primary resource in an RDF graph.
      *
      * @param \EasyRdf\Graph $graph Graph to populate
@@ -127,5 +109,17 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             }
         }
         return $edition;
+    }
+
+    /**
+     * Get the module namespace for use in template resolution. See
+     * \GeebyDeebyLocal\View\InjectTemplateListener. This allows us to extend core
+     * controllers without duplicating templates.
+     *
+     * @return string
+     */
+    public static function getModuleTemplateNamespace()
+    {
+        return 'geeby-deeby';
     }
 }

@@ -39,25 +39,6 @@ namespace GeebyDeebyLocal\Controller;
 class PersonController extends \GeebyDeeby\Controller\PersonController
 {
     /**
-     * Get the view model representing the specified person (or false if
-     * invalid ID)
-     *
-     * @param int $id ID of person to load
-     *
-     * @return \Zend\View\Model\ViewModel|bool
-     */
-    protected function getPersonViewModel($id, $sort = 'title')
-    {
-        $view = parent::getPersonViewModel($id, $sort);
-        if (!$view) {
-            return $view;
-        }
-        // we don't want a geeby-deeby-local template here!!
-        $view->setTemplate('geeby-deeby/person/show');
-        return $view;
-    }
-
-    /**
      * Build the primary resource in an RDF graph.
      *
      * @param \EasyRdf\Graph $graph Graph to populate
@@ -77,5 +58,17 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
         $authName .= $view->person['Extra_Details'];
         $person->set('rda:preferredNameForTheAgent', $authName);
         return $person;
+    }
+
+    /**
+     * Get the module namespace for use in template resolution. See
+     * \GeebyDeebyLocal\View\InjectTemplateListener. This allows us to extend core
+     * controllers without duplicating templates.
+     *
+     * @return string
+     */
+    public static function getModuleTemplateNamespace()
+    {
+        return 'geeby-deeby';
     }
 }

@@ -39,24 +39,6 @@ namespace GeebyDeebyLocal\Controller;
 class ItemController extends \GeebyDeeby\Controller\ItemController
 {
     /**
-     * Get a view model containing an item object (or return false if missing)
-     *
-     * @param array $extras Extra parameters to send to view model
-     *
-     * @return mixed
-     */
-    protected function getViewModelWithItem($extras = array())
-    {
-        $view = parent::getViewModelWithItem($extras);
-        if (!$view) {
-            return $view;
-        }
-        // we don't want a geeby-deeby-local template here!!
-        $view->setTemplate('geeby-deeby/item/show');
-        return $view;
-    }
-
-    /**
      * Build the primary resource in an RDF graph.
      *
      * @param \EasyRdf\Graph $graph Graph to populate
@@ -83,5 +65,17 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
             $item->add($relationship, $editionUri);
         }
         return $item;
+    }
+
+    /**
+     * Get the module namespace for use in template resolution. See
+     * \GeebyDeebyLocal\View\InjectTemplateListener. This allows us to extend core
+     * controllers without duplicating templates.
+     *
+     * @return string
+     */
+    public static function getModuleTemplateNamespace()
+    {
+        return 'geeby-deeby';
     }
 }
