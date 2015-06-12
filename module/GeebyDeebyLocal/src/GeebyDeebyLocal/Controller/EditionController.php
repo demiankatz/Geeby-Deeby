@@ -64,6 +64,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      */
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
+        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
         $class[] = 'dime:Edition';
         $edition = parent::addPrimaryResourceToGraph($graph, $view, $class);
         foreach ($view->credits as $credit) {
@@ -78,12 +79,22 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             $predicate = $itemType['Material_Type_Name'] == 'Issue'
                 ? 'dime:IsEditionOf' : 'dime:IsRealizationOfCreativeWork';
             $edition->set($predicate, $itemUri);
+            $itemTitle = empty($view->item['Item_AltName'])
+                ? $view->item['Item_Name'] : $view->item['Item_AltName'];
+            if (!empty($itemTitle)) {
+                $edition->set('rda:titleProper', $itemTitle);
+            }
         }
         if (isset($view->series)) {
             $seriesUri = $this->getServerUrl('series', ['id' => $view->series['Series_ID']]);
             $edition->add('rda:HasSeries', $seriesUri);
             if ($view->edition['Position'] > 0) {
                 $edition->add('rda:numberingWithinSeries', (int)$view->edition['Position']);
+            }
+            $seriesTitle = empty($view->series['Series_AltName'])
+                ? $view->series['Series_Name'] : $view->series['Series_AltName'];
+            if (!empty($seriesTitle)) {
+                $edition->set('rda:titleProperOfSeries', $seriesTitle);
             }
         }
         foreach ($view->publishers as $publisher) {
