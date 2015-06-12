@@ -13,6 +13,7 @@ return array(
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeebyLocal\Controller\EditionController',
             'GeebyDeeby\Controller\Ingest' => 'GeebyDeebyLocal\Controller\IngestController',
+            'GeebyDeeby\Controller\Item' => 'GeebyDeebyLocal\Controller\ItemController',
             'GeebyDeeby\Controller\Ontology' => 'GeebyDeebyLocal\Controller\OntologyController',
             'GeebyDeeby\Controller\Podcast' => 'GeebyDeebyLocal\Controller\PodcastController',
         ),
