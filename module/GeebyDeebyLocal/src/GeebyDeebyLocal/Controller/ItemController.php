@@ -48,6 +48,9 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
     protected function getViewModelWithItem($extras = array())
     {
         $view = parent::getViewModelWithItem($extras);
+        if (!$view) {
+            return $view;
+        }
         // we don't want a geeby-deeby-local template here!!
         $view->setTemplate('geeby-deeby/item/show');
         return $view;

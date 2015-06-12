@@ -1,6 +1,6 @@
 <?php
 /**
- * Series controller
+ * Publisher controller
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeebyLocal\Controller;
 
 /**
- * Series controller
+ * Publisher controller
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,23 +36,21 @@ namespace GeebyDeebyLocal\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class SeriesController extends \GeebyDeeby\Controller\SeriesController
+class PublisherController extends \GeebyDeeby\Controller\PublisherController
 {
     /**
-     * Get a view model containing a series object (or return false if missing)
-     *
-     * @param array $extras Extra parameters to send to view model
+     * Get view model for publisher (or return false if not found).
      *
      * @return mixed
      */
-    protected function getViewModelWithSeries($extras = array())
+    protected function getPublisherViewModel()
     {
-        $view = parent::getViewModelWithSeries($extras);
+        $view = parent::getPublisherViewModel();
         if (!$view) {
             return $view;
         }
         // we don't want a geeby-deeby-local template here!!
-        $view->setTemplate('geeby-deeby/series/show');
+        $view->setTemplate('geeby-deeby/publisher/show');
         return $view;
     }
 
@@ -65,15 +63,10 @@ class SeriesController extends \GeebyDeeby\Controller\SeriesController
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = 'foaf:Organization')
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
-        $class[] = 'dime:Series';
-        $series = parent::addPrimaryResourceToGraph($graph, $view, $class);
-        foreach ($view->items as $item) {
-            $itemUri = $this->getServerUrl('item', ['id' => $item['Item_ID']]);
-            $series->add('dime:IsSeriesOf', $itemUri);
-        }
-        return $series;
+        $person = parent::addPrimaryResourceToGraph($graph, $view, $class);
+        $person->set('rda:preferredNameForTheAgent', $view->publisher['Publisher_Name']);
+        return $person;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Series controller
+ * Person controller
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeebyLocal\Controller;
 
 /**
- * Series controller
+ * Person controller
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,23 +36,24 @@ namespace GeebyDeebyLocal\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class SeriesController extends \GeebyDeeby\Controller\SeriesController
+class PersonController extends \GeebyDeeby\Controller\PersonController
 {
     /**
-     * Get a view model containing a series object (or return false if missing)
+     * Get the view model representing the specified person (or false if
+     * invalid ID)
      *
-     * @param array $extras Extra parameters to send to view model
+     * @param int $id ID of person to load
      *
-     * @return mixed
+     * @return \Zend\View\Model\ViewModel|bool
      */
-    protected function getViewModelWithSeries($extras = array())
+    protected function getPersonViewModel($id, $sort = 'title')
     {
-        $view = parent::getViewModelWithSeries($extras);
+        $view = parent::getPersonViewModel($id, $sort);
         if (!$view) {
             return $view;
         }
         // we don't want a geeby-deeby-local template here!!
-        $view->setTemplate('geeby-deeby/series/show');
+        $view->setTemplate('geeby-deeby/person/show');
         return $view;
     }
 
@@ -65,15 +66,16 @@ class SeriesController extends \GeebyDeeby\Controller\SeriesController
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = 'foaf:Person')
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
-        $class[] = 'dime:Series';
-        $series = parent::addPrimaryResourceToGraph($graph, $view, $class);
-        foreach ($view->items as $item) {
-            $itemUri = $this->getServerUrl('item', ['id' => $item['Item_ID']]);
-            $series->add('dime:IsSeriesOf', $itemUri);
+        $person = parent::addPrimaryResourceToGraph($graph, $view, $class);
+        $authName = $view->person['Last_Name'];
+        $first = trim($view->person['First_Name'] . ' ' . $view->person['Middle_Name']);
+        if (!empty($first)) {
+            $authName .= ', ' . $first;
         }
-        return $series;
+        $authName .= $view->person['Extra_Details'];
+        $person->set('rda:preferredNameForTheAgent', $authName);
+        return $person;
     }
 }

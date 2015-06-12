@@ -48,6 +48,9 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     protected function getViewModelWithEdition($extras = array())
     {
         $view = parent::getViewModelWithEdition($extras);
+        if (!$view) {
+            return $view;
+        }
         // we don't want a geeby-deeby-local template here!!
         $view->setTemplate('geeby-deeby/edition/show');
         return $view;
