@@ -452,9 +452,9 @@ class AbstractBase extends AbstractActionController
         // items will only be chosen if they're explicitly given a higher
         // priority in the accept headers.
         $rdfForms = array(
-            'application/x-turtle',     // Turtle
-            'text/plain',               // N-Triples
-            'application/rdf+xml',      // RDF-XML
+            'application/x-turtle',                 // Turtle
+            'text/plain', 'application/n-triples',  // N-Triples
+            'application/rdf+xml',                  // RDF-XML
         );
         $bestMatch = $force ? -1 : $accept->match('text/html');
         $bestFormat = false;            // HTML by default
