@@ -54,7 +54,7 @@ class SeriesController extends \GeebyDeeby\Controller\SeriesController
         $series = parent::addPrimaryResourceToGraph($graph, $view, $class);
         foreach ($view->items as $item) {
             $itemUri = $this->getServerUrl('item', ['id' => $item['Item_ID']]);
-            $series->add('dime:IsSeriesOf', $itemUri);
+            $series->add('dime:IsSeriesOf', $graph->resource($itemUri));
         }
         return $series;
     }

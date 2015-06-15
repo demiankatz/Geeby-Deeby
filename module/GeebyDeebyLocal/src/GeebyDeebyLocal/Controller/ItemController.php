@@ -62,7 +62,7 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
             ? 'rda:HasEdition' : 'dime:HasRealizationOfCreativeWork';
         foreach ($view->editions as $edition) {
             $editionUri = $this->getServerUrl('edition', ['id' => $edition['Edition_ID']]);
-            $item->add($relationship, $editionUri);
+            $item->add($relationship, $graph->resource($editionUri));
         }
         return $item;
     }

@@ -54,7 +54,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $edition = parent::addPrimaryResourceToGraph($graph, $view, $class);
         foreach ($view->credits as $credit) {
             $personUri = $this->getServerUrl('person', ['id' => $credit['Person_ID']]);
-            $edition->add('dime:HasCredit', $personUri);
+            $edition->add('dime:HasCredit', $graph->resource($personUri));
         }
         if (!empty($view->item)) {
             $itemUri = $this->getServerUrl('item', ['id' => $view->item['Item_ID']]);
@@ -63,7 +63,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             );
             $predicate = $itemType['Material_Type_Name'] == 'Issue'
                 ? 'dime:IsEditionOf' : 'dime:IsRealizationOfCreativeWork';
-            $edition->set($predicate, $itemUri);
+            $edition->set($predicate, $graph->resource($itemUri));
             $itemTitle = empty($view->item['Item_AltName'])
                 ? $view->item['Item_Name'] : $view->item['Item_AltName'];
             if (!empty($itemTitle)) {
@@ -72,7 +72,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         }
         if (isset($view->series)) {
             $seriesUri = $this->getServerUrl('series', ['id' => $view->series['Series_ID']]);
-            $edition->add('rda:HasSeries', $seriesUri);
+            $edition->add('rda:HasSeries', $graph->resource($seriesUri));
             if ($view->edition['Position'] > 0) {
                 $edition->add('rda:numberingWithinSeries', (int)$view->edition['Position']);
             }
@@ -84,15 +84,15 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         }
         foreach ($view->publishers as $publisher) {
             $pubUri = $this->getServerUrl('publisher', ['id' => $publisher['Publisher_ID']]);
-            $edition->add('rda:publisher', $pubUri);
+            $edition->add('rda:publisher', $graph->resource($pubUri));
         }
         foreach ($view->children as $child) {
             $childUri = $this->getServerUrl('edition', ['id' => $child['Edition_ID']]);
-            $edition->add('rda:containerOf', $childUri);
+            $edition->add('rda:containerOf', $graph->resource($childUri));
         }
         if ($view->parent) {
             $parentUri = $this->getServerUrl('edition', ['id' => $view->parent['Edition_ID']]);
-            $edition->add('rda:containedIn', $parentUri);
+            $edition->add('rda:containedIn', $graph->resource($parentUri));
         }
         if (!empty($view->edition['Edition_Length'])) {
             $edition->add('rda:extent', $view->edition['Edition_Length']);
