@@ -419,6 +419,7 @@ class AbstractBase extends AbstractActionController
         $requestedFormat = $this->rdfRequested(true);
         switch ($requestedFormat) {
         case 'application/x-turtle':
+        case 'text/turtle':
             $serialization = 'turtle';
             break;
         case 'application/rdf+xml':
@@ -452,7 +453,7 @@ class AbstractBase extends AbstractActionController
         // items will only be chosen if they're explicitly given a higher
         // priority in the accept headers.
         $rdfForms = array(
-            'application/x-turtle',                 // Turtle
+            'text/turtle', 'application/x-turtle',  // Turtle
             'text/plain', 'application/n-triples',  // N-Triples
             'application/rdf+xml',                  // RDF-XML
         );
