@@ -160,6 +160,10 @@ class AbstractBase extends AbstractActionController
         }
         foreach ($assignMap as $post => $attr) {
             $row->$attr = trim($this->params()->fromPost($post));
+            // Handle IDs intelligently: empty value should be treated as null!
+            if (substr($attr, -3) == '_ID' && empty($row->$attr)) {
+                $row->$attr = null;
+            }
         }
         $problem = $row->validate();
         if ($problem !== false) {
