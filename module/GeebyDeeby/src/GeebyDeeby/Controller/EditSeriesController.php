@@ -233,6 +233,9 @@ class EditSeriesController extends AbstractBase
         $table = $this->getDbTable('seriespublishers');
         if ($this->getRequest()->isPost()) {
             $imprint = $this->params()->fromPost('imprint');
+            if (empty($imprint)) {
+                $imprint = null;
+            }
             $address = $this->params()->fromPost('address');
             $fields = array(
                 'Imprint_ID' => $imprint, 'Address_ID' => $address
