@@ -415,6 +415,9 @@ class EditEditionController extends AbstractBase
             $row->Month = $this->params()->fromPost('month');
             $row->Day = $this->params()->fromPost('day');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $table->insert((array)$row);
             return $this->jsonReportSuccess();
         }
@@ -481,6 +484,9 @@ class EditEditionController extends AbstractBase
             $row->Role_ID = $this->params()->fromPost('role_id');
             $row->Position = $this->params()->fromPost('pos');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $table->insert((array)$row);
             return $this->jsonReportSuccess();
         }
@@ -703,6 +709,9 @@ class EditEditionController extends AbstractBase
             $row = $table->createRow();
             $row->Edition_ID = $this->params()->fromRoute('id');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $row->Image_Path = $this->params()->fromPost('image');
             if (empty($row->Image_Path)) {
                 return $this->jsonDie('Image path must be set.');
