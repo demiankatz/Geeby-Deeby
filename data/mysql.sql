@@ -26,7 +26,7 @@ CREATE TABLE `Authorities` (
   `Authority_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Authority_Name` tinytext NOT NULL,
   PRIMARY KEY (`Authority_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `Categories` (
   `Category` tinytext NOT NULL,
   `Description` text,
   PRIMARY KEY (`Category_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,7 +55,7 @@ CREATE TABLE `Cities` (
   `City_ID` int(11) NOT NULL AUTO_INCREMENT,
   `City_Name` tinytext NOT NULL,
   PRIMARY KEY (`City_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,8 +71,11 @@ CREATE TABLE `Collections` (
   `User_ID` int(11) NOT NULL DEFAULT '0',
   `Collection_Status` enum('have','want','extra') NOT NULL DEFAULT 'have',
   `Collection_Note` tinytext,
-  PRIMARY KEY (`Series_ID`,`Item_ID`,`User_ID`,`Collection_Status`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`,`Item_ID`,`User_ID`,`Collection_Status`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items`(`Item_ID`),
+  FOREIGN KEY (`User_ID`) REFERENCES `Users`(`User_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,7 +89,7 @@ CREATE TABLE `Countries` (
   `Country_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Country_Name` tinytext NOT NULL,
   PRIMARY KEY (`Country_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,8 +105,8 @@ CREATE TABLE `Editions` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Series_ID` int(11) DEFAULT NULL,
   `Position` int(11) NOT NULL DEFAULT '0',
-  `Preferred_Item_AltName_ID` int(11) DEFAULT NULL,
-  `Preferred_Series_AltName_ID` int(11) DEFAULT NULL,
+  `Preferred_Item_AltName_ID` bigint(20) DEFAULT NULL,
+  `Preferred_Series_AltName_ID` bigint(20) unsigned DEFAULT NULL,
   `Edition_Length` tinytext,
   `Edition_Endings` tinytext,
   `Edition_Description` text,
@@ -111,8 +114,14 @@ CREATE TABLE `Editions` (
   `Parent_Edition_ID` int(11) DEFAULT NULL,
   `Position_In_Parent` int(11) DEFAULT NULL,
   `Extent_In_Parent` text,
-  PRIMARY KEY (`Edition_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Edition_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items`(`Item_ID`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`Preferred_Item_AltName_ID`) REFERENCES `Items_AltTitles` (`Sequence_ID`),
+  FOREIGN KEY (`Preferred_Series_AltName_ID`) REFERENCES `Series_AltTitles` (`Sequence_ID`),
+  FOREIGN KEY (`Preferred_Series_Publisher_ID`) REFERENCES `Series_Publishers` (`Series_Publisher_ID`),
+  FOREIGN KEY (`Parent_Edition_ID`) REFERENCES `Editions` (`Edition_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,8 +137,12 @@ CREATE TABLE `Editions_Credits` (
   `Role_ID` int(11) NOT NULL DEFAULT '0',
   `Position` int(11) DEFAULT NULL,
   `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Edition_ID`,`Person_ID`,`Role_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Edition_ID`,`Person_ID`,`Role_ID`),
+  FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`),
+  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`),
+  FOREIGN KEY (`Role_ID`) REFERENCES `Roles` (`Role_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,8 +157,10 @@ CREATE TABLE `Editions_Full_Text` (
   `Full_Text_Source_ID` int(11) NOT NULL DEFAULT '0',
   `Edition_ID` int(11) NOT NULL DEFAULT '0',
   `Full_Text_URL` tinytext NOT NULL,
-  PRIMARY KEY (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Full_Text_Source_ID`) REFERENCES `Full_Text_Sources` (`Full_Text_Source_ID`),
+  FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -162,8 +177,10 @@ CREATE TABLE `Editions_Images` (
   `Thumb_Path` tinytext NOT NULL,
   `Position` int(11) DEFAULT NULL,
   `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -179,8 +196,10 @@ CREATE TABLE `Editions_ISBNs` (
   `ISBN` char(10) DEFAULT NULL,
   `Note_ID` int(11) DEFAULT NULL,
   `ISBN13` char(13) DEFAULT NULL,
-  PRIMARY KEY (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,8 +214,10 @@ CREATE TABLE `Editions_OCLC_Numbers` (
   `Edition_ID` int(11) NOT NULL DEFAULT '0',
   `OCLC_Number` tinytext NOT NULL,
   `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -209,8 +230,10 @@ DROP TABLE IF EXISTS `Editions_Platforms`;
 CREATE TABLE `Editions_Platforms` (
   `Edition_ID` int(11) NOT NULL DEFAULT '0',
   `Platform_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Edition_ID`,`Platform_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Edition_ID`,`Platform_ID`),
+  FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`),
+  FOREIGN KEY (`Platform_ID`) REFERENCES `Platforms` (`Platform_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -225,8 +248,10 @@ CREATE TABLE `Editions_Product_Codes` (
   `Edition_ID` int(11) NOT NULL DEFAULT '0',
   `Product_Code` tinytext NOT NULL,
   `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -242,8 +267,10 @@ CREATE TABLE `Editions_Release_Dates` (
   `Month` int(11) NOT NULL DEFAULT '0',
   `Day` int(11) NOT NULL DEFAULT '0',
   `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Edition_ID`,`Month`,`Day`,`Year`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Edition_ID`,`Month`,`Day`,`Year`),
+  FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +284,7 @@ CREATE TABLE `FAQ_Categories` (
   `FAQ_Category_ID` int(11) NOT NULL DEFAULT '0',
   `FAQ_Category_Name` tinytext,
   PRIMARY KEY (`FAQ_Category_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -272,8 +299,9 @@ CREATE TABLE `FAQs` (
   `FAQ_ID` int(11) NOT NULL DEFAULT '0',
   `FAQ_Name` tinytext,
   `FAQ_Body` text,
-  PRIMARY KEY (`FAQ_Category_ID`,`FAQ_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`FAQ_Category_ID`,`FAQ_ID`),
+  FOREIGN KEY (`FAQ_Category_ID`) REFERENCES `FAQ_Categories` (`FAQ_Category_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -287,7 +315,7 @@ CREATE TABLE `File_Types` (
   `File_Type_ID` int(11) NOT NULL AUTO_INCREMENT,
   `File_Type` tinytext NOT NULL,
   PRIMARY KEY (`File_Type_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -303,8 +331,9 @@ CREATE TABLE `Files` (
   `File_Path` tinytext,
   `Description` text,
   `File_Type_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`File_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`File_ID`),
+  FOREIGN KEY (`File_Type_ID`) REFERENCES `File_Types` (`File_Type_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,7 +347,7 @@ CREATE TABLE `Full_Text_Sources` (
   `Full_Text_Source_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Full_Text_Source_Name` tinytext,
   PRIMARY KEY (`Full_Text_Source_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -335,7 +364,7 @@ CREATE TABLE `Items` (
   `Item_Thanks` tinytext,
   `Material_Type_ID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -348,8 +377,10 @@ DROP TABLE IF EXISTS `Items_Adaptations`;
 CREATE TABLE `Items_Adaptations` (
   `Source_Item_ID` int(11) NOT NULL DEFAULT '0',
   `Adapted_Item_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Source_Item_ID`,`Adapted_Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Source_Item_ID`,`Adapted_Item_ID`),
+  FOREIGN KEY (`Source_Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Adapted_Item_ID`) REFERENCES `Items` (`Item_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -364,8 +395,10 @@ CREATE TABLE `Items_AltTitles` (
   `Item_AltName` tinytext NOT NULL,
   `Note_ID` int(11) DEFAULT NULL,
   `Sequence_ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -378,8 +411,10 @@ DROP TABLE IF EXISTS `Items_Bibliography`;
 CREATE TABLE `Items_Bibliography` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Bib_Item_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`,`Bib_Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Item_ID`,`Bib_Item_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Bib_Item_ID`) REFERENCES `Items` (`Item_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -393,8 +428,9 @@ CREATE TABLE `Items_Descriptions` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Source` enum('LC','Cover','User','Ad') NOT NULL DEFAULT 'User',
   `Description` text NOT NULL,
-  PRIMARY KEY (`Item_ID`,`Source`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Item_ID`,`Source`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -407,8 +443,10 @@ DROP TABLE IF EXISTS `Items_Files`;
 CREATE TABLE `Items_Files` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `File_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`,`File_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Item_ID`,`File_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`File_ID`) REFERENCES `Files` (`File_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -423,8 +461,10 @@ CREATE TABLE `Items_In_Collections` (
   `Collection_Item_ID` int(11) NOT NULL DEFAULT '0',
   `Position` int(11) NOT NULL DEFAULT '0',
   `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Item_ID`,`Collection_Item_ID`,`Position`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Item_ID`,`Collection_Item_ID`,`Position`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Collection_Item_ID`) REFERENCES `Items` (`Item_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -437,8 +477,10 @@ DROP TABLE IF EXISTS `Items_Links`;
 CREATE TABLE `Items_Links` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Link_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`,`Link_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Item_ID`,`Link_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Link_ID`) REFERENCES `Links` (`Link_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -454,8 +496,10 @@ CREATE TABLE `Items_Reviews` (
   `Review` text NOT NULL,
   `Approved` enum('y','n') NOT NULL DEFAULT 'y',
   PRIMARY KEY (`Item_ID`,`User_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`User_ID`) REFERENCES `Users` (`User_ID`),
   KEY `Approved` (`Approved`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -468,8 +512,10 @@ DROP TABLE IF EXISTS `Items_Tags`;
 CREATE TABLE `Items_Tags` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Tag_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`,`Tag_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Item_ID`,`Tag_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Tag_ID`) REFERENCES `Tags` (`Tag_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -482,8 +528,10 @@ DROP TABLE IF EXISTS `Items_Translations`;
 CREATE TABLE `Items_Translations` (
   `Source_Item_ID` int(11) NOT NULL DEFAULT '0',
   `Trans_Item_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Source_Item_ID`,`Trans_Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Source_Item_ID`,`Trans_Item_ID`),
+  FOREIGN KEY (`Source_Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Trans_Item_ID`) REFERENCES `Items` (`Item_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -497,7 +545,7 @@ CREATE TABLE `Languages` (
   `Language_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Language_Name` tinytext NOT NULL,
   PRIMARY KEY (`Language_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -511,7 +559,7 @@ CREATE TABLE `Link_Types` (
   `Link_Type_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Link_Type` tinytext NOT NULL,
   PRIMARY KEY (`Link_Type_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -528,8 +576,9 @@ CREATE TABLE `Links` (
   `Description` tinytext,
   `Date_Checked` date NOT NULL DEFAULT '0000-00-00',
   `Link_Type_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Link_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Link_ID`),
+  FOREIGN KEY  (`Link_Type_ID`) REFERENCES `Link_Types` (`Link_Type_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -546,7 +595,7 @@ CREATE TABLE `Material_Types` (
   `Material_Type_RDF_Class` tinytext,
   `Default` smallint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Material_Type_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -560,7 +609,7 @@ CREATE TABLE `Notes` (
   `Note_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Note` tinytext NOT NULL,
   PRIMARY KEY (`Note_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -578,8 +627,9 @@ CREATE TABLE `People` (
   `Extra_Details` tinytext,
   `Biography` text,
   `Authority_ID` int,
-  PRIMARY KEY (`Person_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Person_ID`),
+  FOREIGN KEY (`Authority_ID`) REFERENCES `Authorities` (`Authority_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -592,8 +642,10 @@ DROP TABLE IF EXISTS `People_Bibliography`;
 CREATE TABLE `People_Bibliography` (
   `Person_ID` int(11) NOT NULL DEFAULT '0',
   `Item_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Person_ID`,`Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Person_ID`,`Item_ID`),
+  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -606,8 +658,10 @@ DROP TABLE IF EXISTS `People_Files`;
 CREATE TABLE `People_Files` (
   `Person_ID` int(11) NOT NULL DEFAULT '0',
   `File_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Person_ID`,`File_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Person_ID`,`File_ID`),
+  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`),
+  FOREIGN KEY (`File_ID`) REFERENCES `Files` (`File_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -620,8 +674,10 @@ DROP TABLE IF EXISTS `People_Links`;
 CREATE TABLE `People_Links` (
   `Person_ID` int(11) NOT NULL DEFAULT '0',
   `Link_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Person_ID`,`Link_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Person_ID`,`Link_ID`),
+  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`),
+  FOREIGN KEY (`Link_ID`) REFERENCES `Links` (`Link_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -635,7 +691,7 @@ CREATE TABLE `Platforms` (
   `Platform_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Platform` tinytext NOT NULL,
   PRIMARY KEY (`Platform_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -648,8 +704,10 @@ DROP TABLE IF EXISTS `Pseudonyms`;
 CREATE TABLE `Pseudonyms` (
   `Real_Person_ID` int(11) NOT NULL DEFAULT '0',
   `Pseudo_Person_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Real_Person_ID`,`Pseudo_Person_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Real_Person_ID`,`Pseudo_Person_ID`),
+  FOREIGN KEY (`Real_Person_ID`) REFERENCES `People` (`Person_ID`),
+  FOREIGN KEY (`Pseudo_Person_ID`) REFERENCES `People` (`Person_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -663,7 +721,7 @@ CREATE TABLE `Publishers` (
   `Publisher_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Publisher_Name` tinytext NOT NULL,
   PRIMARY KEY (`Publisher_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -679,8 +737,11 @@ CREATE TABLE `Publishers_Addresses` (
   `Country_ID` int(11) NOT NULL,
   `City_ID` int(11) DEFAULT NULL,
   `Street` tinytext DEFAULT '',
-  PRIMARY KEY (`Address_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Address_ID`),
+  FOREIGN KEY (`Publisher_ID`) REFERENCES `Publishers` (`Publisher_ID`),
+  FOREIGN KEY (`Country_ID`) REFERENCES `Countries` (`Country_ID`),
+  FOREIGN KEY (`City_ID`) REFERENCES `Cities` (`City_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -694,8 +755,9 @@ CREATE TABLE `Publishers_Imprints` (
   `Imprint_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Publisher_ID` int(11) NOT NULL,
   `Imprint_Name` tinytext NOT NULL,
-  PRIMARY KEY (`Imprint_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Imprint_ID`),
+  FOREIGN KEY (`Publisher_ID`) REFERENCES `Publishers` (`Publisher_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -710,8 +772,9 @@ CREATE TABLE `Recent_Reviews` (
   `User_ID` int(11) NOT NULL DEFAULT '0',
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Type` enum('item','series') NOT NULL DEFAULT 'item',
-  PRIMARY KEY (`User_ID`,`Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`User_ID`,`Item_ID`),
+  FOREIGN KEY (`User_ID`) REFERENCES `Users`(`User_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -725,7 +788,7 @@ CREATE TABLE `Roles` (
   `Role_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Role_Name` tinytext NOT NULL,
   PRIMARY KEY (`Role_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -740,8 +803,9 @@ CREATE TABLE `Series` (
   `Series_Name` tinytext NOT NULL,
   `Series_Description` text,
   `Language_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Series_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`),
+  FOREIGN KEY (`Language_ID`) REFERENCES `Languages` (`Language_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -757,8 +821,9 @@ CREATE TABLE `Series_AltTitles` (
   `Note_ID` int(11) DEFAULT NULL,
   `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`Sequence_ID`),
-  UNIQUE KEY `Sequence_ID` (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series` (`Series_ID`)
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -775,7 +840,7 @@ CREATE TABLE `Series_Attributes` (
   `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Series_Attribute_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -789,8 +854,10 @@ CREATE TABLE `Series_Attributes_Values` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Series_Attribute_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
   `Series_Attribute_Value` varchar(32768) NOT NULL,
-  PRIMARY KEY (`Series_ID`, `Series_Attribute_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`, `Series_Attribute_ID`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series` (`Series_ID`),
+  FOREIGN KEY (`Series_Attribute_ID`) REFERENCES `Series_Attributes` (`Series_Attribute_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -803,8 +870,10 @@ DROP TABLE IF EXISTS `Series_Bibliography`;
 CREATE TABLE `Series_Bibliography` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Item_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Series_ID`,`Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`,`Item_ID`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`Item_ID`) REFERENCES `Items`(`Item_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -817,8 +886,10 @@ DROP TABLE IF EXISTS `Series_Categories`;
 CREATE TABLE `Series_Categories` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Category_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Series_ID`,`Category_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`,`Category_ID`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`Category_ID`) REFERENCES `Categories`(`Category_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -831,8 +902,10 @@ DROP TABLE IF EXISTS `Series_Files`;
 CREATE TABLE `Series_Files` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `File_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Series_ID`,`File_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`,`File_ID`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`File_ID`) REFERENCES `Files`(`File_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -845,8 +918,10 @@ DROP TABLE IF EXISTS `Series_Links`;
 CREATE TABLE `Series_Links` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Link_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Series_ID`,`Link_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`,`Link_ID`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`Link_ID`) REFERENCES `Links`(`Link_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -859,8 +934,10 @@ DROP TABLE IF EXISTS `Series_Material_Types`;
 CREATE TABLE `Series_Material_Types` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Material_Type_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Series_ID`,`Material_Type_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`,`Material_Type_ID`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`Material_Type_ID`) REFERENCES `Material_Types`(`Material_Type_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -880,7 +957,12 @@ CREATE TABLE `Series_Publishers` (
   PRIMARY KEY (`Series_Publisher_ID`),
   KEY `SERIES` (`Series_ID`),
   KEY `PUBLISHER` (`Publisher_ID`),
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`Publisher_ID`) REFERENCES `Publishers`(`Publisher_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes`(`Note_ID`),
+  FOREIGN KEY (`Imprint_ID`) REFERENCES `Publishers_Imprints`(`Imprint_ID`),
+  FOREIGN KEY (`Address_ID`) REFERENCES `Publishers_Addresses`(`Address_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -895,8 +977,10 @@ CREATE TABLE `Series_Reviews` (
   `User_ID` int(11) NOT NULL DEFAULT '0',
   `Review` text NOT NULL,
   `Approved` enum('y','n') NOT NULL DEFAULT 'y',
-  PRIMARY KEY (`Series_ID`,`User_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Series_ID`,`User_ID`),
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`User_ID`) REFERENCES `Users`(`User_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -909,8 +993,10 @@ DROP TABLE IF EXISTS `Series_Translations`;
 CREATE TABLE `Series_Translations` (
   `Source_Series_ID` int(11) NOT NULL DEFAULT '0',
   `Trans_Series_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Source_Series_ID`,`Trans_Series_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Source_Series_ID`,`Trans_Series_ID`),
+  FOREIGN KEY (`Source_Series_ID`) REFERENCES `Series`(`Series_ID`),
+  FOREIGN KEY (`Trans_Series_ID`) REFERENCES `Series`(`Series_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -924,7 +1010,7 @@ CREATE TABLE `Tag_Types` (
   `Tag_Type_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Tag_Type` tinytext NOT NULL,
   PRIMARY KEY (`Tag_Type_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -938,8 +1024,9 @@ CREATE TABLE `Tags` (
   `Tag_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Tag` tinytext NOT NULL,
   `Tag_Type_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Tag_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`Tag_ID`),
+  FOREIGN KEY (`Tag_Type_ID`) REFERENCES `Tag_Types` (`Tag_Type_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -957,7 +1044,7 @@ CREATE TABLE `User_Groups` (
   `Approver` tinyint NOT NULL DEFAULT 0,
   `Data_Manager` tinyint NOT NULL DEFAULT 0,
   PRIMARY KEY (`User_Group_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -975,8 +1062,9 @@ CREATE TABLE `Users` (
   `Address` tinytext,
   `Person_ID` int(11) DEFAULT NULL,
   `User_Group_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`User_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`User_ID`),
+  FOREIGN KEY (`User_Group_ID`) REFERENCES `User_Groups` (`User_Group_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
