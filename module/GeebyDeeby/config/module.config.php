@@ -62,6 +62,7 @@ return array(
                 'peoplebibliography' => 'GeebyDeeby\Db\Table\PeopleBibliography',
                 'peoplefiles' => 'GeebyDeeby\Db\Table\PeopleFiles',
                 'peoplelinks' => 'GeebyDeeby\Db\Table\PeopleLinks',
+                'peopleuris' => 'GeebyDeeby\Db\Table\PeopleURIs',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'platform' => 'GeebyDeeby\Db\Table\Platform',
                 'pseudonyms' => 'GeebyDeeby\Db\Table\Pseudonyms',

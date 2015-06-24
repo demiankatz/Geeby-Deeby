@@ -77,9 +77,25 @@ class EditPersonController extends AbstractBase
                 ->getPseudonyms($view->personObj->Person_ID);
             $view->realnames = $this->getDbTable('pseudonyms')
                 ->getRealNames($view->personObj->Person_ID);
+            $view->uris = $this->getDbTable('peopleuris')
+                ->getURIsForPerson($view->personObj->Person_ID);
             $view->setTemplate('geeby-deeby/edit-person/edit-full');
         }
         return $view;
+    }
+
+    /**
+     * Deal with URIs
+     *
+     * @return mixed
+     */
+    public function uriAction()
+    {
+        return $this->handleGenericLink(
+            'peopleuris', 'Person_ID', 'URI',
+            'uris', 'getURIsForPerson',
+            'geeby-deeby/edit-person/uri-list.phtml'
+        );
     }
 
     /**

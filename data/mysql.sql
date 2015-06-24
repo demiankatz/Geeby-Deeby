@@ -633,6 +633,22 @@ CREATE TABLE `People` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `People_URIs`
+--
+
+DROP TABLE IF EXISTS `People_URIs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `People_URIs` (
+  `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `Person_ID` int(11) NOT NULL,
+  `URI` varchar(2048) NOT NULL,
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `People_Bibliography`
 --
 
