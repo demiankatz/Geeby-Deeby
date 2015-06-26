@@ -1,0 +1,15 @@
+<? if (isset($uris) && count($uris) > 0): ?>
+  <? foreach ($uris as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td><?=$this->escapeHtml($current['URI'])?></td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteURI('<?=$current['URI']?>'); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? else: ?>
+  No URIs defined.
+<? endif; ?>
