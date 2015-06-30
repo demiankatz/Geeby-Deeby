@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for People_URIs
+ * Table Definition for Predicates
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Db\Table;
 
 /**
- * Table Definition for People_URIs
+ * Table Definition for Predicates
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -36,55 +36,45 @@ namespace GeebyDeeby\Db\Table;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class PeopleURIs extends Gateway
+class Predicate extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('People_URIs');
+        parent::__construct('Predicates', 'GeebyDeeby\Db\Row\Predicate');
     }
 
     /**
-     * Get a list of URIs for the specified person.
-     *
-     * @var int $personID Person ID
+     * Get a list of predicates.
      *
      * @return mixed
      */
-    public function getURIsForPerson($personID)
+    public function getList()
     {
-        $callback = function ($select) use ($personID) {
-            $select->join(
-                array('pr' => 'Predicates'),
-                'People_URIs.Predicate_ID = pr.Predicate_ID'
-            );
-            $select->where->equalTo('Person_ID', $personID);
+        $callback = function ($select) {
+            $select->order('Predicate_Abbrev');
         };
         return $this->select($callback);
     }
 
     /**
-     * Get a list of people for the specified URI.
+     * Get autocomplete suggestions.
      *
-     * @var string $uri URI
+     * @param string $query The user query.
+     * @param mixed  $limit Limit on returned rows (false for no limit).
      *
      * @return mixed
      */
-    public function getPeopleForURI($uri)
+    public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($uri) {
-            $select->join(
-                array('p' => 'People'),
-                'People_URIs.Person_ID = p.Person_ID'
-            );
-            $select->join(
-                array('pr' => 'Predicates'),
-                'People_URIs.Predicate_ID = pr.Predicate_ID'
-            );
-            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
-            $select->where->equalTo('URI', $uri);
+        $callback = function ($select) use ($query, $limit) {
+            if ($limit !== false) {
+                $select->limit($limit);
+            }
+            $select->where->like('Predicate_Abbrev', $query . '%');
+            $select->order('Predicate_Abbrev');
         };
         return $this->select($callback);
     }
