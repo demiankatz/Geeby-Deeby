@@ -80,6 +80,7 @@ class EditPersonController extends AbstractBase
             $view->uris = $this->getDbTable('peopleuris')
                 ->getURIsForPerson($view->personObj->Person_ID);
             $view->setTemplate('geeby-deeby/edit-person/edit-full');
+            $view->predicates = $this->getDbTable('predicate')->getList();
         }
         return $view;
     }
@@ -91,10 +92,13 @@ class EditPersonController extends AbstractBase
      */
     public function uriAction()
     {
+        $extras = ($pid = $this->params()->fromPost('predicate_id'))
+            ? ['Predicate_ID' => $pid] : [];
         return $this->handleGenericLink(
             'peopleuris', 'Person_ID', 'URI',
             'uris', 'getURIsForPerson',
-            'geeby-deeby/edit-person/uri-list.phtml'
+            'geeby-deeby/edit-person/uri-list.phtml',
+            $extras
         );
     }
 

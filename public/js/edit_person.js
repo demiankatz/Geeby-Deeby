@@ -72,6 +72,7 @@ function redrawURIs()
 function addURI()
 {
     var personID = $('#Person_ID').val();
+    var predicateID = $('#Predicate_ID').val();
     var uri = $('#uri').val();
 
     // Validate user selection:
@@ -82,7 +83,7 @@ function addURI()
 
     // Save and update based on selected relationship:
     var url = basePath + '/edit/Person/' + encodeURIComponent(personID) + "/URI/" + encodeURIComponent(uri);
-    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
+    $.post(url, { predicate_id: predicateID }, function(data) {
         // If save was successful...
         if (data.success) {
             // Update the person list.
@@ -91,7 +92,7 @@ function addURI()
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
-    }});
+    }, 'json');
 }
 
 /* Delete a URI:
