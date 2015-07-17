@@ -26,7 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Controller;
-use Zend\Console\Console;
+use GeebyDeebyLocal\Ingest\ModsExtractor, Zend\Console\Console;
 
 /**
  * Ingest controller
@@ -56,33 +56,9 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $editionObj = $this->getDbTable('edition')->getByPrimaryKey($edition);
         $item = $this->getItemForEdition($editionObj);
 
-        $details = [];
-        foreach ($mods->xpath('/mods:mods') as $current) {
-            $currentDetails = $this->extractDetailsFromMods($current);
-            if (!empty($currentDetails)) {
-                $details[] = $currentDetails;
-            }
-        }
-        foreach ($mods->xpath('/mods:mods/mods:relatedItem[@type="constituent"]') as $current) {
-            $currentDetails = $this->extractDetailsFromMods($current);
-            if (!empty($currentDetails)) {
-                $details[] = $currentDetails;
-            }
-        }
-    }
-
-    protected function extractDetailsFromMods($mods)
-    {
-        $details = [];
-        $title = $this->extractTitleInfoFromMods($mods);
-        if (!empty($title)) {
-            $details['title'] = $title;
-        }
-        $authors = $this->extractAuthorsFromMods($mods);
-        if (!empty($authors)) {
-            $details['authors'] = $authors;
-        }
-        return $details;
+        $extractor = new ModsExtractor();
+        $details = $extractor->getDetails($mods);
+        print_r($details);
     }
 
     protected function checkTitle($item, $title)
@@ -90,44 +66,6 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $itemTitle = (isset($item['Item_AltName']) && !empty($item['Item_AltName']))
             ? $item['Item_AltName'] : $item['Item_Name'];
         Console::writeLine('Comparing to ' . $itemTitle);
-    }
-
-    protected function extractAuthorsFromMods($mods)
-    {
-        $authors = [];
-        $matches = $mods->xpath('mods:name');
-        foreach ($matches as $current) {
-            $role = $current->xpath('mods:role/mods:roleTerm');
-            if (isset($role[0]) && (string)$role[0] == 'author') {
-                $currentAuthor = [];
-                $uri = $current->xpath('@valueURI');
-                if (isset($uri[0])) {
-                    $currentAuthor['uri'] = (string)$uri[0];
-                }
-                $currentAuthor['name'] = implode(', ', $current->xpath('mods:namePart'));
-                if (!empty($currentAuthor['name'])) {
-                    Console::writeLine(
-                        'Extracted author: ' . $currentAuthor['name']
-                        . (empty($currentAuthor['uri']) ? '' : " ({$currentAuthor['uri']})")
-                    );
-                    $authors[] = $currentAuthor;
-                }
-            }
-        }
-        return $authors;
-    }
-
-    protected function extractTitleInfoFromMods($mods)
-    {
-        $matches = $mods->xpath('mods:titleInfo[not(@type="alternative")]');
-        if (empty($matches)) {
-            return '';
-        }
-        $title = (string)$matches[0]->xpath('mods:title')[0];
-        $article = $matches[0]->xpath('mods:nonSort');
-        $full = $title .= (empty($article) ? '' : ', ' . (string)$article[0]);
-        Console::writeLine("Extracted title: $full");
-        return $full;
     }
 
     protected function getItemForEdition($rowObj)
@@ -147,6 +85,11 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
 
     protected function getModsForEdition($edition)
     {
+        $cache = '/tmp/gbdb_' . md5($edition);
+        if (file_exists($cache)) {
+            return file_get_contents($cache);
+        }
+    
         // Get MODS identifier from Solr:
         $settings = json_decode(file_get_contents(__DIR__ . '/settings.json'));
         $query = $settings->solrQueryField . ':"' . $edition . '"';
@@ -165,6 +108,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $modsUrl = sprintf($settings->modsUrl, $pid);
         Console::writeLine("Retrieving $modsUrl...");
         $mods = file_get_contents($modsUrl);
+        file_put_contents($cache, $mods);
         return $mods;
     }
 }
