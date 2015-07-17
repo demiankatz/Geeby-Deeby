@@ -75,6 +75,67 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         if (!$childDetails) {
             return;
         }
+        $childDetails = $this->addAuthorDetails($childDetails);
+        if (!$childDetails) {
+            return;
+        }
+    }
+
+    protected function addAuthorDetails($details)
+    {
+        foreach ($details as & $match) {
+            $match[0]['authorIds'] = [];
+            foreach ($match[0]['authors'] as $current) {
+                if (!isset($current['uri'])) {
+                    Console::writeLine("FATAL: Missing URI for {$current['name']}...");
+                    return false;
+                }
+                $id = $this->getPersonIdForUri($current['uri']);
+                if (!$id) {
+                    Console::writeLine("FATAL: Missing Person ID for {$current['uri']}");
+                    return false;
+                }
+                $match[0]['authorIds'][] = $id;
+            }
+            if ($match[1]) {
+                $credits = $this->getDbTable('editionscredits')
+                    ->getCreditsForEdition($match[1]['edition']->Edition_ID);
+                $match[1]['authorIds'] = [];
+                foreach ($credits as $credit) {
+                    $match[1]['authorIds'][] = $credit->Person_ID;
+                }
+                if ($this->hasAuthorProblem($match[0]['authorIds'], $match[1]['authorIds'])) {
+                    return false;
+                }
+            }
+        }
+        return $details;
+    }
+
+    protected function hasAuthorProblem($incomingList, $storedList)
+    {
+        $unexpected = array_diff($storedList, $incomingList);
+        if (count($unexpected) > 0) {
+            Console::writeLine("Found unexpected author ID(s) in database: " . implode(', ', $unexpected));
+            return true;
+        }
+        return false;
+    }
+
+    protected function getPersonIdForUri($uri)
+    {
+        $base = 'http://dimenovels.org/Person/';
+        if (substr($uri, 0, strlen($base)) == $base) {
+            $id = str_replace($base, '', $uri);
+        } else {
+            $table = $this->getDbTable('peopleuris');
+            $result = $table->select(['URI' => $uri]);
+            $id = false;
+            foreach ($result as $curr) {
+                $id = $curr['Person_ID'];
+            }
+        }
+        return $id;
     }
 
     protected function synchronizeChildren($editionObj, $contents)
@@ -124,7 +185,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $expectedNumber = intval($editionObj->Position);
         foreach ($details['series'] as $seriesName => $number) {
             $actualNumber = intval(preg_replace('/[^0-9]/', '', $number));
-            Console::writeLine("Comparing {$expectedNumber} to {$actualNumber}...");
+            //Console::writeLine("Comparing {$expectedNumber} to {$actualNumber}...");
             if ($actualNumber == $expectedNumber && $this->checkSeriesTitle($series, $seriesName)) {
                 return true;
             }
