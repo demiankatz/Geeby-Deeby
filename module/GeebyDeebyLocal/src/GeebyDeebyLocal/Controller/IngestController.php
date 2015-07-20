@@ -82,10 +82,10 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             return false;
         }
         $details['contents'] = $childDetails;
-        return $this->updateDatabase($editionObj, $details);
+        return $this->updateDatabase($editionObj, $series, $details);
     }
 
-    protected function updateDatabase($editionObj, $details)
+    protected function updateDatabase($editionObj, $series, $details)
     {
         $item = $this->getItemForEdition($editionObj);
         if (isset($details['date'])) {
@@ -94,7 +94,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             }
         }
         if (isset($details['publisher'])) {
-            if (!$this->processPublisher($details['publisher'], $editionObj)) {
+            if (!$this->processPublisher($details['publisher'], $editionObj, $series['Series_ID'])) {
                 return false;
             }
         }
@@ -140,9 +140,40 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
-    protected function processPublisher($publisher, $editionObj)
+    protected function processPublisher($publisher, $editionObj, $seriesId)
     {
-        Console::writeLine("TODO: processPublisher()");
+        list ($name, $street) = array_map('trim', explode(',', $publisher['name'], 2));
+        $place = $publisher['place'];
+        $spTable = $this->getDbTable('seriespublishers');
+        $cityTable = $this->getDbTable('city');
+        $pubTable = $this->getDbTable('publisher');
+        $result = $spTable->getPublishers($seriesId);
+        $match = false;
+        foreach ($result as $current) {
+            $city = $current['City_ID'] ? $cityTable->getByPrimaryKey($current['City_ID']) : false;
+            $pub = $current['Publisher_ID'] ? $pubTable->getByPrimaryKey($current['Publisher_ID']) : false;
+            if ($city && $place == $city->City_Name
+                && $pub && $name == $pub->Publisher_Name
+                && $street == $current->Street
+            ) {
+                $match = $current->Series_Publisher_ID;
+                break;
+            }
+        }
+        if (!$match) {
+            Console::writeLine("FATAL: No series/publisher match for $name, $street, $place");
+            return false;
+        }
+        if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID != $match) {
+            Console::writeLine("FATAL: Publisher mismatch in edition.");
+            return false;
+        }
+        if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID == $match) {
+            return true;
+        }
+        Console::writeLine("Updating address to $name, $street, $place");
+        $editionObj->Preferred_Series_Publisher_ID = $match;
+        $editionObj->save();
         return true;
     }
 
