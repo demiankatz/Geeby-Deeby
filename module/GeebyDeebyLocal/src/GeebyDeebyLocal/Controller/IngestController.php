@@ -39,6 +39,9 @@ use GeebyDeebyLocal\Ingest\ModsExtractor, Zend\Console\Console;
  */
 class IngestController extends \GeebyDeeby\Controller\AbstractBase
 {
+    const FULLTEXT_SOURCE_NIU = 10;
+    const ROLE_AUTHOR = 1;
+
     /**
      * Standard ingest action.
      *
@@ -47,38 +50,162 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     public function indexAction()
     {
         $edition = 5865;
-        return $this->loadExistingEdition($edition);
+        $this->loadExistingEdition($edition);
     }
 
     protected function loadExistingEdition($edition)
     {
+        Console::writeLine("Loading existing edition (id = {$edition})");
         $rawMods = $this->getModsForEdition('http://dimenovels.org/Edition/' . $edition);
         if (!$rawMods) {
             Console::writeLine('Could not retrieve MODS.');
-            return;
+            return false;
         }
         $mods = simplexml_load_string($rawMods);
         $editionObj = $this->getDbTable('edition')->getByPrimaryKey($edition);
-        $item = $this->getItemForEdition($editionObj);
         $series = $this->getSeriesForEdition($editionObj);
 
         $extractor = new ModsExtractor();
         $details = $extractor->getDetails($mods);
-        print_r($details);
 
         if (!$this->validateSeries($details, $editionObj, $series)) {
             Console::writeLine('Series validation failed.');
-            return;
+            return false;
         }
 
         $childDetails = $this->synchronizeChildren($editionObj, $details['contents']);
         if (!$childDetails) {
-            return;
+            return false;
         }
         $childDetails = $this->addAuthorDetails($childDetails);
         if (!$childDetails) {
-            return;
+            return false;
         }
+        $details['contents'] = $childDetails;
+        return $this->updateDatabase($editionObj, $details);
+    }
+
+    protected function updateDatabase($editionObj, $details)
+    {
+        $item = $this->getItemForEdition($editionObj);
+        if (isset($details['date'])) {
+            if (!$this->processDate($details['date'], $editionObj)) {
+                return false;
+            }
+        }
+        if (isset($details['publisher'])) {
+            if (!$this->processPublisher($details['publisher'], $editionObj)) {
+                return false;
+            }
+        }
+        if (isset($details['oclc'])) {
+            if (!$this->processOclcNum($details['oclc'], $editionObj)) {
+                return false;
+            }
+        }
+        if (isset($details['url'])) {
+            if (!$this->processUrl($details['url'], $editionObj)) {
+                return false;
+            }
+        }
+        return $this->updateWorks($details['contents']);
+    }
+
+    protected function processDate($date, $editionObj)
+    {
+        list($year, $month, $day) = explode('-', $date);
+        $table = $this->getDbTable('editionsreleasedates');
+        $known = $table->getDatesForEdition($editionObj->Edition_ID);
+        $foundMatch = false;
+        foreach ($known as $current) {
+            if ($current->Month == $month && $current->Year == $year && $current->Day == $day) {
+                $foundMatch = true;
+            }
+        }
+        if (!$foundMatch && count($known) > 0) {
+            Console::writeLine("FATAL: Unexpected date value in database.");
+            return false;
+        }
+        if (count($known) == 0) {
+            Console::writeLine("Adding date: {$date}");
+            $table->insert(
+                [
+                    'Edition_ID' => $editionObj->Edition_ID,
+                    'Year' => $year,
+                    'Month' => $month,
+                    'Day' => $day
+                ]
+            );
+        }
+        return true;
+    }
+
+    protected function processPublisher($publisher, $editionObj)
+    {
+        Console::writeLine("TODO: processPublisher()");
+        return true;
+    }
+
+    protected function processOclcNum($date, $editionObj)
+    {
+        Console::writeLine("TODO: processOclcNum()");
+        return true;
+    }
+
+    protected function processUrl($date, $editionObj)
+    {
+        Console::writeLine("TODO: processUrl()");
+        return true;
+    }
+
+    protected function processAuthors($ids, $db)
+    {
+        Console::writeLine("TODO: processAuthors()");
+        return true;
+    }
+
+    protected function processSubjects($subjects, $db)
+    {
+        Console::writeLine("TODO: processSubjects()");
+        return true;
+    }
+
+    protected function updateWorks($details)
+    {
+        foreach ($details as $current) {
+            list($data, $db) = $current;
+            if (!$db) {
+                if (!$this->addWorkToDatabase($data)) {
+                    return false;
+                }
+            } else {
+                if (!$this->updateWorkInDatabase($data, $db)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    protected function addWorkToDatabase($data)
+    {
+        Console::writeLine("TODO: addWorkToDatabase()");
+        return true;
+    }
+
+    protected function updateWorkInDatabase($data, $db)
+    {
+        if (isset($data['authorIds'])) {
+            if (!$this->processAuthors(array_diff($db['authorIds'], $data['authorIds']), $db)) {
+                return false;
+            }
+        }
+        if (isset($data['subjects'])) {
+            if (!$this->processSubjects($data['subjects'], $db)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected function addAuthorDetails($details)
@@ -102,7 +229,9 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                     ->getCreditsForEdition($match[1]['edition']->Edition_ID);
                 $match[1]['authorIds'] = [];
                 foreach ($credits as $credit) {
-                    $match[1]['authorIds'][] = $credit->Person_ID;
+                    if ($credit->Role_ID == self::ROLE_AUTHOR) {
+                        $match[1]['authorIds'][] = $credit->Person_ID;
+                    }
                 }
                 if ($this->hasAuthorProblem($match[0]['authorIds'], $match[1]['authorIds'])) {
                     return false;
