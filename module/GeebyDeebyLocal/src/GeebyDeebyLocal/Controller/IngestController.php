@@ -50,8 +50,11 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function indexAction()
     {
-        $edition = 5865;
-        $this->loadExistingEdition($edition);
+        foreach ($this->getEditionsFromSolr() as $edition) {
+            if (!$this->loadExistingEdition($edition)) {
+                break;
+            }
+        }
     }
 
     protected function loadExistingEdition($edition)
@@ -528,6 +531,24 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             $series['Series_AltName'] = $tmpRow['Series_AltName'];
         }
         return $series;
+    }
+
+    protected function getEditionsFromSolr()
+    {
+        $settings = json_decode(file_get_contents(__DIR__ . '/settings.json'));
+        $query = $settings->solrQueryField . ':"http://dimenovels.org/*"';
+        $field = $settings->solrQueryField;
+        $url = (string)$settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
+            . '&rows=10000&fl=' . urlencode($field);
+        Console::writeLine("Querying {$settings->solrUrl} for $query...");
+        $solr = json_decode(file_get_contents($url));
+        $editions = [];
+        foreach ($solr->response->docs as $current) {
+            $parts = explode('/', $current->{$settings->solrQueryField});
+            $currentEd = array_pop($parts);
+            $editions[] = $currentEd;
+        }
+        return $editions;
     }
 
     protected function getModsForEdition($edition)
