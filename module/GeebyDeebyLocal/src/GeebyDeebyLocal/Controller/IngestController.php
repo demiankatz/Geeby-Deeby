@@ -146,9 +146,27 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
-    protected function processOclcNum($date, $editionObj)
+    protected function processOclcNum($oclc, $editionObj)
     {
-        Console::writeLine("TODO: processOclcNum()");
+        // strip off non-digits (useless OCLC prefixes):
+        foreach ($oclc as $i => $current) {
+            $oclc[$i] = preg_replace('/[^0-9]/', '', $current);
+        }
+        $table = $this->getDbTable('editionsoclcnumbers');
+        $known = $table->getOCLCNumbersForEdition($editionObj->Edition_ID);
+        $knownArr = [];
+        foreach ($known as $current) {
+            $knownArr[] = $current->OCLC_Number;
+        }
+        foreach (array_diff($oclc, $knownArr) as $current) {
+            Console::writeLine("Adding OCLC number: {$current}");
+            $table->insert(
+                [
+                    'Edition_ID' => $editionObj->Edition_ID,
+                    'OCLC_Number' => $current
+                ]
+            );
+        }
         return true;
     }
 
