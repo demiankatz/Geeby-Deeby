@@ -273,9 +273,38 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
+    protected function getPersonIdsForItem($item)
+    {
+        $table = $this->getDbTable('editionscredits');
+        $ids = [];
+        foreach ($table->getCreditsForItem($item) as $credit) {
+            if ($credit->Role_ID == self::ROLE_AUTHOR) {
+                $ids[] = $credit->Person_ID;
+            }
+        }
+        return $ids;
+    }
+
     protected function getItemForNewEdition($data)
     {
+        // trim article for search purposes
+        $strippedTitle = ($pos = strrpos($data['title'], ','))
+            ? substr($data['title'], 0, $pos) : $data['title'];
         $table = $this->getDbTable('item');
+
+        $callback = function ($select) use ($strippedTitle) {
+            $select->where->like('Item_Name', $strippedTitle . '%');
+        };
+        $options = $table->select($callback);
+        foreach ($options as $current) {
+            $currentCredits = $this->getPersonIdsForItem($current->Item_ID);
+            if (count($data['authorIds']) > 0 && count(array_diff($data['authorIds'], $currentCredits) == 0)) {
+                Console::writeLine("Matched existing item ID {$current->Item_ID}");
+                return $current->Item_ID;
+            }
+        }
+
+        // If we made it this far, we need to create a new item.
         $table->insert(['Item_Name' => $data['title'], 'Material_Type_ID' => self::MATERIALTYPE_WORK]);
         $id = $table->getLastInsertValue();
         Console::writeLine("Added item ID {$id} ({$data['title']})");
@@ -310,8 +339,20 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
+    protected function processTitle($title, $db)
+    {
+        if (!$this->fuzzyCompare($title, $db['item']['Item_Name'])) {
+            Console::writeLine("Unexpected title mismatch; {$title} vs. {$db['item']['Item_Name']}");
+            return false;
+        }
+        return true;
+    }
+
     protected function updateWorkInDatabase($data, $db)
     {
+        if (!$this->processTitle($data['title'], $db)) {
+            return false;
+        }
         if (isset($data['authorIds'])) {
             if (!$this->processAuthors($data['authorIds'], $db)) {
                 return false;
