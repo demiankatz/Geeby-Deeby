@@ -40,6 +40,7 @@ use GeebyDeebyLocal\Ingest\ModsExtractor, Zend\Console\Console;
 class IngestController extends \GeebyDeeby\Controller\AbstractBase
 {
     const FULLTEXT_SOURCE_NIU = 10;
+    const MATERIALTYPE_WORK = 1;
     const ROLE_AUTHOR = 1;
 
     /**
@@ -108,7 +109,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                 return false;
             }
         }
-        return $this->updateWorks($details['contents']);
+        return $this->updateWorks($editionObj, $details['contents']);
     }
 
     protected function processDate($date, $editionObj)
@@ -236,7 +237,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         }
         $table = $this->getDbTable('editionscredits');
         foreach (array_diff($ids, $db['authorIds']) as $current) {
-            Console::writeLine("Adding author ID $current");
+            Console::writeLine("Attaching author ID $current");
             $table->insert(
                 [
                     'Edition_ID' => $db['edition']['Edition_ID'],
@@ -254,12 +255,12 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
-    protected function updateWorks($details)
+    protected function updateWorks($editionObj, $details)
     {
-        foreach ($details as $current) {
+        foreach ($details as $i => $current) {
             list($data, $db) = $current;
             if (!$db) {
-                if (!$this->addWorkToDatabase($data)) {
+                if (!$this->addChildWorkToDatabase($editionObj, $data, $i)) {
                     return false;
                 }
             } else {
@@ -272,9 +273,40 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
-    protected function addWorkToDatabase($data)
+    protected function getItemForNewEdition($data)
     {
-        Console::writeLine("TODO: addWorkToDatabase()");
+        $table = $this->getDbTable('item');
+        $table->insert(['Item_Name' => $data['title'], 'Material_Type_ID' => self::MATERIALTYPE_WORK]);
+        $id = $table->getLastInsertValue();
+        Console::writeLine("Added item ID {$id} ({$data['title']})");
+        return $id;
+    }
+
+    protected function addChildWorkToDatabase($parentEdition, $data, $pos = 0)
+    {
+        $item = $this->getItemForNewEdition($data);
+        $edName = $parentEdition->Edition_Name;
+        $seriesID = $parentEdition->Series_ID;
+        $edsTable = $this->getDbTable('edition');
+        $edsTable->insert(
+            [
+                'Edition_Name' => $edName,
+                'Series_ID' => $seriesID,
+                'Item_ID' => $item,
+                'Parent_Edition_ID' => $parentEdition->Edition_ID,
+                'Position_In_Parent' => $pos,
+            ]
+        );
+        $newObj = $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
+        Console::writeLine("Added edition ID " . $newObj->Edition_ID);
+        $this->updateWorkInDatabase(
+            $data,
+            [
+                'edition' => $newObj,
+                'authorIds' => [],
+                'item' => $this->getItemForEdition($newObj)
+            ]
+        );
         return true;
     }
 
