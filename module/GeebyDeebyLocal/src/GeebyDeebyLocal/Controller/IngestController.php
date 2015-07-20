@@ -200,7 +200,20 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
 
     protected function processAuthors($ids, $db)
     {
-        Console::writeLine("TODO: processAuthors()");
+        if ($this->hasAuthorProblem($ids, $db['authorIds'])) {
+            return false;
+        }
+        $table = $this->getDbTable('editionscredits');
+        foreach (array_diff($ids, $db['authorIds']) as $current) {
+            Console::writeLine("Adding author ID $current");
+            $table->insert(
+                [
+                    'Edition_ID' => $db['edition']['Edition_ID'],
+                    'Person_ID' => $current,
+                    'Role_ID' => self::ROLE_AUTHOR,
+                ]
+            );
+        }
         return true;
     }
 
@@ -219,6 +232,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                     return false;
                 }
             } else {
+                Console::writeLine("Processing edition ID {$db['edition']['Edition_ID']}");
                 if (!$this->updateWorkInDatabase($data, $db)) {
                     return false;
                 }
@@ -236,7 +250,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     protected function updateWorkInDatabase($data, $db)
     {
         if (isset($data['authorIds'])) {
-            if (!$this->processAuthors(array_diff($db['authorIds'], $data['authorIds']), $db)) {
+            if (!$this->processAuthors($data['authorIds'], $db)) {
                 return false;
             }
         }
@@ -272,9 +286,6 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                     if ($credit->Role_ID == self::ROLE_AUTHOR) {
                         $match[1]['authorIds'][] = $credit->Person_ID;
                     }
-                }
-                if ($this->hasAuthorProblem($match[0]['authorIds'], $match[1]['authorIds'])) {
-                    return false;
                 }
             }
         }
