@@ -170,9 +170,31 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
-    protected function processUrl($date, $editionObj)
+    protected function processUrl($urls, $editionObj)
     {
-        Console::writeLine("TODO: processUrl()");
+        // check for unexpected URLs (right now we assume everything is from NIU):
+        foreach ($urls as $current) {
+            if (!strstr($current, 'lib.niu.edu')) {
+                Console::writeLine('FATAL: Unexpected URL: ' . $current);
+                return false;
+            }
+        }
+        $table = $this->getDbTable('editionsfulltext');
+        $known = $table->getFullTextForEdition($editionObj->Edition_ID);
+        $knownArr = [];
+        foreach ($known as $current) {
+            $knownArr[] = $current->Full_Text_URL;
+        }
+        foreach (array_diff($urls, $knownArr) as $current) {
+            Console::writeLine("Adding URL: {$current}");
+            $table->insert(
+                [
+                    'Edition_ID' => $editionObj->Edition_ID,
+                    'Full_Text_URL' => $current,
+                    'Full_Text_Source_ID' => self::FULLTEXT_SOURCE_NIU,
+                ]
+            );
+        }
         return true;
     }
 
