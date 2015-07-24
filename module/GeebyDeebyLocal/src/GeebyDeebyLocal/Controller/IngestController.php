@@ -148,7 +148,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         $parts = array_map('trim', explode(',', $publisher));
         $name = array_shift($parts);
-        if ($parts[0] == 'Publisher') {
+        $skipParts = ['Publisher', 'Publishers', 'Inc.'];
+        while (isset($parts[0]) && in_array($parts[0], $skipParts)) {
             array_shift($parts);
         }
         $street = implode(', ', $parts);
@@ -388,17 +389,19 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         foreach ($details as & $match) {
             $match[0]['authorIds'] = [];
-            foreach ($match[0]['authors'] as $current) {
-                if (!isset($current['uri'])) {
-                    Console::writeLine("FATAL: Missing URI for {$current['name']}...");
-                    return false;
+            if (isset($match[0]['authors'])) {
+                foreach ($match[0]['authors'] as $current) {
+                    if (!isset($current['uri'])) {
+                        Console::writeLine("FATAL: Missing URI for {$current['name']}...");
+                        return false;
+                    }
+                    $id = $this->getPersonIdForUri($current['uri']);
+                    if (!$id) {
+                        Console::writeLine("FATAL: Missing Person ID for {$current['uri']}");
+                        return false;
+                    }
+                    $match[0]['authorIds'][] = $id;
                 }
-                $id = $this->getPersonIdForUri($current['uri']);
-                if (!$id) {
-                    Console::writeLine("FATAL: Missing Person ID for {$current['uri']}");
-                    return false;
-                }
-                $match[0]['authorIds'][] = $id;
             }
             if ($match[1]) {
                 $credits = $this->getDbTable('editionscredits')
