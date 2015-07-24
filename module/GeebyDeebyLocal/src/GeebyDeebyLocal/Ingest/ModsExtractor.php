@@ -180,9 +180,9 @@ class ModsExtractor
         if (empty($matches)) {
             return '';
         }
-        $title = (string)$matches[0]->xpath('mods:title')[0];
+        $title = trim((string)$matches[0]->xpath('mods:title')[0]);
         $article = $matches[0]->xpath('mods:nonSort');
-        $full = $title .= (empty($article) ? '' : ', ' . (string)$article[0]);
+        $full = $title .= (empty($article) ? '' : ', ' . trim((string)$article[0]));
         return $full;
     }
 }

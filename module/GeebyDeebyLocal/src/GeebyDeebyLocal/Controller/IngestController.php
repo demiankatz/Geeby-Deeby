@@ -156,6 +156,19 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return [$name, $street];
     }
 
+    protected function normalizeStreet($street)
+    {
+        return str_replace(
+            [' st.'],
+            [' street'],
+            strtolower($street)
+        );
+    }
+    protected function streetsMatch($street1, $street2)
+    {
+        return $this->normalizeStreet($street1) == $this->normalizeStreet($street2);
+    }
+
     protected function processPublisher($publisher, $editionObj, $seriesId)
     {
         list ($name, $street) = $this->separateNameAndStreet($publisher['name']);
@@ -174,7 +187,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             $pub = $current['Publisher_ID'] ? $pubTable->getByPrimaryKey($current['Publisher_ID']) : false;
             if ($city && $place == $city->City_Name
                 && $pub && $name == $pub->Publisher_Name
-                && $street == $current->Street
+                && $this->streetsMatch($street, $current->Street)
             ) {
                 $match = $current->Series_Publisher_ID;
                 break;
@@ -317,7 +330,10 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $options = $table->select($callback);
         foreach ($options as $current) {
             $currentCredits = $this->getPersonIdsForItem($current->Item_ID);
-            if (count($data['authorIds']) > 0 && count(array_diff($data['authorIds'], $currentCredits) == 0)) {
+            if (count($data['authorIds']) > 0
+                && count(array_diff($data['authorIds'], $currentCredits) == 0)
+                && count(array_intersect($data['authorIds'], $currentCredits)) == count($data['authorIds'])
+            ) {
                 Console::writeLine("Matched existing item ID {$current->Item_ID}");
                 return $current->Item_ID;
             }
