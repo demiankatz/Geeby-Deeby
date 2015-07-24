@@ -144,9 +144,24 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
+    protected function separateNameAndStreet($publisher)
+    {
+        $parts = array_map('trim', explode(',', $publisher));
+        $name = array_shift($parts);
+        if ($parts[0] == 'Publisher') {
+            array_shift($parts);
+        }
+        $street = implode(', ', $parts);
+        return [$name, $street];
+    }
+
     protected function processPublisher($publisher, $editionObj, $seriesId)
     {
-        list ($name, $street) = array_map('trim', explode(',', $publisher['name'], 2));
+        list ($name, $street) = $this->separateNameAndStreet($publisher['name']);
+        if (empty($street)) {
+            Console::writeLine("WARNING: No street address; skipping publisher.");
+            return true;
+        }
         $place = $publisher['place'];
         $spTable = $this->getDbTable('seriespublishers');
         $cityTable = $this->getDbTable('city');
