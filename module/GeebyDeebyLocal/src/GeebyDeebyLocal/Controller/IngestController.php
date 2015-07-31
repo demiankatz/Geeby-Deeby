@@ -127,7 +127,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             }
         }
         if (!$foundMatch && count($known) > 0) {
-            Console::writeLine("FATAL: Unexpected date value in database.");
+            Console::writeLine("FATAL: Unexpected date value in database; expected $date.");
             return false;
         }
         if (count($known) == 0) {
@@ -159,8 +159,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     protected function normalizeStreet($street)
     {
         return str_replace(
-            [' st.'],
-            [' street'],
+            [' st.', ' w.', '23rd'],
+            [' street', ' west', '23d'],
             strtolower($street)
         );
     }
@@ -574,8 +574,15 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $field = $settings->solrQueryField;
         $url = (string)$settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
             . '&rows=10000&fl=' . urlencode($field);
-        Console::writeLine("Querying {$settings->solrUrl} for $query...");
-        $solr = json_decode(file_get_contents($url));
+        $cache = '/tmp/gbdb_editionquery';
+        if (!file_exists($cache)) {
+            Console::writeLine("Querying {$settings->solrUrl} for $query...");
+            $solrResponse = file_get_contents($url);
+            file_put_contents($cache, $solrResponse);
+        } else {
+            $solrResponse = file_get_contents($cache);
+        }
+        $solr = json_decode($solrResponse);
         $editions = [];
         foreach ($solr->response->docs as $current) {
             $parts = explode('/', $current->{$settings->solrQueryField});
