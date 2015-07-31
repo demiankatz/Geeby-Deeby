@@ -12,6 +12,6 @@
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
       <? endif; ?>
     <? endif; ?>
-    <a href="#" onclick="editTag(<?=$current['Tag_ID']?>); return false;"><?=$this->escapeHtml($current['Tag'])?></a><br />
+    <a href="<?=$this->url('edit/tag', array('id' => $current['Tag_ID']))?>"><?=$this->escapeHtml($current['Tag'])?></a><br />
   <? endforeach; ?>
 <? endif; ?>
