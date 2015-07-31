@@ -130,6 +130,10 @@ class ModsExtractor
         if (!empty($authors)) {
             $details['authors'] = $authors;
         }
+        $extent = $this->extractExtent($mods);
+        if (!empty($extent)) {
+            $details['extent'] = $extent;
+        }
         $subjects = $this->extractSubjects($mods);
         if (!empty($subjects)) {
             $details['subjects'] = $subjects;
@@ -158,7 +162,28 @@ class ModsExtractor
         return $authors;
     }
 
-    protected function extractSubjects ($mods)
+    protected function extractExtent($mods)
+    {
+        $chapter = $mods->xpath('mods:part/mods:detail[@type="chapter"]/mods:number');
+        $chapter = isset($chapter[0]) ? (string)$chapter[0] : '';
+        $pageStart = $mods->xpath('mods:part/mods:extent[@unit="pages"]/mods:start');
+        $pageStart = isset($pageStart[0]) ? (string)$pageStart[0] : '';
+        $pageEnd = $mods->xpath('mods:part/mods:extent[@unit="pages"]/mods:end');
+        $pageEnd = isset($pageEnd[0]) ? (string)$pageEnd[0] : $pageStart;
+        $pageRange = ($pageStart === $pageEnd)
+            ? (empty($pageStart) ? '' : 'page ' . $pageStart)
+            : (empty($pageEnd) ? '' : "pages $pageStart-$pageEnd");
+        $parts = [];
+        if (!empty($chapter)) {
+            $parts[] = (strstr($chapter, '-') ? 'chapters ' : 'chapter ') . $chapter;
+        }
+        if (!empty($pageRange)) {
+            $parts[] = $pageRange;
+        }
+        return implode(', ', $parts);
+    }
+
+    protected function extractSubjects($mods)
     {
         $results = [];
         $paths = [

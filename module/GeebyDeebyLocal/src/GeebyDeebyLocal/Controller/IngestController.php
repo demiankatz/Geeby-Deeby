@@ -505,6 +505,25 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
+    protected function processExtent($extent, $db)
+    {
+        $ed = $db['edition'];
+        if (!empty($ed->Extent_In_Parent) && $ed->Extent_In_Parent !== $extent) {
+            Console::writeLine("FATAL ERROR: Unexpected extent: " . $extent);
+            return false;
+        }
+        if (empty($ed->Parent_Edition_ID)) {
+            Console::writeLine("FATAL ERROR: Missing parent ID.");
+            return false;
+        }
+        if (empty($ed->Extent_In_Parent)) {
+            Console::writeLine('Adding extent: ' . $extent);
+            $ed->Extent_In_Parent = $extent;
+            $ed->save();
+        }
+        return true;
+    }
+
     protected function updateWorkInDatabase($data, $db)
     {
         if (!$this->processTitle($data['title'], $db)) {
@@ -512,6 +531,11 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         }
         if (isset($data['altTitles'])) {
             if (!$this->processAltTitles($data['title'], $data['altTitles'], $db)) {
+                return false;
+            }
+        }
+        if (isset($data['extent']) && !empty($data['extent'])) {
+            if (!$this->processExtent($data['extent'], $db)) {
                 return false;
             }
         }
