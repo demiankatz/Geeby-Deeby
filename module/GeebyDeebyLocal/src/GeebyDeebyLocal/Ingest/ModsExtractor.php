@@ -122,6 +122,10 @@ class ModsExtractor
         if (!empty($title)) {
             $details['title'] = $title;
         }
+        $altTitles = $this->extractAltTitleInfo($mods);
+        if (!empty($altTitles)) {
+            $details['altTitles'] = $altTitles;
+        }
         $authors = $this->extractAuthors($mods);
         if (!empty($authors)) {
             $details['authors'] = $authors;
@@ -184,5 +188,24 @@ class ModsExtractor
         $article = $matches[0]->xpath('mods:nonSort');
         $full = $title .= (empty($article) ? '' : ', ' . trim((string)$article[0]));
         return $full;
+    }
+
+    protected function extractAltTitleInfo($mods)
+    {
+        $matches = $mods->xpath('mods:titleInfo[@type="alternative"]');
+        $retVal = [];
+        foreach ($matches as $current) {
+            $title = trim((string)$current->xpath('mods:title')[0]);
+            $subTitleParts = $current->xpath('mods:subTitle');
+            $subtitle = isset($subTitleParts[0])
+                ? trim((string)$subTitleParts[0]) : '';
+            if (!empty($subtitle)) {
+                $title .= ' ' . $subtitle;
+            }
+            $article = $current->xpath('mods:nonSort');
+            $full = $title .= (empty($article) ? '' : ', ' . trim((string)$article[0]));
+            $retVal[] = $full;
+        }
+        return $retVal;
     }
 }

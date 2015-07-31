@@ -335,6 +335,57 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return $ids;
     }
 
+    protected function processAltTitles($title, $altTitles, $db)
+    {
+        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $allTitles = array_unique(array_merge($altTitles, [$title]));
+        $filteredTitles = [];
+        foreach (array_diff($altTitles, [$title]) as $currentNeedle) {
+            $matched = false;
+            if (stristr($currentNeedle, 'and other stories')) {
+                // we don't want any "and other stories" titles in this context...
+                continue;
+            }
+            foreach ($allTitles as $currentHaystack) {
+                if ($currentNeedle == $currentHaystack) {
+                    continue;
+                }
+                if ($this->fuzzyContains($currentHaystack, $currentNeedle)
+                    || $this->fuzzyContains($currentHaystack, $articleHelper->formatTrailingArticles($currentNeedle))
+                ) {
+                    $matched = true;
+                    break;
+                }
+            }
+            if (!$matched) {
+                $filteredTitles[] = $currentNeedle;
+            }
+        }
+        if (!empty($filteredTitles)) {
+            $item = $db['item']['Item_ID'];
+            $table = $this->getDbTable('itemsalttitles');
+            $result = $table->getAltTitles($item);
+            $existing = [];
+            foreach ($result as $current) {
+                $existing[] = $current->Item_AltName;
+            }
+            foreach ($filteredTitles as $newTitle) {
+                $skip = false;
+                foreach ($existing as $current) {
+                    if ($this->fuzzyCompare($newTitle, $current)) {
+                        $skip = true;
+                        break;
+                    }
+                }
+                if (!$skip) {
+                    $table->insert(['Item_ID' => $item, 'Item_AltName' => $newTitle]);
+                    Console::writeLine('Added alternate title: ' . $newTitle);
+                }
+            }
+        }
+        return true;
+    }
+
     protected function processSubjects($subjects, $db)
     {
         $item = $db['item']['Item_ID'];
@@ -458,6 +509,11 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         if (!$this->processTitle($data['title'], $db)) {
             return false;
+        }
+        if (isset($data['altTitles'])) {
+            if (!$this->processAltTitles($data['title'], $data['altTitles'], $db)) {
+                return false;
+            }
         }
         if (isset($data['authorIds'])) {
             if (!$this->processAuthors($data['authorIds'], $db)) {
@@ -585,13 +641,21 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return false;
     }
 
+    protected function fuzz($str)
+    {
+        $regex = '/[^a-z0-9]/';
+        return preg_replace($regex, '', strtolower($str));
+    }
+
     protected function fuzzyCompare($str1, $str2)
     {
         //Console::writeLine("Comparing {$str1} to {$str2}...");
-        $regex = '/[^a-z0-9]/';
-        $str1 = preg_replace($regex, '', strtolower($str1));
-        $str2 = preg_replace($regex, '', strtolower($str2));
-        return $str1 == $str2;
+        return $this->fuzz($str1) == $this->fuzz($str2);
+    }
+
+    protected function fuzzyContains($haystack, $needle)
+    {
+        return strstr($this->fuzz($haystack), $this->fuzz($needle));
     }
 
     protected function checkItemTitle($item, $title)
