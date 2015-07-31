@@ -39,9 +39,12 @@ use GeebyDeebyLocal\Ingest\ModsExtractor, Zend\Console\Console;
  */
 class IngestController extends \GeebyDeeby\Controller\AbstractBase
 {
+    // constant values drawn from dimenovels.org database:
     const FULLTEXT_SOURCE_NIU = 10;
     const MATERIALTYPE_WORK = 1;
+    const PREDICATE_OWL_SAMEAS = 2;
     const ROLE_AUTHOR = 1;
+    const TAGTYPE_LC = 1;
 
     /**
      * Standard ingest action.
@@ -281,9 +284,77 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
+    protected function subjectUrisToIds($subjects)
+    {
+        $tagsUris = $this->getDbTable('tagsuris');
+        $tags = $this->getDbTable('tag');
+    
+        $ids = [];
+        foreach ($subjects as $uri => $text) {
+            $uriLookup = $tagsUris->getTagsForURI($uri);
+            $id = false;
+            foreach ($uriLookup as $id) {
+                break;
+            }
+            if ($id) {
+                $ids[$uri] = $id->Tag_ID;
+            } else {
+                if (!stristr($uri, 'loc.gov')) {
+                    Console::writeLine('FATAL: Unexpected subject URI: ' . $uri);
+                    return false;
+                }
+                $tagObj = false;
+                $result = $tags->select(['Tag' => $text]);
+                foreach ($result as $tagObj) {
+                    break;
+                }
+                if ($tagObj) {
+                    Console::writeLine("Upgrading subject: $text");
+                    $tagObj->Tag_Type_ID = self::TAGTYPE_LC;
+                    $tagObj->save();
+                    $ids[$uri] = $tagObj->Tag_ID;
+                } else {
+                    Console::writeLine("Adding subject: $text");
+                    $tags->insert(
+                        [
+                            'Tag' => $text,
+                            'Tag_Type_ID' => self::TAGTYPE_LC,
+                        ]
+                    );
+                    $ids[$uri] = $tags->getLastInsertValue();
+                }
+                $tagsUris->insert(
+                    [
+                        'Tag_ID' => $ids[$uri],
+                        'URI' => $uri,
+                        'Predicate_ID' => self::PREDICATE_OWL_SAMEAS
+                    ]
+                );
+            }
+        }
+        return $ids;
+    }
+
     protected function processSubjects($subjects, $db)
     {
-        Console::writeLine("TODO: processSubjects()");
+        $item = $db['item']['Item_ID'];
+        $subjectIds = $this->subjectUrisToIds($subjects);
+        if (false === $subjectIds) {
+            return false;
+        }
+        $itemsTags = $this->getDbTable('itemstags');
+        $existingTags = $itemsTags->getTags($item);
+        $existingIds = [];
+        foreach ($existingTags as $current) {
+            $existingIds[] = $current->Tag_ID;
+        }
+        $missing = array_diff($subjectIds, $existingIds);
+        if (count($missing) > 0) {
+            Console::writeLine("Adding subject IDs: " . implode(', ', $missing));
+            foreach ($missing as $id) {
+                $itemsTags->insert(['Item_ID' => $item, 'Tag_ID' => $id]);
+            }
+        }
         return true;
     }
 
