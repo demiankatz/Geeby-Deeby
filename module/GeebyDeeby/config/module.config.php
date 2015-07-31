@@ -85,6 +85,7 @@ return array(
                 'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
                 'seriestranslations' => 'GeebyDeeby\Db\Table\SeriesTranslations',
                 'tag' => 'GeebyDeeby\Db\Table\Tag',
+                'tagsuris' => 'GeebyDeeby\Db\Table\TagsURIs',
                 'tagtype' => 'GeebyDeeby\Db\Table\TagType',
                 'user' => 'GeebyDeeby\Db\Table\User',
                 'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
