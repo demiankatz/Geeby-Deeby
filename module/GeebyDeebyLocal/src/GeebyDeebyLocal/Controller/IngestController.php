@@ -76,11 +76,17 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         // TODO
         $series = $this->params()->fromRoute('series');
-        foreach ($this->getSeriesEntriesFromSolr($series) as $edition) {
-            if (!$this->loadExistingEdition($edition)) {
+        foreach ($this->getSeriesEntriesFromSolr($series) as $pid) {
+            if (!$this->loadSeriesEntry($pid)) {
                 break;
             }
         }
+    }
+
+    protected function loadSeriesEntry($pid)
+    {
+        Console::writeLine("Loading series entry (pid = $pid)");
+        return true;
     }
 
     protected function loadExistingEdition($edition)
@@ -783,9 +789,14 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $query = $this->settings->solrSeriesField . ':"' . addcslashes($series, '"') . '"';
         $field = $this->settings->solrIdField;
         $solr = $this->querySolr($query, $field);
-        // TODO: process data
-        print_r($solr);
-        return [];
+        $retVal = [];
+        foreach ($solr->response->docs as $doc) {
+            $pid = isset($doc->$field) ? $doc->$field : false;
+            if ($pid) {
+                $retVal[] = $pid;
+            }
+        }
+        return $retVal;
     }
 
     protected function getModsForPid($pid)
@@ -797,9 +808,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         // Retrieve MODS from repository:
         $modsUrl = sprintf($this->settings->modsUrl, $pid);
         Console::writeLine("Retrieving $modsUrl...");
-        $mods = file_get_contents($modsUrl);
-        file_put_contents($cache, $mods);
-        return $mods;
+        return file_get_contents($modsUrl);
     }
 
     protected function getModsForEdition($edition)
@@ -818,6 +827,9 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $solr = json_decode(file_get_contents($url));
         $pid = isset($solr->response->docs[0]->$field)
             ? $solr->response->docs[0]->$field : false;
-        return $this->getModsForPid($pid);
+        if ($mods = $this->getModsForPid($pid)) {
+            file_put_contents($cache, $mods);
+        }
+        return $mods;
     }
 }
