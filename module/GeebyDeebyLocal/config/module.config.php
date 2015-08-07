@@ -24,13 +24,23 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
-                'ingest' => array(
+                'ingest-existing' => array(
                     'type' => 'simple',
                     'options' => array(
-                        'route' => 'ingest',
+                        'route' => 'ingest [existing]',
                         'defaults' => array(
                             'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'index',
+                            'action' => 'existing',
+                        )
+                    )
+                ),
+                'ingest-series' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'ingest series <series>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'series',
                         )
                     )
                 )

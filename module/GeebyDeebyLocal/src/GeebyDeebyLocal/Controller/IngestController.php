@@ -46,14 +46,37 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     const ROLE_AUTHOR = 1;
     const TAGTYPE_LC = 1;
 
+    protected $settings;
+
+    public function __construct()
+    {
+        $this->settings = json_decode(file_get_contents(__DIR__ . '/settings.json'));
+    }
+
     /**
-     * Standard ingest action.
+     * Ingest existing editions (by matching URIs) action.
      *
      * @return mixed
      */
-    public function indexAction()
+    public function existingAction()
     {
-        foreach ($this->getEditionsFromSolr() as $edition) {
+        foreach ($this->getExistingEditionsFromSolr() as $edition) {
+            if (!$this->loadExistingEdition($edition)) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Ingest series entries (by searching series title) action.
+     *
+     * @return mixed
+     */
+    public function seriesAction()
+    {
+        // TODO
+        $series = $this->params()->fromRoute('series');
+        foreach ($this->getSeriesEntriesFromSolr($series) as $edition) {
             if (!$this->loadExistingEdition($edition)) {
                 break;
             }
@@ -288,7 +311,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         $tagsUris = $this->getDbTable('tagsuris');
         $tags = $this->getDbTable('tag');
-    
+
         $ids = [];
         foreach ($subjects as $uri => $text) {
             $uriLookup = $tagsUris->getTagsForURI($uri);
@@ -726,29 +749,57 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return $series;
     }
 
-    protected function getEditionsFromSolr()
+    protected function querySolr($query, $fl)
     {
-        $settings = json_decode(file_get_contents(__DIR__ . '/settings.json'));
-        $query = $settings->solrQueryField . ':"http://dimenovels.org/*"';
-        $field = $settings->solrQueryField;
-        $url = (string)$settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
-            . '&rows=10000&fl=' . urlencode($field);
-        $cache = '/tmp/gbdb_editionquery';
+        $url = (string)$this->settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
+            . '&rows=10000&fl=' . urlencode($fl);
+        $cache = '/tmp/gbdb_' . md5("$query-$fl");
         if (!file_exists($cache)) {
-            Console::writeLine("Querying {$settings->solrUrl} for $query...");
+            Console::writeLine("Querying {$this->settings->solrUrl} for $query...");
             $solrResponse = file_get_contents($url);
             file_put_contents($cache, $solrResponse);
         } else {
             $solrResponse = file_get_contents($cache);
         }
-        $solr = json_decode($solrResponse);
+        return json_decode($solrResponse);
+    }
+
+    protected function getExistingEditionsFromSolr()
+    {
+        $query = $this->settings->solrQueryField . ':"http://dimenovels.org/*"';
+        $field = $this->settings->solrQueryField;
+        $solr = $this->querySolr($query, $field);
         $editions = [];
         foreach ($solr->response->docs as $current) {
-            $parts = explode('/', $current->{$settings->solrQueryField});
+            $parts = explode('/', $current->{$this->settings->solrQueryField});
             $currentEd = array_pop($parts);
             $editions[] = $currentEd;
         }
         return $editions;
+    }
+
+    protected function getSeriesEntriesFromSolr($series)
+    {
+        $query = $this->settings->solrSeriesField . ':"' . addcslashes($series, '"') . '"';
+        $field = $this->settings->solrIdField;
+        $solr = $this->querySolr($query, $field);
+        // TODO: process data
+        print_r($solr);
+        return [];
+    }
+
+    protected function getModsForPid($pid)
+    {
+        if (!$pid) {
+            return false;
+        }
+
+        // Retrieve MODS from repository:
+        $modsUrl = sprintf($this->settings->modsUrl, $pid);
+        Console::writeLine("Retrieving $modsUrl...");
+        $mods = file_get_contents($modsUrl);
+        file_put_contents($cache, $mods);
+        return $mods;
     }
 
     protected function getModsForEdition($edition)
@@ -757,26 +808,16 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         if (file_exists($cache)) {
             return file_get_contents($cache);
         }
-    
-        // Get MODS identifier from Solr:
-        $settings = json_decode(file_get_contents(__DIR__ . '/settings.json'));
-        $query = $settings->solrQueryField . ':"' . $edition . '"';
-        $field = $settings->solrIdField;
-        $url = (string)$settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
-            . '&fl=' . urlencode($field);
-        Console::writeLine("Querying {$settings->solrUrl} for $query...");
-        $solr = json_decode(file_get_contents($url));
-        $pid = isset($solr->response->docs[0]->PID)
-            ? $solr->response->docs[0]->PID : false;
-        if (!$pid) {
-            return false;
-        }
 
-        // Retrieve MODS from repository:
-        $modsUrl = sprintf($settings->modsUrl, $pid);
-        Console::writeLine("Retrieving $modsUrl...");
-        $mods = file_get_contents($modsUrl);
-        file_put_contents($cache, $mods);
-        return $mods;
+        // Get MODS identifier from Solr:
+        $query = $this->settings->solrQueryField . ':"' . $edition . '"';
+        $field = $this->settings->solrIdField;
+        $url = (string)$this->settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
+            . '&fl=' . urlencode($field);
+        Console::writeLine("Querying {$this->settings->solrUrl} for $query...");
+        $solr = json_decode(file_get_contents($url));
+        $pid = isset($solr->response->docs[0]->$field)
+            ? $solr->response->docs[0]->$field : false;
+        return $this->getModsForPid($pid);
     }
 }
