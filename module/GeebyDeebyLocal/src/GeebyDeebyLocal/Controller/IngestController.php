@@ -76,17 +76,59 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         // TODO
         $series = $this->params()->fromRoute('series');
+        $seriesObj = $this->getSeriesByTitle($series);
+        if (!$seriesObj) {
+            Console::writeLine("Cannot find series match for $series");
+            return;
+        }
         foreach ($this->getSeriesEntriesFromSolr($series) as $pid) {
-            if (!$this->loadSeriesEntry($pid)) {
+            if (!$this->loadSeriesEntry($pid, $seriesObj)) {
                 break;
             }
         }
     }
 
-    protected function loadSeriesEntry($pid)
+    protected function loadSeriesEntry($pid, $seriesObj)
     {
         Console::writeLine("Loading series entry (pid = $pid)");
+        $rawMods = $this->getModsForPid($pid, '/tmp/gbdb_pid_' . md5($pid));
+        if (!$rawMods) {
+            Console::writeLine('Could not retrieve MODS.');
+            return false;
+        }
+        $mods = simplexml_load_string($rawMods);
+        $extractor = new ModsExtractor();
+        $details = $extractor->getDetails($mods);
+        if (count($details['contents']) > 1) {
+            // For now, we expect just one work per item; TODO: multi-part issues
+            Console::writeLine('FATAL: More contents than expected....');
+            return false;
+        }
+        $pos = preg_replace('/[^0-9]/', '', current($details['series']));
+        $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents']);
+        if (!$childDetails) {
+            return false;
+        }
+        $childDetails = $this->addAuthorDetails($childDetails);
+        if (!$childDetails) {
+            return false;
+        }
+        $details['contents'] = $childDetails;
+        var_dump($details); die();
         return true;
+    }
+
+    protected function getSeriesByTitle($title)
+    {
+        $table = $this->getDbTable('series');
+        $result = $table->select(['Series_Name' => $title]);
+        if (count($result) != 1) {
+            Console::writeLine('Unexpected result count: ' . count($result));
+            return false;
+        }
+        foreach ($result as $current) {
+            return $current;
+        }
     }
 
     protected function loadExistingEdition($edition)
@@ -639,6 +681,44 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return $id;
     }
 
+    protected function synchronizeSeriesEntries($seriesObj, $pos, $contents)
+    {
+        $lookup = $this->getDbTable('edition')
+            ->select(['Series_ID' => $seriesObj->Series_ID, 'Position' => $pos]);
+        $children = [];
+        foreach ($lookup as $child) {
+            $children[] = [
+                'edition' => $child,
+                'item' => $this->getItemForEdition($child)
+            ];
+        }
+
+        $result = [];
+        foreach ($contents as $currentContent) {
+            $match = false;
+            foreach ($children as & $currentChild) {
+                if ($this->checkItemTitle($currentChild['item'], $currentContent['title'])) {
+                    $match = true;
+                    $result[] = [$currentContent, $currentChild];
+                    $currentChild['matched'] = true;
+                    break;
+                }
+            }
+            if (!$match) {
+                $result[] = [$currentContent, false];
+            }
+        }
+
+        // Fail if we have any existing data not matched up with new data....
+        foreach ($children as $child) {
+            if (!isset($child['matched'])) {
+                Console::writeLine("FATAL: No match found for edition {$child['edition']->Edition_ID}");
+                return false;
+            }
+        }
+        return $result;
+    }
+
     protected function synchronizeChildren($editionObj, $contents)
     {
         $lookup = $this->getDbTable('edition')
@@ -799,16 +879,23 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return $retVal;
     }
 
-    protected function getModsForPid($pid)
+    protected function getModsForPid($pid, $cache = false)
     {
         if (!$pid) {
             return false;
         }
 
         // Retrieve MODS from repository:
+        if ($cache && file_exists($cache)) {
+            return file_get_contents($cache);
+        }
         $modsUrl = sprintf($this->settings->modsUrl, $pid);
         Console::writeLine("Retrieving $modsUrl...");
-        return file_get_contents($modsUrl);
+        $mods = file_get_contents($modsUrl);
+        if ($cache && $mods) {
+            file_put_contents($cache, $mods);
+        }
+        return $mods;
     }
 
     protected function getModsForEdition($edition)
@@ -827,9 +914,6 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $solr = json_decode(file_get_contents($url));
         $pid = isset($solr->response->docs[0]->$field)
             ? $solr->response->docs[0]->$field : false;
-        if ($mods = $this->getModsForPid($pid)) {
-            file_put_contents($cache, $mods);
-        }
-        return $mods;
+        return $this->getModsForPid($pid, $cache);
     }
 }
