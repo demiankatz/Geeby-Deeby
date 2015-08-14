@@ -705,19 +705,29 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
 
     protected function getPersonIdForString($str)
     {
-        list($last, $first, $extra) = explode(',', $str, 3);
-        if (!empty($extra)) {
-            $extra = ', ' . trim($extra);
+        $bad = '(dime novelist)';
+        if (substr(strtolower($str), -strlen($bad)) === $bad) {
+            $str = trim(substr($str, 0, strlen($str) - strlen($bad)));
         }
+        $parts = explode(',', $str, 3);
+        $last = $parts[0];
+        $first = $parts[1];
+        $extra = isset($parts[2]) ? (', ' . trim($parts[2])) : '';
         $people = $this->getDbTable('person');
         $query = [
             'First_Name' => trim($first),
             'Last_Name' => trim($last),
-            'Extra_Details' => $extra
         ];
+        if (!empty($extra)) {
+            $query['Extra_Details'] = $extra;
+        }
         $result = $people->select($query);
         if (count($result) == 1) {
             foreach ($result as $current) {
+                if ($current->Extra_Details != $extra) {
+                    Console::writeLine('Extra detail mismatch in person.');
+                    return false;
+                }
                 return $current->Person_ID;
             }
         }
