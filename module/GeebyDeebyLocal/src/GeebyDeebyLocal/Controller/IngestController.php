@@ -261,8 +261,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     protected function normalizeStreet($street)
     {
         return str_replace(
-            [' st.', ' w.', '23rd'],
-            [' street', ' west', '23d'],
+            [' st.', ' w.', '23rd', 'no. '],
+            [' street', ' west', '23d', ''],
             strtolower($street)
         );
     }
