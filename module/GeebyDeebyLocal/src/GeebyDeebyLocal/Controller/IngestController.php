@@ -243,6 +243,26 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return $this->normalizeStreet($street1) == $this->normalizeStreet($street2);
     }
 
+    protected function normalizePublisher($pub)
+    {
+        return str_replace(', inc.', '', strtolower($pub));
+    }
+
+    protected function publishersMatch($pub1, $pub2)
+    {
+        return $this->normalizePublisher($pub1) == $this->normalizePublisher($pub2);
+    }
+
+    protected function normalizeCity($city)
+    {
+        return str_replace(', n.y', '', strtolower($city));
+    }
+
+    protected function citiesMatch($city1, $city2)
+    {
+        return $this->normalizeCity($city1) == $this->normalizeCity($city2);
+    }
+
     protected function processPublisher($publisher, $editionObj, $seriesId)
     {
         list ($name, $street) = $this->separateNameAndStreet($publisher['name']);
@@ -259,8 +279,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         foreach ($result as $current) {
             $city = $current['City_ID'] ? $cityTable->getByPrimaryKey($current['City_ID']) : false;
             $pub = $current['Publisher_ID'] ? $pubTable->getByPrimaryKey($current['Publisher_ID']) : false;
-            if ($city && $place == $city->City_Name
-                && $pub && $name == $pub->Publisher_Name
+            if ($city && $this->citiesMatch($place, $city->City_Name)
+                && $pub && $this->publishersMatch($name, $pub->Publisher_Name)
                 && $this->streetsMatch($street, $current->Street)
             ) {
                 $match = $current->Series_Publisher_ID;
