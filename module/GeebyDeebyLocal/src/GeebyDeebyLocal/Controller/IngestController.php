@@ -649,19 +649,42 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
+    protected function getPersonIdForString($str)
+    {
+        list($last, $first, $extra) = explode(',', $str, 3);
+        if (!empty($extra)) {
+            $extra = ', ' . trim($extra);
+        }
+        $people = $this->getDbTable('person');
+        $query = [
+            'First_Name' => trim($first),
+            'Last_Name' => trim($last),
+            'Extra_Details' => $extra
+        ];
+        $result = $people->select($query);
+        if (count($result) == 1) {
+            foreach ($result as $current) {
+                return $current->Person_ID;
+            }
+        }
+        return false;
+    }
+
     protected function addAuthorDetails($details)
     {
         foreach ($details as & $match) {
             $match[0]['authorIds'] = [];
             if (isset($match[0]['authors'])) {
                 foreach ($match[0]['authors'] as $current) {
-                    if (!isset($current['uri'])) {
-                        Console::writeLine("FATAL: Missing URI for {$current['name']}...");
-                        return false;
+                    if (isset($current['uri'])) {
+                        $id = $this->getPersonIdForUri($current['uri']);
+                    } else {
+                        Console::writeLine("WARNING: Missing URI for {$current['name']}...");
+                        $id = $this->getPersonIdForString($current['name']);
                     }
-                    $id = $this->getPersonIdForUri($current['uri']);
                     if (!$id) {
-                        Console::writeLine("FATAL: Missing Person ID for {$current['uri']}");
+                        $text = isset($current['uri']) ? $current['uri'] : $current['name'];
+                        Console::writeLine("FATAL: Missing Person ID for $text");
                         return false;
                     }
                     $match[0]['authorIds'][] = $id;
@@ -776,6 +799,9 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         // Fail if we have any existing data not matched up with new data....
         foreach ($children as $child) {
             if (!isset($child['matched'])) {
+                foreach ($contents as $current) {
+                    Console::writeLine("Possible match: " . $current['title']);
+                }
                 Console::writeLine("FATAL: No match found for edition {$child['edition']->Edition_ID}");
                 return false;
             }
