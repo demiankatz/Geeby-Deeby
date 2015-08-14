@@ -114,8 +114,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             return false;
         }
         $details['contents'] = $childDetails;
-        var_dump($details); die();
-        return true;
+        return $this->updateDatabaseForFlatEdition($seriesObj, $pos, $details);
     }
 
     protected function getSeriesByTitle($title)
@@ -160,10 +159,10 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             return false;
         }
         $details['contents'] = $childDetails;
-        return $this->updateDatabase($editionObj, $series, $details);
+        return $this->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
     }
 
-    protected function updateDatabase($editionObj, $series, $details)
+    protected function setTopLevelDetails($editionObj, $series, $details)
     {
         $item = $this->getItemForEdition($editionObj);
         if (isset($details['date'])) {
@@ -186,12 +185,38 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                 return false;
             }
         }
-        return $this->updateWorks($editionObj, $details['contents']);
+        return true;
+    }
+
+    protected function updateDatabaseForFlatEdition($series, $pos, $details)
+    {
+        list($data, $db) = $details['contents'][0];
+        if (!$db) {
+            if (!($editionObj = $this->addChildWorkToSeries($series, $data, $pos))) {
+                return false;
+            }
+        } else {
+            if (!($editionObj = $this->updateWorkInDatabase($data, $db))) {
+                return false;
+            }
+        }
+        return $this->setTopLevelDetails($editionObj, $series, $details);
+    }
+
+    protected function updateDatabaseForHierarchicalEdition($editionObj, $series, $details)
+    {
+        if (!$this->setTopLevelDetails($editionObj, $series, $details)) {
+            return false;
+        }
+        return $this->updateChildWorks($editionObj, $details['contents']);
     }
 
     protected function processDate($date, $editionObj)
     {
-        list($year, $month, $day) = explode('-', $date);
+        $parts = explode('-', $date);
+        $year = isset($parts[0]) ? $parts[0] : null;
+        $month = isset($parts[1]) ? $parts[1] : null;
+        $day = isset($parts[2]) ? $parts[2] : null;
         $table = $this->getDbTable('editionsreleasedates');
         $known = $table->getDatesForEdition($editionObj->Edition_ID);
         $foundMatch = false;
@@ -206,14 +231,17 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         }
         if (count($known) == 0) {
             Console::writeLine("Adding date: {$date}");
-            $table->insert(
-                [
-                    'Edition_ID' => $editionObj->Edition_ID,
-                    'Year' => $year,
-                    'Month' => $month,
-                    'Day' => $day
-                ]
-            );
+            $fields = [
+                'Edition_ID' => $editionObj->Edition_ID,
+                'Year' => $year,
+            ];
+            if (!empty($month)) {
+                $fields['Month'] = $month;
+            }
+            if (!empty($day)) {
+                $fields['Day'] = $day;
+            }
+            $table->insert($fields);
         }
         return true;
     }
@@ -506,12 +534,12 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return true;
     }
 
-    protected function updateWorks($editionObj, $details)
+    protected function updateChildWorks($editionObj, $details)
     {
         foreach ($details as $i => $current) {
             list($data, $db) = $current;
             if (!$db) {
-                if (!$this->addChildWorkToDatabase($editionObj, $data, $i)) {
+                if (!$this->addChildWorkToEdition($editionObj, $data, $i)) {
                     return false;
                 }
             } else {
@@ -565,7 +593,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         return $id;
     }
 
-    protected function addChildWorkToDatabase($parentEdition, $data, $pos = 0)
+    protected function addChildWorkToEdition($parentEdition, $data, $pos = 0)
     {
         $item = $this->getItemForNewEdition($data);
         $edName = $parentEdition->Edition_Name;
@@ -582,7 +610,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         );
         $newObj = $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
         Console::writeLine("Added edition ID " . $newObj->Edition_ID);
-        $this->updateWorkInDatabase(
+        return $this->updateWorkInDatabase(
             $data,
             [
                 'edition' => $newObj,
@@ -590,7 +618,33 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                 'item' => $this->getItemForEdition($newObj)
             ]
         );
-        return true;
+    }
+
+    protected function addChildWorkToSeries($series, $data, $pos = 0)
+    {
+        $item = $this->getItemForNewEdition($data);
+        $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+            ->articleAwareAppend($series->Series_Name, ' edition');
+        $seriesID = $series->Series_ID;
+        $edsTable = $this->getDbTable('edition');
+        $edsTable->insert(
+            [
+                'Edition_Name' => $edName,
+                'Series_ID' => $seriesID,
+                'Item_ID' => $item,
+                'Position' => $pos,
+            ]
+        );
+        $newObj = $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
+        Console::writeLine("Added edition ID " . $newObj->Edition_ID);
+        return $this->updateWorkInDatabase(
+            $data,
+            [
+                'edition' => $newObj,
+                'authorIds' => [],
+                'item' => $this->getItemForEdition($newObj)
+            ]
+        );
     }
 
     protected function processTitle($title, $db)
@@ -646,7 +700,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                 return false;
             }
         }
-        return true;
+        return $db['edition'];
     }
 
     protected function getPersonIdForString($str)
