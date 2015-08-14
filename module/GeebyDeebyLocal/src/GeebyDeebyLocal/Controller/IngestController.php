@@ -26,7 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Controller;
-use GeebyDeebyLocal\Ingest\ModsExtractor, Zend\Console\Console;
+use GeebyDeebyLocal\Ingest\ModsExtractor, Zend\Console\Console, Zend\Console\Prompt;
 
 /**
  * Ingest controller
@@ -272,8 +272,14 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             return false;
         }
         if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID != $match) {
-            Console::writeLine("FATAL: Publisher mismatch in edition.");
-            return false;
+            foreach ($this->getDbTable('edition')->getPublishersForEdition($editionObj->Edition_ID) as $ed);
+            Console::writeLine("Publisher mismatch in edition.");
+            Console::writeLine("Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}");
+            Console::writeLine("New: $name, $street, $place");
+            if (!Prompt\Confirm::prompt('Change? (y/n) ')) {
+                Console::writeLine("FATAL: Aborting ingest due to publisher mismatch.");
+                return false;
+            }
         }
         if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID == $match) {
             return true;
