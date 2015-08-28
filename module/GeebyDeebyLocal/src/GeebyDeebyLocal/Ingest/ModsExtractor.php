@@ -203,34 +203,39 @@ class ModsExtractor
         return $results;
     }
 
-    protected function extractTitleInfo($mods)
+    protected function assembleTitle($current, $includeSubtitle = true)
     {
-        $matches = $mods->xpath('mods:titleInfo[not(@type="alternative")]');
-        if (empty($matches)) {
-            return '';
-        }
-        $title = trim((string)$matches[0]->xpath('mods:title')[0]);
-        $article = $matches[0]->xpath('mods:nonSort');
-        $full = $title .= (empty($article) ? '' : ', ' . trim((string)$article[0]));
-        return $full;
-    }
-
-    protected function extractAltTitleInfo($mods)
-    {
-        $matches = $mods->xpath('mods:titleInfo[@type="alternative"]');
-        $retVal = [];
-        foreach ($matches as $current) {
-            $title = trim((string)$current->xpath('mods:title')[0]);
+        $title = trim((string)$current->xpath('mods:title')[0]);
+        if ($includeSubtitle) {
             $subTitleParts = $current->xpath('mods:subTitle');
             $subtitle = isset($subTitleParts[0])
                 ? trim((string)$subTitleParts[0]) : '';
             if (!empty($subtitle)) {
                 $title .= ' ' . $subtitle;
             }
-            $article = $current->xpath('mods:nonSort');
-            $full = $title .= (empty($article) ? '' : ', ' . trim((string)$article[0]));
-            $retVal[] = $full;
         }
-        return $retVal;
+        $article = $current->xpath('mods:nonSort');
+        return $title . (empty($article) ? '' : ', ' . trim((string)$article[0]));
+    }
+
+    protected function extractTitleInfo($mods, $includeSubtitle = false)
+    {
+        $matches = $mods->xpath('mods:titleInfo[not(@type="alternative")]');
+        if (empty($matches)) {
+            return '';
+        }
+        return $this->assembleTitle($matches[0], $includeSubtitle);
+    }
+
+    protected function extractAltTitleInfo($mods)
+    {
+        $matches = $mods->xpath('mods:titleInfo[@type="alternative"]');
+        $results = array_map([$this, 'assembleTitle'], $matches);
+        $mainTitleNoSub = $this->extractTitleInfo($mods, false);
+        $mainTitleWithSub = $this->extractTitleInfo($mods, true);
+        if ($mainTitleNoSub != $mainTitleWithSub) {
+            $results[] = $mainTitleWithSub;
+        }
+        return $results;
     }
 }

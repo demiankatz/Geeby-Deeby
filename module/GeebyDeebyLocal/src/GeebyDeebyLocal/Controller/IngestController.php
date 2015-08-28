@@ -810,7 +810,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         foreach ($contents as $currentContent) {
             $match = false;
             foreach ($children as & $currentChild) {
-                if ($this->checkItemTitle($currentChild['item'], $currentContent['title'])) {
+                if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
                     $match = true;
                     $result[] = [$currentContent, $currentChild];
                     $currentChild['matched'] = true;
@@ -848,7 +848,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         foreach ($contents as $currentContent) {
             $match = false;
             foreach ($children as & $currentChild) {
-                if ($this->checkItemTitle($currentChild['item'], $currentContent['title'])) {
+                if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
                     $match = true;
                     $result[] = [$currentContent, $currentChild];
                     $currentChild['matched'] = true;
@@ -912,6 +912,21 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $itemTitle = (isset($item['Item_AltName']) && !empty($item['Item_AltName']))
             ? $item['Item_AltName'] : $item['Item_Name'];
         return $this->fuzzyCompare($title, $itemTitle);
+    }
+
+    protected function checkItemTitles($item, $currentContent)
+    {
+        if ($this->checkItemTitle($item, $currentContent['title'])) {
+            return true;
+        }
+        if (isset($currentContent['altTitles'])) {
+            foreach ($currentContent['altTitles'] as $title) {
+                if ($this->checkItemTitle($item, $title)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected function checkSeriesTitle($series, $title)
