@@ -86,11 +86,16 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             Console::writeLine("Cannot find series match for $series");
             return;
         }
-        foreach ($this->getSeriesEntriesFromSolr($series) as $pid) {
+        $entries = $this->getSeriesEntriesFromSolr($series);
+        $total = count($entries);
+        $success = 0;
+        foreach ($entries as $pid) {
             if (!$this->loadSeriesEntry($pid, $seriesObj)) {
                 break;
             }
+            $success++;
         }
+        Console::writeLine("Successfully processed $success of $total editions.");
     }
 
     protected function loadSeriesEntry($pid, $seriesObj)
@@ -226,13 +231,22 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $known = $table->getDatesForEdition($editionObj->Edition_ID);
         $foundMatch = false;
         foreach ($known as $current) {
-            if ($current->Month == $month && $current->Year == $year && $current->Day == $day) {
+            if (($current->Month == $month || null === $month)
+                && $current->Year == $year
+                && ($current->Day == $day || null === $day)
+            ) {
                 $foundMatch = true;
+                break;
             }
         }
         if (!$foundMatch && count($known) > 0) {
             Console::writeLine("FATAL: Unexpected date value in database; expected $date.");
             return false;
+        }
+        if (($current->Month > 0 && null === $month)
+            || ($current->Day > 0 && null === $day)
+        ) {
+            Console::writeLine("WARNING: More specific date in database than in incoming data.");
         }
         if (count($known) == 0) {
             Console::writeLine("Adding date: {$date}");
@@ -790,8 +804,34 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         $unexpected = array_diff($storedList, $incomingList);
         if (count($unexpected) > 0) {
-            Console::writeLine("Found unexpected author ID(s) in database: " . implode(', ', $unexpected));
-            return true;
+            $pseudo = $this->getDbTable('pseudonyms');
+            $stillUnexpected = [];
+            foreach ($unexpected as $current) {
+                $matched = false;
+                $pseudonyms = $pseudo->getPseudonyms($current);
+                foreach ($pseudonyms as $p) {
+                    if (in_array($p['Pseudo_Person_ID'], $incomingList)) {
+                        $matched = true;
+                        Console::writeLine('WARNING: Database contains person ' . $current . ' but incoming data uses pseudonym ' . $p['Pseudo_Person_ID']);
+                        break;
+                    }
+                }
+                $real = $pseudo->getRealNames($current);
+                foreach ($real as $r) {
+                    if (in_array($r['Real_Person_ID'], $incomingList)) {
+                        $matched = true;
+                        Console::writeLine('WARNING: Database contains person ' . $current . ' but incoming data uses real name ' . $r['Real_Person_ID']);
+                        break;
+                    }
+                }
+                if (!$matched) {
+                    $stillUnexpected[] = $current;
+                }
+            }
+            if (count($stillUnexpected) > 0) {
+                Console::writeLine("Found unexpected author ID(s) in database: " . implode(', ', $unexpected));
+                return true;
+            }
         }
         return false;
     }
