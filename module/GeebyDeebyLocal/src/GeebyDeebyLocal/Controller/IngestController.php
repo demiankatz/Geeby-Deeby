@@ -60,11 +60,16 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function existingAction()
     {
-        foreach ($this->getExistingEditionsFromSolr() as $edition) {
+        $editions = $this->getExistingEditionsFromSolr();
+        $total = count($editions);
+        $success = 0;
+        foreach ($editions as $edition) {
             if (!$this->loadExistingEdition($edition)) {
                 break;
             }
+            $success++;
         }
+        Console::writeLine("Successfully processed $success of $total editions.");
     }
 
     /**
@@ -649,11 +654,24 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
 
     protected function processTitle($title, $db)
     {
-        if (!$this->fuzzyCompare($title, $db['item']['Item_Name'])) {
-            Console::writeLine("Unexpected title mismatch; {$title} vs. {$db['item']['Item_Name']}");
-            return false;
+        if ($this->fuzzyCompare($title, $db['item']['Item_Name'])) {
+            return true;
         }
-        return true;
+        $table = $this->getDbTable('itemsalttitles');
+        foreach ($table->getAltTitles($db['item']['Item_ID']) as $current) {
+            $currentAlt = $current->Item_AltName;
+            if ($this->fuzzyCompare($title, $currentAlt)) {
+                Console::writeLine(
+                    'WARNING: Found match in alt rather than primary title: '
+                    . $currentAlt
+                );
+                return true;
+            }
+        }
+        Console::writeLine('FATAL: Unexpected title mismatch.');
+        Console::writeLine('Incoming: ' . $title);
+        Console::writeLine('Database: ' . $db['item']['Item_Name']);
+        return false;
     }
 
     protected function processExtent($extent, $db)
