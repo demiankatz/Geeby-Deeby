@@ -65,6 +65,9 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $success = 0;
         foreach ($editions as $edition) {
             if (!$this->loadExistingEdition($edition)) {
+                if (Prompt\Confirm::prompt('Continue with next item anyway? (y/n) ')) {
+                    continue;
+                }
                 break;
             }
             $success++;
@@ -91,6 +94,9 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $success = 0;
         foreach ($entries as $pid) {
             if (!$this->loadSeriesEntry($pid, $seriesObj)) {
+                if (Prompt\Confirm::prompt('Continue with next item anyway? (y/n) ')) {
+                    continue;
+                }
                 break;
             }
             $success++;
@@ -230,6 +236,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $table = $this->getDbTable('editionsreleasedates');
         $known = $table->getDatesForEdition($editionObj->Edition_ID);
         $foundMatch = false;
+        $current = false;
         foreach ($known as $current) {
             if (($current->Month == $month || null === $month)
                 && $current->Year == $year
@@ -243,8 +250,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             Console::writeLine("FATAL: Unexpected date value in database; expected $date.");
             return false;
         }
-        if (($current->Month > 0 && null === $month)
-            || ($current->Day > 0 && null === $day)
+        if (($current && $current->Month > 0 && null === $month)
+            || ($current && $current->Day > 0 && null === $day)
         ) {
             Console::writeLine("WARNING: More specific date in database than in incoming data.");
         }
