@@ -211,7 +211,7 @@ class ModsExtractor
             $subtitle = isset($subTitleParts[0])
                 ? trim((string)$subTitleParts[0]) : '';
             if (!empty($subtitle)) {
-                $title .= ' ' . $subtitle;
+                $title .= ' : ' . $subtitle;
             }
         }
         $article = $current->xpath('mods:nonSort');
