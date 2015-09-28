@@ -516,14 +516,16 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             $item = $db['item']['Item_ID'];
             $table = $this->getDbTable('itemsalttitles');
             $result = $table->getAltTitles($item);
-            $existing = [];
+            $existing = [$db['item']['Item_Name']];
             foreach ($result as $current) {
                 $existing[] = $current->Item_AltName;
             }
             foreach ($filteredTitles as $newTitle) {
                 $skip = false;
                 foreach ($existing as $current) {
-                    if ($this->fuzzyCompare($newTitle, $current)) {
+                    if ($this->fuzzyCompare($newTitle, $current)
+                        || $this->fuzzyContains($current, $newTitle)
+                    ) {
                         $skip = true;
                         break;
                     }
