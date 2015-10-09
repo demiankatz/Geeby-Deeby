@@ -77,8 +77,9 @@ class ModsExtractor
     {
         $all = [];
         foreach ($mods as $current) {
-            if (!empty((string) $current)) {
-                $all[] = (string) $current;
+            $current = (string) $current;
+            if (!empty($current)) {
+                $all[] = $current;
             }
         }
         return empty($all) ? false : $all;
@@ -90,8 +91,9 @@ class ModsExtractor
         foreach ($series as $current) {
             $name = $current->xpath('mods:title');
             $number = $current->xpath('mods:partNumber');
-            if (isset($name[0]) && !empty((string) $name[0])) {
-                $seriesInfo[(string)$name[0]] = isset($number[0]) ? (string) $number[0] : '';
+            $firstName = isset($name[0]) ? (string) $name[0] : null;
+            if (!empty($firstName)) {
+                $seriesInfo[$firstName] = isset($number[0]) ? (string) $number[0] : '';
             }
         }
         return empty($seriesInfo) ? false : $seriesInfo;
