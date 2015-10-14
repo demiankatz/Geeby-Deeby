@@ -185,8 +185,10 @@ class Edition extends Gateway
                     'pe.Preferred_Item_AltName_ID = iat.Sequence_ID',
                     array('Item_AltName'), Select::JOIN_LEFT
                 );
+                $select->order(['Edition_Name', 'pe.Series_ID', 'pe.Position']);
+            } else {
+                $select->order('Edition_Name');
             }
-            $select->order('Edition_Name');
         };
         return $this->select($callback);
     }
