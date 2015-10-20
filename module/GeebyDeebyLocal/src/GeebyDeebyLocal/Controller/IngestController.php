@@ -702,6 +702,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $ed = $db['edition'];
         if (!empty($ed->Extent_In_Parent) && $ed->Extent_In_Parent !== $extent) {
             Console::writeLine("FATAL ERROR: Unexpected extent: " . $extent);
+            Console::writeLine("Expected: " . $ed->Extent_In_Parent);
             return false;
         }
         if (empty($ed->Parent_Edition_ID)) {
