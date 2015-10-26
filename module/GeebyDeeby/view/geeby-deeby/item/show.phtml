@@ -15,7 +15,7 @@
               <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
                 <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
                 <? if (count($editions) > 1): ?>
-                  (<?=$this->escapeHtml($current['Edition_Name'])?>)
+                  (<?=$this->escapeHtml($this->fixtitle($current['Edition_Name']))?>)
                 <? endif; ?>
               </a><br />
             <? endforeach; ?>
