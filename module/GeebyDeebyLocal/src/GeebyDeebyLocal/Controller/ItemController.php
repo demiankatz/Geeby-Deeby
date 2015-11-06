@@ -59,7 +59,7 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
             $view->item['Material_Type_ID']
         );
         $relationship = ($itemType['Material_Type_Name'] == 'Issue')
-            ? 'rda:HasEdition' : 'dime:HasRealizationOfCreativeWork';
+            ? 'dime:HasEdition' : 'dime:HasRealizationOfCreativeWork';
         foreach ($view->editions as $edition) {
             $editionUri = $this->getServerUrl('edition', ['id' => $edition['Edition_ID']]);
             $item->add($relationship, $graph->resource($editionUri));

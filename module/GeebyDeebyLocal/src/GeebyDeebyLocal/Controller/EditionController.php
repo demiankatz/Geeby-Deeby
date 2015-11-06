@@ -72,7 +72,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         }
         if (isset($view->series)) {
             $seriesUri = $this->getServerUrl('series', ['id' => $view->series['Series_ID']]);
-            $edition->add('rda:HasSeries', $graph->resource($seriesUri));
+            $edition->add('dime:HasSeries', $graph->resource($seriesUri));
             if ($view->edition['Position'] > 0) {
                 $edition->add('rda:numberingWithinSeries', (int)$view->edition['Position']);
             }
