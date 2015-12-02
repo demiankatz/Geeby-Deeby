@@ -105,6 +105,7 @@ class SeriesController extends AbstractBase
                 ['Item_Name'], Select::JOIN_LEFT
             );
             $select->where->isNull('d.Year');
+            $select->where->isNull('Editions.Parent_Edition_ID');
             $select->where(['Series_ID' => $seriesId]);
             $select->order('Editions.Position');
         };
