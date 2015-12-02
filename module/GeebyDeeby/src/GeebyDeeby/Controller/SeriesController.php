@@ -154,6 +154,7 @@ class SeriesController extends AbstractBase
                     ),
                 ]
             );
+            $select->where->isNull('Parent_Edition_ID');
             $select->group('Position');
             $select->order('Position');
         };
