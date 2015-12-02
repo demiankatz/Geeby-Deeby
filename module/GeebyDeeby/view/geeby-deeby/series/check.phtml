@@ -1,5 +1,24 @@
 <?
-    $this->layout()->title = 'Check for Missing Data'
+    $this->layout()->title = 'Check for Missing Data';
+
+    $formatRanges = function ($values) {
+        $currentStart = $currentEnd = null;
+        $parts = [];
+        foreach ($values as $current) {
+            if ($currentStart === null) {
+                $currentStart = $currentEnd = $current;
+            } else if ($current == $currentEnd + 1) {
+                $currentEnd = $current;
+            } else {
+                $parts[] = $currentStart === $currentEnd ? $currentStart : "$currentStart-$currentEnd";
+                $currentStart = $currentEnd = $current;
+            }
+        }
+        if (null !== $currentStart) {
+            $parts[] = $currentStart === $currentEnd ? $currentStart : "$currentStart-$currentEnd";
+        }
+        return implode(', ', $parts);
+    };
 ?>
 
 <h2>Missing Credits</h2>
@@ -49,10 +68,10 @@
   different numbers ranging from <?=$this->escapeHtml($itemStats['Start'])?>
   to <?=$this->escapeHtml($itemStats['End'])?>.</p>
   <? if (!empty($itemStats['Dupes'])): ?>
-    <p>Duplicate numbers: <?=implode(', ', $itemStats['Dupes'])?></p>
+    <p>Duplicate numbers: <?=$formatRanges($itemStats['Dupes'])?></p>
   <? endif; ?>
   <? if (!empty($itemStats['Missing'])): ?>
-    <p>Missing numbers: <?=implode(', ', $itemStats['Missing'])?></p>
+    <p>Missing numbers: <?=$formatRanges($itemStats['Missing'])?></p>
   <? endif; ?>
 <? else: ?>
   <p>No item information.</p>
