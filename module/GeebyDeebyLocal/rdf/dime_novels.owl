@@ -15,8 +15,8 @@
 ]>
 
 
-<rdf:RDF xmlns="http://dimenovels.org/ontology#"
-     xml:base="http://dimenovels.org/ontology"
+<rdf:RDF xmlns="https://dimenovels.org/ontology#"
+     xml:base="https://dimenovels.org/ontology"
      xmlns:dc="http://purl.org/dc/elements/1.1/"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:wgs84_pos="http://www.w3.org/2003/01/geo/wgs84_pos#"
@@ -27,7 +27,7 @@
      xmlns:vs="http://www.w3.org/2003/06/sw-vocab-status/ns#"
      xmlns:RegAp="http://metadataregistry.org/uri/profile/RegAp/"
      xmlns:skos="http://www.w3.org/2004/02/skos/core#">
-    <owl:Ontology rdf:about="http://dimenovels.org/ontology">
+    <owl:Ontology rdf:about="https://dimenovels.org/ontology">
         <dc:date rdf:datatype="xsd:dateTime">May 04, 2015 11:38:41
             AM</dc:date>
         <dc:creator rdf:datatype="xsd:string">demiankatz</dc:creator>
@@ -195,113 +195,113 @@ above the local reference ellipsoid).</rdfs:comment>
     
 
 
-    <!-- http://dimenovels.org/ontology#HasCopy -->
+    <!-- https://dimenovels.org/ontology#HasCopy -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasCopy">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#HasCopy">
         <rdfs:label xml:lang="en">HasCopy</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Copy"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Copy"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://dimenovels.org/ontology#HasCredit -->
+    <!-- https://dimenovels.org/ontology#HasCredit -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasCredit">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#HasCredit">
         <rdfs:label xml:lang="en">HasCredit</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
         <rdfs:range rdf:resource="&skos;Concept"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://dimenovels.org/ontology#HasEdition -->
+    <!-- https://dimenovels.org/ontology#HasEdition -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasEdition">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#HasEdition">
         <rdfs:label xml:lang="en">HasEdition</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Edition"/>
-        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#IsEditionOf"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Edition"/>
+        <owl:inverseOf rdf:resource="https://dimenovels.org/ontology#IsEditionOf"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://dimenovels.org/ontology#HasRealizationOfCreativeWork -->
+    <!-- https://dimenovels.org/ontology#HasRealizationOfCreativeWork -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasRealizationOfCreativeWork">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#HasRealizationOfCreativeWork">
         <rdfs:label xml:lang="en">HasRealizationOfCreativeWork</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
-        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#IsRealizationOfCreativeWork"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
+        <owl:inverseOf rdf:resource="https://dimenovels.org/ontology#IsRealizationOfCreativeWork"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://dimenovels.org/ontology#HasSeries -->
+    <!-- https://dimenovels.org/ontology#HasSeries -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#HasSeries">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#HasSeries">
         <rdfs:label xml:lang="en">HasSeries</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Series"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://dimenovels.org/ontology#IsCopyOf -->
+    <!-- https://dimenovels.org/ontology#IsCopyOf -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsCopyOf">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#IsCopyOf">
         <rdfs:label xml:lang="en">IsCopyOf</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Copy"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Edition"/>
-        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#HasCopy"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Copy"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Edition"/>
+        <owl:inverseOf rdf:resource="https://dimenovels.org/ontology#HasCopy"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://dimenovels.org/ontology#IsEditionOf -->
+    <!-- https://dimenovels.org/ontology#IsEditionOf -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsEditionOf">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#IsEditionOf">
         <rdfs:label xml:lang="en">IsEditionOf</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://dimenovels.org/ontology#IsRealizationOfCreativeWork -->
+    <!-- https://dimenovels.org/ontology#IsRealizationOfCreativeWork -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsRealizationOfCreativeWork">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#IsRealizationOfCreativeWork">
         <rdfs:label xml:lang="en">IsRealizationOfCreativeWork</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://dimenovels.org/ontology#IsSeriesOf -->
+    <!-- https://dimenovels.org/ontology#IsSeriesOf -->
 
-    <owl:ObjectProperty rdf:about="http://dimenovels.org/ontology#IsSeriesOf">
+    <owl:ObjectProperty rdf:about="https://dimenovels.org/ontology#IsSeriesOf">
         <rdfs:label xml:lang="en">IsSeriesOf</rdfs:label>
-        <rdfs:isDefinedBy>http://dimenovels.org/ontology</rdfs:isDefinedBy>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <owl:inverseOf rdf:resource="http://dimenovels.org/ontology#HasSeries"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:isDefinedBy>https://dimenovels.org/ontology</rdfs:isDefinedBy>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <owl:inverseOf rdf:resource="https://dimenovels.org/ontology#HasSeries"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Series"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
@@ -313,7 +313,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">Subject</rdfs:label>
         <rdfs:comment xml:lang="en">The topic of the resource.</rdfs:comment>
         <skos:note xml:lang="en">This term is intended to be used with non-literal values as defined in the DCMI Abstract Model (http://dublincore.org/documents/abstract-model/). As of December 2007, the DCMI Usage Board is seeking a way to express this intention with a formal range declaration.</skos:note>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <rdfs:isDefinedBy rdf:resource="http://purl.org/dc/terms/"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
         <rdfs:range rdf:resource="&skos;Concept"/>
@@ -469,8 +469,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a larger resource of which the resource
             is a discrete component.</skos:definition>
         <RegAp:name xml:lang="en">containedIn</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20074"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40009"/>
@@ -491,8 +491,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a later resource that continues the
             narrative of an earlier resource.</skos:definition>
         <RegAp:name xml:lang="en">sequel</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60278"/>
@@ -517,8 +517,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Edition"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Edition"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
@@ -588,8 +588,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource that extends the narrative
             of an earlier resource backwards in time.</skos:definition>
         <RegAp:name xml:lang="en">prequel</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60261"/>
@@ -660,8 +660,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource that is a discrete component
             of a larger resource.</skos:definition>
         <RegAp:name xml:lang="en">containerOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20145"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40034"/>
@@ -902,8 +902,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource whose narrative is extended
             backwards in time by the later resource.</skos:definition>
         <RegAp:name xml:lang="en">prequelTo</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60220"/>
@@ -927,7 +927,7 @@ above the local reference ellipsoid).</rdfs:comment>
             custodian, owner, producer, publisher, distributor or manufacturer associated with a
             resource.</skos:definition>
         <RegAp:name xml:lang="en">otherPFCAssociatedWithAResource</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40023"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30079"/>
@@ -1028,7 +1028,7 @@ above the local reference ellipsoid).</rdfs:comment>
             resource.</skos:definition>
         <RegAp:name xml:lang="en">contributor</RegAp:name>
         <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/ctb</skos:closeMatch>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20053"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -1087,7 +1087,7 @@ above the local reference ellipsoid).</rdfs:comment>
             resource.</skos:definition>
         <skos:broadMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/own</skos:broadMatch>
         <RegAp:name xml:lang="en">owner</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40021"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -1136,8 +1136,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Edition"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Edition"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
@@ -1153,7 +1153,7 @@ above the local reference ellipsoid).</rdfs:comment>
             of a resource</skos:definition>
         <RegAp:name xml:lang="en">creator</RegAp:name>
         <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/cre</skos:closeMatch>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60434"/>
@@ -1172,8 +1172,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the resource whose narrative is
             continued by the later resource.</skos:definition>
         <RegAp:name xml:lang="en">sequelTo</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/P60261"/>
@@ -1190,7 +1190,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates an agent associated with a resource other than as a
             creator to the resource.</skos:definition>
         <RegAp:name xml:lang="en">otherAgentAssociatedWithAResourceOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60604"/>
@@ -1276,7 +1276,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates an agent contributing to a resource to the
             resource.</skos:definition>
         <RegAp:name xml:lang="en">contributorOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50161"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -1333,7 +1333,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates an agent having legal possession of a resource to the
             resource.</skos:definition>
         <RegAp:name xml:lang="en">ownerOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60404"/>
@@ -1406,8 +1406,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:range>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Edition"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Edition"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:range>
@@ -1422,7 +1422,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates an agent responsible for the creation of a resourc to
             the resource.</skos:definition>
         <RegAp:name xml:lang="en">creatorOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/P60447"/>
@@ -1503,8 +1503,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource that is based on or is a
             derivative of the resource.</skos:definition>
         <RegAp:name xml:lang="en">derivativeResourceRelationshipWith</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20233"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -1525,8 +1525,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource that is equivalent to the
             resource.</skos:definition>
         <RegAp:name xml:lang="en">equivalentResourceRelationshipWith</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40053"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -1742,8 +1742,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a larger resource of which the resource
             is a discrete component.</skos:definition>
         <RegAp:name xml:lang="en">containedIn</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20074"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40009"/>
@@ -1766,7 +1766,7 @@ above the local reference ellipsoid).</rdfs:comment>
             resource.</skos:definition>
         <RegAp:name xml:lang="en">contributor</RegAp:name>
         <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/ctb</skos:closeMatch>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20053"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -1787,7 +1787,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates an agent contributing to a resource to the
             resource.</skos:definition>
         <RegAp:name xml:lang="en">contributorOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/a/P50161"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -1808,7 +1808,7 @@ above the local reference ellipsoid).</rdfs:comment>
             of a resource</skos:definition>
         <RegAp:name xml:lang="en">creator</RegAp:name>
         <skos:closeMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/cre</skos:closeMatch>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60434"/>
@@ -1826,7 +1826,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates an agent responsible for the creation of a resourc to
             the resource.</skos:definition>
         <RegAp:name xml:lang="en">creatorOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60663"/>
@@ -1931,8 +1931,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource that is based on or is a
             derivative of the resource.</skos:definition>
         <RegAp:name xml:lang="en">derivativeResourceRelationshipWith</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20233"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -2037,8 +2037,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource that is equivalent to the
             resource.</skos:definition>
         <RegAp:name xml:lang="en">equivalentResourceRelationshipWith</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40053"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -2226,7 +2226,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates an agent associated with a resource other than as a
             creator to the resource.</skos:definition>
         <RegAp:name xml:lang="en">otherAgentAssociatedWithAResourceOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60604"/>
@@ -2249,7 +2249,7 @@ above the local reference ellipsoid).</rdfs:comment>
             custodian, owner, producer, publisher, distributor or manufacturer associated with a
             resource.</skos:definition>
         <RegAp:name xml:lang="en">otherPFCAssociatedWithAResource</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40023"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30079"/>
@@ -2271,7 +2271,7 @@ above the local reference ellipsoid).</rdfs:comment>
             resource.</skos:definition>
         <skos:broadMatch xml:lang="en">http://id.loc.gov/vocabulary/relators/own</skos:broadMatch>
         <RegAp:name xml:lang="en">owner</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40021"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -2290,7 +2290,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates an agent having legal possession of a resource to the
             resource.</skos:definition>
         <RegAp:name xml:lang="en">ownerOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/u/P60628"/>
@@ -2315,8 +2315,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Edition"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Edition"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
@@ -2374,8 +2374,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource that extends the narrative
             of an earlier resource backwards in time.</skos:definition>
         <RegAp:name xml:lang="en">prequel</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/precededBy"/>
@@ -2391,8 +2391,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource whose narrative is extended
             backwards in time by the later resource.</skos:definition>
         <RegAp:name xml:lang="en">prequelTo</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/prequel"/>
@@ -2436,8 +2436,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Edition"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Edition"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
@@ -2459,8 +2459,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:range>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Edition"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Edition"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:range>
@@ -2622,8 +2622,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a later resource that continues the
             narrative of an earlier resource.</skos:definition>
         <RegAp:name xml:lang="en">sequel</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:inverseOf rdf:resource="http://rdaregistry.info/Elements/u/sequelTo"/>
@@ -2640,8 +2640,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the resource whose narrative is
             continued by the later resource.</skos:definition>
         <RegAp:name xml:lang="en">sequelTo</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:subPropertyOf rdf:resource="http://rdaregistry.info/Elements/u/precededBy"/>
@@ -2785,8 +2785,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a resource that is a discrete component
             of a larger resource.</skos:definition>
         <RegAp:name xml:lang="en">containerOf</RegAp:name>
-        <rdfs:range rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:range rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20145"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40034"/>
@@ -2841,11 +2841,11 @@ above the local reference ellipsoid).</rdfs:comment>
     
 
 
-    <!-- http://dimenovels.org/ontology#HasBeenReviewed -->
+    <!-- https://dimenovels.org/ontology#HasBeenReviewed -->
 
-    <owl:DatatypeProperty rdf:about="http://dimenovels.org/ontology#HasBeenReviewed">
+    <owl:DatatypeProperty rdf:about="https://dimenovels.org/ontology#HasBeenReviewed">
         <rdfs:label xml:lang="en">HasBeenReviewed</rdfs:label>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
         <rdfs:range rdf:resource="&xsd;boolean"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topDataProperty"/>
     </owl:DatatypeProperty>
@@ -2860,7 +2860,7 @@ above the local reference ellipsoid).</rdfs:comment>
             resource that serves to differentiate that resource from other
             resources.</skos:definition>
         <RegAp:name xml:lang="en">identifierForTheResource</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Publication"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20002"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/i/P40001"/>
@@ -2900,7 +2900,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">has form of resource</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to a class or genre to which a resource belongs.</skos:definition>
         <RegAp:name xml:lang="en">formOfResource</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/formOfResource"/>
@@ -2917,7 +2917,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a date associated with a claim of protection under copyright or a similar regime.</skos:definition>
         <RegAp:name xml:lang="en">copyrightDate</RegAp:name>
         <RegAp:status xml:lang="en">http://metadataregistry.org/uri/RegStatus/1001</RegAp:status>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/copyrightDate"/>
         <rdfs:range rdf:resource="&xsd;dateTime"/>
@@ -2933,7 +2933,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a date associated with the publication,
             release, or issuing of a resource.</skos:definition>
         <RegAp:name xml:lang="en">dateOfPublication</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30011"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -2967,7 +2967,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">has numbering of part</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to a designation of the sequencing of a part or parts within a larger resource. numbering of part may include a numeral, a letter, any other character, or the combination of these with or without an accompanying caption (volume, number, etc.) and/or a chronological designation.</skos:definition>
         <RegAp:name xml:lang="en">numberingOfPart</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/numberingOfPart"/>
@@ -2986,7 +2986,7 @@ above the local reference ellipsoid).</rdfs:comment>
             any other character, or the combination of these with or without an accompanying caption
             (volume, number, etc.) and/or a chronological designation.</skos:definition>
         <RegAp:name xml:lang="en">numberingWithinSeries</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30014"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3004,7 +3004,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a language used to express the content
             of a resource.</skos:definition>
         <RegAp:name xml:lang="en">languageOfTheContent</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20006"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20007"/>
@@ -3088,7 +3088,7 @@ above the local reference ellipsoid).</rdfs:comment>
             which a resource belongs and the numbering of the resource within the
             series.</skos:definition>
         <RegAp:name xml:lang="en">seriesStatement</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30106"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3107,7 +3107,7 @@ above the local reference ellipsoid).</rdfs:comment>
             places of publication, publisher or publishers, and date or dates of publication of a
             resource.</skos:definition>
         <RegAp:name xml:lang="en">publicationStatement</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30111"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3145,7 +3145,7 @@ above the local reference ellipsoid).</rdfs:comment>
             contributing to the realization of, the intellectual or artistic content of a
             resource.</skos:definition>
         <RegAp:name xml:lang="en">statementOfResponsibility</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30117"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3237,9 +3237,9 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#CreativeWork"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Edition"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#CreativeWork"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Edition"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
@@ -3254,7 +3254,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to an annotation providing additional
             information about content recorded as a resource attribute.</skos:definition>
         <RegAp:name xml:lang="en">noteOnResource</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Publication"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20071"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3364,7 +3364,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the address of a remote access
             resource.</skos:definition>
         <RegAp:name xml:lang="en">uniformResourceLocator</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30154"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3382,7 +3382,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the chief name of a resource (i.e., the
             title normally used when citing the resource).</skos:definition>
         <RegAp:name xml:lang="en">titleProper</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30156"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3400,7 +3400,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the chief name of a series (i.e., the
             title normally used when citing the series).</skos:definition>
         <RegAp:name xml:lang="en">titleProperOfSeries</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30157"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3452,7 +3452,7 @@ above the local reference ellipsoid).</rdfs:comment>
             other character, or the combination of these with or without an accompanying caption
             (volume, number, etc.) and/or a chronological designation.</skos:definition>
         <RegAp:name xml:lang="en">numberingOfSerials</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Series"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30165"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3475,7 +3475,7 @@ above the local reference ellipsoid).</rdfs:comment>
             parts of a serial or the updates to an integrating resource are
             issued.</skos:definition>
         <RegAp:name xml:lang="en">frequency</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Series"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30168"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3492,7 +3492,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">has dimensions</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to the measurements of the carrier or carriers and/or the container of a resource.</skos:definition>
         <RegAp:name xml:lang="en">dimensions</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <owl:equivalentProperty rdf:resource="http://rdaregistry.info/Elements/u/dimensions"/>
@@ -3560,7 +3560,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">has extent</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to the number and type of units and/or subunits making up a resource.</skos:definition>
         <RegAp:name xml:lang="en">extent</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30177"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30178"/>
@@ -3591,8 +3591,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#CreativeWork"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#CreativeWork"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
@@ -3691,7 +3691,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a date associated with a claim of protection under copyright or a similar regime.</skos:definition>
         <RegAp:name xml:lang="en">copyrightDate</RegAp:name>
         <RegAp:status xml:lang="en">http://metadataregistry.org/uri/RegStatus/1001</RegAp:status>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:range rdf:resource="&xsd;dateTime"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topDataProperty"/>
@@ -3776,7 +3776,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a date associated with the publication,
          release, or issuing of a resource.</skos:definition>
         <RegAp:name xml:lang="en">dateOfPublication</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30011"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3807,7 +3807,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">has dimensions</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to the measurements of the carrier or carriers and/or the container of a resource.</skos:definition>
         <RegAp:name xml:lang="en">dimensions</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:range rdf:resource="&xsd;string"/>
@@ -3822,7 +3822,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">has extent</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to the number and type of units and/or subunits making up a resource.</skos:definition>
         <RegAp:name xml:lang="en">extent</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30178"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30179"/>
@@ -3842,7 +3842,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">has form of resource</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to a class or genre to which a resource belongs.</skos:definition>
         <RegAp:name xml:lang="en">formOfResource</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:range rdf:resource="&xsd;string"/>
@@ -3858,7 +3858,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the intervals at which the issues or
          parts of a serial or the updates to an integrating resource are issued.</skos:definition>
         <RegAp:name xml:lang="en">frequency</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Series"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30168"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3893,7 +3893,7 @@ above the local reference ellipsoid).</rdfs:comment>
             resource that serves to differentiate that resource from other
             resources.</skos:definition>
         <RegAp:name xml:lang="en">identifierForTheResource</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Publication"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:range rdf:resource="&xsd;string"/>
@@ -3909,7 +3909,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a language used to express the content of
          a resource.</skos:definition>
         <RegAp:name xml:lang="en">languageOfTheContent</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20006"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20007"/>
@@ -3965,7 +3965,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to an annotation providing additional
          information about content recorded as a resource attribute.</skos:definition>
         <RegAp:name xml:lang="en">noteOnResource</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Publication"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/e/P20071"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -3981,7 +3981,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:label xml:lang="en">has numbering of part</rdfs:label>
         <skos:definition xml:lang="en">Relates a resource to a designation of the sequencing of a part or parts within a larger resource. numbering of part may include a numeral, a letter, any other character, or the combination of these with or without an accompanying caption (volume, number, etc.) and/or a chronological designation.</skos:definition>
         <RegAp:name xml:lang="en">numberingOfPart</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
         <rdfs:range rdf:resource="&xsd;string"/>
@@ -3999,7 +3999,7 @@ above the local reference ellipsoid).</rdfs:comment>
          character, or the combination of these with or without an accompanying caption (volume,
          number, etc.) and/or a chronological designation.</skos:definition>
         <RegAp:name xml:lang="en">numberingOfSerials</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Series"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30165"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -4022,7 +4022,7 @@ above the local reference ellipsoid).</rdfs:comment>
          other character, or the combination of these with or without an accompanying caption
          (volume, number, etc.) and/or a chronological designation.</skos:definition>
         <RegAp:name xml:lang="en">numberingWithinSeries</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30014"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -4177,8 +4177,8 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#CreativeWork"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#CreativeWork"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
@@ -4194,7 +4194,7 @@ above the local reference ellipsoid).</rdfs:comment>
          places of publication, publisher or publishers, and date or dates of publication of a
          resource.</skos:definition>
         <RegAp:name xml:lang="en">publicationStatement</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30111"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -4228,7 +4228,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to a statement identifying a series to which
          a resource belongs and the numbering of the resource within the series.</skos:definition>
         <RegAp:name xml:lang="en">seriesStatement</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30106"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -4247,7 +4247,7 @@ above the local reference ellipsoid).</rdfs:comment>
          contributing to the realization of, the intellectual or artistic content of a
          resource.</skos:definition>
         <RegAp:name xml:lang="en">statementOfResponsibility</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30117"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -4296,9 +4296,9 @@ above the local reference ellipsoid).</rdfs:comment>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#CreativeWork"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Edition"/>
-                    <rdf:Description rdf:about="http://dimenovels.org/ontology#Series"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#CreativeWork"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Edition"/>
+                    <rdf:Description rdf:about="https://dimenovels.org/ontology#Series"/>
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
@@ -4313,7 +4313,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the chief name of a resource (i.e., the
          title normally used when citing the resource).</skos:definition>
         <RegAp:name xml:lang="en">titleProper</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30156"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -4330,7 +4330,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the chief name of a series (i.e., the
          title normally used when citing the series).</skos:definition>
         <RegAp:name xml:lang="en">titleProperOfSeries</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Edition"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Edition"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30157"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -4347,7 +4347,7 @@ above the local reference ellipsoid).</rdfs:comment>
         <skos:definition xml:lang="en">Relates a resource to the address of a remote access
          resource.</skos:definition>
         <RegAp:name xml:lang="en">uniformResourceLocator</RegAp:name>
-        <rdfs:domain rdf:resource="http://dimenovels.org/ontology#Copy"/>
+        <rdfs:domain rdf:resource="https://dimenovels.org/ontology#Copy"/>
         <RegAp:status rdf:resource="http://metadataregistry.org/uri/RegStatus/1001"/>
         <RegAp:hasSubproperty rdf:resource="http://rdaregistry.info/Elements/m/P30154"/>
         <rdfs:isDefinedBy rdf:resource="http://rdaregistry.info/Elements/u/"/>
@@ -4403,64 +4403,64 @@ above the local reference ellipsoid).</rdfs:comment>
     
 
 
-    <!-- http://dimenovels.org/ontology#Copy -->
+    <!-- https://dimenovels.org/ontology#Copy -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Copy">
+    <owl:Class rdf:about="https://dimenovels.org/ontology#Copy">
         <rdfs:label xml:lang="en">Copy</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
-        <owl:disjointWith rdf:resource="http://dimenovels.org/ontology#CreativeWork"/>
-        <owl:disjointWith rdf:resource="http://dimenovels.org/ontology#Edition"/>
-        <owl:disjointWith rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:subClassOf rdf:resource="https://dimenovels.org/ontology#Publication"/>
+        <owl:disjointWith rdf:resource="https://dimenovels.org/ontology#CreativeWork"/>
+        <owl:disjointWith rdf:resource="https://dimenovels.org/ontology#Edition"/>
+        <owl:disjointWith rdf:resource="https://dimenovels.org/ontology#Series"/>
         <skos:definition xml:lang="en">The physical embodiement of a single edition.</skos:definition>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
     </owl:Class>
     
 
 
-    <!-- http://dimenovels.org/ontology#CreativeWork -->
+    <!-- https://dimenovels.org/ontology#CreativeWork -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#CreativeWork">
+    <owl:Class rdf:about="https://dimenovels.org/ontology#CreativeWork">
         <rdfs:label xml:lang="en">CreativeWork</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
-        <owl:disjointWith rdf:resource="http://dimenovels.org/ontology#Edition"/>
-        <owl:disjointWith rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:subClassOf rdf:resource="https://dimenovels.org/ontology#Publication"/>
+        <owl:disjointWith rdf:resource="https://dimenovels.org/ontology#Edition"/>
+        <owl:disjointWith rdf:resource="https://dimenovels.org/ontology#Series"/>
         <skos:definition xml:lang="en">Any creative work, including stories, poems, articles, etc.</skos:definition>
-        <skos:definition rdf:resource="http://dimenovels.org/ontology"/>
+        <skos:definition rdf:resource="https://dimenovels.org/ontology"/>
     </owl:Class>
     
 
 
-    <!-- http://dimenovels.org/ontology#Edition -->
+    <!-- https://dimenovels.org/ontology#Edition -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Edition">
+    <owl:Class rdf:about="https://dimenovels.org/ontology#Edition">
         <rdfs:label xml:lang="en">Edition</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
-        <owl:disjointWith rdf:resource="http://dimenovels.org/ontology#Series"/>
+        <rdfs:subClassOf rdf:resource="https://dimenovels.org/ontology#Publication"/>
+        <owl:disjointWith rdf:resource="https://dimenovels.org/ontology#Series"/>
         <skos:definition xml:lang="en">All copies of a creative work or issue published by the same agent.</skos:definition>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
     </owl:Class>
     
 
 
-    <!-- http://dimenovels.org/ontology#Publication -->
+    <!-- https://dimenovels.org/ontology#Publication -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Publication">
+    <owl:Class rdf:about="https://dimenovels.org/ontology#Publication">
         <rdfs:label xml:lang="en">Publication</rdfs:label>
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
         <owl:disjointWith rdf:resource="&skos;Concept"/>
         <owl:disjointWith rdf:resource="&foaf;Agent"/>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
     </owl:Class>
     
 
 
-    <!-- http://dimenovels.org/ontology#Series -->
+    <!-- https://dimenovels.org/ontology#Series -->
 
-    <owl:Class rdf:about="http://dimenovels.org/ontology#Series">
+    <owl:Class rdf:about="https://dimenovels.org/ontology#Series">
         <rdfs:label xml:lang="en">Series</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://dimenovels.org/ontology#Publication"/>
+        <rdfs:subClassOf rdf:resource="https://dimenovels.org/ontology#Publication"/>
         <skos:definition xml:lang="en">A group of issues, published in succession and each bearing a chronological and/or numeric designtation.</skos:definition>
-        <rdfs:isDefinedBy rdf:resource="http://dimenovels.org/ontology"/>
+        <rdfs:isDefinedBy rdf:resource="https://dimenovels.org/ontology"/>
     </owl:Class>
     
 
