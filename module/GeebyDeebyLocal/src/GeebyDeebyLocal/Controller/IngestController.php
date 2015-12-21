@@ -149,7 +149,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     protected function loadExistingEdition($edition)
     {
         Console::writeLine("Loading existing edition (id = {$edition})");
-        $rawMods = $this->getModsForEdition('http://dimenovels.org/Edition/' . $edition);
+        $rawMods = $this->getModsForEdition('https://dimenovels.org/Edition/' . $edition);
         if (!$rawMods) {
             Console::writeLine('Could not retrieve MODS.');
             return false;
@@ -848,7 +848,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
 
     protected function getPersonIdForUri($uri)
     {
-        $base = 'http://dimenovels.org/Person/';
+        $base = 'https://dimenovels.org/Person/';
         if (substr($uri, 0, strlen($base)) == $base) {
             $id = str_replace($base, '', $uri);
         } else {
@@ -1051,7 +1051,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
 
     protected function getExistingEditionsFromSolr()
     {
-        $query = $this->settings->solrQueryField . ':"http://dimenovels.org/*"';
+        $query = $this->settings->solrQueryField . ':"https://dimenovels.org/*"';
         $field = $this->settings->solrQueryField;
         $solr = $this->querySolr($query, $field);
         $editions = [];
