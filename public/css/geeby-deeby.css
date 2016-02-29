@@ -70,6 +70,17 @@ textarea {
 .nav-tabs>li.active>a {border-bottom-color:#F9F0E0;color:#4D3301}
 .tab-content {background:#F9F0E0;border:1px solid #774E03;border-top:0;padding:1em}
 
+.two-columns {
+  -webkit-column-count: 2;
+  -moz-column-count:2;
+  column-count:2;
+}
+.three-columns {
+  -webkit-column-count: 3;
+  -moz-column-count:3;
+  column-count:3;
+}
+
 /* --- HEADER --- */
 header {
   background:#F9F0E0;
