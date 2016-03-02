@@ -610,6 +610,9 @@ class EditEditionController extends AbstractBase
             $row = $table->createRow();
             $row->Edition_ID = $this->params()->fromRoute('id');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $isbn10 = $isbn->get10();
             if (!empty($isbn10)) {
                 $row->ISBN = $isbn10;
@@ -643,6 +646,9 @@ class EditEditionController extends AbstractBase
             $row = $table->createRow();
             $row->Edition_ID = $this->params()->fromRoute('id');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $row->OCLC_Number = $this->params()->fromPost('oclc_number');
             if (empty($row->OCLC_Number)) {
                 return $this->jsonDie('OCLC number must not be empty.');
@@ -676,6 +682,9 @@ class EditEditionController extends AbstractBase
             $row = $table->createRow();
             $row->Edition_ID = $this->params()->fromRoute('id');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $row->Product_Code = $this->params()->fromPost('code');
             if (empty($row->Product_Code)) {
                 return $this->jsonDie('Product code must not be empty.');
