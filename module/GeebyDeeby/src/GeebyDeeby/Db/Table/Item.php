@@ -113,7 +113,7 @@ class Item extends Gateway
             $select->join(
                 array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
                 array(
-                    'Position',
+                    'Volume', 'Position', 'Replacement_Number',
                     'Edition_ID' => new Expression(
                         'min(?)', array('eds.Edition_ID'),
                         array(Expression::TYPE_IDENTIFIER)
@@ -130,10 +130,10 @@ class Item extends Gateway
                 array('Item_AltName'), Select::JOIN_LEFT
             );
             $select->order(
-                array('mt.Material_Type_Name', 'Position', 'Item_Name')
+                array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', 'Item_Name')
             );
             $select->group(
-                array('Items.Item_ID', 'Position', 'Items.Material_Type_ID')
+                array('Items.Item_ID', 'Volume', 'Position', 'Replacement_Number', 'Items.Material_Type_ID')
             );
             $select->where->equalTo('eds.Series_ID', $seriesID);
             if ($topOnly) {

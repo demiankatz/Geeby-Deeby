@@ -60,14 +60,14 @@ class ItemsTags extends Gateway
             );
             $select->join(
                 array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID',
-                array('Position')
+                array('Volume', 'Position', 'Replacement_Number')
             );
             $select->join(
                 array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
             );
-            $select->group(array('i.Item_ID', 'eds.Position'));
+            $select->group(array('i.Item_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number'));
             $select->order(
-                array('Series_Name', 's.Series_ID', 'eds.Position', 'Item_Name')
+                array('Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Item_Name')
             );
             $select->where->equalTo('Tag_ID', $tagID);
         };

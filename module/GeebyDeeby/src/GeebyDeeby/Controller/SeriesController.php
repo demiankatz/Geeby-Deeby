@@ -88,7 +88,7 @@ class SeriesController extends AbstractBase
             );
             $select->where->isNull('ec.Person_ID');
             $select->where(['Series_ID' => $seriesId]);
-            $select->order('Editions.Position');
+            $select->order('Editions.Volume, Editions.Position, Editions.Replacement_Number');
         };
         $view->missingCredits = $editions->select($callback)->toArray();
 
@@ -107,7 +107,7 @@ class SeriesController extends AbstractBase
             $select->where->isNull('d.Year');
             $select->where->isNull('Editions.Parent_Edition_ID');
             $select->where(['Series_ID' => $seriesId]);
-            $select->order('Editions.Position');
+            $select->order('Editions.Volume, Editions.Position, Editions.Replacement_Number');
         };
         $view->missingDates = $editions->select($callback)->toArray();
 
@@ -146,8 +146,14 @@ class SeriesController extends AbstractBase
                     'Edition_ID' => new Expression(
                         'min(?)', ['Edition_ID'], [Expression::TYPE_IDENTIFIER]
                     ),
+                    'Vol' => new Expression(
+                        'min(?)', ['Volume'], [Expression::TYPE_IDENTIFIER]
+                    ),
                     'Pos' => new Expression(
                         'min(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'Rep' => new Expression(
+                        'min(?)', ['Replacement_Number'], [Expression::TYPE_IDENTIFIER]
                     ),
                     'Total' => new Expression(
                         'count(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
@@ -155,38 +161,59 @@ class SeriesController extends AbstractBase
                 ]
             );
             $select->where->isNull('Parent_Edition_ID');
-            $select->group('Position');
-            $select->order('Position');
+            $select->group(['Volume', 'Position', 'Replacement_Number']);
+            $select->order(['Volume', 'Position', 'Replacement_Number']);
         };
         $results = $editions->select($callback)->toArray();
-        $last = $min = $max = $total = 0;
-        $dupes = $missing = [];
+        $vol = $lastVol = $minVol = $maxVol = $lastPos = $overallTotal = 0;
+        $dupes = $missing = $missingVol = $min = $max = $total = [];
         foreach ($results as $current) {
-            $pos = $current['Pos'];
-            $total += $current['Total'];
-            if ($current['Total'] > 1) {
-                $dupes[] = $pos;
-            }
-            if ($last > 0) {
-                for ($i = $last + 1; $i < $pos; $i++) {
-                    $missing[] = $i;
+            if ($current['Vol'] > $vol) {
+                $vol = $current['Vol'];
+                $lastPos = 0;
+                if ($lastVol > 0) {
+                    for ($i = $lastVol + 1; $i < $vol; $i++) {
+                        $missingVol[] = $i;
+                    }
                 }
             }
-            if ($min == 0) {
-                $min = $pos;
+            $pos = $current['Pos'];
+            $overallTotal += $current['Total'];
+            $total[$vol] = isset($total[$vol]) ? $total[$vol] + $current['Total'] : $current['Total'];
+            if ($current['Total'] > 1) {
+                $dupes[$vol][$pos][] = $current['Rep'];
             }
-            if ($pos > $max) {
-                $max = $pos;
+            if ($lastPos > 0) {
+                for ($i = $lastPos + 1; $i < $pos; $i++) {
+                    $missing[$vol][] = $i;
+                }
             }
-            $last = $pos;
+            if (!isset($min[$vol])) {
+                $min[$vol] = $pos;
+            }
+            if (!isset($max[$vol]) || $pos > $max[$vol]) {
+                $max[$vol] = $pos;
+            }
+            if ($minVol == 0) {
+                $minVol = $vol;
+            }
+            if ($maxVol < $vol) {
+                $maxVol = $vol;
+            }
+            $lastPos = $pos;
+            $lastVol = $vol;
         }
         $view->itemStats = array(
             'Different' =>  count($results),
             'Start' => $min,
             'End' => $max,
-            'Total' => $total,
+            'StartVol' => $minVol,
+            'EndVol' => $maxVol,
+            'Total' => $overallTotal,
+            'TotalByVol' => $total,
             'Dupes' => $dupes,
             'Missing' => $missing,
+            'MissingVol' => $missingVol,
         );
 
         return $view;

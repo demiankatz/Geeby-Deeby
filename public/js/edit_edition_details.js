@@ -6,7 +6,9 @@ function saveEdition()
     var editionID = $('#Edition_ID').val();
     var editionName = $('#Edition_Name').val();
     var desc = $('#Edition_Description').val();
+    var vol = $('#Volume').val();
     var pos = $('#Position').val();
+    var rep = $('#Replacement_Number').val();
     var itemID = $('#Edition_Item_ID').val();
     var seriesID = $('#Series_ID').val();
     var len = $('#Edition_Length').val();
@@ -32,7 +34,9 @@ function saveEdition()
         desc: desc,
         item_id: itemID,
         series_id: seriesID,
+        volume: vol,
         position: pos,
+        replacement_number: rep,
         len: len,
         endings: endings,
         parent_edition_id: parent,

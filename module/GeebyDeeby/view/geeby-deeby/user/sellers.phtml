@@ -22,7 +22,7 @@
       </a></h3>
     <? endif; ?>
     <p class="extraitem">
-      <?=$extra['Position'] > 0 ? $this->escapeHtml($extra['Position']) . '. ' : ''?>
+      <?=$this->escapeHtml($this->formatItemNumber($extra))?>
       <a href="<?=$this->url('item', array('id' => $extra['Item_ID']))?>">
         <?=$this->escapeHtml($this->fixtitle(isset($extra['Item_AltName']) && !empty($extra['Item_AltName']) ? $extra['Item_AltName'] : $extra['Item_Name']))?>
       </a>

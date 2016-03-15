@@ -1177,6 +1177,7 @@ return array(
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
             'firstLetterMenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
+            'formatitemnumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
         ),

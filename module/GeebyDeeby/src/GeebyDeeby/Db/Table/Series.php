@@ -127,7 +127,7 @@ class Series extends Gateway
         $callback = function ($select) use ($itemID, $includePosition) {
             $select->join(
                 array('eds' => 'Editions'), 'Series.Series_ID = eds.Series_ID',
-                $includePosition ? array('Position') : array()
+                $includePosition ? array('Volume', 'Position', 'Replacement_Number') : array()
             );
             $select->join(
                 array('sat' => 'Series_AltTitles'),
@@ -136,7 +136,9 @@ class Series extends Gateway
             );
             $fields = array('Series_Name', 'Series_ID');
             if ($includePosition) {
+                $fields[] = 'Volume';
                 $fields[] = 'Position';
+                $fields[] = 'Replacement_Number';
             }
             $select->order($fields);
             $select->group($fields);
