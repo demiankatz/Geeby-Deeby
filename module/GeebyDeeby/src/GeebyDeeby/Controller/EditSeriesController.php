@@ -91,7 +91,8 @@ class EditSeriesController extends AbstractBase
         );
         $view = $this->handleGenericItem('series', $assignMap, 'series');
         $seriesId = isset($view->seriesObj->Series_ID)
-            ? $view->seriesObj->Series_ID : $view->affectedRow->Series_ID;
+            ? $view->seriesObj->Series_ID
+            : (isset($view->affectedRow->Series_ID) ? $view->affectedRow->Series_ID : null);
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost() && $this->params()->fromPost('attribs')) {
