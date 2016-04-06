@@ -6,7 +6,7 @@
     <? foreach ($item_list as $current): ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="order<?=$current['Edition_ID']?>" />
+          <input class="number" type="text" value="<?=($current['Volume'] > 0 ? $this->escapeHtml($current['Volume'] . ',') : '') . $this->escapeHtml($current['Position'])?>" id="order<?=$current['Edition_ID']?>" />
           <button onclick="changeSeriesOrder(<?=$current['Edition_ID']?>);">Set</button>
         </td>
         <td>

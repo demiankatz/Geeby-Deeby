@@ -25,30 +25,26 @@
 <? if (empty($missingCredits)): ?>
   <p>None.</p>
 <? else: ?>
-  <? foreach ($missingCredits as $current): ?>
-    <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
-      <? if (!empty($current['Position'])): ?>
-        #<?=$this->escapeHtml($current['Position'])?>
-      <? else: ?>
-        <?=$this->escapeHtml($this->fixTitle($current['Item_Name']))?>
-      <? endif; ?>
-    </a>
+  <? $parts = []; foreach ($missingCredits as $current): ?>
+    <? $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
+           . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
+           . '</a>';
+    ?>
   <? endforeach; ?>
+  <?=implode(', ', $parts)?>
 <? endif; ?>
 
 <h2>Missing Dates</h2>
 <? if (empty($missingDates)): ?>
   <p>None.</p>
 <? else: ?>
-  <? foreach ($missingDates as $current): ?>
-    <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
-      <? if (!empty($current['Position'])): ?>
-        #<?=$this->escapeHtml($current['Position'])?>
-      <? else: ?>
-        <?=$this->escapeHtml($this->fixTitle($current['Item_Name']))?>
-      <? endif; ?>
-    </a>
+  <? $parts = []; foreach ($missingDates as $current): ?>
+    <? $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
+           . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
+           . '</a>';
+    ?>
   <? endforeach; ?>
+  <?=implode(', ', $parts)?>
 <? endif; ?>
 
 <h2>Statistics</h2>
@@ -65,14 +61,41 @@
 <? if (!empty($itemStats)): ?>
   <p>Series contains <?=$this->escapeHtml($itemStats['Total'])?>
   total items representing <?=$this->escapeHtml($itemStats['Different'])?>
-  different numbers ranging from <?=$this->escapeHtml($itemStats['Start'])?>
-  to <?=$this->escapeHtml($itemStats['End'])?>.</p>
-  <? if (!empty($itemStats['Dupes'])): ?>
-    <p>Duplicate numbers: <?=$formatRanges($itemStats['Dupes'])?></p>
+  different positions.</p>
+
+  <? if ($itemStats['EndVol'] == 0): ?>
+    <p>Series does not use volume numbering.</p>
+  <? else: ?>
+    <p>Series contains volume numbers from <?=$this->escapeHtml($itemStats['StartVol'])?> to <?=$this->escapeHtml($itemStats['EndVol'])?>.</p>
+    <? if (!empty($itemStats['MissingVol'])): ?>
+      <p>Missing volumes: <?=$formatRanges($itemStats['MissingVol'])?></p>
+    <? endif; ?>
   <? endif; ?>
-  <? if (!empty($itemStats['Missing'])): ?>
-    <p>Missing numbers: <?=$formatRanges($itemStats['Missing'])?></p>
-  <? endif; ?>
+
+  <? for ($v = 0; $v <= $itemStats['EndVol']; $v++): ?>
+    <? if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol'])) { continue; } ?>
+    <? if ($v > 0): ?><h3>Volume <?=$this->escapeHtml($v)?></h3><? endif; ?>
+    <? if ($v == 0 && $itemStats['EndVol'] > $v): ?><h3>No Volume Specified</h3><? endif; ?>
+    <?=$this->escapeHtml($itemStats['TotalByVol'][$v])?> item(s) numbered from <?=$this->escapeHtml($itemStats['Start'][$v])?> to <?=$this->escapeHtml($itemStats['End'][$v])?>.</p>
+      <? if (!empty($itemStats['Dupes'][$v])): ?>
+        <p>
+          Duplicate numbers:
+          <? $dupeList = []; foreach ($itemStats['Dupes'][$v] as $no => $repArr): ?>
+            <? $currentDupe = $this->escapeHtml($no); ?>
+            <? foreach ($repArr as $rep): ?>
+              <? if ($rep > 0): ?>
+                <? $currentDupe .= ' (replacement no. ' . $this->escapeHtml($rep) . ')'; ?>
+              <? endif; ?>
+            <? endforeach; ?>
+            <? $dupeList[] = $currentDupe; ?>
+          <? endforeach; ?>
+          <?=implode(', ', $dupeList)?>
+        </p>
+      <? endif; ?>
+      <? if (!empty($itemStats['Missing'][$v])): ?>
+        <p>Missing numbers: <?=$formatRanges($itemStats['Missing'][$v])?></p>
+      <? endif; ?>
+  <? endfor; ?>
 <? else: ?>
   <p>No item information.</p>
 <? endif; ?>

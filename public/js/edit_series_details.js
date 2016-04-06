@@ -499,13 +499,21 @@ function removeFromSeries(itemID)
 function changeSeriesOrder(editionID)
 {
     var seriesID = $('#Series_ID').val();
-    var pos = parseInt($('#order' + editionID).val(), 10);
+    var raw = $('#order' + editionID).val().split(',');
+    var pos;
+    var vol = 0;
+    if (raw.length < 2) {
+        pos = parseInt(raw[0], 10);
+    } else {
+        vol = parseInt(raw[0], 10);
+        pos = parseInt(raw[1], 10);
+    }
 
     // Validate user selection:
     if (isNaN(editionID)) {
         alert("Please choose a valid item.");
         return;
-    } else if (isNaN(pos)) {
+    } else if (isNaN(pos) || isNaN(vol)) {
         alert("Please enter a valid number.");
         return;
     }
@@ -514,7 +522,7 @@ function changeSeriesOrder(editionID)
     var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/ItemOrder';
     var details = {
         edition_id: editionID,
-        pos: pos
+        pos: vol + "," + pos
     };
     $.post(url, details, function(data) {
         // If save was successful...

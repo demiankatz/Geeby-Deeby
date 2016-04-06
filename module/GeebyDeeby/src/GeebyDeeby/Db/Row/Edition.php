@@ -177,11 +177,13 @@ class Edition extends ServiceLocatorAwareGateway
     }
 
     /**
-     * Get previous edition in series.
+     * Support function for getNextInSeries / getPreviousInSeries.
+     *
+     * @param bool $next Get next (true) or previous (false)?
      *
      * @return Edition|null
      */
-    public function getNextInSeries()
+    protected function getAdjacentInSeries($next)
     {
         if (empty($this->Series_ID)) {
             return null;
@@ -189,24 +191,33 @@ class Edition extends ServiceLocatorAwareGateway
         $table = $this->getDbTable('edition');
         $edition = $this->Edition_ID;
         $series = $this->Series_ID;
+        $vol = $this->Volume;
         $pos = $this->Position;
+        $rep = $this->Replacement_Number;
         $name = $this->Edition_Name;
-        $callback = function ($select) use ($edition, $series, $name, $pos) {
+        $callback = function ($select) use ($edition, $series, $name, $vol, $pos, $rep, $next) {
             $select->where->equalTo('Series_ID', $series);
             $select->where->notEqualTo('Edition_ID', $edition);
+            $fields = array('Volume', 'Position', 'Replacement_Number', 'Edition_Name', 'Edition_ID');
+            $vals = array($vol, $pos, $rep, $name, $edition);
             $nest = $select->where->NEST;
-            $nest->greaterThan('Position', $pos);
-            $nest2 = $nest->OR->NEST;
-            $nest2->equalTo('Position', $pos);
-            $nest2->greaterThan('Edition_Name', $name);
-            $nest2->UNNEST;
-            $nest3 = $nest->OR->NEST;
-            $nest3->equalTo('Position', $pos);
-            $nest3->equalTo('Edition_Name', $name);
-            $nest3->greaterThan('Edition_ID', $edition);
-            $nest3->UNNEST;
+            for ($i = 0; $i < count($fields); $i++) {
+                $clause = $nest->OR->NEST;
+                for ($j = 0; $j <= $i; $j++) {
+                    if ($j == $i) {
+                        if ($next) {
+                            $clause->greaterThan($fields[$j], $vals[$j]);
+                        } else {
+                            $clause->lessThan($fields[$j], $vals[$j]);
+                        }
+                    } else {
+                        $clause->equalTo($fields[$j], $vals[$j]);
+                    }
+                }
+                $clause->UNNEST;
+            }
             $nest->UNNEST;
-            $select->order(array('Position', 'Edition_Name', 'Edition_ID'));
+            $select->order($next ? $fields : array_map(function ($i) { return "$i DESC"; }, $fields));
             $select->limit(1);
         };
         $results = $table->select($callback);
@@ -218,38 +229,19 @@ class Edition extends ServiceLocatorAwareGateway
      *
      * @return Edition|null
      */
+    public function getNextInSeries()
+    {
+        return $this->getAdjacentInSeries(true);
+    }
+
+    /**
+     * Get previous edition in series.
+     *
+     * @return Edition|null
+     */
     public function getPreviousInSeries()
     {
-        if (empty($this->Series_ID)) {
-            return null;
-        }
-        $table = $this->getDbTable('edition');
-        $edition = $this->Edition_ID;
-        $series = $this->Series_ID;
-        $pos = $this->Position;
-        $name = $this->Edition_Name;
-        $callback = function ($select) use ($edition, $series, $name, $pos) {
-            $select->where->equalTo('Series_ID', $series);
-            $select->where->notEqualTo('Edition_ID', $edition);
-            $nest = $select->where->NEST;
-            $nest->lessThan('Position', $pos);
-            $nest2 = $nest->OR->NEST;
-            $nest2->equalTo('Position', $pos);
-            $nest2->lessThan('Edition_Name', $name);
-            $nest2->UNNEST;
-            $nest3 = $nest->OR->NEST;
-            $nest3->equalTo('Position', $pos);
-            $nest3->equalTo('Edition_Name', $name);
-            $nest3->lessThan('Edition_ID', $edition);
-            $nest3->UNNEST;
-            $nest->UNNEST;
-            $select->order(
-                array('Position DESC', 'Edition_Name DESC', 'Edition_ID DESC')
-            );
-            $select->limit(1);
-        };
-        $results = $table->select($callback);
-        return count($results) > 0 ? $results->current() : null;
+        return $this->getAdjacentInSeries(false);
     }
 
     /**

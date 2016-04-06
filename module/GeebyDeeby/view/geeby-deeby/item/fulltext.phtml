@@ -15,7 +15,7 @@
       </a></h2>
     <? endif; ?>
     <span class="item">
-      <?=$current['Position'] > 0 ? $this->escapeHtml($current['Position']) . '. ' : ''?>
+      <?=$this->escapeHtml($this->formatItemNumber($current))?>
       <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
         <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
       </a>

@@ -127,7 +127,7 @@
       <? $matType = $item['Material_Type_Plural_Name'] ?>
       <h2><?=$this->escapeHtml($matType)?></h2>
     <? endif; ?>
-    <?=$item['Position'] > 0 ? $item['Position'] . '. ' : ''?>
+    <?=$this->escapeHtml($this->formatItemNumber($item))?>
     <a href="<?=$this->url('item', array('id' => $item['Item_ID']))?>">
       <?=$this->escapeHtml($this->fixtitle(isset($item['Item_AltName']) && !empty($item['Item_AltName']) ? $item['Item_AltName'] : $item['Item_Name']))?>
     </a>

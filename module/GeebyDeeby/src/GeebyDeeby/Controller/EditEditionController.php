@@ -62,7 +62,9 @@ class EditEditionController extends AbstractBase
             'desc' => 'Edition_Description',
             'item_id' => 'Item_ID',
             'series_id' => 'Series_ID',
+            'volume' => 'Volume',
             'position' => 'Position',
+            'replacement_number' => 'Replacement_Number',
             'len' => 'Edition_Length',
             'endings' => 'Edition_Endings',
             'parent_edition_id' => 'Parent_Edition_ID',
@@ -112,8 +114,10 @@ class EditEditionController extends AbstractBase
                 ->getFullTextForEdition($view->edition['Edition_ID']);
             $view->fullTextSources = $this->getDbTable('fulltextsource')
                 ->getList();
-            $view->next = $view->editionObj->getNextInSeries();
-            $view->previous = $view->editionObj->getPreviousInSeries();
+            if (is_object($view->editionObj)) {
+                $view->next = $view->editionObj->getNextInSeries();
+                $view->previous = $view->editionObj->getPreviousInSeries();
+            }
             $view->item_list = $itemTable
                 ->getItemsForEdition($view->edition['Edition_ID']);
         }

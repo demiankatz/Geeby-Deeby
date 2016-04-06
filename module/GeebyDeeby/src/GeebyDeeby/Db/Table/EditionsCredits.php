@@ -126,7 +126,7 @@ class EditionsCredits extends Gateway
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Credits.Edition_ID = eds.Edition_ID',
-                array('Edition_Name', 'Position')
+                array('Edition_Name', 'Volume', 'Position', 'Replacement_Number')
             );
             $select->join(
                 array('iat' => 'Items_AltTitles'),
@@ -149,7 +149,7 @@ class EditionsCredits extends Gateway
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $fields = array(
-                'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Position',
+                'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
                 'Item_Name', 'Note'
             );
             $select->order($fields);
