@@ -46,11 +46,14 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     const ROLE_AUTHOR = 1;
     const TAGTYPE_LC = 1;
 
-    protected $settings;
+    protected $fedora;
+    protected $solr;
 
     public function __construct()
     {
-        $this->settings = json_decode(file_get_contents(__DIR__ . '/settings.json'));
+        $settings = json_decode(file_get_contents(__DIR__ . '/settings.json'));
+        $this->solr = new \GeebyDeebyLocal\Ingest\SolrHarvester($settings);
+        $this->fedora = new \GeebyDeebyLocal\Ingest\FedoraHarvester($settings->modsUrl, $this->solr);
     }
 
     /**
@@ -60,7 +63,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function existingAction()
     {
-        $editions = $this->getExistingEditionsFromSolr();
+        $editions = $this->solr->getExistingEditions();
         $total = count($editions);
         $success = 0;
         foreach ($editions as $edition) {
@@ -89,7 +92,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             Console::writeLine("Cannot find series match for $series");
             return;
         }
-        $entries = $this->getSeriesEntriesFromSolr($series);
+        $entries = $this->solr->getSeriesEntries($series);
         $total = count($entries);
         $success = 0;
         foreach ($entries as $pid) {
@@ -107,7 +110,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     protected function loadSeriesEntry($pid, $seriesObj)
     {
         Console::writeLine("Loading series entry (pid = $pid)");
-        $rawMods = $this->getModsForPid($pid, '/tmp/gbdb_pid_' . md5($pid));
+        $rawMods = $this->fedora->getModsForPid($pid);
         if (!$rawMods) {
             Console::writeLine('Could not retrieve MODS.');
             return false;
@@ -149,7 +152,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     protected function loadExistingEdition($edition)
     {
         Console::writeLine("Loading existing edition (id = {$edition})");
-        $rawMods = $this->getModsForEdition('https://dimenovels.org/Edition/' . $edition);
+        $rawMods = $this->fedora->getModsForEdition('https://dimenovels.org/Edition/' . $edition);
         if (!$rawMods) {
             Console::writeLine('Could not retrieve MODS.');
             return false;
@@ -1032,87 +1035,5 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             $series['Series_AltName'] = $tmpRow['Series_AltName'];
         }
         return $series;
-    }
-
-    protected function querySolr($query, $fl)
-    {
-        $url = (string)$this->settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
-            . '&rows=10000&fl=' . urlencode($fl);
-        $cache = '/tmp/gbdb_' . md5("$query-$fl");
-        if (!file_exists($cache)) {
-            Console::writeLine("Querying {$this->settings->solrUrl} for $query...");
-            $solrResponse = file_get_contents($url);
-            file_put_contents($cache, $solrResponse);
-        } else {
-            $solrResponse = file_get_contents($cache);
-        }
-        return json_decode($solrResponse);
-    }
-
-    protected function getExistingEditionsFromSolr()
-    {
-        $query = $this->settings->solrQueryField . ':"https://dimenovels.org/*"';
-        $field = $this->settings->solrQueryField;
-        $solr = $this->querySolr($query, $field);
-        $editions = [];
-        foreach ($solr->response->docs as $current) {
-            $parts = explode('/', $current->{$this->settings->solrQueryField});
-            $currentEd = array_pop($parts);
-            $editions[] = $currentEd;
-        }
-        return $editions;
-    }
-
-    protected function getSeriesEntriesFromSolr($series)
-    {
-        $query = $this->settings->solrSeriesField . ':"' . addcslashes($series, '"') . '"';
-        $field = $this->settings->solrIdField;
-        $solr = $this->querySolr($query, $field);
-        $retVal = [];
-        foreach ($solr->response->docs as $doc) {
-            $pid = isset($doc->$field) ? $doc->$field : false;
-            if ($pid) {
-                $retVal[] = $pid;
-            }
-        }
-        return $retVal;
-    }
-
-    protected function getModsForPid($pid, $cache = false)
-    {
-        if (!$pid) {
-            return false;
-        }
-
-        // Retrieve MODS from repository:
-        if ($cache && file_exists($cache)) {
-            return file_get_contents($cache);
-        }
-        $modsUrl = sprintf($this->settings->modsUrl, $pid);
-        Console::writeLine("Retrieving $modsUrl...");
-        $mods = file_get_contents($modsUrl);
-        if ($cache && $mods) {
-            file_put_contents($cache, $mods);
-        }
-        return $mods;
-    }
-
-    protected function getModsForEdition($edition)
-    {
-        $cache = '/tmp/gbdb_' . md5($edition);
-        if (file_exists($cache)) {
-            return file_get_contents($cache);
-        }
-
-        // Get MODS identifier from Solr:
-        $query = $this->settings->solrQueryField . ':"' . $edition . '"';
-        $field = $this->settings->solrIdField;
-        $url = (string)$this->settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
-            . '&fl=' . urlencode($field);
-        Console::writeLine("Querying {$this->settings->solrUrl} for $query...");
-        $solr = json_decode(file_get_contents($url));
-        $pid = isset($solr->response->docs[0]->$field)
-            ? $solr->response->docs[0]->$field : false;
-        return $this->getModsForPid($pid, $cache);
     }
 }
