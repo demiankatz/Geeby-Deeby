@@ -24,6 +24,26 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
+                'harvest-existing' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'harvest existing <dir>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'harvestexisting',
+                        )
+                    )
+                ),
+                'harvest-series' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'harvest series <series> <dir>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'harvestseries',
+                        )
+                    )
+                ),
                 'ingest-existing' => array(
                     'type' => 'simple',
                     'options' => array(

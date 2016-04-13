@@ -57,6 +57,69 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
+     * Harvest existing editions to a directory for later processing.
+     *
+     * @return mixed
+     */
+    public function harvestexistingAction()
+    {
+        $dir = rtrim($this->params()->fromRoute('dir'), '/');
+        if (!is_dir($dir)) {
+            if (!mkdir($dir)) {
+                Console::writeLine("Cannot create directory '$dir'");
+                return;
+            }
+        }
+        $count = 0;
+        foreach ($this->solr->getExistingEditions() as $edition) {
+            $rawMods = $this->fedora->getModsForEdition('https://dimenovels.org/Edition/' . $edition);
+            if (!$rawMods) {
+                Console::writeLine("Could not retrieve MODS for $edition.");
+                return;
+            }
+            file_put_contents($dir . '/' . $count . '.mods', $rawMods);
+            $count++;
+        }
+        file_put_contents($dir . '/job.json', ['type' => 'existing', 'count' => $count]);
+        Console::writeLine("Successfully harvested $count records.");
+    }
+
+    /**
+     * Harvest records from a series to a directory for later processing.
+     *
+     * @return mixed
+     */
+    public function harvestseriesAction()
+    {
+        $dir = rtrim($this->params()->fromRoute('dir'), '/');
+        if (!is_dir($dir)) {
+            if (!mkdir($dir)) {
+                Console::writeLine("Cannot create directory '$dir'");
+                return;
+            }
+        }
+        $series = $this->params()->fromRoute('series');
+        $seriesObj = $this->getSeriesByTitle($series);
+        if (!$seriesObj) {
+            Console::writeLine("Cannot find series match for $series");
+            return;
+        }
+        $entries = $this->solr->getSeriesEntries($series);
+        $count = 0;
+        foreach ($entries as $pid) {
+            $rawMods = $this->fedora->getModsForPid($pid);
+            if (!$rawMods) {
+                Console::writeLine("Could not retrieve MODS for $pid.");
+                return;
+            }
+            file_put_contents($dir . '/' . $count . '.mods', $rawMods);
+            $count++;
+        }
+        file_put_contents($dir . '/job.json', ['type' => 'series', 'id' => $seriesObj->Series_ID, 'count' => $count]);
+        Console::writeLine("Successfully harvested $count records.");
+    }
+
+    /**
      * Ingest existing editions (by matching URIs) action.
      *
      * @return mixed
