@@ -531,7 +531,7 @@ class DatabaseIngester
         foreach ($existingTags as $current) {
             $existingIds[] = $current->Tag_ID;
         }
-        $missing = array_diff($subjectIds, $existingIds);
+        $missing = array_unique(array_diff($subjectIds, $existingIds));
         if (count($missing) > 0) {
             Console::writeLine("Adding subject IDs: " . implode(', ', $missing));
             foreach ($missing as $id) {
