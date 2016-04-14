@@ -414,6 +414,12 @@ class DatabaseIngester
         return true;
     }
 
+    protected function extractIdFromDimeNovelsUri($uri, $type)
+    {
+        $parts = explode('://dimenovels.org/' . $type . '/', $uri);
+        return isset($parts[1]) ? $parts[1] : false;
+    }
+
     protected function subjectUrisToIds($subjects)
     {
         $tagsUris = $this->getDbTable('tagsuris');
@@ -421,10 +427,18 @@ class DatabaseIngester
 
         $ids = [];
         foreach ($subjects as $uri => $text) {
-            $uriLookup = $tagsUris->getTagsForURI($uri);
-            $id = false;
-            foreach ($uriLookup as $id) {
-                break;
+            if ($tagId = $this->extractIdFromDimeNovelsUri($uri, 'Tag')) {
+                $id = $tags->getByPrimaryKey($tagId);
+                if (!$this->fuzzyCompare($text, $id->Tag)) {
+                    Console::writeLine("FATAL: Tag mismatch: $uri, '$text'");
+                    return false;
+                }
+            } else {
+                $uriLookup = $tagsUris->getTagsForURI($uri);
+                $id = false;
+                foreach ($uriLookup as $id) {
+                    break;
+                }
             }
             if ($id) {
                 $ids[$uri] = $id->Tag_ID;
@@ -826,13 +840,9 @@ class DatabaseIngester
 
     protected function getPersonIdForUri($uri)
     {
-        $base = 'https://dimenovels.org/Person/';
-        if (substr($uri, 0, strlen($base)) == $base) {
-            $id = str_replace($base, '', $uri);
-        } else {
+        if (!($id = $this->extractIdFromDimeNovelsUri($uri, 'Person'))) {
             $table = $this->getDbTable('peopleuris');
             $result = $table->select(['URI' => $uri]);
-            $id = false;
             foreach ($result as $curr) {
                 $id = $curr['Person_ID'];
             }
