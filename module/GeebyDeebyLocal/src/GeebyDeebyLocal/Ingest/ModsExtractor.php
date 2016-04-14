@@ -197,8 +197,19 @@ class ModsExtractor
             $matches = $mods->xpath($path . '|mods:subject/' . $path);
             foreach ($matches as $current) {
                 $uri = $current->xpath('@valueURI');
+                $value = (string)$current;
+                if (empty($value)) {
+                    
+                }
+                $value = trim($value);
+                if (empty($value)) {
+                    $parts = $current->xpath('mods:namePart');
+                    foreach ($parts as $namePart) {
+                        $value .= (string)$namePart . ' ';
+                    }
+                }
                 if (isset($uri[0])) {
-                    $results[(string)$uri[0]] = (string)$current;
+                    $results[(string)$uri[0]] = trim($value);
                 }
             }
         }
