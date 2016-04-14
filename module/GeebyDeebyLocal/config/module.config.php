@@ -44,6 +44,16 @@ return array(
                         )
                     )
                 ),
+                'ingest-directory' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'ingest directory <dir>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'directory',
+                        )
+                    )
+                ),
                 'ingest-existing' => array(
                     'type' => 'simple',
                     'options' => array(
