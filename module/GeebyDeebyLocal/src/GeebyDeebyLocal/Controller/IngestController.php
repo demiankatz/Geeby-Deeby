@@ -80,7 +80,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             file_put_contents($dir . '/' . $count . '.mods', $rawMods);
             $count++;
         }
-        file_put_contents($dir . '/job.json', ['type' => 'existing', 'count' => $count]);
+        file_put_contents($dir . '/job.json', json_encode(['type' => 'existing', 'count' => $count]));
         Console::writeLine("Successfully harvested $count records.");
     }
 
@@ -115,7 +115,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             file_put_contents($dir . '/' . $count . '.mods', $rawMods);
             $count++;
         }
-        file_put_contents($dir . '/job.json', ['type' => 'series', 'id' => $seriesObj->Series_ID, 'count' => $count]);
+        file_put_contents($dir . '/job.json', json_encode(['type' => 'series', 'id' => $seriesObj->Series_ID, 'count' => $count]));
         Console::writeLine("Successfully harvested $count records.");
     }
 
