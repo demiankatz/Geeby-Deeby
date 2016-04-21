@@ -42,6 +42,7 @@ class DatabaseIngester
     // constant values drawn from dimenovels.org database:
     const FULLTEXT_SOURCE_NIU = 10;
     const MATERIALTYPE_WORK = 1;
+    const MATERIALTYPE_ISSUE = 2;
     const PREDICATE_OWL_SAMEAS = 2;
     const ROLE_AUTHOR = 1;
     const TAGTYPE_LC = 1;
@@ -99,22 +100,42 @@ class DatabaseIngester
     protected function ingestExisting($details, $editionObj)
     {
         $series = $this->getSeriesForEdition($editionObj);
+        $item = $this->getItemForEdition($editionObj);
 
         if (!$this->validateSeries($details, $editionObj, $series)) {
             Console::writeLine('Series validation failed.');
             return false;
         }
 
-        $childDetails = $this->synchronizeChildren($editionObj, $details['contents']);
-        if (!$childDetails) {
+        if ($item['Material_Type_ID'] == self::MATERIALTYPE_ISSUE) {
+            $childDetails = $this->synchronizeChildren($editionObj, $details['contents']);
+            if (!$childDetails) {
+                return false;
+            }
+            $childDetails = $this->addAuthorDetails($childDetails);
+            if (!$childDetails) {
+                return false;
+            }
+            $details['contents'] = $childDetails;
+            return $this->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
+        } else if ($item['Material_Type_ID'] == self::MATERIALTYPE_WORK) {
+            if (count($details['contents']) != 1) {
+                Console::writeLine("FATAL: too many contents for single-part item.");
+                return false;
+            }
+            if (!$this->checkItemTitles($item, $details['contents'][0])) {
+                Console::writeLine("FATAL: Title mismatch '{$details['contents'][0]['title']}' vs. '{$item['Item_Name']}' for item {$item['Item_ID']}.");
+                return false;
+            }
+            $db = ['item' => $item, 'edition' => $editionObj->toArray()];
+            if (!$this->updateWorkInDatabase($details['contents'][0], $db)) {
+                return false;
+            }
+            return $this->setTopLevelDetails($editionObj, $series, $details);
+        } else {
+            Console::writeLine("FATAL: unexpected material type ID {$item['Material_Type_ID']}.");
             return false;
         }
-        $childDetails = $this->addAuthorDetails($childDetails);
-        if (!$childDetails) {
-            return false;
-        }
-        $details['contents'] = $childDetails;
-        return $this->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
     }
 
     /**
@@ -946,23 +967,54 @@ class DatabaseIngester
         return false;
     }
 
+    /**
+     * Normalize a string for fuzzy comparison.
+     *
+     * @param string $str String to normalize.
+     *
+     * @return bool
+     */     
     protected function fuzz($str)
     {
         $regex = '/[^a-z0-9]/';
         return preg_replace($regex, '', strtolower($str));
     }
 
+    /**
+     * Are $str1 and $str2 the same using fuzzy comparison?
+     *
+     * @param string $str1 First string to compare
+     * @param string $str2 Second string to compare
+     *
+     * @return bool
+     */
     protected function fuzzyCompare($str1, $str2)
     {
         //Console::writeLine("Comparing {$str1} to {$str2}...");
         return $this->fuzz($str1) == $this->fuzz($str2);
     }
 
+    /**
+     * Does $haystack contain $needle (using fuzzy comparison)?
+     *
+     * @param string $haystack Haystack
+     * @param string $needle   Needle
+     *
+     * @return bool
+     */
     protected function fuzzyContains($haystack, $needle)
     {
         return strstr($this->fuzz($haystack), $this->fuzz($needle));
     }
 
+    /**
+     * Do a fuzzy compare to validate an item title.
+     *
+     * @param array  $item  Item summary array (see getItemForEdition)
+     * @param string $title Title from incoming data, to be checked.
+     *
+     * @return bool
+     */
     protected function checkItemTitle($item, $title)
     {
         $itemTitle = (isset($item['Item_AltName']) && !empty($item['Item_AltName']))
@@ -970,6 +1022,16 @@ class DatabaseIngester
         return $this->fuzzyCompare($title, $itemTitle);
     }
 
+    /**
+     * Do a fuzzy compare to validate if any of the incoming titles match. Checks
+     * main title and alt titles.
+     *
+     * @param array $item           Item summary array (see getItemForEdition)
+     * @param array $currentContent Incoming data to be checked (must contain 'title'
+     * key; may contain 'altTitles' key)
+     *
+     * @return bool
+     */
     protected function checkItemTitles($item, $currentContent)
     {
         if ($this->checkItemTitle($item, $currentContent['title'])) {
@@ -985,6 +1047,14 @@ class DatabaseIngester
         return false;
     }
 
+    /**
+     * Do a fuzzy compare to validate a series title.
+     *
+     * @param array  $series Series summary array (see getSeriesForEdition)
+     * @param string $title  Title from incoming data, to be checked.
+     *
+     * @return bool
+     */
     protected function checkSeriesTitle($series, $title)
     {
         $seriesTitle = (isset($series['Series_AltName']) && !empty($series['Series_AltName']))
@@ -992,6 +1062,13 @@ class DatabaseIngester
         return $this->fuzzyCompare($title, $seriesTitle);
     }
 
+    /**
+     * Given an edition row object, return a summary item array.
+     *
+     * @param object $rowObj Edition row
+     *
+     * @return array
+     */
     protected function getItemForEdition($rowObj)
     {
         $itemTable = $this->getDbTable('item');
@@ -1007,6 +1084,13 @@ class DatabaseIngester
         return $item;
     }
 
+    /**
+     * Given an edition row object, return a summary series array.
+     *
+     * @param object $rowObj Edition row
+     *
+     * @return array
+     */
     protected function getSeriesForEdition($rowObj)
     {
         $seriesTable = $this->getDbTable('series');
