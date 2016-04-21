@@ -80,7 +80,7 @@ class DatabaseIngester
      * @param object $extra   Support object (Edition row for existing, Series row for series)
      *
      * @return bool True for success
-     */     
+     */
     public function ingest($details, $type, $extra = null)
     {
         if ($type == 'existing') {
@@ -90,13 +90,67 @@ class DatabaseIngester
     }
 
     /**
+     * Ingest existing Issue edition
+     *
+     * @param array  $details    Details from ModsExtractor or equivalent
+     * @param object $editionObj Edition row
+     * @param array  $series     Series summary array (see getSeriesForEdition)
+     *
+     * @return bool True for success
+     */
+    protected function ingestExistingIssue($details, $editionObj, $series)
+    {
+        $childDetails = $this->synchronizeChildren($editionObj, $details['contents']);
+        if (!$childDetails) {
+            return false;
+        }
+        $childDetails = $this->addAuthorDetails($childDetails);
+        if (!$childDetails) {
+            return false;
+        }
+        $details['contents'] = $childDetails;
+        return $this->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
+    }
+
+    /**
+     * Ingest existing Work edition
+     *
+     * @param array  $details    Details from ModsExtractor or equivalent
+     * @param object $editionObj Edition row
+     * @param array  $item       Item summary array (see getItemForEdition)
+     * @param array  $series     Series summary array (see getSeriesForEdition)
+     *
+     * @return bool True for success
+     */
+     protected function ingestExistingWork($details, $editionObj, $item, $series)
+     {
+        if (count($details['contents']) != 1) {
+            Console::writeLine("FATAL: too many contents for single-part item.");
+            return false;
+        }
+        if (!$this->checkItemTitles($item, $details['contents'][0])) {
+            Console::writeLine("FATAL: Title mismatch '{$details['contents'][0]['title']}' vs. '{$item['Item_Name']}' for item {$item['Item_ID']}.");
+            return false;
+        }
+        $db = ['item' => $item, 'edition' => $editionObj->toArray()];
+        $childDetails = [[$details['contents'][0], $db]];
+        if (!($childDetails = $this->addAuthorDetails($childDetails))) {
+            return false;
+        }
+        if (!$this->updateWorkInDatabase($childDetails[0][0], $childDetails[0][1])) {
+            return false;
+        }
+        return $this->setTopLevelDetails($editionObj, $series, $details);
+    }
+
+    /**
      * Ingest existing edition
      *
      * @param array  $details    Details from ModsExtractor or equivalent
      * @param object $editionObj Edition row
      *
      * @return bool True for success
-     */     
+     */
     protected function ingestExisting($details, $editionObj)
     {
         $series = $this->getSeriesForEdition($editionObj);
@@ -108,34 +162,14 @@ class DatabaseIngester
         }
 
         if ($item['Material_Type_ID'] == self::MATERIALTYPE_ISSUE) {
-            $childDetails = $this->synchronizeChildren($editionObj, $details['contents']);
-            if (!$childDetails) {
-                return false;
-            }
-            $childDetails = $this->addAuthorDetails($childDetails);
-            if (!$childDetails) {
-                return false;
-            }
-            $details['contents'] = $childDetails;
-            return $this->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
+            return $this->ingestExistingIssue($details, $editionObj, $series);
         } else if ($item['Material_Type_ID'] == self::MATERIALTYPE_WORK) {
-            if (count($details['contents']) != 1) {
-                Console::writeLine("FATAL: too many contents for single-part item.");
-                return false;
-            }
-            if (!$this->checkItemTitles($item, $details['contents'][0])) {
-                Console::writeLine("FATAL: Title mismatch '{$details['contents'][0]['title']}' vs. '{$item['Item_Name']}' for item {$item['Item_ID']}.");
-                return false;
-            }
-            $db = ['item' => $item, 'edition' => $editionObj->toArray()];
-            if (!$this->updateWorkInDatabase($details['contents'][0], $db)) {
-                return false;
-            }
-            return $this->setTopLevelDetails($editionObj, $series, $details);
-        } else {
-            Console::writeLine("FATAL: unexpected material type ID {$item['Material_Type_ID']}.");
-            return false;
+            return $this->ingestExistingWork($details, $editionObj, $item, $series);
         }
+
+        // If we got this far, we have bad data:
+        Console::writeLine("FATAL: unexpected material type ID {$item['Material_Type_ID']}.");
+        return false;
     }
 
     /**
@@ -145,7 +179,7 @@ class DatabaseIngester
      * @param object $seriesObj Series row
      *
      * @return bool True for success
-     */     
+     */
     protected function ingestSeries($details, $seriesObj)
     {
         if (count($details['contents']) > 1) {
@@ -178,6 +212,16 @@ class DatabaseIngester
         return $this->tables->get($table);
     }
 
+    /**
+     * Set top-level details (publisher, ID number, links, dates, etc.) for container
+     * item.
+     *
+     * @param object $editionObj Edition row
+     * @param array  $series     Series summary array (see getSeriesForEdition)
+     * @param array  $details    Details from ModsExtractor or equivalent
+     *
+     * @return bool True for success
+     */
     protected function setTopLevelDetails($editionObj, $series, $details)
     {
         $item = $this->getItemForEdition($editionObj);
@@ -811,7 +855,7 @@ class DatabaseIngester
             }
             if ($match[1]) {
                 $credits = $this->getDbTable('editionscredits')
-                    ->getCreditsForEdition($match[1]['edition']->Edition_ID);
+                    ->getCreditsForEdition($match[1]['edition']['Edition_ID']);
                 $match[1]['authorIds'] = [];
                 foreach ($credits as $credit) {
                     if ($credit->Role_ID == self::ROLE_AUTHOR) {
@@ -909,6 +953,17 @@ class DatabaseIngester
         return $result;
     }
 
+    /**
+     * Match up incoming contents against an existing edition; return an array of
+     * arrays, each containing an array of incoming contents data as the first element
+     * and a matching array of edition/item data (or false) as the second element.
+     *
+     * @param object $editionObj Edition row for top-level edition.
+     * @param array  $contents   The 'contents' section of the details from
+     * ModsExtractor or equivalent
+     *
+     * @return array
+     */
     protected function synchronizeChildren($editionObj, $contents)
     {
         $lookup = $this->getDbTable('edition')
@@ -973,7 +1028,7 @@ class DatabaseIngester
      * @param string $str String to normalize.
      *
      * @return bool
-     */     
+     */
     protected function fuzz($str)
     {
         $regex = '/[^a-z0-9]/';
