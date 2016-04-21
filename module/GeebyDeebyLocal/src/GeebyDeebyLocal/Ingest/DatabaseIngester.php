@@ -216,9 +216,10 @@ class DatabaseIngester
      * Set top-level details (publisher, ID number, links, dates, etc.) for container
      * item.
      *
-     * @param object $editionObj Edition row
-     * @param array  $series     Series summary array (see getSeriesForEdition)
-     * @param array  $details    Details from ModsExtractor or equivalent
+     * @param object       $editionObj Edition row
+     * @param array|object $series     Series summary array (see getSeriesForEdition)
+     * or Series row object
+     * @param array        $details    Details from ModsExtractor or equivalent
      *
      * @return bool True for success
      */
@@ -248,6 +249,16 @@ class DatabaseIngester
         return true;
     }
 
+    /**
+     * Write a flat (Work-only) edition into the database.
+     *
+     * @param object $series  Series row
+     * @param int    $pos     Position of new edition in series.
+     * @param array  $details Details from ModsExtractor or equivalent, processed
+     * through synchronizeSeriesEntries() and addAuthorDetails().
+     *
+     * @return bool True for success
+     */
     protected function updateDatabaseForFlatEdition($series, $pos, $details)
     {
         list($data, $db) = $details['contents'][0];
@@ -263,6 +274,16 @@ class DatabaseIngester
         return $this->setTopLevelDetails($editionObj, $series, $details);
     }
 
+    /**
+     * Write a hierarchical (Issue+Works) edition into the database.
+     *
+     * @param object $editionObj Edition row
+     * @param array  $series     Series summary array (see getSeriesForEdition)
+     * @param array  $details    Details from ModsExtractor or equivalent, processed
+     * through synchronizeChildren() and addAuthorDetails().
+     *
+     * @return bool True for success
+     */
     protected function updateDatabaseForHierarchicalEdition($editionObj, $series, $details)
     {
         if (!$this->setTopLevelDetails($editionObj, $series, $details)) {
@@ -316,6 +337,14 @@ class DatabaseIngester
         return true;
     }
 
+    /**
+     * Given a publisher string, split apart the publisher name from the street
+     * and return a two-part array with the components.
+     *
+     * @param string $publisher Publisher + street string.
+     *
+     * @return array
+     */
     protected function separateNameAndStreet($publisher)
     {
         $parts = array_map('trim', explode(',', $publisher));
@@ -328,6 +357,13 @@ class DatabaseIngester
         return [$name, $street];
     }
 
+    /**
+     * Normalize a street string for comparison purposes.
+     *
+     * @param string $street String to normalize.
+     *
+     * @return string
+     */
     protected function normalizeStreet($street)
     {
         return str_replace(
@@ -336,26 +372,64 @@ class DatabaseIngester
             strtolower($street)
         );
     }
+
+    /**
+     * Normalize a street string for comparison purposes.
+     *
+     * @param string $pub String to normalize.
+     *
+     * @return string
+     */
     protected function streetsMatch($street1, $street2)
     {
         return $this->normalizeStreet($street1) == $this->normalizeStreet($street2);
     }
 
+    /**
+     * Normalize a publisher string for comparison purposes.
+     *
+     * @param string $pub String to normalize.
+     *
+     * @return string
+     */
     protected function normalizePublisher($pub)
     {
         return str_replace(', inc.', '', strtolower($pub));
     }
 
+    /**
+     * Check if two publisher names are the same after normalization.
+     *
+     * @param string $pub1 First value to compare
+     * @param string $pub2 Second value to compare
+     *
+     * @return bool
+     */
     protected function publishersMatch($pub1, $pub2)
     {
         return $this->normalizePublisher($pub1) == $this->normalizePublisher($pub2);
     }
 
+    /**
+     * Normalize a city string for comparison purposes.
+     *
+     * @param string $city String to normalize.
+     *
+     * @return string
+     */
     protected function normalizeCity($city)
     {
         return str_replace(', n.y', '', strtolower($city));
     }
 
+    /**
+     * Check if two city names are the same after normalization.
+     *
+     * @param string $city1 First value to compare
+     * @param string $city2 Second value to compare
+     *
+     * @return bool
+     */
     protected function citiesMatch($city1, $city2)
     {
         return $this->normalizeCity($city1) == $this->normalizeCity($city2);
@@ -915,6 +989,18 @@ class DatabaseIngester
         return $id;
     }
 
+    /**
+     * Match up incoming contents against an existing series entry; return an array of
+     * arrays, each containing an array of incoming contents data as the first element
+     * and a matching array of edition/item data (or false) as the second element.
+     *
+     * @param object $seriesObj Series row for containing series.
+     * @param int    $pos       Position of incoming contents within series.
+     * @param array  $contents  The 'contents' section of the details from
+     * ModsExtractor or equivalent
+     *
+     * @return array
+     */
     protected function synchronizeSeriesEntries($seriesObj, $pos, $contents)
     {
         $lookup = $this->getDbTable('edition')
@@ -1005,6 +1091,15 @@ class DatabaseIngester
         return $result;
     }
 
+    /**
+     * Check the consistency of the incoming series data with existing database entries.
+     *
+     * @param array  $details    Details from ModsExtractor or equivalent
+     * @param object $editionObj Edition row
+     * @param array  $series     Series summary array (see getSeriesForEdition)
+     *
+     * @return True if all is well.
+     */
     protected function validateSeries($details, $editionObj, $series)
     {
         if (!isset($details['series'])) {
