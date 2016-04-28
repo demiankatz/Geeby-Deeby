@@ -806,21 +806,40 @@ class DatabaseIngester
         );
     }
 
+    /**
+     * Check for a match between an incoming title and an alternate title of an Item.
+     *
+     * @param string $title  Incoming title to check
+     * @param int    $itemID Item to check against
+     * @param bool   $warn   Should we display a warning if we find a match?
+     *
+     * @return bool
+     */
+    protected function hasMatchingAltTitle($title, $itemID, $warn = false)
+    {
+        $table = $this->getDbTable('itemsalttitles');
+        foreach ($table->getAltTitles($itemID) as $current) {
+            $currentAlt = $current->Item_AltName;
+            if ($this->fuzzyCompare($title, $currentAlt)) {
+                if ($warn) {
+                    Console::writeLine(
+                        'WARNING: Found match in alt rather than primary title: '
+                        . $currentAlt
+                    );
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected function processTitle($title, $db)
     {
         if ($this->fuzzyCompare($title, $db['item']['Item_Name'])) {
             return true;
         }
-        $table = $this->getDbTable('itemsalttitles');
-        foreach ($table->getAltTitles($db['item']['Item_ID']) as $current) {
-            $currentAlt = $current->Item_AltName;
-            if ($this->fuzzyCompare($title, $currentAlt)) {
-                Console::writeLine(
-                    'WARNING: Found match in alt rather than primary title: '
-                    . $currentAlt
-                );
-                return true;
-            }
+        if ($this->hasMatchingAltTitle($title, $db['item']['Item_ID'], true)) {
+            return true;
         }
         Console::writeLine('FATAL: Unexpected title mismatch.');
         Console::writeLine('Incoming: ' . $title);
@@ -1081,6 +1100,7 @@ class DatabaseIngester
         // Fail if we have any existing data not matched up with new data....
         foreach ($children as $child) {
             if (!isset($child['matched'])) {
+                Console::writeLine("Unmatched item: {$child['item']['Item_Name']}");
                 foreach ($contents as $current) {
                     Console::writeLine("Possible match: " . $current['title']);
                 }
@@ -1193,6 +1213,9 @@ class DatabaseIngester
                     return true;
                 }
             }
+        }
+        if ($this->hasMatchingAltTitle($currentContent['title'], $item['Item_ID'])) {
+            return true;
         }
         return false;
     }
