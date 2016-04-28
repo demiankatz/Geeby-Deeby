@@ -435,6 +435,15 @@ class DatabaseIngester
         return $this->normalizeCity($city1) == $this->normalizeCity($city2);
     }
 
+    /**
+     * Validate and store publisher information.
+     *
+     * @param string $publisher  Publisher string from metadata.
+     * @param object $editionObj Edition row
+     * @param int    $seriesId   ID of series being worked on.
+     *
+     * @return bool True on success.
+     */
     protected function processPublisher($publisher, $editionObj, $seriesId)
     {
         list ($name, $street) = $this->separateNameAndStreet($publisher['name']);
@@ -482,6 +491,14 @@ class DatabaseIngester
         return true;
     }
 
+    /**
+     * Normalize and store OCLC number.
+     *
+     * @param string $oclc       Incoming OCLC number
+     * @param object $editionObj Edition row
+     *
+     * @return bool True on success
+     */
     protected function processOclcNum($oclc, $editionObj)
     {
         // strip off non-digits (useless OCLC prefixes):
@@ -506,6 +523,14 @@ class DatabaseIngester
         return true;
     }
 
+    /**
+     * Validate and store URLs for edition.
+     *
+     * @param array  $urls       Incoming URLs.
+     * @param object $editionObj Edition row
+     *
+     * @return bool True on success
+     */
     protected function processUrl($urls, $editionObj)
     {
         // check for unexpected URLs (right now we assume everything is from NIU):
@@ -867,6 +892,14 @@ class DatabaseIngester
         return true;
     }
 
+    /**
+     * Update a work in the database.
+     *
+     * @param array $data Incoming data about a single work.
+     * @param array $db   Existing data about the same work.
+     *
+     * @return bool True on success.
+     */
     protected function updateWorkInDatabase($data, $db)
     {
         if (!$this->processTitle($data['title'], $db)) {
@@ -895,6 +928,13 @@ class DatabaseIngester
         return $db['edition'];
     }
 
+    /**
+     * Given a name string, look up a matching person ID.
+     *
+     * @param string $str Name string
+     *
+     * @return int|bool Person ID, or false for no match.
+     */
     protected function getPersonIdForString($str)
     {
         $bad = '(dime novelist)';
@@ -996,6 +1036,13 @@ class DatabaseIngester
         return false;
     }
 
+    /**
+     * Given a URI, look up a matching person ID.
+     *
+     * @param string $uri URI
+     *
+     * @return int|bool Person ID, or false for no match.
+     */
     protected function getPersonIdForUri($uri)
     {
         if (!($id = $this->extractIdFromDimeNovelsUri($uri, 'Person'))) {
