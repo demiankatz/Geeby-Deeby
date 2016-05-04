@@ -143,11 +143,47 @@ class ModsExtractor
         return $details;
     }
 
+    /**
+     * Given the result of an XPath to retrieve name parts, construct a string.
+     *
+     * @param array  $parts    SimpleXML XPath results.
+     * @param string $nameType The type of name being extracted.
+     *
+     * @return string
+     */
+    protected function getStringFromNameParts($parts, $nameType)
+    {
+        $currentName = '';
+        foreach ($parts as $namePart) {
+            $type = $namePart->xpath('@type');
+            $namePartStr = (string) $namePart;
+            if (strlen($currentName) > 0) {
+                $type = isset($type[0]) ? (string) $type[0] : 'default';
+                switch ($type) {
+                    case 'date':
+                        $currentName .= ', ';
+                        break;
+                    case 'termsOfAddress':
+                        $currentName .= (substr($namePartStr, 0, 1) == '(')
+                            ? ' ' : ', ';
+                        break;
+                    default:
+                        $currentName .= $nameType == 'corporate' ? ' -- ' : ' ';
+                        break;
+                }
+            }
+            $currentName .= $namePartStr;
+        }
+        return trim($currentName);
+    }
+
     protected function extractAuthors($mods)
     {
         $authors = [];
         $matches = $mods->xpath('mods:name');
         foreach ($matches as $current) {
+            $nameType = $current->xpath('@type');
+            $nameType = isset($nameType[0]) ? (string) $nameType[0] : 'default';
             $role = $current->xpath('mods:role/mods:roleTerm');
             if (isset($role[0]) && (string)$role[0] == 'author') {
                 $currentAuthor = [];
@@ -155,7 +191,9 @@ class ModsExtractor
                 if (isset($uri[0])) {
                     $currentAuthor['uri'] = (string)$uri[0];
                 }
-                $currentAuthor['name'] = implode(', ', $current->xpath('mods:namePart'));
+                $currentAuthor['name'] = $this->getStringFromNameParts(
+                    $current->xpath('mods:namePart'), $nameType
+                );
                 if (!empty($currentAuthor['name'])) {
                     $authors[] = $currentAuthor;
                 }
@@ -197,16 +235,14 @@ class ModsExtractor
             $matches = $mods->xpath($path . '|mods:subject/' . $path);
             foreach ($matches as $current) {
                 $uri = $current->xpath('@valueURI');
-                $value = (string)$current;
+                $value = trim((string)$current);
                 if (empty($value)) {
-                    
-                }
-                $value = trim($value);
-                if (empty($value)) {
-                    $parts = $current->xpath('mods:namePart');
-                    foreach ($parts as $namePart) {
-                        $value .= (string)$namePart . ' ';
-                    }
+                    $nameType = $current->xpath('@type');
+                    $nameType = isset($nameType[0])
+                        ? (string) $nameType[0] : 'default';
+                    $value = $this->getStringFromNameParts(
+                        $current->xpath('mods:namePart'), $nameType
+                    );
                 }
                 if (isset($uri[0])) {
                     $results[(string)$uri[0]] = trim($value);
