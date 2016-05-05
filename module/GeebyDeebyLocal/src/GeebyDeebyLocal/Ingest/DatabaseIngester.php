@@ -182,11 +182,6 @@ class DatabaseIngester
      */
     protected function ingestSeries($details, $seriesObj)
     {
-        if (count($details['contents']) > 1) {
-            // For now, we expect just one work per item; TODO: multi-part issues
-            Console::writeLine('FATAL: More contents than expected....');
-            return false;
-        }
         $pos = preg_replace('/[^0-9]/', '', current($details['series']));
         $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents']);
         if (!$childDetails) {
@@ -197,6 +192,16 @@ class DatabaseIngester
             return false;
         }
         $details['contents'] = $childDetails;
+        // Special case: multi-part work:
+        if (count($childDetails) > 1) {
+            $container = trim(current(array_keys($details['series']))) . ' ' . trim(current($details['series']));
+            $newEdition = $this->addChildIssueToSeries($seriesObj, ['title' => $container], $pos);
+            if (!$this->setTopLevelDetails($newEdition, $seriesObj, $details)) {
+                return false;
+            };
+            return $this->updateChildWorks($newEdition, $childDetails);
+        }
+        // Standard case: single-part work:
         return $this->updateDatabaseForFlatEdition($seriesObj, $pos, $details);
     }
 
@@ -749,7 +754,15 @@ class DatabaseIngester
         return $ids;
     }
 
-    protected function getItemForNewEdition($data)
+    /**
+     * Create an Item record for the provided data array.
+     *
+     * @param array $data Incoming data, with 'title' and (optional) 'authorIds' keys.
+     * @param int   $type Material type ID to use for item.
+     *
+     * @return int ID of newly-created Item.
+     */
+    protected function getItemForNewEdition($data, $type = self::MATERIALTYPE_WORK)
     {
         // trim article for search purposes
         $strippedTitle = ($pos = strrpos($data['title'], ','))
@@ -772,7 +785,7 @@ class DatabaseIngester
         }
 
         // If we made it this far, we need to create a new item.
-        $table->insert(['Item_Name' => $data['title'], 'Material_Type_ID' => self::MATERIALTYPE_WORK]);
+        $table->insert(['Item_Name' => $data['title'], 'Material_Type_ID' => $type]);
         $id = $table->getLastInsertValue();
         Console::writeLine("Added item ID {$id} ({$data['title']})");
         return $id;
@@ -805,9 +818,17 @@ class DatabaseIngester
         );
     }
 
-    protected function addChildWorkToSeries($series, $data, $pos = 0)
+    /**
+     * Create an edition object in a series.
+     *
+     * @param object $series Series row object
+     * @param int    $item   Item ID number
+     * @param int    $pos    Position of edition in series
+     *
+     * @return object Edition row object
+     */
+    protected function createEditionInSeries($series, $item, $pos)
     {
-        $item = $this->getItemForNewEdition($data);
         $edName = $this->articles->articleAwareAppend($series->Series_Name, ' edition');
         $seriesID = $series->Series_ID;
         $edsTable = $this->getDbTable('edition');
@@ -819,7 +840,22 @@ class DatabaseIngester
                 'Position' => $pos,
             ]
         );
-        $newObj = $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
+        return $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
+    }
+
+    /**
+     * Add a work to the specified series.
+     *
+     * @param object $series Series row object.
+     * @param array  $data   Incoming data about a single work.
+     * @param int    $pos    Position of issue in series.
+     *
+     * @return object New edition object
+     */
+    protected function addChildWorkToSeries($series, $data, $pos = 0)
+    {
+        $item = $this->getItemForNewEdition($data);
+        $newObj = $this->createEditionInSeries($series, $item, $pos);
         Console::writeLine("Added edition ID " . $newObj->Edition_ID);
         return $this->updateWorkInDatabase(
             $data,
@@ -829,6 +865,23 @@ class DatabaseIngester
                 'item' => $this->getItemForEdition($newObj)
             ]
         );
+    }
+
+    /**
+     * Add an issue to the specified series.
+     *
+     * @param object $series Series row object.
+     * @param array  $data   Incoming data, with 'title' and (optional) 'authorIds' keys.
+     * @param int    $pos    Position of issue in series.
+     *
+     * @return object New edition object
+     */
+    protected function addChildIssueToSeries($series, $data, $pos = 0)
+    {
+        $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
+        $newObj = $this->createEditionInSeries($series, $item, $pos);
+        Console::writeLine("Added edition ID " . $newObj->Edition_ID);
+        return $newObj;
     }
 
     /**
