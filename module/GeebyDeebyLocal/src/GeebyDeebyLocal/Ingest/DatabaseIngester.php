@@ -1032,7 +1032,9 @@ class DatabaseIngester
                         $id = $this->getPersonIdForString($current['name']);
                     }
                     if (!$id) {
-                        $text = isset($current['uri']) ? $current['uri'] : $current['name'];
+                        $text = isset($current['uri'])
+                            ? $current['uri'] . ' (' . $current['name'] . ')'
+                            : $current['name'];
                         Console::writeLine("FATAL: Missing Person ID for $text");
                         return false;
                     }
