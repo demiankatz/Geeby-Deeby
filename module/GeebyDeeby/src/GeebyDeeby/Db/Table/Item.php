@@ -102,14 +102,16 @@ class Item extends Gateway
     /**
      * Get a list of items for the specified series.
      *
-     * @var int  $seriesID Series ID
-     * @var bool $topOnly  Retrieve only top-level items?
+     * @var int  $seriesID        Series ID
+     * @var bool $topOnly         Retrieve only top-level items?
+     * @var bool $groupByMaterial Should we group results by material type?
      *
      * @return mixed
      */
-    public function getItemsForSeries($seriesID, $topOnly = true)
-    {
-        $callback = function ($select) use ($seriesID, $topOnly) {
+    public function getItemsForSeries($seriesID, $topOnly = true,
+        $groupByMaterial = true
+    ) {
+        $callback = function ($select) use ($seriesID, $topOnly, $groupByMaterial) {
             $select->join(
                 array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
                 array(
@@ -130,7 +132,9 @@ class Item extends Gateway
                 array('Item_AltName'), Select::JOIN_LEFT
             );
             $select->order(
-                array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', 'Item_Name')
+                $groupByMaterial
+                    ? array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', 'Item_Name')
+                    : array('Volume', 'Position', 'Replacement_Number', 'Item_Name')
             );
             $select->group(
                 array('Items.Item_ID', 'Volume', 'Position', 'Replacement_Number', 'Items.Material_Type_ID')

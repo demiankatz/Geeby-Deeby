@@ -122,8 +122,9 @@
   <p>No items listed in this series yet.</p>
 <? else: ?>
   <? $matType = ''; ?>
+  <? if (!$groupByMaterial): ?><h2>Items</h2><? endif; ?>
   <? foreach ($items as $item): ?>
-    <? if ($matType != $item['Material_Type_Plural_Name']): ?>
+    <? if ($groupByMaterial && $matType != $item['Material_Type_Plural_Name']): ?>
       <? $matType = $item['Material_Type_Plural_Name'] ?>
       <h2><?=$this->escapeHtml($matType)?></h2>
     <? endif; ?>

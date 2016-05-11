@@ -16,6 +16,8 @@ return array(
         'dbName' => 'gbdb', // database schema name
         'dbUser' => 'gbdb', // database username
         'dbPass' => 'gbdb', // database password
+        // Should we group series entries by material type (true), or display them as one continuous list (false)?
+        'groupSeriesByMaterialType' => true,
         'db_table_plugin_manager' => array(
             'invokables' => array(
                 'authority' => 'GeebyDeeby\Db\Table\Authority',
