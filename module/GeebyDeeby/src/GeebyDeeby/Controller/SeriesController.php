@@ -480,7 +480,10 @@ class SeriesController extends AbstractBase
         $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
-        $view->items = $this->getDbTable('item')->getItemsForSeries($id);
+        $config = $this->getServiceLocator()->get('config');
+        $view->groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
+            ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
+        $view->items = $this->getDbTable('item')->getItemsForSeries($id, true, $view->groupByMaterial);
         $view->language = $this->getDbTable('language')
             ->getByPrimaryKey($view->series['Language_ID']);
         $view->publishers = $this->getDbTable('seriespublishers')
