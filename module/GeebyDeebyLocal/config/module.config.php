@@ -8,6 +8,12 @@
  */
 
 return array(
+    'geeby-deeby' => array(
+        'siteTitle' => 'The Edward T. LeBlanc Memorial Dime Novel Bibliography',
+        'siteEmail' => 'demian.katz@villanova.edu',
+        'siteOwner' => 'Demian Katz',
+        'groupSeriesByMaterialType' => false,
+    ),
     'controllers' => array(
         'invokables' => array(
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
