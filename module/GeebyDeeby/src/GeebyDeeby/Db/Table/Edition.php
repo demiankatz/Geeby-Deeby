@@ -145,13 +145,27 @@ class Edition extends Gateway
     }
 
     /**
-     * Get a list of items for the specified series.
+     * Get a list of items for the specified series (not grouped by material type).
      *
      * @var int $seriesID Series ID
      *
      * @return mixed
      */
     public function getItemsForSeries($seriesID)
+    {
+        // Proxy item table (so handleGenericLink() can be used in
+        // EditSeriesController):
+        return $this->getDbTable('item')->getItemsForSeries($seriesID, true, false);
+    }
+
+    /**
+     * Get a list of items for the specified series ( grouped by material type).
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getItemsForSeriesGroupedByMaterial($seriesID)
     {
         // Proxy item table (so handleGenericLink() can be used in
         // EditSeriesController):

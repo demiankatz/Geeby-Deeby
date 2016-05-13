@@ -118,8 +118,11 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbTable('materialtype')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
+            $config = $this->getServiceLocator()->get('config');
+            $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
+                ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
             $view->item_list = $this->getDbTable('item')
-                ->getItemsForSeries($seriesId);
+                ->getItemsForSeries($seriesId, true, $groupByMaterial);
             $view->series_alt_titles = $this->getDbTable('seriesalttitles')
                 ->getAltTitles($seriesId);
             $view->series_materials = $this->getDbTable('seriesmaterialtypes')
@@ -356,9 +359,14 @@ class EditSeriesController extends AbstractBase
                 $edsTable->copyAssociatedInfo($row['Edition_ID'], $new);
             }
         };
+        $config = $this->getServiceLocator()->get('config');
+        $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
+            ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
+        $listCallback = $groupByMaterial
+            ? 'getItemsForSeriesGroupedByMaterial' : 'getItemsForSeries';
         return $this->handleGenericLink(
             'edition', 'Series_ID', 'Item_ID',
-            'item_list', 'getItemsForSeries',
+            'item_list', $listCallback,
             'geeby-deeby/edit-series/item-list.phtml',
             array('Edition_Name' => $edName), $insertCallback
         );
