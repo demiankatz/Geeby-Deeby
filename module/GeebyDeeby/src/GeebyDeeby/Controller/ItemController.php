@@ -212,7 +212,7 @@ class ItemController extends AbstractBase
         $view->realNames = $this->getDbTable('pseudonyms')
             ->getRealNamesBatch($view->credits);
         $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
-        $view->series = $this->getDbTable('series')->getSeriesForItem($id);
+        $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
         $view->altTitles = $this->getDbTable('itemsalttitles')->getAltTitles($id);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForItem($id);
