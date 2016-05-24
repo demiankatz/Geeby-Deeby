@@ -401,7 +401,13 @@
           <? $displayedCount = 0; foreach ($editions as $ed): ?>
             <? if (!empty($ed['Edition_Description'])): $displayedCount++; ?>
               <? if ($displayedCount > 1): ?><br /><? endif; ?>
-              <i><?=$this->escapeHtml($this->fixtitle($ed['Edition_Name']))?>:</i><br />
+              <? if (count($editions) > 1): ?>
+                <i><?=$this->escapeHtml($this->fixtitle($ed['Edition_Name']))?><? if (empty($ed['Item_Name'])): ?>:<? endif; ?></i>
+                <? if (!empty($ed['Item_Name'])): ?>
+                  (<?=!empty($ed['Extent_In_Parent']) ? $this->escapeHtml($ed['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', array('id' => $ed['Item_ID']))?>"><?=$this->escapeHtml($this->fixtitle(empty($ed['Item_AltName']) ? $ed['Item_Name'] : $ed['Item_AltName']))?></a>):
+                <? endif; ?>
+                <br />
+              <? endif; ?>
               <?=$ed['Edition_Description']?><br />
             <? endif; ?>
           <? endforeach; ?>
@@ -512,7 +518,7 @@
     <a href="<?=$this->url('edition', array('id' => $edition['Edition_ID']))?>">
         <?=$this->escapeHtml($this->fixtitle($edition['Edition_Name']))?>
     </a>
-  <? if (!empty($edition['Item_Name'])): ?>(<?=!empty($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', array('id' => $edition['Item_ID']))?>"><?=$this->escapeHtml($this->fixtitle(empty($edition['Item_AltName']) ? $edition['Item_Name'] : $current['Item_AltName']))?></a>)<? endif; ?>
+  <? if (!empty($edition['Item_Name'])): ?>(<?=!empty($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', array('id' => $edition['Item_ID']))?>"><?=$this->escapeHtml($this->fixtitle(empty($edition['Item_AltName']) ? $edition['Item_Name'] : $edition['Item_AltName']))?></a>)<? endif; ?>
     <br />
   <? endforeach; ?>
 <? endif; ?>
