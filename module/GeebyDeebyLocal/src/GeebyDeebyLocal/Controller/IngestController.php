@@ -27,6 +27,7 @@
  */
 namespace GeebyDeebyLocal\Controller;
 use GeebyDeebyLocal\Ingest\DatabaseIngester;
+use GeebyDeebyLocal\Ingest\IssueMaker;
 use GeebyDeebyLocal\Ingest\ModsExtractor;
 use Zend\Console\Console, Zend\Console\Prompt;
 
@@ -206,6 +207,24 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
+     * Create Issue containers around Works in a series.
+     *
+     * @return mixed
+     */
+    public function makeissuesAction()
+    {
+        $series = $this->params()->fromRoute('series');
+        $seriesObj = $this->getSeriesById($series);
+        if (!$seriesObj) {
+            Console::writeLine("Cannot find series match for $series");
+            return;
+        }
+        $prefix = $this->params()->fromRoute('prefix');
+        $prefix = empty($prefix) ? $seriesObj->Series_Name . ' #' : $prefix;
+        $this->getIssueMaker()->makeIssues($seriesObj, $prefix);
+    }
+
+    /**
      * Ingest series entries (by searching series title) action.
      *
      * @return mixed
@@ -253,6 +272,18 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $extractor = new ModsExtractor();
         $details = $extractor->getDetails($mods);
         return $this->getIngester()->ingest($details, 'series', $seriesObj);
+    }
+
+    /**
+     * Retrieve a series object from the database for a given ID.
+     *
+     * @param string $id ID
+     *
+     * @return \GeebyDeeby\Db\Row\Series|bool
+     */
+    protected function getSeriesById($id)
+    {
+        return $this->getDbTable('series')->getByPrimaryKey($id);
     }
 
     /**
@@ -308,5 +339,16 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         $tables = $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager');
         return new DatabaseIngester($tables, $this->getServiceLocator()->get('GeebyDeeby\Articles'));
+    }
+
+    /**
+     * Construct the issue maker tool.
+     *
+     * @return IssueMaker
+     */
+    protected function getIssueMaker()
+    {
+        $tables = $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager');
+        return new IssueMaker($tables, $this->getServiceLocator()->get('GeebyDeeby\Articles'));
     }
 }

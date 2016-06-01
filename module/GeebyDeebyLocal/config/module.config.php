@@ -70,6 +70,16 @@ return array(
                         )
                     )
                 ),
+                'ingest-makeissues' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'makeissues <series> <prefix>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'makeissues',
+                        )
+                    )
+                ),
                 'ingest-series' => array(
                     'type' => 'simple',
                     'options' => array(
@@ -79,7 +89,7 @@ return array(
                             'action' => 'series',
                         )
                     )
-                )
+                ),
             )
         )
     ),
