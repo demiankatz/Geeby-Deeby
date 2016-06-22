@@ -195,8 +195,8 @@ class DatabaseIngester
         // Special case: multi-part work:
         if (count($childDetails) > 1) {
             $container = trim(current(array_keys($details['series']))) . ' ' . trim(current($details['series']));
-            $newEdition = $this->addChildIssueToSeries($seriesObj, ['title' => $container], $pos);
-            if (!$this->setTopLevelDetails($newEdition, $seriesObj, $details)) {
+            $newEdition = $this->getChildIssueForSeries($seriesObj, ['title' => $container], $pos);
+            if (!$newEdition || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)) {
                 return false;
             };
             return $this->updateChildWorks($newEdition, $childDetails);
@@ -775,7 +775,7 @@ class DatabaseIngester
         $options = $table->select($callback);
         foreach ($options as $current) {
             $currentCredits = $this->getPersonIdsForItem($current->Item_ID);
-            if (count($data['authorIds']) > 0
+            if (isset($data['authorIds']) && count($data['authorIds']) > 0
                 && count(array_diff($data['authorIds'], $currentCredits) == 0)
                 && count(array_intersect($data['authorIds'], $currentCredits)) == count($data['authorIds'])
             ) {
@@ -868,20 +868,34 @@ class DatabaseIngester
     }
 
     /**
-     * Add an issue to the specified series.
+     * Create or load an issue in the specified series position.
      *
      * @param object $series Series row object.
      * @param array  $data   Incoming data, with 'title' and (optional) 'authorIds' keys.
      * @param int    $pos    Position of issue in series.
      *
-     * @return object New edition object
+     * @return object|bool New edition object (false on error)
      */
-    protected function addChildIssueToSeries($series, $data, $pos = 0)
+    protected function getChildIssueForSeries($series, $data, $pos = 0)
     {
-        $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
-        $newObj = $this->createEditionInSeries($series, $item, $pos);
-        Console::writeLine("Added edition ID " . $newObj->Edition_ID);
-        return $newObj;
+        // first make sure we don't already have an issue:
+        $lookup = $this->getDbTable('edition')
+            ->select(['Series_ID' => $series->Series_ID, 'Position' => $pos]);
+        if (count($lookup) == 0) {
+            $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
+            $newObj = $this->createEditionInSeries($series, $item, $pos);
+            Console::writeLine("Added edition ID " . $newObj->Edition_ID);
+            return $newObj;
+        } else if (count($lookup) == 1) {
+            foreach ($lookup as $current) {
+                return $current;
+            }
+        }
+        Console::writeLine(
+            'ERROR: Found ' . count($lookup) . ' items at position ' . $pos . ' of '
+            . $series->Series_Name
+        );
+        return false;
     }
 
     /**
@@ -1128,12 +1142,18 @@ class DatabaseIngester
             ->select(['Series_ID' => $seriesObj->Series_ID, 'Position' => $pos]);
         $children = [];
         foreach ($lookup as $child) {
-            $children[] = [
-                'edition' => $child,
-                'item' => $this->getItemForEdition($child)
-            ];
+            $item = $this->getItemForEdition($child);
+            // If it's an issue, we need to load its children; otherwise, we should
+            // treat it as flat:
+            if ($item['Material_Type_ID'] == self::MATERIALTYPE_ISSUE) {
+                return $this->synchronizeChildren($child, $contents);
+            } else {
+                $children[] = [
+                    'edition' => $child,
+                    'item' => $item,
+                ];
+            }
         }
-
         $result = [];
         foreach ($contents as $currentContent) {
             $match = false;
