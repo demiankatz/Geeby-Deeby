@@ -54,6 +54,13 @@ class FedoraHarvester
     protected $solr;
 
     /**
+     * Should we use a cache?
+     *
+     * @var bool
+     */
+    protected $cache = false;
+    
+    /**
      * Constructor
      *
      * @param string        $modsUrl Base URL for retrieving MODS.
@@ -80,8 +87,8 @@ class FedoraHarvester
         }
 
         // Retrieve MODS from repository:
-        $cache = '/tmp/gbdb_pid_' . md5($pid);
-        if (file_exists($cache)) {
+        $cache = $this->cache ? '/tmp/gbdb_pid_' . md5($pid) : false;
+        if ($cache && file_exists($cache)) {
             return file_get_contents($cache);
         }
         $modsUrl = sprintf($this->modsUrl, $pid);

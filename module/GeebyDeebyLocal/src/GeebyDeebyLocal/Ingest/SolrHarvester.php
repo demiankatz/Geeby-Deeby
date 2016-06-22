@@ -47,6 +47,13 @@ class SolrHarvester
     protected $settings;
 
     /**
+     * Should we use a cache?
+     *
+     * @var bool
+     */
+    protected $cache = false;
+
+    /**
      * Constructor
      *
      * @param array $settings Settings
@@ -126,11 +133,13 @@ class SolrHarvester
     {
         $url = (string)$this->settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
             . '&rows=10000&fl=' . urlencode($fl);
-        $cache = '/tmp/gbdb_' . md5("$query-$fl");
-        if (!file_exists($cache)) {
+        $cache = $this->cache ? '/tmp/gbdb_' . md5("$query-$fl") : false;
+        if (!$cache || !file_exists($cache)) {
             Console::writeLine("Querying {$this->settings->solrUrl} for $query...");
             $solrResponse = file_get_contents($url);
-            file_put_contents($cache, $solrResponse);
+            if ($cache) {
+                file_put_contents($cache, $solrResponse);
+            }
         } else {
             $solrResponse = file_get_contents($cache);
         }
