@@ -297,6 +297,14 @@ class DatabaseIngester
         return $this->updateChildWorks($editionObj, $details['contents']);
     }
 
+    /**
+     * Given a date, update the edition.
+     *
+     * @param string $date       Date string.
+     * @param object $editionObj Row representing Edition row in database.
+     *
+     * @return bool Success?
+     */
     protected function processDate($date, $editionObj)
     {
         $parts = explode('-', $date);
@@ -583,12 +591,27 @@ class DatabaseIngester
         return true;
     }
 
+    /**
+     * Given a URI and type, pull out the numeric ID.
+     *
+     * @param string $uri  URI of entity
+     * @param string $type Type of entity being identified
+     *
+     * @return int|bool
+     */
     protected function extractIdFromDimeNovelsUri($uri, $type)
     {
         $parts = explode('://dimenovels.org/' . $type . '/', $uri);
         return isset($parts[1]) ? $parts[1] : false;
     }
 
+    /**
+     * Given an array of uri => text, produce an array of database tag IDs.
+     *
+     * @param $subjects Associative array of subject data.
+     *
+     * @return array
+     */
     protected function subjectUrisToIds($subjects)
     {
         $tagsUris = $this->getDbTable('tagsuris');
@@ -769,6 +792,10 @@ class DatabaseIngester
             ? substr($data['title'], 0, $pos) : $data['title'];
         $table = $this->getDbTable('item');
 
+        // check to see if we have a title match
+        // TODO: add more smarts here (e.g. look at alt titles, allow user to choose
+        // from multiple possible matches, look up authors and do word similarity
+        // checks in their bibliographies, etc.)
         $callback = function ($select) use ($strippedTitle) {
             $select->where->like('Item_Name', $strippedTitle . '%');
         };
