@@ -123,7 +123,7 @@
         </tr>
       <? endif; ?>
 
-      <? if (count($series) == 0 && count($parents) > 0): // only display if series info is absent; otherwise, redundant. ?>
+      <? if (count($editions) < 2 && count($parents) > 0): // only display if edition info is hidden; otherwise, redundant. ?>
         <tr>
           <th>Part of:</th>
           <td>
