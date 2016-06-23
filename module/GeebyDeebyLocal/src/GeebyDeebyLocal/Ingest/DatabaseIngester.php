@@ -855,11 +855,12 @@ class DatabaseIngester
      */
     protected function chunkAndNormalizeString($str)
     {
+        static $stopwords = ['a', 'an', 'the', 'of', 'for', 'with', 'or', 'and'];
         $parts = preg_split('/\s+/', $str);
         $callback = function ($s) {
             return preg_replace('/[^a-z0-9]/', '', strtolower($s));
         };
-        return array_map($callback, $parts);
+        return array_diff(array_map($callback, $parts), $stopwords);
     }
 
     /**
@@ -934,10 +935,14 @@ class DatabaseIngester
      *
      * @return array
      */
-    public function deduplicateItemMatchCandidates($candidates)
+    public function deduplicateAndFilterItemMatchCandidates($candidates)
     {
         $new = [];
         foreach ($candidates as $current) {
+            // require > 25% confidence for display:
+            if ($current['confidence'] <= 25) {
+                continue;
+            }
             if (!isset($new[$current['id']]) || $new[$current['id']]['confidence'] < $current['confidence']) {
                 $new[$current['id']] = $current;
             }
@@ -967,7 +972,7 @@ class DatabaseIngester
      */
     protected function getItemMatchCandidates($data)
     {
-        $candidates = $this->deduplicateItemMatchCandidates(
+        $candidates = $this->deduplicateAndFilterItemMatchCandidates(
             array_merge(
                 $this->getItemMatchCandidatesUsingTitle($data),
                 $this->getItemMatchCandidatesUsingAuthors($data)
