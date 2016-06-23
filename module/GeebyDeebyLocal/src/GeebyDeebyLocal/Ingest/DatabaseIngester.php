@@ -998,6 +998,12 @@ class DatabaseIngester
         return $count == 1 ? $perfect : null;
     }
 
+    protected function addAltTitle($title, $item)
+    {
+        $table = $this->getDbTable('itemsalttitles');
+        $table->insert(['Item_ID' => $item, 'Item_AltName' => $title]);
+    }
+
     /**
      * Create an Item record for the provided data array.
      *
@@ -1037,6 +1043,11 @@ class DatabaseIngester
             $char = $prompt->show();
             if ($char !== '0') {
                 $response = ord(strtoupper($char)) - 65;
+                if (!$this->fuzzyCompare($data['title'], $candidates[$response]['title'])
+                    && !$this->hasMatchingAltTitle($data['title'], $candidates[$response]['id'])
+                ) {
+                    $this->addAltTitle($data['title'], $candidates[$response]['id']);
+                }
                 return $candidates[$response]['id'];
             }
         }
@@ -1085,17 +1096,19 @@ class DatabaseIngester
      *
      * @return object Edition row object
      */
-    protected function createEditionInSeries($series, $item, $pos)
+    protected function createEditionInSeries($series, $item, $pos, $data)
     {
         $edName = $this->articles->articleAwareAppend($series->Series_Name, ' edition');
         $seriesID = $series->Series_ID;
         $edsTable = $this->getDbTable('edition');
+        $altName = $this->hasMatchingAltTitle($data['title'], $item, false, true);
         $edsTable->insert(
             [
                 'Edition_Name' => $edName,
                 'Series_ID' => $seriesID,
                 'Item_ID' => $item,
                 'Position' => $pos,
+                'Preferred_Item_AltName_ID' => $altName ? $altName : null,
             ]
         );
         return $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
@@ -1113,7 +1126,7 @@ class DatabaseIngester
     protected function addChildWorkToSeries($series, $data, $pos = 0)
     {
         $item = $this->getItemForNewEdition($data);
-        $newObj = $this->createEditionInSeries($series, $item, $pos);
+        $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
         Console::writeLine("Added edition ID " . $newObj->Edition_ID);
         return $this->updateWorkInDatabase(
             $data,
@@ -1141,7 +1154,7 @@ class DatabaseIngester
             ->select(['Series_ID' => $series->Series_ID, 'Position' => $pos]);
         if (count($lookup) == 0) {
             $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
-            $newObj = $this->createEditionInSeries($series, $item, $pos);
+            $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
             Console::writeLine("Added edition ID " . $newObj->Edition_ID);
             return $newObj;
         } else if (count($lookup) == 1) {
@@ -1159,13 +1172,14 @@ class DatabaseIngester
     /**
      * Check for a match between an incoming title and an alternate title of an Item.
      *
-     * @param string $title  Incoming title to check
-     * @param int    $itemID Item to check against
-     * @param bool   $warn   Should we display a warning if we find a match?
+     * @param string $title    Incoming title to check
+     * @param int    $itemID   Item to check against
+     * @param bool   $warn     Should we display a warning if we find a match?
+     * @param bool   $returnId Should we return the alt title sequence ID instead of boolean true?
      *
-     * @return bool
+     * @return bool|int
      */
-    protected function hasMatchingAltTitle($title, $itemID, $warn = false)
+    protected function hasMatchingAltTitle($title, $itemID, $warn = false, $returnId = false)
     {
         $table = $this->getDbTable('itemsalttitles');
         foreach ($table->getAltTitles($itemID) as $current) {
@@ -1177,7 +1191,7 @@ class DatabaseIngester
                         . $currentAlt
                     );
                 }
-                return true;
+                return $returnId ? $current->Sequence_ID : true;
             }
         }
         return false;
