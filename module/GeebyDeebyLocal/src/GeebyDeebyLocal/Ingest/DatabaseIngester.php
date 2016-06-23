@@ -765,16 +765,116 @@ class DatabaseIngester
         return true;
     }
 
-    protected function getPersonIdsForItem($item)
+    /**
+     * Given an item ID, return an associative array of id => display string.
+     *
+     * @param string $item Item ID
+     *
+     * @return array
+     */
+    protected function getPeopleForItem($item)
     {
         $table = $this->getDbTable('editionscredits');
         $ids = [];
         foreach ($table->getCreditsForItem($item) as $credit) {
             if ($credit->Role_ID == self::ROLE_AUTHOR) {
-                $ids[] = $credit->Person_ID;
+                $ids[$credit->Person_ID] = trim($credit->First_Name . ' ' . $credit->Last_Name);
             }
         }
         return $ids;
+    }
+
+    /**
+     * Support method for getItemMatchCandidatesUsingTitle() -- given raw data and query results,
+     * score the results.
+     *
+     * @param array     $data    Raw data
+     * @param \Iterable $options Query results
+     *
+     * @return array
+     */
+    protected function evaluateItemMatchTitleCandidates($data, $options)
+    {
+        $candidates = [];
+        foreach ($options as $current) {
+            $confidence = 100;
+            $currentCredits = $this->getPeopleForItem($current->Item_ID);
+            if (!isset($data['authorIds'])) {
+                $data['authorIds'] = [];
+            }
+            if (count(array_diff($data['authorIds'], array_keys($currentCredits))) != 0) {
+                $confidence -= 25;
+            }
+            if (count(array_intersect($data['authorIds'], array_keys($currentCredits))) != count($data['authorIds'])) {
+                $confidence -= 25;
+            }
+            if (!$this->fuzzyCompare($data['title'], $current->Item_Name)) {
+                $confidence -= $this->hasMatchingAltTitle($data['title'], $current->Item_ID) ? 10 : 25;
+            }
+            $candidates[] = [
+                'id' => $current->Item_ID,
+                'title' => $current->Item_Name,
+                'authors' => implode(', ', $currentCredits),
+                'confidence' => $confidence,
+            ];
+        }
+        return $candidates;
+    }
+
+    /**
+     * Find item match candidates in the database using title.
+     *
+     * @param array $data Raw data
+     *
+     * @return array
+     */
+    protected function getItemMatchCandidatesUsingTitle($data)
+    {
+        $table = $this->getDbTable('item');
+        // Start by searching for full title; we'll break it down into chunks as we go.
+        $pos = strlen($data['title']);
+        do {
+            $strippedTitle = substr($data['title'], 0, $pos);
+            // check to see if we have a title match
+            $callback = function ($select) use ($strippedTitle) {
+                $select->where->like('Item_Name', $strippedTitle . '%');
+            };
+            $options = $table->select($callback);
+            $candidates = $this->evaluateItemMatchTitleCandidates($data, $options);
+            $commaPos = strrpos($strippedTitle, ',');
+            $semiPos = strrpos($strippedTitle, ';');
+            $pos = $commaPos > $semiPos ? $commaPos : $semiPos;
+        } while (count($candidates) == 0 && $pos > 0);
+        return $candidates;
+    }
+
+    /**
+     * Find item match candidates in the database using author.
+     *
+     * @param array $data Raw data
+     *
+     * @return array
+     */
+    protected function getItemMatchCandidatesUsingAuthor($data)
+    {
+        // TODO: implement this
+        return [];
+    }
+
+    /**
+     * Find item match candidates in the database.
+     *
+     * @param array $data Raw data
+     *
+     * @return array
+     */
+    protected function getItemMatchCandidates($data)
+    {
+        // TODO: sort by confidence
+        return array_merge(
+            $this->getItemMatchCandidatesUsingAuthor($data),
+            $this->getItemMatchCandidatesUsingTitle($data)
+        );
     }
 
     /**
@@ -787,31 +887,38 @@ class DatabaseIngester
      */
     protected function getItemForNewEdition($data, $type = self::MATERIALTYPE_WORK)
     {
-        // trim article for search purposes
-        $strippedTitle = ($pos = strrpos($data['title'], ','))
-            ? substr($data['title'], 0, $pos) : $data['title'];
-        $table = $this->getDbTable('item');
-
-        // check to see if we have a title match
-        // TODO: add more smarts here (e.g. look at alt titles, allow user to choose
-        // from multiple possible matches, look up authors and do word similarity
-        // checks in their bibliographies, etc.)
-        $callback = function ($select) use ($strippedTitle) {
-            $select->where->like('Item_Name', $strippedTitle . '%');
-        };
-        $options = $table->select($callback);
-        foreach ($options as $current) {
-            $currentCredits = $this->getPersonIdsForItem($current->Item_ID);
-            if (isset($data['authorIds']) && count($data['authorIds']) > 0
-                && count(array_diff($data['authorIds'], $currentCredits) == 0)
-                && count(array_intersect($data['authorIds'], $currentCredits)) == count($data['authorIds'])
-            ) {
-                Console::writeLine("Matched existing item ID {$current->Item_ID}");
-                return $current->Item_ID;
+        $candidates = $this->getItemMatchCandidates($data);
+        if (count($candidates) > 0) {
+            $authors = [];
+            foreach ($data['authors'] as $current) {
+                $authors[] = $current['name'];
+            }
+            $authors = count($authors) > 0 ? 'by ' . implode(', ', $authors) : ' - no credits';
+            Console::writeLine("Found candidate(s) for match with {$data['title']} $authors\n");
+            $options = '0';
+            foreach ($candidates as $i => $current) {
+                if ($i > 9) {
+                    Console::writeLine('...and more options than can be shown!');
+                    break;
+                }
+                $options .= chr(65 + $i);
+                Console::writeLine(
+                    chr(65 + $i) . '. ' . $current['title']
+                    . (!empty($current['authors']) ? ' by ' . $current['authors'] : ' - no credits')
+                    . ' (confidence: ' . $current['confidence'] . '%)'
+                );
+            }
+            Console::writeLine("\n0. NONE OF THE ABOVE -- CREATE NEW ITEM.");
+            $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
+            $char = $prompt->show();
+            if ($char !== '0') {
+                $response = ord(strtoupper($char)) - 65;
+                return $candidates[$response]['id'];
             }
         }
 
         // If we made it this far, we need to create a new item.
+        $table = $this->getDbTable('item');
         $table->insert(['Item_Name' => $data['title'], 'Material_Type_ID' => $type]);
         $id = $table->getLastInsertValue();
         Console::writeLine("Added item ID {$id} ({$data['title']})");
