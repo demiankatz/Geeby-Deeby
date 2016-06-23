@@ -849,16 +849,113 @@ class DatabaseIngester
     }
 
     /**
-     * Find item match candidates in the database using author.
+     * Reduce a string to alphanumeric chunks
+     *
+     * @return array
+     */
+    protected function chunkAndNormalizeString($str)
+    {
+        $parts = preg_split('/\s+/', $str);
+        $callback = function ($s) {
+            return preg_replace('/[^a-z0-9]/', '', strtolower($s));
+        };
+        return array_map($callback, $parts);
+    }
+
+    /**
+     * Given two strings, provide a measure (0-100) of their similarity.
+     *
+     * @param string $str1 First string
+     * @param string $str2 Second string
+     *
+     * @return int
+     */
+    protected function measureStringSimilarity($str1, $str2)
+    {
+        $parts1 = $this->chunkAndNormalizeString($str1);
+        $parts2 = $this->chunkAndNormalizeString($str2);
+        $smaller = count($parts1) > count($parts2) ? count($parts2) : count($parts1);
+        $intersection = array_intersect($parts1, $parts2);
+        // Our confidence is never greater than 90%, but the more words that match,
+        // the better we feel:
+        return ceil(90 * count($intersection) / $smaller);
+    }
+
+    /**
+     * Find item match candidates in the database using a single author.
+     *
+     * @param int   $author Author ID
+     * @param array $data   Raw data
+     *
+     * @return array
+     */
+    protected function getItemMatchCandidatesUsingAuthor($author, $data)
+    {
+        $ec = $this->getDbTable('editionscredits');
+        $candidates = [];
+        foreach ($ec->getItemCreditsForPerson($author) as $current) {
+            $score = $this->measureStringSimilarity($current['Item_Name'], $data['title']);
+            if ($score > 0) {
+                $currentCredits = $this->getPeopleForItem($current['Item_ID']);
+                $candidates[] = [
+                    'id' => $current['Item_ID'],
+                    'title' => $current['Item_Name'],
+                    'authors' => implode(', ', $currentCredits),
+                    'confidence' => $score,
+                ];
+            }
+        }
+        return $candidates;
+    }
+
+    /**
+     * Find item match candidates in the database using authors.
      *
      * @param array $data Raw data
      *
      * @return array
      */
-    protected function getItemMatchCandidatesUsingAuthor($data)
+    protected function getItemMatchCandidatesUsingAuthors($data)
     {
-        // TODO: implement this
-        return [];
+        if (!isset($data['authorIds'])) {
+            return [];
+        }
+        $candidates = [];
+        foreach ($data['authorIds'] as $author) {
+            $candidates = array_merge($candidates, $this->getItemMatchCandidatesUsingAuthor($author, $data));
+        }
+        return $candidates;
+    }
+
+    /**
+     * Deduplicate match candidates array.
+     *
+     * @param array $candidates Array to deduplicate
+     *
+     * @return array
+     */
+    public function deduplicateItemMatchCandidates($candidates)
+    {
+        $new = [];
+        foreach ($candidates as $current) {
+            if (!isset($new[$current['id']]) || $new[$current['id']]['confidence'] < $current['confidence']) {
+                $new[$current['id']] = $current;
+            }
+        }
+        return $new;
+    }
+
+    /**
+     * Sort function for match candidates.
+     *
+     * @param array $left  Left side of comparison
+     * @param array $right Right side of comparison
+     *
+     * @return int
+     */
+    public function sortCandidates($left, $right)
+    {
+        return $right['confidence'] - $left['confidence'];
     }
 
     /**
@@ -870,11 +967,35 @@ class DatabaseIngester
      */
     protected function getItemMatchCandidates($data)
     {
-        // TODO: sort by confidence
-        return array_merge(
-            $this->getItemMatchCandidatesUsingAuthor($data),
-            $this->getItemMatchCandidatesUsingTitle($data)
+        $candidates = $this->deduplicateItemMatchCandidates(
+            array_merge(
+                $this->getItemMatchCandidatesUsingTitle($data),
+                $this->getItemMatchCandidatesUsingAuthors($data)
+            )
         );
+        usort($candidates, [$this, 'sortCandidates']);
+        return $candidates;
+    }
+
+    /**
+     * Given an array of candidates, return the ID of the perfect match if there is
+     * exactly one. Otherwise, return false.
+     *
+     * @param array $candidates Candidates to examine
+     *
+     * @return int|bool
+     */
+    protected function findPerfectItemMatchCandidate($candidates)
+    {
+        $count = 0;
+        $perfect = null;
+        foreach ($candidates as $current) {
+            if ($current['confidence'] == 100) {
+                $perfect = $current['id'];
+                $count++;
+            }
+        }
+        return $count == 1 ? $perfect : null;
     }
 
     /**
@@ -889,6 +1010,9 @@ class DatabaseIngester
     {
         $candidates = $this->getItemMatchCandidates($data);
         if (count($candidates) > 0) {
+            if ($perfect = $this->findPerfectItemMatchCandidate($candidates)) {
+                return $perfect;
+            }
             $authors = [];
             foreach ($data['authors'] as $current) {
                 $authors[] = $current['name'];
