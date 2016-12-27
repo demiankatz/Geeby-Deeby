@@ -80,6 +80,8 @@ class SeriesMaterialTypes extends Gateway
                 array('mt' => 'Material_Types'),
                 'Series_Material_Types.Material_Type_ID = mt.Material_Type_ID'
             );
+            $select->columns([]);
+            $select->quantifier(\Zend\Db\Sql\Select::QUANTIFIER_DISTINCT);
             $select->order('mt.Material_Type_Name');
             if (null !== $seriesID) {
                 $select->where->equalTo('Series_ID', $seriesID);
