@@ -820,6 +820,7 @@ return array(
                 return new \Zend\Db\Adapter\Adapter(
                     array(
                         'driver' => 'mysqli',
+                        'charset' => 'utf8',
                         'hostname' => $config['geeby-deeby']['dbHost'],
                         'username' => $config['geeby-deeby']['dbUser'],
                         'password' => $config['geeby-deeby']['dbPass'],
