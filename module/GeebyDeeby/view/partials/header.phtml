@@ -1,4 +1,4 @@
-<br />
+<a href="<?=$this->basePath('/')?>"><?=$this->escapeHtml($this->config('siteTitle'))?></a>
 <div class="headerControls">
   <? if ($this->auth()->hasIdentity()): ?>
     <a href="<?=$this->url('user', array('id' => $this->auth()->getIdentity()))?>">Account</a> ·
