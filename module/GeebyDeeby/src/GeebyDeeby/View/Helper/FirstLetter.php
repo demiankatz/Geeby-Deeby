@@ -47,6 +47,6 @@ class FirstLetter extends \Zend\View\Helper\AbstractHelper
      */
     public function __invoke($text)
     {
-        return strtoupper(substr($text, 0, 1));
+        return mb_strtoupper(mb_substr($text, 0, 1));
     }
 }
