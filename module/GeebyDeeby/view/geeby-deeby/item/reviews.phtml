@@ -6,17 +6,21 @@
 <? if (count($reviews) > 0): ?>
   <? $series = false; foreach ($reviews as $review): ?>
     <? if ($series !== $review['Series_ID']): $series = $review['Series_ID']; ?>
+      <? $item = false; ?>
       <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
         <?=$this->fixtitle($review['Series_Name']);?>
       </a></h2>
     <? endif; ?>
-    <span class="item">
-      <?=$review['Position'] > 0 ? $this->escapeHtml($review['Position']) . '. ' : ''?>
-      <a href="<?=$this->url('item', array('id' => $review['Item_ID']))?>">
-        <?=$this->fixtitle($review['Item_Name'])?>
-      </a>
-      <br />
-    </span>
+    <? if ($item !== $review['Item_ID']): ?>
+      <? $item = $review['Item_ID']; ?>
+      <span class="item">
+        <?=$review['Position'] > 0 ? $this->escapeHtml($review['Position']) . '. ' : ''?>
+        <a href="<?=$this->url('item', array('id' => $review['Item_ID']))?>">
+          <?=$this->fixtitle($review['Item_Name'])?>
+        </a>
+        <br />
+      </span>
+    <? endif; ?>
   <? endforeach; ?>
 <? else: ?>
   <p>No reviews listed.</p>
