@@ -1,2 +1,11 @@
+public/banners
+public/computer
+public/contributions
 public/gallery
+public/interviews
+public/onastick
 public/scans
+public/*.htm
+public/*.gif
+public/*.txt
+public/*.xls
