@@ -180,6 +180,10 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
                     'extra' => 'Sellers'
                 )
             );
+        case 'thanks.php':
+            return $this->redirect()->toRoute(
+                'thanks'
+            );
         }
         return $this->forwardTo(__NAMESPACE__ . '\Legacy', 'notfound');
     }
