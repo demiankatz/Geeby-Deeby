@@ -120,8 +120,19 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
                 'publisher', array('id' => $this->params()->fromQuery('id'))
             );
         case 'show_series.php':
+            $id = $this->params()->fromQuery('id');
+            if (!$id) {
+                $name = $this->params()->fromQuery('name');
+                $table = $this->getDbTable('series');
+                $record = $table->select(['Series_Name' => $name])->toArray();
+                if (isset($record[0]['Series_ID'])) {
+                    $id = $record[0]['Series_ID'];
+                } else {
+                    break;
+                }
+            }
             return $this->redirect()
-                ->toRoute('series', array('id' => $this->params()->fromQuery('id')));
+                ->toRoute('series', array('id' => $id));
         case 'show_series_images.php':
             return $this->redirect()->toRoute(
                 'series', array(
