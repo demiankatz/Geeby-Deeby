@@ -2,13 +2,16 @@
     $this->layout()->title = 'Series with Comments';
 ?>
 <? if (count($comments) > 0): ?>
-  <? $currentLetter = false; foreach ($comments as $current): ?>
+  <? $currentLetter = $currentSeries = false; foreach ($comments as $current): ?>
     <? $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <? endif; ?>
-    <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
-      <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
-    </a><br />
+    <? if ($currentSeries !== $current['Series_ID']): ?>
+      <? $currentSeries = $current['Series_ID']; ?>
+      <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+        <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+      </a><br />
+    <? endif; ?>
   <? endforeach; ?>
 <? else: ?>
   <p>No comments listed.</p>
