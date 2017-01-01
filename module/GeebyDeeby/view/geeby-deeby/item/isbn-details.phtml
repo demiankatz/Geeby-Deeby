@@ -7,5 +7,16 @@
 <? if (!$isbn->isValid()): ?>
   <p>Invalid ISBN!</p>
 <? else: ?>
-  <p>Details coming soon.</p>
+  <? if (empty($config)): ?>
+    <p>No links available.</p>
+  <? else: ?>
+    <? foreach ($config as $section => $details): ?>
+      <h2><?=$this->escapeHtml($section)?></h2>
+      <? if (!empty($details['description'])): ?><p><?=$details['description']?></p><? endif; ?>
+      <p>
+        <? foreach ($details['links'] as $label => $url): ?>
+          <a href="<?=$this->escapeHtml(str_replace('%isbn10%', $isbn->get10(), $url))?>"><?=$this->escapeHtml($label)?></a><br />
+        <? endforeach; ?>
+    <? endforeach ?>
+  <? endif; ?>
 <? endif; ?>

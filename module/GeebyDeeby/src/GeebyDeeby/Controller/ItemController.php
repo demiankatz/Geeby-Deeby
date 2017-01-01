@@ -125,9 +125,12 @@ class ItemController extends AbstractBase
     public function isbndetailsAction()
     {
         $isbn = $this->params()->fromRoute('extra');
+        $config = $this->getServiceLocator()->get('config');
         return $this->createViewModel(
             array(
-                'isbn' => new \VuFind\Code\ISBN($isbn)
+                'isbn' => new \VuFind\Code\ISBN($isbn),
+                'config' => isset($config['geeby-deeby']['isbn_links'])
+                    ? $config['geeby-deeby']['isbn_links'] : []
             )
         );
     }

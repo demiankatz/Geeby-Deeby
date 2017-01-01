@@ -75,6 +75,24 @@ return array(
             // if you wish to create custom file groupings on the "List Files"
             // page.  Leave it empty to group by standard File Type values.
         ),
+        'isbn_links' => array(
+            'Shopping' => array(
+                'description' => 'These shopping links are included for your convenience. '
+                    . 'This site is not affiliated with any of these retailers, and their '
+                    . 'inclusion here is not intended as an endorsement.',
+                'links' => array(
+                    'Amazon.ca' => 'http://www.amazon.ca/exec/obidos/ASIN/%isbn10%',
+                    'Amazon.com' => 'http://www.amazon.com/exec/obidos/ASIN/%isbn10%',
+                    'Amazon.co.jp' => 'http://www.amazon.co.jp/exec/obidos/ASIN/%isbn10%',
+                    'Amazon.co.uk' => 'http://www.amazon.co.uk/exec/obidos/ASIN/%isbn10%',
+                    'Amazon.de' => 'http://www.amazon.de/exec/obidos/ASIN/%isbn10%',
+                    'Amazon.fr' => 'http://www.amazon.fr/exec/obidos/ASIN/%isbn10%',
+                    'Barnes & Noble' => 'http://search.barnesandnoble.com/booksearch/isbninquiry.asp?ISBN=%isbn10%',
+                    'BookFinder.com' => 'http://www.bookfinder.com/search/?author=&title=&submit=Begin+Search&new_used=*&binding=*&isbn=%isbn10%&keywords=&minprice=&maxprice=&currency=USD&mode=advanced&st=sr&ac=qr',
+                    'Half.com' => 'http://search.half.ebay.com/ws/web/HalfSearch?query=%isbn10%',
+                ),
+            ),
+        ),
         'link_groups' => array(
             // Fill this array with 'Group Name' => array(
             //     'desc' => string value (HTML description to show on page)
