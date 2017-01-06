@@ -20,6 +20,7 @@ return array(
             'GeebyDeeby\Controller\Edition' => 'GeebyDeebyLocal\Controller\EditionController',
             'GeebyDeeby\Controller\Ingest' => 'GeebyDeebyLocal\Controller\IngestController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeebyLocal\Controller\ItemController',
+            'GeebyDeeby\Controller\Index' => 'GeebyDeebyLocal\Controller\IndexController',
             'GeebyDeeby\Controller\Ontology' => 'GeebyDeebyLocal\Controller\OntologyController',
             'GeebyDeeby\Controller\Person' => 'GeebyDeebyLocal\Controller\PersonController',
             'GeebyDeeby\Controller\Podcast' => 'GeebyDeebyLocal\Controller\PodcastController',
@@ -91,6 +92,11 @@ return array(
                     )
                 ),
             )
+        )
+    ),
+    'controller_plugins' => array(
+        'invokables' => array(
+            'podcast' => 'GeebyDeebyLocal\Controller\Plugin\Podcast',
         )
     ),
     'router' => array(

@@ -1,6 +1,6 @@
 <?php
 /**
- * Search controller
+ * Index controller
  *
  * PHP version 5
  *
@@ -36,14 +36,14 @@ namespace GeebyDeebyLocal\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class SearchController extends \GeebyDeeby\SearchController
+class IndexController extends \GeebyDeeby\Controller\IndexController
 {
-    public function homeAction()
+    public function indexAction()
     {
         return $this->createViewModel(
             array('episodes' => array(
-                'mittie'    => $this->getPodcastMetadata(4, 'Mittie\'s Storytime'),
-                'professor' => $this->getPodcastMetadata(4, 'Professor M\'s Lecture Series'),
+                'mittie'    => $this->podcast()->getMetadata(4, 'Mittie\'s Storytime'),
+                'professor' => $this->podcast()->getMetadata(4, 'Professor M\'s Lecture Series'),
             ))
         );
     }
