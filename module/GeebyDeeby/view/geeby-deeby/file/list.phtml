@@ -10,7 +10,9 @@
       <? foreach ($fileList as $file): ?>
         <a href="<?=$this->escapeHtml($file['File_Path'])?>">
           <?=$this->escapeHtml($this->fixtitle($file['File_Name']))?>
-        </a><br />
+        </a>
+        <? if (!empty($file['Description'])): ?> - <?=$file['Description']?><? endif; ?>
+        <br />
       <? endforeach; ?>
     </p>
   <? endforeach; ?>
