@@ -48,8 +48,8 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         return $this->createViewModel(
             array('episodes' => array(
-                'mittie'    => $this->getPodcastMetadata(4, 'Mittie\'s Storytime'),
-                'professor' => $this->getPodcastMetadata(4, 'Professor M\'s Lecture Series'),
+                'mittie'    => $this->podcast()->getMetadata(4, 'Mittie\'s Storytime'),
+                'professor' => $this->podcast()->getMetadata(4, 'Professor M\'s Lecture Series'),
             ))
         );
     }
@@ -76,7 +76,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         return $this->createViewModel(
             array(
-              'episodes' => $this->getPodcastMetadata(0, 'Mittie\'s Storytime')
+              'episodes' => $this->podcast()->getMetadata(0, 'Mittie\'s Storytime')
             )
         );
     }
@@ -90,7 +90,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         return $this->createViewModel(
             array(
-              'episodes' => $this->getPodcastMetadata(0, 'Professor M\'s Lecture Series')
+              'episodes' => $this->podcast()->getMetadata(0, 'Professor M\'s Lecture Series')
             )
         );
     }
@@ -104,7 +104,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         $episode = $this->params()->fromQuery('file');
         $details = false;
-        $meta = $this->getPodcastMetadata();
+        $meta = $this->podcast()->getMetadata();
         foreach ($meta as $i => $current) {
             if ($current['filename'] == $episode) {
                 $details = $current;
@@ -156,7 +156,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
 
         $aboutUrl = $serverUrl($this->url()->fromRoute('podcast-about'));
         $filter = $this->params()->fromQuery('cat');
-        foreach ($this->getPodcastMetadata(0, $filter) as $current) {
+        foreach ($this->podcast()->getMetadata(0, $filter) as $current) {
             $entry = $feed->createEntry();
             $entry->setTitle($current['category'] . ': ' . $current['title']);
             $entry->setLink($aboutUrl . '?file=' . urlencode($current['filename']));
@@ -172,53 +172,5 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         }
 
         return $feed;
-    }
-
-    /**
-     * Load podcast metadata
-     *
-     * @param int    $limit  Number of results to return (0 for no limit)
-     * @param string $filter Category to filter by (null for no filter)
-     *
-     * @return array
-     */
-    public function getPodcastMetadata($limit = 0, $filter = null)
-    {
-        $handle = fopen(__DIR__ . '/../../../../../public/mp3/metadata', 'r');
-        $result = array();
-        while (true) {
-            $current = array(
-                'filename' => trim(fgets($handle)),
-                'date' => trim(fgets($handle)),
-                'category' => trim(fgets($handle)),
-                'title' => trim(fgets($handle)),
-                'author' => trim(fgets($handle)),
-                'duration' => trim(fgets($handle)),
-                'description' => trim(fgets($handle))
-            );
-            fgets($handle);
-            if (empty($current['filename'])) {
-                break;
-            }
-            if (null !== $filter && $current['category'] !== $filter) {
-                continue;
-            }
-            $filename = realpath(
-                __DIR__ . '/../../../../../public/mp3/' . $current['filename']
-            );
-            $current['size'] = filesize($filename);
-            $current['image'] = str_replace('.mp3', '.jpg', $current['filename']);
-            $firstWord = current(explode(' ', $current['category']));
-            $current['category_route'] = 'podcast-'
-                . strtolower(preg_replace('/[^a-zA-Z]/', '', $firstWord));
-            $credits = str_replace('.mp3', '.html', $filename);
-            $current['credits'] = file_exists($credits)
-                ? file_get_contents($credits) : false;
-            $result[] = $current;
-            if ($limit > 0 && count($result) == $limit) {
-                break;
-            }
-        }
-        return $result;
     }
 }
