@@ -68,7 +68,7 @@ class Podcast extends AbstractPlugin
                 continue;
             }
             $filename = realpath(
-                __DIR__ . '/../../../../../public/mp3/' . $current['filename']
+                __DIR__ . '/../../../../../../public/mp3/' . $current['filename']
             );
             $current['size'] = filesize($filename);
             $current['image'] = str_replace('.mp3', '.jpg', $current['filename']);
