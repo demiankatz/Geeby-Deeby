@@ -47,4 +47,13 @@ class IndexController extends \GeebyDeeby\Controller\IndexController
             ))
         );
     }
+
+    public function loginAction()
+    {
+        $result = parent::loginAction();
+        if (is_callable([$result, 'setTemplate'])) {
+            $result->setTemplate('geeby-deeby/index/login');
+        }
+        return $result;
+    }
 }
