@@ -1,2 +1,8 @@
 composer.lock
+module/GeebyDeebyLocal/src/GeebyDeebyLocal/Controller/settings.json
+public/images/leblanc*
+public/m4b
+public/mp3/*.html
+public/mp3/*.jpg
+public/mp3/*.mp3
 vendor/
