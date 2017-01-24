@@ -904,6 +904,21 @@ class DatabaseIngester
                     'authors' => implode(', ', $currentCredits),
                     'confidence' => $score,
                 ];
+            } else {
+                $table = $this->getDbTable('itemsalttitles');
+                foreach ($table->getAltTitles($current['Item_ID']) as $currentAlt) {
+                    $score = $this->measureStringSimilarity($currentAlt['Item_AltName'], $data['title']);
+                    if ($score > 0) {
+                        $currentCredits = $this->getPeopleForItem($current['Item_ID']);
+                        $candidates[] = [
+                            'id' => $current['Item_ID'],
+                            'title' => $currentAlt['Item_AltName'] . ' (alt. title for ' . $current['Item_Name']. ')',
+                            'authors' => implode(', ', $currentCredits),
+                            'confidence' => $score,
+                        ];
+                        break;
+                    }
+                }
             }
         }
         return $candidates;
