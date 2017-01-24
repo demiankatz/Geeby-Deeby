@@ -1025,8 +1025,10 @@ class DatabaseIngester
                 return $perfect;
             }
             $authors = [];
-            foreach ($data['authors'] as $current) {
-                $authors[] = $current['name'];
+            if (isset($data['authors'])) {
+                foreach ($data['authors'] as $current) {
+                    $authors[] = $current['name'];
+                }
             }
             $authors = count($authors) > 0 ? 'by ' . implode(', ', $authors) : ' - no credits';
             Console::writeLine("Found candidate(s) for match with {$data['title']} $authors\n");
