@@ -38,6 +38,10 @@ namespace GeebyDeebyLocal\Ingest;
  */
 class ModsExtractor
 {
+    protected $subjectUrisToIgnore = [
+        'http://vocab.getty.edu/aat/300028051', // 'books' -- not very meaningful
+    ];
+
     public function getDetails($mods)
     {
         $contents = [];
@@ -244,7 +248,7 @@ class ModsExtractor
                         $current->xpath('mods:namePart'), $nameType
                     );
                 }
-                if (isset($uri[0])) {
+                if (isset($uri[0]) && !in_array($uri[0], $this->subjectUrisToIgnore)) {
                     $results[(string)$uri[0]] = trim($value);
                 }
             }
