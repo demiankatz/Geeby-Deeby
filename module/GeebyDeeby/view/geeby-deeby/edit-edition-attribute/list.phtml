@@ -1,0 +1,6 @@
+<? $this->layout()->title = 'Edit Edition Attributes' ?>
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_attributes.js') ?>
+<p><b>Edition Attributes:</b></p>
+<button id="add_edition_attribute" type="button" onclick="editEditionAttribute('NEW');">Add Edition Attribute</button>
+<br /><br />
+<div id="edition_attribute_list"><?=$this->render('geeby-deeby/edit-edition-attribute/render-edition-attributes.phtml')?></div>

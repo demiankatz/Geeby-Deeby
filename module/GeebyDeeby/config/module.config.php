@@ -26,6 +26,8 @@ return array(
                 'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'edition' => 'GeebyDeeby\Db\Table\Edition',
+                'editionsattribute' => 'GeebyDeeby\Db\Table\EditionsAttribute',
+                'editionsattributesvalues' => 'GeebyDeeby\Db\Table\EditionsAttributesValues',
                 'editionscredits' => 'GeebyDeeby\Db\Table\EditionsCredits',
                 'editionsfulltext' => 'GeebyDeeby\Db\Table\EditionsFullText',
                 'editionsimages' => 'GeebyDeeby\Db\Table\EditionsImages',
@@ -360,6 +362,27 @@ return array(
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'editionattribute' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/EditionAttribute[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditEditionAttribute',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'editionattribute_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/EditionAttributeList',
+                            'defaults' => array(
+                                'controller'    => 'EditEditionAttribute',
+                                'action'        => 'list',
                             ),
                         ),
                     ),
@@ -1143,6 +1166,7 @@ return array(
             'GeebyDeeby\Controller\EditCity' => 'GeebyDeeby\Controller\EditCityController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
+            'GeebyDeeby\Controller\EditEditionAttribute' => 'GeebyDeeby\Controller\EditEditionAttributeController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
             'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',
