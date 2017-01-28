@@ -8,7 +8,7 @@ a:hover {
 }
 
 body {
-    font-size: 10pt;
+    font-size: 12pt;
     font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
     background-color: #F3E3C6;
 }
@@ -73,14 +73,14 @@ table.edit tr th span.note {
 
 table.edit tr td input {
     width: 100%;
-    font-size: 10pt;
+    font-size: 12pt;
 }
 
 table.edit tr td textarea {
     width: 100%;
     min-width: 300px;
     height: 150px;
-    font-size: 10pt;
+    font-size: 12pt;
 }
 
 .edit_container {
@@ -91,7 +91,7 @@ table.approve tr td textarea {
     width: 100%;
     min-width: 500px;
     height: 200px;
-    font-size: 10pt;
+    font-size: 12pt;
 }
 
 table.list_item {
