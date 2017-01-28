@@ -201,10 +201,14 @@ class ItemController extends AbstractBase
                 $view->noChange = true;
             } else {
                 if ($existing) {
-                    $table->update($params);
-                } else {
-                    $table->insert($params);
+                    $table->delete(
+                        [
+                            'Item_ID' => $params['Item_ID'],
+                            'User_ID' => $params['User_ID']
+                        ]
+                    );
                 }
+                $table->insert($params);
             }
             $view->setTemplate('geeby-deeby/item/review-submitted');
             return $view;
