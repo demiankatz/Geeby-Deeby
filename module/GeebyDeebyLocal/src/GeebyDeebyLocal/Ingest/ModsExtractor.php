@@ -97,7 +97,12 @@ class ModsExtractor
             $number = $current->xpath('mods:partNumber');
             $firstName = isset($name[0]) ? (string) $name[0] : null;
             if (!empty($firstName)) {
-                $seriesInfo[$firstName] = isset($number[0]) ? (string) $number[0] : '';
+                // If the same series name has multiple numbers, favor the lowest non-zero value:
+                if (!isset($seriesInfo[$firstName]) || 
+                    ((string) $number[0] > 0 && intval($seriesInfo[$firstName]) < (string) $number[0])
+                ) {
+                    $seriesInfo[$firstName] = isset($number[0]) ? (string) $number[0] : '';
+                }
             }
         }
         return empty($seriesInfo) ? false : $seriesInfo;
