@@ -81,6 +81,8 @@ class EditionController extends AbstractBase
         } else {
             $series = array();
         }
+        $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
+            ->getAttributesForEdition($id);
         return $this->createViewModel(
             array('edition' => $rowObj->toArray(), 'item' => $item, 'series' => $series)
             + $extras
@@ -114,6 +116,14 @@ class EditionController extends AbstractBase
         $edition = $graph->resource($uri, $class);
         $name = $view->edition['Edition_Name'];
         $edition->set('rdf:label', $articleHelper->formatTrailingArticles($name));
+        foreach ($view->editionAttributes as $current) {
+            if (!empty($current['Editions_Attribute_RDF_Property'])) {
+                $edition->set(
+                    $current['Editions_Attribute_RDF_Property'],
+                    $current['Editions_Attribute_Value']
+                );
+            }
+        }
         return $edition;
     }
 
