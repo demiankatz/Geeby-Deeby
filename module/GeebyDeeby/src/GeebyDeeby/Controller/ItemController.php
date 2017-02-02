@@ -53,6 +53,8 @@ class ItemController extends AbstractBase
         if (!is_object($rowObj)) {
             return false;
         }
+        $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
+            ->getAttributesForItem($id);
         return $this->createViewModel(
             array('item' => $rowObj->toArray()) + $extras
         );

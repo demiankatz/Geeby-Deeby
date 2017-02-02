@@ -438,6 +438,33 @@
         </td></tr>
       <? endif; ?>
 
+      <?
+        $groupedAttribs = [];
+        foreach ($editionAttributes as $current) {
+            $groupedAttribs[$current['Editions_Attribute_Name']][] = $current;
+        }
+        foreach ($groupedAttribs as $key => $values) {
+            $groupedAttribs[$key] = [
+              'details' => $values[0],
+              'values' => $this->groupeditions($values, 'Editions_Attribute_Value', $editions)
+            ];
+        }
+      ?>
+      <? foreach ($groupedAttribs as $label => $current): ?>
+        <tr>
+          <th><?=$this->escapeHtml($label)?>:</th>
+          <td>
+            <? foreach ($current['values'] as $value => $note): ?>
+              <? if ($current['details']->Allow_HTML == 1): ?>
+                <? if (!empty($note)): ?><i><?=$this->escapeHtml($note)?>:</i><br /><? endif; ?>
+                <?=$value?><br />
+              <? else: ?>
+                <?=$this->escapeHtml($value)?> <? if (!empty($note)):?>(<?=$this->escapeHtml($note)?>)<? endif; ?><br />
+              <? endif; ?>
+            <? endforeach; ?>
+          </td>
+      <? endforeach; ?>
+
       <? if (count($descriptions) > 0): ?>
         <? foreach ($descriptions as $desc): ?>
           <tr>
