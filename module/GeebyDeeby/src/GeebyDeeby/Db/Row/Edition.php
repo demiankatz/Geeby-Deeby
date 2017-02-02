@@ -167,6 +167,9 @@ class Edition extends ServiceLocatorAwareGateway
     {
         $attrTable = $this->getDbTable('editionsattributesvalues');
         $clonable = $this->getDbTable('editionsattribute')->getClonableIds();
+        if (count($clonable) == 0) {
+            return;
+        }
         $callback = function ($select) use ($editionId, $clonable) {
             $select->where->equalTo('Edition_ID', $editionId)
                 ->in('Editions_Attribute_ID', $clonable);
