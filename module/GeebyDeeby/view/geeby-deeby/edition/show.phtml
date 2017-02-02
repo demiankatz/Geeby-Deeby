@@ -258,6 +258,17 @@
         </td></tr>
       <? endif; ?>
 
+      <? foreach ($editionAttributes as $current): ?>
+        <tr>
+          <th><?=$this->escapeHtml($current->Editions_Attribute_Name)?>:</th>
+          <td>
+            <? if ($current->Allow_HTML == 1): ?>
+              <?=$current->Editions_Attribute_Value?>
+            <? else: ?>
+              <?=$this->escapeHtml($current->Editions_Attribute_Value)?>
+            <? endif; ?>
+          </td>
+      <? endforeach; ?>
     </table>
   </div>
 </div>

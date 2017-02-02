@@ -325,6 +325,7 @@ class Edition extends Gateway
                 )
             );
         }
+        $to->copyAttributes($from->Edition_ID);
         $to->copyCredits($from->Edition_ID);
     }
 }

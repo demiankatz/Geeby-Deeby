@@ -461,10 +461,10 @@ class AbstractBase extends AbstractActionController
             'text/plain', 'application/n-triples',  // N-Triples
             'application/rdf+xml',                  // RDF-XML
         );
-        $bestMatch = $force ? -1 : $accept->match('text/html');
+        $bestMatch = $force ? -1 : $accept->match('text/html')->getPriority();
         $bestFormat = false;            // HTML by default
         foreach ($rdfForms as $current) {
-            $currentMatch = $accept->match($current);
+            $currentMatch = $accept->match($current)->getPriority();
             if ($currentMatch > $bestMatch) {
                 $bestMatch = $currentMatch;
                 $bestFormat = $current;

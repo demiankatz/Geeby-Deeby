@@ -53,6 +53,8 @@ class ItemController extends AbstractBase
         if (!is_object($rowObj)) {
             return false;
         }
+        $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
+            ->getAttributesForItem($id);
         return $this->createViewModel(
             array('item' => $rowObj->toArray()) + $extras
         );
@@ -362,10 +364,14 @@ class ItemController extends AbstractBase
                 $view->noChange = true;
             } else {
                 if ($existing) {
-                    $table->update($params);
-                } else {
-                    $table->insert($params);
+                    $table->delete(
+                        [
+                            'Item_ID' => $params['Item_ID'],
+                            'User_ID' => $params['User_ID']
+                        ]
+                    );
                 }
+                $table->insert($params);
             }
             $view->setTemplate('geeby-deeby/item/review-submitted');
             return $view;

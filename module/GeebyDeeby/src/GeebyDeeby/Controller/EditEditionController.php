@@ -51,6 +51,33 @@ class EditEditionController extends AbstractBase
     }
 
     /**
+     * Save attributes for the current edition.
+     *
+     * @param int   $editionId Edition ID
+     * @param array $attribs   Attribute values
+     *
+     * @return void
+     */
+    protected function saveAttributes($editionId, $attribs)
+    {
+        $table = $this->getDbTable('editionsattributesvalues');
+        // Delete old values:
+        $table->delete(['Edition_ID' => $editionId]);
+        // Save new values:
+        foreach ($attribs as $id => $val) {
+            if (!empty($val)) {
+                $table->insert(
+                    [
+                        'Edition_ID' => $editionId,
+                        'Editions_Attribute_ID' => $id,
+                        'Editions_Attribute_Value' => $val
+                    ]
+                );
+            }
+        }
+    }
+
+    /**
      * Operate on a single edition
      *
      * @return mixed
@@ -72,6 +99,29 @@ class EditEditionController extends AbstractBase
             'extent_in_parent' => 'Extent_In_Parent',
         );
         $view = $this->handleGenericItem('edition', $assignMap, 'edition');
+        $editionId = isset($view->edition['Edition_ID'])
+            ? $view->edition['Edition_ID']
+            : (isset($view->affectedRow->Edition_ID) ? $view->affectedRow->Edition_ID : null);
+
+        // Special handling for saving attributes:
+        if ($this->getRequest()->isPost()
+            && ($attribs = $this->params()->fromPost('attribs'))
+        ) {
+            $this->saveAttributes($editionId, $attribs);
+        }
+
+        // Add attribute details if we have an Edition_ID.
+        if ($editionId) {
+            $view->attributes = $this->getDbTable('editionsattribute')->getList();
+            $attributeValues = [];
+            $values = $this->getDbTable('editionsattributesvalues')
+                ->getAttributesForEdition($editionId);
+            foreach ($values as $current) {
+                $attributeValues[$current->Editions_Attribute_ID]
+                    = $current->Editions_Attribute_Value;
+            }
+            $view->attributeValues = $attributeValues;
+        }
 
         $itemTable = $this->getDbTable('item');
 
@@ -95,23 +145,23 @@ class EditEditionController extends AbstractBase
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->roles = $this->getDbTable('role')->getList();
             $view->credits= $this->getDbTable('editionscredits')
-                ->getCreditsForEdition($view->edition['Edition_ID']);
+                ->getCreditsForEdition($editionId);
             $view->images = $this->getDbTable('editionsimages')
-                ->getImagesForEdition($view->edition['Edition_ID']);
+                ->getImagesForEdition($editionId);
             $view->ISBNs = $this->getDbTable('editionsisbns')
-                ->getISBNsForEdition($view->edition['Edition_ID']);
+                ->getISBNsForEdition($editionId);
             $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
-                ->getOCLCNumbersForEdition($view->edition['Edition_ID']);
+                ->getOCLCNumbersForEdition($editionId);
             $view->editionPlatforms = $this->getDbTable('editionsplatforms')
-                ->getPlatformsForEdition($view->edition['Edition_ID']);
+                ->getPlatformsForEdition($editionId);
             $view->platforms = $this->getDbTable('platform')->getList();
             $view->productCodes = $this->getDbTable('editionsproductcodes')
-                ->getProductCodesForEdition($view->edition['Edition_ID']);
+                ->getProductCodesForEdition($editionId);
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
-                ->getDatesForEdition($view->edition['Edition_ID']);
+                ->getDatesForEdition($editionId);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
             $view->fullText = $this->getDbTable('editionsfulltext')
-                ->getFullTextForEdition($view->edition['Edition_ID']);
+                ->getFullTextForEdition($editionId);
             $view->fullTextSources = $this->getDbTable('fulltextsource')
                 ->getList();
             if (is_object($view->editionObj)) {
@@ -119,7 +169,7 @@ class EditEditionController extends AbstractBase
                 $view->previous = $view->editionObj->getPreviousInSeries();
             }
             $view->item_list = $itemTable
-                ->getItemsForEdition($view->edition['Edition_ID']);
+                ->getItemsForEdition($editionId);
         }
         return $view;
     }
