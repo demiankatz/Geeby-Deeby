@@ -210,6 +210,22 @@ class ApproveController extends AbstractBase
         );
         $value = array('Review' => $text, 'Approved' => 'y');
         $table->update($value, $itemWhere + $userWhere + array('Approved' => 'n'));
+        $recentTable = $this->getDbTable('recentreviews');
+        try {
+            $recentTable->insert(
+                [
+                    'User_ID' => $userId,
+                    'Item_ID' => $itemId,
+                    'Type' => $type,
+                    'Added' => date('Y-m-d'),
+                ]
+            );
+        } catch (\Zend\Db\Adapter\Exception\RuntimeException $e) {
+            // Ignore duplicate insert errors, but rethrow others....
+            if (strpos($e->getMessage(), 'Duplicate entry') !== 0) {
+                throw $e;
+            }
+        }
         return $this->jsonReportSuccess();
     }
 
