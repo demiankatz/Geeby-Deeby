@@ -149,7 +149,7 @@ CREATE TABLE `Items` (
   `Item_Length` tinytext,
   `Item_Endings` tinytext,
   `Item_Errata` text,
-  `Item_Thanks` tinytext,
+  `Item_Thanks` text,
   `Material_Type_ID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Item_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
