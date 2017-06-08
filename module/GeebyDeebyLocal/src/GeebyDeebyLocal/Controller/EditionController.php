@@ -111,6 +111,13 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         return $edition;
     }
 
+    protected function addModsChild($xml, $child)
+    {
+        $current = $xml->addChild('relatedItem');
+        $current['type'] = 'constituent';
+        $current->titleInfo->title = $child->Item_Name;
+    }
+
     /**
      * Construct a MODS record.
      *
@@ -122,6 +129,11 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $template = '<mods:mods xmlns="http://www.loc.gov/mods/v3" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"></mods:mods>';
         $xml = simplexml_load_string($template);
         $xml->titleInfo->title = $view->item['Item_Name'];
+        if (!empty($view->children)) {
+            foreach ($view->children as $child) {
+                $this->addModsChild($xml, $child);
+            }
+        }
         $response = $this->getResponse();
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-type', 'text/xml');
