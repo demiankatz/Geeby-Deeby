@@ -111,11 +111,41 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         return $edition;
     }
 
+    /**
+     * Add title details to an XML object.
+     *
+     * @param \SimpleXMLElement $xml   An empty <mods:titleInfo> element
+     * @param string            $title The title to format
+     *
+     * @return void
+     */
+    protected function addModsTitle($xml, $title)
+    {
+        list($article, $body) = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+            ->separateArticle($title, false);
+        if (!empty($article)) {
+            $xml->nonSort = $article;
+        }
+        $bodyParts = explode(':', $body, 2);
+        $xml->title = trim($bodyParts[0]);
+        if (!empty($bodyParts[1])) {
+            $xml->subTitle = trim($bodyParts[1]);
+        }
+    }
+
+    /**
+     * Add a child record to a MODS object.
+     *
+     * @param \SimpleXMLElement $xml   A <mods:mods> element
+     * @param object            $child Child record information in object form
+     *
+     * @return void
+     */
     protected function addModsChild($xml, $child)
     {
         $current = $xml->addChild('relatedItem');
         $current['type'] = 'constituent';
-        $current->titleInfo->title = $child->Item_Name;
+        $this->addModsTitle($current->addChild('titleInfo'), $child->Item_Name);
     }
 
     /**
@@ -128,7 +158,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $view = $this->getViewModelWithEditionAndDetails();
         $template = '<mods:mods xmlns="http://www.loc.gov/mods/v3" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"></mods:mods>';
         $xml = simplexml_load_string($template);
-        $xml->titleInfo->title = $view->item['Item_Name'];
+        $this->addModsTitle($xml->addChild('titleInfo'), $view->item['Item_Name']);
         if (!empty($view->children)) {
             foreach ($view->children as $child) {
                 $this->addModsChild($xml, $child);
