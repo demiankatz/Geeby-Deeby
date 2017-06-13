@@ -161,7 +161,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      * Add names to the child record of a MODS object.
      *
      * @param \SimpleXMLElement $xml       A <mods:relatedItem> element
-     * @param object            $editionID The edition whose credits should be added
+     * @param int               $editionID The edition whose credits should be added
      *
      * @return void
      */
@@ -205,6 +205,22 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     }
 
     /**
+     * Add genre info to the child record of a MODS object.
+     *
+     * @param \SimpleXMLElement $xml    A <mods:relatedItem> element
+     * @param int               $itemID The item whose tags should be added
+     *
+     * @return void
+     */
+    protected function addModsGenres($xml, $itemID)
+    {
+        $tags = $this->getDbTable('itemstags')->getTags($itemID);
+        foreach ($tags as $tag) {
+            $xml->addChild('genre', $tag->Tag);
+        }
+    }
+
+    /**
      * Add a child record to a MODS object.
      *
      * @param \SimpleXMLElement $xml   A <mods:mods> element
@@ -218,6 +234,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $current['type'] = 'constituent';
         $this->addModsTitle($current->addChild('titleInfo'), $child->Item_Name);
         $this->addModsNames($current, $child->Edition_ID);
+        $this->addModsGenres($current, $child->Item_ID);
         if (!empty($child->Extent_In_Parent)) {
             $this->addModsPart($current->addChild('part'), $child->Extent_In_Parent);
         }
