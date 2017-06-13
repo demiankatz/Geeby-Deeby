@@ -38,6 +38,8 @@ namespace GeebyDeebyLocal\Controller;
  */
 class EditionController extends \GeebyDeeby\Controller\EditionController
 {
+    const LC_NAME_AUTHORITY = 1;
+
     /**
      * Build the primary resource in an RDF graph.
      *
@@ -156,6 +158,53 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     }
 
     /**
+     * Add names to the child record of a MODS object.
+     *
+     * @param \SimpleXMLElement $xml       A <mods:relatedItem> element
+     * @param object            $editionID The edition whose credits should be added
+     *
+     * @return void
+     */
+    protected function addModsNames($xml, $editionID)
+    {
+        $credits = $this->getDbTable('editionscredits')
+            ->getCreditsForEdition($editionID);
+        foreach ($credits as $credit) {
+            $name = $xml->addChild('name');
+            if ($credit->Authority_ID == self::LC_NAME_AUTHORITY) {
+                $name['authority'] = 'naf';
+                $name['authorityURI'] = 'http://id.loc.gov/authorities/names';
+                $URIs = $this->getDbTable('peopleuris')
+                    ->getURIsForPerson($credit->Person_ID)->toArray();
+                $name['valueURI'] = isset($URIs[0]) ? $URIs[0]['URI'] : 'LC URI MISSING!!';
+            } else {
+                $name['authority'] = 'dime';
+                $name['authorityURI'] = 'https://dimenovels.org/Person';
+                $name['valueURI'] = 'https://dimenovels.org/Person/'
+                    . $credit->Person_ID;
+            }
+            $name->addChild(
+                'namePart',
+                trim(
+                    implode(', ', [$credit->Last_Name, $credit->First_Name])
+                    . ' ' . $credit->Middle_Name
+                )
+            );
+            if (!empty($credit->Extra_Details)) {
+                $extra = (substr($credit->Extra_Details, 0, 2) == ', ')
+                    ? substr($credit->Extra_Details, 2) : $credit->Extra_Details;
+                $part = $name->addChild('namePart', $extra);
+                if (preg_match('/[0-9]{4}/', $extra)) {
+                    $part['type'] = 'date';
+                }
+            }
+            $name->role->roleTerm = strtolower($credit->Role_Name);
+            $name->role->roleTerm['type'] = 'text';
+            
+        }
+    }
+
+    /**
      * Add a child record to a MODS object.
      *
      * @param \SimpleXMLElement $xml   A <mods:mods> element
@@ -168,6 +217,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $current = $xml->addChild('relatedItem');
         $current['type'] = 'constituent';
         $this->addModsTitle($current->addChild('titleInfo'), $child->Item_Name);
+        $this->addModsNames($current, $child->Edition_ID);
         if (!empty($child->Extent_In_Parent)) {
             $this->addModsPart($current->addChild('part'), $child->Extent_In_Parent);
         }
