@@ -134,6 +134,28 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     }
 
     /**
+     * Add part details to an XML object.
+     *
+     * @param \SimpleXMLElement $xml  An empty <mods:part> element
+     * @param string            $part Part information
+     *
+     * @return void
+     */
+    protected function addModsPart($xml, $part)
+    {
+        $chunks = explode(' ', $part);
+        if (stristr($chunks[0], 'chapter')) {
+            $type = 'chapter';
+        } else {
+            $type = 'other';
+        }
+        if (!empty($chunks[1])) {
+            $xml->detail->number = $chunks[1];
+            $xml->detail['type'] = $type;
+        }
+    }
+
+    /**
      * Add a child record to a MODS object.
      *
      * @param \SimpleXMLElement $xml   A <mods:mods> element
@@ -146,6 +168,9 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $current = $xml->addChild('relatedItem');
         $current['type'] = 'constituent';
         $this->addModsTitle($current->addChild('titleInfo'), $child->Item_Name);
+        if (!empty($child->Extent_In_Parent)) {
+            $this->addModsPart($current->addChild('part'), $child->Extent_In_Parent);
+        }
     }
 
     /**
