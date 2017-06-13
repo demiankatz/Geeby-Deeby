@@ -149,7 +149,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         if (stristr($chunks[0], 'chapter')) {
             $type = 'chapter';
         } else {
-            $type = 'other';
+            $type = 'number';
         }
         if (!empty($chunks[1])) {
             $xml->detail->number = $chunks[1];
@@ -183,20 +183,26 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                 $name['valueURI'] = 'https://dimenovels.org/Person/'
                     . $credit->Person_ID;
             }
-            $name->addChild(
-                'namePart',
-                trim(
-                    implode(', ', [$credit->Last_Name, $credit->First_Name])
-                    . ' ' . $credit->Middle_Name
-                )
-            );
+            $name['type'] = 'personal';
+            $mainName = $credit->Last_Name;
+            $firstName = trim($credit->First_Name . ' ' . $credit->Middle_Name);
+            if (!empty($firstName)) {
+                $mainName .= ', ' . $firstName;
+            }
             if (!empty($credit->Extra_Details)) {
-                $extra = (substr($credit->Extra_Details, 0, 2) == ', ')
-                    ? substr($credit->Extra_Details, 2) : $credit->Extra_Details;
-                $part = $name->addChild('namePart', $extra);
-                if (preg_match('/[0-9]{4}/', $extra)) {
-                    $part['type'] = 'date';
+                if (substr($credit->Extra_Details, 0, 1) == '(') {
+                    $mainName .= ' ' . $credit->Extra_Details;
+                } else {
+                    $extra = (substr($credit->Extra_Details, 0, 2) == ', ')
+                        ? substr($credit->Extra_Details, 2) : $credit->Extra_Details;
+                    $extraType = (preg_match('/[0-9]{4}/', $extra))
+                        ? 'date' : 'termsOfAddress';
                 }
+            }
+            $name->addChild('namePart', $mainName);
+            if (!empty($extra)) {
+                $part = $name->addChild('namePart', $extra);
+                $part['type'] = $extraType;
             }
             $name->role->roleTerm = strtolower($credit->Role_Name);
             $name->role->roleTerm['type'] = 'text';
@@ -214,9 +220,18 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      */
     protected function addModsGenres($xml, $itemID)
     {
+        $knownForms = ['Poem', 'Sketch'];
+        $knownGenres = ['Detective and mystery stories'];
         $tags = $this->getDbTable('itemstags')->getTags($itemID);
         foreach ($tags as $tag) {
-            $xml->addChild('genre', $tag->Tag);
+            if (in_array($tag->Tag, $knownForms)) {
+                $modsTag = 'form';
+            } else if (in_array($tag->Tag, $knownGenres)) {
+                $modsTag = 'genre';
+            } else {
+                $modsTag = 'subject';
+            }
+            $xml->addChild($modsTag, $tag->Tag);
         }
     }
 
