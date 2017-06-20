@@ -189,12 +189,13 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             if (!empty($firstName)) {
                 $mainName .= ', ' . $firstName;
             }
-            if (!empty($credit->Extra_Details)) {
-                if (substr($credit->Extra_Details, 0, 1) == '(') {
-                    $mainName .= ' ' . $credit->Extra_Details;
+            $rawExtra = trim($credit->Extra_Details);
+            if (!empty($rawExtra)) {
+                if (substr($rawExtra, 0, 1) == '(') {
+                    $mainName .= ' ' . $rawExtra;
                 } else {
-                    $extra = (substr($credit->Extra_Details, 0, 2) == ', ')
-                        ? substr($credit->Extra_Details, 2) : $credit->Extra_Details;
+                    $extra = (substr($rawExtra, 0, 2) == ', ')
+                        ? substr($rawExtra, 2) : $rawExtra;
                     $extraType = (preg_match('/[0-9]{4}/', $extra))
                         ? 'date' : 'termsOfAddress';
                 }
@@ -225,13 +226,19 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $tags = $this->getDbTable('itemstags')->getTags($itemID);
         foreach ($tags as $tag) {
             if (in_array($tag->Tag, $knownForms)) {
-                $modsTag = 'form';
+                $modsTag = 'genre';
+                $auth = 'aat';
             } else if (in_array($tag->Tag, $knownGenres)) {
                 $modsTag = 'genre';
+                $auth = null;
             } else {
                 $modsTag = 'subject';
+                $auth = null;
             }
-            $xml->addChild($modsTag, $tag->Tag);
+            $tag = $xml->addChild($modsTag, $tag->Tag);
+            if (!empty($auth)) {
+                $tag['authority'] = $auth;
+            }
         }
     }
 
