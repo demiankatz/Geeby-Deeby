@@ -3,6 +3,7 @@
     $this->headTitle('User Reviews - ' . $title . ' - ');
 ?>
 <h1>User Reviews - <?=$this->escapeHtml($title)?></h1>
+<p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>
 
 <? if (count($reviews) > 0): ?>
   <? $series = false; foreach ($reviews as $review): ?>
