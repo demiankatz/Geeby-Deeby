@@ -2,6 +2,7 @@
     $title = $user['Username'];
     $this->layout()->title = 'User Comments - ' . $title;
 ?>
+<p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>
 <? if (count($comments) > 0): ?>
   <? $currentLetter = false; foreach ($comments as $current): ?>
     <? $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
