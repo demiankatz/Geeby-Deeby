@@ -87,7 +87,13 @@ BaseEditor.prototype.getSaveData = function() {
     var values = {};
     for (var key in this.saveFields) {
         var rules = this.saveFields[key];
-        var current = $(rules.id).val();
+        var format = typeof rules.format === 'undefined' ? 'text' : rules.format;
+        var current;
+        if (format === 'checkbox') {
+            current = $(rules.id).is(':checked') ? 1 : 0;
+        } else {
+            current = $(rules.id).val();
+        }
         if (typeof rules.emptyError !== 'undefined' && rules.emptyError && current.length == 0) {
             alert(rules.emptyError);
             return false;
