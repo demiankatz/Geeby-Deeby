@@ -18,6 +18,6 @@
       <td><input type="checkbox" id="Allow_HTML" value="1" <?=isset($attribute['Allow_HTML']) && $attribute['Allow_HTML'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>
-  <button id="save_series_attribute" onclick="saveSeriesAttribute();">Save</button>
+  <button id="save_series_attribute" onclick="SeriesAttribute.save();">Save</button>
   <div id="save_series_attribute_status"></div>
 </div>

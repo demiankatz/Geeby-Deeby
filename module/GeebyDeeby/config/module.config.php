@@ -368,7 +368,7 @@ return array(
                     'editionattribute' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/EditionAttribute[/:id]',
+                            'route'    => '/EditionsAttribute[/:id]',
                             'defaults' => array(
                                 'controller'    => 'EditEditionAttribute',
                                 'action'        => 'index',
@@ -379,7 +379,7 @@ return array(
                     'editionattribute_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
-                            'route'    => '/EditionAttributeList',
+                            'route'    => '/EditionsAttributeList',
                             'defaults' => array(
                                 'controller'    => 'EditEditionAttribute',
                                 'action'        => 'list',
