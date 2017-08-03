@@ -1,6 +1,7 @@
 <? $this->layout()->title = 'Edit Categories' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_categories.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_categories.js') ?>
 <p><b>Categories:</b></p>
-<button id="add_category" type="button" onclick="editCategory('NEW');">Add Category</button>
+<button id="add_category" type="button" onclick="Category.edit('NEW');">Add Category</button>
 <br /><br />
 <div id="category_list"><?=$this->render('geeby-deeby/edit-category/render-categories.phtml')?></div>
