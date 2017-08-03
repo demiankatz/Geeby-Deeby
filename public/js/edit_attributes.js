@@ -6,7 +6,6 @@ var SeriesAttributeEditor = function() {
         'priority': { 'id': '#Display_Priority' },
         'allow_html': { 'id': '#Allow_HTML', format: 'checkbox' }
     };
-    this.idSelector = '#Series_Attribute_ID';
 };
 BaseEditor.prototype.registerSubclass(SeriesAttributeEditor);
 var SeriesAttribute = new SeriesAttributeEditor();
@@ -20,7 +19,6 @@ var EditionsAttributeEditor = function() {
         'copy_to_clone': { 'id': '#Copy_To_Clone', format: 'checkbox' },
         'allow_html': { 'id': '#Allow_HTML', format: 'checkbox' }
     };
-    this.idSelector = '#Editions_Attribute_ID';
 };
 BaseEditor.prototype.registerSubclass(EditionsAttributeEditor);
 var EditionsAttribute = new EditionsAttributeEditor();

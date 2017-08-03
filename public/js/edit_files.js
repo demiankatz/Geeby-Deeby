@@ -6,7 +6,6 @@ var FileEditor = function() {
         'desc': { 'id': '#Description' },
         'type_id': { 'id': '#File_Type_ID' }
     };
-    this.idSelector = '#File_ID';
 };
 BaseEditor.prototype.registerSubclass(FileEditor);
 var File = new FileEditor();
@@ -16,7 +15,6 @@ var FileTypeEditor = function() {
     this.saveFields = {
         'fileType': { 'id': '#File_Type', emptyError: 'File type cannot be blank.' }
     };
-    this.idSelector = "#File_Type_ID";
 }
 BaseEditor.prototype.registerSubclass(FileTypeEditor);
 var FileType = new FileTypeEditor();

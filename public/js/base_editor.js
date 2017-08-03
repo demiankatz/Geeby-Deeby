@@ -11,9 +11,6 @@ var BaseEditor = function() {
     this.saveFields = {
         'exampleName': { 'id': '#Example_Name', emptyError: 'Name cannot be blank.' }
     };
-
-    // A selector for obtaining the ID of the record being edited.
-    this.idSelector = '#Example_ID';
 };
 
 /**
@@ -46,6 +43,14 @@ BaseEditor.prototype.edit = function(id) {
         // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
         close: function() { $('#editForm').remove(); }
     });
+};
+
+/**
+ * Get the JQuery selector for the element containing the record ID.
+ */
+BaseEditor.prototype.getIdSelector = function() {
+    // Default convention: underscored type with "_ID" suffix:
+    return '#' + this.type.replace(/\s/g, '_') + '_ID';
 };
 
 /**
@@ -144,6 +149,6 @@ BaseEditor.prototype.save = function() {
     $(this.getSaveStatusTarget()).html('Saving...');
     
     // Use AJAX to save the values:
-    var url = this.getBaseUri() + '/' + encodeURIComponent($(this.idSelector).val());
+    var url = this.getBaseUri() + '/' + encodeURIComponent($(this.getIdSelector()).val());
     $.post(url, values, this.getSaveCallback(), 'json');
 }
