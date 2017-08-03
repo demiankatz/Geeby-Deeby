@@ -6,6 +6,6 @@
       <td><input type="text" id="File_Type" value="<?=isset($fileType['File_Type']) ? $this->escapeHtml($fileType['File_Type']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_file_type" onclick="saveFileType();">Save</button>
+  <button id="save_file_type" onclick="FileType.save();">Save</button>
   <div id="save_file_type_status"></div>
 </div>

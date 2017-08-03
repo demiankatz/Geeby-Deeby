@@ -2,47 +2,6 @@
  *         file list page.
  */
 
-/* Save the file inside the provided form element:
- */
-function saveFile()
-{
-    // Obtain values from form:
-    var fileID = $('#File_ID').val();
-    var fileName = $('#File_Name').val();
-    var filePath = $('#File_Path').val();
-    var desc = $('#Description').val();
-    var typeID = $('#File_Type_ID').val();
-    
-    // Validate form:
-    if (fileName.length == 0) {
-        alert('File name cannot be blank.');
-        return;
-    }
-    if (filePath.length == 0) {
-        alert('File path cannot be blank.');
-        return;
-    }
-    
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_file').hide();
-    $('#save_file_status').html('Saving...');
-    
-    // Use AJAX to save the values:
-    var params = {file_name: fileName, path: filePath, desc: desc, 
-        type_id: typeID};
-    var url = basePath + '/edit/File/' + encodeURIComponent(fileID);
-    $.post(url, params, function(data) {
-        // If save was successful...
-        if (!data.success) {
-            // Save failed -- display error message.
-            alert('Error: ' + data.msg);
-        }
-        // Restore save button:
-        $('#save_file').show();
-        $('#save_file_status').html('');
-    }, 'json');
-}
-
 /* Redraw the item list:
  */
 function redrawItems()

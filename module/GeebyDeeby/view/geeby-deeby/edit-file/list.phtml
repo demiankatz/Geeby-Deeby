@@ -1,15 +1,16 @@
 <? $this->layout()->title = 'Edit Files' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_files.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_files.js') ?>
 <div class="row">
   <div class="col-md-3">
       <p><b>Files:</b></p>
-      <button id="add_file" type="button" onclick="editFile('NEW');">Add File</button>
+      <button id="add_file" type="button" onclick="File.edit('NEW');">Add File</button>
       <br /><br />
       <div id="file_list"><?=$this->render('geeby-deeby/edit-file/render-files.phtml')?></div>
   </div>
   <div class="col-md-3">
       <p><b>File Types:</b></p>
-      <button id="add_file_type" type="button" onclick="editFileType('NEW');">Add File Type</button>
+      <button id="add_file_type" type="button" onclick="FileType.edit('NEW');">Add File Type</button>
       <br /><br />
       <div id="file_type_list"><?=$this->render('geeby-deeby/edit-file/render-types.phtml')?></div>
     </td>
