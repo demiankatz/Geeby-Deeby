@@ -6,6 +6,6 @@
       <td><input type="text" id="Full_Text_Source_Name" value="<?=isset($fulltextsource['Full_Text_Source_Name']) ? $this->escapeHtml($fulltextsource['Full_Text_Source_Name']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_source" onclick="saveFullTextSource();">Save</button>
+  <button id="save_source" onclick="FullTextSource.save();">Save</button>
   <div id="save_source_status"></div>
 </div>
