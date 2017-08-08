@@ -37,6 +37,7 @@ BaseEditor.prototype.getBaseUri = function() {
 BaseEditor.prototype.edit = function(id) {
     // Open the edit dialog box:
     var url = this.getBaseUri() + '/' + encodeURIComponent(id);
+    var editor = this;
     this.editBox = $('<div>Loading...</div>').load(url).dialog({
         title: (id === 'NEW' ? "Add " + this.type : ("Edit " + this.type + " " + id)),
         modal: true,
@@ -44,7 +45,7 @@ BaseEditor.prototype.edit = function(id) {
         width: 600,
         height: 400,
         // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { $('#editForm').remove(); }
+        close: function() { editor.editBox.empty(); }
     });
 };
 
