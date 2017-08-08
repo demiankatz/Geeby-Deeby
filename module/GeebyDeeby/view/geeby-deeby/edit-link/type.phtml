@@ -6,6 +6,6 @@
       <td><input type="text" id="Link_Type" value="<?=isset($linkType['Link_Type']) ? $this->escapeHtml($linkType['Link_Type']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_link_type" onclick="saveLinkType();">Save</button>
+  <button id="save_link_type" onclick="LinkType.save();">Save</button>
   <div id="save_link_type_status"></div>
 </div>

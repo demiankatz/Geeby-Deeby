@@ -1,16 +1,17 @@
 <? $this->layout()->title = 'Edit Links' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_links.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_links.js') ?>
 
 <div class="row">
   <div class="col-md-3">
     <p><b>Links:</b></p>
-    <button id="add_link" type="button" onclick="editLink('NEW');">Add Link</button>
+    <button id="add_link" type="button" onclick="Link.edit('NEW');">Add Link</button>
     <br /><br />
     <div id="link_list"><?=$this->render('geeby-deeby/edit-link/render-links.phtml')?></div>
   </div>
   <div class="col-md-3">
     <p><b>Link Types:</b></p>
-    <button id="add_link_type" type="button" onclick="editLinkType(false);">Add Link Type</button>
+    <button id="add_link_type" type="button" onclick="LinkType.edit('NEW');">Add Link Type</button>
     <br /><br />
     <div id="link_type_list"><?=$this->render('geeby-deeby/edit-link/render-types.phtml')?></div>
   </div>
