@@ -1,69 +1,34 @@
-/* Save the edition inside the provided form element:
- */
-function saveEdition()
-{
-    // Obtain values from form:
-    var editionID = $('#Edition_ID').val();
-    var editionName = $('#Edition_Name').val();
-    var desc = $('#Edition_Description').val();
-    var vol = $('#Volume').val();
-    var pos = $('#Position').val();
-    var rep = $('#Replacement_Number').val();
-    var itemID = $('#Edition_Item_ID').val();
-    var seriesID = $('#Series_ID').val();
-    var len = $('#Edition_Length').val();
-    var endings = $('#Edition_Endings').val();
-    var parent = $('#Parent_Edition_ID').val();
-    var parent_pos = $('#Position_In_Parent').val();
-    var extent = $('#Extent_In_Parent').val();
-
-    // Validate form:
-    if (editionName.length == 0) {
-        alert('Edition name cannot be blank.');
-        return;
-    }
-
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_edition').hide();
-    $('#save_edition_status').html('Saving...');
-
-    // Use AJAX to save the values:
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID);
-    var details = {
-        name: editionName,
-        desc: desc,
-        item_id: itemID,
-        series_id: seriesID,
-        volume: vol,
-        position: pos,
-        replacement_number: rep,
-        len: len,
-        endings: endings,
-        parent_edition_id: parent,
-        position_in_parent: parent_pos,
-        extent_in_parent: extent
+var EditionEditor = function() {
+    this.type = "Edition";
+    this.saveFields = {
+        'name': { 'id': '#Edition_Name', emptyError: 'Edition name cannot be blank.' },
+        'desc': { 'id': '#Edition_Description' },
+        'volume': { 'id': '#Volume' },
+        'position': { 'id': '#Position' },
+        'replacement_number': { 'id': '#Replacement_Number' },
+        'item_id': { 'id': '#Edition_Item_ID' },
+        'series_id': { 'id': '#Series_ID' },
+        'len': { 'id': '#Edition_Length' },
+        'endings': { 'id': '#Edition_Endings' },
+        'parent_edition_id': { 'id': '#Parent_Edition_ID' },
+        'position_in_parent': { 'id': '#Position_In_Parent' },
+        'extent_in_parent': { 'id': '#Extent_In_Parent' }
     };
-    var attribElements = $('.edition-attribute');
-    for (var i = 0; i < attribElements.length; i++) {
-        var obj = $(attribElements[i]);
-        var attrId = obj.attr('id').replace('Edition_Attribute_', '');
-        details['attribs[' + attrId + ']'] = obj.val();
-    }
-    $.post(url, details, function(data) {
-        // If save failed, display error message.
-        if (!data.success) {
-            alert('Error: ' + data.msg);
-        }
-        // Restore save button:
-        $('#save_edition').show();
-        $('#save_edition_status').html('');
-        // Redraw alt titles:
-        redrawItemAltTitles();
-        redrawSeriesAltTitles();
-        redrawSeriesPublishers();
-        redrawNextAndPrev();
-    }, 'json');
+    this.attributeSelector = '.edition-attribute';
+};
+BaseEditor.prototype.registerSubclass(EditionEditor);
+
+/**
+ * Override the standard "redraw after save" behavior.
+ */
+EditionEditor.prototype.redrawAfterSave = function() {
+    redrawItemAltTitles();
+    redrawSeriesAltTitles();
+    redrawSeriesPublishers();
+    redrawNextAndPrev();
 }
+
+var Edition = new EditionEditor();
 
 /* Redraw date list:
  */
