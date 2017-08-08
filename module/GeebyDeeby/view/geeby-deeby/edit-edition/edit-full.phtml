@@ -1,5 +1,6 @@
 <? $this->layout()->title = 'Edit Edition' ?>
 <? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_item.js') ?>
 <? $this->headScript()->appendFile($this->basePath() . '/js/edit_edition_details.js') ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-edition/index.phtml')?>
@@ -93,7 +94,7 @@
   <div id="contents-tab" class="tab-pane">
     <input id="item_name" class="Item_ID"/>
     <button onclick="addExistingItem();">Add Existing Item</button>
-    <button onclick="addNewItem();">Add New Item</button>
+    <button onclick="Item.edit('NEW');">Add New Item</button>
     <div id="item_list">
       <?=$this->render('geeby-deeby/edit-edition/item-list.phtml')?>
     </div>

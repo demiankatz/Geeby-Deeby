@@ -30,6 +30,15 @@ EditionEditor.prototype.redrawAfterSave = function() {
 
 var Edition = new EditionEditor();
 
+/**
+ * Override the standard Item redraw list function:
+ */
+Item.redrawList = function() {
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/Item';
+    $('#item_list').load(url);
+};    
+
 /* Redraw date list:
  */
 function redrawReleaseDates()
@@ -878,33 +887,6 @@ $(document).ready(function() {
   });
 });
 
-
-/* Redraw the list of items linked to the edition:
- */
-function redrawItemList()
-{
-    var edID = $('#Edition_ID').val();
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/Item';
-    $('#item_list').load(url);
-}
-
-/* Add a new item to the edition:
- */
-function addNewItem()
-{
-    // Open the edit dialog box:
-    var url = basePath + '/edit/Item/NEW';
-    editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: "Add Item",
-        modal: true,
-        autoOpen: true,
-        width: 500,
-        height: 400,
-        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { $('#editItemForm').remove(); }
-    });
-}
-
 /* Add an existing item to the edition:
  */
 function addExistingItem()
@@ -927,7 +909,7 @@ function addExistingItem()
             $('#item_name').val('');
 
             // Update the list.
-            redrawItemList();
+            Item.redrawList();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
@@ -949,7 +931,7 @@ function removeFromContents(itemID)
         // If save was successful...
         if (data.success) {
             // Update the list.
-            redrawItemList();
+            Item.redrawList();
         } else {
             // Remove failed -- display error message:
             alert('Error: ' + data.msg);
@@ -983,70 +965,10 @@ function changeContentsOrder(editionID)
         // If save was successful...
         if (data.success) {
             // Update the list.
-            redrawItemList();
+            Item.redrawList();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
-
-/* Save the item inside the provided form element:
- */
-function saveItem()
-{
-    // Obtain values from form:
-    var editionID = $('#Edition_ID').val();
-    var itemID = $('#Item_ID').val();
-    var itemName = $('#Item_Name').val();
-    var errata = $('#Item_Errata').val();
-    var thanks = $('#Item_Thanks').val();
-    var material = $('#Material_Type_ID').val();
-
-    // Length and endings are actually Edition fields, but we load the data here
-    // for convenience when creating items.
-    var len = $('#Item_Length').val();
-    var endings = $('#Item_Endings').val();
-
-    // Validate form:
-    if (itemName.length == 0) {
-        alert('Item name cannot be blank.');
-        return;
-    }
-
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_item').hide();
-    $('#save_item_status').html('Saving...');
-
-    // Use AJAX to save the values:
-    var url = basePath + '/edit/Item/' + encodeURIComponent(itemID);
-    var details = {
-        name: itemName,
-        len: len,
-        endings: endings,
-        errata: errata,
-        thanks: thanks,
-        material: material,
-        edition_id: editionID
-    };
-    $.post(url, details, function(data) {
-        // If save failed, display error message.
-        if (data.success) {
-            // Close the dialog box.
-            if (editBox) {
-                editBox.dialog('close');
-                editBox.dialog('destroy');
-                editBox = false;
-            }
-
-            // Redraw the item list:
-            redrawItemList();
-        } else {
-            alert('Error: ' + data.msg);
-
-            // Restore save button:
-            $('#save_item').show();
-            $('#save_item_status').html('');
         }
     }, 'json');
 }
