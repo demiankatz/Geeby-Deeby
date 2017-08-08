@@ -11,6 +11,9 @@ var BaseEditor = function() {
     this.saveFields = {
         'exampleName': { 'id': '#Example_Name', emptyError: 'Name cannot be blank.' }
     };
+
+    // If this editor uses dynamic attributes, this is the selector to find them.
+    this.attributeSelector = false;
 };
 
 /**
@@ -67,7 +70,7 @@ BaseEditor.prototype.getListTarget = function() {
 BaseEditor.prototype.getSaveButton = function() {
     // Default convention: lowercased, underscored type with "save_" prefix:
     return '#save_' + this.type.toLowerCase().replace(/\s/g, '_');
-}
+};
 
 /**
  * Get the JQuery selector for the save status button.
@@ -75,14 +78,32 @@ BaseEditor.prototype.getSaveButton = function() {
 BaseEditor.prototype.getSaveStatusTarget = function() {
     // Default convention: same as save button, with "_status" suffix:
     return this.getSaveButton() + '_status';
-}
+};
 
 /**
  * Redraw the list of options on the screen.
  */
 BaseEditor.prototype.redrawList = function() {
-    var url = this.getBaseUri() + 'List';
-    $(this.getListTarget()).load(url);
+    // Only make the AJAX call if we have somewhere to send the results:
+    var listTarget = $(this.getListTarget());
+    if (listTarget) {
+        var url = this.getBaseUri() + 'List';
+        listTarget.load(url);
+    }
+};
+
+/**
+ * Callback hook for redrawing controls after a save operation completes.
+ */
+BaseEditor.prototype.redrawAfterSave = function() {
+    this.redrawList();
+};
+
+/**
+ * Get the prefix used on attribute element IDs for this type of object.
+ */
+BaseEditor.prototype.getAttributeIdPrefix = function() {
+    return this.type.replace(/\s/g, '_') + '_Attribute_';
 };
 
 /**
@@ -105,6 +126,14 @@ BaseEditor.prototype.getSaveData = function() {
         }
         values[key] = current;
     }
+    if (typeof this.attributeSelector !== 'undefined' && this.attributeSelector) {
+        var attribElements = $(this.attributeSelector);
+        for (var i = 0; i < attribElements.length; i++) {
+            var obj = $(attribElements[i]);
+            var attrId = obj.attr('id').replace(this.getAttributeIdPrefix(), '');
+            values['attribs[' + attrId + ']'] = obj.val();
+        }
+    }
     return values;
 };
 
@@ -124,7 +153,7 @@ BaseEditor.prototype.getSaveCallback = function() {
             }
             
             // Update the list.
-            editor.redrawList();
+            editor.redrawAfterSave();
        } else {
             // Save failed -- display error message.
             alert('Error: ' + data.msg);
@@ -151,4 +180,4 @@ BaseEditor.prototype.save = function() {
     // Use AJAX to save the values:
     var url = this.getBaseUri() + '/' + encodeURIComponent($(this.getIdSelector()).val());
     $.post(url, values, this.getSaveCallback(), 'json');
-}
+};
