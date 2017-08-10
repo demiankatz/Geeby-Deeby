@@ -843,50 +843,6 @@ function deletePlatform(platID)
     }});
 }
 
-// Load data and setup autocomplete.
-$(document).ready(function() {
-  $('.Item_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Item?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Note_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Note?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Person_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Person?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Series_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Series?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-});
-
 /* Add an existing item to the edition:
  */
 function addExistingItem()
@@ -972,3 +928,11 @@ function changeContentsOrder(editionID)
         }
     }, 'json');
 }
+
+// Load data and setup autocomplete.
+$(document).ready(function() {
+  registerAutocomplete('.Item_ID', 'Item');
+  registerAutocomplete('.Note_ID', 'Note');
+  registerAutocomplete('.Person_ID', 'Person');
+  registerAutocomplete('.Series_ID', 'Series');
+});

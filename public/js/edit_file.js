@@ -178,34 +178,7 @@ function unlinkPerson(relatedID)
 
 // Load data and setup autocomplete.
 $(document).ready(function() {
-  $('.Item_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Item?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Person_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Person?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Series_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Series?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
+  registerAutocomplete('.Item_ID', 'Item');
+  registerAutocomplete('.Person_ID', 'Person');
+  registerAutocomplete('.Series_ID', 'Series');
 });
