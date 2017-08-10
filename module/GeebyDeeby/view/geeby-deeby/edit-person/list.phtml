@@ -1,22 +1,23 @@
 <? $this->layout()->title = 'Edit Person' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_people.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_people.js') ?>
 <div class="row">
   <div class="col-md-6">
     <h3>People:</h3>
-    <button id="add_person" type="button" onclick="editPerson('NEW');">Add Person</button>
+    <button id="add_person" type="button" onclick="Person.edit('NEW');">Add Person</button>
     <br /><br />
-    <div id="people_list"><?=$this->render('geeby-deeby/edit-person/render-people.phtml')?></div>
+    <div id="person_list"><?=$this->render('geeby-deeby/edit-person/render-people.phtml')?></div>
   </div>
   <div class="col-md-3">
     <p><b>Authorities:</b></p>
-    <button id="add_authority" type="button" onclick="editAuthority('NEW');">Add Authority</button>
+    <button id="add_person_authority" type="button" onclick="PersonAuthority.edit('NEW');">Add Authority</button>
     <br /><br />
-    <div id="authority_list"><?=$this->render('geeby-deeby/edit-person/render-authorities.phtml')?></div>
+    <div id="person_authority_list"><?=$this->render('geeby-deeby/edit-person/render-authorities.phtml')?></div>
   </div>
   <div class="col-md-3">
     <p><b>Roles:</b></p>
-    <button id="add_role" type="button" onclick="editRole('NEW');">Add Role</button>
+    <button id="add_person_role" type="button" onclick="PersonRole.edit('NEW');">Add Role</button>
     <br /><br />
-    <div id="role_list"><?=$this->render('geeby-deeby/edit-person/render-roles.phtml')?></div>
+    <div id="person_role_list"><?=$this->render('geeby-deeby/edit-person/render-roles.phtml')?></div>
   </div>
 </div>

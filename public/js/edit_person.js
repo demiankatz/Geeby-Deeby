@@ -2,44 +2,6 @@
  *         people list page.
  */
 
-/* Save the person inside the provided form element:
- */
-function savePerson()
-{
-    // Obtain values from form:
-    var personID = $('#Person_ID').val();
-    var first = $('#First_Name').val();
-    var middle = $('#Middle_Name').val();
-    var last = $('#Last_Name').val();
-    var extra = $('#Extra_Details').val();
-    var bio = $('#Biography').val();
-    var authority = $('#Authority_ID').val();
-
-    // Validate form:
-    if (last.length == 0) {
-        alert('Last name cannot be blank.');
-        return;
-    }
-
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_person').hide();
-    $('#save_person_status').html('Saving...');
-
-    // Use AJAX to save the values:
-    var url = basePath + '/edit/Person/' + encodeURIComponent(personID);
-    var details = {first: first, middle: middle, last: last, bio: bio, extra: extra, authority: authority};
-    $.post(url, details, function(data) {
-        // If save was successful...
-        if (!data.success) {
-            // Save failed -- display error message.
-            alert('Error: ' + data.msg);
-        }
-        // Restore save button:
-        $('#save_person').show();
-        $('#save_person_status').html('');
-    }, 'json');
-}
-
 /* Redraw the pseudonym list:
  */
 function redrawPseudonyms()
