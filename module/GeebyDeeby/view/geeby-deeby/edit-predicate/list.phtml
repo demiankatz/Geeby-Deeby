@@ -1,6 +1,7 @@
 <? $this->layout()->title = 'Edit Predicates' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_predicates.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_predicates.js') ?>
 <p><b>Predicates:</b></p>
-<button id="add_predicate" type="button" onclick="editPredicate('NEW');">Add Predicate</button>
+<button id="add_predicate" type="button" onclick="Predicate.edit('NEW');">Add Predicate</button>
 <br /><br />
 <div id="predicate_list"><?=$this->render('geeby-deeby/edit-predicate/render-predicates.phtml')?></div>
