@@ -1,6 +1,7 @@
 <? $this->layout()->title = 'Edit Platforms' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_platforms.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_platforms.js') ?>
 <p><b>Platforms:</b></p>
-<button id="add_platform" type="button" onclick="editPlatform('NEW');">Add Platform</button>
+<button id="add_platform" type="button" onclick="Platform.edit('NEW');">Add Platform</button>
 <br /><br />
 <div id="platform_list"><?=$this->render('geeby-deeby/edit-platform/render-platforms.phtml')?></div>
