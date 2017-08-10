@@ -10,6 +10,6 @@
       <td><?=$this->render('geeby-deeby/edit-tag/type-select.phtml', array('tagTypes' => $tagTypes, 'selected' => isset($tag['Tag_Type_ID']) ? $tag['Tag_Type_ID'] : null))?></td>
     </tr>
   </table>
-  <button id="save_tag" onclick="saveTag();">Save</button>
+  <button id="save_tag" onclick="Tag.save();">Save</button>
   <div id="save_tag_status"></div>
 </div>

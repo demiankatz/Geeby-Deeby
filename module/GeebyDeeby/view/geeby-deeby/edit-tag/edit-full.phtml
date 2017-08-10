@@ -1,5 +1,7 @@
 <? $this->layout()->title = 'Edit Tag' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_tag.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_tags.js') ?>
+<? $this->headScript()->appendFile($this->basePath() . '/js/edit_tag.js') ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-tag/index.phtml')?>
 </div>

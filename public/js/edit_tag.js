@@ -1,37 +1,3 @@
-/* Save the tag inside the provided form element:
- */
-function saveTag()
-{
-    // Obtain values from form:
-    var tagID = $('#Tag_ID').val();
-    var tag = $('#Tag').val();
-    var typeID = $('#Tag_Type_ID').val();
-    
-    // Validate form:
-    if (tag.length == 0) {
-        alert('Subject/tag name cannot be blank.');
-        return;
-    }
-    
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_tag').hide();
-    $('#save_tag_status').html('Saving...');
-    
-    // Use AJAX to save the values:
-    var targetUrl = basePath + '/edit/Tag/' + encodeURIComponent(tagID);
-    var params = {tag: tag, type_id: typeID};
-    $.post(targetUrl, params, function(data) {
-        // If save was successful...
-        if (!data.success) {
-            // Save failed -- display error message.
-            alert('Error: ' + data.msg);
-        }
-        // Restore save button:
-        $('#save_tag').show();
-        $('#save_tag_status').html('');
-    }, 'json');
-}
-
 /* Redraw the URI list:
  */
 function redrawURIs()
