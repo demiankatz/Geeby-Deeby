@@ -1,34 +1,3 @@
-/* Save the publisher inside the provided form element:
- */
-function savePublisher()
-{
-    // Obtain values from form:
-    var publisherID = $('#Publisher_ID').val();
-    var publisher = $('#Publisher_Name').val();
-    
-    // Validate form:
-    if (publisher.length == 0) {
-        alert('Publisher cannot be blank.');
-        return;
-    }
-    
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_publisher').hide();
-    $('#save_publisher_status').html('Saving...');
-    
-    // Use AJAX to save the values:
-    var url = basePath + '/edit/Publisher/' + encodeURIComponent(publisherID);
-    $.post(url, {publisher: publisher}, function(data) {
-        // If save was successful...
-        if (!data.success) {
-            // Save failed -- display error message and restore save button:
-            alert('Error: ' + data.msg);
-        }
-        $('#save_publisher').show();
-        $('#save_publisher_status').html('');
-    }, 'json');
-}
-
 /* Redraw the imprint list:
  */
 function redrawImprints()
