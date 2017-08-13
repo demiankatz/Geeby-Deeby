@@ -829,64 +829,9 @@ function copyEdition()
 
 // Load data and setup autocomplete.
 $(document).ready(function() {
-  $('#pseudo_name').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Person?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Item_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Item?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Note_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Note?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Person_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Person?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Series_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Series?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Tag_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Tag?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
+  registerAutocomplete('.Item_ID', 'Item');
+  registerAutocomplete('.Note_ID', 'Note');
+  registerAutocomplete('.Person_ID', 'Person');
+  registerAutocomplete('.Series_ID', 'Series');
+  registerAutocomplete('.Tag_ID', 'Tag');
 });

@@ -174,14 +174,5 @@ function deletePseudonym(relatedID)
 
 // Load data and setup autocomplete.
 $(document).ready(function() {
-  $('#pseudo_name').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Person?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  })
+  registerAutocomplete('#pseudo_name', 'Person');
 });

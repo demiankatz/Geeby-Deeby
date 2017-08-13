@@ -1,3 +1,7 @@
+/**
+ * Register an autocomplete on elements matching the selector to retrieve the
+ * specified type of objects.
+ */
 function registerAutocomplete(selector, type) {
   $(selector).autocomplete({
     source: function(request, response) {

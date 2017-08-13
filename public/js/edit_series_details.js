@@ -518,44 +518,8 @@ function saveModifiedPublisher()
 
 // Load data and setup autocomplete.
 $(document).ready(function() {
-  $('#Publisher_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Publisher?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('#trans_name').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Series?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('#item_name').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Item?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
-  $('.Note_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Note?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
+  registerAutocomplete('#Publisher_ID', 'Publisher');
+  registerAutocomplete('#trans_name', 'Series');
+  registerAutocomplete('#item_name', 'Item');
+  registerAutocomplete('.Note_ID', 'Note');
 });
