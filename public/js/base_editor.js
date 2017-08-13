@@ -14,6 +14,9 @@ var BaseEditor = function() {
 
     // If this editor uses dynamic attributes, this is the selector to find them.
     this.attributeSelector = false;
+
+    // Rules for linking to other types of data.
+    this.links = {};
 };
 
 /**
@@ -110,10 +113,10 @@ BaseEditor.prototype.getAttributeIdPrefix = function() {
 /**
  * Retrieve and validate data values to save.
  */
-BaseEditor.prototype.getSaveData = function() {
+BaseEditor.prototype.getSaveData = function(saveFields, attributeSelector, attributeIdPrefix) {
     var values = {};
-    for (var key in this.saveFields) {
-        var rules = this.saveFields[key];
+    for (var key in saveFields) {
+        var rules = saveFields[key];
         var format = typeof rules.format === 'undefined' ? 'text' : rules.format;
         var current;
         if (format === 'checkbox') {
@@ -121,17 +124,26 @@ BaseEditor.prototype.getSaveData = function() {
         } else {
             current = $(rules.id).val();
         }
+        if (typeof rules.nonNumericDefault !== 'undefined') {
+            current = parseInt(current);
+            if (isNaN(current)) {
+                current = rules.nonNumericDefault;
+            }
+        }
         if (typeof rules.emptyError !== 'undefined' && rules.emptyError && current.length == 0) {
             alert(rules.emptyError);
             return false;
         }
+        if (typeof rules.customValidator === 'function' && !rules.customValidator(current)) {
+            return false;
+        }
         values[key] = current;
     }
-    if (typeof this.attributeSelector !== 'undefined' && this.attributeSelector) {
-        var attribElements = $(this.attributeSelector);
+    if (attributeSelector) {
+        var attribElements = $(attributeSelector);
         for (var i = 0; i < attribElements.length; i++) {
             var obj = $(attribElements[i]);
-            var attrId = obj.attr('id').replace(this.getAttributeIdPrefix(), '');
+            var attrId = obj.attr('id').replace(attributeIdPrefix, '');
             values['attribs[' + attrId + ']'] = obj.val();
         }
     }
@@ -162,14 +174,25 @@ BaseEditor.prototype.getSaveCallback = function() {
         // Restore save button:
         $(editor.getSaveButton()).show();
         $(editor.getSaveStatusTarget()).html('');
-    }
+    };
+};
+
+/**
+ * Get the base URI for saving an object.
+ */
+BaseEditor.prototype.getSaveUri = function() {
+    return this.getBaseUri() + '/' + encodeURIComponent($(this.getIdSelector()).val());
 };
 
 /**
  * Save an active instance of the type.
  */
 BaseEditor.prototype.save = function() {
-    var values = this.getSaveData();
+    var values = this.getSaveData(
+        this.saveFields,
+        typeof this.attributeSelector === 'undefined' ? null : this.attributeSelector,
+        this.getAttributeIdPrefix()
+    );
     if (!values) {
         return;
     }
@@ -179,6 +202,59 @@ BaseEditor.prototype.save = function() {
     $(this.getSaveStatusTarget()).html('Saving...');
     
     // Use AJAX to save the values:
-    var url = this.getBaseUri() + '/' + encodeURIComponent($(this.getIdSelector()).val());
-    $.post(url, values, this.getSaveCallback(), 'json');
+    $.post(this.getSaveUri(), values, this.getSaveCallback(), 'json');
+};
+
+/**
+ * Get the URI to interact with a particular type of link.
+ */
+BaseEditor.prototype.getLinkUri = function(type) {
+    return this.getSaveUri() + "/" + type;
+}
+
+/**
+ * Redraw a list of linked information.
+ */
+BaseEditor.prototype.redrawLinks = function(type) {
+    var target = '#' + type.toLowerCase() + "_list";
+    $(target).load(this.getLinkUri(type));
+};
+
+/**
+ * Get the callback function for the AJAX link action.
+ */
+BaseEditor.prototype.getLinkCallback = function(type) {
+    var editor = this;
+    return function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            editor.redrawLinks(type);
+       } else {
+            // Save failed -- display error message.
+            alert('Error: ' + data.msg);
+        }
+    };
+};
+
+/**
+ * Add a piece of linked information.
+ */
+BaseEditor.prototype.link = function(type) {
+    var values = this.getSaveData(this.links[type].saveFields, null, null);
+    if (!values) {
+        return;
+    }
+    $.post(this.getLinkUri(type), values, this.getLinkCallback(type), 'json');
+};
+
+/**
+ * Remove a piece of linked information.
+ */
+BaseEditor.prototype.unlink = function(type, which) {
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+    var url = this.getLinkUri(type) + "/" + encodeURIComponent(which);
+    $.ajax({url: url, type: "delete", dataType: "json", success: this.getLinkCallback(type)});
 };

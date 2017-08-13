@@ -417,12 +417,26 @@ class EditEditionController extends AbstractBase
     }
 
     /**
-     * Get list of dates
+     * Manage date links.
      *
      * @return mixed
      */
-    public function datesAction()
+    public function dateAction()
     {
+        // Only content editors are allowed to do this....
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        // If this is a POST, we're adding a date....
+        if ($this->getRequest()->isPost()) {
+            return $this->addDate();
+        }
+        // If this is a DELETE, we're removing a date....
+        if ($this->getRequest()->isDelete()) {
+            return $this->deleteDate();
+        }
+        // Default action: list dates:
         $table = $this->getDbTable('editionsreleasedates');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
@@ -455,27 +469,24 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function adddateAction()
+    protected function addDate()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
+        $table = $this->getDbTable('editionsreleasedates');
+        $row = $table->createRow();
+        $row->Edition_ID = $this->params()->fromRoute('id');
+        $row->Year = $this->params()->fromPost('year');
+        $row->Month = $this->params()->fromPost('month');
+        $row->Day = $this->params()->fromPost('day');
+        $row->Note_ID = $this->params()->fromPost('note_id');
+        if (empty($row->Note_ID)) {
+            $row->Note_ID = null;
         }
-        if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('editionsreleasedates');
-            $row = $table->createRow();
-            $row->Edition_ID = $this->params()->fromRoute('id');
-            $row->Year = $this->params()->fromPost('year');
-            $row->Month = $this->params()->fromPost('month');
-            $row->Day = $this->params()->fromPost('day');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
+        try {
             $table->insert((array)$row);
-            return $this->jsonReportSuccess();
+        } catch (\Exception $e) {
+            return $this->jsonDie($e->getMessage());
         }
-        return $this->jsonDie('Unexpected method');
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -483,24 +494,19 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function deletedateAction()
+    protected function deleteDate()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if ($this->getRequest()->isPost()) {
-            $this->getDbTable('editionsreleasedates')->delete(
-                array(
-                    'Edition_ID' => $this->params()->fromRoute('id'),
-                    'Year' => $this->params()->fromPost('year'),
-                    'Month' => $this->params()->fromPost('month'),
-                    'Day' => $this->params()->fromPost('day'),
-                )
-            );
-            return $this->jsonReportSuccess();
-        }
-        return $this->jsonDie('Unexpected method');
+        list($year, $month, $day)
+            = explode(',', $this->params()->fromRoute('extra'));
+        $this->getDbTable('editionsreleasedates')->delete(
+            array(
+                'Edition_ID' => $this->params()->fromRoute('id'),
+                'Year' => $year,
+                'Month' => $month,
+                'Day' => $day
+            )
+        );
+        return $this->jsonReportSuccess();
     }
 
     /**
