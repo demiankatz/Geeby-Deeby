@@ -1,8 +1,5 @@
 <? $this->layout()->title = 'Edit Link' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/autocomplete.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_links.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_link.js') ?>
+<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_links', 'edit_link']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-link/index.phtml')?>
 </div>

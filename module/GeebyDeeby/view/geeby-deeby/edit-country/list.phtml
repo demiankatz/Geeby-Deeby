@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Places' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_countries.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_countries']) ?>
 <div class="row">
   <div class="col-md-3">
     <p><b>Countries:</b></p>

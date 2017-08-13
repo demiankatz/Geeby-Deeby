@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Full Text Sources' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_fulltext.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_fulltext']) ?>
 <p><b>Full Text Sources:</b></p>
 <button id="add_source" type="button" onclick="FullTextSource.edit('NEW');">Add Full Text Source</button>
 <br /><br />

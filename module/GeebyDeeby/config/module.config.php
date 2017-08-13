@@ -1218,6 +1218,12 @@ return array(
                     $sm->getServiceLocator()->get('GeebyDeeby\Articles')
                 );
             },
+            'scriptmanager' => function ($sm) {
+                $base = $sm->get('basepath')->__invoke();
+                return new \GeebyDeeby\View\Helper\ScriptManager(
+                    $base, $sm->get('headscript')
+                );
+            }
         ),
         'invokables' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',

@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Files' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_files.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_files']) ?>
 <div class="row">
   <div class="col-md-3">
       <p><b>Files:</b></p>

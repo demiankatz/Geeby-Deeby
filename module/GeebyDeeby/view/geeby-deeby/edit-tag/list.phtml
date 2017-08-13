@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Subject/Tag List' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_tags.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_tags']) ?>
 <div class="row">
   <div class="col-md-6">
     <p><b>Subjects/Tags:</b></p>

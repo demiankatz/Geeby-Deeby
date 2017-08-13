@@ -1,8 +1,5 @@
 <? $this->layout()->title = 'Edit File' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/autocomplete.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_files.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_file.js') ?>
+<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_files', 'edit_file']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-file/index.phtml')?>
 </div>

@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Series Attributes' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_attributes.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_attributes']) ?>
 <p><b>Series Attributes:</b></p>
 <button id="add_series_attribute" type="button" onclick="SeriesAttribute.edit('NEW');">Add Series Attribute</button>
 <br /><br />

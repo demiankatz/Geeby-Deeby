@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Predicates' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_predicates.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_predicates']) ?>
 <p><b>Predicates:</b></p>
 <button id="add_predicate" type="button" onclick="Predicate.edit('NEW');">Add Predicate</button>
 <br /><br />

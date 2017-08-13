@@ -1,7 +1,5 @@
 <? $this->layout()->title = 'Edit Publisher Editor' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_publishers.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_publisher_details.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_publishers', 'edit_publisher_details']) ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-publisher/index.phtml')?>
 </div>

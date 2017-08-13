@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Edition Attributes' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_attributes.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_attributes']) ?>
 <p><b>Edition Attributes:</b></p>
 <button id="add_edition_attribute" type="button" onclick="EditionsAttribute.edit('NEW');">Add Edition Attribute</button>
 <br /><br />

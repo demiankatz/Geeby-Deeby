@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Categories' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_categories.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_categories']) ?>
 <p><b>Categories:</b></p>
 <button id="add_category" type="button" onclick="Category.edit('NEW');">Add Category</button>
 <br /><br />

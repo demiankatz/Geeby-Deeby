@@ -1,6 +1,5 @@
 <? $this->layout()->title = 'Edit Publisher List' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_publishers.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_publishers']) ?>
 <p><b>Publishers:</b></p>
 <button id="add_publisher" type="button" onclick="Publisher.edit('NEW');">Add Publisher</button>
 <br /><br />

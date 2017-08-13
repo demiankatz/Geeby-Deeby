@@ -1,8 +1,5 @@
 <? $this->layout()->title = 'Edit Person' ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/autocomplete.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/base_editor.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_people.js') ?>
-<? $this->headScript()->appendFile($this->basePath() . '/js/edit_person.js') ?>
+<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_people', 'edit_person']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-person/index.phtml')?>
 </div>
