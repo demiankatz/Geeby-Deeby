@@ -39,6 +39,12 @@ var EditionEditor = function() {
                 },
                 'note_id': { 'id': '#releaseNote', 'nonNumericDefault': '' }
             }
+        },
+        'FullText': {
+            'saveFields': {
+                'source_id': { 'id': '#Full_Text_Source_ID' },
+                'url': { 'id': '#Full_Text_URL', 'emptyError': 'URL cannot be blank.' }
+            }
         }
     }
 };
@@ -357,65 +363,6 @@ function changeCreditOrder(person, role)
             alert('Error: ' + data.msg);
         }
     }, 'json');
-}
-
-/* Save a full text URL:
- */
-function saveFullText()
-{
-    // Extract the basic values:
-    var editionID = $('#Edition_ID').val();
-    var source_id = $('#Full_Text_Source_ID').val();
-    var fulltext_url = $('#Full_Text_URL').val();
-    if (fulltext_url.length < 1) {
-        alert('URL cannot be blank.');
-        return;
-    }
-
-    // Save the title:
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/FullText';
-    var params = {source_id: source_id, url: fulltext_url};
-    $.post(url, params, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            redrawFullText();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
-
-/* Remove a release date:
- */
-function deleteFullText(id)
-{
-    if (!confirm("Are you sure?")) {
-        return;
-    }
-
-    var edID = $('#Edition_ID').val();
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/FullText/' + encodeURIComponent(id);
-    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
-        // If delete was successful...
-        if (data.success) {
-            // Update the list.
-            redrawFullText();
-        } else {
-            // Delete failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }});
-}
-
-/* Redraw credit list:
- */
-function redrawFullText()
-{
-    var editionID = $('#Edition_ID').val();
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/FullTextList';
-    $('#fulltext_list').load(url);
 }
 
 /* Redraw the ISBN list:

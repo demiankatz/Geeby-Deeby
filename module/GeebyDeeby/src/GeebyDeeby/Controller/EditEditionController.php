@@ -630,16 +630,7 @@ class EditEditionController extends AbstractBase
             $table->delete(array('Sequence_ID' => $delete));
             return $this->jsonReportSuccess();
         }
-        return $this->jsonDie('Unexpected method.');
-    }
-
-    /**
-     * Get list of full text
-     *
-     * @return mixed
-     */
-    public function fulltextlistAction()
-    {
+        // Default behavior: display list:
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
             $view->fullText = $this->getDbTable('editionsfulltext')
