@@ -56,10 +56,10 @@
           <table class="edit">
             <tr><th>New ISBN</th><td><input type="text" id="isbn" /></td></tr>
             <tr><th>Note:</th><td><input id="isbn_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="addISBN();">Add</button></td></tr>
+            <tr><th></th><td><button onclick="Edition.link('ISBN');">Add</button></td></tr>
           </table>
           <b>ISBNs:</b>
-          <div id="item_isbns">
+          <div id="isbn_list">
             <?=$this->render('geeby-deeby/edit-edition/isbn-list.phtml')?>
           </div>
         </td>
@@ -67,10 +67,10 @@
           <table class="edit">
             <tr><th>New OCLC Number:</th><td><input type="text" id="oclc_number" /></td></tr>
             <tr><th>Note:</th><td><input id="oclc_number_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="addOCLCNumber();">Add</button></td></tr>
+            <tr><th></th><td><button onclick="Edition.link('OCLCNumber');">Add</button></td></tr>
           </table>
           <b>OCLC Numbers:</b>
-          <div id="item_oclc_numbers">
+          <div id="oclcnumber_list">
             <?=$this->render('geeby-deeby/edit-edition/oclc-number-list.phtml')?>
           </div>
         </td>
@@ -78,10 +78,10 @@
           <table class="edit">
             <tr><th>New Code</th><td><input type="text" id="product_code" /></td></tr>
             <tr><th>Note:</th><td><input id="product_code_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="addProductCode();">Add</button></td></tr>
+            <tr><th></th><td><button onclick="Edition.link('ProductCode');">Add</button></td></tr>
           </table>
           <b>Product Codes:</b>
-          <div id="item_codes">
+          <div id="productcode_list">
             <?=$this->render('geeby-deeby/edit-edition/product-code-list.phtml')?>
           </div>
         </td>
