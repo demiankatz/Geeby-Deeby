@@ -263,9 +263,32 @@ BaseEditor.prototype.link = function(type) {
     // Check if we need to add an extra value to the URI:
     if (typeof this.links[type].uriField !== 'undefined') {
         var extra = this.getSaveData({ 'extra': this.links[type].uriField }, null, null);
+        if (!extra) {
+            return;
+        }
         uri += "/" + extra['extra'];
     }
     $.post(uri, values, this.getLinkCallback(type), 'json');
+};
+
+/**
+ * Get the selector for the reorder input for a specific type of link matching
+ * specific details....
+ */
+BaseEditor.prototype.getLinkOrderInputSelector = function(type, details) {
+    var values = [];
+    for (var key in details) {
+        values[values.length] = details[key];
+    }
+    return '#' + type.toLowerCase() + '_order_' + values.join('_');
+};
+
+/**
+ * Reorder a piece of linked information.
+ */
+BaseEditor.prototype.reorderLink = function(type, details) {
+    details['pos'] = parseInt($(this.getLinkOrderInputSelector(type, details)).val(), 10);
+    $.post(this.getLinkUri(type + 'Order'), details, this.getLinkCallback(type), 'json');
 };
 
 /**
