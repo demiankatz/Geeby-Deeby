@@ -2,6 +2,7 @@
  * Constructor
  */
 var BaseEditor = function() {
+    /*
     // Type of object being edited by this class
     this.type = "Example";
 
@@ -16,7 +17,20 @@ var BaseEditor = function() {
     this.attributeSelector = false;
 
     // Rules for linking to other types of data.
-    this.links = {};
+    this.links = {
+        // You can do a simple link, where you are linking two IDs through the URI...
+        'SimpleLink': {
+            'uriField': { 'id': '#Simple_Link_ID' }
+        },
+        // Or you can do a complex link, where you are building a POST from a form:
+        'ComplexLink': {
+            'saveFields': {
+                'fieldA': { 'id': '#FieldA' },
+                'fieldB': { 'id': '#FieldB' }
+            }
+        }
+    };
+    */
 };
 
 /**
@@ -245,7 +259,13 @@ BaseEditor.prototype.link = function(type) {
     if (!values) {
         return;
     }
-    $.post(this.getLinkUri(type), values, this.getLinkCallback(type), 'json');
+    var uri = this.getLinkUri(type);
+    // Check if we need to add an extra value to the URI:
+    if (typeof this.links[type].uriField !== 'undefined') {
+        var extra = this.getSaveData({ 'extra': this.links[type].uriField }, null, null);
+        uri += "/" + extra['extra'];
+    }
+    $.post(uri, values, this.getLinkCallback(type), 'json');
 };
 
 /**
