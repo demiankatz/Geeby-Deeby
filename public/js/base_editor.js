@@ -139,7 +139,7 @@ BaseEditor.prototype.getSaveData = function(saveFields, attributeSelector, attri
             current = $(rules.id).val();
         }
         if (typeof rules.nonNumericDefault !== 'undefined') {
-            current = parseInt(current);
+            current = parseInt(current, 10);
             if (isNaN(current)) {
                 current = rules.nonNumericDefault;
             }
