@@ -69,13 +69,20 @@ var EditionEditor = function() {
 BaseEditor.prototype.registerSubclass(EditionEditor);
 
 /**
+ * Redraw the next and previous links:
+ */
+EditionEditor.prototype.redrawNextAndPrev = function() {
+    $('#nextAndPrev').load(this.getLinkUri('NextAndPrev'));
+};
+
+/**
  * Override the standard "redraw after save" behavior.
  */
 EditionEditor.prototype.redrawAfterSave = function() {
     redrawItemAltTitles();
     redrawSeriesAltTitles();
     redrawSeriesPublishers();
-    redrawNextAndPrev();
+    this.redrawNextAndPrev();
 }
 
 var Edition = new EditionEditor();
@@ -210,15 +217,6 @@ function saveItemAltTitle()
             alert('Error: ' + data.msg);
         }
     }, 'json');
-}
-
-/* Redraw the next and previous links:
- */
-function redrawNextAndPrev()
-{
-    var edID = $('#Edition_ID').val();
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/NextAndPrev';
-    $('#nextAndPrev').load(url);
 }
 
 /* Redraw the series alternate title list:
