@@ -510,32 +510,17 @@ class EditEditionController extends AbstractBase
     }
 
     /**
-     * Get list of credits
+     * Manage credits
      *
      * @return mixed
      */
-    public function creditsAction()
-    {
-        $table = $this->getDbTable('editionscredits');
-        $view = $this->createViewModel();
-        $primary = $this->params()->fromRoute('id');
-        $view->credits = $table->getCreditsForEdition($primary);
-        $view->setTemplate('geeby-deeby/edit-edition/credits.phtml');
-        $view->setTerminal(true);
-        return $view;
-    }
-
-    /**
-     * Add a credit
-     *
-     * @return mixed
-     */
-    public function addcreditAction()
+    public function creditAction()
     {
         $ok = $this->checkPermission('Content_Editor');
         if ($ok !== true) {
             return $ok;
         }
+        // POST action:
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('editionscredits');
             $row = $table->createRow();
@@ -550,31 +535,26 @@ class EditEditionController extends AbstractBase
             $table->insert((array)$row);
             return $this->jsonReportSuccess();
         }
-        return $this->jsonDie('Unexpected method');
-    }
-
-    /**
-     * Remove a credit
-     *
-     * @return mixed
-     */
-    public function deletecreditAction()
-    {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if ($this->getRequest()->isPost()) {
+        // DELETE action:
+        if ($this->getRequest()->isDelete()) {
+            list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
             $this->getDbTable('editionscredits')->delete(
                 array(
                     'Edition_ID' => $this->params()->fromRoute('id'),
-                    'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id')
+                    'Person_ID' => $person,
+                    'Role_ID' => $role
                 )
             );
             return $this->jsonReportSuccess();
         }
-        return $this->jsonDie('Unexpected method');
+        // Default behavior: show list:
+        $table = $this->getDbTable('editionscredits');
+        $view = $this->createViewModel();
+        $primary = $this->params()->fromRoute('id');
+        $view->credits = $table->getCreditsForEdition($primary);
+        $view->setTemplate('geeby-deeby/edit-edition/credits.phtml');
+        $view->setTerminal(true);
+        return $view;
     }
 
     /**
