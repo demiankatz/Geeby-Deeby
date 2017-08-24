@@ -72,6 +72,32 @@ var EditionEditor = function() {
         'Platform': {
             'uriField': { 'id': '#Platform_ID' }
         },
+        'PreferredItemTitle': {
+            'redrawFunction': function() { $('#Preferred_Item_Title_Text').val(''); },
+            'saveFieldsFunction': function() {
+                // Extract the basic values:
+                var titleID = $('#Preferred_Item_Title_ID').val();
+                var titleText = false;
+                if (titleID == 'NEW') {
+                    titleText = $('#Preferred_Item_Title_Text').val();
+                    if (titleText.length < 1) {
+                        alert('Title cannot be blank.');
+                        return false;
+                    }
+                } else {
+                    titleID = parseInt(titleID);
+                    if (isNaN(titleID) || titleID < 1) {
+                        alert('Invalid title selection.');
+                        return false;
+                    }
+                }
+
+                // Send back the appropriate parameter:
+                return titleText
+                    ? {'title_text': titleText}
+                    : {'title_id': titleID};
+            }
+        },
         'ProductCode': {
             'saveFields': {
                 'code': { 'id': '#product_code', 'emptyError': 'Product code cannot be blank.' },
@@ -93,7 +119,7 @@ EditionEditor.prototype.redrawNextAndPrev = function() {
  * Override the standard "redraw after save" behavior.
  */
 EditionEditor.prototype.redrawAfterSave = function() {
-    redrawItemAltTitles();
+    this.redrawLinks('PreferredItemTitle');
     redrawSeriesAltTitles();
     redrawSeriesPublishers();
     this.redrawNextAndPrev();
@@ -109,79 +135,6 @@ Item.redrawList = function() {
     var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/Item';
     $('#item_list').load(url);
 };    
-
-/* Redraw the item alternate title list:
- */
-function redrawItemAltTitles()
-{
-    var edID = $('#Edition_ID').val();
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/ItemAltTitles';
-    $('#item-alt-title-select-container').load(url);
-    $('#Preferred_Item_Title_Text').val('');
-}
-
-/* Clear the preferred item alternate title:
- */
-function deleteItemAltTitle()
-{
-    // Extract the basic values:
-    var editionID = $('#Edition_ID').val();
-
-    // Save the credit:
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/ClearPreferredItemTitle';
-    $.post(url, {}, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            redrawItemAltTitles();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
-
-/* Set the preferred item alternate title:
- */
-function saveItemAltTitle()
-{
-    // Extract the basic values:
-    var editionID = $('#Edition_ID').val();
-    var titleID = $('#Preferred_Item_Title_ID').val();
-    var titleText = false;
-    if (titleID == 'NEW') {
-        titleText = $('#Preferred_Item_Title_Text').val();
-        if (titleText.length < 1) {
-            alert('Title cannot be blank.');
-            return;
-        }
-    } else {
-        titleID = parseInt(titleID);
-        if (isNaN(titleID) || titleID < 1) {
-            alert('Invalid title selection.');
-            return;
-        }
-    }
-
-    // Save the title:
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredItemTitle';
-    var params = {};
-    if (titleText) {
-        params.title_text = titleText;
-    } else {
-        params.title_id = titleID;
-    }
-    $.post(url, params, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            redrawItemAltTitles();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
 
 /* Redraw the series alternate title list:
  */

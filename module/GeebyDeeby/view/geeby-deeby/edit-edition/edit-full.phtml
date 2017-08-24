@@ -199,12 +199,12 @@
   <div id="preferred-titles" class="tab-pane">
     <div class="edit_container">
       <h3>Preferred Item Title</h3>
-      <div id="item-alt-title-select-container">
+      <div id="preferreditemtitle_list">
         <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', array('itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']))?>
       </div>
       <input type="text" id="Preferred_Item_Title_Text" size="50" />
-      <button onclick="saveItemAltTitle()">Save</button>
-      <button onclick="deleteItemAltTitle()">Clear</button>
+      <button onclick="Edition.link('PreferredItemTitle')">Save</button>
+      <button onclick="Edition.unlink('PreferredItemTitle')">Clear</button>
 
       <h3>Preferred Series Title</h3>
       <div id="series-alt-title-select-container">

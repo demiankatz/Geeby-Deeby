@@ -107,6 +107,9 @@ BaseEditor.prototype.redrawList = function() {
     if (listTarget) {
         var url = this.getBaseUri() + 'List';
         listTarget.load(url);
+        if (typeof this.redrawFunction === 'function') {
+            this.redrawFunction();
+        }
     }
 };
 
@@ -126,9 +129,13 @@ BaseEditor.prototype.getAttributeIdPrefix = function() {
 
 /**
  * Retrieve and validate data values to save.
+ *
+ * @param values            Initial set of values to add further values to
+ * @param saveFields        Configuration for retrieving further values
+ * @param attributeSelector Selector for pulling dynamic attribute values
+ * @param attributeIdPrefix ID prefix for extracting dynamic attribute IDs
  */
-BaseEditor.prototype.getSaveData = function(saveFields, attributeSelector, attributeIdPrefix) {
-    var values = {};
+BaseEditor.prototype.getSaveData = function(values, saveFields, attributeSelector, attributeIdPrefix) {
     for (var key in saveFields) {
         var rules = saveFields[key];
         var format = typeof rules.format === 'undefined' ? 'text' : rules.format;
@@ -203,6 +210,7 @@ BaseEditor.prototype.getSaveUri = function() {
  */
 BaseEditor.prototype.save = function() {
     var values = this.getSaveData(
+        typeof this.saveFieldsFunction === 'function' ? this.saveFieldsFunction() : {},
         this.saveFields,
         typeof this.attributeSelector === 'undefined' ? null : this.attributeSelector,
         this.getAttributeIdPrefix()
@@ -232,6 +240,9 @@ BaseEditor.prototype.getLinkUri = function(type) {
 BaseEditor.prototype.redrawLinks = function(type) {
     var target = '#' + type.toLowerCase() + "_list";
     $(target).load(this.getLinkUri(type));
+    if (typeof this.links[type].redrawFunction === 'function') {
+        this.links[type].redrawFunction();
+    }
 };
 
 /**
@@ -255,7 +266,12 @@ BaseEditor.prototype.getLinkCallback = function(type) {
  * Add a piece of linked information.
  */
 BaseEditor.prototype.link = function(type) {
-    var values = this.getSaveData(this.links[type].saveFields, null, null);
+    var values = this.getSaveData(
+        typeof this.links[type].saveFieldsFunction === 'function' ? this.links[type].saveFieldsFunction() : {},
+        this.links[type].saveFields,
+        null,
+        null
+    );
     if (!values) {
         return;
     }
