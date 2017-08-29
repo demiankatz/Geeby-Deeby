@@ -254,7 +254,12 @@ BaseEditor.prototype.redrawLinks = function(type) {
     var target = '#' + type.toLowerCase() + "_list";
     $(target).load(this.getLinkUri(type));
     // Reset the form inputs since we are redrawing...
-    this.clearSaveData(this.links[type].saveFields);
+    if (typeof this.links[type].saveFields !== 'undefined') {
+        this.clearSaveData(this.links[type].saveFields);
+    }
+    if (this.links[type].uriField !== 'undefined') {
+        this.clearSaveData({ 'extra': this.links[type].uriField });
+    }
     // If we have a custom redraw function, execute that too...
     if (typeof this.links[type].redrawFunction === 'function') {
         this.links[type].redrawFunction();
