@@ -13,6 +13,14 @@ var ItemEditor = function() {
         // Edition_ID is only set when we are creating a child edition....
         'edition_id': { 'id': '#Edition_ID' }
     };
+    this.links = {
+        'AltTitle': {
+            'saveFields': {
+                'title': { 'id': '#Alt_Title', 'emptyError': 'Title must not be blank.' },
+                'note_id': { 'id': '#Alt_Title_Note', 'nonNumericDefault': '' }
+            }
+        }
+    };
 };
 BaseEditor.prototype.registerSubclass(ItemEditor);
 var Item = new ItemEditor();
