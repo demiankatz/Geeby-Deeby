@@ -297,12 +297,22 @@ class EditEditionController extends AbstractBase
     }
 
     /**
-     * Get drop-down of series alt titles
+     * Handle the preferred series title controls.
      *
      * @return mixed
      */
-    public function seriesalttitlesAction()
+    public function preferredseriestitleAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            return $this->setPreferredSeriesTitle();
+        }
+        if ($this->getRequest()->isDelete()) {
+            return $this->clearPreferredSeriesTitle();
+        }
         $view = $this->createViewModel();
         $view->edition = $this->getDbTable('edition')
             ->getByPrimaryKey($this->params()->fromRoute('id'));
@@ -319,16 +329,8 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function setpreferredseriestitleAction()
+    public function setPreferredSeriesTitle()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if (!$this->getRequest()->isPost()) {
-            return $this->jsonDie('Unexpected method.');
-        }
-
         $editionId = $this->params()->fromRoute('id');
         $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
         $title = $this->params()->fromPost('title_id', 'NEW');
@@ -366,21 +368,13 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function clearpreferredseriestitleAction()
+    public function clearPreferredSeriesTitle()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if ($this->getRequest()->isPost()) {
-            $editionId = $this->params()->fromRoute('id');
-            $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
-            $edition->Preferred_Series_AltName_ID = null;
-            $edition->save();
-            return $this->jsonReportSuccess();
-        } else {
-            return $this->jsonDie('Unexpected method.');
-        }
+        $editionId = $this->params()->fromRoute('id');
+        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $edition->Preferred_Series_AltName_ID = null;
+        $edition->save();
+        return $this->jsonReportSuccess();
     }
 
     /**

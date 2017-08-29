@@ -1,3 +1,30 @@
+/**
+ * Process the title controls for the preferred item/series forms.
+ */
+function getPreferredTitle(type) {
+    // Extract the basic values:
+    var titleID = $('#Preferred_' + type + '_Title_ID').val();
+    var titleText = false;
+    if (titleID == 'NEW') {
+        titleText = $('#Preferred_' + type + '_Title_Text').val();
+        if (titleText.length < 1) {
+            alert('Title cannot be blank.');
+            return false;
+        }
+    } else {
+        titleID = parseInt(titleID);
+        if (isNaN(titleID) || titleID < 1) {
+            alert('Invalid title selection.');
+            return false;
+        }
+    }
+
+    // Send back the appropriate parameter:
+    return titleText
+        ? {'title_text': titleText}
+        : {'title_id': titleID};
+}
+
 var EditionEditor = function() {
     this.type = "Edition";
     this.saveFields = {
@@ -74,29 +101,11 @@ var EditionEditor = function() {
         },
         'PreferredItemTitle': {
             'redrawFunction': function() { $('#Preferred_Item_Title_Text').val(''); },
-            'saveFieldsFunction': function() {
-                // Extract the basic values:
-                var titleID = $('#Preferred_Item_Title_ID').val();
-                var titleText = false;
-                if (titleID == 'NEW') {
-                    titleText = $('#Preferred_Item_Title_Text').val();
-                    if (titleText.length < 1) {
-                        alert('Title cannot be blank.');
-                        return false;
-                    }
-                } else {
-                    titleID = parseInt(titleID);
-                    if (isNaN(titleID) || titleID < 1) {
-                        alert('Invalid title selection.');
-                        return false;
-                    }
-                }
-
-                // Send back the appropriate parameter:
-                return titleText
-                    ? {'title_text': titleText}
-                    : {'title_id': titleID};
-            }
+            'saveFieldsFunction': function() { return getPreferredTitle('Item'); }
+        },
+        'PreferredSeriesTitle': {
+            'redrawFunction': function() { $('#Preferred_Series_Title_Text').val(''); },
+            'saveFieldsFunction': function() { return getPreferredTitle('Series'); }
         },
         'ProductCode': {
             'saveFields': {
@@ -120,7 +129,7 @@ EditionEditor.prototype.redrawNextAndPrev = function() {
  */
 EditionEditor.prototype.redrawAfterSave = function() {
     this.redrawLinks('PreferredItemTitle');
-    redrawSeriesAltTitles();
+    this.redrawLinks('PreferredSeriesTitle');
     redrawSeriesPublishers();
     this.redrawNextAndPrev();
 }
@@ -136,16 +145,6 @@ Item.redrawList = function() {
     $('#item_list').load(url);
 };    
 
-/* Redraw the series alternate title list:
- */
-function redrawSeriesAltTitles()
-{
-    var edID = $('#Edition_ID').val();
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/SeriesAltTitles';
-    $('#series-alt-title-select-container').load(url);
-    $('#Preferred_Series_Title_Text').val('');
-}
-
 /* Redraw the series publisher list:
  */
 function redrawSeriesPublishers()
@@ -153,69 +152,6 @@ function redrawSeriesPublishers()
     var edID = $('#Edition_ID').val();
     var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/SeriesPublishers';
     $('#series-publisher-select-container').load(url);
-}
-
-/* Clear the preferred series alternate title:
- */
-function deleteSeriesAltTitle()
-{
-    // Extract the basic values:
-    var editionID = $('#Edition_ID').val();
-
-    // Save the credit:
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/ClearPreferredSeriesTitle';
-    $.post(url, {}, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            redrawSeriesAltTitles();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
-
-/* Set the preferred series alternate title:
- */
-function saveSeriesAltTitle()
-{
-    // Extract the basic values:
-    var editionID = $('#Edition_ID').val();
-    var titleID = $('#Preferred_Series_Title_ID').val();
-    var titleText = false;
-    if (titleID == 'NEW') {
-        titleText = $('#Preferred_Series_Title_Text').val();
-        if (titleText.length < 1) {
-            alert('Title cannot be blank.');
-            return;
-        }
-    } else {
-        titleID = parseInt(titleID);
-        if (isNaN(titleID) || titleID < 1) {
-            alert('Invalid title selection.');
-            return;
-        }
-    }
-
-    // Save the title:
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredSeriesTitle';
-    var params = {};
-    if (titleText) {
-        params.title_text = titleText;
-    } else {
-        params.title_id = titleID;
-    }
-    $.post(url, params, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            redrawSeriesAltTitles();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
 }
 
 /* Set the preferred series publisher:

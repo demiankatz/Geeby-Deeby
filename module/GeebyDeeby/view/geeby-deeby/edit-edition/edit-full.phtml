@@ -202,17 +202,17 @@
       <div id="preferreditemtitle_list">
         <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', array('itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']))?>
       </div>
-      <input type="text" id="Preferred_Item_Title_Text" size="50" />
+      <input type="text" id="Preferred_Item_Title_Text" onkeypress="$('#Preferred_Item_Title_ID').val('NEW');" size="50" />
       <button onclick="Edition.link('PreferredItemTitle')">Save</button>
       <button onclick="Edition.unlink('PreferredItemTitle')">Clear</button>
 
       <h3>Preferred Series Title</h3>
-      <div id="series-alt-title-select-container">
+      <div id="preferredseriestitle_list">
         <?=$this->render('geeby-deeby/edit-edition/series-alt-title-select.phtml', array('seriesAltTitles' => $seriesAltTitles, 'selected' => $edition['Preferred_Series_AltName_ID']))?>
       </div>
-      <input type="text" id="Preferred_Series_Title_Text" size="50" />
-      <button onclick="saveSeriesAltTitle()">Save</button>
-      <button onclick="deleteSeriesAltTitle()">Clear</button>
+      <input type="text" id="Preferred_Series_Title_Text" onkeypress="$('#Preferred_Series_Title_ID').val('NEW');" size="50" />
+      <button onclick="Edition.link('PreferredSeriesTitle')">Save</button>
+      <button onclick="Edition.unlink('PreferredSeriesTitle')">Clear</button>
     </div>
   </div>
 </div>
