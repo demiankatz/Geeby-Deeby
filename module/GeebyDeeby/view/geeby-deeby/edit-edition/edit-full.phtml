@@ -189,10 +189,10 @@
   <div id="preferred-publisher" class="tab-pane">
     <div class="edit_container">
       <h3>Preferred Publisher</h3>
-      <div id="series-publisher-select-container">
+      <div id="preferredpublisher_list">
         <?=$this->render('geeby-deeby/edit-edition/series-publisher-select.phtml', array('publishers' => $publishers, 'selected' => $edition['Preferred_Series_Publisher_ID']))?>
       </div>
-      <button onclick="saveSeriesPublisher()">Save</button>
+      <button onclick="Edition.link('PreferredPublisher')">Save</button>
     </div>
   </div>
 

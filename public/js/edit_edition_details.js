@@ -103,6 +103,11 @@ var EditionEditor = function() {
             'redrawFunction': function() { $('#Preferred_Item_Title_Text').val(''); },
             'saveFieldsFunction': function() { return getPreferredTitle('Item'); }
         },
+        'PreferredPublisher': {
+            'saveFields': {
+                'pub_id': { 'id': '#Series_Publisher_ID' }
+            }
+        },
         'PreferredSeriesTitle': {
             'redrawFunction': function() { $('#Preferred_Series_Title_Text').val(''); },
             'saveFieldsFunction': function() { return getPreferredTitle('Series'); }
@@ -129,8 +134,8 @@ EditionEditor.prototype.redrawNextAndPrev = function() {
  */
 EditionEditor.prototype.redrawAfterSave = function() {
     this.redrawLinks('PreferredItemTitle');
+    this.redrawLinks('PreferredPublisher');
     this.redrawLinks('PreferredSeriesTitle');
-    redrawSeriesPublishers();
     this.redrawNextAndPrev();
 }
 
@@ -144,35 +149,6 @@ Item.redrawList = function() {
     var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/Item';
     $('#item_list').load(url);
 };    
-
-/* Redraw the series publisher list:
- */
-function redrawSeriesPublishers()
-{
-    var edID = $('#Edition_ID').val();
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/SeriesPublishers';
-    $('#series-publisher-select-container').load(url);
-}
-
-/* Set the preferred series publisher:
- */
-function saveSeriesPublisher()
-{
-    // Extract the basic values:
-    var editionID = $('#Edition_ID').val();
-    var pubID = $('#Series_Publisher_ID').val();
-
-    // Save the publisher:
-    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredPublisher';
-    var params = {pub_id: pubID};
-    $.post(url, params, function(data) {
-        // If save was successful...
-        if (!data.success) {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
 
 /* Redraw image list:
  */

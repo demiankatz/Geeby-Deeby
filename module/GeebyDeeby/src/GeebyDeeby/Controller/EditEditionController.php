@@ -175,12 +175,19 @@ class EditEditionController extends AbstractBase
     }
 
     /**
-     * Get drop-down of series publishers
+     * Manage preferred publisher functionality.
      *
      * @return mixed
      */
-    public function seriespublishersAction()
+    public function preferredpublisherAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            return $this->setPreferredPublisher();
+        }
         $view = $this->createViewModel();
         $view->edition = $this->getDbTable('edition')
             ->getByPrimaryKey($this->params()->fromRoute('id'));
@@ -197,16 +204,8 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function setpreferredpublisherAction()
+    protected function setPreferredPublisher()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if (!$this->getRequest()->isPost()) {
-            return $this->jsonDie('Unexpected method.');
-        }
-
         $editionId = $this->params()->fromRoute('id');
         $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
         $pubId = $this->params()->fromPost('pub_id');
@@ -329,7 +328,7 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function setPreferredSeriesTitle()
+    protected function setPreferredSeriesTitle()
     {
         $editionId = $this->params()->fromRoute('id');
         $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
@@ -368,7 +367,7 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function clearPreferredSeriesTitle()
+    protected function clearPreferredSeriesTitle()
     {
         $editionId = $this->params()->fromRoute('id');
         $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
