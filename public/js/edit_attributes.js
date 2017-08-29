@@ -4,7 +4,7 @@ var SeriesAttributeEditor = function() {
         'attribute_name': { 'id': '#Series_Attribute_Name', emptyError: 'Name cannot be blank.' },
         'rdf_property': { 'id': '#Series_Attribute_RDF_Property' },
         'priority': { 'id': '#Display_Priority' },
-        'allow_html': { 'id': '#Allow_HTML', format: 'checkbox' }
+        'allow_html': { 'id': '#Allow_HTML' }
     };
 };
 BaseEditor.prototype.registerSubclass(SeriesAttributeEditor);
@@ -16,8 +16,8 @@ var EditionsAttributeEditor = function() {
         'attribute_name': { 'id': '#Editions_Attribute_Name', emptyError: 'Name cannot be blank.' },
         'rdf_property': { 'id': '#Editions_Attribute_RDF_Property' },
         'priority': { 'id': '#Display_Priority' },
-        'copy_to_clone': { 'id': '#Copy_To_Clone', format: 'checkbox' },
-        'allow_html': { 'id': '#Allow_HTML', format: 'checkbox' }
+        'copy_to_clone': { 'id': '#Copy_To_Clone' },
+        'allow_html': { 'id': '#Allow_HTML' }
     };
 };
 BaseEditor.prototype.registerSubclass(EditionsAttributeEditor);

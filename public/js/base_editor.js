@@ -153,13 +153,11 @@ BaseEditor.prototype.clearSaveData = function(saveFields) {
 BaseEditor.prototype.getSaveData = function(values, saveFields, attributeSelector, attributeIdPrefix) {
     for (var key in saveFields) {
         var rules = saveFields[key];
-        var format = typeof rules.format === 'undefined' ? 'text' : rules.format;
-        var current;
-        if (format === 'checkbox') {
-            current = $(rules.id).is(':checked') ? 1 : 0;
-        } else {
-            current = $(rules.id).val();
-        }
+        var currentElement = $(rules.id);
+        var inputType = currentElement.prop('type');
+        var current = (inputType === 'checkbox')
+            ? (currentElement.is(':checked') ? 1 : 0)
+            : currentElement.val();
         if (typeof rules.nonNumericDefault !== 'undefined') {
             current = parseInt(current, 10);
             if (isNaN(current)) {
