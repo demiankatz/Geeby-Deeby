@@ -198,7 +198,7 @@ BaseEditor.prototype.getSaveCallback = function() {
                 editor.editBox.dialog('destroy');
                 editor.editBox = false;
             }
-            
+
             // Update the list.
             editor.redrawAfterSave();
        } else {
@@ -231,11 +231,11 @@ BaseEditor.prototype.save = function() {
     if (!values) {
         return;
     }
-    
+
     // Hide save button and display status message to avoid duplicate submission:
     $(this.getSaveButton()).hide();
     $(this.getSaveStatusTarget()).html('Saving...');
-    
+
     // Use AJAX to save the values:
     $.post(this.getSaveUri(), values, this.getSaveCallback(), 'json');
 };

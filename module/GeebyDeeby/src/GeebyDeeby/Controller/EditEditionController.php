@@ -776,7 +776,7 @@ class EditEditionController extends AbstractBase
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
-            $image = $this->params()->fromRoute('extra');
+            $image = $this->params()->fromPost('sequence_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('editionsimages')->update(
                 array('Position' => $pos), array('Sequence_ID' => $image)
