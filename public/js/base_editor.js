@@ -257,7 +257,7 @@ BaseEditor.prototype.redrawLinks = function(type) {
     if (typeof this.links[type].saveFields !== 'undefined') {
         this.clearSaveData(this.links[type].saveFields);
     }
-    if (this.links[type].uriField !== 'undefined') {
+    if (typeof this.links[type].uriField !== 'undefined') {
         this.clearSaveData({ 'extra': this.links[type].uriField });
     }
     // If we have a custom redraw function, execute that too...
