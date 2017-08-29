@@ -128,6 +128,21 @@ BaseEditor.prototype.getAttributeIdPrefix = function() {
 };
 
 /**
+ * Clear out a save form.
+ *
+ * @param saveFields Form field configuration.
+ */
+BaseEditor.prototype.clearSaveData = function(saveFields) {
+    for (var key in saveFields) {
+        var rules = saveFields[key];
+        var current = $(rules.id);
+        if (current.prop('type') == 'text') {
+            current.val('');
+        }
+    }
+};
+
+/**
  * Retrieve and validate data values to save.
  *
  * @param values            Initial set of values to add further values to
@@ -240,6 +255,9 @@ BaseEditor.prototype.getLinkUri = function(type) {
 BaseEditor.prototype.redrawLinks = function(type) {
     var target = '#' + type.toLowerCase() + "_list";
     $(target).load(this.getLinkUri(type));
+    // Reset the form inputs since we are redrawing...
+    this.clearSaveData(this.links[type].saveFields);
+    // If we have a custom redraw function, execute that too...
     if (typeof this.links[type].redrawFunction === 'function') {
         this.links[type].redrawFunction();
     }
