@@ -8,7 +8,7 @@
           </a>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteItemReference(<?=$current['Item_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('AboutItem', <?=$current['Item_ID']?>); return false;">
           </a>
         </td>
       </tr>

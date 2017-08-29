@@ -14,6 +14,15 @@ var ItemEditor = function() {
         'edition_id': { 'id': '#Edition_ID' }
     };
     this.links = {
+        'AboutItem': {
+            'uriField': { 'id': '#item_bib_id', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }
+        },
+        'AboutPerson': {
+            'uriField': { 'id': '#person_bib_id', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid person.' }
+        },
+        'AboutSeries': {
+            'uriField': { 'id': '#series_bib_id', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid series.' }
+        },
         'AltTitle': {
             'saveFields': {
                 'title': { 'id': '#Alt_Title', 'emptyError': 'Title must not be blank.' },
