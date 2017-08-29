@@ -23,6 +23,10 @@ var ItemEditor = function() {
         'AboutSeries': {
             'uriField': { 'id': '#series_bib_id', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid series.' }
         },
+        'Adaptation': {
+            'subtypeSelector': { 'id': '#adapt_type' },
+            'uriField': { 'id': '#adapt_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }
+        },
         'AltTitle': {
             'saveFields': {
                 'title': { 'id': '#Alt_Title', 'emptyError': 'Title must not be blank.' },

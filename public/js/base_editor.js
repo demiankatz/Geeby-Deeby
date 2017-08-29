@@ -241,17 +241,30 @@ BaseEditor.prototype.save = function() {
 };
 
 /**
+ * If a subtype selector is active, get the selected subtype.
+ */
+BaseEditor.prototype.getSelectedSubtype = function(type) {
+    if (typeof this.links[type].subtypeSelector.id !== 'undefined') {
+        return $(this.links[type].subtypeSelector.id).val();
+    }
+    return '';
+};
+
+/**
  * Get the URI to interact with a particular type of link.
  */
-BaseEditor.prototype.getLinkUri = function(type) {
-    return this.getSaveUri() + "/" + type;
+BaseEditor.prototype.getLinkUri = function(type, subtype) {
+    if (typeof subtype === 'undefined') {
+        subtype = this.getSelectedSubtype(type);
+    }
+    return this.getSaveUri() + "/" + type + subtype;
 }
 
 /**
  * Redraw a list of linked information.
  */
 BaseEditor.prototype.redrawLinks = function(type) {
-    var target = '#' + type.toLowerCase() + "_list";
+    var target = '#' + type.toLowerCase() + this.getSelectedSubtype(type).toLowerCase() + "_list";
     $(target).load(this.getLinkUri(type));
     // Reset the form inputs since we are redrawing...
     if (typeof this.links[type].saveFields !== 'undefined') {
@@ -331,10 +344,13 @@ BaseEditor.prototype.reorderLink = function(type, details) {
 /**
  * Remove a piece of linked information.
  */
-BaseEditor.prototype.unlink = function(type, which) {
+BaseEditor.prototype.unlink = function(type, which, subtype) {
     if (!confirm("Are you sure?")) {
         return;
     }
-    var url = this.getLinkUri(type) + "/" + encodeURIComponent(which);
+    if (typeof subtype === 'undefined') {
+        subtype = '';
+    }
+    var url = this.getLinkUri(type, subtype) + "/" + encodeURIComponent(which);
     $.ajax({url: url, type: "delete", dataType: "json", success: this.getLinkCallback(type)});
 };

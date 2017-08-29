@@ -181,7 +181,7 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function adaptationAction()
+    public function adaptationintoAction()
     {
         return $this->handleGenericLink(
             'itemsadaptations', 'Source_Item_ID', 'Adapted_Item_ID',
@@ -195,7 +195,7 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function adaptedfromAction()
+    public function adaptationfromAction()
     {
         return $this->handleGenericLink(
             'itemsadaptations', 'Adapted_Item_ID', 'Source_Item_ID',

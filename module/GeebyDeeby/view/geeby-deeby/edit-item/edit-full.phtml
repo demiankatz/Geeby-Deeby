@@ -25,22 +25,22 @@
 
   <div id="adaptations-tab" class="tab-pane">
     <select id="adapt_type">
-      <option value='from'>Adapted From</option>
-      <option value='into'>Adapted Into</option>
+      <option value='From'>Adapted From</option>
+      <option value='Into'>Adapted Into</option>
     </select>
     <input id="adapt_name" class="Item_ID" />
-    <button onclick="saveAdaptation();">Add Adaptation</button>
+    <button onclick="Item.link('Adaptation');">Add Adaptation</button>
     <table>
       <tr>
         <td>
           <b>Adapted From:</b>
-          <div id="adapt_from">
+          <div id="adaptationfrom_list">
             <?=$this->render('geeby-deeby/edit-item/adapted-from-list.phtml')?>
           </div>
         </td>
         <td>
           <b>Adapted Into:</b>
-          <div id="adapt_into">
+          <div id="adaptationinto_list">
             <?=$this->render('geeby-deeby/edit-item/adapted-into-list.phtml')?>
           </div>
         </td>
