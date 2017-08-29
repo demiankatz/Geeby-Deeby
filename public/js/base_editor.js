@@ -294,7 +294,7 @@ BaseEditor.prototype.link = function(type) {
     var uri = this.getLinkUri(type);
     // Check if we need to add an extra value to the URI:
     if (typeof this.links[type].uriField !== 'undefined') {
-        var extra = this.getSaveData({ 'extra': this.links[type].uriField }, null, null);
+        var extra = this.getSaveData({}, { 'extra': this.links[type].uriField }, null, null);
         if (!extra) {
             return;
         }
