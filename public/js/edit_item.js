@@ -19,6 +19,9 @@ var ItemEditor = function() {
                 'title': { 'id': '#Alt_Title', 'emptyError': 'Title must not be blank.' },
                 'note_id': { 'id': '#Alt_Title_Note', 'nonNumericDefault': '' }
             }
+        },
+        'Tag': {
+            'uriField': { 'id': '#Tag_ID', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid tag.' }
         }
     };
 };
