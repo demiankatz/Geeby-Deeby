@@ -393,7 +393,7 @@ class EditItemController extends AbstractBase
             $table = $this->getDbTable('itemsdescriptions');
             $row = $table->createRow();
             $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Source = $this->params()->fromRoute('extra');
+            $row->Source = $this->params()->fromPost('type');
             $row->Description = $this->params()->fromPost('desc');
             try {
                 $table->insert((array)$row);

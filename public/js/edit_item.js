@@ -33,6 +33,12 @@ var ItemEditor = function() {
                 'note_id': { 'id': '#Alt_Title_Note', 'nonNumericDefault': '' }
             }
         },
+        'Description': {
+            'saveFields': {
+                'type': { 'id': '#DescriptionType' },
+                'desc': { 'id': '#Description', 'emptyError': 'Description must not be blank.' }
+            }
+        },
         'Tag': {
             'uriField': { 'id': '#Tag_ID', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid tag.' }
         },
