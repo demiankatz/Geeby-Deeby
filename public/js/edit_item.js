@@ -64,3 +64,17 @@ var ItemEditor = function() {
 };
 BaseEditor.prototype.registerSubclass(ItemEditor);
 var Item = new ItemEditor();
+
+/**
+ * Copy an edition (special Item-specific action)
+ */
+Item.prototype.copyEdition = function() {
+    var edition = $('.selectedEdition:checked').val();
+    if (!edition) {
+        alert("Please select an edition.");
+        return;
+    }
+    // Save and update based on selected relationship:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edition) + '/Copy';
+    $.post(url, {}, this.getLinkCallback('Editions'), 'json');
+}
