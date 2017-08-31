@@ -33,6 +33,12 @@ var ItemEditor = function() {
                 'note_id': { 'id': '#Alt_Title_Note', 'nonNumericDefault': '' }
             }
         },
+        'Attachment': {
+            'uriField': { 'id': '#attachment_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' },
+            'saveFields': {
+                'note_id': { 'id': '#Attachment_Note', 'nonNumericDefault': '' },
+            }
+        },
         'Credit': {
             'saveFields': {
                 'note_id': { 'id': '#credit_note', 'nonNumericDefault': '' },

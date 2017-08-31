@@ -70,11 +70,11 @@
         </tr>
         <tr>
           <th></th>
-          <td><button onclick="addAttachedItem();">Add Item</button></td>
+          <td><button onclick="Item.link('Attachment');">Add Item</button></td>
         </tr>
       </table>
     </div>
-    <div id="item_list">
+    <div id="attachment_list">
       <p class="error">IMPORTANT: In the vast majority of cases, items should be attached at
           the individual EDITION level, not here at the ITEM level.</p>
       <?=$this->render('geeby-deeby/edit-item/list.phtml')?>

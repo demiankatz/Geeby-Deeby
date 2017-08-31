@@ -288,7 +288,7 @@ class EditItemController extends AbstractBase
     {
         if ($this->getRequest()->isPost()) {
             $collection = $this->params()->fromRoute('id');
-            $item = $this->params()->fromPost('attach_id');
+            $item = $this->params()->fromPost('item_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('itemsincollections')->update(
                 array('Position' => $pos),
