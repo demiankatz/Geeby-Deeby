@@ -411,7 +411,7 @@ class EditItemController extends AbstractBase
     }
 
     /**
-     * Deal with translations
+     * Deal with tags
      *
      * @return mixed
      */
@@ -424,11 +424,11 @@ class EditItemController extends AbstractBase
     }
 
     /**
-     * Deal with translations
+     * Deal with translations (into)
      *
      * @return mixed
      */
-    public function translationAction()
+    public function translationintoAction()
     {
         return $this->handleGenericLink(
             'itemstranslations', 'Source_Item_ID', 'Trans_Item_ID',
@@ -442,7 +442,7 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function translatedfromAction()
+    public function translationfromAction()
     {
         return $this->handleGenericLink(
             'itemstranslations', 'Trans_Item_ID', 'Source_Item_ID',

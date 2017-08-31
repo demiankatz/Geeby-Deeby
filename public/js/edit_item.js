@@ -35,6 +35,10 @@ var ItemEditor = function() {
         },
         'Tag': {
             'uriField': { 'id': '#Tag_ID', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid tag.' }
+        },
+        'Translation': {
+            'subtypeSelector': { 'id': '#trans_type' },
+            'uriField': { 'id': '#trans_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }
         }
     };
 };
