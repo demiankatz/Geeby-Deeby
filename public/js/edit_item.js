@@ -33,6 +33,14 @@ var ItemEditor = function() {
                 'note_id': { 'id': '#Alt_Title_Note', 'nonNumericDefault': '' }
             }
         },
+        'Credit': {
+            'saveFields': {
+                'note_id': { 'id': '#credit_note', 'nonNumericDefault': '' },
+                'person_id': { 'id': '#credit_person', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid person' },
+                'pos': { 'id': '#credit_position', 'nonNumericDefault': 0 },
+                'role_id': { 'id': '#Role_ID' }
+            }
+        },
         'Description': {
             'saveFields': {
                 'type': { 'id': '#DescriptionType' },

@@ -304,8 +304,19 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function creditsAction()
+    public function creditAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            return $this->addCredit();
+        }
+        if ($this->getRequest()->isDelete()) {
+            return $this->deleteCredit();
+        }
+        // Default action: display list:
         $table = $this->getDbTable('editionscredits');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
@@ -320,24 +331,21 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function addcreditAction()
+    protected function addCredit()
     {
-        if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('editionscredits');
-            $item = $this->params()->fromRoute('id');
-            $row = array(
-                'Person_ID' => $this->params()->fromPost('person_id'),
-                'Role_ID' => $this->params()->fromPost('role_id'),
-                'Position' => $this->params()->fromPost('pos'),
-                'Note_ID' => $this->params()->fromPost('note_id')
-            );
-            if (empty($row['Note_ID'])) {
-                $row['Note_ID'] = null;
-            }
-            $table->insertForItem($item, $row);
-            return $this->jsonReportSuccess();
+        $table = $this->getDbTable('editionscredits');
+        $item = $this->params()->fromRoute('id');
+        $row = array(
+            'Person_ID' => $this->params()->fromPost('person_id'),
+            'Role_ID' => $this->params()->fromPost('role_id'),
+            'Position' => $this->params()->fromPost('pos'),
+            'Note_ID' => $this->params()->fromPost('note_id')
+        );
+        if (empty($row['Note_ID'])) {
+            $row['Note_ID'] = null;
         }
-        return $this->jsonDie('Unexpected method');
+        $table->insertForItem($item, $row);
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -345,19 +353,14 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function deletecreditAction()
+    protected function deleteCredit()
     {
-        if ($this->getRequest()->isPost()) {
-            $this->getDbTable('editionscredits')->deleteForItem(
-                $this->params()->fromRoute('id'),
-                array(
-                    'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id')
-                )
-            );
-            return $this->jsonReportSuccess();
-        }
-        return $this->jsonDie('Unexpected method');
+        list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
+        $this->getDbTable('editionscredits')->deleteForItem(
+            $this->params()->fromRoute('id'),
+            array('Person_ID' => $person, 'Role_ID' => $role)
+        );
+        return $this->jsonReportSuccess();
     }
 
     /**
