@@ -136,7 +136,7 @@ BaseEditor.prototype.clearSaveData = function(saveFields) {
     for (var key in saveFields) {
         var rules = saveFields[key];
         var current = $(rules.id);
-        if (current.prop('type') == 'text') {
+        if (current.prop('type') == 'text' || current.prop('tagName').toLowerCase() == 'textarea') {
             current.val('');
         }
     }
@@ -244,7 +244,7 @@ BaseEditor.prototype.save = function() {
  * If a subtype selector is active, get the selected subtype.
  */
 BaseEditor.prototype.getSelectedSubtype = function(type) {
-    if (typeof this.links[type].subtypeSelector.id !== 'undefined') {
+    if (typeof this.links[type].subtypeSelector !== 'undefined') {
         return $(this.links[type].subtypeSelector.id).val();
     }
     return '';
