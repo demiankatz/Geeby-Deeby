@@ -253,11 +253,11 @@ BaseEditor.prototype.getSelectedSubtype = function(type) {
 /**
  * Get the URI to interact with a particular type of link.
  */
-BaseEditor.prototype.getLinkUri = function(type, subtype) {
+BaseEditor.prototype.getLinkUri = function(type, subtype, extra) {
     if (typeof subtype === 'undefined') {
         subtype = this.getSelectedSubtype(type);
     }
-    return this.getSaveUri() + "/" + type + subtype;
+    return this.getSaveUri() + "/" + type + subtype + (typeof extra === 'undefined' ? '' : extra);
 }
 
 /**
@@ -339,9 +339,9 @@ BaseEditor.prototype.getLinkOrderInputSelector = function(type, details) {
 /**
  * Reorder a piece of linked information.
  */
-BaseEditor.prototype.reorderLink = function(type, details) {
+BaseEditor.prototype.reorderLink = function(type, details, subtype) {
     details['pos'] = parseInt($(this.getLinkOrderInputSelector(type, details)).val(), 10);
-    $.post(this.getLinkUri(type + 'Order'), details, this.getLinkCallback(type), 'json');
+    $.post(this.getLinkUri(type, subtype, 'Order'), details, this.getLinkCallback(type), 'json');
 };
 
 /**
