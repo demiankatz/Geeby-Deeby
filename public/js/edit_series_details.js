@@ -521,5 +521,5 @@ $(document).ready(function() {
   registerAutocomplete('#Publisher_ID', 'Publisher');
   registerAutocomplete('#trans_name', 'Series');
   registerAutocomplete('#item_name', 'Item');
-  registerAutocomplete('.Note_ID', 'Note');
+  // .Note_ID autocomplete is already registered by edit_items.js
 });

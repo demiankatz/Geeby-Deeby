@@ -158,10 +158,4 @@ Item.redrawList = function() {
     $('#item_list').load(url);
 };
 
-// Load data and setup autocomplete.
-$(document).ready(function() {
-  registerAutocomplete('.Item_ID', 'Item');
-  registerAutocomplete('.Note_ID', 'Note');
-  registerAutocomplete('.Person_ID', 'Person');
-  registerAutocomplete('.Series_ID', 'Series');
-});
+// No need to set up autocompletes here; it's already been done by edit_items.js.

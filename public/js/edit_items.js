@@ -53,6 +53,7 @@ var ItemEditor = function() {
                 'desc': { 'id': '#Description', 'emptyError': 'Description must not be blank.' }
             }
         },
+        'Editions': { /* dummy placeholder to make copyEdition function work correctly */ },
         'Tag': {
             'uriField': { 'id': '#Tag_ID', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid tag.' }
         },
@@ -63,12 +64,11 @@ var ItemEditor = function() {
     };
 };
 BaseEditor.prototype.registerSubclass(ItemEditor);
-var Item = new ItemEditor();
 
 /**
  * Copy an edition (special Item-specific action)
  */
-Item.prototype.copyEdition = function() {
+ItemEditor.prototype.copyEdition = function() {
     var edition = $('.selectedEdition:checked').val();
     if (!edition) {
         alert("Please select an edition.");
@@ -78,3 +78,14 @@ Item.prototype.copyEdition = function() {
     var url = basePath + '/edit/Edition/' + encodeURIComponent(edition) + '/Copy';
     $.post(url, {}, this.getLinkCallback('Editions'), 'json');
 }
+
+var Item = new ItemEditor();
+
+// Load data and setup autocomplete.
+$(document).ready(function() {
+  registerAutocomplete('.Item_ID', 'Item');
+  registerAutocomplete('.Note_ID', 'Note');
+  registerAutocomplete('.Person_ID', 'Person');
+  registerAutocomplete('.Series_ID', 'Series');
+  registerAutocomplete('.Tag_ID', 'Tag');
+});
