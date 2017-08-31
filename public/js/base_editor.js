@@ -263,9 +263,12 @@ BaseEditor.prototype.getLinkUri = function(type, subtype) {
 /**
  * Redraw a list of linked information.
  */
-BaseEditor.prototype.redrawLinks = function(type) {
-    var target = '#' + type.toLowerCase() + this.getSelectedSubtype(type).toLowerCase() + "_list";
-    $(target).load(this.getLinkUri(type));
+BaseEditor.prototype.redrawLinks = function(type, subtype) {
+    if (typeof subtype === 'undefined') {
+        subtype = this.getSelectedSubtype(type);
+    }
+    var target = '#' + type.toLowerCase() + subtype.toLowerCase() + "_list";
+    $(target).load(this.getLinkUri(type, subtype));
     // Reset the form inputs since we are redrawing...
     if (typeof this.links[type].saveFields !== 'undefined') {
         this.clearSaveData(this.links[type].saveFields);
@@ -282,13 +285,13 @@ BaseEditor.prototype.redrawLinks = function(type) {
 /**
  * Get the callback function for the AJAX link action.
  */
-BaseEditor.prototype.getLinkCallback = function(type) {
+BaseEditor.prototype.getLinkCallback = function(type, subtype) {
     var editor = this;
     return function(data) {
         // If save was successful...
         if (data.success) {
             // Update the list.
-            editor.redrawLinks(type);
+            editor.redrawLinks(type, subtype);
        } else {
             // Save failed -- display error message.
             alert('Error: ' + data.msg);
@@ -352,5 +355,5 @@ BaseEditor.prototype.unlink = function(type, which, subtype) {
         subtype = '';
     }
     var url = this.getLinkUri(type, subtype) + "/" + encodeURIComponent(which);
-    $.ajax({url: url, type: "delete", dataType: "json", success: this.getLinkCallback(type)});
+    $.ajax({url: url, type: "delete", dataType: "json", success: this.getLinkCallback(type, subtype)});
 };
