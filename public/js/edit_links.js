@@ -7,6 +7,17 @@ var LinkEditor = function() {
         'date_checked': { 'id': '#Date_Checked' },
         'type_id': { 'id': '#Link_Type_ID' }
     };
+    this.links = {
+        'Item': {
+            'uriField': { 'id': '#link_item_id', 'nonNumericDefault': '', 'emptyError': 'Please choose a valid item.' }
+        },
+        'Person': {
+            'uriField': { 'id': '#link_person_id', 'nonNumericDefault': '', 'emptyError': 'Please choose a valid person.' }
+        },
+        'Series': {
+            'uriField': { 'id': '#link_series_id', 'nonNumericDefault': '', 'emptyError': 'Please choose a valid series.' }
+        }
+    };
 };
 BaseEditor.prototype.registerSubclass(LinkEditor);
 var Link = new LinkEditor();
@@ -19,3 +30,12 @@ var LinkTypeEditor = function() {
 };
 BaseEditor.prototype.registerSubclass(LinkTypeEditor);
 var LinkType = new LinkTypeEditor();
+
+// Load data and setup autocomplete.
+$(document).ready(function() {
+    if (typeof registerAutocomplete === 'function') {
+        registerAutocomplete('.Item_ID', 'Item');
+        registerAutocomplete('.Person_ID', 'Person');
+        registerAutocomplete('.Series_ID', 'Series');
+    }
+});
