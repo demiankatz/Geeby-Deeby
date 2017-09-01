@@ -32,7 +32,9 @@ var FileType = new FileTypeEditor();
 
 // Load data and setup autocomplete.
 $(document).ready(function() {
-  registerAutocomplete('.Item_ID', 'Item');
-  registerAutocomplete('.Person_ID', 'Person');
-  registerAutocomplete('.Series_ID', 'Series');
+    if (typeof registerAutocomplete === 'function') {
+        registerAutocomplete('.Item_ID', 'Item');
+        registerAutocomplete('.Person_ID', 'Person');
+        registerAutocomplete('.Series_ID', 'Series');
+    }
 });
