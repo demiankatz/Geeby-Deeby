@@ -4,7 +4,7 @@
       <tr>
         <td><?=$this->escapeHtml($current['Material_Type_Name'])?></td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteMaterial(<?=$current['Material_Type_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Series.unlink('Material', <?=$current['Material_Type_ID']?>); return false;">
           </a>
         </td>
       </tr>
