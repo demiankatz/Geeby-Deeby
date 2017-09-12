@@ -105,7 +105,7 @@ BaseEditor.prototype.redrawList = function() {
     // Only make the AJAX call if we have somewhere to send the results:
     var targetSelector = this.getListTarget();
     var listTarget = $(targetSelector);
-    if (listTarget) {
+    if (listTarget.length > 0) {
         var url = this.getBaseUri() + 'List';
         listTarget.load(url);
         if (typeof this.redrawFunction === 'function') {
@@ -270,8 +270,13 @@ BaseEditor.prototype.redrawLinks = function(type, subtype) {
     if (typeof subtype === 'undefined') {
         subtype = this.getSelectedSubtype(type);
     }
-    var target = '#' + type.toLowerCase() + subtype.toLowerCase() + "_list";
-    $(target).load(this.getLinkUri(type, subtype));
+    var targetSelector = '#' + type.toLowerCase() + subtype.toLowerCase() + "_list";
+    var target = $(targetSelector);
+    if (target.length > 0) {
+        target.load(this.getLinkUri(type, subtype));
+    } else {
+        console.log('Cannot find list element: ' + targetSelector);
+    }
     // Reset the form inputs since we are redrawing...
     if (typeof this.links[type].saveFields !== 'undefined') {
         this.clearSaveData(this.links[type].saveFields);
