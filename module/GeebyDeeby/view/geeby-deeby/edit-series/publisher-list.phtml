@@ -3,7 +3,7 @@
     <table class="list_item">
       <tr>
         <td>
-          <a href="#" onclick="modifyPublisher(<?=$current['Series_Publisher_ID']?>); return false;"><?=$this->escapeHtml($current['Publisher_Name'])?></a>
+          <a href="#" onclick="Series.editLink('Publisher', <?=$current['Series_Publisher_ID']?>); return false;"><?=$this->escapeHtml($current['Publisher_Name'])?></a>
           <? if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
             (<?
               $city = (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']);
@@ -16,7 +16,7 @@
           <? endif; ?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-gear" href="#" onclick="modifyPublisher(<?=$current['Series_Publisher_ID']?>); return false;">
+          <a class="ui-icon ui-icon-gear" href="#" onclick="Series.editLink('Publisher', <?=$current['Series_Publisher_ID']?>); return false;">
           </a>
         </td>
         <td>

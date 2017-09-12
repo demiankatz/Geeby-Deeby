@@ -26,6 +26,10 @@ var SeriesEditor = function() {
             'uriField': { 'id': '#Series_Material_Type_ID' }
         },
         'Publisher': {
+            'editFields': {
+                'address': { 'id': '#Address_ID' },
+                'imprint': { 'id': '#Imprint_ID' }
+            },
             'saveFields': {
                 'publisher_id': { 'id': '#Publisher_ID', 'nonNumericDefault': '', 'emptyError': 'Publisher must not be blank.' },
                 'note_id': { 'id': '#Publisher_Note_ID', 'nonNumericDefault': '' }

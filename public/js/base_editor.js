@@ -49,14 +49,12 @@ BaseEditor.prototype.getBaseUri = function() {
 };
 
 /**
- * Edit an instance of the type represented by this class.
+ * Open a lightbox.
  */
-BaseEditor.prototype.edit = function(id) {
-    // Open the edit dialog box:
-    var url = this.getBaseUri() + '/' + encodeURIComponent(id);
+BaseEditor.prototype.openLightbox = function(url, title) {
     var editor = this;
     this.editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === 'NEW' ? "Add " + this.type : ("Edit " + this.type + " " + id)),
+        title: title,
         modal: true,
         autoOpen: true,
         width: 600,
@@ -64,6 +62,27 @@ BaseEditor.prototype.edit = function(id) {
         // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
         close: function() { editor.editBox.empty(); }
     });
+};
+
+/**
+ * Close a lightbox.
+ */
+BaseEditor.prototype.closeLightbox = function() {
+    if (this.editBox) {
+        this.editBox.dialog('close');
+        this.editBox.dialog('destroy');
+        this.editBox = false;
+    }
+};
+
+/**
+ * Edit an instance of the type represented by this class.
+ */
+BaseEditor.prototype.edit = function(id) {
+    // Open the edit dialog box:
+    var url = this.getBaseUri() + '/' + encodeURIComponent(id);
+    var title = (id === 'NEW' ? "Add " + this.type : ("Edit " + this.type + " " + id));
+    return this.openLightbox(url, title);
 };
 
 /**
@@ -85,15 +104,16 @@ BaseEditor.prototype.getListTarget = function() {
 /**
  * Get the JQuery selector for the save button.
  */
-BaseEditor.prototype.getSaveButton = function() {
+BaseEditor.prototype.getSaveButton = function(type) {
     // Default convention: lowercased, underscored type with "save_" prefix:
-    return '#save_' + this.type.toLowerCase().replace(/\s/g, '_');
+    return '#save_' + this.type.toLowerCase().replace(/\s/g, '_')
+        + ((typeof type === "string" && type.length > 0) ? '_' + type.toLowerCase() : '');
 };
 
 /**
  * Get the JQuery selector for the save status button.
  */
-BaseEditor.prototype.getSaveStatusTarget = function() {
+BaseEditor.prototype.getSaveStatusTarget = function(type) {
     // Default convention: same as save button, with "_status" suffix:
     return this.getSaveButton() + '_status';
 };
@@ -119,8 +139,12 @@ BaseEditor.prototype.redrawList = function() {
 /**
  * Callback hook for redrawing controls after a save operation completes.
  */
-BaseEditor.prototype.redrawAfterSave = function() {
-    this.redrawList();
+BaseEditor.prototype.redrawAfterSave = function(type) {
+    if (typeof type === "string" && type.length > 0) {
+        this.redrawLinks(type);
+    } else {
+        this.redrawList();
+    }
 };
 
 /**
@@ -190,27 +214,26 @@ BaseEditor.prototype.getSaveData = function(values, saveFields, attributeSelecto
 /**
  * Get the callback function for the AJAX save action.
  */
-BaseEditor.prototype.getSaveCallback = function() {
+BaseEditor.prototype.getSaveCallback = function(type) {
     var editor = this;
+    if (typeof type === "undefined") {
+        type = '';
+    }
     return function(data) {
         // If save was successful...
         if (data.success) {
              // Close the dialog box.
-            if (editor.editBox) {
-                editor.editBox.dialog('close');
-                editor.editBox.dialog('destroy');
-                editor.editBox = false;
-            }
+            editor.closeLightbox();
 
             // Update the list.
-            editor.redrawAfterSave();
+            editor.redrawAfterSave(type);
        } else {
             // Save failed -- display error message.
             alert('Error: ' + data.msg);
         }
         // Restore save button:
-        $(editor.getSaveButton()).show();
-        $(editor.getSaveStatusTarget()).html('');
+        $(editor.getSaveButton(type)).show();
+        $(editor.getSaveStatusTarget(type)).html('');
     };
 };
 
@@ -342,6 +365,40 @@ BaseEditor.prototype.getLinkOrderInputSelector = function(type, details) {
         values[values.length] = details[key];
     }
     return '#' + type.toLowerCase() + '_order_' + values.join('_');
+};
+
+/**
+ * Pop up a dialog box to edit an existing link.
+ */
+BaseEditor.prototype.editLink = function(type, which, subtype) {
+    if (typeof subtype === 'undefined') {
+        subtype = '';
+    }
+    var url = this.getLinkUri(type, subtype) + "/" + encodeURIComponent(which);
+    var title = "Modify " + type;
+    return this.openLightbox(url, title);
+};
+
+/**
+ * Save an active link instance.
+ */
+BaseEditor.prototype.saveLink = function(type, which, subtype) {
+    var values = this.getSaveData({}, this.links[type].editFields, null, null);
+    if (!values) {
+        return;
+    }
+
+    if (typeof subtype === 'undefined') {
+        subtype = '';
+    }
+    var url = this.getLinkUri(type, subtype) + "/" + encodeURIComponent(which);
+
+    // Hide save button and display status message to avoid duplicate submission:
+    $(this.getSaveButton(type)).hide();
+    $(this.getSaveStatusTarget(type)).html('Saving...');
+
+    // Use AJAX to save the values:
+    $.post(url, values, this.getSaveCallback(type), 'json');
 };
 
 /**
