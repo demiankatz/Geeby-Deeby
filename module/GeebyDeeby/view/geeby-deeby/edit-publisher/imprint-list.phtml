@@ -6,7 +6,7 @@
           <?=$this->escapeHtml($current['Imprint_Name'])?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteImprint(<?=$current['Imprint_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Publisher.unlink('Imprint', <?=$current['Imprint_ID']?>); return false;">
           </a>
         </td>
       </tr>

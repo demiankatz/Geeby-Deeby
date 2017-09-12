@@ -6,7 +6,7 @@
           <?=$this->escapeHtml($current['Country_Name'] . (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']) . (empty($current['Street']) ? '' : ' -- ' . $current['Street']))?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteAddress(<?=$current['Address_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Publisher.unlink('Address', <?=$current['Address_ID']?>); return false;">
           </a>
         </td>
       </tr>
