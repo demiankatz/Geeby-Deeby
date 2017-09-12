@@ -103,13 +103,16 @@ BaseEditor.prototype.getSaveStatusTarget = function() {
  */
 BaseEditor.prototype.redrawList = function() {
     // Only make the AJAX call if we have somewhere to send the results:
-    var listTarget = $(this.getListTarget());
+    var targetSelector = this.getListTarget();
+    var listTarget = $(targetSelector);
     if (listTarget) {
         var url = this.getBaseUri() + 'List';
         listTarget.load(url);
         if (typeof this.redrawFunction === 'function') {
             this.redrawFunction();
         }
+    } else {
+        console.log('Cannot find list element: ' + targetSelector);
     }
 };
 
