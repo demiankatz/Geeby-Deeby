@@ -8,7 +8,7 @@
           </a>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteRealName(<?=$current['Person_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Person.unlink('Alias', <?=$current['Person_ID']?>, 'realname'); return false;">
           </a>
         </td>
       </tr>
