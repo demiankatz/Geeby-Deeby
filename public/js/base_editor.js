@@ -247,7 +247,7 @@ BaseEditor.prototype.save = function() {
  * If a subtype selector is active, get the selected subtype.
  */
 BaseEditor.prototype.getSelectedSubtype = function(type) {
-    if (typeof this.links[type].subtypeSelector !== 'undefined') {
+    if (typeof this.links[type] !== 'undefined' && typeof this.links[type].subtypeSelector !== 'undefined') {
         return $(this.links[type].subtypeSelector.id).val();
     }
     return '';
