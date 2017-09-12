@@ -241,6 +241,9 @@ class EditSeriesController extends AbstractBase
                 $imprint = null;
             }
             $address = $this->params()->fromPost('address');
+            if (empty($address)) {
+                $address = null;
+            }
             $fields = array(
                 'Imprint_ID' => $imprint, 'Address_ID' => $address
             );
