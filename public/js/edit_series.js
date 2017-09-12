@@ -7,6 +7,12 @@ var SeriesEditor = function() {
     };
     this.attributeSelector = '.series-attribute';
     this.links = {
+        'AltTitle': {
+            'saveFields': {
+                'title': { 'id': '#Alt_Title', 'emptyError': 'Title must not be blank.' },
+                'note_id': { 'id': '#Alt_Title_Note', 'nonNumericDefault': '' }
+            }
+        },
         'Material': {
             'uriField': { 'id': '#Series_Material_Type_ID' }
         },
