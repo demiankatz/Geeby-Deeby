@@ -348,7 +348,10 @@ BaseEditor.prototype.getLinkOrderInputSelector = function(type, details) {
  * Reorder a piece of linked information.
  */
 BaseEditor.prototype.reorderLink = function(type, details, subtype) {
-    details['pos'] = parseInt($(this.getLinkOrderInputSelector(type, details)).val(), 10);
+    // Set the position using either a custom callback or the default method.
+    details['pos'] = (typeof this.links[type].reorderPositionCallback === 'function')
+        ? this.links[type].reorderPositionCallback(type, details, subtype)
+        : parseInt($(this.getLinkOrderInputSelector(type, details)).val(), 10);
     $.post(this.getLinkUri(type, subtype, 'Order'), details, this.getLinkCallback(type), 'json');
 };
 

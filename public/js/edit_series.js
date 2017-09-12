@@ -14,7 +14,13 @@ var SeriesEditor = function() {
             }
         },
         'Item': {
-            'uriField': { 'id': '#item_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item' }
+            'uriField': { 'id': '#item_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item' },
+            'reorderPositionCallback': function(type, details, subtype) {
+                var raw = $('#order' + details['edition_id']).val().split(',');
+                return (raw.length < 2)
+                    ? "0," + parseInt(raw[0], 10)
+                    : details['pos'] = parseInt(raw[0], 10) + "," + parseInt(raw[1], 10);
+            }
         },
         'Material': {
             'uriField': { 'id': '#Series_Material_Type_ID' }

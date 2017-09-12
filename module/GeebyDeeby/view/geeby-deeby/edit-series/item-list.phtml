@@ -7,7 +7,7 @@
       <tr>
         <td>
           <input class="number" type="text" value="<?=($current['Volume'] > 0 ? $this->escapeHtml($current['Volume'] . ',') : '') . $this->escapeHtml($current['Position'])?>" id="order<?=$current['Edition_ID']?>" />
-          <button onclick="changeSeriesOrder(<?=$current['Edition_ID']?>);">Set</button>
+          <button onclick="Series.reorderLink('Item', { 'edition_id': <?=$current['Edition_ID']?> });">Set</button>
         </td>
         <td>
           <a class="ui-icon ui-icon-trash" href="#" onclick="Series.unlink('Item', <?=$current['Edition_ID']?>); return false;">

@@ -96,48 +96,6 @@ function redrawPublishers()
     $('#publisher_list').load(url);
 }
 
-/* Change the position of an item within the series:
- */
-function changeSeriesOrder(editionID)
-{
-    var seriesID = $('#Series_ID').val();
-    var raw = $('#order' + editionID).val().split(',');
-    var pos;
-    var vol = 0;
-    if (raw.length < 2) {
-        pos = parseInt(raw[0], 10);
-    } else {
-        vol = parseInt(raw[0], 10);
-        pos = parseInt(raw[1], 10);
-    }
-
-    // Validate user selection:
-    if (isNaN(editionID)) {
-        alert("Please choose a valid item.");
-        return;
-    } else if (isNaN(pos) || isNaN(vol)) {
-        alert("Please enter a valid number.");
-        return;
-    }
-
-    // Save and update based on selected relationship:
-    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/ItemOrder';
-    var details = {
-        edition_id: editionID,
-        pos: vol + "," + pos
-    };
-    $.post(url, details, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            Item.redrawList();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
-
 /* Save the modified publisher information:
  */
 function saveModifiedPublisher()
