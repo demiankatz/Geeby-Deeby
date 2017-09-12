@@ -4,7 +4,7 @@
       <tr>
         <td><?=$this->escapeHtml($current['URI'])?> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteURI('<?=$current['URI']?>'); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Tag.unlink('URI', '<?=$current['URI']?>'); return false;">
           </a>
         </td>
       </tr>

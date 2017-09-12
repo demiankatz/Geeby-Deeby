@@ -1,5 +1,5 @@
 <? $this->layout()->title = 'Edit Tag' ?>
-<? $this->scriptManager()->add(['base_editor', 'edit_tags', 'edit_tag']) ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_tags']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-tag/index.phtml')?>
 </div>
@@ -9,7 +9,7 @@
     <b>URIs (for linked data):</b><br />
     <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
     <input type="text" id="uri" />
-    <button onclick="addURI();">Add URI</button>
+    <button onclick="Tag.link('URI');">Add URI</button>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-tag/uri-list.phtml')?>
     </div>
