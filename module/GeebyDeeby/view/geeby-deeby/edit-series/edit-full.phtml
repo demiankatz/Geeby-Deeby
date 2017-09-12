@@ -69,7 +69,7 @@
         <input type="checkbox" id="Category_ID_<?=$current['Category_ID']?>" class="Category_ID" value="<?=$current['Category_ID']?>"<?=in_array($current['Category_ID'], $selected_categories) ? ' checked="checked"' : '' ?> />
         <label for="Category_ID_<?=$current['Category_ID']?>"><?=$this->escapeHtml($current['Category'])?></label><br />
       <? endforeach; ?>
-      <button id="save_categories" onclick="saveCategories();">Save</button>
+      <button id="save_categories" onclick="Series.saveCategories();">Save</button>
       <div id="save_categories_status"></div>
     <? else: ?>
       No categories defined.

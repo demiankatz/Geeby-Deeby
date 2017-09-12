@@ -96,35 +96,6 @@ function redrawPublishers()
     $('#publisher_list').load(url);
 }
 
-/* Save selected categories:
- */
-function saveCategories()
-{
-    // Create an array of all checked categories:
-    var values = [];
-    $('.Category_ID').each(function(intIndex) {
-        if ($(this).is(':checked')) {
-            values[values.length] = $(this).val();
-        }
-    });
-
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_categories').hide();
-    $('#save_categories_status').html('Saving...');
-
-    // Use AJAX to save the values:
-    var url = basePath + '/edit/Series/' + encodeURIComponent($('#Series_ID').val()) + '/Categories';
-    $.post(url, {"categories[]": values}, function(data) {
-        // If save failed, display error message.
-        if (!data.success) {
-            alert('Error: ' + data.msg);
-        }
-        // Restore save button:
-        $('#save_categories').show();
-        $('#save_categories_status').html('');
-    }, 'json');
-}
-
 /* Add an existing item to the series:
  */
 function addExistingItem()
@@ -257,11 +228,3 @@ function saveModifiedPublisher()
         }
     }, 'json');
 }
-
-// Load data and setup autocomplete.
-$(document).ready(function() {
-  registerAutocomplete('#Publisher_ID', 'Publisher');
-  registerAutocomplete('#trans_name', 'Series');
-  registerAutocomplete('#item_name', 'Item');
-  // .Note_ID autocomplete is already registered by edit_items.js
-});
