@@ -73,7 +73,7 @@ class Series extends ServiceLocatorAwareGateway
      */
     public function validate()
     {
-        if (empty($this->Series_Name)) {
+        if (strlen(trim($this->Series_Name)) == 0) {
             return 'Series name cannot be blank.';
         }
         return false;
