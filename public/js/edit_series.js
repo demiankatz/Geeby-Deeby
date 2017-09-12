@@ -13,6 +13,9 @@ var SeriesEditor = function() {
                 'note_id': { 'id': '#Alt_Title_Note', 'nonNumericDefault': '' }
             }
         },
+        'Item': {
+            'uriField': { 'id': '#item_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item' }
+        },
         'Material': {
             'uriField': { 'id': '#Series_Material_Type_ID' }
         },
@@ -61,9 +64,7 @@ var Series = new SeriesEditor();
  */
 if (typeof Item === "object") {
     Item.redrawList = function() {
-        var seriesID = $('#Series_ID').val();
-        var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Item';
-        $('#item_list').load(url);
+        Series.redrawLinks('Item');
     }
 }
 

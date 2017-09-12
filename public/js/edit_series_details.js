@@ -96,58 +96,6 @@ function redrawPublishers()
     $('#publisher_list').load(url);
 }
 
-/* Add an existing item to the series:
- */
-function addExistingItem()
-{
-    var seriesID = $('#Series_ID').val();
-    var itemID = parseInt($('#item_name').val());
-
-    // Validate user selection:
-    if (isNaN(itemID)) {
-        alert("Please choose a valid item.");
-        return;
-    }
-
-    // Save and update based on selected relationship:
-    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Item/' + encodeURIComponent(itemID);
-    $.ajax({url: url, type: "put", dataType: "json", success: function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Clear the form:
-            $('#item_name').val('');
-
-            // Update the list.
-            Item.redrawList();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }});
-}
-
-/* Remove an item from the series:
- */
-function removeFromSeries(itemID)
-{
-    if (!confirm("Are you sure?")) {
-        return;
-    }
-
-    var seriesID = $('#Series_ID').val();
-    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Item/' + encodeURIComponent(itemID);
-    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the list.
-            Item.redrawList();
-        } else {
-            // Remove failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }});
-}
-
 /* Change the position of an item within the series:
  */
 function changeSeriesOrder(editionID)
