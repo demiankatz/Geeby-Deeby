@@ -16,6 +16,10 @@ var SeriesEditor = function() {
         'Material': {
             'uriField': { 'id': '#Series_Material_Type_ID' }
         },
+        'Translation': {
+            'subtypeSelector': { 'id': '#trans_type' },
+            'uriField': { 'id': '#trans_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid series.' }
+        }
     };
 };
 BaseEditor.prototype.registerSubclass(SeriesEditor);

@@ -82,18 +82,18 @@
       <option value='into'>Translated Into</option>
     </select>
     <input id="trans_name" />
-    <button onclick="saveTranslation();">Add Translation</button>
+    <button onclick="Series.link('Translation');">Add Translation</button>
     <table>
       <tr>
         <td>
           <b>Translated From:</b>
-          <div id="trans_from">
+          <div id="translationfrom_list">
             <?=$this->render('geeby-deeby/edit-series/trans-from-list.phtml')?>
           </div>
         </td>
         <td>
           <b>Translated Into:</b>
-          <div id="trans_into">
+          <div id="translationinto_list">
             <?=$this->render('geeby-deeby/edit-series/trans-into-list.phtml')?>
           </div>
         </td>
