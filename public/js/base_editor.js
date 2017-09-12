@@ -322,7 +322,7 @@ BaseEditor.prototype.link = function(type) {
         if (!extra) {
             return;
         }
-        uri += "/" + extra['extra'];
+        uri += "/" + encodeURIComponent(extra['extra']);
     }
     $.post(uri, values, this.getLinkCallback(type), 'json');
 };
