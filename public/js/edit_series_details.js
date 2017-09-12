@@ -1,45 +1,6 @@
 // Global reference to current open edit box.
 var editBox = false;
 
-/* Save the current publisher:
- */
-function addPublisher()
-{
-    var seriesID = $('#Series_ID').val();
-    var publisherID = parseInt($('#Publisher_ID').val());
-    var noteID = parseInt($('#Publisher_Note_ID').val());
-
-    // Validate user selection:
-    if (isNaN(publisherID)) {
-        alert("Please choose a valid publisher.");
-        return;
-    }
-    if (isNaN(noteID)) {
-        noteID = '';
-    }
-
-    // Save and update based on selected relationship:
-    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Publisher/NEW';
-    var details = {
-        publisher_id: publisherID,
-        note_id: noteID,
-    };
-    $.post(url, details, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Clear the form:
-            $('#Publisher_ID').val('');
-            $('#Publisher_Note_ID').val('');
-
-            // Update the publisher list.
-            redrawPublishers();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }, 'json');
-}
-
 /* Modify a publisher attached to the series:
  */
 function modifyPublisher(rowID)
@@ -56,44 +17,6 @@ function modifyPublisher(rowID)
         // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
         close: function() { $('#modifyPublisherForm').remove(); }
     });
-}
-
-/* Remove a publisher from the series:
- */
-function deletePublisher(rowID)
-{
-    if (!confirm("Are you sure?")) {
-        return;
-    }
-
-    // Validate user selection:
-    if (isNaN(rowID)) {
-        alert("Please choose a valid publisher.");
-        return;
-    }
-
-    // Save and update based on selected relationship:
-    var seriesID = $('#Series_ID').val();
-    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Publisher/' + encodeURIComponent(rowID);
-    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Update the publisher list.
-            redrawPublishers();
-        } else {
-            // Save failed -- display error message:
-            alert('Error: ' + data.msg);
-        }
-    }});
-}
-
-/* Redraw the publisher list:
- */
-function redrawPublishers()
-{
-    var seriesID = $('#Series_ID').val();
-    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/Publisher';
-    $('#publisher_list').load(url);
 }
 
 /* Save the modified publisher information:
@@ -124,7 +47,7 @@ function saveModifiedPublisher()
                 editBox.dialog('destroy');
                 editBox = false;
             }
-            redrawPublishers();
+            Series.redrawLinks('Publisher');
         } else {
             alert('Error: ' + data.msg);
 

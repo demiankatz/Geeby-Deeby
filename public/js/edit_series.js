@@ -25,6 +25,12 @@ var SeriesEditor = function() {
         'Material': {
             'uriField': { 'id': '#Series_Material_Type_ID' }
         },
+        'Publisher': {
+            'saveFields': {
+                'publisher_id': { 'id': '#Publisher_ID', 'nonNumericDefault': '', 'emptyError': 'Publisher must not be blank.' },
+                'note_id': { 'id': '#Publisher_Note_ID', 'nonNumericDefault': '' }
+            }
+        },
         'Translation': {
             'subtypeSelector': { 'id': '#trans_type' },
             'uriField': { 'id': '#trans_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid series.' }
