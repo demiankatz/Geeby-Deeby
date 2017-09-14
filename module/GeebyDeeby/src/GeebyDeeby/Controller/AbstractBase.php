@@ -110,15 +110,16 @@ class AbstractBase extends AbstractActionController
     /**
      * Generic method for displaying a list of items.
      *
-     * @param string $table    Table to load list from
-     * @param string $assignTo View variable to assign list to
-     * @param string $tpl      Template to use in AJAX mode
+     * @param string $table      Table to load list from
+     * @param string $assignTo   View variable to assign list to
+     * @param string $tpl        Template to use in AJAX mode
+     * @param string $permission Permission to check
      *
      * @return mixed
      */
-    protected function getGenericList($table, $assignTo, $tpl)
+    protected function getGenericList($table, $assignTo, $tpl, $permission = 'Content_Editor')
     {
-        $ok = $this->checkPermission('Content_Editor');
+        $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
         }
@@ -215,15 +216,16 @@ class AbstractBase extends AbstractActionController
     /**
      * Generic method for handling item edit/save actions.
      *
-     * @param string $table     Table to load item from
-     * @param array  $assignMap Map of POST fields => object properties for saving
-     * @param string $assignTo  Variable to assign form data to (for showing form)
+     * @param string $table      Table to load item from
+     * @param array  $assignMap  Map of POST fields => object properties for saving
+     * @param string $assignTo   Variable to assign form data to (for showing form)
+     * @param string $permission Permission to check
      *
      * @return mixed
      */
-    protected function handleGenericItem($table, $assignMap, $assignTo)
+    protected function handleGenericItem($table, $assignMap, $assignTo, $permission = 'Content_Editor')
     {
-        $ok = $this->checkPermission('Content_Editor');
+        $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
         }

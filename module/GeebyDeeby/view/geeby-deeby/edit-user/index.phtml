@@ -1,0 +1,11 @@
+<div id="editForm">
+  <input type="hidden" id="User_ID" value="<?=$user['User_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Username:</th>
+      <td><input type="text" id="Username" value="<?=isset($user['Username']) ? $this->escapeHtml($user['Username']) : '' ?>" /></td>
+    </tr>
+  </table>
+  <button id="save_user" onclick="User.save();">Save</button>
+  <div id="save_user_status"></div>
+</div>

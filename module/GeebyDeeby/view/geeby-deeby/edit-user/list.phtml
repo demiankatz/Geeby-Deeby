@@ -1,0 +1,12 @@
+<? $this->layout()->title = 'Edit Users' ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_users']) ?>
+<div class="row">
+  <div class="col-md-6">
+      <p><b>Users:</b></p>
+      <div id="user_list"><?=$this->render('geeby-deeby/edit-user/render-users.phtml')?></div>
+  </div>
+  <div class="col-md-6">
+      <p><b>Groups:</b></p>
+      <p><i>Coming soon!</i></p>
+  </div>
+</div>
