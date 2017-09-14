@@ -64,8 +64,17 @@ class EditUserController extends AbstractBase
     {
         $assignMap = array(
             'username' => 'Username',
+            'name' => 'Name',
+            'address' => 'Address',
+            'person_id' => 'Person_ID',
+            'group_id' => 'User_Group_ID',
         );
         $view = $this->handleGenericItem('user', $assignMap, 'user', 'User_Editor');
+        if (isset($view->user) && $view->user['Person_ID'] > 0) {
+            $view->person = $this->getDbTable('person')
+                ->getByPrimaryKey($view->user['Person_ID']);
+        }
+        $view->usergroups = $this->usergrouplistAction()->usergroups;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->setTemplate('geeby-deeby/edit-user/edit-full');

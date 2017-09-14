@@ -1,7 +1,13 @@
 var UserEditor = function() {
     this.type = "User";
     this.saveFields = {
-        'username': { 'id': '#Username', emptyError: 'Username cannot be blank.' }
+        'username': { 'id': '#Username', emptyError: 'Username cannot be blank.' },
+        'name': { 'id': '#Name', emptyError: 'Name cannot be blank.' },
+        'address': { 'id': '#Address' },
+        'person_id': { 'id': '#Person_ID' },
+        'group_id': { 'id': '#User_Group_ID' },
+        'password': { 'id': '#Password' },
+        'password_confirm': { 'id': '#Password_Confirm' }
     };
 };
 BaseEditor.prototype.registerSubclass(UserEditor);
@@ -19,3 +25,10 @@ var UserGroupEditor = function() {
 };
 BaseEditor.prototype.registerSubclass(UserGroupEditor);
 var UserGroup = new UserGroupEditor();
+
+// Set up autocomplete.
+$(document).ready(function() {
+    if (typeof registerAutocomplete === 'function') {
+        registerAutocomplete('#Person_ID', 'Person');
+    }
+});
