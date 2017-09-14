@@ -12,8 +12,17 @@
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
       <? endif; ?>
     <? endif; ?>
-    <a href="<?=$this->url('edit/user', array('id' => $current['User_ID']))?>">
-      <?=$this->escapeHtml($current['Username'])?>
-    </a><br />
+    <table class="list_item">
+      <tr>
+        <td>
+          <a href="<?=$this->url('edit/user', array('id' => $current['User_ID']))?>">
+            <?=$this->escapeHtml($current['Username'])?>
+          </a><br />
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="User.destroy(<?=$current['User_ID']?>); return false;"></a>
+        </td>
+      </tr>
+    </table>
   <? endforeach; ?>
 <? endif; ?>

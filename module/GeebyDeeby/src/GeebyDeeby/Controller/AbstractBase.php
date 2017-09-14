@@ -183,6 +183,26 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Support method for handleGenericItem() -- delete record.
+     *
+     * @param string $table Table to delete item from.
+     *
+     * @return mixed
+     */
+    protected function deleteGenericItem($table)
+    {
+        try {
+            $id = $this->params()->fromRoute('id');
+            $table = $this->getDbTable($table);
+            $rowObj = $table->getByPrimaryKey($id);
+            $rowObj->delete();
+        } catch (\Exception $e) {
+            return $this->jsonDie($e->getMessage());
+        }
+        return $this->jsonReportSuccess();
+    }
+
+    /**
      * Support method for handleGenericItem() -- show form.
      *
      * @param string $table    Table to load item from
@@ -231,6 +251,8 @@ class AbstractBase extends AbstractActionController
         }
         if ($this->getRequest()->isPost()) {
             $view = $this->saveGenericItem($table, $assignMap);
+        } else if ($this->getRequest()->isDelete()) {
+            $view = $this->deleteGenericItem($table);
         } else {
             $view = $this->showGenericItem($table, $assignTo);
             $view->setTerminal($this->getRequest()->isXmlHttpRequest());

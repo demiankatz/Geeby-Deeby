@@ -1,4 +1,13 @@
 <? foreach ($usergroups as $current): ?>
-  <a href="#" onclick="UserGroup.edit(<?=$this->escapeHtml($current['User_Group_ID'])?>); return false;"><?=$this->escapeHtml($current['Group_Name'])?></a><br />
+  <table class="list_item">
+    <tr>
+      <td>
+        <a href="#" onclick="UserGroup.edit(<?=$this->escapeHtml($current['User_Group_ID'])?>); return false;"><?=$this->escapeHtml($current['Group_Name'])?></a>
+      </td>
+      <td>
+        <a class="ui-icon ui-icon-trash" href="#" onclick="UserGroup.destroy(<?=$current['User_Group_ID']?>); return false;"></a>
+      </td>
+    </tr>
+  </table>
 <? endforeach; ?>
 <? if (count($usergroups) == 0): ?>No groups defined.<? endif; ?>
