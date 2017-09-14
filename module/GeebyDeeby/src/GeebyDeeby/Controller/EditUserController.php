@@ -90,7 +90,7 @@ class EditUserController extends AbstractBase
     public function usergrouplistAction()
     {
         return $this->getGenericList(
-            'usergroup', 'usergroups', 'geeby-deeby/edit-user/render-usergroups'
+            'usergroup', 'usergroups', 'geeby-deeby/edit-user/render-usergroups', 'User_Editor'
         );
     }
 
@@ -108,6 +108,6 @@ class EditUserController extends AbstractBase
             'approver' => 'Approver',
             'data_manager' => 'Data_Manager',
         );
-        return $this->handleGenericItem('usergroup', $assignMap, 'usergroup');
+        return $this->handleGenericItem('usergroup', $assignMap, 'usergroup', 'User_Editor');
     }
 }
