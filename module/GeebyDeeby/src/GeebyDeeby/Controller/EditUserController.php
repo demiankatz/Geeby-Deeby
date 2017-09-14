@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+use Zend\Crypt\Password\Bcrypt;
 
 /**
  * Edit user controller
@@ -62,6 +63,13 @@ class EditUserController extends AbstractBase
      */
     public function indexAction()
     {
+        // Validate password:
+        $password = $this->params()->fromPost('password');
+        if ($this->params()->fromPost('password_confirm') !== $password) {
+            return $this->jsonDie('Passwords must match!');
+        }
+
+        // Process standard values:
         $assignMap = array(
             'username' => 'Username',
             'name' => 'Name',
@@ -70,11 +78,23 @@ class EditUserController extends AbstractBase
             'group_id' => 'User_Group_ID',
         );
         $view = $this->handleGenericItem('user', $assignMap, 'user', 'User_Editor');
+
+        // Add associated person details, if necessary:
         if (isset($view->user) && $view->user['Person_ID'] > 0) {
             $view->person = $this->getDbTable('person')
                 ->getByPrimaryKey($view->user['Person_ID']);
         }
+
+        // Change password, if necessary:
+        if ($password && isset($view->affectedRow)) {
+            $bcrypt = new Bcrypt();
+            $view->affectedRow->Password_Hash = $bcrypt->create($password);
+            $view->affectedRow->save();
+        }
+
+        // Load group list:
         $view->usergroups = $this->usergrouplistAction()->usergroups;
+
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->setTemplate('geeby-deeby/edit-user/edit-full');

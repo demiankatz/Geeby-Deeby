@@ -21,7 +21,6 @@
       <th>User Group:</th>
       <td><?=$this->render('geeby-deeby/edit-user/usergroup-select.phtml', array('usergroups' => $usergroups, 'selected' => isset($user['User_Group_ID']) ? $user['User_Group_ID'] : null))?></td>
     </tr>
-    <!-- TODO: implement passwords
     <tr>
       <th>New Password (empty to leave unchanged):</th>
       <td><input type="password" id="Password" value="" /></td>
@@ -30,7 +29,6 @@
       <th>Confirm New Password (empty to leave unchanged):</th>
       <td><input type="password" id="Password_Confirm" value="" /></td>
     </tr>
-    -->
   </table>
   <button id="save_user" onclick="User.save();">Save</button>
   <div id="save_user_status"></div>
