@@ -48,6 +48,10 @@ class EditUserController extends AbstractBase
         $view = $this->getGenericList(
             'user', 'users', 'geeby-deeby/edit-user/render-users', 'User_Editor'
         );
+        // If this is not an AJAX request, we also want to display groups:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->usergroups = $this->usergrouplistAction()->usergroups;
+        }
         return $view;
     }
 
@@ -67,5 +71,34 @@ class EditUserController extends AbstractBase
             $view->setTemplate('geeby-deeby/edit-user/edit-full');
         }
         return $view;
+    }
+
+    /**
+     * Display a list of groups
+     *
+     * @return mixed
+     */
+    public function usergrouplistAction()
+    {
+        return $this->getGenericList(
+            'usergroup', 'usergroups', 'geeby-deeby/edit-user/render-usergroups'
+        );
+    }
+
+    /**
+     * Operate on a single group
+     *
+     * @return mixed
+     */
+    public function usergroupAction()
+    {
+        $assignMap = array(
+            'name' => 'Group_Name',
+            'content_editor' => 'Content_Editor',
+            'user_editor' => 'User_Editor',
+            'approver' => 'Approver',
+            'data_manager' => 'Data_Manager',
+        );
+        return $this->handleGenericItem('usergroup', $assignMap, 'usergroup');
     }
 }

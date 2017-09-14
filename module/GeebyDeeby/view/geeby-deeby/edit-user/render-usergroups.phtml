@@ -1,0 +1,4 @@
+<? foreach ($usergroups as $current): ?>
+  <a href="#" onclick="UserGroup.edit(<?=$this->escapeHtml($current['User_Group_ID'])?>); return false;"><?=$this->escapeHtml($current['Group_Name'])?></a><br />
+<? endforeach; ?>
+<? if (count($usergroups) == 0): ?>No groups defined.<? endif; ?>

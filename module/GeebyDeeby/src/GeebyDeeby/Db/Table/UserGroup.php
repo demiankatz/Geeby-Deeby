@@ -45,4 +45,17 @@ class UserGroup extends Gateway
     {
         parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\UserGroup');
     }
+
+    /**
+     * Get a list of groups.
+     *
+     * @return mixed
+     */
+    public function getList()
+    {
+        $callback = function ($select) {
+            $select->order('Group_Name');
+        };
+        return $this->select($callback);
+    }
 }

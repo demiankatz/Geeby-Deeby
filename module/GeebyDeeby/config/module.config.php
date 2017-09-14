@@ -825,6 +825,28 @@ return array(
                             ),
                         ),
                     ),
+                    'usergroup' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/UserGroup[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'usergroup',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'usergroup_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/UserGroupList',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'usergrouplist',
+                            ),
+                        ),
+                    ),
                 ),
             ),
             'edition' => array(
