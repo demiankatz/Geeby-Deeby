@@ -199,36 +199,20 @@ class ItemController extends AbstractBase
     }
 
     /**
-     * Get the view model representing the item and all relevant related details.
+     * Add item-specific relationships to a view model.
      *
-     * @return \Zend\View\Model\ViewModel|bool
+     * @param int    $id   Item id
+     * @param object $view View model
+     *
+     * @return void
      */
-    public function getViewModelWithItemAndDetails()
+    protected function addItemRelationships($id, $view)
     {
-        $view = $this->getViewModelWithItem();
-        if (!$view) {
-            return false;
-        }
-        $id = $view->item['Item_ID'];
-        $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
-        $view->realNames = $this->getDbTable('pseudonyms')
-            ->getRealNamesBatch($view->credits);
-        $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
-        $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
         $view->altTitles = $this->getDbTable('itemsalttitles')->getAltTitles($id);
-        $view->platforms = $this->getDbTable('editionsplatforms')
-            ->getPlatformsForItem($id);
         $view->tags = $this->getDbTable('itemstags')->getTags($id);
         $collections = $this->getDbTable('itemsincollections');
-        // Contains/containedIn are item-level relationships, while children/parents
-        // are edition-level relationships. These are very similar, but the edition
-        // relationships are preferred and more valuable.
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);
-        $itemTable = $this->getDbTable('item');
-        $view->children = $itemTable->getItemChildren($id);
-        $view->parents = $itemTable->getItemParents($id);
-
         $trans = $this->getDbTable('itemstranslations');
         $adapt = $this->getDbTable('itemsadaptations');
         // The variable/function names are a bit unintuitive here --
@@ -239,15 +223,6 @@ class ItemController extends AbstractBase
         $view->translatedFrom = $trans->getTranslatedInto($id, true);
         $view->adaptedInto = $adapt->getAdaptedFrom($id);
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
-        $edTable = $this->getDbTable('edition');
-        $view->publishers = $edTable->getPublishersForItem($id);
-        $view->editions = $edTable->getEditionsForItem($id, true);
-        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
-        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
-        $view->codes = $this->getDbTable('editionsproductcodes')
-            ->getProductCodesForItem($id);
-        $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
-            ->getOCLCNumbersForItem($id);
         $view->descriptions = $this->getDbTable('itemsdescriptions')
             ->getDescriptions($id);
         $reviews = $this->getDbTable('itemsreviews');
@@ -270,8 +245,47 @@ class ItemController extends AbstractBase
         $view->bibliography = $this->getDbTable('itemsbibliography')
             ->getItemsDescribingItem($id);
         $view->links = $this->getDbTable('itemslinks')->getLinksForItem($id);
+        $edTable = $this->getDbTable('edition');
+        $view->editions = $edTable->getEditionsForItem($id, true);
+    }
+
+    /**
+     * Get the view model representing the item and all relevant related details.
+     *
+     * @return \Zend\View\Model\ViewModel|bool
+     */
+    public function getViewModelWithItemAndDetails()
+    {
+        $view = $this->getViewModelWithItem();
+        if (!$view) {
+            return false;
+        }
+        $id = $view->item['Item_ID'];
+        $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
+        $view->realNames = $this->getDbTable('pseudonyms')
+            ->getRealNamesBatch($view->credits);
+        $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
+        $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
+        $view->platforms = $this->getDbTable('editionsplatforms')
+            ->getPlatformsForItem($id);
+        // Contains/containedIn are item-level relationships (see addItemRelationships
+        // above), while children/parents are edition-level relationships. These are
+        // very similar, but the edition relationships are preferred and more valuable.
+        $itemTable = $this->getDbTable('item');
+        $view->children = $itemTable->getItemChildren($id);
+        $view->parents = $itemTable->getItemParents($id);
+
+        $edTable = $this->getDbTable('edition');
+        $view->publishers = $edTable->getPublishersForItem($id);
+        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
+        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
+        $view->codes = $this->getDbTable('editionsproductcodes')
+            ->getProductCodesForItem($id);
+        $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
+            ->getOCLCNumbersForItem($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForItem($id);
+        $this->addItemRelationships($id, $view);
         return $view;
     }
 
