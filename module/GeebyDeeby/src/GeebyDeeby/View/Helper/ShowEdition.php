@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\View\Helper;
+use GeebyDeeby\Controller\EditionController;
 
 /**
  * Edition display view helper
@@ -39,6 +40,23 @@ namespace GeebyDeeby\View\Helper;
 class ShowEdition extends \Zend\View\Helper\AbstractHelper
 {
     /**
+     * Edition controller
+     *
+     * @var EditionController
+     */
+    protected $controller;
+
+    /**
+     * Constructor
+     *
+     * @param EditionController $controller Edition controller
+     */
+    public function __construct(EditionController $controller)
+    {
+        $this->controller = $controller;
+    }
+
+    /**
      * Render edition details.
      *
      * @param array $id ID of edition to display.
@@ -47,6 +65,9 @@ class ShowEdition extends \Zend\View\Helper\AbstractHelper
      */
     public function __invoke($id)
     {
-        return '<h2>' . $id . '</h2>';
+        $view = $this->controller->getViewModelWithEditionAndDetails($id);
+        $view->skipTitle = true;
+        return '<h2>' . $this->view->escapeHtml($this->view->fixtitle($view->edition['Edition_Name'])) . '</h2>'
+            . $this->view->partial('geeby-deeby/edition/show', $view);
     }
 }

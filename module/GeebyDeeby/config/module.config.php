@@ -1225,7 +1225,9 @@ return array(
                 );
             },
             'showedition' => function ($sm) {
-                return new \GeebyDeeby\View\Helper\ShowEdition();
+                $controller = $sm->getServiceLocator()->get('ControllerLoader')
+                    ->get('GeebyDeeby\Controller\Edition');
+                return new \GeebyDeeby\View\Helper\ShowEdition($controller);
             },
         ),
         'invokables' => array(
