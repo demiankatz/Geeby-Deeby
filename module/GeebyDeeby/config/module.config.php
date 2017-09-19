@@ -1223,7 +1223,10 @@ return array(
                 return new \GeebyDeeby\View\Helper\ScriptManager(
                     $base, $sm->get('headscript')
                 );
-            }
+            },
+            'showedition' => function ($sm) {
+                return new \GeebyDeeby\View\Helper\ShowEdition();
+            },
         ),
         'invokables' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
