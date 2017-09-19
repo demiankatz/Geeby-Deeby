@@ -199,6 +199,53 @@ class ItemController extends AbstractBase
     }
 
     /**
+     * "Show editions of item" page
+     *
+     * @return mixed
+     */
+    public function editionsAction()
+    {
+        return ($view = $this->getViewModelWithItemAndDetails(false))
+            ? $view : $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
+    }
+
+    /**
+     * Add edition-specific relationships to a view model.
+     *
+     * @param int    $id   Item id
+     * @param object $view View model
+     *
+     * @return void
+     */
+    protected function addEditionRelationships($id, $view)
+    {
+        $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
+        $view->realNames = $this->getDbTable('pseudonyms')
+            ->getRealNamesBatch($view->credits);
+        $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
+        $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
+        $view->platforms = $this->getDbTable('editionsplatforms')
+            ->getPlatformsForItem($id);
+        // Contains/containedIn are item-level relationships (see addItemRelationships
+        // below), while children/parents are edition-level relationships. These are
+        // very similar, but the edition relationships are preferred and more valuable.
+        $itemTable = $this->getDbTable('item');
+        $view->children = $itemTable->getItemChildren($id);
+        $view->parents = $itemTable->getItemParents($id);
+
+        $edTable = $this->getDbTable('edition');
+        $view->publishers = $edTable->getPublishersForItem($id);
+        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
+        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
+        $view->codes = $this->getDbTable('editionsproductcodes')
+            ->getProductCodesForItem($id);
+        $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
+            ->getOCLCNumbersForItem($id);
+        $view->fullText = $this->getDbTable('editionsfulltext')
+            ->getFullTextForItem($id);
+    }
+
+    /**
      * Add item-specific relationships to a view model.
      *
      * @param int    $id   Item id
@@ -254,37 +301,16 @@ class ItemController extends AbstractBase
      *
      * @return \Zend\View\Model\ViewModel|bool
      */
-    public function getViewModelWithItemAndDetails()
+    public function getViewModelWithItemAndDetails($includeEditionData = true)
     {
         $view = $this->getViewModelWithItem();
         if (!$view) {
             return false;
         }
         $id = $view->item['Item_ID'];
-        $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
-        $view->realNames = $this->getDbTable('pseudonyms')
-            ->getRealNamesBatch($view->credits);
-        $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
-        $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
-        $view->platforms = $this->getDbTable('editionsplatforms')
-            ->getPlatformsForItem($id);
-        // Contains/containedIn are item-level relationships (see addItemRelationships
-        // above), while children/parents are edition-level relationships. These are
-        // very similar, but the edition relationships are preferred and more valuable.
-        $itemTable = $this->getDbTable('item');
-        $view->children = $itemTable->getItemChildren($id);
-        $view->parents = $itemTable->getItemParents($id);
-
-        $edTable = $this->getDbTable('edition');
-        $view->publishers = $edTable->getPublishersForItem($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
-        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
-        $view->codes = $this->getDbTable('editionsproductcodes')
-            ->getProductCodesForItem($id);
-        $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
-            ->getOCLCNumbersForItem($id);
-        $view->fullText = $this->getDbTable('editionsfulltext')
-            ->getFullTextForItem($id);
+        if ($includeEditionData) {
+            $this->addEditionRelationships($id, $view);
+        }
         $this->addItemRelationships($id, $view);
         return $view;
     }
