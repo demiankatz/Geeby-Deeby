@@ -10,6 +10,6 @@
       <td><input type="text" id="Predicate_Abbrev" value="<?=isset($predicate['Predicate_Abbrev']) ? $this->escapeHtml($predicate['Predicate_Abbrev']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_predicate" onclick="savePredicate();">Save</button>
+  <button id="save_predicate" onclick="Predicate.save();">Save</button>
   <div id="save_predicate_status"></div>
 </div>

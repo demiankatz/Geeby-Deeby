@@ -6,7 +6,7 @@
           <?=$this->escapeHtml($current['Product_Code'])?><? if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<? endif; ?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteProductCode(<?=$current['Sequence_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('ProductCode', <?=$current['Sequence_ID']?>); return false;">
           </a>
         </td>
       </tr>

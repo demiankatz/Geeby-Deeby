@@ -1,0 +1,35 @@
+<div id="editForm">
+  <input type="hidden" id="User_ID" value="<?=$user['User_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Username:</th>
+      <td><input type="text" id="Username" value="<?=isset($user['Username']) ? $this->escapeHtml($user['Username']) : '' ?>" /></td>
+    </tr>
+    <tr>
+      <th>Name:</th>
+      <td><input type="text" id="Name" value="<?=isset($user['Name']) ? $this->escapeHtml($user['Name']) : '' ?>" /></td>
+    </tr>
+    <tr>
+      <th>Address:</th>
+      <td><input type="text" id="Address" value="<?=isset($user['Address']) ? $this->escapeHtml($user['Address']) : '' ?>" /></td>
+    </tr>
+    <tr>
+      <th>Status (-1 = normal, 0 = not approved yet, >0 = ID of Person in DB):</th>
+      <td><input type="text" id="Person_ID" value="<?=isset($user['Person_ID']) ? $this->escapeHtml($user['Person_ID'] . (isset($person) ? ': ' . $this->showperson($person) : '')) : '' ?>" /></td>
+    </tr>
+    <tr>
+      <th>User Group:</th>
+      <td><?=$this->render('geeby-deeby/edit-user/usergroup-select.phtml', array('usergroups' => $usergroups, 'selected' => isset($user['User_Group_ID']) ? $user['User_Group_ID'] : null))?></td>
+    </tr>
+    <tr>
+      <th>New Password (empty to leave unchanged):</th>
+      <td><input type="password" id="Password" value="" /></td>
+    </tr>
+    <tr>
+      <th>Confirm New Password (empty to leave unchanged):</th>
+      <td><input type="password" id="Password_Confirm" value="" /></td>
+    </tr>
+  </table>
+  <button id="save_user" onclick="User.save();">Save</button>
+  <div id="save_user_status"></div>
+</div>

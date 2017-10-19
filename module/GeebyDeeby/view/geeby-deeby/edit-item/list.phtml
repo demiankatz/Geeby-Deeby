@@ -6,11 +6,11 @@
     <? foreach ($item_list as $current): ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="attachment<?=$current['Item_ID']?>" />
-          <button onclick="changeAttachmentOrder(<?=$current['Item_ID']?>);">Set</button>
+          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="attachment_order_<?=$current['Item_ID']?>" />
+          <button onclick="Item.reorderLink('Attachment', { 'item_id': <?=$current['Item_ID']?> });">Set</button>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="removeAttachment(<?=$current['Item_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Attachment', <?=$current['Item_ID']?>); return false;">
           </a>
         </td>
         <td>

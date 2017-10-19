@@ -6,11 +6,11 @@
     <? foreach ($credits as $current): ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="credit_order<?=$this->escapeHtml($current['Person_ID'])?>_<?=$this->escapeHtml($current['Role_ID'])?>" />
-          <button onclick="changeCreditOrder(<?=$this->escapeHtml($current['Person_ID'])?>, <?=$this->escapeHtml($current['Role_ID'])?>);">Set</button>
+          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="credit_order_<?=$this->escapeHtml($current['Person_ID'])?>_<?=$this->escapeHtml($current['Role_ID'])?>" />
+          <button onclick="Edition.reorderLink('Credit', { 'person_id': <?=$this->escapeHtml($current['Person_ID'])?>, 'role_id': <?=$this->escapeHtml($current['Role_ID'])?> });">Set</button>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="removeCredit(<?=$this->escapeHtml($current['Person_ID'])?>, <?=$this->escapeHtml($current['Role_ID'])?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('Credit', '<?=$this->escapeHtml($current['Person_ID'])?>,<?=$this->escapeHtml($current['Role_ID'])?>'); return false;">
           </a>
         </td>
         <td>

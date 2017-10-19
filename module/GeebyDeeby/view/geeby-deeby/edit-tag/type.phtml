@@ -6,6 +6,6 @@
       <td><input type="text" id="Tag_Type" value="<?=isset($tagType['Tag_Type']) ? $this->escapeHtml($tagType['Tag_Type']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_tag_type" onclick="saveTagType();">Save</button>
+  <button id="save_tag_type" onclick="TagType.save();">Save</button>
   <div id="save_tag_type_status"></div>
 </div>

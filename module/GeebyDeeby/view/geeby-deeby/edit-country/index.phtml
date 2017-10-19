@@ -6,6 +6,6 @@
       <td><input type="text" id="Country_Name" value="<?=isset($country['Country_Name']) ? $this->escapeHtml($country['Country_Name']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_country" onclick="saveCountry();">Save</button>
+  <button id="save_country" onclick="Country.save();">Save</button>
   <div id="save_country_status"></div>
 </div>

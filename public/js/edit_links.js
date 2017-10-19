@@ -1,145 +1,41 @@
-// Global reference to current open edit box.
-var editBox = false;
-
-/* Pop up a dialog to edit a person:
- */
-function editLink(id)
-{
-    // Open the edit dialog box:
-    var url = basePath + '/edit/Link/' + encodeURIComponent(id);
-    editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === 'NEW' ? "Add Link" : ("Edit Link " + id)),
-        modal: true,
-        autoOpen: true,
-        width: 600,
-        height: 400,
-        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { $('#editForm').remove(); }
-    });
-}
-
-/* Redraw the links on the screen:
- */
-function redrawLinks()
-{
-    var url = basePath + '/edit/LinkList';
-    $('#link_list').load(url);
-}
-
-/* Save the link inside the provided form element:
- */
-function saveLink()
-{
-    // Obtain values from form:
-    var linkID = $('#Link_ID').val();
-    var linkName = $('#Link_Name').val();
-    var url = $('#URL').val();
-    var desc = $('#Description').val();
-    var dateChecked = $('#Date_Checked').val();
-    var typeID = $('#Link_Type_ID').val();
-    
-    // Validate form:
-    if (linkName.length == 0) {
-        alert('Link name cannot be blank.');
-        return;
-    }
-    if (url.length == 0) {
-        alert('URL cannot be blank.');
-        return;
-    }
-    
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_link').hide();
-    $('#save_link_status').html('Saving...');
-    
-    // Use AJAX to save the values:
-    var targetUrl = basePath + '/edit/Link/' + encodeURIComponent(linkID);
-    var params = {link_name: linkName, url: url, desc: desc, 
-        date_checked: dateChecked, type_id: typeID};
-    $.post(targetUrl, params, function(data) {
-        // If save was successful...
-        if (data.success) {
-             // Close the dialog box.
-            if (editBox) {
-                editBox.dialog('close');
-                editBox.dialog('destroy');
-                editBox = false;
-            }
-            
-            // Update the person list.
-            redrawLinks();
-       } else {
-            // Save failed -- display error message.
-            alert('Error: ' + data.msg);
+var LinkEditor = function() {
+    this.type = "Link";
+    this.saveFields = {
+        'link_name': { 'id': '#Link_Name', emptyError: 'Link name cannot be blank.' },
+        'url': { 'id': '#URL', emptyError: 'URL cannot be blank.' },
+        'desc': { 'id': '#Description' },
+        'date_checked': { 'id': '#Date_Checked' },
+        'type_id': { 'id': '#Link_Type_ID' }
+    };
+    this.links = {
+        'Item': {
+            'uriField': { 'id': '#link_item_id', 'nonNumericDefault': '', 'emptyError': 'Please choose a valid item.' }
+        },
+        'Person': {
+            'uriField': { 'id': '#link_person_id', 'nonNumericDefault': '', 'emptyError': 'Please choose a valid person.' }
+        },
+        'Series': {
+            'uriField': { 'id': '#link_series_id', 'nonNumericDefault': '', 'emptyError': 'Please choose a valid series.' }
         }
-        // Restore save button:
-        $('#save_link').show();
-        $('#save_link_status').html('');
-    }, 'json');
-}
+    };
+};
+BaseEditor.prototype.registerSubclass(LinkEditor);
+var Link = new LinkEditor();
 
-/* Pop up a dialog to edit a link type:
- */
-function editLinkType(id)
-{
-    // Open the edit dialog box:
-    var url = basePath + '/edit/LinkType/' + encodeURIComponent(id);
-    editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === false ? "Add Link Type" : ("Edit Link Type " + id)),
-        modal: true,
-        autoOpen: true,
-        width: 500,
-        height: 400,
-        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { $('#editForm').remove(); }
-    });
-}
+var LinkTypeEditor = function() {
+    this.type = "Link Type";
+    this.saveFields = {
+        'linkType': { 'id': '#Link_Type', emptyError: 'Link type cannot be blank.' }
+    };
+};
+BaseEditor.prototype.registerSubclass(LinkTypeEditor);
+var LinkType = new LinkTypeEditor();
 
-/* Redraw the link types on the screen:
- */
-function redrawLinkTypes()
-{
-    var url = basePath + '/edit/LinkTypeList';
-    $('#link_type_list').load(url);
-}
-
-/* Save the link type inside the provided form element:
- */
-function saveLinkType()
-{
-    // Obtain values from form:
-    var linkTypeID = $('#Link_Type_ID').val();
-    var linkType = $('#Link_Type').val();
-    
-    // Validate form:
-    if (linkType.length == 0) {
-        alert('Link type cannot be blank.');
-        return;
+// Load data and setup autocomplete.
+$(document).ready(function() {
+    if (typeof registerAutocomplete === 'function') {
+        registerAutocomplete('.Item_ID', 'Item');
+        registerAutocomplete('.Person_ID', 'Person');
+        registerAutocomplete('.Series_ID', 'Series');
     }
-    
-    // Hide save button and display status message to avoid duplicate submission:
-    $('#save_link_type').hide();
-    $('#save_link_type_status').html('Saving...');
-    
-    // Use AJAX to save the values:
-    var url = basePath + '/edit/LinkType/' + encodeURIComponent(linkTypeID);
-    $.post(url, {linkType: linkType}, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Close the dialog box.
-            if (editBox) {
-                editBox.dialog('close');
-                editBox.dialog('destroy');
-                editBox = false;
-            }
-            
-            // Update the role list.
-            redrawLinkTypes();
-        } else {
-            // Save failed -- display error message and restore save button:
-            alert('Error: ' + data.msg);
-            $('#save_link_type').show();
-            $('#save_link_type_status').html('');
-        }
-    }, 'json');
-}
+});

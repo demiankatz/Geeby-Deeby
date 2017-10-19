@@ -181,7 +181,7 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function adaptationAction()
+    public function adaptationintoAction()
     {
         return $this->handleGenericLink(
             'itemsadaptations', 'Source_Item_ID', 'Adapted_Item_ID',
@@ -195,7 +195,7 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function adaptedfromAction()
+    public function adaptationfromAction()
     {
         return $this->handleGenericLink(
             'itemsadaptations', 'Adapted_Item_ID', 'Source_Item_ID',
@@ -288,7 +288,7 @@ class EditItemController extends AbstractBase
     {
         if ($this->getRequest()->isPost()) {
             $collection = $this->params()->fromRoute('id');
-            $item = $this->params()->fromPost('attach_id');
+            $item = $this->params()->fromPost('item_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('itemsincollections')->update(
                 array('Position' => $pos),
@@ -304,8 +304,19 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function creditsAction()
+    public function creditAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            return $this->addCredit();
+        }
+        if ($this->getRequest()->isDelete()) {
+            return $this->deleteCredit();
+        }
+        // Default action: display list:
         $table = $this->getDbTable('editionscredits');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
@@ -320,24 +331,21 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function addcreditAction()
+    protected function addCredit()
     {
-        if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('editionscredits');
-            $item = $this->params()->fromRoute('id');
-            $row = array(
-                'Person_ID' => $this->params()->fromPost('person_id'),
-                'Role_ID' => $this->params()->fromPost('role_id'),
-                'Position' => $this->params()->fromPost('pos'),
-                'Note_ID' => $this->params()->fromPost('note_id')
-            );
-            if (empty($row['Note_ID'])) {
-                $row['Note_ID'] = null;
-            }
-            $table->insertForItem($item, $row);
-            return $this->jsonReportSuccess();
+        $table = $this->getDbTable('editionscredits');
+        $item = $this->params()->fromRoute('id');
+        $row = array(
+            'Person_ID' => $this->params()->fromPost('person_id'),
+            'Role_ID' => $this->params()->fromPost('role_id'),
+            'Position' => $this->params()->fromPost('pos'),
+            'Note_ID' => $this->params()->fromPost('note_id')
+        );
+        if (empty($row['Note_ID'])) {
+            $row['Note_ID'] = null;
         }
-        return $this->jsonDie('Unexpected method');
+        $table->insertForItem($item, $row);
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -345,19 +353,14 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function deletecreditAction()
+    protected function deleteCredit()
     {
-        if ($this->getRequest()->isPost()) {
-            $this->getDbTable('editionscredits')->deleteForItem(
-                $this->params()->fromRoute('id'),
-                array(
-                    'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id')
-                )
-            );
-            return $this->jsonReportSuccess();
-        }
-        return $this->jsonDie('Unexpected method');
+        list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
+        $this->getDbTable('editionscredits')->deleteForItem(
+            $this->params()->fromRoute('id'),
+            array('Person_ID' => $person, 'Role_ID' => $role)
+        );
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -393,7 +396,7 @@ class EditItemController extends AbstractBase
             $table = $this->getDbTable('itemsdescriptions');
             $row = $table->createRow();
             $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Source = $this->params()->fromRoute('extra');
+            $row->Source = $this->params()->fromPost('type');
             $row->Description = $this->params()->fromPost('desc');
             try {
                 $table->insert((array)$row);
@@ -411,7 +414,7 @@ class EditItemController extends AbstractBase
     }
 
     /**
-     * Deal with translations
+     * Deal with tags
      *
      * @return mixed
      */
@@ -424,11 +427,11 @@ class EditItemController extends AbstractBase
     }
 
     /**
-     * Deal with translations
+     * Deal with translations (into)
      *
      * @return mixed
      */
-    public function translationAction()
+    public function translationintoAction()
     {
         return $this->handleGenericLink(
             'itemstranslations', 'Source_Item_ID', 'Trans_Item_ID',
@@ -442,7 +445,7 @@ class EditItemController extends AbstractBase
      *
      * @return mixed
      */
-    public function translatedfromAction()
+    public function translationfromAction()
     {
         return $this->handleGenericLink(
             'itemstranslations', 'Trans_Item_ID', 'Source_Item_ID',

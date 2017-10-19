@@ -1,6 +1,6 @@
 <? if (isset($cities) && count($cities) > 0): ?>
   <? foreach ($cities as $current): ?>
-    <a href="#" onclick="editCity(<?=$this->escapeHtml($current['City_ID'])?>); return false;"><?=$this->escapeHtml($current['City_Name'])?></a><br />
+    <a href="#" onclick="City.edit(<?=$this->escapeHtml($current['City_ID'])?>); return false;"><?=$this->escapeHtml($current['City_Name'])?></a><br />
   <? endforeach; ?>
 <? else: ?>
   No cities defined.

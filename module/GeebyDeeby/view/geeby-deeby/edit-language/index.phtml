@@ -6,6 +6,6 @@
       <td><input type="text" id="Language_Name" value="<?=isset($language['Language_Name']) ? $this->escapeHtml($language['Language_Name']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_language" onclick="saveLanguage();">Save</button>
+  <button id="save_language" onclick="Language.save();">Save</button>
   <div id="save_language_status"></div>
 </div>

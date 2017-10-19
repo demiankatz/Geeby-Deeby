@@ -31,7 +31,7 @@
       <li><a target='_cleanup' href='<?=$this->url('edit/cleanup')?>'>Data Cleanup</a></li>
     <? endif; ?>
     <? if ($userEditor): ?>
-      <li>Edit Users (not implemented yet)</li>
+      <li><a target='_users' href='<?=$this->url('edit/user_list')?>'>Edit Users</a></li>
     <? endif; ?>
     <? if ($dataManager): ?>
       <li><a target='_migrate' href='<?=$this->url('edit/migrate')?>'>Migrate Old Data</a></li>

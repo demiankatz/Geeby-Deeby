@@ -1,6 +1,6 @@
 <? $this->layout()->title = 'Edit Languages' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_languages.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_languages']) ?>
 <p><b>Languages:</b></p>
-<button id="add_language" type="button" onclick="editLanguage('NEW');">Add Language</button>
+<button id="add_language" type="button" onclick="Language.edit('NEW');">Add Language</button>
 <br /><br />
 <div id="language_list"><?=$this->render('geeby-deeby/edit-language/render-languages.phtml')?></div>

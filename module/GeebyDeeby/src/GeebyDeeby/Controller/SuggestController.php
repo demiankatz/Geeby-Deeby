@@ -62,6 +62,6 @@ class SuggestController extends AbstractBase
             $response .= $current->getPrimaryKeyValue() . ': '
                 . $current->getDisplayName() . "\n";
         }
-        return $this->getResponse()->setContent(htmlspecialchars($response));
+        return $this->getResponse()->setContent($response);
     }
 }

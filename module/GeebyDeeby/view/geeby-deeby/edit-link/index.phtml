@@ -22,6 +22,6 @@
       <td><textarea id="Description"><?=isset($link['Description']) ? $this->escapeHtml($link['Description']) : ''?></textarea></td>
     </tr>
   </table>
-  <button id="save_link" onclick="saveLink();">Save</button>
+  <button id="save_link" onclick="Link.save();">Save</button>
   <div id="save_link_status"></div>
 </div>

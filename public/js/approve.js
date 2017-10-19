@@ -220,14 +220,5 @@ function rejectComment(userID, seriesID)
 
 // Load data and setup autocomplete.
 $(document).ready(function() {
-  $('.Person_ID').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: basePath + "/Suggest/Person?q=" + request.term, 
-        success: function(data) {
-          response(data.split('\n').slice(0, -1));
-        }
-      });
-    }
-  });
+    registerAutocomplete('.Person_ID', 'Person');
 });

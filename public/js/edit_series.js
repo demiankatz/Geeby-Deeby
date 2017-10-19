@@ -1,79 +1,95 @@
-// Global reference to current open edit box.
-var editBox = false;
+var SeriesEditor = function() {
+    this.type = "Series";
+    this.saveFields = {
+        'name': { 'id': '#Series_Name', emptyError: 'Series name cannot be blank.' },
+        'desc': { 'id': '#Series_Description' },
+        'lang': { 'id': '#Language_ID' }
+    };
+    this.attributeSelector = '.series-attribute';
+    this.links = {
+        'AltTitle': {
+            'saveFields': {
+                'title': { 'id': '#Alt_Title', 'emptyError': 'Title must not be blank.' },
+                'note_id': { 'id': '#Alt_Title_Note', 'nonNumericDefault': '' }
+            }
+        },
+        'Item': {
+            'uriField': { 'id': '#item_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item' },
+            'reorderPositionCallback': function(type, details, subtype) {
+                var raw = $('#order' + details['edition_id']).val().split(',');
+                return (raw.length < 2)
+                    ? "0," + parseInt(raw[0], 10)
+                    : details['pos'] = parseInt(raw[0], 10) + "," + parseInt(raw[1], 10);
+            }
+        },
+        'Material': {
+            'uriField': { 'id': '#Series_Material_Type_ID' }
+        },
+        'Publisher': {
+            'editFields': {
+                'address': { 'id': '#Address_ID' },
+                'imprint': { 'id': '#Imprint_ID' }
+            },
+            'saveFields': {
+                'publisher_id': { 'id': '#Publisher_ID', 'nonNumericDefault': '', 'emptyError': 'Publisher must not be blank.' },
+                'note_id': { 'id': '#Publisher_Note_ID', 'nonNumericDefault': '' }
+            }
+        },
+        'Translation': {
+            'subtypeSelector': { 'id': '#trans_type' },
+            'uriField': { 'id': '#trans_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid series.' }
+        }
+    };
+};
+BaseEditor.prototype.registerSubclass(SeriesEditor);
 
-/* Pop up a dialog to edit a series:
+/**
+ * Save selected categories:
  */
-function editSeries(id)
+SeriesEditor.prototype.saveCategories = function()
 {
-    // Open the edit dialog box:
-    var url = basePath + '/edit/Series/' + encodeURIComponent(id);
-    editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: (id === 'NEW' ? "Add Series" : ("Edit Series " + id)),
-        modal: true,
-        autoOpen: true,
-        width: 500,
-        height: 400,
-        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { $('#editForm').remove(); }
+    // Create an array of all checked categories:
+    var values = [];
+    $('.Category_ID').each(function(intIndex) {
+        if ($(this).is(':checked')) {
+            values[values.length] = $(this).val();
+        }
     });
-}
-
-/* Redraw the series on the screen:
- */
-function redrawSeries()
-{
-    var url = basePath + '/edit/SeriesList';
-    $('#series_list').load(url);
-}
-
-/* Save the series inside the provided form element:
- */
-function saveSeries()
-{
-    // Obtain values from form:
-    var seriesID = $('#Series_ID').val();
-    var seriesName = $('#Series_Name').val();
-    var desc = $('#Series_Description').val();
-    var lang = $('#Language_ID').val();
-
-    // Validate form:
-    if (seriesName.length == 0) {
-        alert('Series name cannot be blank.');
-        return;
-    }
-    
-    // Build post parameters, including attributes:
-    var postParams = {name: seriesName, desc: desc, lang: lang};
-    var attribElements = $('.series-attribute');
-    for (var i = 0; i < attribElements.length; i++) {
-        var obj = $(attribElements[i]);
-        var attrId = obj.attr('id').replace('Series_Attribute_', '');
-        postParams['attribs[' + attrId + ']'] = obj.val();
-    }
 
     // Hide save button and display status message to avoid duplicate submission:
-    $('#save_series').hide();
-    $('#save_series_status').html('Saving...');
-    
+    $('#save_categories').hide();
+    $('#save_categories_status').html('Saving...');
+
     // Use AJAX to save the values:
-    var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID);
-    $.post(url, postParams, function(data) {
-        // If save was successful...
-        if (data.success) {
-            // Close the dialog box.
-            if (editBox) {
-                editBox.dialog('close');
-                editBox.dialog('destroy');
-                editBox = false;
-            }
-            
-            // Update the series list.
-            redrawSeries();
-        } else {
-            // Save failed -- display error message and restore save button:
+    var url = this.getLinkUri('Categories');
+    $.post(url, {"categories[]": values}, function(data) {
+        // If save failed, display error message.
+        if (!data.success) {
             alert('Error: ' + data.msg);
-            $('#save_series').show();
-            $('#save_series_status').html('');
         }
+        // Restore save button:
+        $('#save_categories').show();
+        $('#save_categories_status').html('');
     }, 'json');
+};
+
+var Series = new SeriesEditor();
+
+/**
+ * Override the standard Item redraw list function:
+ */
+if (typeof Item === "object") {
+    Item.redrawList = function() {
+        Series.redrawLinks('Item');
+    }
 }
+
+// Load data and setup autocomplete.
+$(document).ready(function() {
+    if (typeof registerAutocomplete === 'function') {
+        registerAutocomplete('#Publisher_ID', 'Publisher');
+        registerAutocomplete('#trans_name', 'Series');
+        registerAutocomplete('#item_name', 'Item');
+        // .Note_ID autocomplete is already registered by edit_items.js
+    }
+});

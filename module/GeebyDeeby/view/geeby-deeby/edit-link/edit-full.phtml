@@ -1,5 +1,5 @@
 <? $this->layout()->title = 'Edit Link' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_link.js') ?>
+<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_links']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-link/index.phtml')?>
 </div>
@@ -7,23 +7,23 @@
 <b>Related Items:</b>
 <br />
 <input id="link_item_id" class="Item_ID" />
-<button onclick="linkItem();">Link</button>
-<div id="link_item_list">
+<button onclick="Link.link('Item');">Link</button>
+<div id="item_list">
   <?=$this->render('geeby-deeby/edit-link/item-list.phtml')?>
 </div>
 <hr />
 <b>Related Series:</b>
 <br />
 <input id="link_series_id" class="Series_ID" />
-<button onclick="linkSeries();">Link</button>
-<div id="link_series_list">
+<button onclick="Link.link('Series');">Link</button>
+<div id="series_list">
   <?=$this->render('geeby-deeby/edit-link/series-list.phtml')?>
 </div>
 <hr />
 <b>Related People:</b>
 <br />
 <input id="link_person_id" class="Person_ID" />
-<button onclick="linkPerson();">Link</button>
-<div id="link_person_list">
+<button onclick="Link.link('Person');">Link</button>
+<div id="person_list">
   <?=$this->render('geeby-deeby/edit-link/person-list.phtml')?>
 </div>

@@ -107,7 +107,7 @@ class EditPersonController extends AbstractBase
      *
      * @return mixed
      */
-    public function pseudonymAction()
+    public function aliaspseudonymAction()
     {
         return $this->handleGenericLink(
             'pseudonyms', 'Real_Person_ID', 'Pseudo_Person_ID',
@@ -121,7 +121,7 @@ class EditPersonController extends AbstractBase
      *
      * @return mixed
      */
-    public function realnameAction()
+    public function aliasrealnameAction()
     {
         return $this->handleGenericLink(
             'pseudonyms', 'Pseudo_Person_ID', 'Real_Person_ID',

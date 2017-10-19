@@ -1,5 +1,5 @@
 <? $this->layout()->title = 'Edit Item' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_item_details.js') ?>
+<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_items']) ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-item/index.phtml')?>
 </div>
@@ -17,30 +17,30 @@
 </ul>
 <div class="tab-content">
   <div id="editions-tab" class="tab-pane active">
-    <button onclick="return copyEdition();">Copy Selected Edition</button>
-    <div id="edition_list">
+    <button onclick="return Item.copyEdition();">Copy Selected Edition</button>
+    <div id="editions_list">
       <?=$this->render('geeby-deeby/edit-item/edition-list.phtml')?>
     </div>
   </div>
 
   <div id="adaptations-tab" class="tab-pane">
     <select id="adapt_type">
-      <option value='from'>Adapted From</option>
-      <option value='into'>Adapted Into</option>
+      <option value='From'>Adapted From</option>
+      <option value='Into'>Adapted Into</option>
     </select>
     <input id="adapt_name" class="Item_ID" />
-    <button onclick="saveAdaptation();">Add Adaptation</button>
+    <button onclick="Item.link('Adaptation');">Add Adaptation</button>
     <table>
       <tr>
         <td>
           <b>Adapted From:</b>
-          <div id="adapt_from">
+          <div id="adaptationfrom_list">
             <?=$this->render('geeby-deeby/edit-item/adapted-from-list.phtml')?>
           </div>
         </td>
         <td>
           <b>Adapted Into:</b>
-          <div id="adapt_into">
+          <div id="adaptationinto_list">
             <?=$this->render('geeby-deeby/edit-item/adapted-into-list.phtml')?>
           </div>
         </td>
@@ -51,8 +51,8 @@
   <div id="alt-titles-tab" class="tab-pane">
     <b>Title:</b> <input type="text" id="Alt_Title" />
     <b>Note: </b> <input id="Alt_Title_Note" class="Note_ID" />
-    <button onclick="addAltTitle();">Add</button>
-    <div id="alt_title_list">
+    <button onclick="Item.link('AltTitle');">Add</button>
+    <div id="alttitle_list">
       <?=$this->render('geeby-deeby/edit-item/alt-title-list.phtml')?>
     </div>
   </div>
@@ -70,11 +70,11 @@
         </tr>
         <tr>
           <th></th>
-          <td><button onclick="addAttachedItem();">Add Item</button></td>
+          <td><button onclick="Item.link('Attachment');">Add Item</button></td>
         </tr>
       </table>
     </div>
-    <div id="item_list">
+    <div id="attachment_list">
       <p class="error">IMPORTANT: In the vast majority of cases, items should be attached at
           the individual EDITION level, not here at the ITEM level.</p>
       <?=$this->render('geeby-deeby/edit-item/list.phtml')?>
@@ -85,20 +85,20 @@
     <p>The current item is about the following items, series and people...</p>
     <b>Item References:</b>
     <input id="item_bib_id" class="Item_ID" />
-    <button onclick="addItemReference();">Add Reference</button>
-    <div id="item_bib">
+    <button onclick="Item.link('AboutItem');">Add Reference</button>
+    <div id="aboutitem_list">
       <?=$this->render('geeby-deeby/edit-item/item-ref-list.phtml')?>
     </div>
     <b>Series References:</b>
     <input id="series_bib_id" class="Series_ID" />
-    <button onclick="addSeriesReference();">Add Reference</button>
-    <div id="series_bib">
+    <button onclick="Item.link('AboutSeries');">Add Reference</button>
+    <div id="aboutseries_list">
       <?=$this->render('geeby-deeby/edit-item/series-ref-list.phtml')?>
     </div>
     <b>Person References:</b>
     <input id="person_bib_id" class="Person_ID" />
-    <button onclick="addPersonReference();">Add Reference</button>
-    <div id="people_bib">
+    <button onclick="Item.link('AboutPerson');">Add Reference</button>
+    <div id="aboutperson_list">
       <?=$this->render('geeby-deeby/edit-item/person-ref-list.phtml')?>
     </div>
   </div>
@@ -126,11 +126,11 @@
         </tr>
         <tr>
           <th></th>
-          <td><button onclick="saveCredit();">Add</button></td>
+          <td><button onclick="Item.link('Credit');">Add</button></td>
         </tr>
       </table>
     </div>
-    <div id="credits">
+    <div id="credit_list">
       <?=$this->render('geeby-deeby/edit-item/credits.phtml')?>
     </div>
   </div>
@@ -156,11 +156,11 @@
         </tr>
         <tr>
           <th></th>
-          <td><button onclick="saveDescription();">Add</button></td>
+          <td><button onclick="Item.link('Description');">Add</button></td>
         </tr>
       </table>
     </div>
-    <div id="desc_list">
+    <div id="description_list">
       <?=$this->render('geeby-deeby/edit-item/description-list.phtml')?>
     </div>
   </div>
@@ -174,7 +174,7 @@
         </tr>
         <tr>
           <th></th>
-          <td><button onclick="addTag();">Add</button></td>
+          <td><button onclick="Item.link('Tag');">Add</button></td>
         </tr>
       </table>
     </div>
@@ -189,18 +189,18 @@
       <option value='into'>Translated Into</option>
     </select>
     <input id="trans_name" class="Item_ID" />
-    <button onclick="saveTranslation();">Add Translation</button>
+    <button onclick="Item.link('Translation');">Add Translation</button>
     <table>
       <tr>
         <td>
           <b>Translated From:</b>
-          <div id="trans_from">
+          <div id="translationfrom_list">
             <?=$this->render('geeby-deeby/edit-item/trans-from-list.phtml')?>
           </div>
         </td>
         <td>
           <b>Translated Into:</b>
-          <div id="trans_into">
+          <div id="translationinto_list">
             <?=$this->render('geeby-deeby/edit-item/trans-into-list.phtml')?>
           </div>
         </td>

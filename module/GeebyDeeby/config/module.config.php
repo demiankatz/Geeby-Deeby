@@ -368,7 +368,7 @@ return array(
                     'editionattribute' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/EditionAttribute[/:id]',
+                            'route'    => '/EditionsAttribute[/:id]',
                             'defaults' => array(
                                 'controller'    => 'EditEditionAttribute',
                                 'action'        => 'index',
@@ -379,7 +379,7 @@ return array(
                     'editionattribute_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
-                            'route'    => '/EditionAttributeList',
+                            'route'    => '/EditionsAttributeList',
                             'defaults' => array(
                                 'controller'    => 'EditEditionAttribute',
                                 'action'        => 'list',
@@ -803,6 +803,50 @@ return array(
                             ),
                         ),
                     ),
+                    'user' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/User[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'user_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/UserList',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'usergroup' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/UserGroup[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'usergroup',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'usergroup_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/UserGroupList',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'usergrouplist',
+                            ),
+                        ),
+                    ),
                 ),
             ),
             'edition' => array(
@@ -1182,6 +1226,7 @@ return array(
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\EditSeriesAttribute' => 'GeebyDeeby\Controller\EditSeriesAttributeController',
             'GeebyDeeby\Controller\EditTag' => 'GeebyDeeby\Controller\EditTagController',
+            'GeebyDeeby\Controller\EditUser' => 'GeebyDeeby\Controller\EditUserController',
             'GeebyDeeby\Controller\FAQs' => 'GeebyDeeby\Controller\FAQsController',
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
@@ -1218,6 +1263,12 @@ return array(
                     $sm->getServiceLocator()->get('GeebyDeeby\Articles')
                 );
             },
+            'scriptmanager' => function ($sm) {
+                $base = $sm->get('basepath')->__invoke();
+                return new \GeebyDeeby\View\Helper\ScriptManager(
+                    $base, $sm->get('headscript')
+                );
+            }
         ),
         'invokables' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',

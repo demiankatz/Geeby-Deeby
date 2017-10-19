@@ -1,5 +1,5 @@
 <? $this->layout()->title = 'Edit Publisher Editor' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_publisher_details.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_publishers']) ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-publisher/index.phtml')?>
 </div>
@@ -15,7 +15,7 @@
         <tr><th>Country:</th><td><?=$this->render('geeby-deeby/edit-country/select.phtml')?></td></tr>
         <tr><th>City:</th><td><?=$this->render('geeby-deeby/edit-city/select.phtml')?></td></tr>
         <tr><th>Street:</th><td><input type="text" id="Street" /></td></tr>
-        <tr><th></th><td><button onclick="addAddress();">Add</button></td></tr>
+        <tr><th></th><td><button onclick="Publisher.link('Address');">Add</button></td></tr>
       </table>
     </div>
     <div id="address_list">
@@ -25,7 +25,7 @@
 
   <div id="imprints-tab" class="tab-pane">
     <b>Imprint:</b> <input type="text" id="Imprint" />
-    <button onclick="addImprint();">Add</button>
+    <button onclick="Publisher.link('Imprint');">Add</button>
     <div id="imprint_list">
       <?=$this->render('geeby-deeby/edit-publisher/imprint-list.phtml')?>
     </div>

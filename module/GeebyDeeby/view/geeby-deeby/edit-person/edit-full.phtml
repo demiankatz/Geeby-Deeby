@@ -1,5 +1,5 @@
 <? $this->layout()->title = 'Edit Person' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_person.js') ?>
+<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_people']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-person/index.phtml')?>
 </div>
@@ -10,19 +10,19 @@
   <option value='pseudonym'>Pseudonym:</option>
 </select>
 <input id="pseudo_name" />
-<button onclick="saveRelationship();">Add Relationship</button>
+<button onclick="Person.link('Alias');">Add Relationship</button>
 </div>
 <hr/>
 <div class="row">
   <div class="col-md-3">
     <b>Pseudonym For:</b>
-    <div id="realname_list">
+    <div id="aliasrealname_list">
       <?=$this->render('geeby-deeby/edit-person/realname-list.phtml')?>
     </div>
   </div>
   <div class="col-md-3">
     <b>Pseudonym(s):</b>
-    <div id="pseudonym_list">
+    <div id="aliaspseudonym_list">
       <?=$this->render('geeby-deeby/edit-person/pseudonym-list.phtml')?>
     </div>
   </div>
@@ -33,7 +33,7 @@
     <b>URIs (for linked data):</b><br />
     <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
     <input type="text" id="uri" />
-    <button onclick="addURI();">Add URI</button>
+    <button onclick="Person.link('URI');">Add URI</button>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-person/uri-list.phtml')?>
     </div>

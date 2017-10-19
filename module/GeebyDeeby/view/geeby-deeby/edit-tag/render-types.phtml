@@ -1,6 +1,6 @@
 <? if (isset($tagTypes) && count($tagTypes) > 0): ?>
   <? foreach ($tagTypes as $current): ?>
-    <a href="#" onclick="editTagType(<?=$current['Tag_Type_ID']?>); return false;"><?=$this->escapeHtml($current['Tag_Type'])?></a><br />
+    <a href="#" onclick="TagType.edit(<?=$current['Tag_Type_ID']?>); return false;"><?=$this->escapeHtml($current['Tag_Type'])?></a><br />
   <? endforeach; ?>
 <? else: ?>
   No subject/tag types defined yet.

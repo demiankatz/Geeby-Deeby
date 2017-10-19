@@ -1,6 +1,6 @@
 <? $this->layout()->title = 'Edit Publisher List' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_publishers.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_publishers']) ?>
 <p><b>Publishers:</b></p>
-<button id="add_publisher" type="button" onclick="editPublisher('NEW');">Add Publisher</button>
+<button id="add_publisher" type="button" onclick="Publisher.edit('NEW');">Add Publisher</button>
 <br /><br />
 <div id="publisher_list"><?=$this->render('geeby-deeby/edit-publisher/render-publishers.phtml')?></div>

@@ -6,7 +6,7 @@
           <a href="<?=$this->url('edit/series', array('id' => $current['Series_ID']))?>"><?=$this->escapeHtml($current['Series_Name'])?></a><br />
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="unlinkSeries(<?=$current['Series_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Link.unlink('Series', <?=$current['Series_ID']?>); return false;">
           </a>
         </td>
       </tr>

@@ -7,7 +7,7 @@
         <?=$current['Description']?> (Source: <?=$this->descriptionSource()->getName($current['Source'])?>)
       </td>
       <td>
-        <a class="ui-icon ui-icon-trash" href="#" onclick="deleteDescription(&quot;<?=$this->escapeHtml($current['Source'])?>&quot;); return false;">
+        <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Description', &quot;<?=$this->escapeHtml($current['Source'])?>&quot;); return false;">
         </a>
       </td>
     </tr>
