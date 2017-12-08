@@ -9,7 +9,7 @@ function saveLink()
     // Obtain values from form:
     var linkID = $('#Link_ID').val();
     var linkName = $('#Link_Name').val();
-    var url = $('#URL').val();
+    var urlv = $('#URL').val();
     var desc = $('#Description').val();
     var dateChecked = $('#Date_Checked').val();
     var typeID = $('#Link_Type_ID').val();
@@ -19,7 +19,7 @@ function saveLink()
         alert('Link name cannot be blank.');
         return;
     }
-    if (url.length == 0) {
+    if (urlv.length == 0) {
         alert('URL cannot be blank.');
         return;
     }
@@ -30,7 +30,7 @@ function saveLink()
     
     // Use AJAX to save the values:
     var url = basePath + '/edit/Link/' + encodeURIComponent(linkID);
-    var params = {link_name: linkName, url: url, desc: desc, 
+    var params = {link_name: linkName, url: urlv, desc: desc, 
         date_checked: dateChecked, type_id: typeID};
     $.post(url, params, function(data) {
         // If save was successful...
