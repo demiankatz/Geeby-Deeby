@@ -148,7 +148,7 @@
     <? endif; ?>
     <p class="file">
       <a target="_new" href="<?=$this->escapeHtml($file['File_Path'])?>">
-        <?=$this->escapeHtml($file['File_Name'])?>
+        <?=$this->escapeHtml($this->fixtitle($file['File_Name']))?>
       </a>
       <? if (!empty($file['Description'])): ?>
         <br /><?=$file['Description']?>
