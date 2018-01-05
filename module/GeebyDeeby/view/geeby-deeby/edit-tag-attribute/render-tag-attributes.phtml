@@ -1,0 +1,3 @@
+<? foreach ($attributes as $current): ?>
+  <a href="#" onclick="TagsAttribute.edit(<?=$current['Tags_Attribute_ID']?>); return false;"><?=$this->escapeHtml($current['Tags_Attribute_Name'])?></a><br />
+<? endforeach; ?>

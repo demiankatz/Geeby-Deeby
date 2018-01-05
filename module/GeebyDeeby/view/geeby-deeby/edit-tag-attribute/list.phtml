@@ -1,0 +1,6 @@
+<? $this->layout()->title = 'Edit Tag Attributes' ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_attributes']) ?>
+<p><b>Tag Attributes:</b></p>
+<button id="add_tag_attribute" type="button" onclick="TagsAttribute.edit('NEW');">Add Tag Attribute</button>
+<br /><br />
+<div id="tags_attribute_list"><?=$this->render('geeby-deeby/edit-tag-attribute/render-tag-attributes.phtml')?></div>

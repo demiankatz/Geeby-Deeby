@@ -125,6 +125,7 @@ CREATE TABLE `Editions` (
   FOREIGN KEY (`Parent_Edition_ID`) REFERENCES `Editions` (`Edition_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Table structure for table `Editions_Attributes`
 --
@@ -1097,6 +1098,42 @@ CREATE TABLE `Tags` (
   FOREIGN KEY (`Tag_Type_ID`) REFERENCES `Tag_Types` (`Tag_Type_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `Tags_Attributes`
+--
+
+DROP TABLE IF EXISTS `Tags_Attributes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Tags_Attributes` (
+  `Tags_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `Tags_Attribute_Name` varchar(255) NOT NULL,
+  `Tags_Attribute_RDF_Property` varchar(255),
+  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Display_Priority` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Tags_Attribute_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Tags_Attributes_Values`
+--
+
+DROP TABLE IF EXISTS `Tags_Attributes_Values`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Tags_Attributes_Values` (
+  `Tag_ID` int(11) NOT NULL DEFAULT '0',
+  `Tags_Attribute_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `Tags_Attribute_Value` varchar(32768) NOT NULL,
+  PRIMARY KEY (`Tag_ID`, `Tags_Attribute_ID`),
+  FOREIGN KEY (`Tag_ID`) REFERENCES `Tags` (`Tag_ID`),
+  FOREIGN KEY (`Tags_Attribute_ID`) REFERENCES `Tags_Attributes` (`Tags_Attribute_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
 -- Table structure for table `Tags_URIs`

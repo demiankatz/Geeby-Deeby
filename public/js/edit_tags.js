@@ -1,5 +1,6 @@
 var TagEditor = function() {
     this.type = "Tag";
+    this.attributeSelector = '.tag-attribute';
     this.saveFields = {
         'tag': { 'id': '#Tag', emptyError: 'Subject/tag name cannot be blank.' },
         'type_id': { 'id': '#Tag_Type_ID' }

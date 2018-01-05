@@ -89,6 +89,8 @@ return array(
                 'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
                 'seriestranslations' => 'GeebyDeeby\Db\Table\SeriesTranslations',
                 'tag' => 'GeebyDeeby\Db\Table\Tag',
+                'tagsattribute' => 'GeebyDeeby\Db\Table\TagsAttribute',
+                'tagsattributesvalues' => 'GeebyDeeby\Db\Table\TagsAttributesValues',
                 'tagsuris' => 'GeebyDeeby\Db\Table\TagsURIs',
                 'tagtype' => 'GeebyDeeby\Db\Table\TagType',
                 'user' => 'GeebyDeeby\Db\Table\User',
@@ -803,6 +805,27 @@ return array(
                             ),
                         ),
                     ),
+                    'tagattribute' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/TagsAttribute[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditTagAttribute',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'tagattribute_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/TagsAttributeList',
+                            'defaults' => array(
+                                'controller'    => 'EditTagAttribute',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                     'user' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -1226,6 +1249,7 @@ return array(
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\EditSeriesAttribute' => 'GeebyDeeby\Controller\EditSeriesAttributeController',
             'GeebyDeeby\Controller\EditTag' => 'GeebyDeeby\Controller\EditTagController',
+            'GeebyDeeby\Controller\EditTagAttribute' => 'GeebyDeeby\Controller\EditTagAttributeController',
             'GeebyDeeby\Controller\EditUser' => 'GeebyDeeby\Controller\EditUserController',
             'GeebyDeeby\Controller\FAQs' => 'GeebyDeeby\Controller\FAQsController',
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',

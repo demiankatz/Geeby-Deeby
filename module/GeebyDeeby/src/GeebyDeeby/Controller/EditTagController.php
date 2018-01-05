@@ -56,6 +56,33 @@ class EditTagController extends AbstractBase
     }
 
     /**
+     * Save attributes for the current tag.
+     *
+     * @param int   $tagId   Tag ID
+     * @param array $attribs Attribute values
+     *
+     * @return void
+     */
+    protected function saveAttributes($tagId, $attribs)
+    {
+        $table = $this->getDbTable('tagsattributesvalues');
+        // Delete old values:
+        $table->delete(['Tag_ID' => $tagId]);
+        // Save new values:
+        foreach ($attribs as $id => $val) {
+            if (!empty($val)) {
+                $table->insert(
+                    [
+                        'Tag_ID' => $tagId,
+                        'Tags_Attribute_ID' => $id,
+                        'Tags_Attribute_Value' => $val
+                    ]
+                );
+            }
+        }
+    }
+
+    /**
      * Operate on a single tag
      *
      * @return mixed
@@ -68,6 +95,32 @@ class EditTagController extends AbstractBase
         );
         $view = $this->handleGenericItem('tag', $assignMap, 'tag');
         $view->tagTypes = $this->typelistAction()->tagTypes;
+
+        // Get tag ID
+        $tagId = isset($view->tag['Tag_ID'])
+            ? $view->tag['Tag_ID']
+            : (isset($view->affectedRow->Tag_ID) ? $view->affectedRow->Tag_ID : null);
+
+        // Special handling for saving attributes:
+        if ($this->getRequest()->isPost()
+            && ($attribs = $this->params()->fromPost('attribs'))
+        ) {
+            $this->saveAttributes($tagId, $attribs);
+        }
+
+        // Add attribute details if we have an Tag_ID.
+        if ($tagId) {
+            $view->attributes = $this->getDbTable('tagsattribute')->getList();
+            $attributeValues = [];
+            $values = $this->getDbTable('tagsattributesvalues')
+                ->getAttributesForTag($tagId);
+            foreach ($values as $current) {
+                $attributeValues[$current->Tags_Attribute_ID]
+                    = $current->Tags_Attribute_Value;
+            }
+            $view->attributeValues = $attributeValues;
+        }
+
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->uris = $this->getDbTable('tagsuris')
