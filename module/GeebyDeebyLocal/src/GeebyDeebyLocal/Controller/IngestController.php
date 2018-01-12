@@ -298,8 +298,18 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $table = $this->getDbTable('series');
         $result = $table->select(['Series_Name' => $title]);
         if (count($result) != 1) {
-            Console::writeLine('Unexpected result count: ' . count($result));
-            return false;
+            if (count($result) === 0) {
+                Console::writeLine('No primary title match; trying alternate titles.');
+                $altTable = $this->getDbTable('seriesalttitles');
+                $altResult = $altTable->select(['Series_AltName' => $title])->toArray();
+                if (count($altResult) === 1) {
+                    $result = $table->select(['Series_ID' => $altResult[0]['Series_ID']]);
+                }
+            }
+            if (count($result) != 1) {
+                Console::writeLine('Unexpected result count: ' . count($result));
+                return false;
+            }
         }
         foreach ($result as $current) {
             return $current;
