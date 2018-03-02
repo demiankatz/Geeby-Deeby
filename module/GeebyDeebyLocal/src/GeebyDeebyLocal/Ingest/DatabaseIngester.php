@@ -1496,7 +1496,7 @@ class DatabaseIngester
         // Fail if we have any existing data not matched up with new data....
         foreach ($children as $child) {
             if (!isset($child['matched'])) {
-                Console::writeLine("FATAL: No match found for edition {$child['edition']->Edition_ID}");
+                Console::writeLine("FATAL: No series match found for edition {$child['edition']->Edition_ID}");
                 return false;
             }
         }
@@ -1549,7 +1549,7 @@ class DatabaseIngester
                 foreach ($contents as $current) {
                     Console::writeLine("Possible match: " . $current['title']);
                 }
-                Console::writeLine("FATAL: No match found for edition {$child['edition']->Edition_ID}");
+                Console::writeLine("FATAL: No child match found for edition {$child['edition']->Edition_ID}");
                 return false;
             }
         }
