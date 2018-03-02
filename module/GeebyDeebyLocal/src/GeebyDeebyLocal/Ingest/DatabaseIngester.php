@@ -172,6 +172,15 @@ class DatabaseIngester
         return false;
     }
 
+    protected function getPositionFromSeriesString($str)
+    {
+        // Find the last number in the string.
+        preg_match_all('/[0-9]+[,\s]*[0-9]*/', $str, $matches);
+        $index = count($matches[0]) - 1;
+        return isset($matches[0][$index])
+            ? preg_replace('/[^0-9]/', '', $matches[0][$index]) : '0';
+    }
+
     /**
      * Ingest series entry
      *
@@ -182,7 +191,7 @@ class DatabaseIngester
      */
     protected function ingestSeries($details, $seriesObj)
     {
-        $pos = preg_replace('/[^0-9]/', '', current($details['series']));
+        $pos = $this->getPositionFromSeriesString(current($details['series']));
         Console::writeLine("Working on no. $pos...");
         $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents']);
         if (!$childDetails) {
