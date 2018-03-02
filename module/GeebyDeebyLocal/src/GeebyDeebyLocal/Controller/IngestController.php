@@ -159,10 +159,10 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $ingester = $this->getIngester();
         $success = 0;
         for ($i = 0; $i < $job->count; $i++) {
+            $modsFile = $dir . '/' . $i . '.mods';
+            Console::writeLine("Opening $modsFile...");
             $details = $extractor->getDetails(
-                simplexml_load_string(
-                    file_get_contents($dir . '/' . $i . '.mods')
-                )
+                simplexml_load_string(file_get_contents($modsFile))
             );
             // for existing, extra is edition object, loaded for each record...
             if ($job->type == 'existing') {
@@ -179,6 +179,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                 }
                 break;
             }
+            Console::writeLine('---');
             $success++;
         }
         Console::writeLine("Successfully processed $success of {$job->count} editions.");
