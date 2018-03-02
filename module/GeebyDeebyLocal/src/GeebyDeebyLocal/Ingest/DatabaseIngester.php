@@ -794,7 +794,7 @@ class DatabaseIngester
      *
      * @return array
      */
-    protected function evaluateItemMatchTitleCandidates($data, $options)
+    protected function evaluateItemMatchTitleCandidates($data, $options, $titleField = 'Item_Name')
     {
         $candidates = [];
         foreach ($options as $current) {
@@ -809,12 +809,12 @@ class DatabaseIngester
             if (count(array_intersect($data['authorIds'], array_keys($currentCredits))) != count($data['authorIds'])) {
                 $confidence -= 25;
             }
-            if (!$this->fuzzyCompare($data['title'], $current->Item_Name)) {
+            if (!$this->fuzzyCompare($data['title'], $current->$titleField)) {
                 $confidence -= $this->hasMatchingAltTitle($data['title'], $current->Item_ID) ? 10 : 25;
             }
             $candidates[] = [
                 'id' => $current->Item_ID,
-                'title' => $current->Item_Name,
+                'title' => $current->$titleField,
                 'authors' => implode(', ', $currentCredits),
                 'confidence' => $confidence,
             ];
@@ -842,6 +842,33 @@ class DatabaseIngester
             };
             $options = $table->select($callback);
             $candidates = $this->evaluateItemMatchTitleCandidates($data, $options);
+            $commaPos = strrpos($strippedTitle, ',');
+            $semiPos = strrpos($strippedTitle, ';');
+            $pos = $commaPos > $semiPos ? $commaPos : $semiPos;
+        } while (count($candidates) == 0 && $pos > 0);
+        return $candidates;
+    }
+
+    /**
+     * Find item match candidates in the database using alternate title.
+     *
+     * @param array $data Raw data
+     *
+     * @return array
+     */
+    protected function getItemMatchCandidatesUsingAltTitle($data)
+    {
+        $table = $this->getDbTable('itemsalttitles');
+        // Start by searching for full title; we'll break it down into chunks as we go.
+        $pos = strlen($data['title']);
+        do {
+            $strippedTitle = substr($data['title'], 0, $pos);
+            // check to see if we have a title match
+            $callback = function ($select) use ($strippedTitle) {
+                $select->where->like('Item_AltName', $strippedTitle . '%');
+            };
+            $options = $table->select($callback);
+            $candidates = $this->evaluateItemMatchTitleCandidates($data, $options, 'Item_AltName');
             $commaPos = strrpos($strippedTitle, ',');
             $semiPos = strrpos($strippedTitle, ';');
             $pos = $commaPos > $semiPos ? $commaPos : $semiPos;
@@ -991,6 +1018,7 @@ class DatabaseIngester
         $candidates = $this->deduplicateAndFilterItemMatchCandidates(
             array_merge(
                 $this->getItemMatchCandidatesUsingTitle($data),
+                $this->getItemMatchCandidatesUsingAltTitle($data),
                 $this->getItemMatchCandidatesUsingAuthors($data)
             )
         );
