@@ -126,7 +126,7 @@ class ModsExtractor
             }
         }
         // If we have an authorized name, override the one extracted above:
-        if (isset($authMods[0]) && !empty((string) $authMods[0])) {
+        if (isset($authMods[0]) && strlen((string) $authMods[0]) > 0) {
             $parts = explode(',', isset($pub['name']) ? $pub['name'] : '');
             $newParts = explode(',', (string) $authMods[0]);
             foreach ($newParts as $i => $part) {
