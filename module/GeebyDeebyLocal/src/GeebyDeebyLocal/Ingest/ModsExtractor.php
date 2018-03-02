@@ -58,7 +58,7 @@ class ModsExtractor
             }
         }
         $retVal = compact('contents');
-        if ($pub = $this->extractPublisher($mods->xpath('/mods:mods/mods:originInfo[@eventType="publication"]'))) {
+        if ($pub = $this->extractPublisher($mods->xpath('/mods:mods/mods:originInfo[@eventType="publication"]'), $mods->xpath('/mods:mods/mods:name[mods:role/mods:roleTerm=\'publisher\']/mods:namePart'))) {
             $retVal['publisher'] = $pub;
         }
         $date = $mods->xpath('/mods:mods/mods:originInfo[@eventType="publication"]/mods:dateIssued');
@@ -108,20 +108,31 @@ class ModsExtractor
         return empty($seriesInfo) ? false : $seriesInfo;
     }
 
-    protected function extractPublisher($mods)
+    protected function extractPublisher($mods, $authMods = [])
     {
-        if (!isset($mods[0])) {
+        if (!isset($mods[0]) && !isset($authMods[0])) {
             return false;
         }
-        $mods = $mods[0];
         $pub = [];
-        $publisher = $mods->xpath('mods:publisher');
-        if (isset($publisher[0])) {
-            $pub['name'] = (string) $publisher[0];
-            $place = $mods->xpath('mods:place/mods:placeTerm[@type="text"]');
-            if (isset($place[0])) {
-                $pub['place'] = (string) $place[0];
+        if (isset($mods[0])) {
+            $mods = $mods[0];
+            $publisher = $mods->xpath('mods:publisher');
+            if (isset($publisher[0])) {
+                $pub['name'] = (string) $publisher[0];
+                $place = $mods->xpath('mods:place/mods:placeTerm[@type="text"]');
+                if (isset($place[0])) {
+                    $pub['place'] = (string) $place[0];
+                }
             }
+        }
+        // If we have an authorized name, override the one extracted above:
+        if (isset($authMods[0]) && !empty((string) $authMods[0])) {
+            $parts = explode(',', isset($pub['name']) ? $pub['name'] : '');
+            $newParts = explode(',', (string) $authMods[0]);
+            foreach ($newParts as $i => $part) {
+                $parts[$i] = $part;
+            }
+            $pub['name'] = implode(',', $parts);
         }
         return empty($pub) ? false : $pub;
     }
