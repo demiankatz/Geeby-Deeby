@@ -183,6 +183,7 @@ class DatabaseIngester
     protected function ingestSeries($details, $seriesObj)
     {
         $pos = preg_replace('/[^0-9]/', '', current($details['series']));
+        Console::writeLine("Working on no. $pos...");
         $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents']);
         if (!$childDetails) {
             return false;
