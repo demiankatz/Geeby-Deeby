@@ -813,10 +813,10 @@ class DatabaseIngester
                 $data['authorIds'] = [];
             }
             if (count(array_diff($data['authorIds'], array_keys($currentCredits))) != 0) {
-                $confidence -= 25;
+                $confidence -= 20;
             }
             if (count(array_intersect($data['authorIds'], array_keys($currentCredits))) != count($data['authorIds'])) {
-                $confidence -= 25;
+                $confidence -= 20;
             }
             if (!$this->fuzzyCompare($data['title'], $current->$titleField)) {
                 $confidence -= $this->hasMatchingAltTitle($data['title'], $current->Item_ID) ? 10 : 25;
