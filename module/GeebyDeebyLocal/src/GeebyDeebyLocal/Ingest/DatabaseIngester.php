@@ -1087,7 +1087,7 @@ class DatabaseIngester
             Console::writeLine("Found candidate(s) for match with {$data['title']} $authors\n");
             $options = '0';
             foreach ($candidates as $i => $current) {
-                if ($i > 9) {
+                if ($i > 25) {
                     Console::writeLine('...and more options than can be shown!');
                     break;
                 }
