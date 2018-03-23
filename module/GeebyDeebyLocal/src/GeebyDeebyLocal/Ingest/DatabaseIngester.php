@@ -1424,6 +1424,13 @@ class DatabaseIngester
                         Console::writeLine('WARNING: Database contains person ' . $current . ' but incoming data uses real name ' . $r['Real_Person_ID']);
                         break;
                     }
+                    foreach ($pseudo->getPseudonyms($r['Real_Person_ID']) as $realPseudo) {
+                        if (in_array($realPseudo['Pseudo_Person_ID'], $incomingList)) {
+                            $matched = true;
+                            Console::writeLine('WARNING: Database contains person ' . $current . ' but incoming data uses alternate pseudonym ' . $realPseudo['Pseudo_Person_ID']);
+                            break 2;
+                        }
+                    }
                 }
                 if (!$matched) {
                     $stillUnexpected[] = $current;
