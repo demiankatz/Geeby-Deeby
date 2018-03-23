@@ -1,17 +1,37 @@
 <? $this->layout()->title = 'Edit Tag' ?>
-<? $this->scriptManager()->add(['base_editor', 'edit_tags']) ?>
+<? $this->scriptManager()->add(['base_editor', 'autocomplete', 'edit_tags']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-tag/index.phtml')?>
 </div>
 <hr />
-<div class="row">
-  <div class="col-md-12">
-    <b>URIs (for linked data):</b><br />
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#uris-tab" data-toggle="tab">URIs (for linked data)</a></li>
+  <li><a href="#relationships-tab" data-toggle="tab">Relationships</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="uris-tab" class="tab-pane active">
     <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
     <input type="text" id="uri" />
     <button onclick="Tag.link('URI');">Add URI</button>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-tag/uri-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="relationships-tab" class="tab-pane">
+    <div>
+      <select id="relationship_type">
+        <? foreach ($this->relationships as $value => $label): ?>
+          <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
+        <? endforeach; ?>
+      </select>
+      <input id="target_tag" />
+      <button onclick="Tag.link('Relationship');">Add Relationship</button>
+    </div>
+    <hr/>
+    <div id="relationship_list">
+      <?=$this->render('geeby-deeby/edit-tag/relationship-list.phtml')?>
     </div>
   </div>
 </div>

@@ -1,10 +1,10 @@
 <?php
 /**
- * Edit tag attribute controller
+ * Edit tag relationship controller
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -36,7 +36,7 @@ namespace GeebyDeeby\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditTagAttributeController extends AbstractBase
+class EditTagRelationshipController extends AbstractBase
 {
     /**
      * Display a list of types
@@ -45,16 +45,10 @@ class EditTagAttributeController extends AbstractBase
      */
     public function listAction()
     {
-        $view = $this->getGenericList(
-            'tagsattribute', 'attributes',
-            'geeby-deeby/edit-tag-attribute/render-tag-attributes'
+        return $this->getGenericList(
+            'tagsrelationship', 'relationships',
+            'geeby-deeby/edit-tag-relationship/render-tag-relationships'
         );
-        // If this is not an AJAX request, we also want to display cities:
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->relationships
-                = $this->forwardTo(__NAMESPACE__ . '\EditTagRelationship', 'list')->relationships;
-        }
-        return $view;
     }
 
     /**
@@ -65,14 +59,15 @@ class EditTagAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = array(
-            'attribute_name' => 'Tags_Attribute_Name',
-            'rdf_property' => 'Tags_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority'
-            
+            'relationship_name' => 'Tags_Relationship_Name',
+            'rdf_property' => 'Tags_Relationship_RDF_Property',
+            'priority' => 'Display_Priority',
+            'inverse_relationship_name' => 'Tags_Inverse_Relationship_Name',
+            'inverse_rdf_property' => 'Tags_Inverse_Relationship_RDF_Property',
+            'inverse_priority' => 'Inverse_Display_Priority',            
         );
         $response = $this
-            ->handleGenericItem('tagsattribute', $assignMap, 'attribute');
+            ->handleGenericItem('tagsrelationship', $assignMap, 'relationship');
 
         return $response;
     }

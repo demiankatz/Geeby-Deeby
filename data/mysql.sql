@@ -1117,6 +1117,7 @@ CREATE TABLE `Tags_Attributes` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
 --
 -- Table structure for table `Tags_Attributes_Values`
 --
@@ -1131,6 +1132,45 @@ CREATE TABLE `Tags_Attributes_Values` (
   PRIMARY KEY (`Tag_ID`, `Tags_Attribute_ID`),
   FOREIGN KEY (`Tag_ID`) REFERENCES `Tags` (`Tag_ID`),
   FOREIGN KEY (`Tags_Attribute_ID`) REFERENCES `Tags_Attributes` (`Tags_Attribute_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `Tags_Relationships`
+--
+
+DROP TABLE IF EXISTS `Tags_Relationships`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Tags_Relationships` (
+  `Tags_Relationship_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `Tags_Relationship_Name` varchar(255) NOT NULL,
+  `Tags_Relationship_RDF_Property` varchar(255),
+  `Display_Priority` int(11) NOT NULL DEFAULT '0',
+  `Tags_Inverse_Relationship_Name` varchar(255),
+  `Tags_Inverse_Relationship_RDF_Property` varchar(255),
+  `Inverse_Display_Priority` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Tags_Relationship_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `Tags_Relationships_Values`
+--
+
+DROP TABLE IF EXISTS `Tags_Relationships_Values`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Tags_Relationships_Values` (
+  `Subject_Tag_ID` int(11) NOT NULL DEFAULT '0',
+  `Tags_Relationship_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `Object_Tag_ID` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Subject_Tag_ID`, `Tags_Relationship_ID`, `Object_Tag_ID`),
+  FOREIGN KEY (`Subject_Tag_ID`) REFERENCES `Tags` (`Tag_ID`),
+  FOREIGN KEY (`Tags_Relationship_ID`) REFERENCES `Tags_Relationships` (`Tags_Relationship_ID`),
+  FOREIGN KEY (`Object_Tag_ID`) REFERENCES `Tags` (`Tag_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

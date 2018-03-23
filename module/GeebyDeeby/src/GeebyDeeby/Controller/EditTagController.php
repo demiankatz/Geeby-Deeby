@@ -108,7 +108,7 @@ class EditTagController extends AbstractBase
             $this->saveAttributes($tagId, $attribs);
         }
 
-        // Add attribute details if we have an Tag_ID.
+        // Add attribute details if we have a Tag_ID.
         if ($tagId) {
             $view->attributes = $this->getDbTable('tagsattribute')->getList();
             $attributeValues = [];
@@ -127,6 +127,9 @@ class EditTagController extends AbstractBase
                 ->getURIsForTag($view->tagObj->Tag_ID);
             $view->setTemplate('geeby-deeby/edit-tag/edit-full');
             $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->relationships = $this->getDbTable('tagsrelationship')->getOptionList();
+            $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
+                ->getRelationshipsForTag($tagId);
         }
         return $view;
     }
@@ -140,6 +143,34 @@ class EditTagController extends AbstractBase
     {
         return $this->getGenericList(
             'tagType', 'tagTypes', 'geeby-deeby/edit-tag/render-types'
+        );
+    }
+
+    /**
+     * Deal with arbitrary relationships.
+     *
+     * @return mixed
+     */
+    public function relationshipAction()
+    {
+        // The relationship ID may have a leading 'i' indicating an inverse
+        // relationship; if we find this, we should handle it here to keep
+        // the standard behavior consistent.
+        $rid = $this->params()->fromRoute('relationship_id');
+        if (substr($rid, 0, 1) === 'i') {
+            $linkFrom = 'Object_Tag_ID';
+            $linkTo = 'Subject_Tag_ID';
+            $rid = substr($rid, 1);
+        } else {
+            $linkFrom = 'Subject_Tag_ID';
+            $linkTo = 'Object_Tag_ID';
+        }
+        $extras = ['Tags_Relationship_ID' => $rid];
+        return $this->handleGenericLink(
+            'tagsrelationshipsvalues', $linkFrom, $linkTo,
+            'relationshipsValues', 'getRelationshipsForTag',
+            'geeby-deeby/edit-tag/relationship-list.phtml',
+            $extras
         );
     }
 

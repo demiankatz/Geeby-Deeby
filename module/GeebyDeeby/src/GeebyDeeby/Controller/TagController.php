@@ -72,6 +72,16 @@ class TagController extends AbstractBase
                 );
             }
         }
+        foreach ($view->relationshipsValues as $current) {
+            if (!empty($current['predicate'])) {
+                foreach ($current['values'] as $value) {
+                    $tag->add(
+                        $current['predicate'],
+                        $this->getServerUrl('tag', ['id' => $value['Tag_ID']])
+                    );
+                }
+            }
+        }
         return tag;
     }
 
@@ -127,6 +137,8 @@ class TagController extends AbstractBase
         $view->items = $this->getDbTable('itemstags')->getItemsForTag($id);
         $view->tagAttributes = $this->getDbTable('tagsattributesvalues')
             ->getAttributesForTag($id);
+        $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
+            ->getRelationshipsForTag($id);
         return $view;
     }
 

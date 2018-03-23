@@ -1,6 +1,16 @@
-<? $this->layout()->title = 'Edit Tag Attributes' ?>
+<? $this->layout()->title = 'Edit Tag Attributes and Relationships' ?>
 <? $this->scriptManager()->add(['base_editor', 'edit_attributes']) ?>
-<p><b>Tag Attributes:</b></p>
-<button id="add_tag_attribute" type="button" onclick="TagsAttribute.edit('NEW');">Add Tag Attribute</button>
-<br /><br />
-<div id="tags_attribute_list"><?=$this->render('geeby-deeby/edit-tag-attribute/render-tag-attributes.phtml')?></div>
+<div class="row">
+  <div class="col-md-3">
+    <p><b>Tag Attributes:</b></p>
+    <button id="add_tag_attribute" type="button" onclick="TagsAttribute.edit('NEW');">Add Tag Attribute</button>
+    <br /><br />
+    <div id="tags_attribute_list"><?=$this->render('geeby-deeby/edit-tag-attribute/render-tag-attributes.phtml')?></div>
+  </div>
+  <div class="col-md-3">
+    <p><b>Tag Relationships:</b></p>
+    <button id="add_tag_relationship" type="button" onclick="TagsRelationship.edit('NEW');">Add Tag Relationship</button>
+    <br /><br />
+    <div id="tags_relationship_list"><?=$this->render('geeby-deeby/edit-tag-relationship/render-tag-relationships.phtml')?></div>
+  </div>
+</div>
