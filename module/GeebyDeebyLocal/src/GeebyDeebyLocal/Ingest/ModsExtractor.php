@@ -125,8 +125,8 @@ class ModsExtractor
                 }
             }
         }
-        // If we have an authorized name, override the one extracted above:
-        if (isset($authMods[0]) && strlen((string) $authMods[0]) > 0) {
+        // If we have an authorized name with a date in it, override the one extracted above:
+        if (isset($authMods[0]) && preg_match('/\(\d{4}/', (string) $authMods[0])) {
             $parts = explode(',', isset($pub['name']) ? $pub['name'] : '');
             $newParts = explode(',', (string) $authMods[0]);
             foreach ($newParts as $i => $part) {
