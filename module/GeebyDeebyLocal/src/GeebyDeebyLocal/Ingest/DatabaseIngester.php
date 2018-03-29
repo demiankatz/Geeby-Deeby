@@ -418,7 +418,7 @@ class DatabaseIngester
      */
     protected function normalizePublisher($pub)
     {
-        return str_replace(', inc.', '', strtolower($pub));
+        return str_replace([', inc.', '. '], ['', '.'], strtolower($pub));
     }
 
     /**
