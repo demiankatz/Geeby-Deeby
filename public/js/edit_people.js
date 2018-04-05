@@ -1,7 +1,3 @@
-/**
- * Note -- this is the script for editing the people list; edit_person.js is for the
- *         single person edit page.
- */
 var PersonEditor = function() {
     this.type = "Person";
     this.saveFields = {
