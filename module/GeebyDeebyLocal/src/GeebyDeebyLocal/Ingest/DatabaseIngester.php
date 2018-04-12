@@ -40,6 +40,7 @@ use Zend\Console\Console;
 class DatabaseIngester
 {
     // constant values drawn from dimenovels.org database:
+    const FULLTEXT_SOURCE_VU = 1;
     const FULLTEXT_SOURCE_NIU = 10;
     const MATERIALTYPE_WORK = 1;
     const MATERIALTYPE_ISSUE = 2;
@@ -417,7 +418,7 @@ class DatabaseIngester
      */
     protected function normalizePublisher($pub)
     {
-        return str_replace(', inc.', '', strtolower($pub));
+        return str_replace([', inc.', '. '], ['', '.'], strtolower($pub));
     }
 
     /**
@@ -547,6 +548,24 @@ class DatabaseIngester
     }
 
     /**
+     * Get the source ID for a URL.
+     *
+     * @param string $url URL to check
+     *
+     * @return int
+     */
+    protected function getSourceForUrl($url)
+    {
+        if (strstr($url, 'lib.niu.edu')) {
+            return self::FULLTEXT_SOURCE_NIU;
+        }
+        if (strstr($url, 'digital.library.villanova.edu')) {
+            return self::FULLTEXT_SOURCE_VU;
+        }
+        return null;
+    }
+
+    /**
      * Validate and store URLs for edition.
      *
      * @param array  $urls       Incoming URLs.
@@ -556,13 +575,6 @@ class DatabaseIngester
      */
     protected function processUrl($urls, $editionObj)
     {
-        // check for unexpected URLs (right now we assume everything is from NIU):
-        foreach ($urls as $current) {
-            if (!strstr($current, 'lib.niu.edu')) {
-                Console::writeLine('FATAL: Unexpected URL: ' . $current);
-                return false;
-            }
-        }
         $table = $this->getDbTable('editionsfulltext');
         $known = $table->getFullTextForEdition($editionObj->Edition_ID);
         $knownArr = [];
@@ -570,12 +582,17 @@ class DatabaseIngester
             $knownArr[] = $current->Full_Text_URL;
         }
         foreach (array_diff($urls, $knownArr) as $current) {
+            $source = $this->getSourceForUrl($current);
+            if (null === $source) {
+                Console::writeLine('FATAL: Unexpected URL: ' . $current);
+                return false;
+            }
             Console::writeLine("Adding URL: {$current}");
             $table->insert(
                 [
                     'Edition_ID' => $editionObj->Edition_ID,
                     'Full_Text_URL' => $current,
-                    'Full_Text_Source_ID' => self::FULLTEXT_SOURCE_NIU,
+                    'Full_Text_Source_ID' => $source,
                 ]
             );
         }

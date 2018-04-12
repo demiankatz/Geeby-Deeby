@@ -10,6 +10,25 @@
       <td><?=$this->render('geeby-deeby/edit-tag/type-select.phtml', array('tagTypes' => $tagTypes, 'selected' => isset($tag['Tag_Type_ID']) ? $tag['Tag_Type_ID'] : null))?></td>
     </tr>
   </table>
+  <? if (count($attributes) > 0): ?>
+    <div class="collapse" id="extraAttributes">
+      <? foreach ($attributes as $attribute): $attrId = $attribute['Tags_Attribute_ID']; ?>
+        <div class="form-group">
+          <label for="Tag_Attribute_<?=$attrId?>" class="col-sm-2 control-label"><?=$this->escapeHtml($attribute['Tags_Attribute_Name'])?>:</label>
+          <div class="col-sm-10">
+            <? if ($attribute['Allow_HTML'] != 1): ?>
+              <input class="form-control tag-attribute" type="text" id="Tag_Attribute_<?=$attrId?>" value="<?=isset($attributeValues[$attrId]) ? $this->escapeHtml($attributeValues[$attrId]) : ''?>" />
+            <? else: ?>
+              <textarea class="form-control tag-attribute" style="width:100%" rows="6" id="Tag_Attribute_<?=$attrId?>"><?=isset($attributeValues[$attrId]) ? $this->escapeHtml($attributeValues[$attrId]) : ''?></textarea>
+            <? endif; ?>
+          </div>
+        </div>
+      <? endforeach; ?>
+    </div>
+  <? endif; ?>
+  <? if (count($attributes) > 0): ?>
+    <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
+  <? endif; ?>
   <button id="save_tag" onclick="Tag.save();">Save</button>
   <div id="save_tag_status"></div>
 </div>

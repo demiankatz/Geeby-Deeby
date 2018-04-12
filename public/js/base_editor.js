@@ -307,7 +307,9 @@ BaseEditor.prototype.redrawLinks = function(type, subtype) {
     if (typeof subtype === 'undefined') {
         subtype = this.getSelectedSubtype(type);
     }
-    var targetSelector = '#' + type.toLowerCase() + subtype.toLowerCase() + "_list";
+    var targetSelector = typeof this.links[type].targetSelector === 'undefined'
+        ? '#' + type.toLowerCase() + subtype.toLowerCase() + "_list"
+        : this.links[type].targetSelector;
     var target = $(targetSelector);
     if (target.length > 0) {
         target.load(this.getLinkUri(type, subtype));
