@@ -391,8 +391,8 @@ class DatabaseIngester
     protected function normalizeStreet($street)
     {
         return str_replace(
-            [' st.', ' w.', '23rd', 'no. '],
-            [' street', ' west', '23d', ''],
+            [' st.', ' w.', '23rd', 'no. ', '&'],
+            [' street', ' west', '23d', '', 'and'],
             strtolower($street)
         );
     }
