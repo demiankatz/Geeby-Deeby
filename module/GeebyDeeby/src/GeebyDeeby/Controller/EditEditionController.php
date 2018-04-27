@@ -741,7 +741,7 @@ class EditEditionController extends AbstractBase
             }
             $row->Image_Path = $this->params()->fromPost('image');
             $row->IIIF_URI = $this->params()->fromPost('iiif');
-            if (empty($row->Image_Path) || empty($row->IIIF_URI)) {
+            if (empty($row->Image_Path) && empty($row->IIIF_URI)) {
                 return $this->jsonDie('Image path or IIIF URI must be set.');
             }
             $row->Thumb_Path = $this->params()->fromPost('thumb');
