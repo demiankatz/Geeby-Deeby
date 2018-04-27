@@ -740,12 +740,15 @@ class EditEditionController extends AbstractBase
                 $row->Note_ID = null;
             }
             $row->Image_Path = $this->params()->fromPost('image');
-            if (empty($row->Image_Path)) {
-                return $this->jsonDie('Image path must be set.');
+            $row->IIIF_URI = $this->params()->fromPost('iiif');
+            if (empty($row->Image_Path) && empty($row->IIIF_URI)) {
+                return $this->jsonDie('Image path or IIIF URI must be set.');
             }
             $row->Thumb_Path = $this->params()->fromPost('thumb');
             // Build thumb path if none was provided:
-            if (empty($row->Thumb_Path)) {
+            if (empty($row->Thumb_Path) && empty($row->IIIF_URI)
+                && !empty($row->Image_Path)
+            ) {
                 $parts = explode('.', $row->Image_Path);
                 $nextToLast = count($parts) - 2;
                 $parts[$nextToLast] .= 'thumb';

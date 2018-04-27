@@ -210,8 +210,9 @@ DROP TABLE IF EXISTS `Editions_Images`;
 CREATE TABLE `Editions_Images` (
   `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Edition_ID` int(11) NOT NULL DEFAULT '0',
-  `Image_Path` tinytext NOT NULL,
-  `Thumb_Path` tinytext NOT NULL,
+  `Image_Path` tinytext,
+  `Thumb_Path` tinytext,
+  `IIIF_URI` tinytext,
   `Position` int(11) DEFAULT NULL,
   `Note_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Sequence_ID`),
