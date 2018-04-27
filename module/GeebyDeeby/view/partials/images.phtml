@@ -1,17 +1,19 @@
 <? if (count($images) > 0): ?>
     <? foreach ($images as $image): ?>
       <?
+        $path = $image['Image_Path'];
         if (!isset($linkType) || $linkType == 'image') {
-          $openAnchor = '<a target="_new" href="' . $this->escapeHtml($image['Image_Path']) . '">';
+          $openAnchor = '<a target="_new" href="' . $this->escapeHtml($path) . '">';
         } else if ($linkType == 'item') {
           $openAnchor = '<a href="' . $this->url('item', array('id' => $image['Item_ID'])) . '">';
         } else {
           // unsupported option:
           $openAnchor = '<a>';
         }
+        $thumbnail = $image['Thumb_Path'];
       ?>
       <div class="col-md-2" style="text-align:center">
-        <?=$openAnchor?><img class="img-polaroid" src="<?=$this->escapeHtml($image['Thumb_Path'])?>" style="display:block;margin:auto"/></a>
+        <?=$openAnchor?><img class="img-polaroid" src="<?=$this->escapeHtml($thumbnail)?>" style="display:block;margin:auto"/></a>
         <?
           $note = '';
           if (isset($editions) && count($editions) > 1) {

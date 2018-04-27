@@ -85,6 +85,7 @@ var EditionEditor = function() {
             'saveFields': {
                 'image': { 'id': '#image_path' },
                 'thumb': { 'id': '#thumb_path' },
+                'iiif': { 'id': '#iiif_uri' },
                 'note_id': { 'id': '#image_note', 'nonNumericDefault': '' },
                 'pos': { 'id': '#image_position', 'nonNumericDefault': 0 }
             }

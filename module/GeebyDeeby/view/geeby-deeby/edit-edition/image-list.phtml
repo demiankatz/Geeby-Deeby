@@ -14,13 +14,24 @@
           </a>
         </td>
         <td>
-          <a target="_imagePopup" href="<?=$this->escapeHtml($current['Image_Path'])?>">
-            <img src="<?=$this->escapeHtml($current['Thumb_Path'])?>" />
+          <?
+            $thumb = $current['Thumb_Path'];
+            $image = $current['Image_Path'];
+          ?>
+          <a target="_imagePopup" href="<?=$this->escapeHtml($image)?>">
+            <img src="<?=$this->escapeHtml($thumb)?>" />
           </a>
         </td>
         <td>
-          <b>Image Path:</b> <?=$this->escapeHtml($current['Image_Path'])?><br />
-          <b>Thumb Path:</b> <?=$this->escapeHtml($current['Thumb_Path'])?><br />
+          <? if (!empty($current['Image_Path'])): ?>
+            <b>Image Path:</b> <?=$this->escapeHtml($current['Image_Path'])?><br />
+          <? endif; ?>
+          <? if (!empty($current['Thumb_Path'])): ?>
+            <b>Thumb Path:</b> <?=$this->escapeHtml($current['Thumb_Path'])?><br />
+          <? endif; ?>
+          <? if (!empty($current['IIIF_URI'])): ?>
+            <b>IIIF URI:</b> <?=$this->escapeHtml($current['IIIF_URI'])?><br />
+          <? endif; ?>
           <? if (!empty($current['Note'])): ?>
             <b>Note:</b> <?=$this->escapeHtml($current['Note'])?>
           <? endif; ?>
