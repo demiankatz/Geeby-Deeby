@@ -133,7 +133,7 @@ class Series extends Gateway
             if ($includePosition && $includeParentPosition) {
                 $select->join(
                     ['parent_eds' => 'Editions'], 'parent_eds.Edition_ID = eds.Parent_Edition_ID',
-                    ['Parent_Volume' => 'Volume', 'Parent_Position' => 'Position', 'Parent_Replacement_Number' => 'Replacement_Number'],
+                    ['Parent_Volume' => 'Volume', 'Parent_Position' => 'Position', 'Parent_Replacement_Number' => 'Replacement_Number', 'Parent_Item_ID' => 'Item_ID'],
                     Select::JOIN_LEFT
                 );
             }

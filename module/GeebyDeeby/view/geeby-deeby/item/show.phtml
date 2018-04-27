@@ -31,19 +31,24 @@
                 <?=$this->escapeHtml($this->fixtitle(empty($current['Series_AltName']) ? $current['Series_Name'] : $current['Series_AltName']))?>
               </a>
               <? if ($current['Parent_Volume'] > 0 || $current['Parent_Position'] > 0 || $current['Parent_Replacement_Number'] > 0): ?>
-                <? if ($current['Parent_Volume'] > 0): ?>
-                  v. <?=$this->escapeHtml($current['Parent_Volume'])?>
-                <? endif; ?>
-                <? if ($current['Parent_Position'] > 0): ?>
-                  no. <?=$this->escapeHtml($current['Parent_Position'])?>
-                <? endif; ?>
-                <? if ($current['Parent_Replacement_Number'] > 0): ?>
-                  (replacement title no. <?=$this->escapeHtml($current['Parent_Replacement_Number'])?>)
-                <? endif; ?>
+                &mdash; <a href="<?=$this->url('item', array('id' => $current['Parent_Item_ID']))?>">
+                  <? if ($current['Parent_Volume'] > 0): ?>
+                    v. <?=$this->escapeHtml($current['Parent_Volume'])?>
+                  <? endif; ?>
+                  <? if ($current['Parent_Position'] > 0): ?>
+                    no. <?=$this->escapeHtml($current['Parent_Position'])?>
+                  <? endif; ?>
+                  <? if ($current['Parent_Replacement_Number'] > 0): ?>
+                    (replacement title no. <?=$this->escapeHtml($current['Parent_Replacement_Number'])?>)
+                  <? endif; ?>
+                </a>
                 <? if (!empty($current['Extent_In_Parent'])): ?>
-                  (<?=$this->escapeHtml($current['Extent_In_Parent'])?>)
+                  &mdash; <?=$this->escapeHtml($current['Extent_In_Parent'])?>
                 <? endif; ?>
               <? else: ?>
+                <? if ($current['Volume'] > 0 || $current['Position'] > 0 || $current['Replacement_Number'] > 0): ?>
+                  &mdash;
+                <? endif; ?>
                 <? if ($current['Volume'] > 0): ?>
                   v. <?=$this->escapeHtml($current['Volume'])?>
                 <? endif; ?>
