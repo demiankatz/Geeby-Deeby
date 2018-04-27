@@ -16,7 +16,13 @@
         <td>
           <?
             $thumb = $current['Thumb_Path'];
+            if (empty($thumb)) {
+              $thumb = $current['IIIF_URI'] . '/full/,120/0/default.jpg';
+            }
             $image = $current['Image_Path'];
+            if (empty($image)) {
+              $image = $current['IIIF_URI'] . '/full/full/0/default.jpg';
+            }
           ?>
           <a target="_imagePopup" href="<?=$this->escapeHtml($image)?>">
             <img src="<?=$this->escapeHtml($thumb)?>" />
