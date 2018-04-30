@@ -166,7 +166,7 @@ class EditionsImages extends Gateway
             );
             $select->group(
                 array(
-                    'Thumb_Path', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Editions_Images.Position',
+                    'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Editions_Images.Position',
                     'i.Item_ID', 'Note'
                 )
             );
