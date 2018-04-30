@@ -141,7 +141,7 @@ class EditionsImages extends Gateway
     public function getImagesForSeries($seriesID)
     {
         $callback = function ($select) use ($seriesID) {
-            $select->columns(array('Thumb_Path'));
+            $select->columns(array('Thumb_Path', 'IIIF_URI'));
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Images.Edition_ID = eds.Edition_ID'
