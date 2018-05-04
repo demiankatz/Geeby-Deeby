@@ -27,6 +27,7 @@
  */
 namespace GeebyDeebyLocal\Controller;
 use GeebyDeebyLocal\Ingest\DatabaseIngester;
+use GeebyDeebyLocal\Ingest\ImageIngester;
 use GeebyDeebyLocal\Ingest\IssueMaker;
 use GeebyDeebyLocal\Ingest\ModsExtractor;
 use Zend\Console\Console, Zend\Console\Prompt;
@@ -208,6 +209,16 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
+     * Load IIIF images
+     *
+     * @return mixed
+     */
+    public function loadiiifAction()
+    {
+        $this->getImageIngester()->ingestImages();
+    }
+
+    /**
      * Create Issue containers around Works in a series.
      *
      * @return mixed
@@ -339,6 +350,17 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $editionObj = $this->getDbTable('edition')->getByPrimaryKey($edition);
 
         return $this->getIngester()->ingest($details, 'existing', $editionObj);
+    }
+
+    /**
+     * Construct the image ingestion tool.
+     *
+     * @return DatabaseIngester
+     */
+    protected function getImageIngester()
+    {
+        $tables = $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager');
+        return new ImageIngester($tables, $this->solr);
     }
 
     /**

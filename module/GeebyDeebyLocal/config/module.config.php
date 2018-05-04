@@ -71,6 +71,16 @@ return array(
                         )
                     )
                 ),
+                'ingest-images' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'load iiif',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'loadiiif',
+                        )
+                    )
+                ),
                 'ingest-makeissues' => array(
                     'type' => 'simple',
                     'options' => array(

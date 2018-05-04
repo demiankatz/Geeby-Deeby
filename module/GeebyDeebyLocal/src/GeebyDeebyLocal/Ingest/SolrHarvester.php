@@ -83,6 +83,24 @@ class SolrHarvester
     }
 
     /**
+     * Given the PID of an item, get the PID of its first page (false if not
+     * found).
+     *
+     * @param string $pid PID
+     *
+     * @return string|bool
+     */
+    public function getFirstPagePID($pid)
+    {
+        $query = 'RELS_EXT_isPageOf_uri_ms:"info:fedora/' . $pid
+            . '" AND RELS_EXT_isPageNumber_literal_ms:"1"';
+        $field = $this->settings->solrIdField;
+        $solr = $this->querySolr($query, $field);
+        return isset($solr->response->docs[0]->$field)
+            ? $solr->response->docs[0]->$field : false;
+    }
+
+    /**
      * Given an edition, retrieve a PID. Return false if no match found.
      *
      * @param string $edition Edition

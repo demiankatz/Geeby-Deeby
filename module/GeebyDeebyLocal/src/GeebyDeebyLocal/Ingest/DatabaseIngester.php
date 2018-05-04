@@ -37,24 +37,8 @@ use Zend\Console\Console;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class DatabaseIngester
+class DatabaseIngester extends BaseIngester
 {
-    // constant values drawn from dimenovels.org database:
-    const FULLTEXT_SOURCE_VU = 1;
-    const FULLTEXT_SOURCE_NIU = 10;
-    const MATERIALTYPE_WORK = 1;
-    const MATERIALTYPE_ISSUE = 2;
-    const PREDICATE_OWL_SAMEAS = 2;
-    const ROLE_AUTHOR = 1;
-    const TAGTYPE_LC = 1;
-
-    /**
-     * Table plugin manager
-     *
-     * @var object
-     */
-    protected $tables;
-
     /**
      * Articles helper
      *
@@ -69,7 +53,7 @@ class DatabaseIngester
      */
     public function __construct($tables, $articles)
     {
-        $this->tables = $tables;
+        parent::__construct($tables);
         $this->articles = $articles;
     }
 
@@ -214,18 +198,6 @@ class DatabaseIngester
         }
         // Standard case: single-part work:
         return $this->updateDatabaseForFlatEdition($seriesObj, $pos, $details);
-    }
-
-    /**
-     * Get a database table gateway.
-     *
-     * @param string $table Name of table service to pull
-     *
-     * @return \Zend\Db\TableGateway\AbstractTableGateway
-     */
-    protected function getDbTable($table)
-    {
-        return $this->tables->get($table);
     }
 
     /**
