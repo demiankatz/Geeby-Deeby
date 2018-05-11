@@ -93,7 +93,7 @@ class ImageIngester extends BaseIngester
         if (!$pid) {
             throw new \Exception("Could not find first page PID for $uri");
         }
-        return "http://dimenovels.lib.niu.edu/iiif/" . urlencode($pid);
+        return "http://dimenovels.lib.niu.edu/iiif/2/" . urlencode($pid);
     }
 
     /**
