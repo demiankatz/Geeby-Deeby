@@ -69,11 +69,18 @@ class ImageIngester extends BaseIngester
         foreach ($this->getMissingImageLinks() as $link) {
             if (!in_array($link->Edition_ID, $existingImages)) {
                 Console::writeLine("Adding image to edition " . $link->Edition_ID);
+                try {
+                    $iiifUrl = $this->getIIIFURI($link->Full_Text_URL);
+                } catch (\Exception $e) {
+                    // Skip bad images....
+                    Console::writeLine($e->getMessage());
+                    continue;
+                }
                 $table->insert(
                     [
                         'Edition_ID' => $link->Edition_ID,
                         'Image_Path' => $link->Full_Text_URL,
-                        'IIIF_URI' => $this->getIIIFURI($link->Full_Text_URL),
+                        'IIIF_URI' => $iiifUrl,
                     ]
                 );
             }
