@@ -1466,8 +1466,12 @@ class DatabaseIngester extends BaseIngester
      */
     protected function synchronizeSeriesEntries($seriesObj, $pos, $contents)
     {
-        $lookup = $this->getDbTable('edition')
-            ->select(['Series_ID' => $seriesObj->Series_ID, 'Position' => $pos]);
+        $params = [
+            'Series_ID' => $seriesObj->Series_ID,
+            'Position' => $pos,
+            'Replacement_Number' => 0,
+        ];
+        $lookup = $this->getDbTable('edition')->select($params);
         $children = [];
         foreach ($lookup as $child) {
             $item = $this->getItemForEdition($child);
