@@ -1466,12 +1466,43 @@ class DatabaseIngester extends BaseIngester
      */
     protected function synchronizeSeriesEntries($seriesObj, $pos, $contents)
     {
-        $params = [
-            'Series_ID' => $seriesObj->Series_ID,
-            'Position' => $pos,
-            'Replacement_Number' => 0,
-        ];
+        $params = ['Series_ID' => $seriesObj->Series_ID, 'Position' => $pos];
         $lookup = $this->getDbTable('edition')->select($params);
+        $sorted = [];
+        foreach ($lookup as $child) {
+            $sorted[$child->Replacement_Number][] = $child;
+        }
+        // Special case -- no matches found; test with an empty array.
+        if (empty($sorted)) {
+            return $this->synchronizeSeriesEntriesHelper([], $contents);
+        }
+
+        // When replacement numbers are involved, let's try each one separately
+        // until we find one that works....
+        foreach ($sorted as $replacementNo => $children) {
+            if (count($sorted) > 1) {
+                Console::writeLine("Trying replacement no. $replacementNo");
+            }
+            $success = $this->synchronizeSeriesEntriesHelper($children, $contents);
+            if ($success) {
+                return $success;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Helper method for synchronizeSeriesEntries(); allows us to evaluate titles
+     * with replacement numbers one group at a time.
+     *
+     * @param array $lookup   An array of editions to check
+     * @param array $contents The 'contents' section of the details from
+     * ModsExtractor or equivalent
+     *
+     * @return array
+     */
+    protected function synchronizeSeriesEntriesHelper($lookup, $contents)
+    {
         $children = [];
         foreach ($lookup as $child) {
             $item = $this->getItemForEdition($child);
