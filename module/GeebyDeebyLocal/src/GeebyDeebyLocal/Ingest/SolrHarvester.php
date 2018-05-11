@@ -93,7 +93,7 @@ class SolrHarvester
     public function getFirstPagePID($pid)
     {
         $query = 'RELS_EXT_isPageOf_uri_ms:"info:fedora/' . $pid
-            . '" AND RELS_EXT_isPageNumber_literal_ms:"1"';
+            . '" AND RELS_EXT_isSequenceNumber_literal_ms:"1"';
         $field = $this->settings->solrIdField;
         $solr = $this->querySolr($query, $field);
         return isset($solr->response->docs[0]->$field)
