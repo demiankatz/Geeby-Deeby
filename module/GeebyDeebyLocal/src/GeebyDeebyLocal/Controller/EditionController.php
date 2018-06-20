@@ -71,6 +71,22 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             if (!empty($itemTitle)) {
                 $edition->set('rda:titleProper', $itemTitle);
             }
+            // Special case: if it's a creative work not contained in an issue,
+            // build a "virtual" issue to normalize the structure for easier
+            // SPARQL querying.
+            if ($predicate === 'dime:IsRealizationOfCreativeWork'
+                && !$view->parent
+            ) {
+                $id = $view->edition['Edition_ID'];
+                $virtualIssueEditionUri = $this->getServerUrl('edition', ['id' => $id])
+                    . '#issue';
+                $virtualIssueEdition = $graph->resource($virtualIssueEditionUri, $class);
+                $virtualIssueItemUri = $graph->resource($itemUri . '#issue');
+                $virtualIssueEdition->set('dime:IsEditionOf', $virtualIssueItemUri);
+                $edition->add('rda:containedIn', $virtualIssueEdition);
+                $virtualIssueEdition->add('rda:containerOf', $edition);
+                $virtualIssueEdition->set('rdf:label', $articleHelper->formatTrailingArticles($view->edition['Edition_Name']));
+            }
         }
         if (isset($view->series)) {
             $seriesUri = $this->getServerUrl('series', ['id' => $view->series['Series_ID']]);
