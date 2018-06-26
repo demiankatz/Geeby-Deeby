@@ -313,8 +313,11 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
+        $config = $this->getServiceLocator()->get('config');
+        $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
+            ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
         $view->images = $this->getDbTable('editionsimages')
-            ->getImagesForSeries($view->series['Series_ID']);
+            ->getImagesForSeries($view->series['Series_ID'], $groupByMaterial);
         return $view;
     }
 
