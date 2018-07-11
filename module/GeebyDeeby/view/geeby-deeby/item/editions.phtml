@@ -13,6 +13,7 @@
     </div>
     <h2>Item-Level Details</h2>
     <table class="item">
+      <? ob_start(); ?>
       <? $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
         <tr>
           <th>Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
@@ -185,6 +186,10 @@
           </td>
         </tr>
       <? endif; ?>
+
+      <? $table_contents = ob_get_contents(); ?>
+      <? ob_end_clean(); ?>
+      <?=strlen(trim($table_contents)) > 0 ? $table_contents : "No information available." ?>
     </table>
   </div>
 </div>
