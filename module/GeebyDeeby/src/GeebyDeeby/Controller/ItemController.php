@@ -435,7 +435,8 @@ class ItemController extends AbstractBase
     public function fulltextAction()
     {
         $fuzzy = $this->params()->fromQuery('fuzzy', false);
-        $source = $this->params()->fromQuery('source');
+        $rawSource = $this->params()->fromQuery('source');
+        $source = empty($rawSource) ? null : $rawSource;
         $view = $this->createViewModel(compact('fuzzy', 'source'));
         $view->sources = $this->getDbTable('fulltextsource')->getList();
         $view->fulltext = $this->getDbTable('editionsfulltext')
