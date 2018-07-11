@@ -1,0 +1,22 @@
+<? if (empty($this->relationshipsValues)): ?>
+  <p>No relationships defined.</p>
+<? else: ?>
+    <? foreach ($this->relationshipsValues as $current): ?>
+      <h3><?=$this->escapeHtml($current['label'])?>:</h3>
+      <table class="list_item">
+        <? foreach ($current['values'] as $value): ?>
+          <tr>
+            <td>
+              <a href="<?=$this->url('edit/tag', ['id' => $value['Tag_ID']])?>">
+                <?=$this->escapeHtml($value['Tag'])?>
+              </a>
+            </td><td>
+              <a class="ui-icon ui-icon-trash" href="#" onclick="Tag.unlink('Relationship', <?=$value['Tag_ID']?>, '/<?=$current['relationship_id']?>'); return false;">
+              </a>
+            </td>
+          </tr>
+        <? endforeach; ?>
+      </table>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>

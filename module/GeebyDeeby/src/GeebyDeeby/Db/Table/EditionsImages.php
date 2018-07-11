@@ -134,14 +134,15 @@ class EditionsImages extends Gateway
     /**
      * Get image information for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @var int  $seriesID        Series ID
+     * @var bool $groupByMaterial Should we group results by material type?
      *
      * @return mixed
      */
-    public function getImagesForSeries($seriesID)
+    public function getImagesForSeries($seriesID, $groupByMaterial = true)
     {
         $callback = function ($select) use ($seriesID) {
-            $select->columns(array('Thumb_Path'));
+            $select->columns(array('Thumb_Path', 'IIIF_URI'));
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Images.Edition_ID = eds.Edition_ID'
@@ -159,14 +160,13 @@ class EditionsImages extends Gateway
                 array('Note'), Select::JOIN_LEFT
             );
             $select->order(
-                array(
-                    'mt.Material_Type_Name', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
-                    'i.Item_Name', 'Editions_Images.Position'
-                )
+                $groupByMaterial
+                    ? array('mt.Material_Type_Name', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'i.Item_Name', 'Editions_Images.Position')
+                    : array('eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'i.Item_Name', 'Editions_Images.Position')
             );
             $select->group(
                 array(
-                    'Thumb_Path', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Editions_Images.Position',
+                    'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Editions_Images.Position',
                     'i.Item_ID', 'Note'
                 )
             );

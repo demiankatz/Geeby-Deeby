@@ -1,10 +1,10 @@
 <?php
 /**
- * Table Definition for User_Groups
+ * Edit tag relationship controller
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,42 +20,55 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Controller;
 
 /**
- * Table Definition for User_Groups
+ * Edit tag attribute controller
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class UserGroup extends Gateway
+class EditTagRelationshipController extends AbstractBase
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\UserGroup');
-    }
-
-    /**
-     * Get a list of groups.
+     * Display a list of types
      *
      * @return mixed
      */
-    public function getList()
+    public function listAction()
     {
-        $callback = function ($select) {
-            $select->order('Group_Name');
-        };
-        return $this->select($callback);
+        return $this->getGenericList(
+            'tagsrelationship', 'relationships',
+            'geeby-deeby/edit-tag-relationship/render-tag-relationships'
+        );
+    }
+
+    /**
+     * Operate on a single type
+     *
+     * @return mixed
+     */
+    public function indexAction()
+    {
+        $assignMap = array(
+            'relationship_name' => 'Tags_Relationship_Name',
+            'rdf_property' => 'Tags_Relationship_RDF_Property',
+            'priority' => 'Display_Priority',
+            'inverse_relationship_name' => 'Tags_Inverse_Relationship_Name',
+            'inverse_rdf_property' => 'Tags_Inverse_Relationship_RDF_Property',
+            'inverse_priority' => 'Inverse_Display_Priority',            
+        );
+        $response = $this
+            ->handleGenericItem('tagsrelationship', $assignMap, 'relationship');
+
+        return $response;
     }
 }

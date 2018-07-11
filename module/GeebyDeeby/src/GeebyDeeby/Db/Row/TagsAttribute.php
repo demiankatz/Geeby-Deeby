@@ -1,10 +1,10 @@
 <?php
 /**
- * Table Definition for User_Groups
+ * Row Definition for Tags_Attributes
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,42 +20,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Db\Row;
 
 /**
- * Table Definition for User_Groups
+ * Row Definition for Tags_Attributes
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class UserGroup extends Gateway
+class TagsAttribute extends RowGateway
 {
     /**
      * Constructor
+     *
+     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function __construct()
+    public function __construct($adapter)
     {
-        parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\UserGroup');
+        parent::__construct('Tags_Attribute_ID', 'Tags_Attributes', $adapter);
     }
 
     /**
-     * Get a list of groups.
+     * Validate the fields in the current object.  Return error message if problem
+     * found, boolean false if no errors were found.
      *
-     * @return mixed
+     * @return string|bool
      */
-    public function getList()
+    public function validate()
     {
-        $callback = function ($select) {
-            $select->order('Group_Name');
-        };
-        return $this->select($callback);
+        if (empty($this->Tags_Attribute_Name)) {
+            return 'Name cannot be blank.';
+        }
+        return false;
     }
 }

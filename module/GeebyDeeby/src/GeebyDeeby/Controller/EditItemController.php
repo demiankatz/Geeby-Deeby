@@ -101,20 +101,6 @@ class EditItemController extends AbstractBase
 
         // Process series ID linkage if necessary:
         if ($this->getRequest()->isPost()) {
-            if ($seriesID = $this->params()->fromPost('series_id', false)) {
-                $series = $this->getDbTable('series')->getByPrimaryKey($seriesID);
-                $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
-                    ->articleAwareAppend($series->Series_Name, ' edition');
-                $this->getDbTable('edition')->insert(
-                    array(
-                        'Edition_Name' => $edName,
-                        'Item_ID' => $view->affectedRow->Item_ID,
-                        'Series_ID' => $seriesID,
-                        'Edition_Length' => $this->params()->fromPost('len'),
-                        'Edition_Endings' => $this->params()->fromPost('endings')
-                    )
-                );
-            }
             if ($editionID = $this->params()->fromPost('edition_id', false)) {
                 $parentEdition = $this->getDbTable('edition')
                     ->getByPrimaryKey($editionID);
@@ -126,6 +112,19 @@ class EditItemController extends AbstractBase
                         'Edition_Length' => $this->params()->fromPost('len'),
                         'Edition_Endings' => $this->params()->fromPost('endings'),
                         'Parent_Edition_ID' => $editionID
+                    )
+                );
+            } elseif ($seriesID = $this->params()->fromPost('series_id', false)) {
+                $series = $this->getDbTable('series')->getByPrimaryKey($seriesID);
+                $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+                    ->articleAwareAppend($series->Series_Name, ' edition');
+                $this->getDbTable('edition')->insert(
+                    array(
+                        'Edition_Name' => $edName,
+                        'Item_ID' => $view->affectedRow->Item_ID,
+                        'Series_ID' => $seriesID,
+                        'Edition_Length' => $this->params()->fromPost('len'),
+                        'Edition_Endings' => $this->params()->fromPost('endings')
                     )
                 );
             }

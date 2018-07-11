@@ -89,6 +89,10 @@ return array(
                 'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
                 'seriestranslations' => 'GeebyDeeby\Db\Table\SeriesTranslations',
                 'tag' => 'GeebyDeeby\Db\Table\Tag',
+                'tagsattribute' => 'GeebyDeeby\Db\Table\TagsAttribute',
+                'tagsattributesvalues' => 'GeebyDeeby\Db\Table\TagsAttributesValues',
+                'tagsrelationship' => 'GeebyDeeby\Db\Table\TagsRelationship',
+                'tagsrelationshipsvalues' => 'GeebyDeeby\Db\Table\TagsRelationshipsValues',
                 'tagsuris' => 'GeebyDeeby\Db\Table\TagsURIs',
                 'tagtype' => 'GeebyDeeby\Db\Table\TagType',
                 'user' => 'GeebyDeeby\Db\Table\User',
@@ -772,6 +776,16 @@ return array(
                             ),
                         ),
                     ),
+                    'tag_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Tag/:id/Relationship/:relationship_id[/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditTag',
+                                'action'        => 'Relationship',
+                            ),
+                        ),
+                    ),
                     'tag_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -800,6 +814,92 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditTag',
                                 'action'        => 'typelist',
+                            ),
+                        ),
+                    ),
+                    'tagattribute' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/TagsAttribute[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditTagAttribute',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'tagattribute_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/TagsAttributeList',
+                            'defaults' => array(
+                                'controller'    => 'EditTagAttribute',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'tagrelationship' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/TagsRelationship[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditTagRelationship',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'tagrelationship_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/TagsRelationshipList',
+                            'defaults' => array(
+                                'controller'    => 'EditTagRelationship',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'user' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/User[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'user_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/UserList',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'usergroup' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/UserGroup[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'usergroup',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'usergroup_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/UserGroupList',
+                            'defaults' => array(
+                                'controller'    => 'EditUser',
+                                'action'        => 'usergrouplist',
                             ),
                         ),
                     ),
@@ -1182,6 +1282,9 @@ return array(
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\EditSeriesAttribute' => 'GeebyDeeby\Controller\EditSeriesAttributeController',
             'GeebyDeeby\Controller\EditTag' => 'GeebyDeeby\Controller\EditTagController',
+            'GeebyDeeby\Controller\EditTagAttribute' => 'GeebyDeeby\Controller\EditTagAttributeController',
+            'GeebyDeeby\Controller\EditTagRelationship' => 'GeebyDeeby\Controller\EditTagRelationshipController',
+            'GeebyDeeby\Controller\EditUser' => 'GeebyDeeby\Controller\EditUserController',
             'GeebyDeeby\Controller\FAQs' => 'GeebyDeeby\Controller\FAQsController',
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',

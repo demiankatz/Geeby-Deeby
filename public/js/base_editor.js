@@ -132,7 +132,7 @@ BaseEditor.prototype.redrawList = function() {
             this.redrawFunction();
         }
     } else {
-        console.log('Cannot find list element: ' + targetSelector);
+        //console.log('Cannot find list element: ' + targetSelector);
     }
 };
 
@@ -240,8 +240,22 @@ BaseEditor.prototype.getSaveCallback = function(type) {
 /**
  * Get the base URI for saving an object.
  */
-BaseEditor.prototype.getSaveUri = function() {
-    return this.getBaseUri() + '/' + encodeURIComponent($(this.getIdSelector()).val());
+BaseEditor.prototype.getSaveUri = function(id) {
+    if (typeof id === "undefined") {
+        id = $(this.getIdSelector()).val();
+    }
+    return this.getBaseUri() + '/' + encodeURIComponent(id);
+};
+
+/**
+ * Delete an object.
+ */
+BaseEditor.prototype.destroy = function(id) {
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+    var url = this.getSaveUri(id);
+    $.ajax({url: url, type: "delete", dataType: "json", success: this.getSaveCallback()});
 };
 
 /**
@@ -293,12 +307,14 @@ BaseEditor.prototype.redrawLinks = function(type, subtype) {
     if (typeof subtype === 'undefined') {
         subtype = this.getSelectedSubtype(type);
     }
-    var targetSelector = '#' + type.toLowerCase() + subtype.toLowerCase() + "_list";
+    var targetSelector = typeof this.links[type].targetSelector === 'undefined'
+        ? '#' + type.toLowerCase() + subtype.toLowerCase() + "_list"
+        : this.links[type].targetSelector;
     var target = $(targetSelector);
     if (target.length > 0) {
         target.load(this.getLinkUri(type, subtype));
     } else {
-        console.log('Cannot find list element: ' + targetSelector);
+        //console.log('Cannot find list element: ' + targetSelector);
     }
     // Reset the form inputs since we are redrawing...
     if (typeof this.links[type].saveFields !== 'undefined') {

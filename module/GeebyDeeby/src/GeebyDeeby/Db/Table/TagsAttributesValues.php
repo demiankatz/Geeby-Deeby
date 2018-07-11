@@ -1,10 +1,10 @@
 <?php
 /**
- * Table Definition for User_Groups
+ * Table Definition for Tags_Attributes_Values
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Db\Table;
 
 /**
- * Table Definition for User_Groups
+ * Table Definition for Tags_Attributes_Values
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -36,25 +36,33 @@ namespace GeebyDeeby\Db\Table;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class UserGroup extends Gateway
+class TagsAttributesValues extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\UserGroup');
+        parent::__construct('Tags_Attributes_Values');
     }
 
     /**
-     * Get a list of groups.
+     * Get a list of attributes for the specified tag.
+     *
+     * @var int $tagID Tag ID
      *
      * @return mixed
      */
-    public function getList()
+    public function getAttributesForTag($tagID)
     {
-        $callback = function ($select) {
-            $select->order('Group_Name');
+        $callback = function ($select) use ($tagID) {
+            $select->join(
+                array('ta' => 'Tags_Attributes'),
+                'ta.Tags_Attribute_ID = '
+                . 'Tags_Attributes_Values.Tags_Attribute_ID'
+            );
+            $select->order(array('ta.Display_Priority', 'ta.Tags_Attribute_Name'));
+            $select->where->equalTo('Tag_ID', $tagID);
         };
         return $this->select($callback);
     }

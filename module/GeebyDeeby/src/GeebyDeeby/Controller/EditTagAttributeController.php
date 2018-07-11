@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for User_Groups
+ * Edit tag attribute controller
  *
  * PHP version 5
  *
@@ -20,42 +20,60 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Controller;
 
 /**
- * Table Definition for User_Groups
+ * Edit tag attribute controller
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class UserGroup extends Gateway
+class EditTagAttributeController extends AbstractBase
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\UserGroup');
-    }
-
-    /**
-     * Get a list of groups.
+     * Display a list of types
      *
      * @return mixed
      */
-    public function getList()
+    public function listAction()
     {
-        $callback = function ($select) {
-            $select->order('Group_Name');
-        };
-        return $this->select($callback);
+        $view = $this->getGenericList(
+            'tagsattribute', 'attributes',
+            'geeby-deeby/edit-tag-attribute/render-tag-attributes'
+        );
+        // If this is not an AJAX request, we also want to display cities:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->relationships
+                = $this->forwardTo(__NAMESPACE__ . '\EditTagRelationship', 'list')->relationships;
+        }
+        return $view;
+    }
+
+    /**
+     * Operate on a single type
+     *
+     * @return mixed
+     */
+    public function indexAction()
+    {
+        $assignMap = array(
+            'attribute_name' => 'Tags_Attribute_Name',
+            'rdf_property' => 'Tags_Attribute_RDF_Property',
+            'allow_html' => 'Allow_HTML',
+            'priority' => 'Display_Priority'
+            
+        );
+        $response = $this
+            ->handleGenericItem('tagsattribute', $assignMap, 'attribute');
+
+        return $response;
     }
 }

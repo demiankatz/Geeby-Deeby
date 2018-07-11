@@ -1,10 +1,10 @@
 <?php
 /**
- * Table Definition for User_Groups
+ * Table Definition for Tags_Attributes
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Db\Table;
 
 /**
- * Table Definition for User_Groups
+ * Table Definition for Tags_Attributes
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -36,25 +36,29 @@ namespace GeebyDeeby\Db\Table;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class UserGroup extends Gateway
+class TagsAttribute extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('User_Groups', 'GeebyDeeby\Db\Row\UserGroup');
+        parent::__construct('Tags_Attributes', 'GeebyDeeby\Db\Row\TagsAttribute');
     }
 
     /**
-     * Get a list of groups.
+     * Get a list of roles.
      *
+     * @param mixed $where Where clause for list.
      * @return mixed
      */
-    public function getList()
+    public function getList($where = null)
     {
-        $callback = function ($select) {
-            $select->order('Group_Name');
+        $callback = function ($select) use ($where) {
+            if (null !== $where) {
+                $select->where($where);
+            }
+            $select->order('Tags_Attribute_Name');
         };
         return $this->select($callback);
     }

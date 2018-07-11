@@ -3,6 +3,33 @@
     $this->layout()->title = 'Subject/Tag - ' . $title;
     $displayedSomething = false;
 ?>
+<table class="item">
+  <? foreach ($tagAttributes as $current): ?>
+    <tr>
+      <th><?=$this->escapeHtml($current->Tags_Attribute_Name)?>:</th>
+      <td>
+        <? $displayedSomething = true; ?>
+        <? if ($current->Allow_HTML == 1): ?>
+          <?=$current->Tags_Attribute_Value?>
+        <? else: ?>
+          <?=$this->escapeHtml($current->Tags_Attribute_Value)?>
+        <? endif; ?>
+      </td>
+    </tr>
+  <? endforeach; ?>
+  <? foreach ($this->relationshipsValues as $current): ?>
+    <tr>
+      <th><?=$this->escapeHtml($current['label'])?>:</th>
+      <td>
+        <? foreach ($current['values'] as $value): ?>
+          <a href="<?=$this->url('tag', ['id' => $value['Tag_ID']])?>">
+            <?=$this->escapeHtml($value['Tag'])?>
+          </a><br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endforeach; ?>
+</table>
 <? if (count($items) > 0): $displayedSomething = true; ?>
   <? $series = false; foreach ($items as $credit): ?>
     <? if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
