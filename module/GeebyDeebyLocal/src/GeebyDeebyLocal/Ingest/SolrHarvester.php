@@ -128,7 +128,9 @@ class SolrHarvester
     {
         $query = $this->settings->solrSeriesField . ':"' . addcslashes($series, '"') . '"';
         $field = $this->settings->solrIdField;
-        $solr = $this->querySolr($query, $field);
+        $sort = isset($this->settings->solrSeriesSortField)
+            ? $this->settings->solrSeriesSortField : null;
+        $solr = $this->querySolr($query, $field, $sort);
         $retVal = [];
         foreach ($solr->response->docs as $doc) {
             $pid = isset($doc->$field) ? $doc->$field : false;
@@ -144,13 +146,17 @@ class SolrHarvester
      *
      * @param string $query Query to execute
      * @param string $fl    Field list to retrieve
+     * @param string $sort  Sort option
      *
      * @return object
      */
-    protected function querySolr($query, $fl)
+    protected function querySolr($query, $fl, $sort = null)
     {
         $url = (string)$this->settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
             . '&rows=10000&fl=' . urlencode($fl);
+        if ($sort) {
+            $url .= '&sort=' . urlencode($sort);
+        }
         $cache = $this->cache ? '/tmp/gbdb_' . md5("$query-$fl") : false;
         if (!$cache || !file_exists($cache)) {
             Console::writeLine("Querying {$this->settings->solrUrl} for $query...");
