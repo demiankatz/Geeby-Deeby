@@ -98,13 +98,16 @@ class EditionsFullText extends Gateway
     /**
      * Get a list of items with full text.
      *
-     * @param int $series Series ID (optional limiter)
+     * @param int  $series Series ID (optional limiter)
+     * @param bool $fuzzy  Use fuzzy matching? (optional)
+     * @param int  $source Full text source ID (optional limiter)
      *
      * @return mixed
      */
-    public function getItemsWithFullText($series = null, $fuzzy = false)
-    {
-        $callback = function ($select) use ($series, $fuzzy) {
+    public function getItemsWithFullText($series = null, $fuzzy = false,
+        $source = null
+    ) {
+        $callback = function ($select) use ($series, $fuzzy, $source) {
             if ($fuzzy) {
                 $select->join(
                     array('eds2' => 'Editions'),
@@ -132,6 +135,10 @@ class EditionsFullText extends Gateway
             );
             if (null !== $series) {
                 $select->where->equalTo('eds.Series_ID', $series);
+            }
+            if (null !== $source) {
+                $select->where
+                    ->equalTo('Editions_Full_Text.Full_Text_Source_ID', $source);
             }
             $select->group(
                 array(
