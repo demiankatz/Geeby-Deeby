@@ -1326,7 +1326,12 @@ return array(
                 return new \GeebyDeeby\View\Helper\ScriptManager(
                     $base, $sm->get('headscript')
                 );
-            }
+            },
+            'showedition' => function ($sm) {
+                $controller = $sm->getServiceLocator()->get('ControllerLoader')
+                    ->get('GeebyDeeby\Controller\Edition');
+                return new \GeebyDeeby\View\Helper\ShowEdition($controller);
+            },
         ),
         'invokables' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
