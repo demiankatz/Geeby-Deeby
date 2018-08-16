@@ -27,6 +27,7 @@
  */
 namespace GeebyDeebyLocal\Ingest;
 use Zend\Console\Console;
+use Zend\Console\Prompt;
 
 /**
  * Class to load information into the database.
