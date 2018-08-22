@@ -981,8 +981,8 @@ class DatabaseIngester extends BaseIngester
     {
         $new = [];
         foreach ($candidates as $current) {
-            // require > 25% confidence for display:
-            if ($current['confidence'] <= 25) {
+            // require > 20% confidence for display:
+            if ($current['confidence'] <= 20) {
                 continue;
             }
             if (!isset($new[$current['id']]) || $new[$current['id']]['confidence'] < $current['confidence']) {
