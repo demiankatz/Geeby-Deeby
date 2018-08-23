@@ -488,7 +488,9 @@ class AbstractBase extends AbstractActionController
         $bestMatch = $force ? -1 : $accept->match('text/html')->getPriority();
         $bestFormat = false;            // HTML by default
         foreach ($rdfForms as $current) {
-            $currentMatch = $accept->match($current)->getPriority();
+            $currentMatchObject = $accept->match($current);
+            $currentMatch = is_object($currentMatchObject)
+                ? $currentMatchObject->getPriority() : -1;
             if ($currentMatch > $bestMatch) {
                 $bestMatch = $currentMatch;
                 $bestFormat = $current;
