@@ -50,12 +50,12 @@ class FormatItemNumber extends \Zend\View\Helper\AbstractHelper
      */
     public function __invoke($arr, $prefix = '', $suffix = '. ', $default = '')
     {
-        $str = $arr['Volume'] > 0
+        $str = (isset($arr['Volume']) && $arr['Volume'] > 0)
             ? 'v. ' . $arr['Volume'] . (($arr['Position'] > 0) ? ', no. ' : '')
             : '';
-        if ($arr['Position'] > 0) {
+        if (isset($arr['Position']) && $arr['Position'] > 0) {
             $str .= $arr['Position'];
-            $str .= $arr['Replacement_Number'] > 0
+            $str .= (isset($arr['Replacement_Number']) && $arr['Replacement_Number'] > 0)
                 ? ' (replacement title)' : '';
         }
         return empty($str) ? $default : $prefix . $str . $suffix;
