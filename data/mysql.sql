@@ -397,7 +397,7 @@ DROP TABLE IF EXISTS `Items`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Items` (
   `Item_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Item_Name` tinytext NOT NULL,
+  `Item_Name` text NOT NULL,
   `Item_Errata` text,
   `Item_Thanks` tinytext,
   `Material_Type_ID` int(11) NOT NULL DEFAULT '0',
@@ -430,7 +430,7 @@ DROP TABLE IF EXISTS `Items_AltTitles`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Items_AltTitles` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Item_AltName` tinytext NOT NULL,
+  `Item_AltName` text NOT NULL,
   `Note_ID` int(11) DEFAULT NULL,
   `Sequence_ID` bigint(20) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`Sequence_ID`),
