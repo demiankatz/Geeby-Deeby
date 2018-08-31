@@ -1,0 +1,2 @@
+ALTER TABLE Items MODIFY COLUMN `Item_Name` text NOT NULL;
+ALTER TABLE Items_AltTitles MODIFY COLUMN `Item_AltName` text NOT NULL;
