@@ -363,10 +363,12 @@ class DatabaseIngester extends BaseIngester
      */
     protected function normalizeStreet($street)
     {
-        return str_replace(
-            [' st.', ' w.', '23rd', 'no. ', '&'],
-            [' street', ' west', '23d', '', 'and'],
-            strtolower($street)
+        return rtrim(
+            str_replace(
+                [' st.', ' w.', '23rd', 'no. ', '&'],
+                [' street', ' west', '23d', '', 'and'],
+                strtolower($street)
+            ), '.'
         );
     }
 
