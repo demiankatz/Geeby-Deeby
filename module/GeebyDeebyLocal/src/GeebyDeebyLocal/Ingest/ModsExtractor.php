@@ -65,7 +65,7 @@ class ModsExtractor
         if (isset($date[0])) {
             $retVal['date'] = (string) $date[0];
         }
-        if ($seriesInfo = $this->extractSeries($mods->xpath('/mods:mods/mods:relatedItem[@type="series"]/mods:titleInfo'))) {
+        if ($seriesInfo = $this->extractSeries($mods->xpath('/mods:mods/mods:relatedItem[@type="series"]/mods:titleInfo[@type="uniform"]'))) {
             $retVal['series'] = $seriesInfo;
         }
         if ($oclc = $this->extractAll($mods->xpath('/mods:mods/mods:identifier[@type="oclc"]'))) {
