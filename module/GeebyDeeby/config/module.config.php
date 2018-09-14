@@ -1285,6 +1285,7 @@ return array(
             'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
+            'GeebyDeeby\Controller\EditCitation' => 'GeebyDeeby\Controller\EditCitationController',
             'GeebyDeeby\Controller\EditCity' => 'GeebyDeeby\Controller\EditCityController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
