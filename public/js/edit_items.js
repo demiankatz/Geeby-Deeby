@@ -39,6 +39,12 @@ var ItemEditor = function() {
                 'note_id': { 'id': '#Attachment_Note', 'nonNumericDefault': '' },
             }
         },
+        'Creator': {
+            'saveFields': {
+                'person_id': { 'id': '#creator_person', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid person' },
+                'role_id': { 'id': '#Creator_Role_ID' }
+            }
+        },
         'Credit': {
             'saveFields': {
                 'note_id': { 'id': '#credit_note', 'nonNumericDefault': '' },

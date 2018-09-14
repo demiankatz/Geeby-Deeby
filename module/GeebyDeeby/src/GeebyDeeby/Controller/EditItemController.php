@@ -74,6 +74,8 @@ class EditItemController extends AbstractBase
             $view->adaptedFrom = $this->getDbTable('itemsadaptations')
                 ->getAdaptedInto($view->itemObj->Item_ID);
             $view->roles = $this->getDbTable('role')->getList();
+            $view->creators = $this->getDbTable('itemscreators')
+                ->select(array('Item_ID' => $view->itemObj->Item_ID));
             $view->credits= $this->getDbTable('editionscredits')
                 ->getCreditsForItem($view->itemObj->Item_ID, true);
             $view->itemsBib = $this->getDbTable('itemsbibliography')
@@ -296,6 +298,68 @@ class EditItemController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Get list of creators
+     *
+     * @return mixed
+     */
+    public function creatorAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            return $this->addCredit();
+        }
+        if ($this->getRequest()->isDelete()) {
+            return $this->deleteCredit();
+        }
+        // Default action: display list:
+        $table = $this->getDbTable('itemscreators');
+        $view = $this->createViewModel();
+        $primary = $this->params()->fromRoute('id');
+        $view->creators = $table->select(array('Item_ID' => $primary));
+        $view->setTemplate('geeby-deeby/edit-item/creators.phtml');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Add a creator
+     *
+     * @return mixed
+     */
+    protected function addCreator()
+    {
+        $table = $this->getDbTable('itemscreators');
+        $row = array(
+            'Item_ID' => $this->params()->fromRoute('id'),
+            'Person_ID' => $this->params()->fromPost('person_id'),
+            'Role_ID' => $this->params()->fromPost('role_id'),
+        );
+        $table->insert($row);
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Remove a creator
+     *
+     * @return mixed
+     */
+    protected function deleteCreator()
+    {
+        list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
+        $this->getDbTable('itemscreators')->delete(
+            array(
+                'Item_ID' => $this->params()->fromRoute('id'),
+                'Person_ID' => $person,
+                'Role_ID' => $role
+            )
+        );
+        return $this->jsonReportSuccess();
     }
 
     /**
