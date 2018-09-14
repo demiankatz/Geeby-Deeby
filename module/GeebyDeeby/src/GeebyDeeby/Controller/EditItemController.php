@@ -311,6 +311,13 @@ class EditItemController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
+        // Modify the publisher if it's a GET/POST and has an extra set.
+        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+            && null !== $this->params()->fromRoute('extra')
+            && 'NEW' !== $this->params()->fromRoute('extra')
+        ) {
+            return $this->modifyCreator();
+        }
         if ($this->getRequest()->isPost()) {
             return $this->addCreator();
         }
@@ -324,6 +331,34 @@ class EditItemController extends AbstractBase
         $view->creators = $table->getCreatorsForItem($primary);
         $view->setTemplate('geeby-deeby/edit-item/creators.phtml');
         $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Support method for creatorAction()
+     *
+     * @return mixed
+     */
+    protected function modifyCreator()
+    {
+        $rowId = $this->params()->fromRoute('extra');
+        $table = $this->getDbTable('itemscreators');
+        if ($this->getRequest()->isPost()) {
+            // TODO: process post
+            return $this->jsonReportSuccess();
+        }
+        $view = $this->createViewModel();
+        $view->row = $table->select(['Item_Creator_ID' => $rowId])->current();
+        //$view->citations = $this->getDbTable('itemscreatorscitations')
+        //    ->getCitations($rowId);
+        $view->setTemplate('geeby-deeby/edit-item/modify-creator');
+
+        // If this is an AJAX request, render the core list only, not the
+        // framing layout and buttons.
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $view->setTerminal(true);
+        }
+
         return $view;
     }
 

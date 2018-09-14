@@ -2,17 +2,21 @@
   No creators.
 <? else: ?>
   <table class="list_item">
-    <tr><th colspan="2">Creator</th></tr>
+    <tr><th colspan="3">Creator</th></tr>
     <? foreach ($creators as $current): ?>
       <tr>
-        <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Creator', '<?=$this->escapeHtml($current['Person_ID'])?>,<?=$this->escapeHtml($current['Role_ID'])?>'); return false;">
-          </a>
-        </td>
         <td>
           <?=$this->escapeHtml($current['Role_Name'])?>:
           <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
             <?=$this->escapeHtml($this->showperson($current))?>
+          </a>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-gear" href="#" onclick="Item.editLink('Creator', <?=$current['Item_Creator_ID']?>); return false;">
+          </a>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Creator', '<?=$this->escapeHtml($current['Person_ID'])?>,<?=$this->escapeHtml($current['Role_ID'])?>'); return false;">
           </a>
         </td>
       </tr>
