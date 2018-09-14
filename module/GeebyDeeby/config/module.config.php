@@ -22,6 +22,7 @@ return array(
             'invokables' => array(
                 'authority' => 'GeebyDeeby\Db\Table\Authority',
                 'category' => 'GeebyDeeby\Db\Table\Category',
+                'citation' => 'GeebyDeeby\Db\Table\Citation',
                 'city' => 'GeebyDeeby\Db\Table\City',
                 'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
@@ -278,6 +279,27 @@ return array(
                             'route'    => '/CategoryList',
                             'defaults' => array(
                                 'controller'    => 'EditCategory',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'citation' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Citation[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditCitation',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'citation_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/CitationList',
+                            'defaults' => array(
+                                'controller'    => 'EditCitation',
                                 'action'        => 'list',
                             ),
                         ),
