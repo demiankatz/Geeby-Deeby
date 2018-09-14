@@ -3,7 +3,7 @@
 <? else: ?>
   <table class="list_item">
     <tr><th colspan="2">Creator</th></tr>
-    <? foreach ($credits as $current): ?>
+    <? foreach ($creators as $current): ?>
       <tr>
         <td>
           <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Creator', '<?=$this->escapeHtml($current['Person_ID'])?>,<?=$this->escapeHtml($current['Role_ID'])?>'); return false;">

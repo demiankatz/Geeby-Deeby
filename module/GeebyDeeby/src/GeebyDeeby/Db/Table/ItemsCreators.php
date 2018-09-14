@@ -47,4 +47,31 @@ class ItemsCreators extends Gateway
     {
         parent::__construct('Items_Creators');
     }
+
+    /**
+     * Given an item identifier, return a list of creators.
+     *
+     * @param int $itemID Item ID
+     *
+     * @return mixed
+     */
+    public function getCreatorsForItem($itemID)
+    {
+        $callback = function ($select) use ($itemID) {
+            $select->join(
+                array('p' => 'People'),
+                'Items_Creators.Person_ID = p.Person_ID'
+            );
+            $select->join(
+                array('r' => 'Roles'),
+                'Items_Creators.Role_ID = r.Role_ID'
+            );
+            $fields = array(
+                'Role_Name', 'Last_Name', 'First_Name', 'Middle_Name'
+            );
+            $select->order($fields);
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return $this->select($callback);
+    }
 }

@@ -75,7 +75,7 @@ class EditItemController extends AbstractBase
                 ->getAdaptedInto($view->itemObj->Item_ID);
             $view->roles = $this->getDbTable('role')->getList();
             $view->creators = $this->getDbTable('itemscreators')
-                ->select(array('Item_ID' => $view->itemObj->Item_ID));
+                ->getCreatorsForItem($view->itemObj->Item_ID);
             $view->credits= $this->getDbTable('editionscredits')
                 ->getCreditsForItem($view->itemObj->Item_ID, true);
             $view->itemsBib = $this->getDbTable('itemsbibliography')
@@ -312,16 +312,16 @@ class EditItemController extends AbstractBase
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
-            return $this->addCredit();
+            return $this->addCreator();
         }
         if ($this->getRequest()->isDelete()) {
-            return $this->deleteCredit();
+            return $this->deleteCreator();
         }
         // Default action: display list:
         $table = $this->getDbTable('itemscreators');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->creators = $table->select(array('Item_ID' => $primary));
+        $view->creators = $table->getCreatorsForItem($primary);
         $view->setTemplate('geeby-deeby/edit-item/creators.phtml');
         $view->setTerminal(true);
         return $view;
