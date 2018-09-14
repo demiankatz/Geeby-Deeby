@@ -46,6 +46,7 @@ return array(
                 'itemsalttitles' => 'GeebyDeeby\Db\Table\ItemsAltTitles',
                 'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
                 'itemscreators' => 'GeebyDeeby\Db\Table\ItemsCreators',
+                'itemscreatorscitations' => 'GeebyDeeby\Db\Table\ItemsCreatorsCitations',
                 'itemscredits' => 'GeebyDeeby\Db\Table\ItemsCredits',
                 'itemsdescriptions' => 'GeebyDeeby\Db\Table\ItemsDescriptions',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
