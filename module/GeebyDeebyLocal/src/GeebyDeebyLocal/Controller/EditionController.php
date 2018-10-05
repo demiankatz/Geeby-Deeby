@@ -286,7 +286,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     public function modsAction()
     {
         $view = $this->getViewModelWithEditionAndDetails();
-        $template = '<mods:mods xmlns="http://www.loc.gov/mods/v3" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"></mods:mods>';
+        $template = '<mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"></mods:mods>';
         $xml = simplexml_load_string($template);
         $this->addModsTitle($xml->addChild('titleInfo'), $view->item['Item_Name']);
         $xml->typeOfResource = 'text';
