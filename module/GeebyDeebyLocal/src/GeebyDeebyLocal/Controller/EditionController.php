@@ -161,15 +161,39 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      */
     protected function addModsPart($xml, $part)
     {
-        $chunks = explode(' ', $part);
-        if (stristr($chunks[0], 'chapter')) {
-            $type = 'chapter';
-        } else {
-            $type = 'number';
+        $bigChunks = explode(',', $part);
+        $elements = [];
+        foreach ($bigChunks as $bigChunk) {
+            $chunks = explode(' ', trim($bigChunk));
+            if (stristr($chunks[0], 'chapter')) {
+                $type = 'chapter';
+                $value = trim($chunks[1]);
+            } elseif (stristr($chunks[0], 'page')) {
+                $type = 'page';
+                $value = trim($bigChunk);
+            } else {
+                $type = trim($chunks[0]);
+                $value = trim($bigChunk);
+            }
+            if (!isset($elements[$type])) {
+                $elements[$type] = $value;
+            }
         }
-        if (!empty($chunks[1])) {
-            $xml->detail->number = $chunks[1];
-            $xml->detail['type'] = $type;
+
+        foreach ($elements as $type => $value) {
+            if ($type === 'chapter') {
+                $detail = $xml->addChild('detail');
+                $detail['type'] = 'chapter';
+                $detail->number = $value;
+            } elseif ($type === 'page') {
+                $extent = $xml->addChild('extent');
+                $extent['unit'] = 'page';
+                $extent->list = $value;
+            } else {
+                $detail = $xml->addChild('detail');
+                $detail['type'] = 'part';
+                $detail->number = $value;
+            }
         }
     }
 
