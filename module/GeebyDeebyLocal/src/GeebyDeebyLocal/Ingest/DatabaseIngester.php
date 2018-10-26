@@ -537,9 +537,10 @@ class DatabaseIngester extends BaseIngester
     {
         if (strstr($url, 'lib.niu.edu')) {
             return self::FULLTEXT_SOURCE_NIU;
-        }
-        if (strstr($url, 'digital.library.villanova.edu')) {
+        } elseif (strstr($url, 'digital.library.villanova.edu')) {
             return self::FULLTEXT_SOURCE_VU;
+        } elseif (strstr($url, 'digitalgallery.bgsu.edu')) {
+            return self::FULLTEXT_SOURCE_BGSU;
         }
         return null;
     }
