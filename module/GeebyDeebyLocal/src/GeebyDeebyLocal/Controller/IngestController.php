@@ -187,6 +187,56 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
+     * Ingest the contents of a spreadsheet.
+     *
+     * @return mixed
+     */
+    public function spreadsheetAction()
+    {
+        $file = $this->params()->fromRoute('file');
+        if (!file_exists($file)) {
+           Console::writeLine("Invalid/missing spreadsheet: $file");
+           return;
+        }
+        $ingester = $this->getIngester();
+        $total = $success = 0;
+        $handle = fopen($file, 'r');
+        while ($line = fgetcsv($handle)) {
+            if (count($line) < 8) {
+                Console::writeLine("Short line encountered; breaking out...");
+                break;
+            }
+            list($title, $author, $date, $place, $publisher, $series, $number, $url)
+                = $line;
+            $details = [
+                'contents' => [['title' => $title, 'authors' => [['name' => $author]]]],
+                'publisher' => ['name' => $publisher, 'place' => $place],
+                'series' => [$series => $number],
+                'date' => $date,
+                'url' => [$url],
+            ];
+            $total++;
+            $seriesObj = $this->getSeriesByTitle($series);
+            if (!$seriesObj) {
+                Console::writeLine("Cannot find series match for $series");
+                if (Prompt\Confirm::prompt('Continue with next item anyway? (y/n) ')) {
+                    continue;
+                }
+                break;
+            } elseif (!$ingester->ingest($details, 'series', $seriesObj)) {
+                if (Prompt\Confirm::prompt('Continue with next item anyway? (y/n) ')) {
+                    continue;
+                }
+                break;
+            }
+            Console::writeLine('---');
+            $success++;
+        }
+        fclose($handle);
+        Console::writeLine("Successfully processed $success of $total rows.");
+    }
+
+    /**
      * Ingest existing editions (by matching URIs) action.
      *
      * @return mixed

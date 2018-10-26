@@ -61,6 +61,16 @@ return array(
                         )
                     )
                 ),
+                'ingest-spreadsheet' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'ingest spreadsheet <file>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'spreadsheet',
+                        )
+                    )
+                ),
                 'ingest-existing' => array(
                     'type' => 'simple',
                     'options' => array(
