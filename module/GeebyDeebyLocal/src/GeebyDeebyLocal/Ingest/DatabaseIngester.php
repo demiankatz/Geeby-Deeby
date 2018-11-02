@@ -816,7 +816,7 @@ class DatabaseIngester extends BaseIngester
                 $confidence -= 20;
             }
             if (!$this->fuzzyCompare($data['title'], $current->$titleField)) {
-                $confidence -= $this->hasMatchingAltTitle($data['title'], $current->Item_ID) ? 10 : 25;
+                $confidence -= $this->hasMatchingAltTitle($data['title'], $current->Item_ID, $current->Item_Name) ? 10 : 25;
             }
             $candidates[] = [
                 'id' => $current->Item_ID,
@@ -1101,7 +1101,7 @@ class DatabaseIngester extends BaseIngester
             if ($char !== '0') {
                 $response = ord(strtoupper($char)) - 65;
                 if (!$this->fuzzyCompare($data['title'], $candidates[$response]['title'])
-                    && !$this->hasMatchingAltTitle($data['title'], $candidates[$response]['id'])
+                    && !$this->hasMatchingAltTitle($data['title'], $candidates[$response]['id'], $candidates[$response]['title'])
                 ) {
                     $this->addAltTitle($data['title'], $candidates[$response]['id']);
                 }
@@ -1158,7 +1158,7 @@ class DatabaseIngester extends BaseIngester
         $edName = $this->articles->articleAwareAppend($series->Series_Name, ' edition');
         $seriesID = $series->Series_ID;
         $edsTable = $this->getDbTable('edition');
-        $altName = $this->hasMatchingAltTitle($data['title'], $item, false, true);
+        $altName = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
         $edsTable->insert(
             [
                 'Edition_Name' => $edName,
@@ -1229,15 +1229,17 @@ class DatabaseIngester extends BaseIngester
     /**
      * Check for a match between an incoming title and an alternate title of an Item.
      *
-     * @param string $title    Incoming title to check
-     * @param int    $itemID   Item to check against
-     * @param bool   $warn     Should we display a warning if we find a match?
-     * @param bool   $returnId Should we return the alt title sequence ID instead of boolean true?
+     * @param string $title     Incoming title to check
+     * @param int    $itemID    Item to check against
+     * @param string $itemTitle Title of item to check against (for additional fuzzy matching)
+     * @param bool   $warn      Should we display a warning if we find a match?
+     * @param bool   $returnId  Should we return the alt title sequence ID instead of boolean true?
      *
      * @return bool|int
      */
-    protected function hasMatchingAltTitle($title, $itemID, $warn = false, $returnId = false)
+    protected function hasMatchingAltTitle($title, $itemID, $itemTitle, $warn = false, $returnId = false)
     {
+        // Check the alt titles table:
         $table = $this->getDbTable('itemsalttitles');
         foreach ($table->getAltTitles($itemID) as $current) {
             $currentAlt = $current->Item_AltName;
@@ -1251,6 +1253,24 @@ class DatabaseIngester extends BaseIngester
                 return $returnId ? $current->Sequence_ID : true;
             }
         }
+
+        // Check for partial matches of an "A; or, B" type of title; note that we
+        // can't do this in "return ID" mode because these kinds of alt. title
+        // match do not exist in the database table and thus have no sequence ID
+        // to return.
+        $titleParts = preg_split('/[;:, ]\s*or[;:, ]/', $itemTitle);
+        if (!$returnId && count($titleParts) > 1) {
+            foreach ($titleParts as $part) {
+                if ($this->fuzzyCompare($title, $part)) {
+                    if ($warn) {
+                        Console::writeLine(
+                            'WARNING: Partial title match only: ' . $part
+                        );
+                    }
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -1259,7 +1279,7 @@ class DatabaseIngester extends BaseIngester
         if ($this->fuzzyCompare($title, $db['item']['Item_Name'])) {
             return true;
         }
-        if ($this->hasMatchingAltTitle($title, $db['item']['Item_ID'], true)) {
+        if ($this->hasMatchingAltTitle($title, $db['item']['Item_ID'], $db['item']['Item_Name'], true)) {
             return true;
         }
         Console::writeLine('FATAL: Unexpected title mismatch.');
@@ -1707,7 +1727,7 @@ class DatabaseIngester extends BaseIngester
                 }
             }
         }
-        if ($this->hasMatchingAltTitle($currentContent['title'], $item['Item_ID'])) {
+        if ($this->hasMatchingAltTitle($currentContent['title'], $item['Item_ID'], $item['Item_Name'])) {
             return true;
         }
         return false;
