@@ -490,8 +490,8 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if (!$match) {
-            Console::writeLine("FATAL: No series/publisher match for $name, $street, $place");
-            return false;
+            Console::writeLine("WARNING: No series/publisher match for $name, $street, $place; skipping publisher.");
+            return true;
         }
         if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID != $match) {
             foreach ($this->getDbTable('edition')->getPublishersForEdition($editionObj->Edition_ID) as $ed);
