@@ -491,6 +491,18 @@ return array(
                             ),
                         ),
                     ),
+                    'item_creator' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Item_Creator[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditItemCreator',
+                                'action'        => 'citation',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
                     'item_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -1296,6 +1308,7 @@ return array(
             'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
+            'GeebyDeeby\Controller\EditItemCreator' => 'GeebyDeeby\Controller\EditItemCreatorController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',

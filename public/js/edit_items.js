@@ -87,6 +87,21 @@ ItemEditor.prototype.copyEdition = function() {
 
 var Item = new ItemEditor();
 
+var ItemCreatorEditor = function() {
+    this.type = "Item_Creator";
+    this.saveFields = [];
+    this.links = {
+        'Citation': {
+            'editFields': {
+                'citation_id': { 'id' : '#Citation_ID', 'nonNumericDefault': '', 'emptyError': 'Please select a citation.' }
+            }
+        }
+    };
+};
+BaseEditor.prototype.registerSubclass(ItemCreatorEditor);
+
+var ItemCreator = new ItemCreatorEditor();
+
 // Load data and setup autocomplete.
 $(document).ready(function() {
     if (typeof registerAutocomplete === 'function') {

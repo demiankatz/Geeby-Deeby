@@ -343,13 +343,10 @@ class EditItemController extends AbstractBase
     {
         $rowId = $this->params()->fromRoute('extra');
         $table = $this->getDbTable('itemscreators');
-        if ($this->getRequest()->isPost()) {
-            // TODO: process post
-            return $this->jsonReportSuccess();
-        }
         $view = $this->createViewModel();
         $view->row = $table->select(['Item_Creator_ID' => $rowId])->current();
-        $view->citations = $this->getDbTable('itemscreatorscitations')
+        $view->citations = $this->getDbTable('citation')->select();
+        $view->selectedCitations = $this->getDbTable('itemscreatorscitations')
             ->getCitations($rowId);
         $view->setTemplate('geeby-deeby/edit-item/modify-creator');
 
