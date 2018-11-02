@@ -1,7 +1,7 @@
 <div id="modifyCreatorForm">
   <input type="hidden" id="Item_Creator_ID" value="<?=$this->row['Item_Creator_ID']?>" />
   <?=$this->render('geeby-deeby/edit-citation/select.phtml')?>
-  <button id="add_creator_citation" onclick="ItemCreator.saveLink('Citation', '')">Add</button>
+  <button id="add_creator_citation" onclick="ItemCreator.link('Citation')">Add</button>
   <br />
   <?=$this->render('geeby-deeby/edit-item-creator/citation-list.phtml')?>
 </div>

@@ -92,9 +92,7 @@ var ItemCreatorEditor = function() {
     this.saveFields = [];
     this.links = {
         'Citation': {
-            'editFields': {
-                'citation_id': { 'id' : '#Citation_ID', 'nonNumericDefault': '', 'emptyError': 'Please select a citation.' }
-            }
+            'uriField': { 'id' : '#Citation_ID', 'nonNumericDefault': '', 'emptyError': 'Please select a citation.' }
         }
     };
 };

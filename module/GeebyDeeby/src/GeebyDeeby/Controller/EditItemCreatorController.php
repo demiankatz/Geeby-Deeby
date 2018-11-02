@@ -53,7 +53,7 @@ class EditItemCreatorController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             $insert = array(
                 'Item_Creator_ID' => $this->params()->fromRoute('id'),
-                'Citation_ID' => trim($this->params()->fromPost('citation_id'))
+                'Citation_ID' => $this->params()->fromRoute('extra'),
             );
             $table->insert($insert);
             return $this->jsonReportSuccess();
