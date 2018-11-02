@@ -282,6 +282,27 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
+     * Attempt to parse year, month and day out of arbitrary date string.
+     *
+     * @param string $date Raw date string
+     *
+     * @return array of year, month, day
+     */
+    protected function parseDate($date)
+    {
+        $parts = preg_split('|[-/]|', $date);
+        if (isset($parts[2]) && $parts[2] > 50) {
+            $year = isset($parts[2]) ? $parts[2] : null;
+            $month = isset($parts[0]) ? $parts[0] : null;
+            $day = isset($parts[1]) ? $parts[1] : null;
+        } else {
+            $year = isset($parts[0]) ? $parts[0] : null;
+            $month = isset($parts[1]) ? $parts[1] : null;
+            $day = isset($parts[2]) ? $parts[2] : null;
+        }
+        return [$year, $month, $day];
+    }
+    /**
      * Given a date, update the edition.
      *
      * @param string $date       Date string.
@@ -291,10 +312,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function processDate($date, $editionObj)
     {
-        $parts = explode('-', $date);
-        $year = isset($parts[0]) ? $parts[0] : null;
-        $month = isset($parts[1]) ? $parts[1] : null;
-        $day = isset($parts[2]) ? $parts[2] : null;
+        list($year, $month, $day) = $this->parseDate($date);
         $table = $this->getDbTable('editionsreleasedates');
         $known = $table->getDatesForEdition($editionObj->Edition_ID);
         $foundMatch = false;
