@@ -83,6 +83,7 @@ return array(
                 'links' => array(
                     'Amazon.ca' => 'http://www.amazon.ca/exec/obidos/ASIN/%isbn10%',
                     'Amazon.com' => 'http://www.amazon.com/exec/obidos/ASIN/%isbn10%',
+                    'Amazon.com.br' => 'http://www.amazon.com.br/exec/obidos/ASIN/%isbn10%',
                     'Amazon.co.jp' => 'http://www.amazon.co.jp/exec/obidos/ASIN/%isbn10%',
                     'Amazon.co.uk' => 'http://www.amazon.co.uk/exec/obidos/ASIN/%isbn10%',
                     'Amazon.de' => 'http://www.amazon.de/exec/obidos/ASIN/%isbn10%',
