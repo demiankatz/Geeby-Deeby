@@ -834,7 +834,7 @@ class DatabaseIngester extends BaseIngester
                 $confidence -= 20;
             }
             if (!$this->fuzzyCompare($data['title'], $current->$titleField)) {
-                $confidence -= $this->hasMatchingAltTitle($data['title'], $current->Item_ID, $current->Item_Name) ? 10 : 25;
+                $confidence -= $this->hasMatchingAltTitle($data['title'], $current->Item_ID, isset($current->Item_Name) ? $current->Item_Name : '') ? 10 : 25;
             }
             $candidates[] = [
                 'id' => $current->Item_ID,
