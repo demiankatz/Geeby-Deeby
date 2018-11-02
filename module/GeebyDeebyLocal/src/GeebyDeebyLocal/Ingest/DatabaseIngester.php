@@ -1276,8 +1276,12 @@ class DatabaseIngester extends BaseIngester
         // can't do this in "return ID" mode because these kinds of alt. title
         // match do not exist in the database table and thus have no sequence ID
         // to return.
-        $titleParts = preg_split('/[;:, ]\s*or[;:, ]/', $itemTitle);
+        list($itemArticle, $itemMainTitle) = $this->articles->separateArticle($itemTitle);
+        $titleParts = preg_split('/[;:, ]\s*or[;:, ]/', $itemMainTitle);
         if (!$returnId && count($titleParts) > 1) {
+            if ($itemArticle) {
+                $titleParts[0] .= ', ' . trim($itemArticle);
+            }
             foreach ($titleParts as $part) {
                 if ($this->fuzzyCompare($title, $part)) {
                     if ($warn) {
