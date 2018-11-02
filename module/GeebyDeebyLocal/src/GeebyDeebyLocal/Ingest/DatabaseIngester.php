@@ -1554,6 +1554,7 @@ class DatabaseIngester extends BaseIngester
     protected function synchronizeSeriesEntriesHelper($lookup, $contents)
     {
         $children = [];
+        $titlesChecked = [];
         foreach ($lookup as $child) {
             $item = $this->getItemForEdition($child);
             // If it's an issue, we need to load its children; otherwise, we should
@@ -1571,6 +1572,7 @@ class DatabaseIngester extends BaseIngester
         foreach ($contents as $currentContent) {
             $match = false;
             foreach ($children as & $currentChild) {
+                $titlesChecked[] = $currentChild['item']['Item_Name'] . ' vs. ' . $currentContent['title'];
                 if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
                     $match = true;
                     $result[] = [$currentContent, $currentChild];
@@ -1586,6 +1588,9 @@ class DatabaseIngester extends BaseIngester
         // Fail if we have any existing data not matched up with new data....
         foreach ($children as $child) {
             if (!isset($child['matched'])) {
+                foreach ($titlesChecked as $titleChecked) {
+                    Console::writeLine("Title checked: " . $titleChecked);
+                }
                 Console::writeLine("FATAL: No series match found for edition {$child['edition']->Edition_ID}");
                 return false;
             }
