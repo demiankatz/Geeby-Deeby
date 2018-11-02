@@ -49,7 +49,7 @@ class EditItemCreatorController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
-        $table = $this->getDbTable('itemcreatorscitations');
+        $table = $this->getDbTable('itemscreatorscitations');
         if ($this->getRequest()->isPost()) {
             $insert = array(
                 'Item_Creator_ID' => $this->params()->fromRoute('id'),

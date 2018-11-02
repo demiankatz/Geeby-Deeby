@@ -494,7 +494,7 @@ return array(
                     'item_creator' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Item_Creator[/:id][/:action][/:extra]',
+                            'route'    => '/Item_Creator[/:id][/:action][/][:extra]',
                             'defaults' => array(
                                 'controller'    => 'EditItemCreator',
                                 'action'        => 'citation',
