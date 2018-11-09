@@ -50,17 +50,20 @@ class EditItemCreatorController extends AbstractBase
             return $ok;
         }
         $table = $this->getDbTable('itemscreatorscitations');
-        if ($this->getRequest()->isPost()) {
-            $insert = array(
-                'Item_Creator_ID' => $this->params()->fromRoute('id'),
-                'Citation_ID' => $this->params()->fromRoute('extra'),
-            );
-            $table->insert($insert);
-            return $this->jsonReportSuccess();
-        } else if ($this->getRequest()->isDelete()) {
-            $delete = $this->params()->fromRoute('extra');
-            $table->delete(array('Citation_ID' => $delete));
-            return $this->jsonReportSuccess();
+        $params = array(
+            'Item_Creator_ID' => $this->params()->fromRoute('id'),
+            'Citation_ID' => $this->params()->fromRoute('extra'),
+        );
+        try {
+            if ($this->getRequest()->isPost()) {
+                $table->insert($params);
+                return $this->jsonReportSuccess();
+            } else if ($this->getRequest()->isDelete()) {
+                $table->delete($params);
+                return $this->jsonReportSuccess();
+            }
+        } catch (\Exception $e) {
+            return $this->jsonDie($e->getMessage());
         }
         // Default behavior: display list:
         $view = $this->createViewModel();
