@@ -100,7 +100,9 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      */
     protected function isMatchingPerson($personId, $creatorIds)
     {
-        if (in_array($personId, $creatorIds)) {
+        // If no creator IDs have been specified, we just assume that all names
+        // are correct. We mainly use these for disambiguation.
+        if (empty($creatorIds) || in_array($personId, $creatorIds)) {
             return true;
         }
         foreach ($this->getRealPersonDetails($personId) as $real) {
