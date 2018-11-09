@@ -1372,6 +1372,7 @@ return array(
             },
         ),
         'invokables' => array(
+            'analyzecredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
             'firstLetterMenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',

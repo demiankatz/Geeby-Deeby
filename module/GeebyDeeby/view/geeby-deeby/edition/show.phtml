@@ -108,23 +108,7 @@
         </tr>
       <? endif; ?>
 
-      <?
-        if (count($credits) > 0) {
-          $groupedCredits = array();
-          foreach ($credits as $credit) {
-            if (!isset($groupedCredits[$credit['Role_Name']])) {
-              $groupedCredits[$credit['Role_Name']] = array();
-            }
-            if (!isset($groupedCredits[$credit['Role_Name']][$credit['Person_ID']])) {
-              $groupedCredits[$credit['Role_Name']][$credit['Person_ID']] = array();
-            }
-            $groupedCredits[$credit['Role_Name']][$credit['Person_ID']][] = $credit;
-          }
-        } else {
-          $groupedCredits = array();
-        }
-      ?>
-
+      <? $groupedCredits = $this->analyzeCredits($credits); ?>
       <? if (count($groupedCredits) > 0): ?>
         <? foreach ($groupedCredits as $role => $group): ?>
           <tr>
