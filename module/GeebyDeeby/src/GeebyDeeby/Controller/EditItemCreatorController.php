@@ -59,7 +59,7 @@ class EditItemCreatorController extends AbstractBase
             return $this->jsonReportSuccess();
         } else if ($this->getRequest()->isDelete()) {
             $delete = $this->params()->fromRoute('extra');
-            $table->delete(array('Sequence_ID' => $delete));
+            $table->delete(array('Citation_ID' => $delete));
             return $this->jsonReportSuccess();
         }
         // Default behavior: display list:
