@@ -114,19 +114,41 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
+     * Filter $names to only include values matching $filter (or all names, if
+     * $filter is empty).
+     *
+     * @param array $names  Names to filter
+     * @param array $filter Person IDs to keep (or empty to keep all).
+     */
+    protected function filterNames($names, $filter)
+    {
+        if (empty($filter)) {
+            return $names;
+        }
+        $filtered = array();
+        foreach ($names as $name) {
+            if (in_array($name['Real_Person_ID'], $filter)) {
+                $filtered[] = $name;
+            }
+        }
+        return $filtered;
+    }
+
+    /**
      * Figure out the real person behind a pseudonym.
      *
-     * @param int $person Person ID.
+     * @param int   $person Person ID.
+     * @param array $filter Array of person IDs to filter on.
      *
      * @return array
      */
-    protected function getRealPersonDetails($person)
+    protected function getRealPersonDetails($person, $filter = array())
     {
         if (!isset($this->realNames[$person])) {
             $this->realNames[$person] = $this->pseudonymsTable
                 ->getRealNames($person)->toArray();
         }
-        return $this->realNames[$person];
+        return $this->filterNames($this->realNames[$person], $filter);
     }
 
     /**
@@ -165,7 +187,7 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
             }
             $final[$person] = [
                 'person' => $credit,
-                'realPerson' => $this->getRealPersonDetails($person),
+                'realPerson' => $this->getRealPersonDetails($person, $creatorIds),
                 'notes' => implode(', ', array_unique($notes))
             ];
         }
