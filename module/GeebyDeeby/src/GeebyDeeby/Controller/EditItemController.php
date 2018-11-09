@@ -384,13 +384,17 @@ class EditItemController extends AbstractBase
     protected function deleteCreator()
     {
         list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
-        $this->getDbTable('itemscreators')->delete(
-            array(
-                'Item_ID' => $this->params()->fromRoute('id'),
-                'Person_ID' => $person,
-                'Role_ID' => $role
-            )
-        );
+        try {
+            $this->getDbTable('itemscreators')->delete(
+                array(
+                    'Item_ID' => $this->params()->fromRoute('id'),
+                    'Person_ID' => $person,
+                    'Role_ID' => $role
+                )
+            );
+        } catch (\Exception $e) {
+            return $this->jsonDie($e->getMessage());
+        }
         return $this->jsonReportSuccess();
     }
 
