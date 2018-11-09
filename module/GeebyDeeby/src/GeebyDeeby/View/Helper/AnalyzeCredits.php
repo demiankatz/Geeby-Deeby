@@ -39,13 +39,13 @@ namespace GeebyDeeby\View\Helper;
 class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
 {
     /**
-     * Analyze and reformat a list of credits
+     * Group credits by role and person ID.
      *
      * @param array $credits Credits to analyze
      *
      * @return array
      */
-    public function __invoke($credits)
+    protected function groupGredits($credits)
     {
         $groupedCredits = array();
         foreach ($credits as $credit) {
@@ -58,5 +58,79 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
             $groupedCredits[$credit['Role_Name']][$credit['Person_ID']][] = $credit;
         }
         return $groupedCredits;
+    }
+
+    /**
+     * Figure out the real person behind a pseudonym.
+     *
+     * @param int   $person    Person ID.
+     * @param array $realNames Real name data.
+     *
+     * @return array
+     */
+    protected function getRealPersonDetails($person, $realNames)
+    {
+        return isset($realNames[$person]) ? $realNames[$person] : [];
+    }
+
+    /**
+     * Reformat all the credit lines for a single role.
+     *
+     * @param array $editions  Edition details
+     * @param array $realNames Real name data.
+     * @param array $details   Credits for a single role, keyed by person
+     *
+     * @return array
+     */
+    protected function analyzeGroup($editions, $realNames, $details)
+    {
+        $final = [];
+        $fixTitle = $this->view->plugin('fixtitle');
+        foreach ($details as $person => $credits) {
+            $notes = [];
+            foreach ($credits as $current) {
+                // If credit count doesn't match edition count, then different
+                // editions have different attributions.
+                if (count($credits) != count($editions)) {
+                    foreach ($credits as $credit) {
+                        $note = $fixTitle($credit['Edition_Name']);
+                        if (!empty($credit['Note'])) {
+                            $note .= ' - ' . $credit['Note'];
+                        }
+                        $notes[] = $note;
+                    }
+                } else {
+                    foreach ($credits as $credit) {
+                        if (!empty($credit['Note'])) {
+                            $notes[] = $credit['Note'];
+                        }
+                    }
+                }
+            }
+            $final[$person] = [
+                'person' => $credit,
+                'realPerson' => $this->getRealPersonDetails($person, $realNames),
+                'notes' => implode(', ', array_unique($notes))
+            ];
+        }
+        return $final;
+    }
+
+    /**
+     * Analyze and reformat a list of credits
+     *
+     * @param array $credits   Credits to analyze
+     * @param array $editions  Information on editions containing credits
+     * @param array $realNames Real name data.
+     *
+     * @return array
+     */
+    public function __invoke($credits, $editions, $realNames)
+    {
+        $final = [];
+        foreach ($this->groupGredits($credits) as $role => $details) {
+            $final[$role] = $this->analyzeGroup($editions, $realNames, $details);
+        }
+        return $final;
     }
 }
