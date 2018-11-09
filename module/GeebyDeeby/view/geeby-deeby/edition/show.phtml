@@ -108,7 +108,7 @@
         </tr>
       <? endif; ?>
 
-      <? foreach ($this->analyzeCredits($credits, [$edition], $realNames) as $role => $group): ?>
+      <? foreach ($this->analyzeCredits($creators, $credits, [$edition]) as $role => $group): ?>
         <tr>
           <th><?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's') ?>:</th>
           <td>

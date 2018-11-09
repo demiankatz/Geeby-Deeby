@@ -219,9 +219,8 @@ class ItemController extends AbstractBase
      */
     protected function addEditionRelationships($id, $view)
     {
+        $view->creators = $this->getDbTable('itemscreators')->getCreatorsForItem($id);
         $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
-        $view->realNames = $this->getDbTable('pseudonyms')
-            ->getRealNamesBatch($view->credits);
         $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
         $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
         $view->platforms = $this->getDbTable('editionsplatforms')

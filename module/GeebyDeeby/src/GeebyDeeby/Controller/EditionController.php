@@ -189,10 +189,10 @@ class EditionController extends AbstractBase
             return false;
         }
         $id = $view->edition['Edition_ID'];
+        $view->creators = $this->getDbTable('itemscreators')
+            ->getCreatorsForItem($view->edition['Item_ID']);
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForEdition($id);
-        $view->realNames = $this->getDbTable('pseudonyms')
-            ->getRealNamesBatch($view->credits);
         $view->images = $this->getDbTable('editionsimages')->getImagesForEdition($id);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForEdition($id);
