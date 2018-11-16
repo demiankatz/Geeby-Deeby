@@ -178,7 +178,7 @@ class DatabaseIngester extends BaseIngester
     protected function ingestSeries($details, $seriesObj)
     {
         $pos = $this->getPositionFromSeriesString(current($details['series']));
-        Console::writeLine("Working on no. $pos...");
+        Console::writeLine("Working on " . $seriesObj->Series_Name . " no. $pos...");
         $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents']);
         if (!$childDetails) {
             return false;
