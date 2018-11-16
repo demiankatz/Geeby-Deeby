@@ -1382,6 +1382,11 @@ class DatabaseIngester extends BaseIngester
         $parts = explode(',', $str, 3);
         $last = $parts[0];
         $first = $parts[1];
+        // handle special case -- last name with date, no first:
+        if (preg_match('/\d{4}-\d{4}/', $first)) {
+            $parts[2] = $first;
+            $first = null;
+        }
         $extra = isset($parts[2]) ? (', ' . trim($parts[2])) : '';
         $people = $this->getDbTable('person');
         $query = [
