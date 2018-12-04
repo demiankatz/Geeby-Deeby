@@ -1,0 +1,10 @@
+<select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Imprint_ID">
+  <option value="">-- none selected --</option>
+  <? if (isset($imprints) && count($imprints) > 0): ?>
+    <? foreach ($imprints as $current): ?>
+      <option value="<?=$current['Imprint_ID']?>"<?=(isset($selected) && $current['Imprint_ID'] == $selected) ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current['Imprint_Name'])?>
+      </option>
+    <? endforeach; ?>
+  <? endif; ?>
+</select>

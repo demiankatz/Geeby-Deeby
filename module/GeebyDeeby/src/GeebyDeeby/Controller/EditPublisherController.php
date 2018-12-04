@@ -58,6 +58,54 @@ class EditPublisherController extends AbstractBase
     public function indexAction()
     {
         $assignMap = array('publisher' => 'Publisher_Name');
-        return $this->handleGenericItem('publisher', $assignMap, 'publisher');
+        $view = $this->handleGenericItem('publisher', $assignMap, 'publisher');
+        // Add extra fields/controls if outside of a lightbox:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->imprints = $this->getDbTable('publishersimprints')
+                ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
+            $view->setTemplate('geeby-deeby/edit-publisher/edit-full');
+        }
+        return $view;
+    }
+
+    /**
+     * Work with imprints
+     *
+     * @return mixed
+     */
+    public function imprintAction()
+    {
+        // Special case: new title:
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('publishersimprints');
+            $row = $table->createRow();
+            $row->Publisher_ID = $this->params()->fromRoute('id');
+            $row->Imprint_Name = $this->params()->fromPost('imprint');
+            if (empty($row->Imprint_Name)) {
+                return $this->jsonDie('Name must not be empty.');
+            }
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Prevent deletion of imprints that are linked up:
+            if ($this->getRequest()->isDelete()) {
+                $extra = $this->params()->fromRoute('extra');
+                $result = $this->getDbTable('seriespublishers')->select(
+                    array('Imprint_ID' => $extra)
+                );
+                if (count($result) > 0) {
+                    $row = $result->current();
+                    $msg = 'You cannot delete this imprint; it is used by Series '
+                        . $row->Series_ID . '.';
+                    return $this->jsonDie($msg);
+                }
+            }
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'publishersimprints', 'Publisher_ID', 'Imprint_ID',
+                'imprints', 'getImprintsForPublisher',
+                'geeby-deeby/edit-publisher/imprint-list.phtml'
+            );
+        }
     }
 }

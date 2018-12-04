@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Publishers_Imprints
+ * Row Definition for Cities
  *
  * PHP version 5
  *
@@ -20,46 +20,45 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
-use Zend\Db\Sql\Select;
+namespace GeebyDeeby\Db\Row;
 
 /**
- * Table Definition for Publishers_Imprints
+ * Row Definition for Cities
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class PublishersImprints extends Gateway
+class City extends RowGateway
 {
     /**
      * Constructor
+     *
+     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function __construct()
+    public function __construct($adapter)
     {
-        parent::__construct('Publishers_Imprints');
+        parent::__construct('City_ID', 'Cities', $adapter);
     }
 
     /**
-     * Get a list of imprints for the specified publisher.
+     * Validate the fields in the current object.  Return error message if problem
+     * found, boolean false if no errors were found.
      *
-     * @var int $pubID Publisher ID
-     *
-     * @return mixed
+     * @return string|bool
      */
-    public function getImprintsForPublisher($pubID)
+    public function validate()
     {
-        $callback = function ($select) use ($pubID) {
-            $select->order('Imprint_Name');
-            $select->where->equalTo('Publisher_ID', $pubID);
-        };
-        return $this->select($callback);
+        if (empty($this->City_Name)) {
+            return 'City name cannot be blank.';
+        }
+        return false;
     }
 }

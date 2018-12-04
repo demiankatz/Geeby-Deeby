@@ -20,6 +20,7 @@ return array(
             'invokables' => array(
                 'authority' => 'GeebyDeeby\Db\Table\Authority',
                 'category' => 'GeebyDeeby\Db\Table\Category',
+                'city' => 'GeebyDeeby\Db\Table\City',
                 'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'edition' => 'GeebyDeeby\Db\Table\Edition',
@@ -238,6 +239,27 @@ return array(
                             'route'    => '/CategoryList',
                             'defaults' => array(
                                 'controller'    => 'EditCategory',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'city' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/City[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditCity',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'city_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/CityList',
+                            'defaults' => array(
+                                'controller'    => 'EditCity',
                                 'action'        => 'list',
                             ),
                         ),
@@ -566,11 +588,12 @@ return array(
                     'publisher' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Publisher[/:id]',
+                            'route'    => '/Publisher[/:id][/:action][/:extra]',
                             'defaults' => array(
                                 'controller'    => 'EditPublisher',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null
                             ),
                         ),
                     ),
@@ -994,6 +1017,7 @@ return array(
             'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
+            'GeebyDeeby\Controller\EditCity' => 'GeebyDeeby\Controller\EditCityController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',

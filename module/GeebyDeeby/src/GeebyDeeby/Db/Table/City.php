@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Publishers_Imprints
+ * Table Definition for Cities
  *
  * PHP version 5
  *
@@ -26,10 +26,9 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
-use Zend\Db\Sql\Select;
 
 /**
- * Table Definition for Publishers_Imprints
+ * Table Definition for Cities
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -37,28 +36,25 @@ use Zend\Db\Sql\Select;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class PublishersImprints extends Gateway
+class City extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('Publishers_Imprints');
+        parent::__construct('Cities', 'GeebyDeeby\Db\Row\City');
     }
 
     /**
-     * Get a list of imprints for the specified publisher.
-     *
-     * @var int $pubID Publisher ID
+     * Get a list of cities.
      *
      * @return mixed
      */
-    public function getImprintsForPublisher($pubID)
+    public function getList()
     {
-        $callback = function ($select) use ($pubID) {
-            $select->order('Imprint_Name');
-            $select->where->equalTo('Publisher_ID', $pubID);
+        $callback = function ($select) {
+            $select->order('City_Name');
         };
         return $this->select($callback);
     }
