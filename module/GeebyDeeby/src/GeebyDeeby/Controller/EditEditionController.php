@@ -90,6 +90,8 @@ class EditEditionController extends AbstractBase
             $view->roles = $this->getDbTable('role')->getList();
             $view->credits= $this->getDbTable('editionscredits')
                 ->getCreditsForEdition($view->edition['Edition_ID']);
+            $view->images = $this->getDbTable('editionsimages')
+                ->getImagesForEdition($view->edition['Edition_ID']);
             $view->ISBNs = $this->getDbTable('editionsisbns')
                 ->getISBNsForEdition($view->edition['Edition_ID']);
             $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
@@ -678,5 +680,69 @@ class EditEditionController extends AbstractBase
                 'geeby-deeby/edit-edition/product-code-list.phtml'
             );
         }
+    }
+
+    /**
+     * Work with images
+     *
+     * @return mixed
+     */
+    public function imageAction()
+    {
+        // Special case: new image:
+        if ($this->getRequest()->isPost()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
+            $table = $this->getDbTable('editionsimages');
+            $row = $table->createRow();
+            $row->Edition_ID = $this->params()->fromRoute('id');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $row->Image_Path = $this->params()->fromPost('image');
+            if (empty($row->Image_Path)) {
+                return $this->jsonDie('Image path must be set.');
+            }
+            $row->Thumb_Path = $this->params()->fromPost('thumb');
+            // Build thumb path if none was provided:
+            if (empty($row->Thumb_Path)) {
+                $parts = explode('.', $row->Image_Path);
+                $nextToLast = count($parts) - 2;
+                $parts[$nextToLast] .= 'thumb';
+                $row->Thumb_Path = implode('.', $parts);
+            }
+            $row->Position = $this->params()->fromPost('pos');
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        } else {
+            // Otherwise, treat this as a generic link:
+            return $this->handleGenericLink(
+                'editionsimages', 'Edition_ID', 'Sequence_ID',
+                'images', 'getImagesForEdition',
+                'geeby-deeby/edit-edition/image-list.phtml'
+            );
+        }
+    }
+
+    /**
+     * Set the order of an attached image
+     *
+     * @return mixed
+     */
+    public function imageorderAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            $image = $this->params()->fromRoute('extra');
+            $pos = $this->params()->fromPost('pos');
+            $this->getDbTable('editionsimages')->update(
+                array('Position' => $pos), array('Sequence_ID' => $image)
+            );
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
     }
 }

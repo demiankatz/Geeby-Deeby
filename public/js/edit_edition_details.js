@@ -699,6 +699,101 @@ function deleteProductCode(rowID)
     }});
 }
 
+/* Redraw image list:
+ */
+function redrawImages()
+{
+    var editionID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/Image';
+    $('#image_list').load(url);
+}
+
+/* Add an image:
+ */
+function saveImage()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+    var noteID = parseInt($('#image_note').val());
+    if (isNaN(noteID)) {
+        noteID = '';
+    }
+    var pos = parseInt($('#image_position').val());
+    if (isNaN(pos)) {
+        pos = 0;
+    }
+    var image = $('#image_path').val();
+    var thumb = $('#thumb_path').val();
+
+    // Save the image:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/Image/NEW';
+    var params =
+        {image: image, thumb: thumb, note_id: noteID, pos: pos};
+    $.post(url, params, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawImages();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Remove an image:
+ */
+function removeImage(image_id, role)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+
+    var editionID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/Image/' + encodeURIComponent(image_id);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
+        // If delete was successful...
+        if (data.success) {
+            // Update the list.
+            redrawImages();
+        } else {
+            // Delete failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }});
+}
+
+/* Renumber an image:
+ */
+function changeImageOrder(image_id)
+{
+    // Validate parameters:
+    if (isNaN(image_id)) {
+        alert('Please select a valid image.');
+        return;
+    }
+
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+    var pos = parseInt($('#image_order' + image_id).val());
+    if (isNaN(pos)) {
+        pos = 0;
+    }
+
+    // Renumber the image:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/ImageOrder/' + encodeURIComponent(image_id);
+    $.post(url, {pos: pos}, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawImages();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
 // Activate page controls on domready:
 $(document).ready(function(){
     // Turn on tabs

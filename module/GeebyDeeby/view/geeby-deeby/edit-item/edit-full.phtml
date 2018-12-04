@@ -14,7 +14,6 @@
     <li><a href="#attached-tab"><span>Attached Items</span></a></li>
     <li><a href="#credits-tab"><span>Credits</span></a></li>
     <li><a href="#desc-tab"><span>Descriptions</span></a></li>
-    <li><a href="#images-tab"><span>Images</span></a></li>
     <li><a href="#platforms-tab"><span>Platforms</span></a></li>
     <li><a href="#bib-tab"><span>References</span></a></li>
     <li><a href="#tags-tab"><span>Subjects/Tags</span></a></li>
@@ -151,36 +150,6 @@
     </div>
     <div id="desc_list">
       <?=$this->render('geeby-deeby/edit-item/description-list.phtml')?>
-    </div>
-  </div>
-
-  <div id="images-tab" class="edit_tab_contents">
-    <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th>Image Path:</th>
-          <td><input type="text" id="image_path" /></td>
-        </tr>
-        <tr>
-          <th>Thumb Path:<br /><span class="note">(leave blank to add &quot;thumb&quot; to image filename)</span></th>
-          <td><input type="text" id="thumb_path" /></td>
-        </tr>
-        <tr>
-          <th>Position:</th>
-          <td><input type="text" id="image_position" /></td>
-        </tr>
-        <tr>
-          <th>Note:</th>
-          <td><input id="image_note" class="Note_ID" /></td>
-        </tr>
-        <tr>
-          <th></th>
-          <td><button onclick="saveImage();">Add</button></td>
-        </tr>
-      </table>
-    </div>
-    <div id="image_list">
-      <?=$this->render('geeby-deeby/edit-item/image-list.phtml')?>
     </div>
   </div>
 

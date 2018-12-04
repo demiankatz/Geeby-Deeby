@@ -395,25 +395,6 @@ CREATE TABLE `Items_Files` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Items_Images`
---
-
-DROP TABLE IF EXISTS `Items_Images`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Images` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Image_Path` tinytext NOT NULL,
-  `Thumb_Path` tinytext NOT NULL,
-  `Position` int(11) DEFAULT NULL,
-  `Note_ID` int(11) DEFAULT NULL,
-  `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`Sequence_ID`),
-  UNIQUE KEY `Sequence_ID` (`Sequence_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Items_In_Collections`
 --
 
