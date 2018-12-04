@@ -41,9 +41,11 @@ class SeriesController extends AbstractBase
     /**
      * Get a view model containing a series object (or return false if missing)
      *
+     * @param array $extras Extra parameters to send to view model
+     *
      * @return mixed
      */
-    protected function getViewModelWithSeries()
+    protected function getViewModelWithSeries($extras = array())
     {
         $id = $this->params()->fromRoute('id');
         $table = $this->getDbTable('series');
@@ -52,7 +54,7 @@ class SeriesController extends AbstractBase
             return false;
         }
         return $this->createViewModel(
-            array('series' => $rowObj->toArray())
+            array('series' => $rowObj->toArray()) + $extras
         );
     }
 
@@ -101,7 +103,11 @@ class SeriesController extends AbstractBase
         // Send review to the view.
         $review = $existing ? $existing['Review'] : '';
 
-        return $this->createViewModel(array('review' => $review));
+        $view = $this->getViewModelWithSeries(array('review' => $review));
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        return $view;
     }
 
     /**
@@ -124,7 +130,10 @@ class SeriesController extends AbstractBase
     public function imagesAction()
     {
         $view = $this->getViewModelWithSeries();
-        $view->images = $this->getDbTable('edition')
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        $view->images = $this->getDbTable('itemsimages')
             ->getImagesForSeries($view->series['Series_ID']);
         return $view;
     }
@@ -150,7 +159,7 @@ class SeriesController extends AbstractBase
         $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
-        $view->items = $this->getDbTable('edition')->getItemsForSeries($id);
+        $view->items = $this->getDbTable('item')->getItemsForSeries($id);
         $view->language = $this->getDbTable('language')
             ->getByPrimaryKey($view->series['Language_ID']);
         $view->publishers = $this->getDbTable('seriespublishers')

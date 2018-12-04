@@ -23,6 +23,7 @@ return array(
                 'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
                 'edition' => 'GeebyDeeby\Db\Table\Edition',
+                'editionsreleasedates' => 'GeebyDeeby\Db\Table\EditionsReleaseDates',
                 'faqs' => 'GeebyDeeby\Db\Table\FAQs',
                 'file' => 'GeebyDeeby\Db\Table\File',
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
@@ -249,6 +250,18 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditCountry',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'edition' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Edition[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditEdition',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                                'extra'         => null,
                             ),
                         ),
                     ),
@@ -883,6 +896,7 @@ return array(
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
+            'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',

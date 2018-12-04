@@ -8,6 +8,7 @@
 <hr />
 <div id="tabs">
   <ul>
+    <li><a href="#editions-tab"><span>Editions</span></a></li>
     <li><a href="#adaptations-tab"><span>Adaptations</span></a></li>
     <li><a href="#alt-titles-tab"><span>Alternate Titles</span></a></li>
     <li><a href="#attached-tab"><span>Attached Items</span></a></li>
@@ -20,6 +21,13 @@
     <li><a href="#bib-tab"><span>References</span></a></li>
     <li><a href="#translations-tab"><span>Translations</span></a></li>
   </ul>
+
+  <div id="editions-tab" class="edit_tab_contents">
+    <button onclick="return copyEdition();">Copy Selected Edition</button>
+    <div id="edition_list">
+      <?=$this->render('geeby-deeby/edit-item/edition-list.phtml')?>
+    </div>
+  </div>
 
   <div id="adaptations-tab" class="edit_tab_contents">
     <select id="adapt_type">

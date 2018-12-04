@@ -99,39 +99,6 @@ class Edition extends Gateway
     }
 
     /**
-     * Get image information for the specified series.
-     *
-     * @var int $seriesID Series ID
-     *
-     * @return mixed
-     */
-    public function getImagesForSeries($seriesID)
-    {
-        $callback = function ($select) use ($seriesID) {
-            $select->join(
-                array('i' => 'Items'), 'Editions.Item_ID = i.Item_ID'
-            );
-            $select->join(
-                array('mt' => 'Material_Types'),
-                'i.Material_Type_ID = mt.Material_Type_ID'
-            );
-            $select->join(array('ii' => 'Items_Images'), 'i.item_ID = ii.item_ID');
-            $select->join(
-                array('n' => 'Notes'), 'ii.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
-            );
-            $select->order(
-                array(
-                    'mt.Material_Type_Name', 'Editions.Position',
-                    'i.Item_Name', 'ii.Position'
-                )
-            );
-            $select->where->equalTo('Series_ID', $seriesID);
-        };
-        return $this->select($callback);
-    }
-
-    /**
      * Get a list of items for the specified series.
      *
      * @var int $seriesID Series ID
@@ -140,39 +107,23 @@ class Edition extends Gateway
      */
     public function getItemsForSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
-            $select->join(
-                array('i' => 'Items'), 'Editions.Item_ID = i.Item_ID'
-            );
-            $select->join(
-                array('mt' => 'Material_Types'),
-                'i.Material_Type_ID = mt.Material_Type_ID'
-            );
-            $select->order(
-                array('mt.Material_Type_Name', 'Position', 'i.Item_Name')
-            );
-            $select->where->equalTo('Series_ID', $seriesID);
-        };
-        return $this->select($callback);
+        // Proxy item table (so handleGenericLink() can be used in
+        // EditSeriesController):
+        return $this->getDbTable('item')->getItemsForSeries($seriesID);
     }
 
     /**
-     * Get a list of series for the specified item.
+     * Retrieve editions for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID.
      *
      * @return mixed
      */
-    public function getSeriesForItem($itemID)
+    public function getEditionsForItem($itemID)
     {
         $callback = function ($select) use ($itemID) {
-            $select->join(
-                array('s' => 'Series'), 'Editions.Series_ID = s.Series_ID'
-            );
-            $select->order(
-                array('s.Series_Name', 's.Series_ID', 'Position')
-            );
             $select->where->equalTo('Item_ID', $itemID);
+            $select->order('Edition_Name');
         };
         return $this->select($callback);
     }

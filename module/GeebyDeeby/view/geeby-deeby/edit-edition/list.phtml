@@ -1,0 +1,8 @@
+<h1>Editions</h1>
+<? if (!isset($editions) || count($editions) < 1): ?>
+  No editions.
+<? else: ?>
+  <p>
+    <?=$this->render('geeby-deeby/edit-edition/render-editions.phtml')?>
+  </p>
+<? endif; ?>

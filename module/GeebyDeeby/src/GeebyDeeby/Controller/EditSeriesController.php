@@ -71,7 +71,7 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbTable('materialtype')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
-            $view->item_list = $this->getDbTable('edition')
+            $view->item_list = $this->getDbTable('item')
                 ->getItemsForSeries($view->seriesObj->Series_ID);
             $view->series_alt_titles = $this->getDbTable('seriesalttitles')
                 ->getAltTitles($view->seriesObj->Series_ID);
@@ -96,6 +96,10 @@ class EditSeriesController extends AbstractBase
      */
     public function categoriesAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('seriescategories');
             $series = $this->params()->fromRoute('id');
@@ -132,6 +136,10 @@ class EditSeriesController extends AbstractBase
     {
         // Special case: new publisher:
         if ($this->getRequest()->isPost()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
             $table = $this->getDbTable('seriesalttitles');
             $row = $table->createRow();
             $row->Series_ID = $this->params()->fromRoute('id');
@@ -161,6 +169,10 @@ class EditSeriesController extends AbstractBase
     {
         // Special case: new publisher:
         if ($this->getRequest()->isPost()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
             $table = $this->getDbTable('seriespublishers');
             $row = $table->createRow();
             $row->Series_ID = $this->params()->fromRoute('id');
@@ -187,14 +199,27 @@ class EditSeriesController extends AbstractBase
      */
     public function itemAction()
     {
+        // Special case: delete editions differently from other links:
+        if ($this->getRequest()->isDelete()) {
+            $ok = $this->checkPermission('Content_Editor');
+            if ($ok !== true) {
+                return $ok;
+            }
+            $this->getDbTable('edition')
+                ->delete(array('Edition_ID' => $this->params()->fromRoute('extra')));
+            return $this->jsonReportSuccess();
+        }
+
         $series = $this->getDbTable('series')->getByPrimaryKey(
             $this->params()->fromRoute('id')
         );
+        $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+            ->articleAwareAppend($series->Series_Name, ' edition');
         return $this->handleGenericLink(
             'edition', 'Series_ID', 'Item_ID',
             'item_list', 'getItemsForSeries',
             'geeby-deeby/edit-series/item-list.phtml',
-            array('Edition_Name' => $series->Series_Name . ' edition')
+            array('Edition_Name' => $edName)
         );
     }
 
@@ -205,6 +230,10 @@ class EditSeriesController extends AbstractBase
      */
     public function itemorderAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         if ($this->getRequest()->isPost()) {
             $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');

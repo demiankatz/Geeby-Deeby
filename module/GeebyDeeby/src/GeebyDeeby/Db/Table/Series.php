@@ -112,4 +112,30 @@ class Series extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of series for the specified item.
+     *
+     * @var int  $itemID          Item ID
+     * @var bool $includePosition Should we include position information?
+     *
+     * @return mixed
+     */
+    public function getSeriesForItem($itemID, $includePosition = true)
+    {
+        $callback = function ($select) use ($itemID, $includePosition) {
+            $select->join(
+                array('eds' => 'Editions'), 'Series.Series_ID = eds.Series_ID',
+                $includePosition ? array('Position') : array()
+            );
+            $fields = array('Series_Name', 'Series_ID');
+            if ($includePosition) {
+                $fields[] = 'Position';
+            }
+            $select->order($fields);
+            $select->group($fields);
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return $this->select($callback);
+    }
 }

@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Expression;
 
 /**
  * Table Definition for Items
@@ -93,6 +94,41 @@ class Item extends Gateway
                 $select->where->like('Item_Name', '%' . $token . '%');
             }
             $select->order('Item_Name');
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get a list of items for the specified series.
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getItemsForSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->join(
+                array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
+                array(
+                    'Position',
+                    'Edition_ID' => new Expression(
+                        'min(?)', array('Edition_ID'),
+                        array(Expression::TYPE_IDENTIFIER)
+                    )
+                )
+            );
+            $select->join(
+                array('mt' => 'Material_Types'),
+                'Items.Material_Type_ID = mt.Material_Type_ID'
+            );
+            $select->order(
+                array('mt.Material_Type_Name', 'Position', 'Item_Name')
+            );
+            $select->group(
+                array('Items.Item_ID', 'Position', 'Items.Material_Type_ID')
+            );
+            $select->where->equalTo('Series_ID', $seriesID);
         };
         return $this->select($callback);
     }

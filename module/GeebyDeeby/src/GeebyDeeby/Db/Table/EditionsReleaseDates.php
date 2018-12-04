@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for Items_Images
+ * Table Definition for Editions_Release_Dates
  *
  * PHP version 5
  *
@@ -29,7 +29,7 @@ namespace GeebyDeeby\Db\Table;
 use Zend\Db\Sql\Select;
 
 /**
- * Table Definition for Items_Images
+ * Table Definition for Editions_Release_Dates
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -37,79 +37,61 @@ use Zend\Db\Sql\Select;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ItemsImages extends Gateway
+class EditionsReleaseDates extends Gateway
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('Items_Images');
+        parent::__construct('Editions_Release_Dates');
     }
 
     /**
-     * Get a list of images for the specified item.
+     * Get a list of dates for the specified item.
      *
      * @var int $itemID Item ID
      *
      * @return mixed
      */
-    public function getImagesForItem($itemID)
+    public function getDatesForItem($itemID)
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('i' => 'Items'), 'Items_Images.Item_ID = i.Item_ID'
-            );
-            $select->join(
-                array('n' => 'Notes'), 'Items_Images.Note_ID = n.Note_ID',
+                array('n' => 'Notes'),
+                'Items_Release_Dates.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->order(array('Position', 'i.Item_Name'));
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Release_Dates.Item_ID = eds.Edition_ID'
+            );
+            $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
+            $select->order(array('Year', 'Month', 'Day', 'Edition_Name'));
             $select->where->equalTo('i.Item_ID', $itemID);
         };
         return $this->select($callback);
     }
 
     /**
-     * Get image information for the specified series.
-     *
-     * @var int $seriesID Series ID
+     * Get a list of items sorted by publication date.
      *
      * @return mixed
      */
-    public function getImagesForSeries($seriesID)
+    public function getItemsByYear()
     {
-        $callback = function ($select) use ($seriesID) {
-            $select->columns(array('Thumb_Path', 'Item_ID'));
+        $callback = function ($select) {
             $select->join(
-                array('i' => 'Items'), 'Items_Images.Item_ID = i.Item_ID',
-                array()
+                array('eds' => 'Editions'),
+                'Editions_Release_Dates.Item_ID = eds.Edition_ID'
             );
+            $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
             $select->join(
-                array('eds' => 'Editions'), 'eds.item_ID = i.item_ID', array()
+                array('n' => 'Notes'),
+                'Editions_Release_Dates.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->join(
-                array('mt' => 'Material_Types'),
-                'i.Material_Type_ID = mt.Material_Type_ID',
-                array()
-            );
-            $select->join(
-                array('n' => 'Notes'), 'Items_Images.Note_ID = n.Note_ID',
-                array('Note'), Select::JOIN_LEFT
-            );
-            $select->order(
-                array(
-                    'mt.Material_Type_Name', 'eds.Position',
-                    'i.Item_Name', 'Items_Images.Position'
-                )
-            );
-            $select->group(
-                array(
-                    'Thumb_Path', 'eds.Position', 'Items_Images.Position',
-                    'Items_Images.Item_ID', 'Note'
-                )
-            );
-            $select->where->equalTo('Series_ID', $seriesID);
+            $select->order(array('Year', 'Item_Name', 'Edition_Name'));
         };
         return $this->select($callback);
     }

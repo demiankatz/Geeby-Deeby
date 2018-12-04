@@ -50,9 +50,24 @@ class MigrateController extends AbstractBase
             return $ok;
         }
         $messages = array();
-        $migrated = $this->migrateItemsInSeriesToEditions();
+        try {
+            $migrated = $this->migrateItemsInSeriesToEditions();
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
+            // Table no longer exists -- no migration necessary
+            $migrated = 0;
+        }
         if ($migrated > 0) {
             $messages[] = 'Migrated ' . $migrated . ' rows from Items_In_Series.';
+        }
+        try {
+            $migrated = $this->migrateItemDatesToEditions();
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
+            // Table no longer exists -- no migration necessary
+            $migrated = 0;
+        }
+        if ($migrated > 0) {
+            $messages[] = 'Migrated ' . $migrated
+                . ' release dates from Items_Release_Dates.';
         }
         return $this->createViewModel(array('messages' => $messages));
     }
@@ -69,7 +84,9 @@ class MigrateController extends AbstractBase
         $count = 0;
         foreach ($iis->getAll() as $current) {
             $row = $eds->createRow();
-            $row->Edition_Name = $current->Series_Name . ' edition';
+            $row->Edition_Name = $this->getServiceLocator()
+                ->get('GeebyDeeby\Articles')
+                ->articleAwareAppend($current->Series_Name, ' edition');
             $row->Item_ID = $current->Item_ID;
             $row->Series_ID = $current->Series_ID;
             $row->Position = $current->Position;
@@ -81,6 +98,32 @@ class MigrateController extends AbstractBase
                     'Position' => $current->Position
                 )
             );
+            $count++;
+        }
+        return $count;
+    }
+
+    /**
+     * Migrate Items_Release_Dates to Editions_Release_Dates.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemDatesToEditions()
+    {
+        $iDates = $this->getDbTable('itemsreleasedates');
+        $eDates = $this->getDbTable('editionsreleasedates');
+        $eds = $this->getDbTable('edition');
+        $count = 0;
+        foreach ($iDates->select() as $current) {
+            $current = (array)$current;
+            $currentEds = $eds->getEditionsForItem($current['Item_ID']);
+            foreach ($currentEds as $currentEd) {
+                unset($current['Item_ID']);
+                $current['Edition_ID'] = $currentEd->Edition_ID;
+                $eDates->insert($current);
+            }
+            unset($current['Edition_ID']);
+            $iDates->delete($current);
             $count++;
         }
         return $count;

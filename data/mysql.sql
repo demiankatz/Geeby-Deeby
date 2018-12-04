@@ -93,6 +93,23 @@ CREATE TABLE `Editions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Editions_Release_Dates`
+--
+
+DROP TABLE IF EXISTS `Editions_Release_Dates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Release_Dates` (
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Year` int(11) NOT NULL DEFAULT '0',
+  `Month` int(11) NOT NULL DEFAULT '0',
+  `Day` int(11) NOT NULL DEFAULT '0',
+  `Note_ID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Edition_ID`,`Month`,`Day`,`Year`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `FAQ_Categories`
 --
 

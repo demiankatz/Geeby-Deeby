@@ -76,12 +76,12 @@ class ItemsCredits extends Gateway
                 'Items_Credits.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->order(
-                array(
-                    'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Position',
-                    'Item_Name'
-                )
+            $fields = array(
+                'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Position',
+                'Item_Name'
             );
+            $select->order($fields);
+            $select->group($fields);
             $select->where->equalTo('Person_ID', $personID);
         };
         return $this->select($callback);

@@ -11,7 +11,7 @@
 <? endif; ?>
 
 <form action="" method="post">
-  <h2>Review:</h2>
+  <h2>Review of <?=$this->escapeHtml($this->fixtitle($item['Item_Name']))?>:</h2>
   <textarea name="Review" rows="15" cols="80"><?=$this->escapeHtml($review)?></textarea><br />
   <input type="submit" value="Submit Review" />
 </form>
