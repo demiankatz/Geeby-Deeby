@@ -22,6 +22,7 @@ return array(
                 'category' => 'GeebyDeeby\Db\Table\Category',
                 'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
+                'edition' => 'GeebyDeeby\Db\Table\Edition',
                 'faqs' => 'GeebyDeeby\Db\Table\FAQs',
                 'file' => 'GeebyDeeby\Db\Table\File',
                 'filetype' => 'GeebyDeeby\Db\Table\FileType',
@@ -398,6 +399,16 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditMaterialType',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'migrate' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/Migrate',
+                            'defaults' => array(
+                                'controller'    => 'Migrate',
+                                'action'        => 'index',
                             ),
                         ),
                     ),
@@ -889,6 +900,7 @@ return array(
             'GeebyDeeby\Controller\Language' => 'GeebyDeeby\Controller\LanguageController',
             'GeebyDeeby\Controller\Link' => 'GeebyDeeby\Controller\LinkController',
             'GeebyDeeby\Controller\MaterialType' => 'GeebyDeeby\Controller\MaterialTypeController',
+            'GeebyDeeby\Controller\Migrate' => 'GeebyDeeby\Controller\MigrateController',
             'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
             'GeebyDeeby\Controller\Platform' => 'GeebyDeeby\Controller\PlatformController',
             'GeebyDeeby\Controller\Publisher' => 'GeebyDeeby\Controller\PublisherController',

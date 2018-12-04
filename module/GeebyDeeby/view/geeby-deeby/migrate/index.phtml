@@ -1,0 +1,13 @@
+<? $this->headTitle('Data Migration - ') ?>
+<h1>Data Migration</h1>
+
+<? if (!empty($messages)): ?>
+  <h2>Status</h2>
+  <p>
+    <? foreach ($messages as $m): ?>
+      <?=$this->escapeHtml($m)?><br />
+    <? endforeach; ?>
+  </p>
+<? else: ?>
+  <p>No data migrations necessary.</p>
+<? endif; ?>

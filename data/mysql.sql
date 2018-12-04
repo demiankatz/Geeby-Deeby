@@ -76,6 +76,23 @@ CREATE TABLE `Countries` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Editions`
+--
+
+DROP TABLE IF EXISTS `Editions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions` (
+  `Edition_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Edition_Name` tinytext NOT NULL,
+  `Item_ID` int(11) NOT NULL DEFAULT '0',
+  `Series_ID` int(11) DEFAULT NULL,
+  `Position` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Edition_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `FAQ_Categories`
 --
 
@@ -777,6 +794,7 @@ CREATE TABLE `User_Groups` (
   `Content_Editor` tinyint NOT NULL DEFAULT 0,
   `User_Editor` tinyint NOT NULL DEFAULT 0,
   `Approver` tinyint NOT NULL DEFAULT 0,
+  `Data_Manager` tinyint NOT NULL DEFAULT 0,
   PRIMARY KEY (`User_Group_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

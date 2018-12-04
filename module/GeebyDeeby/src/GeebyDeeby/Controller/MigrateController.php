@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit controller
+ * Migration controller
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Controller;
 
 /**
- * Edit controller
+ * Migration controller
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,36 +36,53 @@ namespace GeebyDeeby\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditController extends AbstractBase
+class MigrateController extends AbstractBase
 {
     /**
-     * Default edit menu
+     * Main approval action
      *
      * @return mixed
      */
     public function indexAction()
     {
-        if (!($user = $this->getCurrentUser())) {
-            return $this->forceLogin();
+        $ok = $this->checkPermission('Data_Manager');
+        if ($ok !== true) {
+            return $ok;
         }
-
-        return $this->createViewModel(
-            array(
-                'contentEditor' => $user->hasPermission('Content_Editor'),
-                'approver' => $user->hasPermission('Approver'),
-                'userEditor' => $user->hasPermission('User_Editor'),
-                'dataManager' => $user->hasPermission('Data_Manager')
-            )
-        );
+        $messages = array();
+        $migrated = $this->migrateItemsInSeriesToEditions();
+        if ($migrated > 0) {
+            $messages[] = 'Migrated ' . $migrated . ' rows from Items_In_Series.';
+        }
+        return $this->createViewModel(array('messages' => $messages));
     }
 
     /**
-     * Display access denied message
+     * Migrate Items_In_Series to Editions
      *
-     * @return mixed
+     * @return int Number of rows migrated
      */
-    public function deniedAction()
+    protected function migrateItemsInSeriesToEditions()
     {
-        return $this->createViewModel();
+        $iis = $this->getDbTable('itemsinseries');
+        $eds = $this->getDbTable('edition');
+        $count = 0;
+        foreach ($iis->getAll() as $current) {
+            $row = $eds->createRow();
+            $row->Edition_Name = $current->Series_Name . ' edition';
+            $row->Item_ID = $current->Item_ID;
+            $row->Series_ID = $current->Series_ID;
+            $row->Position = $current->Position;
+            $row->save();
+            $iis->delete(
+                array(
+                    'Item_ID' => $current->Item_ID,
+                    'Series_ID' => $current->Series_ID,
+                    'Position' => $current->Position
+                )
+            );
+            $count++;
+        }
+        return $count;
     }
 }
