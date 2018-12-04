@@ -1,24 +1,22 @@
-<? $this->headTitle('Edition Editor - ') ?>
+<? $this->layout()->title = 'Edit Edition' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/edit_edition_details.js') ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/ui.tabs.paging.js') ?>
-<h1>Edit Edition</h1>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-edition/index.phtml')?>
 </div>
 <hr />
-<div id="tabs">
-  <ul>
-    <li><a href="#credits-tab"><span>Credits</span></a></li>
-    <li><a href="#codes-tab"><span>Codes/ISBNs</span></a></li>
-    <li><a href="#release-tab"><span>Dates</span></a></li>
-    <li><a href="#fulltext-tab"><span>Full Text Links</span></a></li>
-    <li><a href="#images-tab"><span>Images</span></a></li>
-    <li><a href="#platforms-tab"><span>Platforms</span></a></li>
-    <li><a href="#preferred-publisher"><span>Preferred Publisher</span></a></li>
-    <li><a href="#preferred-titles"><span>Preferred Titles</span></a></li>
-  </ul>
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#credits-tab" data-toggle="tab"><span>Credits</span></a></li>
+  <li><a href="#codes-tab" data-toggle="tab"><span>Codes/ISBNs</span></a></li>
+  <li><a href="#release-tab" data-toggle="tab"><span>Dates</span></a></li>
+  <li><a href="#fulltext-tab" data-toggle="tab"><span>Full Text Links</span></a></li>
+  <li><a href="#images-tab" data-toggle="tab"><span>Images</span></a></li>
+  <li><a href="#platforms-tab" data-toggle="tab"><span>Platforms</span></a></li>
+  <li><a href="#preferred-publisher" data-toggle="tab"><span>Preferred Publisher</span></a></li>
+  <li><a href="#preferred-titles" data-toggle="tab"><span>Preferred Titles</span></a></li>
+</ul>
 
-  <div id="credits-tab" class="edit_tab_contents">
+<div class="tab-content">
+  <div id="credits-tab" class="tab-pane active">
     <p class="disclaimer">Credits added/removed here will affect only this edition of the item;
     to affect ALL editions, please go back to the Item Editor first.</p>
     <div class="edit_container">
@@ -50,7 +48,7 @@
     </div>
   </div>
 
-  <div id="codes-tab" class="edit_tab_contents">
+  <div id="codes-tab" class="tab-pane">
     <table>
       <tr>
         <td style="width: 33%;">
@@ -90,7 +88,7 @@
     </table>
   </div>
 
-  <div id="release-tab" class="edit_tab_contents">
+  <div id="release-tab" class="tab-pane">
     <div class="edit_container">
       <table class="edit">
         <tr>
@@ -122,7 +120,7 @@
     </div>
   </div>
 
-  <div id="fulltext-tab" class="edit_tab_contents">
+  <div id="fulltext-tab" class="tab-pane">
     <div class="edit_container">
       Add full text:
       <select id="Full_Text_Source_ID">
@@ -138,7 +136,7 @@
     </div>
   </div>
 
-  <div id="images-tab" class="edit_tab_contents">
+  <div id="images-tab" class="tab-pane">
     <div class="edit_container">
       <table class="edit">
         <tr>
@@ -168,7 +166,7 @@
     </div>
   </div>
 
-  <div id="platforms-tab" class="edit_tab_contents">
+  <div id="platforms-tab" class="tab-pane">
     <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
     <button onclick="addPlatform();">Add Platform</button>
     <br/>
@@ -178,7 +176,7 @@
     </div>
   </div>
 
-  <div id="preferred-publisher" class="edit_tab_contents">
+  <div id="preferred-publisher" class="tab-pane">
     <div class="edit_container">
       <h3>Preferred Publisher</h3>
       <div id="series-publisher-select-container">
@@ -188,7 +186,7 @@
     </div>
   </div>
 
-  <div id="preferred-titles" class="edit_tab_contents">
+  <div id="preferred-titles" class="tab-pane">
     <div class="edit_container">
       <h3>Preferred Item Title</h3>
       <div id="item-alt-title-select-container">

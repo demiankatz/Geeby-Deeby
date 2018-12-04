@@ -1,6 +1,5 @@
-<? $this->headTitle('File Editor - ') ?>
+<? $this->layout()->title = 'Edit File' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/edit_file.js') ?>
-<h1>Edit File</h1>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-file/index.phtml')?>
 </div>

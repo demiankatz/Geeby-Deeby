@@ -1,0 +1,15 @@
+{
+    "name": "demiankatz/geeby-deeby",
+    "description": "A bibliographic management system for series fiction.",
+    "authors": [
+        {
+            "name": "Demian Katz",
+            "email": "demian.katz@villanova.edu"
+        }
+    ],
+    "license": "GPL-2.0",
+    "require": {
+        "vufind-org/vufindcode": "*",
+        "zendframework/zendframework": "2.1.1"
+    }
+}

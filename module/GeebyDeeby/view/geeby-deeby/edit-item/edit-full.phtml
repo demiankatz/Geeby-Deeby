@@ -1,32 +1,29 @@
-<? $this->headTitle('Item Editor - ') ?>
+<? $this->layout()->title = 'Edit Item' ?>
 <? $this->headScript()->prependFile($this->basePath() . '/js/edit_item_details.js') ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/ui.tabs.paging.js') ?>
-<h1>Edit Item</h1>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-item/index.phtml')?>
 </div>
 <hr />
-<div id="tabs">
-  <ul>
-    <li><a href="#editions-tab"><span>Editions</span></a></li>
-    <li><a href="#adaptations-tab"><span>Adaptations</span></a></li>
-    <li><a href="#alt-titles-tab"><span>Alternate Titles</span></a></li>
-    <li><a href="#attached-tab"><span>Attached Items</span></a></li>
-    <li><a href="#credits-tab"><span>Credits</span></a></li>
-    <li><a href="#desc-tab"><span>Descriptions</span></a></li>
-    <li><a href="#bib-tab"><span>References</span></a></li>
-    <li><a href="#tags-tab"><span>Subjects/Tags</span></a></li>
-    <li><a href="#translations-tab"><span>Translations</span></a></li>
-  </ul>
-
-  <div id="editions-tab" class="edit_tab_contents">
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#editions-tab" data-toggle="tab"><span>Editions</span></a></li>
+  <li><a href="#adaptations-tab" data-toggle="tab"><span>Adaptations</span></a></li>
+  <li><a href="#alt-titles-tab" data-toggle="tab"><span>Alternate Titles</span></a></li>
+  <li><a href="#attached-tab" data-toggle="tab"><span>Attached Items</span></a></li>
+  <li><a href="#credits-tab" data-toggle="tab"><span>Credits</span></a></li>
+  <li><a href="#desc-tab" data-toggle="tab"><span>Descriptions</span></a></li>
+  <li><a href="#bib-tab" data-toggle="tab"><span>References</span></a></li>
+  <li><a href="#tags-tab" data-toggle="tab"><span>Subjects/Tags</span></a></li>
+  <li><a href="#translations-tab" data-toggle="tab"><span>Translations</span></a></li>
+</ul>
+<div class="tab-content">
+  <div id="editions-tab" class="tab-pane active">
     <button onclick="return copyEdition();">Copy Selected Edition</button>
     <div id="edition_list">
       <?=$this->render('geeby-deeby/edit-item/edition-list.phtml')?>
     </div>
   </div>
 
-  <div id="adaptations-tab" class="edit_tab_contents">
+  <div id="adaptations-tab" class="tab-pane">
     <select id="adapt_type">
       <option value='from'>Adapted From</option>
       <option value='into'>Adapted Into</option>
@@ -51,7 +48,7 @@
     </table>
   </div>
 
-  <div id="alt-titles-tab" class="edit_tab_contents">
+  <div id="alt-titles-tab" class="tab-pane">
     <b>Title:</b> <input type="text" id="Alt_Title" />
     <b>Note: </b> <input id="Alt_Title_Note" class="Note_ID" />
     <button onclick="addAltTitle();">Add</button>
@@ -60,7 +57,7 @@
     </div>
   </div>
 
-  <div id="attached-tab" class="edit_tab_contents">
+  <div id="attached-tab" class="tab-pane">
     <div class="edit_container">
       <table class="edit">
         <tr>
@@ -82,7 +79,7 @@
     </div>
   </div>
 
-  <div id="bib-tab" class="edit_tab_contents">
+  <div id="bib-tab" class="tab-pane">
     <p>The current item is about the following items, series and people...</p>
     <b>Item References:</b>
     <input id="item_bib_id" class="Item_ID" />
@@ -104,7 +101,7 @@
     </div>
   </div>
 
-  <div id="credits-tab" class="edit_tab_contents">
+  <div id="credits-tab" class="tab-pane">
     <p class="disclaimer">Credits added/removed here will affect ALL editions of this item;
     to affect a single edition, select it from the Editions tab first.</p>
     <div class="edit_container">
@@ -136,7 +133,7 @@
     </div>
   </div>
 
-  <div id="desc-tab" class="edit_tab_contents">
+  <div id="desc-tab" class="tab-pane">
     <div class="edit_container">
       <table class="edit">
         <tr>
@@ -166,7 +163,7 @@
     </div>
   </div>
 
-  <div id="tags-tab" class="edit_tab_contents">
+  <div id="tags-tab" class="tab-pane">
     <div class="edit_container">
       <table class="edit">
         <tr>
@@ -184,7 +181,7 @@
     </div>
   </div>
 
-  <div id="translations-tab" class="edit_tab_contents">
+  <div id="translations-tab" class="tab-pane">
     <select id="trans_type">
       <option value='from'>Translated From</option>
       <option value='into'>Translated Into</option>
@@ -208,5 +205,4 @@
       </tr>
     </table>
   </div>
-
 </div>

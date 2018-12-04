@@ -9,3 +9,5 @@ public/*.htm
 public/*.gif
 public/*.txt
 public/*.xls
+composer.lock
+vendor/

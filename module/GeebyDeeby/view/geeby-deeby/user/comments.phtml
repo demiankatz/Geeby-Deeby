@@ -1,6 +1,6 @@
 <?
     $title = $user['Username'];
-    $this->headTitle('User Comments - ' . $title . ' - ');
+    $this->layout()->title = 'User Comments - ' . $title;
 ?>
 <h1>User Comments - <?=$this->escapeHtml($title)?></h1>
 <p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>

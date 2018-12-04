@@ -1,10 +1,8 @@
 <?
     $title = $language['Language_Name'];
-    $this->headTitle('Language - ' . $title . ' - ');
+    $this->layout()->title = 'Language - ' . $title;
     $displayedSomething = false;
 ?>
-<h1><?=$this->escapeHtml($title)?></h1>
-
 <? if (count($series) < 1): ?>
   <p>No information is available about this language.</p>
 <? else: ?>

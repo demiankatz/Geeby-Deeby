@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+use Zend\Crypt\Password\Bcrypt;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
 
 /**
@@ -73,6 +74,8 @@ class MigrateController extends AbstractBase
                 'imprints from Series_Publishers',
             'migratePublisherCountries' =>
                 'countries from Series_Publishers',
+            'migrateUserPasswords' =>
+                'user password hashes',
         );
         foreach ($migrations as $method => $msg) {
             try {
@@ -277,7 +280,7 @@ class MigrateController extends AbstractBase
      * Support method for migratePublisherImprints -- create or retrieve imprint ID
      * for provided Series_Publishers row.
      *
-     * @param \VuFind\Db\Row\SeriesPublishers $current Series_Publishers row
+     * @param \GeebyDeeby\Db\Row\SeriesPublishers $current Series_Publishers row
      *
      * @return string
      */
@@ -323,7 +326,7 @@ class MigrateController extends AbstractBase
      * Support method for migratePublisherCountries -- create or retrieve country ID
      * for provided Series_Publishers row.
      *
-     * @param \VuFind\Db\Row\SeriesPublishers $current Series_Publishers row
+     * @param \GeebyDeeby\Db\Row\SeriesPublishers $current Series_Publishers row
      *
      * @return string
      */
@@ -342,5 +345,23 @@ class MigrateController extends AbstractBase
         // No row found -- create one!
         $pi->insert($address);
         return $this->getAddressID($current);
+    }
+
+    /**
+     * Migrate user passwords
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateUserPasswords()
+    {
+        $users = $this->getDbTable('user');
+        $bcrypt = new Bcrypt();
+        $count = 0;
+        foreach ($users->select(['Password_Hash' => '']) as $user) {
+            $user->Password_Hash = $bcrypt->create($user->Password);
+            $user->save();
+            $count++;
+        }
+        return $count;
     }
 }

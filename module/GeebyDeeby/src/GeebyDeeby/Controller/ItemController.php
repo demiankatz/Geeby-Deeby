@@ -200,7 +200,7 @@ class ItemController extends AbstractBase
         $config = $this->getServiceLocator()->get('config');
         return $this->createViewModel(
             array(
-                'isbn' => new \VuFind\Code\ISBN($isbn),
+                'isbn' => new \VuFindCode\ISBN($isbn),
                 'config' => isset($config['geeby-deeby']['isbn_links'])
                     ? $config['geeby-deeby']['isbn_links'] : []
             )

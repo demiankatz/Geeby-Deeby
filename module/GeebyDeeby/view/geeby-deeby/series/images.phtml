@@ -1,11 +1,11 @@
 <?
     $title = $this->fixtitle($series['Series_Name']);
-    $this->headTitle('Series Images - ' . $title . ' - ');
+    $this->layout()->title = 'Series Images - ' . $title;
 ?>
-<h1><?=$this->escapeHtml('Series Images - ' . $title)?></h1>
-
 <? if (count($images) < 1): ?>
   <p>No images available for this series.</p>
 <? else: ?>
-  <?=$this->render('partials/images.phtml', array('images' => $images, 'linkType' => 'item'))?>
+  <div class="row">
+    <?=$this->render('partials/images.phtml', array('images' => $images, 'linkType' => 'item'))?>
+  </div>
 <? endif; ?>

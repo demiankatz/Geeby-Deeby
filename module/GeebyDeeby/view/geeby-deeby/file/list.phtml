@@ -1,7 +1,6 @@
 <?
-    $this->headTitle('File List - ');
+    $this->layout()->title = 'File List';
 ?>
-<h1>File List</h1>
 <? if (count($files) < 1): ?>
   <p>No files listed in this database yet.</p>
 <? else: ?>

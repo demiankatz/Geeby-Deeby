@@ -595,7 +595,7 @@ class EditEditionController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $isbn = new \VuFind\Code\ISBN($this->params()->fromPost('isbn'));
+            $isbn = new \VuFindCode\ISBN($this->params()->fromPost('isbn'));
             if (!$isbn->isValid()) {
                 return $this->jsonDie('Invalid ISBN -- cannot save.');
             }

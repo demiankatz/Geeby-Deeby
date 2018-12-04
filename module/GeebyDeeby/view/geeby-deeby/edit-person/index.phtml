@@ -25,7 +25,11 @@
       <th>Biography:</th>
       <td><textarea id="Biography"><?=$this->escapeHtml(isset($person['Biography']) ? $person['Biography'] : '')?></textarea></td>
     </tr>
+    <tr>
+      <td></td>
+      <td id="save_person_status">
+        <button id="save_person" class="btn btn-primary" onclick="savePerson();">Save</button>
+      </td>
+    </tr>
   </table>
-  <button id="save_person" onclick="savePerson();">Save</button>
-  <div id="save_person_status"></div>
 </div>

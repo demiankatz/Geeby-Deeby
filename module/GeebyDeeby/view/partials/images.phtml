@@ -1,31 +1,30 @@
 <? if (count($images) > 0): ?>
-  <? foreach ($images as $image): ?>
-    <?
-      if (!isset($linkType) || $linkType == 'image') {
-        $openAnchor = '<a target="_new" href="' . $this->escapeHtml($image['Image_Path']) . '">';
-      } else if ($linkType == 'item') {
-        $openAnchor = '<a href="' . $this->url('item', array('id' => $image['Item_ID'])) . '">';
-      } else {
-        // unsupported option:
-        $openAnchor = '<a>';
-      }
-    ?>
-    <table class="image">
-      <tr><td align="center"><?=$openAnchor?><img src="<?=$this->escapeHtml($image['Thumb_Path'])?>" /></a></td></tr>
+    <? foreach ($images as $image): ?>
       <?
-        $note = '';
-        if (isset($editions) && count($editions) > 1) {
-            $note = $this->fixtitle($image['Edition_Name']);
-        }
-        if (!empty($image['Note'])) {
-            if (!empty($note)) {
-                $note .= ' - ';
-            }
-            $note .= $image['Note'];
+        if (!isset($linkType) || $linkType == 'image') {
+          $openAnchor = '<a target="_new" href="' . $this->escapeHtml($image['Image_Path']) . '">';
+        } else if ($linkType == 'item') {
+          $openAnchor = '<a href="' . $this->url('item', array('id' => $image['Item_ID'])) . '">';
+        } else {
+          // unsupported option:
+          $openAnchor = '<a>';
         }
       ?>
-      <tr><td align="center"><?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : '<br />'?></td></tr>
-    </table>
-  <? endforeach; ?>
-  <div style="clear: left;"><!-- empty --></div>
+      <div class="col-md-2" style="text-align:center">
+        <?=$openAnchor?><img class="img-polaroid" src="<?=$this->escapeHtml($image['Thumb_Path'])?>" style="display:block;margin:auto"/></a>
+        <?
+          $note = '';
+          if (isset($editions) && count($editions) > 1) {
+              $note = $this->fixtitle($image['Edition_Name']);
+          }
+          if (!empty($image['Note'])) {
+              if (!empty($note)) {
+                  $note .= ' - ';
+              }
+              $note .= $image['Note'];
+          }
+        ?>
+        <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : '<br />'?>
+      </div>
+    <? endforeach; ?>
 <? endif; ?>

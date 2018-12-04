@@ -1,7 +1,6 @@
 <?
-    $this->headTitle('Search Results - ISBN - ');
+    $this->layout()->title = 'Search Results - ISBN';
 ?>
-<h1>Search Results - ISBN</h1>
 <? if (count($results) < 1): ?>
   <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
 <? else: ?>
