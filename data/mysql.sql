@@ -375,23 +375,6 @@ CREATE TABLE `Items_Product_Codes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Items_Release_Dates`
---
-
-DROP TABLE IF EXISTS `Items_Release_Dates`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Release_Dates` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Year` int(11) NOT NULL DEFAULT '0',
-  `Month` int(11) NOT NULL DEFAULT '0',
-  `Day` int(11) NOT NULL DEFAULT '0',
-  `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Item_ID`,`Month`,`Day`,`Year`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Items_Reviews`
 --
 
