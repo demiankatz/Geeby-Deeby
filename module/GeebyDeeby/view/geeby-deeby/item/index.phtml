@@ -51,12 +51,15 @@
     </tr>
   <? endif; ?>
 
-  <? $platformCount = count($platforms); if ($platformCount > 0): ?>
+  <? $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID'); $platformCount = count($platforms); if ($platformCount > 0): ?>
     <tr>
       <th>Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
       <td>
-        <? foreach ($platforms as $platform): ?>
-          <a href="<?=$this->url('platform', array('id' => $platform['Platform_ID']))?>"><?=$this->escapeHtml($platform['Platform'])?></a><br />
+        <? foreach ($platforms as $platform => $note): ?>
+          <? list($platId, $platName) = explode('|', $platform, 2); ?>
+          <a href="<?=$this->url('platform', array('id' => $platId))?>"><?=$this->escapeHtml($platName)?></a>
+          <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
+          <br />
         <? endforeach; ?>
       </td>
     </tr>

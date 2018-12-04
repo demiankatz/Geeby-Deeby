@@ -26,7 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
-use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Expression, Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Editions_Images
@@ -48,9 +48,46 @@ class EditionsImages extends Gateway
     }
 
     /**
+     * Get a list of thumbnails attached to multiple editions.
+     *
+     * @return mixed
+     */
+    public function getDuplicateThumbs()
+    {
+        $callback = function ($select) {
+            $count = new Expression(
+                'count(?)', array('Thumb_Path'), array(Expression::TYPE_IDENTIFIER)
+            );
+            $select->columns(array('Thumb_Path', 'c' => $count));
+            $select->group(array('Thumb_Path'));
+            $select->having('c > 1');
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get edition information matching a particular thumbnail path.
+     *
+     * @param string $thumb Thumb path
+     *
+     * @return mixed
+     */
+    public function getEditionsForThumb($thumb)
+    {
+        $callback = function ($select) use ($thumb) {
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Images.Edition_ID = eds.Edition_ID'
+            );
+            $select->where->equalTo('Thumb_Path', $thumb);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of images for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */

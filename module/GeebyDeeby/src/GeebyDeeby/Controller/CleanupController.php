@@ -1,6 +1,6 @@
 <?php
 /**
- * Platform controller
+ * Cleanup controller
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Controller;
 
 /**
- * Platform controller
+ * Cleanup controller
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,48 +36,40 @@ namespace GeebyDeeby\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class PlatformController extends AbstractBase
+class CleanupController extends AbstractBase
 {
     /**
-     * "Show platform" page
+     * Main action
      *
      * @return mixed
      */
     public function indexAction()
     {
-        $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('platform');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
-            return $this->forwardTo(__NAMESPACE__ . '\Platform', 'notfound');
+        $ok = $this->checkPermission('Data_Manager');
+        if ($ok !== true) {
+            return $ok;
         }
-        $view = $this->createViewModel(
-            array('platform' => $rowObj->toArray())
-        );
-        $view->items = $this->getDbTable('editionsplatforms')
-            ->getItemsForPlatform($id);
-        return $view;
-    }
-
-    /**
-     * Platform list
-     *
-     * @return mixed
-     */
-    public function listAction()
-    {
-        return $this->createViewModel(
-            array('platforms' => $this->getDbTable('platform')->getList())
-        );
-    }
-
-    /**
-     * Not found page
-     *
-     * @return mixed
-     */
-    public function notfoundAction()
-    {
         return $this->createViewModel();
+    }
+
+    /**
+     * Duplicate image cleanup action
+     *
+     * @return mixed
+     */
+    public function imagedupesAction()
+    {
+        $ok = $this->checkPermission('Data_Manager');
+        if ($ok !== true) {
+            return $ok;
+        }
+        $table = $this->getDbTable('editionsimages');
+        $thumbs = $table->getDuplicateThumbs();
+        $details = array();
+        foreach ($thumbs as $current) {
+            $details[$current['Thumb_Path']]
+                = $table->getEditionsForThumb($current['Thumb_Path']);
+        }
+        return $this->createViewModel(array('details' => $details));
     }
 }

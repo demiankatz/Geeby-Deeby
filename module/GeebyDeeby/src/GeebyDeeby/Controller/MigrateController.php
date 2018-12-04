@@ -67,6 +67,8 @@ class MigrateController extends AbstractBase
                 'ISBNs from Items_ISBNs',
             'migrateItemProductCodesToEditions' =>
                 'product codes from Items_Product_Codes',
+            'migrateItemPlatformsToEditions' =>
+                'platforms from Items_Platforms',
             'migratePublisherImprints' =>
                 'imprints from Series_Publishers',
             'migratePublisherCountries' =>
@@ -235,6 +237,18 @@ class MigrateController extends AbstractBase
     {
         return $this->genericItemToEditionMigration(
             'itemsproductcodes', 'editionsproductcodes', 'Sequence_ID'
+        );
+    }
+
+    /**
+     * Migrate Item platforms to Editions.
+     *
+     * @return int Number of rows migrated
+     */
+    protected function migrateItemPlatformsToEditions()
+    {
+        return $this->genericItemToEditionMigration(
+            'itemsplatforms', 'editionsplatforms'
         );
     }
 

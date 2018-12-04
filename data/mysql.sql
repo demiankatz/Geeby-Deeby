@@ -197,6 +197,20 @@ CREATE TABLE `Editions_OCLC_Numbers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Editions_Platforms`
+--
+
+DROP TABLE IF EXISTS `Editions_Platforms`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_Platforms` (
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `Platform_ID` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Edition_ID`,`Platform_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Editions_Product_Codes`
 --
 
@@ -420,20 +434,6 @@ CREATE TABLE `Items_Links` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Link_ID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Item_ID`,`Link_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Items_Platforms`
---
-
-DROP TABLE IF EXISTS `Items_Platforms`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Platforms` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Platform_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`,`Platform_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

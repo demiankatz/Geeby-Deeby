@@ -14,7 +14,6 @@
     <li><a href="#attached-tab"><span>Attached Items</span></a></li>
     <li><a href="#credits-tab"><span>Credits</span></a></li>
     <li><a href="#desc-tab"><span>Descriptions</span></a></li>
-    <li><a href="#platforms-tab"><span>Platforms</span></a></li>
     <li><a href="#bib-tab"><span>References</span></a></li>
     <li><a href="#tags-tab"><span>Subjects/Tags</span></a></li>
     <li><a href="#translations-tab"><span>Translations</span></a></li>
@@ -150,16 +149,6 @@
     </div>
     <div id="desc_list">
       <?=$this->render('geeby-deeby/edit-item/description-list.phtml')?>
-    </div>
-  </div>
-
-  <div id="platforms-tab" class="edit_tab_contents">
-    <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
-    <button onclick="addPlatform();">Add Platform</button>
-    <br/>
-    <b>Platforms:</b>
-    <div id="platform_list">
-    <?=$this->render('geeby-deeby/edit-item/platform-list.phtml')?>
     </div>
   </div>
 
