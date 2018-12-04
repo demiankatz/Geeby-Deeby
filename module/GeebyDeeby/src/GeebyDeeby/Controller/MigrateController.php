@@ -45,6 +45,7 @@ class MigrateController extends AbstractBase
      */
     public function indexAction()
     {
+        set_time_limit(0);
         $ok = $this->checkPermission('Data_Manager');
         if ($ok !== true) {
             return $ok;
