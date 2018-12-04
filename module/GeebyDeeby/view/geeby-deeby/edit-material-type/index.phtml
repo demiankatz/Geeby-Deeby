@@ -2,8 +2,16 @@
   <input type="hidden" id="Material_Type_ID" value="<?=$material['Material_Type_ID']?>" />
   <table class="edit">
     <tr>
-      <th>Material Types:</th>
+      <th>Name (singular):</th>
       <td><input type="text" id="Material_Type_Name" value="<?=isset($material['Material_Type_Name']) ? $this->escapeHtml($material['Material_Type_Name']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Name (plural):</th>
+      <td><input type="text" id="Material_Type_Plural_Name" value="<?=isset($material['Material_Type_Plural_Name']) ? $this->escapeHtml($material['Material_Type_Plural_Name']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Set as default:</th>
+      <td><input type="checkbox" id="Default" value="1" <?=isset($material['Default']) && $material['Default'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>
   <button id="save_material" onclick="saveMaterial();">Save</button>

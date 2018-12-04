@@ -52,13 +52,46 @@ class EditMaterialTypeController extends AbstractBase
     }
 
     /**
+     * Support method for indexAction -- set a default material type.
+     *
+     * @param \GeebyDeeby\Db\Row\MaterialType $row Material type to set as default
+     *
+     * @return void
+     */
+    protected function setDefaultMaterialType($row)
+    {
+        // If row is already set as default, no further action is needed:
+        if ($row->Default) {
+            return;
+        }
+
+        // First clear existing default:
+        $table = $this->getDbTable('materialtype');
+        $table->update(array('Default' => 0));
+
+        // Now set new default:
+        $row->Default = 1;
+        $row->save();
+    }
+
+    /**
      * Operate on a single type
      *
      * @return mixed
      */
     public function indexAction()
     {
-        $assignMap = array('material' => 'Material_Type_Name');
-        return $this->handleGenericItem('materialtype', $assignMap, 'material');
+        $assignMap = array(
+            'material' => 'Material_Type_Name',
+            'material_plural' => 'Material_Type_Plural_Name'
+        );
+        $response = $this->handleGenericItem('materialtype', $assignMap, 'material');
+
+        // Special handling for "set as default" checkbox:
+        if ($this->getRequest()->isPost() && $this->params()->fromPost('default')) {
+            $this->setDefaultMaterialType($response->affectedRow);
+        }
+
+        return $response;
     }
 }

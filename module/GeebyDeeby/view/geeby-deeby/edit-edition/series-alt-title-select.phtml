@@ -1,0 +1,10 @@
+<select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Preferred_Series_Title_ID">
+  <option value="NEW">Choose a title from the drop-down or enter a new one in the box below.</option>
+  <? if (isset($seriesAltTitles) && count($seriesAltTitles) > 0): ?>
+    <? foreach ($seriesAltTitles as $current): ?>
+      <option value="<?=$current['Sequence_ID']?>"<?=(isset($selected) && $current['Sequence_ID'] == $selected) ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current['Series_AltName'])?>
+      </option>
+    <? endforeach; ?>
+  <? endif; ?>
+</select>

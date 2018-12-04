@@ -134,7 +134,7 @@ class EditSeriesController extends AbstractBase
      */
     public function alttitleAction()
     {
-        // Special case: new publisher:
+        // Special case: new title:
         if ($this->getRequest()->isPost()) {
             $ok = $this->checkPermission('Content_Editor');
             if ($ok !== true) {
@@ -151,6 +151,19 @@ class EditSeriesController extends AbstractBase
             $table->insert((array)$row);
             return $this->jsonReportSuccess();
         } else {
+            // Prevent deletion of alttitles that are linked up:
+            if ($this->getRequest()->isDelete()) {
+                $extra = $this->params()->fromRoute('extra');
+                $result = $this->getDbTable('edition')->select(
+                    array('Preferred_Series_AltName_ID' => $extra)
+                );
+                if (count($result) > 0) {
+                    $ed = $result->current();
+                    $msg = 'You cannot delete this title; it is assigned to Edition '
+                        . $ed->Edition_ID . '.';
+                    return $this->jsonDie($msg);
+                }
+            }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
                 'seriesalttitles', 'Series_ID', 'Sequence_ID',

@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Items_Reviews
@@ -110,6 +111,11 @@ class ItemsReviews extends Gateway
                 $select->join(
                     array('eds' => 'Editions'),
                     'i.Item_ID = eds.Item_ID'
+                );
+                $select->join(
+                    array('iat' => 'Items_AltTitles'),
+                    'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                    array('Item_AltName'), Select::JOIN_LEFT
                 );
                 $select->join(
                     array('s' => 'Series'),

@@ -178,6 +178,8 @@ class ItemController extends AbstractBase
         $view->bibliography = $this->getDbTable('itemsbibliography')
             ->getItemsDescribingItem($id);
         $view->links = $this->getDbTable('itemslinks')->getLinksForItem($id);
+        $view->fullText = $this->getDbTable('editionsfulltext')
+            ->getFullTextForItem($id);
         return $view;
     }
 
