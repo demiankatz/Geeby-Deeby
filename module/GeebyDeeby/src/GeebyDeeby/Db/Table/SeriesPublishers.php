@@ -114,6 +114,7 @@ class SeriesPublishers extends Gateway
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');
+            $select->group('s.Series_ID');
             $select->where->equalTo('Publisher_ID', $publisherID);
         };
         return $this->select($callback);
@@ -136,12 +137,12 @@ class SeriesPublishers extends Gateway
             $select->join(
                 array('pa' => 'Publishers_Addresses'),
                 'Series_Publishers.Address_ID = pa.Address_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                array('Street'), Select::JOIN_LEFT
             );
             $select->join(
                 array('pi' => 'Publishers_Imprints'),
                 'Series_Publishers.Imprint_ID = pi.Imprint_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                array('Imprint_Name'), Select::JOIN_LEFT
             );
             $select->join(
                 array('c' => 'Countries'), 'pa.Country_ID = c.Country_ID',

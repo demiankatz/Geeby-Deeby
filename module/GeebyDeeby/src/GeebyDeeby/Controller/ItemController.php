@@ -134,7 +134,7 @@ class ItemController extends AbstractBase
         $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
         $view->realNames = $this->getDbTable('pseudonyms')
             ->getRealNamesBatch($view->credits);
-        $view->images = $this->getDbTable('itemsimages')->getImagesForItem($id);
+        $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
         $view->series = $this->getDbTable('series')->getSeriesForItem($id);
         $view->altTitles = $this->getDbTable('itemsalttitles')->getAltTitles($id);
         $view->platforms = $this->getDbTable('itemsplatforms')
@@ -153,7 +153,9 @@ class ItemController extends AbstractBase
         $view->translatedFrom = $trans->getTranslatedInto($id, true);
         $view->adaptedInto = $adapt->getAdaptedFrom($id);
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
-        $view->editions = $this->getDbTable('edition')->getEditionsForItem($id);
+        $edTable = $this->getDbTable('edition');
+        $view->publishers = $edTable->getPublishersForItem($id);
+        $view->editions = $edTable->getEditionsForItem($id);
         $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
         $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
         $view->codes = $this->getDbTable('editionsproductcodes')

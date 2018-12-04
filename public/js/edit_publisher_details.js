@@ -20,22 +20,12 @@ function savePublisher()
     var url = basePath + '/edit/Publisher/' + encodeURIComponent(publisherID);
     $.post(url, {publisher: publisher}, function(data) {
         // If save was successful...
-        if (data.success) {
-            // Close the dialog box.
-            if (editBox) {
-                editBox.dialog('close');
-                editBox.dialog('destroy');
-                editBox = false;
-            }
-            
-            // Update the publisher list.
-            redrawPublishers();
-        } else {
+        if (!data.success) {
             // Save failed -- display error message and restore save button:
             alert('Error: ' + data.msg);
-            $('#save_publisher').show();
-            $('#save_publisher_status').html('');
         }
+        $('#save_publisher').show();
+        $('#save_publisher_status').html('');
     }, 'json');
 }
 

@@ -232,6 +232,47 @@
     </tr>
   <? endif; ?>
 
+  <? $pubCount = count($publishers); if ($pubCount > 0): ?>
+    <tr>
+      <th>Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($publishers as $publisher): ?>
+          <? if (count($editions) > 1): ?>
+            <?=$this->escapeHtml($this->fixTitle($publisher['Edition_Name']))?>:
+          <? endif; ?>
+          <a href="<?=$this->url('publisher', array('id' => $publisher['Publisher_ID']))?>">
+            <?=$this->escapeHtml($publisher['Publisher_Name'])?>
+          </a>
+          <? if (!empty($publisher['City_Name']) || !empty($publisher['Street'])): ?>
+            (<?
+              if (!empty($publisher['City_Name'])) {
+                echo '<a href="' . $this->url('city', array('id' => $publisher['City_ID'])) . '">'
+                  . $this->escapeHtml($publisher['City_Name']) . '</a>';
+                if (!empty($publisher['Street'])) {
+                  echo ': ';
+                }
+              }
+              echo $this->escapeHtml($publisher['Street']);
+            ?>)
+          <? endif; ?>
+          <? if (!empty($publisher['Imprint_Name'])): ?>
+            (<?=$this->escapeHtml($publisher['Imprint_Name'])?> imprint)
+          <? endif; ?>
+          <? if (!empty($publisher['Country_Name'])): ?>
+            --
+            <a href="<?=$this->url('country', array('id' => $publisher['Country_ID']))?>">
+              <?=$this->escapeHtml($publisher['Country_Name'])?>
+            </a>
+          <? endif; ?>
+          <? if (!empty($publisher['Note'])): ?>
+            (<?=$this->escapeHtml($publisher['Note'])?>)
+          <? endif; ?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
   <? $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions); $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
     <tr>
       <th>OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
