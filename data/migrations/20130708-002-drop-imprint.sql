@@ -1,0 +1,1 @@
+ALTER TABLE `Series_Publishers` DROP COLUMN `Imprint`;
