@@ -1,6 +1,6 @@
 <?php
 /**
- * Description source name view helper
+ * Tag controller
  *
  * PHP version 5
  *
@@ -20,64 +20,63 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  View_Helpers
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\View\Helper;
+namespace GeebyDeeby\Controller;
 
 /**
- * Description source name view helper
+ * Tag controller
  *
  * @category GeebyDeeby
- * @package  View_Helpers
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class DescriptionSource extends \Zend\View\Helper\AbstractHelper
+class TagController extends AbstractBase
 {
     /**
-     * Descriptions of source types
+     * "Show tag" page
      *
-     * @var array
+     * @return mixed
      */
-    protected $descriptionTypes;
+    public function indexAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $table = $this->getDbTable('tag');
+        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
+        if (!is_object($rowObj)) {
+            return $this->forwardTo(__NAMESPACE__ . '\Tag', 'notfound');
+        }
+        $view = $this->createViewModel(
+            array('tag' => $rowObj->toArray())
+        );
+        $view->items = $this->getDbTable('itemstags')->getItemsForTag($id);
+        return $view;
+    }
 
     /**
-     * Constructor
+     * Tag list
+     *
+     * @return mixed
      */
-    public function __construct()
+    public function listAction()
     {
-        $this->descriptionTypes = array(
-            'User' => 'User Summary',
-            'LC' => 'LC Cataloging in Publication Summary',
-            'Cover' => 'Cover Text',
-            'Ad' => 'Advertisement Blurb',
+        return $this->createViewModel(
+            array('tags' => $this->getDbTable('tag')->getList())
         );
     }
 
     /**
-     * Get the full list of description type information
+     * Not found page
      *
-     * @return array
+     * @return mixed
      */
-    public function getList()
+    public function notfoundAction()
     {
-        return $this->descriptionTypes;
-    }
-
-    /**
-     * Convert a raw source type into a description
-     *
-     * @param string $source Source type (from Items_Descriptions table)
-     *
-     * @return string
-     */
-    public function getName($source)
-    {
-        return isset($this->descriptionTypes[$source])
-            ? $this->descriptionTypes[$source] : 'Unknown';
+        return $this->createViewModel();
     }
 }

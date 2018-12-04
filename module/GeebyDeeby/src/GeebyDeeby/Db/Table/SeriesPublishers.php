@@ -44,7 +44,9 @@ class SeriesPublishers extends Gateway
      */
     public function __construct()
     {
-        parent::__construct('Series_Publishers');
+        parent::__construct(
+            'Series_Publishers', 'GeebyDeeby\Db\Row\SeriesPublishers'
+        );
     }
 
     /**

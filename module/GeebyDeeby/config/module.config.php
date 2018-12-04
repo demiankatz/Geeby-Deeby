@@ -63,6 +63,7 @@ return array(
                 'platform' => 'GeebyDeeby\Db\Table\Platform',
                 'pseudonyms' => 'GeebyDeeby\Db\Table\Pseudonyms',
                 'publisher' => 'GeebyDeeby\Db\Table\Publisher',
+                'publishersimprints' => 'GeebyDeeby\Db\Table\PublishersImprints',
                 'recentreviews' => 'GeebyDeeby\Db\Table\RecentReviews',
                 'role' => 'GeebyDeeby\Db\Table\Role',
                 'series' => 'GeebyDeeby\Db\Table\Series',
@@ -906,6 +907,30 @@ return array(
                     ),
                 ),
             ),
+            'tag' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Tag[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Tag',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
+            'tags' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Tags[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Tag',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'user' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -999,6 +1024,7 @@ return array(
             'GeebyDeeby\Controller\Series' => 'GeebyDeeby\Controller\SeriesController',
             'GeebyDeeby\Controller\Signup' => 'GeebyDeeby\Controller\SignupController',
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
+            'GeebyDeeby\Controller\Tag' => 'GeebyDeeby\Controller\TagController',
             'GeebyDeeby\Controller\User' => 'GeebyDeeby\Controller\UserController',
         ),
     ),

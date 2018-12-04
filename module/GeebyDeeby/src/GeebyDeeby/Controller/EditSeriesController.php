@@ -193,7 +193,7 @@ class EditSeriesController extends AbstractBase
             $row->Country_ID = $this->params()->fromPost('country_id');
             $row->Note_ID = $this->params()->fromPost('note_id');
             $row->Imprint = $this->params()->fromPost('imprint');
-            $table->insert((array)$row);
+            $row->save();
             return $this->jsonReportSuccess();
         } else {
             // Otherwise, treat this as a generic link:

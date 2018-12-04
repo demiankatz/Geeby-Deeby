@@ -1,6 +1,6 @@
 <?php
 /**
- * Description source name view helper
+ * Table Definition for Publishers_Imprints
  *
  * PHP version 5
  *
@@ -20,64 +20,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category GeebyDeeby
- * @package  View_Helpers
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\View\Helper;
+namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Select;
 
 /**
- * Description source name view helper
+ * Table Definition for Publishers_Imprints
  *
  * @category GeebyDeeby
- * @package  View_Helpers
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class DescriptionSource extends \Zend\View\Helper\AbstractHelper
+class PublishersImprints extends Gateway
 {
-    /**
-     * Descriptions of source types
-     *
-     * @var array
-     */
-    protected $descriptionTypes;
-
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->descriptionTypes = array(
-            'User' => 'User Summary',
-            'LC' => 'LC Cataloging in Publication Summary',
-            'Cover' => 'Cover Text',
-            'Ad' => 'Advertisement Blurb',
-        );
-    }
-
-    /**
-     * Get the full list of description type information
-     *
-     * @return array
-     */
-    public function getList()
-    {
-        return $this->descriptionTypes;
-    }
-
-    /**
-     * Convert a raw source type into a description
-     *
-     * @param string $source Source type (from Items_Descriptions table)
-     *
-     * @return string
-     */
-    public function getName($source)
-    {
-        return isset($this->descriptionTypes[$source])
-            ? $this->descriptionTypes[$source] : 'Unknown';
+        parent::__construct('Publishers_Imprints');
     }
 }
