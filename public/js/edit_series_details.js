@@ -478,13 +478,13 @@ function removeFromSeries(itemID)
 
 /* Change the position of an item within the series:
  */
-function changeSeriesOrder(itemID)
+function changeSeriesOrder(editionID)
 {
     var seriesID = $('#Series_ID').val();
-    var pos = parseInt($('#order' + itemID).val(), 10);
+    var pos = parseInt($('#order' + editionID).val(), 10);
 
     // Validate user selection:
-    if (isNaN(itemID)) {
+    if (isNaN(editionID)) {
         alert("Please choose a valid item.");
         return;
     } else if (isNaN(pos)) {
@@ -495,7 +495,7 @@ function changeSeriesOrder(itemID)
     // Save and update based on selected relationship:
     var url = basePath + '/edit/Series/' + encodeURIComponent(seriesID) + '/ItemOrder';
     var details = {
-        item_id: itemID,
+        edition_id: editionID,
         pos: pos
     };
     $.post(url, details, function(data) {

@@ -57,10 +57,10 @@ class ItemsTranslations extends Gateway
     public static function addLanguageToSelect($select)
     {
         $select->join(
-            array('iis' => 'Items_In_Series'), 'iis.Item_ID = i.Item_ID', array()
+            array('eds' => 'Editions'), 'eds.Item_ID = i.Item_ID', array()
         );
         $select->join(
-            array('s' => 'Series'), 's.Series_ID = iis.Series_ID', array()
+            array('s' => 'Series'), 's.Series_ID = eds.Series_ID', array()
         );
         $select->join(
             array('l' => 'Languages'), 'l.Language_ID = s.Language_ID',

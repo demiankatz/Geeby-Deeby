@@ -245,17 +245,19 @@ class AbstractBase extends AbstractActionController
      * @param string $listMethod      Name of method on table class to call for
      * list assignment
      * @param string $listTemplate    Name of template to use for displaying list
+     * @param array  $extraFields     Extra fields to insert with the link (optional)
      *
      * @return mixed
      */
     public function handleGenericLink($tableName, $primaryColumn, $secondaryColumn,
-        $listVariable, $listMethod, $listTemplate
+        $listVariable, $listMethod, $listTemplate, $extraFields = array()
     ) {
         $primary = $this->params()->fromRoute('id');
         $secondary = $this->params()->fromRoute('extra');
         $table = $this->getDbTable($tableName);
         if (!empty($primary) && !empty($secondary)) {
             $row = array($primaryColumn => $primary, $secondaryColumn => $secondary);
+            $row += $extraFields;
             try {
                 if ($this->getRequest()->isPut()) {
                     $table->insert($row);

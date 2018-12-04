@@ -62,12 +62,10 @@ class ItemsCredits extends Gateway
                 'Items_Credits.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('iis' => 'Items_In_Series'),
-                'i.Item_ID = iis.Item_ID'
+                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
             );
             $select->join(
-                array('s' => 'Series'),
-                'iis.Series_ID = s.Series_ID'
+                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
             );
             $select->join(
                 array('r' => 'Roles'),
@@ -80,7 +78,7 @@ class ItemsCredits extends Gateway
             );
             $select->order(
                 array(
-                    'Role_Name', 'Series_Name', 's.Series_ID', 'iis.Position',
+                    'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Position',
                     'Item_Name'
                 )
             );

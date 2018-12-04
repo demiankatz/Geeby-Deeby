@@ -71,7 +71,7 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbTable('materialtype')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
-            $view->item_list = $this->getDbTable('itemsinseries')
+            $view->item_list = $this->getDbTable('edition')
                 ->getItemsForSeries($view->seriesObj->Series_ID);
             $view->series_alt_titles = $this->getDbTable('seriesalttitles')
                 ->getAltTitles($view->seriesObj->Series_ID);
@@ -187,10 +187,14 @@ class EditSeriesController extends AbstractBase
      */
     public function itemAction()
     {
+        $series = $this->getDbTable('series')->getByPrimaryKey(
+            $this->params()->fromRoute('id')
+        );
         return $this->handleGenericLink(
-            'itemsinseries', 'Series_ID', 'Item_ID',
+            'edition', 'Series_ID', 'Item_ID',
             'item_list', 'getItemsForSeries',
-            'geeby-deeby/edit-series/item-list.phtml'
+            'geeby-deeby/edit-series/item-list.phtml',
+            array('Edition_Name' => $series->Series_Name . ' edition')
         );
     }
 
@@ -202,12 +206,10 @@ class EditSeriesController extends AbstractBase
     public function itemorderAction()
     {
         if ($this->getRequest()->isPost()) {
-            $series = $this->params()->fromRoute('id');
-            $item = $this->params()->fromPost('item_id');
+            $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
-            $this->getDbTable('itemsinseries')->update(
-                array('Position' => $pos),
-                array('Item_ID' => $item, 'Series_ID' => $series)
+            $this->getDbTable('edition')->update(
+                array('Position' => $pos), array('Edition_ID' => $edition)
             );
             return $this->jsonReportSuccess();
         }

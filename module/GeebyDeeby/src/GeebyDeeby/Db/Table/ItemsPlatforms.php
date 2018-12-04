@@ -60,15 +60,13 @@ class ItemsPlatforms extends Gateway
                 'Items_Platforms.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('iis' => 'Items_In_Series'),
-                'i.Item_ID = iis.Item_ID'
+                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
             );
             $select->join(
-                array('s' => 'Series'),
-                'iis.Series_ID = s.Series_ID'
+                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
             );
             $select->order(
-                array('Series_Name', 's.Series_ID', 'iis.Position', 'Item_Name')
+                array('Series_Name', 's.Series_ID', 'eds.Position', 'Item_Name')
             );
             $select->where->equalTo('Platform_ID', $platformID);
         };

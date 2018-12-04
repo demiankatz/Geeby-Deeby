@@ -89,12 +89,12 @@ class Collections extends Gateway
                 'Collections.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('iis' => 'Items_In_Series'),
-                'i.Item_ID = iis.Item_ID'
+                array('eds' => 'Editions'),
+                'i.Item_ID = eds.Item_ID'
             );
             $select->join(
                 array('s' => 'Series'),
-                'iis.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
+                'eds.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
             );
             if ($groupByLang) {
                 $select->join(
@@ -152,12 +152,12 @@ class Collections extends Gateway
                 array()
             );
             $select->join(
-                array('iis' => 'Items_In_Series'),
-                'i.Item_ID = iis.Item_ID'
+                array('eds' => 'Editions'),
+                'i.Item_ID = eds.Item_ID'
             );
             $select->join(
                 array('s' => 'Series'),
-                'iis.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
+                'eds.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
             );
             $order = array(
                 'Username', 'Series_Name', 's.Series_ID', 'Position', 'Item_Name'

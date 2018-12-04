@@ -108,12 +108,12 @@ class ItemsReviews extends Gateway
             );
             if ($series) {
                 $select->join(
-                    array('iis' => 'Items_In_Series'),
-                    'i.Item_ID = iis.Item_ID'
+                    array('eds' => 'Editions'),
+                    'i.Item_ID = eds.Item_ID'
                 );
                 $select->join(
                     array('s' => 'Series'),
-                    'iis.Series_ID = s.Series_ID'
+                    'eds.Series_ID = s.Series_ID'
                 );
             }
             // If we don't already have a user in mind, let's pull in extra
@@ -124,7 +124,7 @@ class ItemsReviews extends Gateway
                 );
             }
             // Different sort settings based on whether or not series are included:
-            $all = array('Series_Name', 's.Series_ID', 'iis.Position', 'Item_Name');
+            $all = array('Series_Name', 's.Series_ID', 'eds.Position', 'Item_Name');
             $select->order($series ? $all : array('Item_Name'));
             if (null !== $approved) {
                 $select->where->equalTo('Approved', $approved);
