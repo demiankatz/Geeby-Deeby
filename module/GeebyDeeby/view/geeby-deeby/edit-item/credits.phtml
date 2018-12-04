@@ -16,7 +16,7 @@
         <td>
           <?=$this->escapeHtml($current['Role_Name'])?>:
           <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
-            <?=$this->escapeHtml($current['First_Name'] . ' ' . $current['Middle_Name'] . ' ' . $current['Last_Name'])?>
+            <?=$this->escapeHtml($this->showperson($current))?>
           </a>
           <? if (!empty($current['Note'])): ?>
             (<?=$this->escapeHtml($current['Note'])?>)

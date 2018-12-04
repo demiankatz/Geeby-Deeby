@@ -104,7 +104,7 @@
     <? endif; ?>
     <?=$item['Position'] > 0 ? $item['Position'] . '. ' : ''?>
     <a href="<?=$this->url('item', array('id' => $item['Item_ID']))?>">
-      <?=$this->escapeHtml(isset($item['Item_AltName']) && !empty($item['Item_AltName']) ? $item['Item_AltName'] : $item['Item_Name'])?>
+      <?=$this->escapeHtml($this->fixtitle(isset($item['Item_AltName']) && !empty($item['Item_AltName']) ? $item['Item_AltName'] : $item['Item_Name']))?>
     </a><br />
   <? endforeach; ?>
 <? endif; ?>

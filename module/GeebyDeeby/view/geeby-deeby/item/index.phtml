@@ -234,12 +234,47 @@
     </tr>
   <? endif; ?>
 
-  <? if (!empty($item['Item_Length'])): ?>
-    <tr><th>Length:</th><td><?=$this->escapeHtml($item['Item_Length'])?></td></tr>
+  <?
+    $lengths = $endings = array();
+    foreach ($editions as $ed) {
+        $name = $this->fixtitle($ed['Edition_Name']);
+        if (!empty($ed['Edition_Length'])) {
+            if (!isset($lengths[$ed['Edition_Length']])) {
+                $lengths[$ed['Edition_Length']] = array();
+            }
+            $lengths[$ed['Edition_Length']][] = $name;
+        }
+        if (!empty($ed['Edition_Endings'])) {
+            if (!isset($endings[$ed['Edition_Endings']])) {
+                $endings[$ed['Edition_Endings']] = array();
+            }
+            $endings[$ed['Edition_Endings']][] = $name;
+        }
+    }
+  ?>
+
+  <? if (!empty($lengths)): ?>
+    <tr><th>Length:</th><td>
+      <? foreach ($lengths as $length => $editionNames): ?>
+        <?=$this->escapeHtml($length)?>
+        <? if (count($editionNames) != count($editions) && count($editions) > 1): ?>
+          (<?=$this->escapeHtml(implode(', ', $editionNames))?>)
+        <? endif; ?>
+        <br />
+      <? endforeach; ?>
+    </td></tr>
   <? endif; ?>
 
-  <? if (!empty($item['Item_Endings'])): ?>
-    <tr><th>Number of Endings:</th><td><?=$this->escapeHtml($item['Item_Endings'])?></td></tr>
+  <? if (!empty($endings)): ?>
+    <tr><th>Number of Endings:</th><td>
+      <? foreach ($endings as $ending => $editionNames): ?>
+        <?=$this->escapeHtml($ending)?>
+        <? if (count($editionNames) != count($editions) && count($editions) > 1): ?>
+          (<?=$this->escapeHtml(implode(', ', $editionNames))?>)
+        <? endif; ?>
+        <br />
+      <? endforeach; ?>
+    </td></tr>
   <? endif; ?>
 
   <? if (count($descriptions) > 0): ?>

@@ -9,14 +9,17 @@
       <th>Item Name:</th>
       <td><input type="text" id="Item_Name" value="<?=isset($item['Item_Name']) ? $this->escapeHtml($item['Item_Name']) : ''?>" /></td>
     </tr>
-    <tr>
-      <th>Length:</th>
-      <td><input type="text" id="Item_Length" value="<?=isset($item['Item_Length']) ? $this->escapeHtml($item['Item_Length']) : ''?>" /></td>
-    </tr>
-    <tr>
-      <th>Endings:</th>
-      <td><input type="text" id="Item_Endings" value="<?=isset($item['Item_Endings']) ? $this->escapeHtml($item['Item_Endings']) : ''?>" /></td>
-    </tr>
+    <? // Only show length/endings when creating a new item: ?>
+    <? if (!isset($item['Item_ID']) || !is_numeric($item['Item_ID'])): ?>
+      <tr>
+        <th>Length:</th>
+        <td><input type="text" id="Item_Length" value="<?=isset($item['Item_Length']) ? $this->escapeHtml($item['Item_Length']) : ''?>" /></td>
+      </tr>
+      <tr>
+        <th>Endings:</th>
+        <td><input type="text" id="Item_Endings" value="<?=isset($item['Item_Endings']) ? $this->escapeHtml($item['Item_Endings']) : ''?>" /></td>
+      </tr>
+    <? endif; ?>
     <tr>
       <th>Errata:</th>
       <td><textarea id="Item_Errata"><?=isset($item['Item_Errata']) ? $this->escapeHtml($item['Item_Errata']) : ''?></textarea></td>

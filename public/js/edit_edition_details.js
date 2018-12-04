@@ -8,6 +8,8 @@ function saveEdition()
     var pos = $('#Position').val();
     var itemID = $('#Item_ID').val();
     var seriesID = $('#Series_ID').val();
+    var len = $('#Edition_Length').val();
+    var endings = $('#Edition_Endings').val();
 
     // Validate form:
     if (editionName.length == 0) {
@@ -25,7 +27,9 @@ function saveEdition()
         name: editionName,
         item_id: itemID,
         series_id: seriesID,
-        position: pos
+        position: pos,
+        len: len,
+        endings: endings
     };
     $.post(url, details, function(data) {
         // If save failed, display error message.
@@ -38,6 +42,7 @@ function saveEdition()
         // Redraw alt titles:
         redrawItemAltTitles();
         redrawSeriesAltTitles();
+        redrawNextAndPrev();
     }, 'json');
 }
 
@@ -243,6 +248,15 @@ function saveItemAltTitle()
             alert('Error: ' + data.msg);
         }
     }, 'json');
+}
+
+/* Redraw the next and previous links:
+ */
+function redrawNextAndPrev()
+{
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/NextAndPrev';
+    $('#nextAndPrev').load(url);
 }
 
 /* Redraw the series alternate title list:

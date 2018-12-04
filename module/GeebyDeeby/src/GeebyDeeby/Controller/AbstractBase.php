@@ -166,7 +166,7 @@ class AbstractBase extends AbstractActionController
             return $this->jsonDie($problem);
         }
         try {
-            $newID = $row->save();
+            $row->save();
         } catch (\Exception $e) {
             return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
         }
