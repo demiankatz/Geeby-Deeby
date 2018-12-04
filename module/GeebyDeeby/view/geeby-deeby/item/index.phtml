@@ -221,6 +221,19 @@
     </tr>
   <? endif; ?>
 
+  <? $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions); $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
+    <tr>
+      <th>OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
+      <td>
+        <? foreach ($oclcNumbers as $number => $note): ?>
+          <?=$this->escapeHtml($number)?>
+          <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
+          <br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endif; ?>
+
   <? $codes = $this->groupeditions($codes, 'Product_Code', $editions); $codeCount = count($codes); if ($codeCount > 0): ?>
     <tr>
       <th>Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
@@ -236,6 +249,7 @@
 
   <?
     $lengths = $endings = array();
+    $descCount = 0;
     foreach ($editions as $ed) {
         $name = $this->fixtitle($ed['Edition_Name']);
         if (!empty($ed['Edition_Length'])) {
@@ -250,8 +264,23 @@
             }
             $endings[$ed['Edition_Endings']][] = $name;
         }
+        if (!empty($ed['Edition_Description'])) {
+            $descCount++;
+        }
     }
   ?>
+
+  <? if ($descCount > 0): ?>
+    <tr><th>Edition Description<?=$descCount>1 ? 's' : ''?>:</th><td>
+      <? $displayedCount = 0; foreach ($editions as $ed): ?>
+        <? if (!empty($ed['Edition_Description'])): $displayedCount++; ?>
+          <? if ($displayedCount > 1): ?><br /><? endif; ?>
+          <i><?=$this->escapeHtml($this->fixtitle($ed['Edition_Name']))?>:</i><br />
+          <?=$ed['Edition_Description']?><br />
+        <? endif; ?>
+      <? endforeach; ?>
+    </td></tr>
+  <? endif; ?>
 
   <? if (!empty($lengths)): ?>
     <tr><th>Length:</th><td>

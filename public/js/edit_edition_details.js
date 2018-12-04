@@ -5,6 +5,7 @@ function saveEdition()
     // Obtain values from form:
     var editionID = $('#Edition_ID').val();
     var editionName = $('#Edition_Name').val();
+    var desc = $('#Edition_Description').val();
     var pos = $('#Position').val();
     var itemID = $('#Item_ID').val();
     var seriesID = $('#Series_ID').val();
@@ -25,6 +26,7 @@ function saveEdition()
     var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID);
     var details = {
         name: editionName,
+        desc: desc,
         item_id: itemID,
         series_id: seriesID,
         position: pos,
@@ -516,6 +518,78 @@ function deleteISBN(rowID)
         if (data.success) {
             // Update the list.
             redrawISBNs();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }});
+}
+
+/* Redraw the code list:
+ */
+function redrawOCLCNumbers()
+{
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/OCLCNumber';
+    $('#item_oclc_numbers').load(url);
+}
+
+/* Save the current product code:
+ */
+function addOCLCNumber()
+{
+    var edID = $('#Edition_ID').val();
+    var noteID = parseInt($('#oclc_number_note').val());
+
+    // Validate user selection:
+    if (isNaN(noteID)) {
+        noteID = '';
+    }
+
+    // Save and update:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/OCLCNumber/NEW';
+    var details = {
+        note_id: noteID,
+        oclc_number: $('#oclc_number').val()
+    };
+    $.post(url, details, function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Clear the form:
+            $('#oclc_number').val('');
+            $('#oclc_number_note').val('');
+
+            // Update the list.
+            redrawOCLCNumbers();
+        } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Remove a code from the edition:
+ */
+function deleteOCLCNumber(rowID)
+{
+    if (!confirm("Are you sure?")) {
+        return;
+    }
+
+    // Validate user selection:
+    if (isNaN(rowID)) {
+        alert("Please choose a valid code.");
+        return;
+    }
+
+    // Save and update:
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/OCLCNumber/' + encodeURIComponent(rowID);
+    $.ajax({url: url, type: "delete", dataType: "json", success: function(data) {
+        // If save was successful...
+        if (data.success) {
+            // Update the list.
+            redrawOCLCNumbers();
         } else {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);

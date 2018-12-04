@@ -50,7 +50,7 @@
   <div id="codes-tab" class="edit_tab_contents">
     <table>
       <tr>
-        <td style="width: 50%;">
+        <td style="width: 33%;">
           <table class="edit">
             <tr><th>New ISBN</th><td><input type="text" id="isbn" /></td></tr>
             <tr><th>Note:</th><td><input id="isbn_note" class="Note_ID" /></td></tr>
@@ -59,6 +59,17 @@
           <b>ISBNs:</b>
           <div id="item_isbns">
             <?=$this->render('geeby-deeby/edit-edition/isbn-list.phtml')?>
+          </div>
+        </td>
+        <td style="width: 33%;">
+          <table class="edit">
+            <tr><th>New OCLC Number:</th><td><input type="text" id="oclc_number" /></td></tr>
+            <tr><th>Note:</th><td><input id="oclc_number_note" class="Note_ID" /></td></tr>
+            <tr><th></th><td><button onclick="addOCLCNumber();">Add</button></td></tr>
+          </table>
+          <b>OCLC Numbers:</b>
+          <div id="item_oclc_numbers">
+            <?=$this->render('geeby-deeby/edit-edition/oclc-number-list.phtml')?>
           </div>
         </td>
         <td>

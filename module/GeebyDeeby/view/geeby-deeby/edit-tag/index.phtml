@@ -1,0 +1,15 @@
+<div id="editForm">
+  <input type="hidden" id="Tag_ID" value="<?=$tag['Tag_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Subject/Tag:</th>
+      <td><input type="text" id="Tag" value="<?=isset($tag['Tag']) ? $this->escapeHtml($tag['Tag']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Subject/Tag Type:</th>
+      <td><?=$this->render('geeby-deeby/edit-tag/type-select.phtml', array('tagTypes' => $tagTypes, 'selected' => isset($tag['Tag_Type_ID']) ? $tag['Tag_Type_ID'] : null))?></td>
+    </tr>
+  </table>
+  <button id="save_tag" onclick="saveTag();">Save</button>
+  <div id="save_tag_status"></div>
+</div>

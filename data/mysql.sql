@@ -92,6 +92,7 @@ CREATE TABLE `Editions` (
   `Preferred_Series_AltName_ID` int(11) DEFAULT NULL,
   `Edition_Length` tinytext,
   `Edition_Endings` tinytext,
+  `Edition_Description` text,
   PRIMARY KEY (`Edition_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -142,6 +143,22 @@ CREATE TABLE `Editions_ISBNs` (
   `ISBN` char(10) DEFAULT NULL,
   `Note_ID` int(11) DEFAULT NULL,
   `ISBN13` char(13) DEFAULT NULL,
+  PRIMARY KEY (`Sequence_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Editions_OCLC_Numbers`
+--
+
+DROP TABLE IF EXISTS `Editions_OCLC_Numbers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Editions_OCLC_Numbers` (
+  `Sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Edition_ID` int(11) NOT NULL DEFAULT '0',
+  `OCLC_Number` tinytext NOT NULL,
+  `Note_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Sequence_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -420,6 +437,20 @@ CREATE TABLE `Items_Reviews` (
   `Approved` enum('y','n') NOT NULL DEFAULT 'y',
   PRIMARY KEY (`Item_ID`,`User_ID`),
   KEY `Approved` (`Approved`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Items_Tags`
+--
+
+DROP TABLE IF EXISTS `Items_Tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Items_Tags` (
+  `Item_ID` int(11) NOT NULL DEFAULT '0',
+  `Tag_ID` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Item_ID`,`Tag_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -797,6 +828,35 @@ CREATE TABLE `Series_Translations` (
   `Source_Series_ID` int(11) NOT NULL DEFAULT '0',
   `Trans_Series_ID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Source_Series_ID`,`Trans_Series_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Tag_Types`
+--
+
+DROP TABLE IF EXISTS `Tag_Types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Tag_Types` (
+  `Tag_Type_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Tag_Type` tinytext NOT NULL,
+  PRIMARY KEY (`Tag_Type_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Tags`
+--
+
+DROP TABLE IF EXISTS `Tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Tags` (
+  `Tag_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Tag` tinytext NOT NULL,
+  `Tag_Type_ID` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Tag_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
