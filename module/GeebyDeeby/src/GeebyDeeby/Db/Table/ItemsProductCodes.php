@@ -46,25 +46,4 @@ class ItemsProductCodes extends Gateway
     {
         parent::__construct('Items_Product_Codes');
     }
-
-    /**
-     * Get a list of product codes for the specified item.
-     *
-     * @var int $itemID Item ID
-     *
-     * @return mixed
-     */
-    public function getProductCodes($itemID)
-    {
-        $callback = function ($select) use ($itemID) {
-            $select->join(
-                array('n' => 'Notes'),
-                'Items_Product_Codes.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
-            );
-            $select->order('Product_Code');
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
-    }
 }

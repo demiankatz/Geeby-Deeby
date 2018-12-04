@@ -114,7 +114,7 @@ class SearchController extends AbstractBase
     {
         $q = $this->layout()->query;
         $view = $this->createViewModel();
-        $view->results = $this->getDbTable('itemsisbns')->searchForItems($q);
+        $view->results = $this->getDbTable('editionsisbns')->searchForItems($q);
         return $view;
     }
 

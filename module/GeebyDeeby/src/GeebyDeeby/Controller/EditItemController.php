@@ -90,15 +90,11 @@ class EditItemController extends AbstractBase
                 ->getTranslatedFrom($view->itemObj->Item_ID);
             $view->descriptions = $this->getDbTable('itemsdescriptions')
                 ->getDescriptions($view->itemObj->Item_ID);
-            $view->ISBNs = $this->getDbTable('itemsisbns')
-                ->getISBNs($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->itemObj->Item_ID);
             $view->item_platforms = $this->getDbTable('itemsplatforms')
                 ->getPlatformsForItem($view->itemObj->Item_ID);
             $view->platforms = $this->getDbTable('platform')->getList();
-            $view->productCodes = $this->getDbTable('itemsproductcodes')
-                ->getProductCodes($view->itemObj->Item_ID);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
             $view->editions = $this->getDbTable('edition')
@@ -195,68 +191,6 @@ class EditItemController extends AbstractBase
             'adaptedFrom', 'getAdaptedInto',
             'geeby-deeby/edit-item/adapted-from-list.phtml'
         );
-    }
-
-    /**
-     * Work with ISBNs
-     *
-     * @return mixed
-     */
-    public function isbnAction()
-    {
-        // Special case: new publisher:
-        if ($this->getRequest()->isPost()) {
-            $isbn = new \VuFind\Code\ISBN($this->params()->fromPost('isbn'));
-            if (!$isbn->isValid()) {
-                return $this->jsonDie('Invalid ISBN -- cannot save.');
-            }
-            $table = $this->getDbTable('itemsisbns');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            $isbn10 = $isbn->get10();
-            if (!empty($isbn10)) {
-                $row->ISBN = $isbn10;
-            }
-            $row->ISBN13 = $isbn->get13();
-            $table->insert((array)$row);
-            return $this->jsonReportSuccess();
-        } else {
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'itemsisbns', 'Item_ID', 'Sequence_ID', 'ISBNs', 'getISBNs',
-                'geeby-deeby/edit-item/isbn-list.phtml'
-            );
-        }
-    }
-
-    /**
-     * Work with product codes
-     *
-     * @return mixed
-     */
-    public function productcodeAction()
-    {
-        // Special case: new publisher:
-        if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemsproductcodes');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            $row->Product_Code = $this->params()->fromPost('code');
-            if (empty($row->Product_Code)) {
-                return $this->jsonDie('Product code must not be empty.');
-            }
-            $table->insert((array)$row);
-            return $this->jsonReportSuccess();
-        } else {
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'itemsproductcodes', 'Item_ID', 'Sequence_ID',
-                'productCodes', 'getProductCodes',
-                'geeby-deeby/edit-item/product-code-list.phtml'
-            );
-        }
     }
 
     /**

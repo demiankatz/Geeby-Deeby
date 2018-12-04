@@ -9,6 +9,7 @@
 <div id="tabs">
   <ul>
     <li><a href="#credits-tab"><span>Credits</span></a></li>
+    <li><a href="#codes-tab"><span>Codes/ISBNs</span></a></li>
     <li><a href="#release-tab"><span>Dates</span></a></li>
     <li><a href="#fulltext-tab"><span>Full Text Links</span></a></li>
     <li><a href="#preferred-titles"><span>Preferred Titles</span></a></li>
@@ -44,6 +45,35 @@
     <div id="credits">
       <?=$this->render('geeby-deeby/edit-edition/credits.phtml')?>
     </div>
+  </div>
+
+  <div id="codes-tab" class="edit_tab_contents">
+    <table>
+      <tr>
+        <td style="width: 50%;">
+          <table class="edit">
+            <tr><th>New ISBN</th><td><input type="text" id="isbn" /></td></tr>
+            <tr><th>Note:</th><td><input id="isbn_note" class="Note_ID" /></td></tr>
+            <tr><th></th><td><button onclick="addISBN();">Add</button></td></tr>
+          </table>
+          <b>ISBNs:</b>
+          <div id="item_isbns">
+            <?=$this->render('geeby-deeby/edit-edition/isbn-list.phtml')?>
+          </div>
+        </td>
+        <td>
+          <table class="edit">
+            <tr><th>New Code</th><td><input type="text" id="product_code" /></td></tr>
+            <tr><th>Note:</th><td><input id="product_code_note" class="Note_ID" /></td></tr>
+            <tr><th></th><td><button onclick="addProductCode();">Add</button></td></tr>
+          </table>
+          <b>Product Codes:</b>
+          <div id="item_codes">
+            <?=$this->render('geeby-deeby/edit-edition/product-code-list.phtml')?>
+          </div>
+        </td>
+      </tr>
+    </table>
   </div>
 
   <div id="release-tab" class="edit_tab_contents">

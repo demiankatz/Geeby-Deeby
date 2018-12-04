@@ -205,29 +205,29 @@
     </tr>
   <? endif; ?>
 
-  <? $isbnCount = count($isbns); if ($isbnCount > 0): ?>
+  <? $isbns = $this->groupeditions($isbns, 'ISBN13', $editions); $isbnCount = count($isbns); if ($isbnCount > 0): ?>
     <tr>
       <th>ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
       <td>
-        <? foreach ($isbns as $isbn): ?>
-          <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn['ISBN13']))?>">
-            <?=empty($isbn['ISBN']) ? '' : $this->escapeHtml($isbn['ISBN']) . ' / '?>
-            <?=$this->escapeHtml($isbn['ISBN13'])?>
+        <? foreach ($isbns as $isbn => $note): ?>
+          <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn))?>">
+            <? $isbnConverter = new \VuFind\Code\ISBN($isbn); $isbn10 = $isbnConverter->get10(); ?>
+            <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn : $isbn)?>
           </a>
-          <?=!empty($isbn['Note']) ? '(' . $this->escapeHtml($isbn['Note']) . ')' : ''?>
+          <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
           <br />
         <? endforeach; ?>
       </td>
     </tr>
   <? endif; ?>
 
-  <? $codeCount = count($codes); if ($codeCount > 0): ?>
+  <? $codes = $this->groupeditions($codes, 'Product_Code', $editions); $codeCount = count($codes); if ($codeCount > 0): ?>
     <tr>
       <th>Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
       <td>
-        <? foreach ($codes as $code): ?>
-          <?=$this->escapeHtml($code['Product_Code'])?>
-          <?=!empty($code['Note']) ? '(' . $this->escapeHtml($code['Note']) . ')' : ''?>
+        <? foreach ($codes as $code => $note): ?>
+          <?=$this->escapeHtml($code)?>
+          <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
           <br />
         <? endforeach; ?>
       </td>
