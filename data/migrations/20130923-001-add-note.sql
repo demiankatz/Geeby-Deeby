@@ -1,0 +1,1 @@
+ALTER TABLE `Items_In_Collections` ADD COLUMN `Note_ID` int(11) DEFAULT NULL;
