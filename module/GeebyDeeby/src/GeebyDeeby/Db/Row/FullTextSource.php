@@ -1,6 +1,6 @@
 <?php
 /**
- * Row Definition for Editions
+ * Row Definition for Full_Text_Sources
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Db\Row;
 
 /**
- * Row Definition for Editions
+ * Row Definition for Full_Text_Sources
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -36,7 +36,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Edition extends ServiceLocatorAwareGateway
+class FullTextSource extends RowGateway
 {
     /**
      * Constructor
@@ -45,7 +45,7 @@ class Edition extends ServiceLocatorAwareGateway
      */
     public function __construct($adapter)
     {
-        parent::__construct('Edition_ID', 'Editions', $adapter);
+        parent::__construct('Full_Text_Source_ID', 'Full_Text_Sources', $adapter);
     }
 
     /**
@@ -56,39 +56,9 @@ class Edition extends ServiceLocatorAwareGateway
      */
     public function validate()
     {
-        if (empty($this->Edition_Name)) {
-            return 'Edition name cannot be blank.';
+        if (empty($this->Full_Text_Source_Name)) {
+            return 'Name cannot be blank.';
         }
         return false;
-    }
-
-    /**
-     * Get the display name to represent the row to a user.
-     *
-     * @return string
-     */
-    public function getDisplayName()
-    {
-        return $this->Edition_Name;
-    }
-
-    /**
-     * Copy credits from another edition.
-     *
-     * @param int $editionId Edition to copy from
-     *
-     * @return void
-     */
-    public function copyCredits($editionId)
-    {
-        $creditTable = $this->getDbTable('editionscredits');
-        $credits = $creditTable->select(
-            array('Edition_ID' => $editionId)
-        );
-        foreach ($credits as $credit) {
-            $arr = (array)$credit;
-            $arr['Edition_ID'] = $this->Edition_ID;
-            $creditTable->insert($arr);
-        }
     }
 }

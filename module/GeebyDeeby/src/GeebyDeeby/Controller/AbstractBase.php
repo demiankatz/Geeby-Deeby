@@ -235,22 +235,25 @@ class AbstractBase extends AbstractActionController
     /**
      * Handle generic linking between two items.
      *
-     * @param string $tableName       Name of database table to modify
-     * @param string $primaryColumn   Name of database column whose value is in
+     * @param string   $tableName       Name of database table to modify
+     * @param string   $primaryColumn   Name of database column whose value is in
      * 'id' route parameter
-     * @param string $secondaryColumn Name of database column whose value is in
+     * @param string   $secondaryColumn Name of database column whose value is in
      * 'extra' route parameter
-     * @param string $listVariable    Name of view variable to assign list to
+     * @param string   $listVariable    Name of view variable to assign list to
      * when displaying existing links
-     * @param string $listMethod      Name of method on table class to call for
+     * @param string   $listMethod      Name of method on table class to call for
      * list assignment
-     * @param string $listTemplate    Name of template to use for displaying list
-     * @param array  $extraFields     Extra fields to insert with the link (optional)
+     * @param string   $listTemplate    Name of template to use for displaying list
+     * @param array    $extraFields     Extra fields to insert with the link
+     * (optional)
+     * @param Callback $insertCallback  Callback function when inserting a new row
      *
      * @return mixed
      */
     public function handleGenericLink($tableName, $primaryColumn, $secondaryColumn,
-        $listVariable, $listMethod, $listTemplate, $extraFields = array()
+        $listVariable, $listMethod, $listTemplate, $extraFields = array(),
+        $insertCallback = null
     ) {
         $ok = $this->checkPermission('Content_Editor');
         if ($ok !== true) {
@@ -265,6 +268,12 @@ class AbstractBase extends AbstractActionController
             try {
                 if ($this->getRequest()->isPut()) {
                     $table->insert($row);
+                    if (is_callable($insertCallback)) {
+                        $insertCallback(
+                            $table->getLastInsertValue(), $row,
+                            $this->getServiceLocator()
+                        );
+                    }
                 } else if ($this->getRequest()->isDelete()) {
                     $table->delete($row);
                 } else {

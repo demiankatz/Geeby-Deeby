@@ -127,4 +127,24 @@ class Edition extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Delete an edition if there are no attached data items.
+     *
+     * @param int $id ID of edition to delete
+     *
+     * @throws \Exception
+     * @return void
+     */
+    public function safeDelete($id)
+    {
+        $select = array('Edition_ID' => $id);
+        if (count($this->getDbTable('editionscredits')->select($select)) > 0) {
+            throw new \Exception('Cannot delete - attached credits.');
+        }
+        if (count($this->getDbTable('editionsreleasedates')->select($select)) > 0) {
+            throw new \Exception('Cannot delete - attached dates.');
+        }
+        $this->delete($select);
+    }
 }

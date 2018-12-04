@@ -1,0 +1,7 @@
+<? $this->headTitle('Full Text Source List - ') ?>
+<? $this->headScript()->prependFile($this->basePath() . '/js/edit_fulltext.js') ?>
+<h1>Edit Full Text Sources</h1>
+<p><b>Full Text Sources:</b></p>
+<button id="add_source" type="button" onclick="editFullTextSource('NEW');">Add Full Text Source</button>
+<br /><br />
+<div id="source_list"><?=$this->render('geeby-deeby/edit-full-text-source/render-sources.phtml')?></div>
