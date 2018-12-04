@@ -33,8 +33,8 @@
           <a href="<?=$this->url('publisher', array('id' => $publisher['Publisher_ID']))?>">
             <?=$this->escapeHtml($publisher['Publisher_Name'])?>
           </a>
-          <? if (!empty($publisher['Imprint'])): ?>
-            (<?=$this->escapeHtml($publisher['Imprint'])?> imprint)
+          <? if (!empty($publisher['Imprint_Name'])): ?>
+            (<?=$this->escapeHtml($publisher['Imprint_Name'])?> imprint)
           <? endif; ?>
           --
           <a href="<?=$this->url('country', array('id' => $publisher['Country_ID']))?>">
