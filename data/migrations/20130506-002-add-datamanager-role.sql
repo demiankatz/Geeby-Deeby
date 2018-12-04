@@ -1,0 +1,1 @@
+ALTER TABLE `User_Groups` ADD COLUMN `Data_Manager` tinyint NOT NULL DEFAULT 0;
