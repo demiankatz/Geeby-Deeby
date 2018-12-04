@@ -93,7 +93,7 @@ CREATE TABLE `Editions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Items_Credits`
+-- Table structure for table `Editions_Credits`
 --
 
 DROP TABLE IF EXISTS `Editions_Credits`;
@@ -247,23 +247,6 @@ CREATE TABLE `Items_Bibliography` (
   `Item_ID` int(11) NOT NULL DEFAULT '0',
   `Bib_Item_ID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Item_ID`,`Bib_Item_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Items_Credits`
---
-
-DROP TABLE IF EXISTS `Items_Credits`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Items_Credits` (
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Person_ID` int(11) NOT NULL DEFAULT '0',
-  `Role_ID` int(11) NOT NULL DEFAULT '0',
-  `Position` int(11) DEFAULT NULL,
-  `Note_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Item_ID`,`Person_ID`,`Role_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -78,6 +78,9 @@ class EditEditionController extends AbstractBase
         }
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->roles = $this->getDbTable('role')->getList();
+            $view->credits= $this->getDbTable('editionscredits')
+                ->getCreditsForEdition($view->edition['Edition_ID']);
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
                 ->getDatesForEdition($view->edition['Edition_ID']);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
@@ -163,6 +166,84 @@ class EditEditionController extends AbstractBase
                     'Year' => $this->params()->fromPost('year'),
                     'Month' => $this->params()->fromPost('month'),
                     'Day' => $this->params()->fromPost('day'),
+                )
+            );
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Get list of credits
+     *
+     * @return mixed
+     */
+    public function creditsAction()
+    {
+        $table = $this->getDbTable('editionscredits');
+        $view = $this->createViewModel();
+        $primary = $this->params()->fromRoute('id');
+        $view->credits = $table->getCreditsForEdition($primary);
+        $view->setTemplate('geeby-deeby/edit-edition/credits.phtml');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Add a credit
+     *
+     * @return mixed
+     */
+    public function addcreditAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $table = $this->getDbTable('editionscredits');
+            $row = $table->createRow();
+            $row->Edition_ID = $this->params()->fromRoute('id');
+            $row->Person_ID = $this->params()->fromPost('person_id');
+            $row->Role_ID = $this->params()->fromPost('role_id');
+            $row->Position = $this->params()->fromPost('pos');
+            $row->Note_ID = $this->params()->fromPost('note_id');
+            $table->insert((array)$row);
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Remove a credit
+     *
+     * @return mixed
+     */
+    public function deletecreditAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $this->getDbTable('editionscredits')->delete(
+                array(
+                    'Edition_ID' => $this->params()->fromRoute('id'),
+                    'Person_ID' => $this->params()->fromPost('person_id'),
+                    'Role_ID' => $this->params()->fromPost('role_id')
+                )
+            );
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Set the order of an attached credit
+     *
+     * @return mixed
+     */
+    public function creditorderAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $this->getDbTable('editionscredits')->update(
+                array('Position' => $this->params()->fromPost('pos')),
+                array(
+                    'Edition_ID' => $this->params()->fromRoute('id'),
+                    'Person_ID' => $this->params()->fromPost('person_id'),
+                    'Role_ID' => $this->params()->fromPost('role_id')
                 )
             );
             return $this->jsonReportSuccess();

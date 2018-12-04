@@ -76,8 +76,8 @@ class EditItemController extends AbstractBase
             $view->adaptedFrom = $this->getDbTable('itemsadaptations')
                 ->getAdaptedInto($view->itemObj->Item_ID);
             $view->roles = $this->getDbTable('role')->getList();
-            $view->credits= $this->getDbTable('itemscredits')
-                ->getCreditsForItem($view->itemObj->Item_ID);
+            $view->credits= $this->getDbTable('editionscredits')
+                ->getCreditsForItem($view->itemObj->Item_ID, true);
             $view->itemsBib = $this->getDbTable('itemsbibliography')
                 ->getItemsDescribedByItem($view->itemObj->Item_ID);
             $view->peopleBib = $this->getDbTable('peoplebibliography')
@@ -400,10 +400,10 @@ class EditItemController extends AbstractBase
      */
     public function creditsAction()
     {
-        $table = $this->getDbTable('itemscredits');
+        $table = $this->getDbTable('editionscredits');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->credits = $table->getCreditsForItem($primary);
+        $view->credits = $table->getCreditsForItem($primary, true);
         $view->setTemplate('geeby-deeby/edit-item/credits.phtml');
         $view->setTerminal(true);
         return $view;
@@ -417,14 +417,15 @@ class EditItemController extends AbstractBase
     public function addcreditAction()
     {
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemscredits');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Person_ID = $this->params()->fromPost('person_id');
-            $row->Role_ID = $this->params()->fromPost('role_id');
-            $row->Position = $this->params()->fromPost('pos');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            $table->insert((array)$row);
+            $table = $this->getDbTable('editionscredits');
+            $item = $this->params()->fromRoute('id');
+            $row = array(
+                'Person_ID' => $this->params()->fromPost('person_id'),
+                'Role_ID' => $this->params()->fromPost('role_id'),
+                'Position' => $this->params()->fromPost('pos'),
+                'Note_ID' => $this->params()->fromPost('note_id')
+            );
+            $table->insertForItem($item, $row);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
@@ -438,9 +439,9 @@ class EditItemController extends AbstractBase
     public function deletecreditAction()
     {
         if ($this->getRequest()->isPost()) {
-            $this->getDbTable('itemscredits')->delete(
+            $this->getDbTable('editionscredits')->deleteForItem(
+                $this->params()->fromRoute('id'),
                 array(
-                    'Item_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $this->params()->fromPost('person_id'),
                     'Role_ID' => $this->params()->fromPost('role_id')
                 )
@@ -458,10 +459,10 @@ class EditItemController extends AbstractBase
     public function creditorderAction()
     {
         if ($this->getRequest()->isPost()) {
-            $this->getDbTable('itemscredits')->update(
+            $this->getDbTable('editionscredits')->updateForItem(
+                $this->params()->fromRoute('id'),
                 array('Position' => $this->params()->fromPost('pos')),
                 array(
-                    'Item_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $this->params()->fromPost('person_id'),
                     'Role_ID' => $this->params()->fromPost('role_id')
                 )

@@ -56,71 +56,162 @@ class EditionsCredits extends Gateway
      */
     public function getCreditsForPerson($personID)
     {
-        /* TODO
         $callback = function ($select) use ($personID) {
             $select->join(
-                array('i' => 'Items'),
-                'Items_Credits.Item_ID = i.Item_ID'
+                array('eds' => 'Editions'),
+                'Editions_Credits.Edition_ID = eds.Edition_ID',
+                array('Edition_Name', 'Position')
             );
             $select->join(
-                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
+                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
             );
             $select->join(
                 array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
             );
             $select->join(
                 array('r' => 'Roles'),
-                'Items_Credits.Role_ID = r.Role_ID'
+                'Editions_Credits.Role_ID = r.Role_ID'
             );
             $select->join(
                 array('n' => 'Notes'),
-                'Items_Credits.Note_ID = n.Note_ID',
+                'Editions_Credits.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $fields = array(
                 'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Position',
-                'Item_Name'
+                'Item_Name', 'Note'
             );
             $select->order($fields);
             $select->group($fields);
             $select->where->equalTo('Person_ID', $personID);
         };
         return $this->select($callback);
-         */
+    }
+
+    /**
+     * Get a list of credits attached to the specified edition.
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getCreditsForEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->join(
+                array('p' => 'People'),
+                'Editions_Credits.Person_ID = p.Person_ID'
+            );
+            $select->join(
+                array('r' => 'Roles'),
+                'Editions_Credits.Role_ID = r.Role_ID'
+            );
+            $select->join(
+                array('n' => 'Notes'),
+                'Editions_Credits.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
+            $fields = array(
+                'Role_Name', 'Position', 'Last_Name',
+                'First_Name', 'Middle_Name'
+            );
+            $select->order($fields);
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return $this->select($callback);
     }
 
     /**
      * Get a list of credits attached to the specified item.
      *
-     * @var int $itemID Item ID
+     * @var int  $itemID Item ID
+     * @var bool $group  Should we group by person/role?
      *
      * @return mixed
      */
-    public function getCreditsForItem($itemID)
+    public function getCreditsForItem($itemID, $group = false)
     {
-        /* TODO
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID, $group) {
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Credits.Edition_ID = eds.Edition_ID',
+                array('Item_ID', 'Edition_Name')
+            );
             $select->join(
                 array('p' => 'People'),
-                'Items_Credits.Person_ID = p.Person_ID'
+                'Editions_Credits.Person_ID = p.Person_ID'
             );
             $select->join(
                 array('r' => 'Roles'),
-                'Items_Credits.Role_ID = r.Role_ID'
+                'Editions_Credits.Role_ID = r.Role_ID'
             );
             $select->join(
                 array('n' => 'Notes'),
-                'Items_Credits.Note_ID = n.Note_ID',
+                'Editions_Credits.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->order(
-                array(
-                    'Role_Name', 'Position', 'Last_Name', 'First_Name', 'Middle_Name'
-                )
+            $fields = array(
+                'Role_Name', 'Editions_Credits.Position', 'Last_Name',
+                'First_Name', 'Middle_Name'
             );
+            $select->order($fields);
+            if ($group) {
+                $select->group(array('r.Role_ID', 'p.Person_ID', 'n.Note_ID'));
+            }
             $select->where->equalTo('Item_ID', $itemID);
         };
         return $this->select($callback);
-         */
+    }
+
+    /**
+     * Delete credits for all editions of an item.
+     *
+     * @param int   $item  Item ID
+     * @param array $where Fields to match
+     *
+     * @return void
+     */
+    public function deleteForItem($item, $where)
+    {
+        $table = $this->getDbTable('edition');
+        $eds = $table->getEditionsForItem($item);
+        foreach ($eds as $ed) {
+            $this->delete(array('Edition_ID' => $ed->Edition_ID) + $where);
+        }
+    }
+
+    /**
+     * Insert credits for all editions of an item.
+     *
+     * @param int   $item   Item ID
+     * @param array $fields Fields to insert
+     *
+     * @return void
+     */
+    public function insertForItem($item, $fields)
+    {
+        $table = $this->getDbTable('edition');
+        $eds = $table->getEditionsForItem($item);
+        foreach ($eds as $ed) {
+            $this->insert(array('Edition_ID' => $ed->Edition_ID) + $fields);
+        }
+    }
+
+    /**
+     * Update credits for all editions of an item.
+     *
+     * @param int   $item   Item ID
+     * @param array $fields Fields to change
+     * @param array $where  Fields to match
+     *
+     * @return void
+     */
+    public function updateForItem($item, $fields, $where)
+    {
+        $table = $this->getDbTable('edition');
+        $eds = $table->getEditionsForItem($item);
+        foreach ($eds as $ed) {
+            $this->update($fields, array('Edition_ID' => $ed->Edition_ID) + $where);
+        }
     }
 }
