@@ -65,6 +65,11 @@ class ItemsInCollections extends Gateway
                 array('mt' => 'Material_Types'),
                 'i.Material_Type_ID = mt.Material_Type_ID'
             );
+            $select->join(
+                array('n' => 'Notes'),
+                'Items_In_Collections.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
+            );
             $select->order(
                 array('mt.Material_Type_Name', 'i.Item_Name')
             );
@@ -90,6 +95,11 @@ class ItemsInCollections extends Gateway
             $select->join(
                 array('mt' => 'Material_Types'),
                 'i.Material_Type_ID = mt.Material_Type_ID'
+            );
+            $select->join(
+                array('n' => 'Notes'),
+                'Items_In_Collections.Note_ID = n.Note_ID',
+                Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->order(
                 array('mt.Material_Type_Name', 'Position', 'i.Item_Name')

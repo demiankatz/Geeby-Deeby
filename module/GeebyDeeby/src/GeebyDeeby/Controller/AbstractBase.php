@@ -266,7 +266,7 @@ class AbstractBase extends AbstractActionController
             $row = array($primaryColumn => $primary, $secondaryColumn => $secondary);
             $row += $extraFields;
             try {
-                if ($this->getRequest()->isPut()) {
+                if ($this->getRequest()->isPut() || $this->getRequest()->isPost()) {
                     $table->insert($row);
                     if (is_callable($insertCallback)) {
                         $insertCallback(

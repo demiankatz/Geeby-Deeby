@@ -83,7 +83,7 @@
         <? foreach ($containedIn as $current): ?>
           <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
             <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
-          </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?>)<br />
+          </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?><? if (!empty($current['Note'])): ?>, <?=$this->escapeHtml($current['Note'])?><? endif; ?>)<br />
         <? endforeach; ?>
       </td>
     </tr>
@@ -96,7 +96,7 @@
         <? foreach ($contains as $current): ?>
           <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
             <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
-          </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?>)<br />
+          </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?><? if (!empty($current['Note'])): ?>, <?=$this->escapeHtml($current['Note'])?><? endif; ?>)<br />
         <? endforeach; ?>
       </td>
     </tr>

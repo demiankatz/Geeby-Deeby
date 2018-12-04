@@ -239,10 +239,12 @@ class EditItemController extends AbstractBase
      */
     public function attachmentAction()
     {
+        $note = intval($this->params()->fromPost('note_id'));
+        $extras = $note > 0 ? array('Note_ID' => $note) : array();
         return $this->handleGenericLink(
             'itemsincollections', 'Collection_Item_ID', 'Item_ID',
             'item_list', 'getItemsForCollection',
-            'geeby-deeby/edit-item/list.phtml'
+            'geeby-deeby/edit-item/list.phtml', $extras
         );
     }
 
