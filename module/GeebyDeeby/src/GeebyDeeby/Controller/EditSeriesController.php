@@ -184,12 +184,17 @@ class EditSeriesController extends AbstractBase
         $table = $this->getDbTable('seriespublishers');
         if ($this->getRequest()->isPost()) {
             $imprint = $this->params()->fromPost('imprint');
-            $fields = array('Imprint_ID' => $imprint);
+            $address = $this->params()->fromPost('address');
+            $fields = array(
+                'Imprint_ID' => $imprint, 'Address_ID' => $address
+            );
             $table->update($fields, array('Series_Publisher_ID' => $rowId));
             return $this->jsonReportSuccess();
         }
         $view = $this->createViewModel();
         $view->row = $table->getByPrimaryKey($rowId);
+        $view->addresses = $this->getDbTable('publishersaddresses')
+            ->getAddressesForPublisher($view->row->Publisher_ID);
         $view->imprints = $this->getDbTable('publishersimprints')
             ->getImprintsForPublisher($view->row->Publisher_ID);
         $view->setTemplate('geeby-deeby/edit-series/modify-publisher');
@@ -213,6 +218,7 @@ class EditSeriesController extends AbstractBase
         // Modify the publisher if it's a GET/POST and has an extra set.
         if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
             && null !== $this->params()->fromRoute('extra')
+            && 'NEW' !== $this->params()->fromRoute('extra')
         ) {
             return $this->modifyPublisher();
         }
@@ -227,11 +233,23 @@ class EditSeriesController extends AbstractBase
             $row = $table->createRow();
             $row->Series_ID = $this->params()->fromRoute('id');
             $row->Publisher_ID = $this->params()->fromPost('publisher_id');
-            $row->Country_ID = $this->params()->fromPost('country_id');
             $row->Note_ID = $this->params()->fromPost('note_id');
             $row->save();
             return $this->jsonReportSuccess();
         } else {
+            if ($this->getRequest()->isDelete()) {
+                $extra = $this->params()->fromRoute('extra');
+                $result = $this->getDbTable('edition')->select(
+                    array('Preferred_Series_Publisher_ID' => $extra)
+                );
+                if (count($result) > 0) {
+                    $ed = $result->current();
+                    $msg = 'You cannot delete this publisher; '
+                        . 'it is assigned to Edition '
+                        . $ed->Edition_ID . '.';
+                    return $this->jsonDie($msg);
+                }
+            }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
                 'seriespublishers', 'Series_ID', 'Series_Publisher_ID',

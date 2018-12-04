@@ -107,6 +107,7 @@ CREATE TABLE `Editions` (
   `Edition_Length` tinytext,
   `Edition_Endings` tinytext,
   `Edition_Description` text,
+  `Preferred_Series_Publisher_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Edition_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

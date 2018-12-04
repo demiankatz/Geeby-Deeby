@@ -165,6 +165,30 @@ return array(
                     ),
                 ),
             ),
+            'city' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/City[/:id][/:action][/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'City',
+                        'action'        => 'index',
+                        'id'            => null,
+                        'extra'         => null,
+                    ),
+                ),
+            ),
+            'cities' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/Cities[/:extra]',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'City',
+                        'action'        => 'list',
+                    ),
+                ),
+            ),
             'country' => array(
                 'type'    => 'Segment',
                 'options' => array(
@@ -1015,6 +1039,7 @@ return array(
         'invokables' => array(
             'GeebyDeeby\Controller\Approve' => 'GeebyDeeby\Controller\ApproveController',
             'GeebyDeeby\Controller\Category' => 'GeebyDeeby\Controller\CategoryController',
+            'GeebyDeeby\Controller\City' => 'GeebyDeeby\Controller\CityController',
             'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',

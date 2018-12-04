@@ -44,6 +44,7 @@ function saveEdition()
         // Redraw alt titles:
         redrawItemAltTitles();
         redrawSeriesAltTitles();
+        redrawSeriesPublishers();
         redrawNextAndPrev();
     }, 'json');
 }
@@ -271,6 +272,15 @@ function redrawSeriesAltTitles()
     $('#Preferred_Series_Title_Text').val('');
 }
 
+/* Redraw the series publisher list:
+ */
+function redrawSeriesPublishers()
+{
+    var edID = $('#Edition_ID').val();
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(edID) + '/SeriesPublishers';
+    $('#series-publisher-select-container').load(url);
+}
+
 /* Clear the preferred series alternate title:
  */
 function deleteSeriesAltTitle()
@@ -328,6 +338,26 @@ function saveSeriesAltTitle()
             // Update the list.
             redrawSeriesAltTitles();
         } else {
+            // Save failed -- display error message:
+            alert('Error: ' + data.msg);
+        }
+    }, 'json');
+}
+
+/* Set the preferred series publisher:
+ */
+function saveSeriesPublisher()
+{
+    // Extract the basic values:
+    var editionID = $('#Edition_ID').val();
+    var pubID = $('#Series_Publisher_ID').val();
+
+    // Save the publisher:
+    var url = basePath + '/edit/Edition/' + encodeURIComponent(editionID) + '/SetPreferredPublisher';
+    var params = {pub_id: pubID};
+    $.post(url, params, function(data) {
+        // If save was successful...
+        if (!data.success) {
             // Save failed -- display error message:
             alert('Error: ' + data.msg);
         }
