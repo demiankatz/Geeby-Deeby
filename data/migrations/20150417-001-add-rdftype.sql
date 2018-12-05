@@ -1,0 +1,1 @@
+ALTER TABLE `Material_Types` ADD COLUMN `Material_Type_RDF_Class` tinytext;
