@@ -100,6 +100,18 @@
       </td>
     </tr>
   <? endif; ?>
+
+  <? foreach ($seriesAttributes as $current): ?>
+    <tr>
+        <th><?=$this->escapeHtml($current->Series_Attribute_Name)?>:</th>
+        <td>
+          <? if ($current->Allow_HTML == 1): ?>
+            <?=$current->Series_Attribute_Value?>
+          <? else: ?>
+            <?=$this->escapeHtml($current->Series_Attribute_Value)?>
+          <? endif; ?>
+        </td>
+  <? endforeach; ?>
 </table>
 
 <? if (!empty($series['Series_Description'])): ?>

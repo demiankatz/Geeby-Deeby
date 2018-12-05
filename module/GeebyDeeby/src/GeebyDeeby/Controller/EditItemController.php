@@ -115,6 +115,20 @@ class EditItemController extends AbstractBase
                     )
                 );
             }
+            if ($editionID = $this->params()->fromPost('edition_id', false)) {
+                $parentEdition = $this->getDbTable('edition')
+                    ->getByPrimaryKey($editionID);
+                $this->getDbTable('edition')->insert(
+                    array(
+                        'Edition_Name' => $parentEdition->Edition_Name,
+                        'Item_ID' => $view->affectedRow->Item_ID,
+                        'Series_ID' => $parentEdition->Series_ID,
+                        'Edition_Length' => $this->params()->fromPost('len'),
+                        'Edition_Endings' => $this->params()->fromPost('endings'),
+                        'Parent_Edition_ID' => $editionID
+                    )
+                );
+            }
         }
 
         return $view;

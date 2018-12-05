@@ -1,0 +1,25 @@
+<? if (!isset($item_list) || count($item_list) == 0): ?>
+  No items.
+<? else: ?>
+  <table class="list_item">
+    <tr><th>Order</th><th colspan="2">Title</th></tr>
+    <? foreach ($item_list as $current): ?>
+      <tr>
+        <td>
+          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position_in_Parent'])?>" id="order<?=$current['Edition_ID']?>" />
+          <button onclick="changeContentsOrder(<?=$current['Edition_ID']?>);">Set</button>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="removeFromContents(<?=$current['Edition_ID']?>); return false;">
+          </a>
+        </td>
+        <td>
+          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>">
+            <?=$this->escapeHtml(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])?>
+          </a>
+          <? if (!empty($current['Extent_In_Parent'])): ?>(<?=$this->escapeHtml($current['Extent_In_Parent'])?>)<? endif; ?>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>

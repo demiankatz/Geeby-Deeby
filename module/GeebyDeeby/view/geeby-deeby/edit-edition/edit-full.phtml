@@ -7,6 +7,7 @@
 <ul class="nav nav-tabs">
   <li class="active"><a href="#credits-tab" data-toggle="tab"><span>Credits</span></a></li>
   <li><a href="#codes-tab" data-toggle="tab"><span>Codes/ISBNs</span></a></li>
+  <li><a href="#contents-tab" data-toggle="tab"><span>Contents (Attached Items)</span></a></li>
   <li><a href="#release-tab" data-toggle="tab"><span>Dates</span></a></li>
   <li><a href="#fulltext-tab" data-toggle="tab"><span>Full Text Links</span></a></li>
   <li><a href="#images-tab" data-toggle="tab"><span>Images</span></a></li>
@@ -86,6 +87,15 @@
         </td>
       </tr>
     </table>
+  </div>
+
+  <div id="contents-tab" class="tab-pane">
+    <input id="item_name" class="Item_ID"/>
+    <button onclick="addExistingItem();">Add Existing Item</button>
+    <button onclick="addNewItem();">Add New Item</button>
+    <div id="item_list">
+      <?=$this->render('geeby-deeby/edit-edition/item-list.phtml')?>
+    </div>
   </div>
 
   <div id="release-tab" class="tab-pane">

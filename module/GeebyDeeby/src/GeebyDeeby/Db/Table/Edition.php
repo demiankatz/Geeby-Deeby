@@ -99,6 +99,20 @@ class Edition extends Gateway
     }
 
     /**
+     * Get a list of items for the specified edition.
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getItemsForEdition($editionID)
+    {
+        // Proxy item table (so handleGenericLink() can be used in
+        // EditEditionController):
+        return $this->getDbTable('item')->getItemsForEdition($editionID);
+    }
+
+    /**
      * Get a list of items for the specified series.
      *
      * @var int $seriesID Series ID

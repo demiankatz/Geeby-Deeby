@@ -55,6 +55,9 @@ class SeriesController extends AbstractBase
         if (!is_object($rowObj)) {
             return false;
         }
+        $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
+            ->getAttributesForSeries($id);
+
         return $this->createViewModel(
             array('series' => $rowObj->toArray()) + $extras
         );
@@ -142,24 +145,47 @@ class SeriesController extends AbstractBase
                     'Edition_ID' => new Expression(
                         'min(?)', ['Edition_ID'], [Expression::TYPE_IDENTIFIER]
                     ),
-                    'Start' => new Expression(
+                    'Pos' => new Expression(
                         'min(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'End' => new Expression(
-                        'max(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
                     ),
                     'Total' => new Expression(
                         'count(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
                     ),
-                    'Different' => new Expression(
-                        'count(distinct(?))', ['Position'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
                 ]
             );
-            $select->group('Series_ID');
+            $select->group('Position');
+            $select->order('Position');
         };
-        $view->itemStats = current($editions->select($callback)->toArray());
+        $results = $editions->select($callback)->toArray();
+        $last = $min = $max = $total = 0;
+        $dupes = $missing = [];
+        foreach ($results as $current) {
+            $pos = $current['Pos'];
+            $total += $current['Total'];
+            if ($current['Total'] > 1) {
+                $dupes[] = $pos;
+            }
+            if ($last > 0) {
+                for ($i = $last + 1; $i < $pos; $i++) {
+                    $missing[] = $i;
+                }
+            }
+            if ($min == 0) {
+                $min = $pos;
+            }
+            if ($pos > $max) {
+                $max = $pos;
+            }
+            $last = $pos;
+        }
+        $view->itemStats = array(
+            'Different' =>  count($results),
+            'Start' => $min,
+            'End' => $max,
+            'Total' => $total,
+            'Dupes' => $dupes,
+            'Missing' => $missing,
+        );
 
         return $view;
     }
