@@ -99,6 +99,38 @@ class Edition extends Gateway
     }
 
     /**
+     * Get parent item for the specified edition (false if none).
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getParentItemForEdition($editionID)
+    {
+        $ed = $this->getByPrimaryKey($editionID);
+        if (empty($ed->Parent_Edition_ID)) {
+            return false;
+        }
+        $parent = $ed->Parent_Edition_ID;
+        $callback = function ($select) use ($parent) {
+            $select->join(
+                array('items' => 'Items'), 'Editions.Item_ID = items.Item_ID'
+            );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'Editions.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
+            $select->where->equalTo('Edition_ID', $parent);
+        };
+        $results = $this->select($callback);
+        foreach ($results as $current) {
+            return $current;
+        }
+        return false;
+    }
+
+    /**
      * Get a list of items for the specified edition.
      *
      * @var int $editionID Edition ID
@@ -129,14 +161,31 @@ class Edition extends Gateway
     /**
      * Retrieve editions for the specified item.
      *
-     * @param int $itemID Item ID.
+     * @param int  $itemID         Item ID.
+     * @param bool $includeParents Should we include information on parent items?
      *
      * @return mixed
      */
-    public function getEditionsForItem($itemID)
+    public function getEditionsForItem($itemID, $includeParents = false)
     {
-        $callback = function ($select) use ($itemID) {
-            $select->where->equalTo('Item_ID', $itemID);
+        $callback = function ($select) use ($itemID, $includeParents) {
+            $select->where->equalTo('Editions.Item_ID', $itemID);
+            if ($includeParents) {
+                $select->join(
+                    array('pe' => 'Editions'),
+                    'Editions.Parent_Edition_ID = pe.Edition_ID',
+                    [], Select::JOIN_LEFT
+                );
+                $select->join(
+                    array('i' => 'Items'), 'pe.Item_ID = i.Item_ID',
+                    Select::SQL_STAR, Select::JOIN_LEFT
+                );
+                $select->join(
+                    array('iat' => 'Items_AltTitles'),
+                    'pe.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                    array('Item_AltName'), Select::JOIN_LEFT
+                );
+            }
             $select->order('Edition_Name');
         };
         return $this->select($callback);
@@ -229,6 +278,37 @@ class Edition extends Gateway
         if (count($this->getDbTable('editionsreleasedates')->select($select)) > 0) {
             throw new \Exception('Cannot delete - attached dates.');
         }
+        if (count($this->getDbTable('edition')->select(array('Parent_Edition_ID' => $id))) > 0) {
+            throw new \Exception('Cannot delete - has child editions.');
+        }
         $this->delete($select);
+    }
+
+    /**
+     * Copy information associated with one edition into another.
+     *
+     * @param int|\GeebyDeeby\Db\Row\Edition $from Source item (object or ID)
+     * @param int|\GeebyDeeby\Db\Row\Edition $to   Target item (object or ID)
+     *
+     * @return void
+     */
+    public function copyAssociatedInfo($from, $to)
+    {
+        if (!($from instanceof \GeebyDeeby\Db\Row\Edition)) {
+            $from = $this->getByPrimaryKey($from);
+        }
+        if (!($to instanceof \GeebyDeeby\Db\Row\Edition)) {
+            $to = $this->getByPrimaryKey($to);
+        }
+        foreach ($from->getChildren() as $child) {
+            $child->copy(
+                array(
+                    'Parent_Edition_ID' => $to->Edition_ID,
+                    'Series_ID' => $to->Series_ID,
+                    'Edition_Name' => $to->Edition_Name
+                )
+            );
+        }
+        $to->copyCredits($from->Edition_ID);
     }
 }

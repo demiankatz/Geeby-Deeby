@@ -120,15 +120,92 @@ class ItemController extends AbstractBase
     }
 
     /**
-     * "Show item" page
+     * 303 redirect page
      *
      * @return mixed
      */
     public function indexAction()
     {
+        return $this->performRdfRedirect('item');
+    }
+
+    /**
+     * Build the primary resource in an RDF graph.
+     *
+     * @param \EasyRdf\Graph $graph Graph to populate
+     * @param object         $view  View model populated with information.
+     * @param mixed          $class Class(es) for resource.
+     *
+     * @return \EasyRdf\Resource
+     */
+    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    {
+        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $id = $view->item['Item_ID'];
+        $uri = $this->getServerUrl('item', ['id' => $id]);
+        $type = $this->getDbTable('materialtype')
+            ->getByPrimaryKey($view->item['Material_Type_ID']);
+        if (!empty($type->Material_Type_RDF_Class)) {
+            $class = (array)$class;
+            $class[] = $type->Material_Type_RDF_Class;
+        }
+        $item = $graph->resource($uri, $class);
+        $name = $view->item['Item_Name'];
+        $item->set('dcterms:title', $articleHelper->formatTrailingArticles($name));
+        return $item;
+    }
+
+    /**
+     * Build an RDF graph from the available data.
+     *
+     * @param object $view View model populated with information.
+     *
+     * @return \EasyRdf\Graph
+     */
+    protected function getGraphFromView($view)
+    {
+        $graph = new \EasyRdf\Graph();
+        $this->addPrimaryResourceToGraph($graph, $view);
+        return $graph;
+    }
+
+    /**
+     * RDF representation page
+     *
+     * @return mixed
+     */
+    public function rdfAction()
+    {
+        $view = $this->getViewModelWithItemAndDetails();
+        if (!is_object($view)) {
+            $response = $this->getResponse();
+            $response->setStatusCode(404);
+            return $response;
+        }
+        return $this->getRdfResponse($this->getGraphFromView($view));
+    }
+
+    /**
+     * "Show item" page
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        return ($view = $this->getViewModelWithItemAndDetails())
+            ? $view : $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
+    }
+
+    /**
+     * Get the view model representing the item and all relevant related details.
+     *
+     * @return \Zend\View\Model\ViewModel|bool
+     */
+    public function getViewModelWithItemAndDetails()
+    {
         $view = $this->getViewModelWithItem();
         if (!$view) {
-            return $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
+            return false;
         }
         $id = $view->item['Item_ID'];
         $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
@@ -141,8 +218,15 @@ class ItemController extends AbstractBase
             ->getPlatformsForItem($id);
         $view->tags = $this->getDbTable('itemstags')->getTags($id);
         $collections = $this->getDbTable('itemsincollections');
+        // Contains/containedIn are item-level relationships, while children/parents
+        // are edition-level relationships. These are very similar, but the edition
+        // relationships are preferred and more valuable.
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);
+        $itemTable = $this->getDbTable('item');
+        $view->children = $itemTable->getItemChildren($id);
+        $view->parents = $itemTable->getItemParents($id);
+
         $trans = $this->getDbTable('itemstranslations');
         $adapt = $this->getDbTable('itemsadaptations');
         // The variable/function names are a bit unintuitive here --
@@ -155,7 +239,7 @@ class ItemController extends AbstractBase
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
         $edTable = $this->getDbTable('edition');
         $view->publishers = $edTable->getPublishersForItem($id);
-        $view->editions = $edTable->getEditionsForItem($id);
+        $view->editions = $edTable->getEditionsForItem($id, true);
         $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
         $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
         $view->codes = $this->getDbTable('editionsproductcodes')

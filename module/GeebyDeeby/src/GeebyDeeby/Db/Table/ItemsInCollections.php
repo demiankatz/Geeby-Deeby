@@ -48,6 +48,25 @@ class ItemsInCollections extends Gateway
     }
 
     /**
+     * Get a list of all collections.
+     *
+     * @return mixed
+     */
+    public function getAllCollections()
+    {
+        $callback = function ($select) {
+            $select->columns(array());
+            $select->join(
+                array('i' => 'Items'),
+                'Items_In_Collections.Collection_Item_ID = i.Item_ID'
+            );
+            $select->order('Item_Name');
+            $select->group('Item_ID');
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of collections for the specified item.
      *
      * @var int $itemID Item ID

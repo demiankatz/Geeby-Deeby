@@ -42,8 +42,29 @@
       <input class="form-control" type="text" id="Edition_Endings" value="<?=isset($edition['Edition_Endings']) ? $this->escapeHtml($edition['Edition_Endings']) : ''?>" />
     </div>
   </div>
+  <div class="collapse" id="parentDetails">
+    <div class="form-group">
+      <label for="Parent_Edition_ID" class="col-sm-2 control-label">Parent Edition ID (manual edit discouraged):</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="text" id="Parent_Edition_ID" value="<?=isset($edition['Parent_Edition_ID']) ? $this->escapeHtml($edition['Parent_Edition_ID']) : ''?>" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="Position_In_Parent" class="col-sm-2 control-label">Position in Parent:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="text" id="Position_In_Parent" value="<?=isset($edition['Position_In_Parent']) ? $this->escapeHtml($edition['Position_In_Parent']) : ''?>" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="Extent_In_Parent" class="col-sm-2 control-label">Extent in Parent:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="text" id="Extent_In_Parent" value="<?=isset($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) : ''?>" />
+      </div>
+    </div>
+  </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
+      <button data-toggle="collapse" data-target="#parentDetails">Toggle Parent Details</button>
       <button id="save_edition" onclick="saveEdition();">Save</button>
     </div>
   </div>

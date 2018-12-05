@@ -64,7 +64,10 @@ class EditEditionController extends AbstractBase
             'series_id' => 'Series_ID',
             'position' => 'Position',
             'len' => 'Edition_Length',
-            'endings' => 'Edition_Endings'
+            'endings' => 'Edition_Endings',
+            'parent_edition_id' => 'Parent_Edition_ID',
+            'position_in_parent' => 'Position_In_Parent',
+            'extent_in_parent' => 'Extent_In_Parent',
         );
         $view = $this->handleGenericItem('edition', $assignMap, 'edition');
 
@@ -350,16 +353,11 @@ class EditEditionController extends AbstractBase
             if (!$old) {
                 return $this->jsonDie('Cannot load edition ' . $editionId);
             }
-            $new = $table->createRow();
-            foreach ($old->toArray() as $key => $value) {
-                if ($key != 'Edition_ID') {
-                    $new->$key = $value;
-                }
+            if ($old->copy()) {
+                return $this->jsonReportSuccess();
+            } else {
+                return $this->jsonDie('Copy operation failed.');
             }
-            $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
-            $new->save();
-            $new->copyCredits($editionId);
-            return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
     }
@@ -417,6 +415,9 @@ class EditEditionController extends AbstractBase
             $row->Month = $this->params()->fromPost('month');
             $row->Day = $this->params()->fromPost('day');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $table->insert((array)$row);
             return $this->jsonReportSuccess();
         }
@@ -483,6 +484,9 @@ class EditEditionController extends AbstractBase
             $row->Role_ID = $this->params()->fromPost('role_id');
             $row->Position = $this->params()->fromPost('pos');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $table->insert((array)$row);
             return $this->jsonReportSuccess();
         }
@@ -705,6 +709,9 @@ class EditEditionController extends AbstractBase
             $row = $table->createRow();
             $row->Edition_ID = $this->params()->fromRoute('id');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $row->Image_Path = $this->params()->fromPost('image');
             if (empty($row->Image_Path)) {
                 return $this->jsonDie('Image path must be set.');
@@ -796,6 +803,11 @@ class EditEditionController extends AbstractBase
         $insertCallback = function ($new, $row, $sm) {
             $edsTable = $sm->get('GeebyDeeby\DbTablePluginManager')
                 ->get('edition');
+            $newObj = $edsTable->getByPrimaryKey($new);
+            if ($error = $newObj->validate()) {
+                $newObj->delete();
+                throw new \Exception($error);
+            }
             $rows = $edsTable->select(array('Item_ID' => $row['Item_ID']));
             foreach ($rows as $row) {
                 $row = $row->toArray();

@@ -190,6 +190,9 @@ class EditSeriesController extends AbstractBase
             $row = $table->createRow();
             $row->Series_ID = $this->params()->fromRoute('id');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $row->Series_AltName = $this->params()->fromPost('title');
             if (empty($row->Series_AltName)) {
                 return $this->jsonDie('Title must not be empty.');
@@ -280,6 +283,9 @@ class EditSeriesController extends AbstractBase
             $row->Series_ID = $this->params()->fromRoute('id');
             $row->Publisher_ID = $this->params()->fromPost('publisher_id');
             $row->Note_ID = $this->params()->fromPost('note_id');
+            if (empty($row->Note_ID)) {
+                $row->Note_ID = null;
+            }
             $row->save();
             return $this->jsonReportSuccess();
         } else {
@@ -343,7 +349,7 @@ class EditSeriesController extends AbstractBase
                 }
             }
             if (isset($row['Edition_ID']) && $row['Edition_ID'] != $new) {
-                $edsTable->getByPrimaryKey($new)->copyCredits($row['Edition_ID']);
+                $edsTable->copyAssociatedInfo($row['Edition_ID'], $new);
             }
         };
         return $this->handleGenericLink(

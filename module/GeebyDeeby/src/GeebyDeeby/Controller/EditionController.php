@@ -88,15 +88,91 @@ class EditionController extends AbstractBase
     }
 
     /**
-     * "Show item" page
+     * 303 redirect page
      *
      * @return mixed
      */
     public function indexAction()
     {
-        $view = $this->getViewModelWithEdition();
+        return $this->performRdfRedirect('edition');
+    }
+
+    /**
+     * Build the primary resource in an RDF graph.
+     *
+     * @param \EasyRdf\Graph $graph Graph to populate
+     * @param object         $view  View model populated with information.
+     * @param mixed          $class Class(es) for resource.
+     *
+     * @return \EasyRdf\Resource
+     */
+    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    {
+        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $id = $view->edition['Edition_ID'];
+        $uri = $this->getServerUrl('edition', ['id' => $id]);
+        $edition = $graph->resource($uri, $class);
+        $name = $view->edition['Edition_Name'];
+        $edition->set('rdf:label', $articleHelper->formatTrailingArticles($name));
+        return $edition;
+    }
+
+    /**
+     * Build an RDF graph from the available data.
+     *
+     * @param string $id   ID of primary resource in graph.
+     * @param object $view View model populated with information.
+     *
+     * @return \EasyRdf\Graph
+     */
+    protected function getGraphFromView($view)
+    {
+        $graph = new \EasyRdf\Graph();
+        $this->addPrimaryResourceToGraph($graph, $view);
+        return $graph;
+    }
+
+    /**
+     * RDF representation page
+     *
+     * @return mixed
+     */
+    public function rdfAction()
+    {
+        $view = $this->getViewModelWithEditionAndDetails();
+        if (!is_object($view)) {
+            $response = $this->getResponse();
+            $response->setStatusCode(404);
+            return $response;
+        }
+        return $this->getRdfResponse($this->getGraphFromView($view));
+    }
+
+    /**
+     * "Show item" page
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        $view = $this->getViewModelWithEditionAndDetails();
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Edition', 'notfound');
+        }
+        return $view;
+    }
+
+    /**
+     * Get the view model populated with edition-specific details (or return
+     * false if the edition is not found).
+     *
+     * @return mixed
+     */
+    protected function getViewModelWithEditionAndDetails()
+    {
+        $view = $this->getViewModelWithEdition();
+        if (!$view) {
+            return false;
         }
         $id = $view->edition['Edition_ID'];
         $view->credits = $this->getDbTable('editionscredits')
@@ -114,7 +190,10 @@ class EditionController extends AbstractBase
             ->getOCLCNumbersForEdition($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForEdition($id);
-        $view->publishers = $this->getDbTable('edition')->getPublishersForEdition($id);
+        $edTable = $this->getDbTable('edition');
+        $view->publishers = $edTable->getPublishersForEdition($id);
+        $view->parent = $edTable->getParentItemForEdition($id);
+        $view->children = $edTable->getItemsForEdition($id);
         return $view;
     }
 
