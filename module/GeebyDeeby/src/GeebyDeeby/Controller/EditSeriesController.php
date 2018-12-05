@@ -51,6 +51,33 @@ class EditSeriesController extends AbstractBase
     }
 
     /**
+     * Save attributes for the current series.
+     *
+     * @param int   $seriesId Series ID
+     * @param array $attribs  Attribute values
+     *
+     * @return void
+     */
+    protected function saveAttributes($seriesId, $attribs)
+    {
+        $table = $this->getDbTable('seriesattributesvalues');
+        // Delete old values:
+        $table->delete(['Series_ID' => $seriesId]);
+        // Save new values:
+        foreach ($attribs as $id => $val) {
+            if (!empty($val)) {
+                $table->insert(
+                    [
+                        'Series_ID' => $seriesId,
+                        'Series_Attribute_ID' => $id,
+                        'Series_Attribute_Value' => $val
+                    ]
+                );
+            }
+        }
+    }
+
+    /**
      * Operate on a single series
      *
      * @return mixed
@@ -63,8 +90,27 @@ class EditSeriesController extends AbstractBase
             'lang' => 'Language_ID'
         );
         $view = $this->handleGenericItem('series', $assignMap, 'series');
+        $seriesId = isset($view->seriesObj->Series_ID)
+            ? $view->seriesObj->Series_ID : $view->affectedRow->Series_ID;
+
+        // Special handling for saving attributes:
+        if ($this->getRequest()->isPost() && $this->params()->fromPost('attribs')) {
+            $this->saveAttributes(
+                $seriesId, $this->params()->fromPost('attribs')
+            );
+        }
+
         $languages = $this->getDbTable('language');
         $view->languages = $languages->getList();
+        $view->attributes = $this->getDbTable('seriesattribute')->getList();
+        $attributeValues = [];
+        $values = $this->getDbTable('seriesattributesvalues')
+            ->getAttributesForSeries($seriesId);
+        foreach ($values as $current) {
+            $attributeValues[$current->Series_Attribute_ID]
+                = $current->Series_Attribute_Value;
+        }
+        $view->attributeValues = $attributeValues;
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -72,17 +118,17 @@ class EditSeriesController extends AbstractBase
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
             $view->item_list = $this->getDbTable('item')
-                ->getItemsForSeries($view->seriesObj->Series_ID);
+                ->getItemsForSeries($seriesId);
             $view->series_alt_titles = $this->getDbTable('seriesalttitles')
-                ->getAltTitles($view->seriesObj->Series_ID);
+                ->getAltTitles($seriesId);
             $view->series_materials = $this->getDbTable('seriesmaterialtypes')
-                ->getMaterials($view->seriesObj->Series_ID);
+                ->getMaterials($seriesId);
             $view->series_publishers = $this->getDbTable('seriespublishers')
-                ->getPublishers($view->seriesObj->Series_ID);
+                ->getPublishers($seriesId);
             $view->translatedInto = $this->getDbTable('seriestranslations')
-                ->getTranslatedFrom($view->seriesObj->Series_ID);
+                ->getTranslatedFrom($seriesId);
             $view->translatedFrom = $this->getDbTable('seriestranslations')
-                ->getTranslatedInto($view->seriesObj->Series_ID);
+                ->getTranslatedInto($seriesId);
             $view->setTemplate('geeby-deeby/edit-series/edit-full');
         }
 

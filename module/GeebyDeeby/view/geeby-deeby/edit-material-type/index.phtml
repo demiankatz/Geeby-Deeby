@@ -10,6 +10,10 @@
       <td><input type="text" id="Material_Type_Plural_Name" value="<?=isset($material['Material_Type_Plural_Name']) ? $this->escapeHtml($material['Material_Type_Plural_Name']) : ''?>" /></td>
     </tr>
     <tr>
+      <th>RDF Class (optional URI):</th>
+      <td><input type="text" id="Material_Type_RDF_Class" value="<?=isset($material['Material_Type_RDF_Class']) ? $this->escapeHtml($material['Material_Type_RDF_Class']) : ''?>" /></td>
+    </tr>
+    <tr>
       <th>Set as default:</th>
       <td><input type="checkbox" id="Default" value="1" <?=isset($material['Default']) && $material['Default'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>

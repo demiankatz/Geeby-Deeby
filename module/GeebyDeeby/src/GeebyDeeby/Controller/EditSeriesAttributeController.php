@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit material type controller
+ * Edit series attribute controller
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Controller;
 
 /**
- * Edit material type controller
+ * Edit series attribute controller
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,7 +36,7 @@ namespace GeebyDeeby\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditMaterialTypeController extends AbstractBase
+class EditSeriesAttributeController extends AbstractBase
 {
     /**
      * Display a list of types
@@ -46,32 +46,9 @@ class EditMaterialTypeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'materialtype', 'materials',
-            'geeby-deeby/edit-material-type/render-material-types'
+            'seriesattribute', 'attributes',
+            'geeby-deeby/edit-series-attribute/render-series-attributes'
         );
-    }
-
-    /**
-     * Support method for indexAction -- set a default material type.
-     *
-     * @param \GeebyDeeby\Db\Row\MaterialType $row Material type to set as default
-     *
-     * @return void
-     */
-    protected function setDefaultMaterialType($row)
-    {
-        // If row is already set as default, no further action is needed:
-        if ($row->Default) {
-            return;
-        }
-
-        // First clear existing default:
-        $table = $this->getDbTable('materialtype');
-        $table->update(array('Default' => 0));
-
-        // Now set new default:
-        $row->Default = 1;
-        $row->save();
     }
 
     /**
@@ -82,16 +59,14 @@ class EditMaterialTypeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = array(
-            'material' => 'Material_Type_Name',
-            'material_plural' => 'Material_Type_Plural_Name',
-            'material_rdf' => 'Material_Type_RDF_Class'
+            'attribute_name' => 'Series_Attribute_Name',
+            'rdf_property' => 'Series_Attribute_RDF_Property',
+            'allow_html' => 'Allow_HTML',
+            'priority' => 'Display_Priority'
+            
         );
-        $response = $this->handleGenericItem('materialtype', $assignMap, 'material');
-
-        // Special handling for "set as default" checkbox:
-        if ($this->getRequest()->isPost() && $this->params()->fromPost('default')) {
-            $this->setDefaultMaterialType($response->affectedRow);
-        }
+        $response = $this
+            ->handleGenericItem('seriesattribute', $assignMap, 'attribute');
 
         return $response;
     }

@@ -25,14 +25,38 @@
 <? endif; ?>
 
 <? if (count($credits) > 0): $displayedSomething = true; ?>
-  <? $role = $series = false; foreach ($credits as $credit): ?>
+  <? $sorts = [ 'series', 'title', 'year' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
+  <div class="pull-right" style="padding:12px 0;">
+    Sort by: 
+    <div class="btn-group" style="margin-top:-4px;">
+      <? foreach ($sorts as $current): ?>
+        <a href="?sort=<?=urlencode($current)?>" class="btn btn-<?=$sort == $current ? 'primary' : 'default'?>"><?=ucwords($current)?></a>
+      <? endforeach; ?>
+    </div>
+  </div>
+  <? $role = $series = $year = false; foreach ($credits as $credit): ?>
     <? if ($role !== $credit['Role_Name']): $role = $credit['Role_Name']; $series = false; ?>
       <h2>Items with "<?=$this->escapeHtml($title)?>" as <?=$this->escapeHtml($role)?></h2>
+        <? if ($sort == 'year'): ?>
+          <div class="alert alert-info">Note: This list is sorted by the earliest known
+          dated edition for each title; earlier editions may exist.</div>
+        <? endif; ?>
     <? endif; ?>
-    <? if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
+    <? if ($sort === 'series' && $series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
       <h3 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
         <?=$this->fixtitle($credit['Series_Name']);?>
       </a></h3>
+    <? endif; ?>
+    <? if ($sort === 'year' && $year !== $credit['Earliest_Year']): $year = $credit['Earliest_Year']; ?>
+      <h3 class="year">
+        <? if ($year < 0): ?>
+          Unpublished
+        <? elseif (empty($year)): ?>
+          Date Unknown
+        <? else: ?>
+          <?=$this->escapeHtml($year);?>
+        <? endif; ?>
+      </h3>
     <? endif; ?>
     <span class="item">
       <span class="number"><?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?></span>
@@ -40,6 +64,9 @@
         <?=$this->escapeHtml($this->fixtitle(isset($credit['Item_AltName']) && !empty($credit['Item_AltName']) ? $credit['Item_AltName'] : $credit['Item_Name']))?>
       </a>
       <? if (!empty($credit['Note'])): ?> (<?=$this->escapeHtml($credit['Note'])?>)<? endif; ?>
+      <? if ($sort === 'title' && !empty($credit['Edition_Count'])): ?>
+        (<?=$credit['Edition_Count'] === 1 ? '1 edition' : intval($credit['Edition_Count']) . ' editions'?>)
+      <? endif; ?>
       <br />
     </span>
   <? endforeach; ?>
