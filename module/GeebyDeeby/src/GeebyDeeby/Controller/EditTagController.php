@@ -68,6 +68,13 @@ class EditTagController extends AbstractBase
         );
         $view = $this->handleGenericItem('tag', $assignMap, 'tag');
         $view->tagTypes = $this->typelistAction()->tagTypes;
+        // Add extra fields/controls if outside of a lightbox:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->uris = $this->getDbTable('tagsuris')
+                ->getURIsForTag($view->tagObj->Tag_ID);
+            $view->setTemplate('geeby-deeby/edit-tag/edit-full');
+            $view->predicates = $this->getDbTable('predicate')->getList();
+        }
         return $view;
     }
 
@@ -92,5 +99,22 @@ class EditTagController extends AbstractBase
     {
         $assignMap = array('tagType' => 'Tag_Type');
         return $this->handleGenericItem('tagType', $assignMap, 'tagType');
+    }
+
+    /**
+     * Deal with URIs
+     *
+     * @return mixed
+     */
+    public function uriAction()
+    {
+        $extras = ($pid = $this->params()->fromPost('predicate_id'))
+            ? ['Predicate_ID' => $pid] : [];
+        return $this->handleGenericLink(
+            'tagsuris', 'Tag_ID', 'URI',
+            'uris', 'getURIsForTag',
+            'geeby-deeby/edit-tag/uri-list.phtml',
+            $extras
+        );
     }
 }
