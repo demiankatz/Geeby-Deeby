@@ -65,6 +65,7 @@ return array(
                 'peopleuris' => 'GeebyDeeby\Db\Table\PeopleURIs',
                 'person' => 'GeebyDeeby\Db\Table\Person',
                 'platform' => 'GeebyDeeby\Db\Table\Platform',
+                'predicate' => 'GeebyDeeby\Db\Table\Predicate',
                 'pseudonyms' => 'GeebyDeeby\Db\Table\Pseudonyms',
                 'publisher' => 'GeebyDeeby\Db\Table\Publisher',
                 'publishersaddresses' => 'GeebyDeeby\Db\Table\PublishersAddresses',
@@ -648,6 +649,27 @@ return array(
                             ),
                         ),
                     ),
+                    'predicate' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Predicate[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditPredicate',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'predicate_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/PredicateList',
+                            'defaults' => array(
+                                'controller'    => 'EditPredicate',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                     'publisher' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -1128,6 +1150,7 @@ return array(
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
             'GeebyDeeby\Controller\EditLink' => 'GeebyDeeby\Controller\EditLinkController',
             'GeebyDeeby\Controller\EditPerson' => 'GeebyDeeby\Controller\EditPersonController',
+            'GeebyDeeby\Controller\EditPredicate' => 'GeebyDeeby\Controller\EditPredicateController',
             'GeebyDeeby\Controller\EditPlatform' => 'GeebyDeeby\Controller\EditPlatformController',
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',

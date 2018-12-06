@@ -2,7 +2,7 @@
   <? foreach ($uris as $current): ?>
     <table class="list_item">
       <tr>
-        <td><?=$this->escapeHtml($current['URI'])?></td>
+        <td><?=$this->escapeHtml($current['URI'])?> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
         <td>
           <a class="ui-icon ui-icon-trash" href="#" onclick="deleteURI('<?=$current['URI']?>'); return false;">
           </a>

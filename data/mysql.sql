@@ -633,22 +633,6 @@ CREATE TABLE `People` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `People_URIs`
---
-
-DROP TABLE IF EXISTS `People_URIs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `People_URIs` (
-  `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `Person_ID` int(11) NOT NULL,
-  `URI` varchar(2048) NOT NULL,
-  PRIMARY KEY (`Sequence_ID`),
-  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `People_Bibliography`
 --
 
@@ -697,6 +681,24 @@ CREATE TABLE `People_Links` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `People_URIs`
+--
+
+DROP TABLE IF EXISTS `People_URIs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `People_URIs` (
+  `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `Person_ID` int(11) NOT NULL,
+  `Predicate_ID` int(11) NOT NULL,
+  `URI` varchar(2048) NOT NULL,
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`),
+  FOREIGN KEY (`Predicate_ID`) REFERENCES `Predicates` (`Predicate_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Platforms`
 --
 
@@ -707,6 +709,21 @@ CREATE TABLE `Platforms` (
   `Platform_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Platform` tinytext NOT NULL,
   PRIMARY KEY (`Platform_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Predicates`
+--
+
+DROP TABLE IF EXISTS `Predicates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Predicates` (
+  `Predicate_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Predicate` varchar(2048) NOT NULL,
+  `Predicate_Abbrev` varchar(256) NOT NULL,
+  PRIMARY KEY (`Predicate_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

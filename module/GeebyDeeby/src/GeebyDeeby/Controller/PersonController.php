@@ -67,7 +67,7 @@ class PersonController extends AbstractBase
             . ' ' . $view->person['Last_Name'];
         $person->set('foaf:name', trim(preg_replace('/\s+/', ' ', $name)));
         foreach ($view->uris as $uri) {
-            $person->add('owl:sameAs', $graph->resource($uri->URI));
+            $person->add($uri->Predicate, $graph->resource($uri->URI));
         }
         return $person;
     }
