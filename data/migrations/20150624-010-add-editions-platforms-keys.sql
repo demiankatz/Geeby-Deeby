@@ -1,0 +1,2 @@
+ALTER TABLE `Editions_Platforms` ADD FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`);
+ALTER TABLE `Editions_Platforms` ADD FOREIGN KEY (`Platform_ID`) REFERENCES `Platforms` (`Platform_ID`);
