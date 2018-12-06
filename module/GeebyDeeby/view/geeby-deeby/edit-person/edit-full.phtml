@@ -25,5 +25,16 @@
     <div id="pseudonym_list">
       <?=$this->render('geeby-deeby/edit-person/pseudonym-list.phtml')?>
     </div>
-  </div
+  </div>
+</div>
+<hr />
+<div class="row">
+  <div class="col-md-12">
+    <b>URIs (for linked data owl:sameAs):</b><br />
+    <input type="text" id="uri" />
+    <button onclick="addURI();">Add URI</button>
+    <div id="uri_list">
+      <?=$this->render('geeby-deeby/edit-person/uri-list.phtml')?>
+    </div>
+  </div>
 </div>

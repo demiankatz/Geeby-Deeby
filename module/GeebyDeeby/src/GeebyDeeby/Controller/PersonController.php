@@ -66,6 +66,9 @@ class PersonController extends AbstractBase
         $name = $view->person['First_Name'] . ' ' . $view->person['Middle_Name']
             . ' ' . $view->person['Last_Name'];
         $person->set('foaf:name', trim(preg_replace('/\s+/', ' ', $name)));
+        foreach ($view->uris as $uri) {
+            $person->add('owl:sameAs', $graph->resource($uri->URI));
+        }
         return $person;
     }
 
@@ -175,6 +178,7 @@ class PersonController extends AbstractBase
         $view->bibliography = $this->getDbTable('peoplebibliography')
             ->getItemsDescribingPerson($id);
         $view->links = $this->getDbTable('peoplelinks')->getLinksForPerson($id);
+        $view->uris = $this->getDbTable('peopleuris')->getURIsForPerson($id);
         return $view;
     }
 }
