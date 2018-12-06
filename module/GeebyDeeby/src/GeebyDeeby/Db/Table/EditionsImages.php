@@ -160,13 +160,13 @@ class EditionsImages extends Gateway
             );
             $select->order(
                 array(
-                    'mt.Material_Type_Name', 'eds.Position',
+                    'mt.Material_Type_Name', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
                     'i.Item_Name', 'Editions_Images.Position'
                 )
             );
             $select->group(
                 array(
-                    'Thumb_Path', 'eds.Position', 'Editions_Images.Position',
+                    'Thumb_Path', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Editions_Images.Position',
                     'i.Item_ID', 'Note'
                 )
             );

@@ -113,9 +113,9 @@ class Item extends Gateway
             $select->join(
                 array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
                 array(
-                    'Position',
+                    'Volume', 'Position', 'Replacement_Number',
                     'Edition_ID' => new Expression(
-                        'min(?)', array('Edition_ID'),
+                        'min(?)', array('eds.Edition_ID'),
                         array(Expression::TYPE_IDENTIFIER)
                     )
                 )
@@ -130,14 +130,44 @@ class Item extends Gateway
                 array('Item_AltName'), Select::JOIN_LEFT
             );
             $select->order(
-                array('mt.Material_Type_Name', 'Position', 'Item_Name')
+                array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', 'Item_Name')
             );
             $select->group(
-                array('Items.Item_ID', 'Position', 'Items.Material_Type_ID')
+                array('Items.Item_ID', 'Volume', 'Position', 'Replacement_Number', 'Items.Material_Type_ID')
             );
-            $select->where->equalTo('Series_ID', $seriesID);
+            $select->where->equalTo('eds.Series_ID', $seriesID);
             if ($topOnly) {
-                $select->where->isNull('Parent_Edition_ID');
+                $select->join(
+                    array('childEds' => 'Editions'),
+                    'eds.Edition_ID = childEds.Parent_Edition_ID',
+                    array(),
+                    Select::JOIN_LEFT
+                );
+                $select->join(
+                    array('childItems' => 'Items'),
+                    'childEds.Item_ID = childItems.Item_ID',
+                    array(
+                        'Child_Items' => new Expression(
+                            'GROUP_CONCAT('
+                                . 'COALESCE(?, ?) ORDER BY ? SEPARATOR \'||\')',
+                            array(
+                                'childIat.Item_AltName', 'childItems.Item_Name',
+                                'childEds.Position_In_Parent'),
+                            array(
+                                Expression::TYPE_IDENTIFIER,
+                                Expression::TYPE_IDENTIFIER,
+                                Expression::TYPE_IDENTIFIER
+                            )
+                        )
+                    ),
+                    Select::JOIN_LEFT
+                );
+                $select->join(
+                    array('childIat' => 'Items_AltTitles'),
+                    'childEds.Preferred_Item_AltName_ID = childIat.Sequence_ID',
+                    array(), Select::JOIN_LEFT
+                );
+                $select->where->isNull('eds.Parent_Edition_ID');
             }
         };
         return $this->select($callback);

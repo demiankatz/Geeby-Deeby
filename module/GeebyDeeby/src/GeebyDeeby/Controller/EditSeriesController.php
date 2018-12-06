@@ -91,7 +91,8 @@ class EditSeriesController extends AbstractBase
         );
         $view = $this->handleGenericItem('series', $assignMap, 'series');
         $seriesId = isset($view->seriesObj->Series_ID)
-            ? $view->seriesObj->Series_ID : $view->affectedRow->Series_ID;
+            ? $view->seriesObj->Series_ID
+            : (isset($view->affectedRow->Series_ID) ? $view->affectedRow->Series_ID : null);
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost() && $this->params()->fromPost('attribs')) {
@@ -376,9 +377,17 @@ class EditSeriesController extends AbstractBase
         }
         if ($this->getRequest()->isPost()) {
             $edition = $this->params()->fromPost('edition_id');
-            $pos = $this->params()->fromPost('pos');
+            $raw = $this->params()->fromPost('pos');
+            $parts = explode(',', $raw);
+            if (count($parts) < 2) {
+                $vol = '0';
+                $pos = $parts[0];
+            } else {
+                list($vol, $pos) = $parts;
+            }
             $this->getDbTable('edition')->update(
-                array('Position' => $pos), array('Edition_ID' => $edition)
+                array('Position' => intval($pos), 'Volume' => intval($vol)),
+                array('Edition_ID' => $edition)
             );
             return $this->jsonReportSuccess();
         }

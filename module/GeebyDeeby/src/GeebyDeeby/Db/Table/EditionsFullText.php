@@ -135,10 +135,10 @@ class EditionsFullText extends Gateway
             }
             $select->group(
                 array(
-                    'eds.Item_ID', 'eds.Series_ID', 'eds.Position'
+                    'eds.Item_ID', 'eds.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number'
                 )
             );
-            $ord = array('Series_Name', 's.Series_ID', 'eds.Position', 'Item_Name');
+            $ord = array('Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Item_Name');
             $select->order($ord);
         };
         return $this->select($callback);

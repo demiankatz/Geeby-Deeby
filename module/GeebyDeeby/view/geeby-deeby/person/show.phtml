@@ -59,7 +59,9 @@
       </h3>
     <? endif; ?>
     <span class="item">
-      <span class="number"><?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?></span>
+      <span class="number">
+        <?=$this->escapeHtml($this->formatItemNumber($credit))?>
+      </span>
       <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
         <?=$this->escapeHtml($this->fixtitle(isset($credit['Item_AltName']) && !empty($credit['Item_AltName']) ? $credit['Item_AltName'] : $credit['Item_Name']))?>
       </a>

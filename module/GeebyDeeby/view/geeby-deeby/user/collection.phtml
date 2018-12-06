@@ -18,11 +18,13 @@
             <? if (!isset($parts['want']) || count($parts['want']) < 1): ?>
               None.
             <? else: ?>
-              <? $count = count($parts['want']); foreach ($parts['want'] as $i => $current): ?>
-                <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
-                  <?=$this->escapeHtml($current['Position'] == 0 ? $this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']) : $current['Position'])?>
-                </a><?=empty($current['Collection_Note']) ? '' : '(' . $this->escapeHtml($current['Collection_Note']) . ')'?><?=($i + 1 < $count) ? ', ' : ''?>
+              <? $output = []; foreach ($parts['want'] as $current): ?>
+                <? $output[] = '<a href="' . $this->url('item', array('id' => $current['Item_ID'])) . '">'
+                  . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
+                  . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
+                ?>
               <? endforeach; ?>
+              <?=implode(', ', $output)?>
             <? endif; ?>
           </td>
           <td class="have">
@@ -30,11 +32,13 @@
             <? if (!isset($parts['have']) || count($parts['have']) < 1): ?>
               None.
             <? else: ?>
-              <? $count = count($parts['have']); foreach ($parts['have'] as $i => $current): ?>
-                <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
-                  <?=$this->escapeHtml($current['Position'] == 0 ? $this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']) : $current['Position'])?>
-                </a><?=empty($current['Collection_Note']) ? '' : '(' . $this->escapeHtml($current['Collection_Note']) . ')'?><?=($i + 1 < $count) ? ', ' : ''?>
+              <? $output = []; foreach ($parts['have'] as $current): ?>
+                <? $output[] = '<a href="' . $this->url('item', array('id' => $current['Item_ID'])) . '">'
+                  . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
+                  . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
+                ?>
               <? endforeach; ?>
+              <?=implode(', ', $output)?>
             <? endif; ?>
           </td>
         </tr>

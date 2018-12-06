@@ -107,11 +107,11 @@ class Collections extends Gateway
                 );
                 $fields = array(
                     'Language_Name', 'Series_Name', 's.Series_ID',
-                    'Collection_Status', 'Position','Item_Name'
+                    'Collection_Status', 'Volume', 'Position', 'Replacement_Number', 'Item_Name'
                 );
             } else {
                 $fields = array(
-                    'Series_Name', 's.Series_ID', 'Collection_Status', 'Position',
+                    'Series_Name', 's.Series_ID', 'Collection_Status', 'Volume', 'Position', 'Replacement_Number',
                     'Item_Name'
                 );
             }
@@ -170,7 +170,7 @@ class Collections extends Gateway
                 'eds.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
             );
             $fields = array(
-                'Username', 'Series_Name', 's.Series_ID', 'Position', 'Item_Name'
+                'Username', 'Series_Name', 's.Series_ID', 'Volume', 'Position', 'Replacement_Number', 'Item_Name'
             );
             $select->order($fields);
             $select->group($fields + array('i.Item_ID'));

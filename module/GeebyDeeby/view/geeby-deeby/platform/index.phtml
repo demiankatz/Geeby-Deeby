@@ -11,7 +11,7 @@
       </a></h2>
     <? endif; ?>
     <span class="item">
-      <?=$credit['Position'] > 0 ? $this->escapeHtml($credit['Position']) . '. ' : ''?>
+      <?=$this->escapeHtml($this->formatItemNumber($credit))?>
       <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
         <?=$this->fixtitle($credit['Item_Name'])?>
       </a>

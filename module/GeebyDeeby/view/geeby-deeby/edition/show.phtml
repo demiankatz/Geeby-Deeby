@@ -28,8 +28,14 @@
             <a href="<?=$this->url('series', array('id' => $series['Series_ID']))?>">
               <?=$this->escapeHtml($this->fixtitle(empty($series['Series_AltName']) ? $series['Series_Name'] : $series['Series_AltName']))?>
             </a>
+            <? if ($edition['Volume'] > 0): ?>
+              v. <?=$this->escapeHtml($edition['Volume'])?>
+            <? endif; ?>
             <? if ($edition['Position'] > 0): ?>
-              #<?=$this->escapeHtml($edition['Position'])?>
+              no. <?=$this->escapeHtml($edition['Position'])?>
+            <? endif; ?>
+            <? if ($edition['Replacement_Number'] > 0): ?>
+              (replacement title no. <?=$this->escapeHtml($edition['Replacement_Number'])?>)
             <? endif; ?>
             <br />
           </td>
