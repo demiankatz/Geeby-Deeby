@@ -43,6 +43,12 @@ function saveEdition()
         position_in_parent: parent_pos,
         extent_in_parent: extent
     };
+    var attribElements = $('.edition-attribute');
+    for (var i = 0; i < attribElements.length; i++) {
+        var obj = $(attribElements[i]);
+        var attrId = obj.attr('id').replace('Edition_Attribute_', '');
+        details['attribs[' + attrId + ']'] = obj.val();
+    }
     $.post(url, details, function(data) {
         // If save failed, display error message.
         if (!data.success) {

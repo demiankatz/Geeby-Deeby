@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -154,6 +154,29 @@ class Edition extends ServiceLocatorAwareGateway
         return $this->getDbTable('edition')->select(
             array('Parent_Edition_ID' => $this->Edition_ID)
         );
+    }
+
+    /**
+     * Copy attributes from another edition.
+     *
+     * @param int $editionId Edition to copy from
+     *
+     * @return void
+     */
+    public function copyAttributes($editionId)
+    {
+        $attrTable = $this->getDbTable('editionsattributesvalues');
+        $clonable = $this->getDbTable('editionsattribute')->getClonableIds();
+        $callback = function ($select) use ($editionId, $clonable) {
+            $select->where->equalTo('Edition_ID', $editionId)
+                ->in('Editions_Attribute_ID', $clonable);
+        };
+        $attribs = $attrTable->select($callback);
+        foreach ($attribs as $attr) {
+            $arr = (array)$attr;
+            $arr['Edition_ID'] = $this->Edition_ID;
+            $attrTable->insert($arr);
+        }
     }
 
     /**

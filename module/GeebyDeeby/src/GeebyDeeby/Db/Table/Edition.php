@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -145,13 +145,27 @@ class Edition extends Gateway
     }
 
     /**
-     * Get a list of items for the specified series.
+     * Get a list of items for the specified series (not grouped by material type).
      *
      * @var int $seriesID Series ID
      *
      * @return mixed
      */
     public function getItemsForSeries($seriesID)
+    {
+        // Proxy item table (so handleGenericLink() can be used in
+        // EditSeriesController):
+        return $this->getDbTable('item')->getItemsForSeries($seriesID, true, false);
+    }
+
+    /**
+     * Get a list of items for the specified series ( grouped by material type).
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getItemsForSeriesGroupedByMaterial($seriesID)
     {
         // Proxy item table (so handleGenericLink() can be used in
         // EditSeriesController):
@@ -311,6 +325,7 @@ class Edition extends Gateway
                 )
             );
         }
+        $to->copyAttributes($from->Edition_ID);
         $to->copyCredits($from->Edition_ID);
     }
 }

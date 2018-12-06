@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -480,7 +480,10 @@ class SeriesController extends AbstractBase
         $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
-        $view->items = $this->getDbTable('item')->getItemsForSeries($id);
+        $config = $this->getServiceLocator()->get('config');
+        $view->groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
+            ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
+        $view->items = $this->getDbTable('item')->getItemsForSeries($id, true, $view->groupByMaterial);
         $view->language = $this->getDbTable('language')
             ->getByPrimaryKey($view->series['Language_ID']);
         $view->publishers = $this->getDbTable('seriespublishers')

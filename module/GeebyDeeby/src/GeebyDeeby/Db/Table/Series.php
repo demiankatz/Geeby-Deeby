@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -117,18 +117,26 @@ class Series extends Gateway
     /**
      * Get a list of series for the specified item.
      *
-     * @var int  $itemID          Item ID
-     * @var bool $includePosition Should we include position information?
+     * @var int  $itemID                Item ID
+     * @var bool $includePosition       Should we include position information?
+     * @var bool $includeParentPosition Should we include information about parent edition(s)?
      *
      * @return mixed
      */
-    public function getSeriesForItem($itemID, $includePosition = true)
+    public function getSeriesForItem($itemID, $includePosition = true, $includeParentPosition = false)
     {
-        $callback = function ($select) use ($itemID, $includePosition) {
+        $callback = function ($select) use ($itemID, $includePosition, $includeParentPosition) {
             $select->join(
                 array('eds' => 'Editions'), 'Series.Series_ID = eds.Series_ID',
-                $includePosition ? array('Volume', 'Position', 'Replacement_Number') : array()
+                $includePosition ? array('Volume', 'Position', 'Replacement_Number', 'Extent_In_Parent') : array()
             );
+            if ($includePosition && $includeParentPosition) {
+                $select->join(
+                    ['parent_eds' => 'Editions'], 'parent_eds.Edition_ID = eds.Parent_Edition_ID',
+                    ['Parent_Volume' => 'Volume', 'Parent_Position' => 'Position', 'Parent_Replacement_Number' => 'Replacement_Number'],
+                    Select::JOIN_LEFT
+                );
+            }
             $select->join(
                 array('sat' => 'Series_AltTitles'),
                 'eds.Preferred_Series_AltName_ID = sat.Sequence_ID',
@@ -136,13 +144,18 @@ class Series extends Gateway
             );
             $fields = array('Series_Name', 'Series_ID');
             if ($includePosition) {
+                if ($includeParentPosition) {
+                    $fields[] = 'Parent_Volume';
+                    $fields[] = 'Parent_Position';
+                    $fields[] = 'Parent_Replacement_Number';
+                }
                 $fields[] = 'Volume';
                 $fields[] = 'Position';
                 $fields[] = 'Replacement_Number';
             }
             $select->order($fields);
             $select->group($fields);
-            $select->where->equalTo('Item_ID', $itemID);
+            $select->where->equalTo('eds.Item_ID', $itemID);
         };
         return $this->select($callback);
     }

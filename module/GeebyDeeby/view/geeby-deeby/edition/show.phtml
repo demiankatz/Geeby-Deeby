@@ -28,16 +28,30 @@
             <a href="<?=$this->url('series', array('id' => $series['Series_ID']))?>">
               <?=$this->escapeHtml($this->fixtitle(empty($series['Series_AltName']) ? $series['Series_Name'] : $series['Series_AltName']))?>
             </a>
-            <? if ($edition['Volume'] > 0): ?>
-              v. <?=$this->escapeHtml($edition['Volume'])?>
+            <? if ($parent && ($parent['Volume'] > 0 || $parent['Position'] > 0 || $parent['Replacement_Number'] > 0)): ?>
+              <? if ($parent['Volume'] > 0): ?>
+                v. <?=$this->escapeHtml($parent['Volume'])?>
+              <? endif; ?>
+              <? if ($parent['Position'] > 0): ?>
+                no. <?=$this->escapeHtml($parent['Position'])?>
+              <? endif; ?>
+              <? if ($parent['Replacement_Number'] > 0): ?>
+                (replacement title no. <?=$this->escapeHtml($parent['Replacement_Number'])?>)
+              <? endif; ?>
+              <? if (!empty($edition['Extent_In_Parent'])): ?>
+                (<?=$this->escapeHtml($edition['Extent_In_Parent'])?>)
+              <? endif; ?>
+            <? else: ?>
+              <? if ($edition['Volume'] > 0): ?>
+                v. <?=$this->escapeHtml($edition['Volume'])?>
+              <? endif; ?>
+              <? if ($edition['Position'] > 0): ?>
+                no. <?=$this->escapeHtml($edition['Position'])?>
+              <? endif; ?>
+              <? if ($edition['Replacement_Number'] > 0): ?>
+                (replacement title no. <?=$this->escapeHtml($edition['Replacement_Number'])?>)
+              <? endif; ?>
             <? endif; ?>
-            <? if ($edition['Position'] > 0): ?>
-              no. <?=$this->escapeHtml($edition['Position'])?>
-            <? endif; ?>
-            <? if ($edition['Replacement_Number'] > 0): ?>
-              (replacement title no. <?=$this->escapeHtml($edition['Replacement_Number'])?>)
-            <? endif; ?>
-            <br />
           </td>
         </tr>
       <? endif; ?>
@@ -63,7 +77,7 @@
         </tr>
       <? endif; ?>
 
-      <? if ($parent): ?>
+      <? if (!isset($series) && $parent): // only display if series info is absent; otherwise, redundant. ?>
         <tr>
           <th>Part of:</th>
           <td>
