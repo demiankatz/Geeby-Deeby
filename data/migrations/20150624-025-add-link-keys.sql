@@ -1,0 +1,1 @@
+ALTER TABLE `Links` ADD FOREIGN KEY  (`Link_Type_ID`) REFERENCES `Link_Types` (`Link_Type_ID`);

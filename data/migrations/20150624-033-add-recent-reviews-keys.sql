@@ -1,0 +1,1 @@
+ALTER TABLE `Recent_Reviews` ADD FOREIGN KEY (`User_ID`) REFERENCES `Users`(`User_ID`);
