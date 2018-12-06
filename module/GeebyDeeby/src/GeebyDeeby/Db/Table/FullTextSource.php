@@ -49,12 +49,34 @@ class FullTextSource extends Gateway
     /**
      * Get a list of types.
      *
+     * @param int $seriesID Series ID to limit (optional)
+     *
      * @return mixed
      */
-    public function getList()
+    public function getList($seriesID = null)
     {
-        $callback = function ($select) {
+        $filter = [];
+        if (!empty($seriesID)) {
+            $fulltext = $this->getDbTable('editionsfulltext');
+            $filterCallback = function ($select) use ($seriesID) {
+                $select->join(
+                    array('e' => 'Editions'),
+                    'Editions_Full_Text.Edition_ID = e.Edition_ID',
+                    array(), \Zend\Db\Sql\Select::JOIN_INNER
+                );
+                $select->columns(['Full_Text_Source_ID']);
+                $select->quantifier(\Zend\Db\Sql\Select::QUANTIFIER_DISTINCT);
+                $select->where(['Series_ID' => $seriesID]);
+            };
+            foreach ($fulltext->select($filterCallback) as $current) {
+                $filter[] = $current['Full_Text_Source_ID'];
+            }
+        }
+        $callback = function ($select) use ($filter) {
             $select->order('Full_Text_Source_Name');
+            if (!empty($filter)) {
+                $select->where->in('Full_Text_Source_ID', $filter);
+            }
         };
         return $this->select($callback);
     }

@@ -7,6 +7,20 @@
   <p>Showing exact matches; switch to <a href="?fuzzy=1">fuzzy matches</a> to add links to listings where online text comes from a different edition.</p>
 <? endif; ?>
 
+<form action="<?=$this->url(isset($series) ? 'series' : 'items', array('extra' => 'FullText') + (isset($series) ? array('id' => $series['Series_ID']) : array()))?>" method="GET">
+  Showing results from:
+  <input type="hidden" name="fuzzy" value="<?=$fuzzy ? 1 : 0?>" />
+  <select name="source">
+    <option value="">All Sources</option>
+    <? foreach ($sources as $current): ?>
+      <option value="<?=$current['Full_Text_Source_ID']?>"<? if ((int)$source === (int)$current['Full_Text_Source_ID']): ?> selected="selected"<? endif; ?>>
+        <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
+      </option>
+    <? endforeach; ?>
+  </select>
+  <input type="submit" value="Change" />
+</form>
+
 <? if (count($fulltext) > 0): ?>
   <? $series = false; foreach ($fulltext as $current): ?>
     <? if ($series !== $current['Series_ID']): $series = $current['Series_ID']; ?>

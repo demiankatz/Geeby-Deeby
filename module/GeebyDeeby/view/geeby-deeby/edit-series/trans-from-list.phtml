@@ -8,7 +8,7 @@
           </a>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteTranslatedFrom(<?=$current['Series_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Series.unlink('Translation', <?=$current['Series_ID']?>, 'From'); return false;">
           </a>
         </td>
       </tr>

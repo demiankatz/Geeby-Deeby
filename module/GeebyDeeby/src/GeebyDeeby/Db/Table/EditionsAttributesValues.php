@@ -66,4 +66,32 @@ class EditionsAttributesValues extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of attributes for the specified item.
+     *
+     * @var int $itemID Item ID
+     *
+     * @return mixed
+     */
+    public function getAttributesForItem($itemID)
+    {
+        $callback = function ($select) use ($itemID) {
+            $select->join(
+                array('e' => 'Editions'),
+                'e.Edition_ID = Editions_Attributes_Values.Edition_ID'
+            );
+            $select->join(
+                array('i' => 'Items'), 'e.Item_ID = i.Item_ID'
+            );
+            $select->join(
+                array('ea' => 'Editions_Attributes'),
+                'ea.Editions_Attribute_ID = '
+                . 'Editions_Attributes_Values.Editions_Attribute_ID'
+            );
+            $select->order(array('ea.Display_Priority', 'ea.Editions_Attribute_Name'));
+            $select->where->equalTo('i.Item_ID', $itemID);
+        };
+        return $this->select($callback);
+    }
 }

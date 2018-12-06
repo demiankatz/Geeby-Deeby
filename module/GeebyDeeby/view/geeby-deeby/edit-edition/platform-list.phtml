@@ -6,7 +6,7 @@
           <?=$this->escapeHtml($current['Platform'])?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deletePlatform(<?=$current['Platform_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('Platform', <?=$current['Platform_ID']?>); return false;">
           </a>
         </td>
       </tr>

@@ -1,9 +1,12 @@
 <?
-    $title = $this->fixtitle($edition['Edition_Name']);
-    if (!empty($item['Item_Name'])) {
-        $title = $this->fixtitle(empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']) . ' - ' . $title;
+    // This template may be rendered from within the item view, so we need a way to skip title setting:
+    if (!isset($skipTitle)) {
+        $title = $this->fixtitle($edition['Edition_Name']);
+        if (!empty($item['Item_Name'])) {
+            $title = $this->fixtitle(empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']) . ' - ' . $title;
+        }
+        $this->layout()->title = 'Edition - ' . $title;
     }
-    $this->layout()->title = 'Edition - ' . $title;
 ?>
 <div class="row">
   <?=$this->render('partials/images.phtml')?>
@@ -258,6 +261,18 @@
         </td></tr>
       <? endif; ?>
 
+      <? foreach ($editionAttributes as $current): ?>
+        <tr>
+          <th><?=$this->escapeHtml($current->Editions_Attribute_Name)?>:</th>
+          <td>
+            <? if ($current->Allow_HTML == 1): ?>
+              <?=$current->Editions_Attribute_Value?>
+            <? else: ?>
+              <?=$this->escapeHtml($current->Editions_Attribute_Value)?>
+            <? endif; ?>
+          </td>
+        </tr>
+      <? endforeach; ?>
     </table>
   </div>
 </div>

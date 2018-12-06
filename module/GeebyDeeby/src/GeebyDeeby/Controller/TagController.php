@@ -39,23 +39,118 @@ namespace GeebyDeeby\Controller;
 class TagController extends AbstractBase
 {
     /**
-     * "Show tag" page
+     * 303 redirect page
      *
      * @return mixed
      */
     public function indexAction()
     {
+        return $this->performRdfRedirect('tag');
+    }
+
+    /**
+     * Build the primary resource in an RDF graph.
+     *
+     * @param \EasyRdf\Graph $graph Graph to populate
+     * @param object         $view  View model populated with information.
+     * @param mixed          $class Class(es) for resource.
+     *
+     * @return \EasyRdf\Resource
+     */
+    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    {
+        $id = $view->tag['Tag_ID'];
+        $uri = $this->getServerUrl('tag', ['id' => $id]);
+        $tag = $graph->resource($uri, $class);
+        $name = $view->tag['Tag'];
+        $tag->set('rdf:label', $name);
+        foreach ($view->tagAttributes as $current) {
+            if (!empty($current['Tags_Attribute_RDF_Property'])) {
+                $tag->set(
+                    $current['Tags_Attribute_RDF_Property'],
+                    $current['Tags_Attribute_Value']
+                );
+            }
+        }
+        foreach ($view->relationshipsValues as $current) {
+            if (!empty($current['predicate'])) {
+                foreach ($current['values'] as $value) {
+                    $tag->add(
+                        $current['predicate'],
+                        $this->getServerUrl('tag', ['id' => $value['Tag_ID']])
+                    );
+                }
+            }
+        }
+        return tag;
+    }
+
+    /**
+     * Build an RDF graph from the available data.
+     *
+     * @param string $id   ID of primary resource in graph.
+     * @param object $view View model populated with information.
+     *
+     * @return \EasyRdf\Graph
+     */
+    protected function getGraphFromView($view)
+    {
+        $graph = new \EasyRdf\Graph();
+        $this->addPrimaryResourceToGraph($graph, $view);
+        return $graph;
+    }
+
+    /**
+     * RDF representation page
+     *
+     * @return mixed
+     */
+    public function rdfAction()
+    {
+        $view = $this->getViewModelWithTag();
+        if (!is_object($view)) {
+            $response = $this->getResponse();
+            $response->setStatusCode(404);
+            return $response;
+        }
+        return $this->getRdfResponse($this->getGraphFromView($view));
+    }
+
+    /**
+     * Get a view model containing a tag object (or return false if missing)
+     *
+     * @param array $extras Extra parameters to send to view model
+     *
+     * @return mixed
+     */
+    protected function getViewModelWithTag($extras = array())
+    {
         $id = $this->params()->fromRoute('id');
         $table = $this->getDbTable('tag');
         $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
         if (!is_object($rowObj)) {
-            return $this->forwardTo(__NAMESPACE__ . '\Tag', 'notfound');
+            return false;
         }
         $view = $this->createViewModel(
             array('tag' => $rowObj->toArray())
         );
         $view->items = $this->getDbTable('itemstags')->getItemsForTag($id);
+        $view->tagAttributes = $this->getDbTable('tagsattributesvalues')
+            ->getAttributesForTag($id);
+        $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
+            ->getRelationshipsForTag($id);
         return $view;
+    }
+
+    /**
+     * "Show tag" page
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        $view = $this->getViewModelWithTag();
+        return $view ? $view : $this->forwardTo(__NAMESPACE__ . '\Tag', 'notfound');
     }
 
     /**

@@ -241,6 +241,9 @@ class EditSeriesController extends AbstractBase
                 $imprint = null;
             }
             $address = $this->params()->fromPost('address');
+            if (empty($address)) {
+                $address = null;
+            }
             $fields = array(
                 'Imprint_ID' => $imprint, 'Address_ID' => $address
             );
@@ -407,7 +410,7 @@ class EditSeriesController extends AbstractBase
      *
      * @return mixed
      */
-    public function translationAction()
+    public function translationintoAction()
     {
         return $this->handleGenericLink(
             'seriestranslations', 'Source_Series_ID', 'Trans_Series_ID',
@@ -421,7 +424,7 @@ class EditSeriesController extends AbstractBase
      *
      * @return mixed
      */
-    public function translatedfromAction()
+    public function translationfromAction()
     {
         return $this->handleGenericLink(
             'seriestranslations', 'Trans_Series_ID', 'Source_Series_ID',

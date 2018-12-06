@@ -18,6 +18,6 @@
       <td><textarea id="Description"><?=isset($file['Description']) ? $this->escapeHtml($file['Description']) : '' ?></textarea></td>
     </tr>
   </table>
-  <button id="save_file" onclick="saveFile();">Save</button>
+  <button id="save_file" onclick="File.save();">Save</button>
   <div id="save_file_status"></div>
 </div>

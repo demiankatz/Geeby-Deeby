@@ -175,12 +175,19 @@ class EditEditionController extends AbstractBase
     }
 
     /**
-     * Get drop-down of series publishers
+     * Manage preferred publisher functionality.
      *
      * @return mixed
      */
-    public function seriespublishersAction()
+    public function preferredpublisherAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            return $this->setPreferredPublisher();
+        }
         $view = $this->createViewModel();
         $view->edition = $this->getDbTable('edition')
             ->getByPrimaryKey($this->params()->fromRoute('id'));
@@ -197,16 +204,8 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function setpreferredpublisherAction()
+    protected function setPreferredPublisher()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if (!$this->getRequest()->isPost()) {
-            return $this->jsonDie('Unexpected method.');
-        }
-
         $editionId = $this->params()->fromRoute('id');
         $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
         $pubId = $this->params()->fromPost('pub_id');
@@ -216,12 +215,22 @@ class EditEditionController extends AbstractBase
     }
 
     /**
-     * Get drop-down of item alt titles
+     * Manage the drop-down of item alt titles
      *
      * @return mixed
      */
-    public function itemalttitlesAction()
+    public function preferreditemtitleAction()
     {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            return $this->setPreferredItemTitle();
+        }
+        if ($this->getRequest()->isDelete()) {
+            return $this->clearPreferredItemTitle();
+        }
         $view = $this->createViewModel();
         $view->edition = $this->getDbTable('edition')
             ->getByPrimaryKey($this->params()->fromRoute('id'));
@@ -238,16 +247,8 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function setpreferreditemtitleAction()
+    protected function setPreferredItemTitle()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if (!$this->getRequest()->isPost()) {
-            return $this->jsonDie('Unexpected method.');
-        }
-
         $editionId = $this->params()->fromRoute('id');
         $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
         $title = $this->params()->fromPost('title_id', 'NEW');
@@ -285,30 +286,32 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function clearpreferreditemtitleAction()
+    protected function clearPreferredItemTitle()
+    {
+        $editionId = $this->params()->fromRoute('id');
+        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $edition->Preferred_Item_AltName_ID = null;
+        $edition->save();
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Handle the preferred series title controls.
+     *
+     * @return mixed
+     */
+    public function preferredseriestitleAction()
     {
         $ok = $this->checkPermission('Content_Editor');
         if ($ok !== true) {
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
-            $editionId = $this->params()->fromRoute('id');
-            $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
-            $edition->Preferred_Item_AltName_ID = null;
-            $edition->save();
-            return $this->jsonReportSuccess();
-        } else {
-            return $this->jsonDie('Unexpected method.');
+            return $this->setPreferredSeriesTitle();
         }
-    }
-
-    /**
-     * Get drop-down of series alt titles
-     *
-     * @return mixed
-     */
-    public function seriesalttitlesAction()
-    {
+        if ($this->getRequest()->isDelete()) {
+            return $this->clearPreferredSeriesTitle();
+        }
         $view = $this->createViewModel();
         $view->edition = $this->getDbTable('edition')
             ->getByPrimaryKey($this->params()->fromRoute('id'));
@@ -325,16 +328,8 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function setpreferredseriestitleAction()
+    protected function setPreferredSeriesTitle()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if (!$this->getRequest()->isPost()) {
-            return $this->jsonDie('Unexpected method.');
-        }
-
         $editionId = $this->params()->fromRoute('id');
         $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
         $title = $this->params()->fromPost('title_id', 'NEW');
@@ -372,21 +367,13 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function clearpreferredseriestitleAction()
+    protected function clearPreferredSeriesTitle()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if ($this->getRequest()->isPost()) {
-            $editionId = $this->params()->fromRoute('id');
-            $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
-            $edition->Preferred_Series_AltName_ID = null;
-            $edition->save();
-            return $this->jsonReportSuccess();
-        } else {
-            return $this->jsonDie('Unexpected method.');
-        }
+        $editionId = $this->params()->fromRoute('id');
+        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $edition->Preferred_Series_AltName_ID = null;
+        $edition->save();
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -417,12 +404,26 @@ class EditEditionController extends AbstractBase
     }
 
     /**
-     * Get list of dates
+     * Manage date links.
      *
      * @return mixed
      */
-    public function datesAction()
+    public function dateAction()
     {
+        // Only content editors are allowed to do this....
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        // If this is a POST, we're adding a date....
+        if ($this->getRequest()->isPost()) {
+            return $this->addDate();
+        }
+        // If this is a DELETE, we're removing a date....
+        if ($this->getRequest()->isDelete()) {
+            return $this->deleteDate();
+        }
+        // Default action: list dates:
         $table = $this->getDbTable('editionsreleasedates');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
@@ -455,27 +456,24 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function adddateAction()
+    protected function addDate()
     {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
+        $table = $this->getDbTable('editionsreleasedates');
+        $row = $table->createRow();
+        $row->Edition_ID = $this->params()->fromRoute('id');
+        $row->Year = $this->params()->fromPost('year');
+        $row->Month = $this->params()->fromPost('month');
+        $row->Day = $this->params()->fromPost('day');
+        $row->Note_ID = $this->params()->fromPost('note_id');
+        if (empty($row->Note_ID)) {
+            $row->Note_ID = null;
         }
-        if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('editionsreleasedates');
-            $row = $table->createRow();
-            $row->Edition_ID = $this->params()->fromRoute('id');
-            $row->Year = $this->params()->fromPost('year');
-            $row->Month = $this->params()->fromPost('month');
-            $row->Day = $this->params()->fromPost('day');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
+        try {
             $table->insert((array)$row);
-            return $this->jsonReportSuccess();
+        } catch (\Exception $e) {
+            return $this->jsonDie($e->getMessage());
         }
-        return $this->jsonDie('Unexpected method');
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -483,53 +481,33 @@ class EditEditionController extends AbstractBase
      *
      * @return mixed
      */
-    public function deletedateAction()
+    protected function deleteDate()
+    {
+        list($year, $month, $day)
+            = explode(',', $this->params()->fromRoute('extra'));
+        $this->getDbTable('editionsreleasedates')->delete(
+            array(
+                'Edition_ID' => $this->params()->fromRoute('id'),
+                'Year' => $year,
+                'Month' => $month,
+                'Day' => $day
+            )
+        );
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Manage credits
+     *
+     * @return mixed
+     */
+    public function creditAction()
     {
         $ok = $this->checkPermission('Content_Editor');
         if ($ok !== true) {
             return $ok;
         }
-        if ($this->getRequest()->isPost()) {
-            $this->getDbTable('editionsreleasedates')->delete(
-                array(
-                    'Edition_ID' => $this->params()->fromRoute('id'),
-                    'Year' => $this->params()->fromPost('year'),
-                    'Month' => $this->params()->fromPost('month'),
-                    'Day' => $this->params()->fromPost('day'),
-                )
-            );
-            return $this->jsonReportSuccess();
-        }
-        return $this->jsonDie('Unexpected method');
-    }
-
-    /**
-     * Get list of credits
-     *
-     * @return mixed
-     */
-    public function creditsAction()
-    {
-        $table = $this->getDbTable('editionscredits');
-        $view = $this->createViewModel();
-        $primary = $this->params()->fromRoute('id');
-        $view->credits = $table->getCreditsForEdition($primary);
-        $view->setTemplate('geeby-deeby/edit-edition/credits.phtml');
-        $view->setTerminal(true);
-        return $view;
-    }
-
-    /**
-     * Add a credit
-     *
-     * @return mixed
-     */
-    public function addcreditAction()
-    {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
+        // POST action:
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('editionscredits');
             $row = $table->createRow();
@@ -544,31 +522,26 @@ class EditEditionController extends AbstractBase
             $table->insert((array)$row);
             return $this->jsonReportSuccess();
         }
-        return $this->jsonDie('Unexpected method');
-    }
-
-    /**
-     * Remove a credit
-     *
-     * @return mixed
-     */
-    public function deletecreditAction()
-    {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        if ($this->getRequest()->isPost()) {
+        // DELETE action:
+        if ($this->getRequest()->isDelete()) {
+            list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
             $this->getDbTable('editionscredits')->delete(
                 array(
                     'Edition_ID' => $this->params()->fromRoute('id'),
-                    'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id')
+                    'Person_ID' => $person,
+                    'Role_ID' => $role
                 )
             );
             return $this->jsonReportSuccess();
         }
-        return $this->jsonDie('Unexpected method');
+        // Default behavior: show list:
+        $table = $this->getDbTable('editionscredits');
+        $view = $this->createViewModel();
+        $primary = $this->params()->fromRoute('id');
+        $view->credits = $table->getCreditsForEdition($primary);
+        $view->setTemplate('geeby-deeby/edit-edition/credits.phtml');
+        $view->setTerminal(true);
+        return $view;
     }
 
     /**
@@ -624,16 +597,7 @@ class EditEditionController extends AbstractBase
             $table->delete(array('Sequence_ID' => $delete));
             return $this->jsonReportSuccess();
         }
-        return $this->jsonDie('Unexpected method.');
-    }
-
-    /**
-     * Get list of full text
-     *
-     * @return mixed
-     */
-    public function fulltextlistAction()
-    {
+        // Default behavior: display list:
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
             $view->fullText = $this->getDbTable('editionsfulltext')
@@ -776,12 +740,15 @@ class EditEditionController extends AbstractBase
                 $row->Note_ID = null;
             }
             $row->Image_Path = $this->params()->fromPost('image');
-            if (empty($row->Image_Path)) {
-                return $this->jsonDie('Image path must be set.');
+            $row->IIIF_URI = $this->params()->fromPost('iiif');
+            if (empty($row->Image_Path) && empty($row->IIIF_URI)) {
+                return $this->jsonDie('Image path or IIIF URI must be set.');
             }
             $row->Thumb_Path = $this->params()->fromPost('thumb');
             // Build thumb path if none was provided:
-            if (empty($row->Thumb_Path)) {
+            if (empty($row->Thumb_Path) && empty($row->IIIF_URI)
+                && !empty($row->Image_Path)
+            ) {
                 $parts = explode('.', $row->Image_Path);
                 $nextToLast = count($parts) - 2;
                 $parts[$nextToLast] .= 'thumb';
@@ -812,7 +779,7 @@ class EditEditionController extends AbstractBase
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
-            $image = $this->params()->fromRoute('extra');
+            $image = $this->params()->fromPost('sequence_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('editionsimages')->update(
                 array('Position' => $pos), array('Sequence_ID' => $image)

@@ -12,7 +12,7 @@
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
       <? endif; ?>
     <? endif; ?>
-    <a href="#" onClick="editNote(<?=$current['Note_ID'] ?>);return false">
+    <a href="#" onClick="Note.edit(<?=$current['Note_ID'] ?>);return false">
       <?=$this->escapeHtml($this->fixtitle($current['Note']))?>
     </a><br />
   <? endforeach; ?>

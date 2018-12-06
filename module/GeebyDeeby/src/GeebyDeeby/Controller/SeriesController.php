@@ -296,8 +296,12 @@ class SeriesController extends AbstractBase
         }
         $fuzzy = $this->params()->fromQuery('fuzzy', false);
         $view->fuzzy = $fuzzy;
+        $rawSource = $this->params()->fromQuery('source');
+        $view->source = $source = empty($rawSource) ? null : $rawSource;
+        $view->sources = $this->getDbTable('fulltextsource')
+            ->getList($view->series['Series_ID']);
         $view->fulltext = $this->getDbTable('editionsfulltext')
-            ->getItemsWithFullText($view->series['Series_ID'], $fuzzy);
+            ->getItemsWithFullText($view->series['Series_ID'], $fuzzy, $source);
         $view->setTemplate('geeby-deeby/item/fulltext');
         return $view;
     }
@@ -313,8 +317,11 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
+        $config = $this->getServiceLocator()->get('config');
+        $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
+            ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
         $view->images = $this->getDbTable('editionsimages')
-            ->getImagesForSeries($view->series['Series_ID']);
+            ->getImagesForSeries($view->series['Series_ID'], $groupByMaterial);
         return $view;
     }
 

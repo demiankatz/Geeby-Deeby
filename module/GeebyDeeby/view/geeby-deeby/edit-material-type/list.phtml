@@ -1,6 +1,6 @@
 <? $this->layout()->title = 'Edit Material Types' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_materials.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_materials']) ?>
 <p><b>Material Types:</b></p>
-<button id="add_material" type="button" onclick="editMaterial('NEW');">Add Material Type</button>
+<button id="add_material_type" type="button" onclick="MaterialType.edit('NEW');">Add Material Type</button>
 <br /><br />
-<div id="material_list"><?=$this->render('geeby-deeby/edit-material-type/render-material-types.phtml')?></div>
+<div id="material_type_list"><?=$this->render('geeby-deeby/edit-material-type/render-material-types.phtml')?></div>

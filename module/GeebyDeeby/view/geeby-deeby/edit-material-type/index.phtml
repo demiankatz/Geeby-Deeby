@@ -18,6 +18,6 @@
       <td><input type="checkbox" id="Default" value="1" <?=isset($material['Default']) && $material['Default'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>
-  <button id="save_material" onclick="saveMaterial();">Save</button>
-  <div id="save_material_status"></div>
+  <button id="save_material_type" onclick="MaterialType.save();">Save</button>
+  <div id="save_material_type_status"></div>
 </div>

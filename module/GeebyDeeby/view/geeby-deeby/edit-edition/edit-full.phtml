@@ -1,5 +1,5 @@
 <? $this->layout()->title = 'Edit Edition' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_edition_details.js') ?>
+<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_items', 'edit_editions']) ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-edition/index.phtml')?>
 </div>
@@ -40,11 +40,11 @@
         </tr>
         <tr>
           <th></th>
-          <td><button onclick="saveCredit();">Add</button></td>
+          <td><button onclick="Edition.link('Credit');">Add</button></td>
         </tr>
       </table>
     </div>
-    <div id="credits">
+    <div id="credit_list">
       <?=$this->render('geeby-deeby/edit-edition/credits.phtml')?>
     </div>
   </div>
@@ -56,10 +56,10 @@
           <table class="edit">
             <tr><th>New ISBN</th><td><input type="text" id="isbn" /></td></tr>
             <tr><th>Note:</th><td><input id="isbn_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="addISBN();">Add</button></td></tr>
+            <tr><th></th><td><button onclick="Edition.link('ISBN');">Add</button></td></tr>
           </table>
           <b>ISBNs:</b>
-          <div id="item_isbns">
+          <div id="isbn_list">
             <?=$this->render('geeby-deeby/edit-edition/isbn-list.phtml')?>
           </div>
         </td>
@@ -67,10 +67,10 @@
           <table class="edit">
             <tr><th>New OCLC Number:</th><td><input type="text" id="oclc_number" /></td></tr>
             <tr><th>Note:</th><td><input id="oclc_number_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="addOCLCNumber();">Add</button></td></tr>
+            <tr><th></th><td><button onclick="Edition.link('OCLCNumber');">Add</button></td></tr>
           </table>
           <b>OCLC Numbers:</b>
-          <div id="item_oclc_numbers">
+          <div id="oclcnumber_list">
             <?=$this->render('geeby-deeby/edit-edition/oclc-number-list.phtml')?>
           </div>
         </td>
@@ -78,10 +78,10 @@
           <table class="edit">
             <tr><th>New Code</th><td><input type="text" id="product_code" /></td></tr>
             <tr><th>Note:</th><td><input id="product_code_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="addProductCode();">Add</button></td></tr>
+            <tr><th></th><td><button onclick="Edition.link('ProductCode');">Add</button></td></tr>
           </table>
           <b>Product Codes:</b>
-          <div id="item_codes">
+          <div id="productcode_list">
             <?=$this->render('geeby-deeby/edit-edition/product-code-list.phtml')?>
           </div>
         </td>
@@ -91,8 +91,8 @@
 
   <div id="contents-tab" class="tab-pane">
     <input id="item_name" class="Item_ID"/>
-    <button onclick="addExistingItem();">Add Existing Item</button>
-    <button onclick="addNewItem();">Add New Item</button>
+    <button onclick="Edition.link('Item');">Add Existing Item</button>
+    <button onclick="Item.edit('NEW');">Add New Item</button>
     <div id="item_list">
       <?=$this->render('geeby-deeby/edit-edition/item-list.phtml')?>
     </div>
@@ -120,7 +120,7 @@
         <tr>
           <th></th>
           <td>
-            <button onclick="saveReleaseDate();">Add</button>
+            <button onclick="Edition.link('Date');">Add</button>
           </td>
         </tr>
       </table>
@@ -139,7 +139,7 @@
         <? endforeach; ?>
       </select>
       <input type="text" id="Full_Text_URL" size="50" />
-      <button onclick="saveFullText()">Save</button>
+      <button onclick="Edition.link('FullText')">Save</button>
     </div>
     <div id="fulltext_list">
       <?=$this->render('geeby-deeby/edit-edition/fulltext-list.phtml')?>
@@ -158,6 +158,10 @@
           <td><input type="text" id="thumb_path" /></td>
         </tr>
         <tr>
+          <th>IIIF Base URI:<br /><span class="note">(optional; may be used instead of Image/Thumb)</span></th>
+          <td><input type="text" id="iiif_uri" /></td>
+        </tr>
+        <tr>
           <th>Position:</th>
           <td><input type="text" id="image_position" /></td>
         </tr>
@@ -167,7 +171,7 @@
         </tr>
         <tr>
           <th></th>
-          <td><button onclick="saveImage();">Add</button></td>
+          <td><button onclick="Edition.link('Image');">Add</button></td>
         </tr>
       </table>
     </div>
@@ -178,7 +182,7 @@
 
   <div id="platforms-tab" class="tab-pane">
     <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
-    <button onclick="addPlatform();">Add Platform</button>
+    <button onclick="Edition.link('Platform');">Add Platform</button>
     <br/>
     <b>Platforms:</b>
     <div id="platform_list">
@@ -189,30 +193,30 @@
   <div id="preferred-publisher" class="tab-pane">
     <div class="edit_container">
       <h3>Preferred Publisher</h3>
-      <div id="series-publisher-select-container">
+      <div id="preferredpublisher_list">
         <?=$this->render('geeby-deeby/edit-edition/series-publisher-select.phtml', array('publishers' => $publishers, 'selected' => $edition['Preferred_Series_Publisher_ID']))?>
       </div>
-      <button onclick="saveSeriesPublisher()">Save</button>
+      <button onclick="Edition.link('PreferredPublisher')">Save</button>
     </div>
   </div>
 
   <div id="preferred-titles" class="tab-pane">
     <div class="edit_container">
       <h3>Preferred Item Title</h3>
-      <div id="item-alt-title-select-container">
+      <div id="preferreditemtitle_list">
         <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', array('itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']))?>
       </div>
-      <input type="text" id="Preferred_Item_Title_Text" size="50" />
-      <button onclick="saveItemAltTitle()">Save</button>
-      <button onclick="deleteItemAltTitle()">Clear</button>
+      <input type="text" id="Preferred_Item_Title_Text" onkeypress="$('#Preferred_Item_Title_ID').val('NEW');" size="50" />
+      <button onclick="Edition.link('PreferredItemTitle')">Save</button>
+      <button onclick="Edition.unlink('PreferredItemTitle')">Clear</button>
 
       <h3>Preferred Series Title</h3>
-      <div id="series-alt-title-select-container">
+      <div id="preferredseriestitle_list">
         <?=$this->render('geeby-deeby/edit-edition/series-alt-title-select.phtml', array('seriesAltTitles' => $seriesAltTitles, 'selected' => $edition['Preferred_Series_AltName_ID']))?>
       </div>
-      <input type="text" id="Preferred_Series_Title_Text" size="50" />
-      <button onclick="saveSeriesAltTitle()">Save</button>
-      <button onclick="deleteSeriesAltTitle()">Clear</button>
+      <input type="text" id="Preferred_Series_Title_Text" onkeypress="$('#Preferred_Series_Title_ID').val('NEW');" size="50" />
+      <button onclick="Edition.link('PreferredSeriesTitle')">Save</button>
+      <button onclick="Edition.unlink('PreferredSeriesTitle')">Clear</button>
     </div>
   </div>
 </div>

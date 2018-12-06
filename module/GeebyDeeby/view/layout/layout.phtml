@@ -1,26 +1,19 @@
-<? echo $this->doctype(); ?>
-
+<?=$this->doctype()?>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <? echo $this->headTitle($this->layout()->title .' - '. $this->config('siteTitle')) ?>
-
-    <? echo $this->headLink()
-            ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-1.7.2.custom.css')
-            ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
-            ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
-            ->prependStylesheet($this->basePath() . '/css/fonts.css')
-    ?>
-
     <?
+      echo $this->headTitle($this->layout()->title .' - '. $this->config('siteTitle'));
+      echo $this->headLink()
+        ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-1.7.2.custom.css')
+        ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
+        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+        ->prependStylesheet($this->basePath() . '/css/fonts.css');
+
       // Set global path for Javascript code:
       $this->headScript()->prependScript("basePath = '" . rtrim($this->basePath(), '/') . "';");
-    ?>
-
-    <? echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9'))
-           ->prependFile($this->basePath() . '/js/bootstrap.min.js')
-           ->prependFile($this->basePath() . '/js/jquery-ui.js')
-           ->prependFile($this->basePath() . '/js/jquery.js');
+      $this->scriptManager()->add(['jquery', 'jquery-ui', 'bootstrap.min'], true);
+      echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9'))
     ?>
   </head>
   <body>

@@ -1,15 +1,15 @@
 <? $this->layout()->title = 'Edit Subject/Tag List' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_tags.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_tags']) ?>
 <div class="row">
   <div class="col-md-6">
     <p><b>Subjects/Tags:</b></p>
-    <button id="add_tag" type="button" onclick="editTag('NEW');">Add Subject/Tag</button>
+    <button id="add_tag" type="button" onclick="Tag.edit('NEW');">Add Subject/Tag</button>
     <br /><br />
     <div id="tag_list"><?=$this->render('geeby-deeby/edit-tag/render-tags.phtml')?></div>
   </div>
   <div class="col-md-3">
     <p><b>Subject/Tag Types:</b></p>
-    <button id="add_tag_type" type="button" onclick="editTagType(false);">Add Subject/Tag Type</button>
+    <button id="add_tag_type" type="button" onclick="TagType.edit(false);">Add Subject/Tag Type</button>
     <br /><br />
     <div id="tag_type_list"><?=$this->render('geeby-deeby/edit-tag/render-types.phtml')?></div>
   </div>

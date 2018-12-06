@@ -10,6 +10,6 @@
       <td><textarea id="Description"><?=$this->escapeHtml(isset($category['Description']) ? $category['Description'] : '')?></textarea></td>
     </tr>
   </table>
-  <button id="save_category" onclick="saveCategory();">Save</button>
+  <button id="save_category" onclick="Category.save();">Save</button>
   <div id="save_category_status"></div>
 </div>

@@ -12,7 +12,7 @@
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
       <? endif; ?>
     <? endif; ?>
-    <a href="#" onClick="editPredicate(<?=$current['Predicate_ID'] ?>);return false">
+    <a href="#" onClick="Predicate.edit(<?=$current['Predicate_ID'] ?>);return false">
       <?=$this->escapeHtml($current['Predicate_Abbrev'] . ' (' . $current['Predicate'] . ')')?>
     </a><br />
   <? endforeach; ?>

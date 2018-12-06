@@ -1,0 +1,12 @@
+<? if (isset($usergroups) && count($usergroups) > 0): ?>
+  <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>User_Group_ID">
+    <option value="">None</option>
+    <? foreach ($usergroups as $current): ?>
+      <option value="<?=$current['User_Group_ID']?>"<?=(isset($selected) && $current['User_Group_ID'] == $selected) ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current['Group_Name'])?>
+      </option>
+    <? endforeach; ?>
+  </select>
+<? else: ?>
+  Please define groups.
+<? endif; ?>

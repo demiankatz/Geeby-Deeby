@@ -1,6 +1,6 @@
 <? $this->layout()->title = 'Edit Series List' ?>
-<? $this->headScript()->prependFile($this->basePath() . '/js/edit_series.js') ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_series']) ?>
 <p><b>Series:</b></p>
-<button id="add_series" type="button" onclick="editSeries('NEW');">Add Series</button>
+<button id="add_series" type="button" onclick="Series.edit('NEW');">Add Series</button>
 <br /><br />
 <div id="series_list"><?=$this->render('geeby-deeby/edit-series/render-series.phtml')?></div>

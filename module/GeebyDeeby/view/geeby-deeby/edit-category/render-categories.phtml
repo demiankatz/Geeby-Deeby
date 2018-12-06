@@ -1,3 +1,3 @@
 <? foreach ($categories as $current): ?>
-  <a href="#" onclick="editCategory(<?=$current->Category_ID?>); return false;"><?=$this->escapeHtml($current->Category)?></a><br />
+  <a href="#" onclick="Category.edit(<?=$current->Category_ID?>); return false;"><?=$this->escapeHtml($current->Category)?></a><br />
 <? endforeach; ?>

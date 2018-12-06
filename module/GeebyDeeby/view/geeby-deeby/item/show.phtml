@@ -4,7 +4,14 @@
 ?>
 <div class="row">
   <?=$this->render('partials/images.phtml')?>
-  <div class="col-md-10">
+  <div class="col-md-<?=count($images) > 0 ? 10 : 12?>">
+    <div class="pull-right" style="padding:6px 0;">
+      View:
+      <div class="btn-group" style="margin-top:-4px;">
+        <a href="" class="btn btn-primary">Combined</a>
+        <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'extra' => 'Editions'))?>" class="btn btn-default">By Edition</a>
+      </div>
+    </div>
     <? if (count($editions) > 1): ?><h2>Combined Summary</h2><? endif; ?>
     <table class="item">
       <? if (count($fullText) > 0): ?>
@@ -31,19 +38,24 @@
                 <?=$this->escapeHtml($this->fixtitle(empty($current['Series_AltName']) ? $current['Series_Name'] : $current['Series_AltName']))?>
               </a>
               <? if ($current['Parent_Volume'] > 0 || $current['Parent_Position'] > 0 || $current['Parent_Replacement_Number'] > 0): ?>
-                <? if ($current['Parent_Volume'] > 0): ?>
-                  v. <?=$this->escapeHtml($current['Parent_Volume'])?>
-                <? endif; ?>
-                <? if ($current['Parent_Position'] > 0): ?>
-                  no. <?=$this->escapeHtml($current['Parent_Position'])?>
-                <? endif; ?>
-                <? if ($current['Parent_Replacement_Number'] > 0): ?>
-                  (replacement title no. <?=$this->escapeHtml($current['Parent_Replacement_Number'])?>)
-                <? endif; ?>
+                &mdash; <a href="<?=$this->url('item', array('id' => $current['Parent_Item_ID']))?>">
+                  <? if ($current['Parent_Volume'] > 0): ?>
+                    v. <?=$this->escapeHtml($current['Parent_Volume'])?>
+                  <? endif; ?>
+                  <? if ($current['Parent_Position'] > 0): ?>
+                    no. <?=$this->escapeHtml($current['Parent_Position'])?>
+                  <? endif; ?>
+                  <? if ($current['Parent_Replacement_Number'] > 0): ?>
+                    (replacement title no. <?=$this->escapeHtml($current['Parent_Replacement_Number'])?>)
+                  <? endif; ?>
+                </a>
                 <? if (!empty($current['Extent_In_Parent'])): ?>
-                  (<?=$this->escapeHtml($current['Extent_In_Parent'])?>)
+                  &mdash; <?=$this->escapeHtml($current['Extent_In_Parent'])?>
                 <? endif; ?>
               <? else: ?>
+                <? if ($current['Volume'] > 0 || $current['Position'] > 0 || $current['Replacement_Number'] > 0): ?>
+                  &mdash;
+                <? endif; ?>
                 <? if ($current['Volume'] > 0): ?>
                   v. <?=$this->escapeHtml($current['Volume'])?>
                 <? endif; ?>
@@ -437,6 +449,33 @@
           <? endforeach; ?>
         </td></tr>
       <? endif; ?>
+
+      <?
+        $groupedAttribs = [];
+        foreach ($editionAttributes as $current) {
+            $groupedAttribs[$current['Editions_Attribute_Name']][] = $current;
+        }
+        foreach ($groupedAttribs as $key => $values) {
+            $groupedAttribs[$key] = [
+              'details' => $values[0],
+              'values' => $this->groupeditions($values, 'Editions_Attribute_Value', $editions)
+            ];
+        }
+      ?>
+      <? foreach ($groupedAttribs as $label => $current): ?>
+        <tr>
+          <th><?=$this->escapeHtml($label)?>:</th>
+          <td>
+            <? foreach ($current['values'] as $value => $note): ?>
+              <? if ($current['details']->Allow_HTML == 1): ?>
+                <? if (!empty($note)): ?><i><?=$this->escapeHtml($note)?>:</i><br /><? endif; ?>
+                <?=$value?><br />
+              <? else: ?>
+                <?=$this->escapeHtml($value)?> <? if (!empty($note)):?>(<?=$this->escapeHtml($note)?>)<? endif; ?><br />
+              <? endif; ?>
+            <? endforeach; ?>
+          </td>
+      <? endforeach; ?>
 
       <? if (count($descriptions) > 0): ?>
         <? foreach ($descriptions as $desc): ?>

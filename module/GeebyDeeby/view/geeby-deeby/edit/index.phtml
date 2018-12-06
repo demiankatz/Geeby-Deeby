@@ -18,6 +18,7 @@
     <li><a target='_series' href='<?=$this->url('edit/series_list')?>'>Series</a></li>
     <li><a target='_seriesattributes' href='<?=$this->url('edit/seriesattribute_list')?>'>Series Attributes</a></li>
     <li><a target='_tags' href='<?=$this->url('edit/tag_list')?>'>Subjects/Tags</a></li>
+    <li><a target='_tagsattributes' href='<?=$this->url('edit/tagattribute_list')?>'>Subjects/Tags Attributes and Relationships</a></li>
   </ul>
 <? endif; ?>
 
@@ -31,7 +32,7 @@
       <li><a target='_cleanup' href='<?=$this->url('edit/cleanup')?>'>Data Cleanup</a></li>
     <? endif; ?>
     <? if ($userEditor): ?>
-      <li>Edit Users (not implemented yet)</li>
+      <li><a target='_users' href='<?=$this->url('edit/user_list')?>'>Edit Users</a></li>
     <? endif; ?>
     <? if ($dataManager): ?>
       <li><a target='_migrate' href='<?=$this->url('edit/migrate')?>'>Migrate Old Data</a></li>

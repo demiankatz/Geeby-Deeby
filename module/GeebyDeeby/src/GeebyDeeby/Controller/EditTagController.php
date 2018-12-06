@@ -56,6 +56,33 @@ class EditTagController extends AbstractBase
     }
 
     /**
+     * Save attributes for the current tag.
+     *
+     * @param int   $tagId   Tag ID
+     * @param array $attribs Attribute values
+     *
+     * @return void
+     */
+    protected function saveAttributes($tagId, $attribs)
+    {
+        $table = $this->getDbTable('tagsattributesvalues');
+        // Delete old values:
+        $table->delete(['Tag_ID' => $tagId]);
+        // Save new values:
+        foreach ($attribs as $id => $val) {
+            if (!empty($val)) {
+                $table->insert(
+                    [
+                        'Tag_ID' => $tagId,
+                        'Tags_Attribute_ID' => $id,
+                        'Tags_Attribute_Value' => $val
+                    ]
+                );
+            }
+        }
+    }
+
+    /**
      * Operate on a single tag
      *
      * @return mixed
@@ -68,12 +95,41 @@ class EditTagController extends AbstractBase
         );
         $view = $this->handleGenericItem('tag', $assignMap, 'tag');
         $view->tagTypes = $this->typelistAction()->tagTypes;
+
+        // Get tag ID
+        $tagId = isset($view->tag['Tag_ID'])
+            ? $view->tag['Tag_ID']
+            : (isset($view->affectedRow->Tag_ID) ? $view->affectedRow->Tag_ID : null);
+
+        // Special handling for saving attributes:
+        if ($this->getRequest()->isPost()
+            && ($attribs = $this->params()->fromPost('attribs'))
+        ) {
+            $this->saveAttributes($tagId, $attribs);
+        }
+
+        // Add attribute details if we have a Tag_ID.
+        if ($tagId) {
+            $view->attributes = $this->getDbTable('tagsattribute')->getList();
+            $attributeValues = [];
+            $values = $this->getDbTable('tagsattributesvalues')
+                ->getAttributesForTag($tagId);
+            foreach ($values as $current) {
+                $attributeValues[$current->Tags_Attribute_ID]
+                    = $current->Tags_Attribute_Value;
+            }
+            $view->attributeValues = $attributeValues;
+        }
+
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->uris = $this->getDbTable('tagsuris')
                 ->getURIsForTag($view->tagObj->Tag_ID);
             $view->setTemplate('geeby-deeby/edit-tag/edit-full');
             $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->relationships = $this->getDbTable('tagsrelationship')->getOptionList();
+            $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
+                ->getRelationshipsForTag($tagId);
         }
         return $view;
     }
@@ -87,6 +143,34 @@ class EditTagController extends AbstractBase
     {
         return $this->getGenericList(
             'tagType', 'tagTypes', 'geeby-deeby/edit-tag/render-types'
+        );
+    }
+
+    /**
+     * Deal with arbitrary relationships.
+     *
+     * @return mixed
+     */
+    public function relationshipAction()
+    {
+        // The relationship ID may have a leading 'i' indicating an inverse
+        // relationship; if we find this, we should handle it here to keep
+        // the standard behavior consistent.
+        $rid = $this->params()->fromRoute('relationship_id');
+        if (substr($rid, 0, 1) === 'i') {
+            $linkFrom = 'Object_Tag_ID';
+            $linkTo = 'Subject_Tag_ID';
+            $rid = substr($rid, 1);
+        } else {
+            $linkFrom = 'Subject_Tag_ID';
+            $linkTo = 'Object_Tag_ID';
+        }
+        $extras = ['Tags_Relationship_ID' => $rid];
+        return $this->handleGenericLink(
+            'tagsrelationshipsvalues', $linkFrom, $linkTo,
+            'relationshipsValues', 'getRelationshipsForTag',
+            'geeby-deeby/edit-tag/relationship-list.phtml',
+            $extras
         );
     }
 

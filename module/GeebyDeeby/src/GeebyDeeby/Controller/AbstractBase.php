@@ -110,15 +110,16 @@ class AbstractBase extends AbstractActionController
     /**
      * Generic method for displaying a list of items.
      *
-     * @param string $table    Table to load list from
-     * @param string $assignTo View variable to assign list to
-     * @param string $tpl      Template to use in AJAX mode
+     * @param string $table      Table to load list from
+     * @param string $assignTo   View variable to assign list to
+     * @param string $tpl        Template to use in AJAX mode
+     * @param string $permission Permission to check
      *
      * @return mixed
      */
-    protected function getGenericList($table, $assignTo, $tpl)
+    protected function getGenericList($table, $assignTo, $tpl, $permission = 'Content_Editor')
     {
-        $ok = $this->checkPermission('Content_Editor');
+        $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
         }
@@ -182,6 +183,26 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Support method for handleGenericItem() -- delete record.
+     *
+     * @param string $table Table to delete item from.
+     *
+     * @return mixed
+     */
+    protected function deleteGenericItem($table)
+    {
+        try {
+            $id = $this->params()->fromRoute('id');
+            $table = $this->getDbTable($table);
+            $rowObj = $table->getByPrimaryKey($id);
+            $rowObj->delete();
+        } catch (\Exception $e) {
+            return $this->jsonDie($e->getMessage());
+        }
+        return $this->jsonReportSuccess();
+    }
+
+    /**
      * Support method for handleGenericItem() -- show form.
      *
      * @param string $table    Table to load item from
@@ -215,20 +236,23 @@ class AbstractBase extends AbstractActionController
     /**
      * Generic method for handling item edit/save actions.
      *
-     * @param string $table     Table to load item from
-     * @param array  $assignMap Map of POST fields => object properties for saving
-     * @param string $assignTo  Variable to assign form data to (for showing form)
+     * @param string $table      Table to load item from
+     * @param array  $assignMap  Map of POST fields => object properties for saving
+     * @param string $assignTo   Variable to assign form data to (for showing form)
+     * @param string $permission Permission to check
      *
      * @return mixed
      */
-    protected function handleGenericItem($table, $assignMap, $assignTo)
+    protected function handleGenericItem($table, $assignMap, $assignTo, $permission = 'Content_Editor')
     {
-        $ok = $this->checkPermission('Content_Editor');
+        $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
             $view = $this->saveGenericItem($table, $assignMap);
+        } else if ($this->getRequest()->isDelete()) {
+            $view = $this->deleteGenericItem($table);
         } else {
             $view = $this->showGenericItem($table, $assignTo);
             $view->setTerminal($this->getRequest()->isXmlHttpRequest());
@@ -461,10 +485,12 @@ class AbstractBase extends AbstractActionController
             'text/plain', 'application/n-triples',  // N-Triples
             'application/rdf+xml',                  // RDF-XML
         );
-        $bestMatch = $force ? -1 : $accept->match('text/html');
+        $bestMatch = $force ? -1 : $accept->match('text/html')->getPriority();
         $bestFormat = false;            // HTML by default
         foreach ($rdfForms as $current) {
-            $currentMatch = $accept->match($current);
+            $currentMatchObject = $accept->match($current);
+            $currentMatch = is_object($currentMatchObject)
+                ? $currentMatchObject->getPriority() : -1;
             if ($currentMatch > $bestMatch) {
                 $bestMatch = $currentMatch;
                 $bestFormat = $current;

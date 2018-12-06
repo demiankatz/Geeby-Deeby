@@ -1,11 +1,11 @@
 <div id="editForm">
-  <input type="hidden" id="Authority_ID" value="<?=$this->escapeHtml($authority['Authority_ID'])?>" />
+  <input type="hidden" id="Person_Authority_ID" value="<?=$this->escapeHtml($authority['Authority_ID'])?>" />
   <table class="edit">
     <tr>
       <th>Authority:</th>
       <td><input type="text" id="Authority_Name" value="<?=$this->escapeHtml(isset($authority['Authority_Name']) ? $authority['Authority_Name'] : '')?>" /></td>
     </tr>
   </table>
-  <button id="save_authority" onclick="saveAuthority();">Save</button>
-  <div id="save_authority_status"></div>
+  <button id="save_person_authority" onclick="PersonAuthority.save();">Save</button>
+  <div id="save_person_authority_status"></div>
 </div>

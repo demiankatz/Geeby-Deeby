@@ -1,0 +1,28 @@
+<? if (count($users) < 1): ?>
+  <p>No users in this database yet.</p>
+<? else: ?>
+  <h2>
+    <?=$this->firstLetterMenu($users, 'Username'); ?>
+  </h2>
+  <? $currentLetter = false; foreach ($users as $i=>$current): ?>
+    <? $first = $this->firstletter($current['Username']); ?>
+    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <? if ($i > 0): ?>
+        <a name="<?=$this->escapeHtml($currentLetter)?>"/>
+        <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
+      <? endif; ?>
+    <? endif; ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <a href="<?=$this->url('edit/user', array('id' => $current['User_ID']))?>">
+            <?=$this->escapeHtml($current['Username'])?>
+          </a><br />
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="User.destroy(<?=$current['User_ID']?>); return false;"></a>
+        </td>
+      </tr>
+    </table>
+  <? endforeach; ?>
+<? endif; ?>

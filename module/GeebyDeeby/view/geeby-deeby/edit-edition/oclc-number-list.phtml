@@ -6,7 +6,7 @@
           <?=$this->escapeHtml($current['OCLC_Number'])?><? if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<? endif; ?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="deleteOCLCNumber(<?=$current['Sequence_ID']?>); return false;">
+          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('OCLCNumber', <?=$current['Sequence_ID']?>); return false;">
           </a>
         </td>
       </tr>

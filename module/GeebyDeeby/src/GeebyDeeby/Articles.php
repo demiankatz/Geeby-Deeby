@@ -63,11 +63,39 @@ class Articles
             'An','A','¡','Les','"', 'I', 'Ein', 'Lo',
             'Un','Das','Die','Der','Den','Det','Et', 
             'Las','¿','¡La "', 'Els', 'The "', 'El "',
-            'Una', 'Gli', 'A "', 'The "', '¡La',
+            'Una', 'Gli', 'A "', 'The "', '¡La', '"The'
         );
         $this->unspacedArticles = array(
-            "¡", "¿", "L'", '"', '¡La "', 'The "', 'El "', 'A "', 'The "'
+            "¡", "¿", "L'", '"', '¡La "', 'The "', 'El "', 'A "'
         );
+    }
+
+    /**
+     * Separate a title from its article.
+     *
+     * @param string $title                     Title to separate (Body, Article
+     * format)
+     * @param bool   $padArticleWhenAppropriate Should we put a trailing space on
+     * the article if the article requires one?
+     *
+     * @return array        [article, main title]
+     */
+    public function separateArticle($title, $padArticleWhenAppropriate = true)
+    {
+        foreach ($this->articles as $art) {
+            $suffix = ", " . $art;
+            if (in_array($art, $this->unspacedArticles)) {
+                $prefix = $art;
+            } else {
+                $prefix = $art . ($padArticleWhenAppropriate ? ' ' : '');
+            }
+            $suflen = strlen($suffix);
+            if (substr($title, strlen($title)-$suflen) == $suffix) {
+                return [$prefix, substr($title, 0, strlen($title) - $suflen)];
+            }
+        }
+        // If we've reached this point, there was no article... return now!
+        return ['', $title];
     }
 
     /**
@@ -79,20 +107,7 @@ class Articles
      */
     public function formatTrailingArticles($title)
     {
-        foreach ($this->articles as $art) {
-            $suffix = ", " . $art;
-            if (in_array($art, $this->unspacedArticles)) {
-                $prefix = $art;
-            } else {
-                $prefix = $art . " ";
-            }
-            $suflen = strlen($suffix);
-            if (substr($title, strlen($title)-$suflen) == $suffix) {
-                return $prefix . substr($title, 0, strlen($title) - $suflen);
-            }
-        }
-        // If we've reached this point, there was no article... return now!
-        return $title;
+        return implode('', $this->separateArticle($title));
     }
 
     /**

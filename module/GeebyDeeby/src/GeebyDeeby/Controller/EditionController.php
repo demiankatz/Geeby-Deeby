@@ -41,13 +41,15 @@ class EditionController extends AbstractBase
     /**
      * Get a view model containing an edition object (or return false if missing)
      *
-     * @param array $extras Extra parameters to send to view model
+     * @param array $extras     Extra parameters to send to view model
+     * @param int   $overrideId ID to use instead of the route match (optional)
      *
      * @return mixed
      */
-    protected function getViewModelWithEdition($extras = array())
+    protected function getViewModelWithEdition($extras = [], $overrideId = null)
     {
-        $id = $this->params()->fromRoute('id');
+        $id = ($overrideId === null)
+            ? $this->params()->fromRoute('id') : $overrideId;
         $table = $this->getDbTable('edition');
         $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
         if (!is_object($rowObj)) {
@@ -81,6 +83,8 @@ class EditionController extends AbstractBase
         } else {
             $series = array();
         }
+        $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
+            ->getAttributesForEdition($id);
         return $this->createViewModel(
             array('edition' => $rowObj->toArray(), 'item' => $item, 'series' => $series)
             + $extras
@@ -114,6 +118,14 @@ class EditionController extends AbstractBase
         $edition = $graph->resource($uri, $class);
         $name = $view->edition['Edition_Name'];
         $edition->set('rdf:label', $articleHelper->formatTrailingArticles($name));
+        foreach ($view->editionAttributes as $current) {
+            if (!empty($current['Editions_Attribute_RDF_Property'])) {
+                $edition->set(
+                    $current['Editions_Attribute_RDF_Property'],
+                    $current['Editions_Attribute_Value']
+                );
+            }
+        }
         return $edition;
     }
 
@@ -166,11 +178,13 @@ class EditionController extends AbstractBase
      * Get the view model populated with edition-specific details (or return
      * false if the edition is not found).
      *
+     * @param int $overrideId ID to use instead of the route match (optional)
+     *
      * @return mixed
      */
-    protected function getViewModelWithEditionAndDetails()
+    public function getViewModelWithEditionAndDetails($overrideId = null)
     {
-        $view = $this->getViewModelWithEdition();
+        $view = $this->getViewModelWithEdition([], $overrideId);
         if (!$view) {
             return false;
         }
