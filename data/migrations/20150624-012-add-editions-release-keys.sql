@@ -1,0 +1,2 @@
+ALTER TABLE `Editions_Release_Dates` ADD FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`);
+ALTER TABLE `Editions_Release_Dates` ADD FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`);

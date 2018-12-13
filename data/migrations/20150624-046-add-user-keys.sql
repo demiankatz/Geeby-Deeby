@@ -1,0 +1,1 @@
+ALTER TABLE `Users` ADD FOREIGN KEY (`User_Group_ID`) REFERENCES `User_Groups` (`User_Group_ID`);

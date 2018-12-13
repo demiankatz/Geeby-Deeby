@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS `Items_ISBNs`;
+DROP TABLE IF EXISTS `Items_Product_Codes`;

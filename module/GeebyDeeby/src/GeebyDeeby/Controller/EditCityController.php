@@ -51,7 +51,7 @@ class EditCityController extends AbstractBase
     }
 
     /**
-     * Operate on a single category
+     * Operate on a single city
      *
      * @return mixed
      */

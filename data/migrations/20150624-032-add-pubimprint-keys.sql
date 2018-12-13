@@ -1,0 +1,1 @@
+ALTER TABLE `Publishers_Imprints` ADD FOREIGN KEY (`Publisher_ID`) REFERENCES `Publishers` (`Publisher_ID`);
