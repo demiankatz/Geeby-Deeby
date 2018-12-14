@@ -175,4 +175,22 @@ class EditPersonController extends AbstractBase
         $assignMap = array('role' => 'Role_Name');
         return $this->handleGenericItem('role', $assignMap, 'role');
     }
+
+    /**
+     * Show action -- allows tolerance of URLs where the user has inserted 'edit'
+     * into an existing front-end link.
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        return $this->redirect()->toRoute(
+            'edit/item',
+            [
+                'action' => 'index',
+                'id' => $this->params()->fromRoute('id'),
+                'extra' => $this->params()->fromRoute('extra')
+            ]
+        );
+    }
 }

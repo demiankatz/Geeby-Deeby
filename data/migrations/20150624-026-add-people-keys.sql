@@ -1,0 +1,1 @@
+ALTER TABLE `People` ADD FOREIGN KEY (`Authority_ID`) REFERENCES `Authorities` (`Authority_ID`)

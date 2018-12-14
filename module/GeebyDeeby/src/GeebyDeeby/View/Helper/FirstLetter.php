@@ -47,6 +47,11 @@ class FirstLetter extends \Zend\View\Helper\AbstractHelper
      */
     public function __invoke($text)
     {
-        return mb_strtoupper(mb_substr($text, 0, 1));
+        setlocale(LC_ALL, 'en_US');
+        $firstUtf = mb_strtoupper(mb_substr($text, 0, 1));
+        $first = preg_replace(
+            '/[^0-9A-Z]/', '', iconv('utf-8', 'ascii//TRANSLIT', $firstUtf)
+        );
+        return strlen($first) == 1 ? $first : $firstUtf;
     }
 }

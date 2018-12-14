@@ -1,0 +1,2 @@
+ALTER TABLE `Editions_Full_Text` ADD FOREIGN KEY (`Full_Text_Source_ID`) REFERENCES `Full_Text_Sources` (`Full_Text_Source_ID`);
+ALTER TABLE `Editions_Full_Text` ADD FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`);

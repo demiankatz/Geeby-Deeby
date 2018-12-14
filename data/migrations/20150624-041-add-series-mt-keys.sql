@@ -1,0 +1,2 @@
+ALTER TABLE `Series_Material_Types` ADD FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`);
+ALTER TABLE `Series_Material_Types` ADD FOREIGN KEY (`Material_Type_ID`) REFERENCES `Material_Types`(`Material_Type_ID`);

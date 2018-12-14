@@ -1,0 +1,1 @@
+ALTER TABLE `Tags` ADD FOREIGN KEY (`Tag_Type_ID`) REFERENCES `Tag_Types` (`Tag_Type_ID`);

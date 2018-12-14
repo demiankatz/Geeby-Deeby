@@ -1,0 +1,1 @@
+ALTER TABLE `Items_Descriptions` ADD FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`);

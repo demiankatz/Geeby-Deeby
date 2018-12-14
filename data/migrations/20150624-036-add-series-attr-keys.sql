@@ -1,0 +1,2 @@
+ALTER TABLE `Series_Attributes_Values` ADD FOREIGN KEY (`Series_ID`) REFERENCES `Series` (`Series_ID`);
+ALTER TABLE `Series_Attributes_Values` ADD FOREIGN KEY (`Series_Attribute_ID`) REFERENCES `Series_Attributes` (`Series_Attribute_ID`);

@@ -1,0 +1,5 @@
+CREATE TABLE `Cities` (
+  `City_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `City_Name` tinytext NOT NULL,
+  PRIMARY KEY (`City_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

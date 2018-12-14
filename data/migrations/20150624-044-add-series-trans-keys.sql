@@ -1,0 +1,2 @@
+ALTER TABLE `Series_Translations` ADD FOREIGN KEY (`Source_Series_ID`) REFERENCES `Series`(`Series_ID`);
+ALTER TABLE `Series_Translations` ADD FOREIGN KEY (`Trans_Series_ID`) REFERENCES `Series`(`Series_ID`);

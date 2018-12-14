@@ -51,7 +51,7 @@ class FirstLetterMenu extends \Zend\View\Helper\AbstractHelper
         $currentLetter = false;
         $letters = array();
         for ($i=0;$i<count($list);$i++) {
-            $first = strtoupper(substr($list[$i][$index], 0, 1));
+            $first = $this->view->firstLetter($list[$i][$index]);
             if ($currentLetter !== $first) {
                 $currentLetter = $first;
                 $letters[] = $first;
