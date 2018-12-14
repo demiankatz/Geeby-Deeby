@@ -72,20 +72,19 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     /**
      * Group credits by role and person ID.
      *
-     * @param array $creators   Known creators to analyze
-     * @param array $creatorIds IDs extracted from creators
-     * @param array $credits    Credits to analyze
+     * @param array $creators Known creators to analyze
+     * @param array $credits  Credits to analyze
      *
      * @return array
      */
-    protected function groupCredits($creators, $creatorIds, $credits)
+    protected function groupCredits($creators, $credits)
     {
         $groupedCredits = array();
 
         // First group and associate the credits:
         foreach ($credits as $credit) {
             $personId = $credit['Person_ID'];
-            $prefix = $this->isMatchingPerson($personId, $creatorIds)
+            $prefix = $this->isMatchingPerson($personId, array_keys($creators))
                 ? '' : 'Incorrectly Attributed ';
             $role = $prefix . $credit['Role_Name'];
             if (!isset($groupedCredits[$role])) {
@@ -201,13 +200,13 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     /**
      * Reformat all the credit lines for a single role.
      *
-     * @param array $creatorIds IDs of known creators
-     * @param array $editions   Edition details
-     * @param array $details    Credits for a single role, keyed by person
+     * @param array $creators Known creators
+     * @param array $editions Edition details
+     * @param array $details  Credits for a single role, keyed by person
      *
      * @return array
      */
-    protected function analyzeGroup($creatorIds, $editions, $details)
+    protected function analyzeGroup($creators, $editions, $details)
     {
         $final = [];
         $fixTitle = $this->view->plugin('fixtitle');
@@ -220,7 +219,10 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
                     foreach ($credits as $credit) {
                         $note = $fixTitle($credit['Edition_Name']);
                         if (!empty($credit['Note'])) {
-                            $note .= ' - ' . $credit['Note'];
+                            if (!empty($note)) {
+                                $note .= ' - ';
+                            }
+                            $note .= $credit['Note'];
                         }
                         $notes[] = $note;
                     }
@@ -234,7 +236,8 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
             }
             $final[$person] = [
                 'person' => $credit,
-                'realPerson' => $this->getRealPersonDetails($person, $creatorIds),
+                'realPerson' => $this
+                    ->getRealPersonDetails($person, array_keys($creators)),
                 'notes' => implode(', ', array_unique($notes))
             ];
         }
@@ -242,19 +245,22 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
-     * Extract IDs from creator list.
+     * Group creators by citation. Return an array of arrays keyed by Person_ID
      *
-     * @param array $creators Known creators to analyze
+     * @param array $creators Creators to group
+     * @param int   $itemId   Item ID creators belong to
      *
      * @return array
      */
-    protected function extractCreatorIds($creators)
+    protected function groupCreators($creators, $itemId)
     {
-        $ids = [];
-        foreach ($creators as $current) {
-            $ids[] = $current['Person_ID'];
+        $groups = [];
+        foreach ($creators as $creator) {
+            // TODO: determine group key by looking up citation IDs
+            $key = 0;
+            $groups[$key][$creator['Person_ID']] = $creator;
         }
-        return $ids;
+        return $groups;
     }
 
     /**
@@ -269,11 +275,14 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     public function __invoke($creators, $credits, $editions)
     {
         $final = [];
-        $creatorIds = $this->extractCreatorIds($creators);
-        $groups = $this->groupCredits($creators, $creatorIds, $credits);
-        foreach ($groups as $role => $details) {
-            $final[$role] = $this
-                ->analyzeGroup($creatorIds, $editions, $details);
+        $itemId = current($editions)['Item_ID'];
+        $groupedCreators = $this->groupCreators($creators, $itemId);
+        foreach ($groupedCreators as $currentCreators) {
+            $groups = $this->groupCredits($currentCreators, $credits);
+            foreach ($groups as $role => $details) {
+                $final[$role] = $this
+                    ->analyzeGroup($currentCreators, $editions, $details);
+            }
         }
         return $final;
     }
