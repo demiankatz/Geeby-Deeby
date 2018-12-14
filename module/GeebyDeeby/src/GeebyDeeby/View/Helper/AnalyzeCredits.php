@@ -46,6 +46,13 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     protected $pseudonymsTable;
 
     /**
+     * Pseudonym information.
+     *
+     * @var array
+     */
+    protected $pseudonyms = array();
+
+    /**
      * Real name information.
      *
      * @var array
@@ -65,14 +72,17 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     /**
      * Group credits by role and person ID.
      *
-     * @param array $creatorIds IDs of known creators
+     * @param array $creators   Known creators to analyze
+     * @param array $creatorIds IDs extracted from creators
      * @param array $credits    Credits to analyze
      *
      * @return array
      */
-    protected function groupGredits($creatorIds, $credits)
+    protected function groupCredits($creators, $creatorIds, $credits)
     {
         $groupedCredits = array();
+
+        // First group and associate the credits:
         foreach ($credits as $credit) {
             $personId = $credit['Person_ID'];
             $prefix = $this->isMatchingPerson($personId, $creatorIds)
@@ -85,6 +95,21 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
                 $groupedCredits[$role][$personId] = array();
             }
             $groupedCredits[$role][$personId][] = $credit;
+        }
+
+        // Now insert uncredited author credits for anything that wasn't matched:
+        foreach ($creators as $creator) {
+            $role = $creator['Role_Name'];
+            $personId = $creator['Person_ID'];
+            $creditedIds = array_keys(
+                isset($groupedCredits[$role]) ? $groupedCredits[$role] : []
+            );
+            if (empty($creditedIds)
+                || !$this->isMatchingPerson($personId, $creditedIds)
+            ) {
+                $groupedCredits[$role][$personId][]
+                    = $creator->getArrayCopy() + ['Note' => 'uncredited'];
+            }
         }
         return $groupedCredits;
     }
@@ -110,6 +135,11 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
                 return true;
             }
         }
+        foreach ($this->getPseudonymDetails($personId) as $pseudo) {
+            if (in_array($pseudo['Person_ID'], $creatorIds)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -132,6 +162,23 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
             }
         }
         return $filtered;
+    }
+
+    /**
+     * Figure out the pseudonyms for a real person.
+     *
+     * @param int   $person Person ID.
+     * @param array $filter Array of person IDs to filter on.
+     *
+     * @return array
+     */
+    protected function getPseudonymDetails($person, $filter = array())
+    {
+        if (!isset($this->pseudonyms[$person])) {
+            $this->pseudonyms[$person] = $this->pseudonymsTable
+                ->getPseudonyms($person)->toArray();
+        }
+        return $this->filterNames($this->pseudonyms[$person], $filter);
     }
 
     /**
@@ -223,7 +270,8 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     {
         $final = [];
         $creatorIds = $this->extractCreatorIds($creators);
-        foreach ($this->groupGredits($creatorIds, $credits) as $role => $details) {
+        $groups = $this->groupCredits($creators, $creatorIds, $credits);
+        foreach ($groups as $role => $details) {
             $final[$role] = $this
                 ->analyzeGroup($creatorIds, $editions, $details);
         }
