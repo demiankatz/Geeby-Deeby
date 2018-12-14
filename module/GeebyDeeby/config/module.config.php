@@ -159,7 +159,7 @@ return array(
             'category' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Category[/:id][/:action][/:extra]',
+                    'route'    => '/Category[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Category',
@@ -172,7 +172,7 @@ return array(
             'categories' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Categories[/:extra]',
+                    'route'    => '/Categories[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Category',
@@ -183,7 +183,7 @@ return array(
             'city' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/City[/:id][/:action][/:extra]',
+                    'route'    => '/City[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'City',
@@ -196,7 +196,7 @@ return array(
             'cities' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Cities[/:extra]',
+                    'route'    => '/Cities[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'City',
@@ -207,7 +207,7 @@ return array(
             'country' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Country[/:id][/:action][/:extra]',
+                    'route'    => '/Country[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Country',
@@ -220,7 +220,7 @@ return array(
             'countries' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Countries[/:extra]',
+                    'route'    => '/Countries[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Country',
@@ -361,7 +361,7 @@ return array(
                     'edition' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Edition[/:id][/:action][/:extra]',
+                            'route'    => '/Edition[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditEdition',
                                 'action'        => 'index',
@@ -394,7 +394,7 @@ return array(
                     'file' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/File[/:id][/:action][/:extra]',
+                            'route'    => '/File[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditFile',
                                 'action'        => 'index',
@@ -437,7 +437,7 @@ return array(
                     'fulltextsource' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/FullTextSource[/:id][/:action][/:extra]',
+                            'route'    => '/FullTextSource[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditFullTextSource',
                                 'action'        => 'index',
@@ -459,7 +459,7 @@ return array(
                     'item' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Item[/:id][/:action][/:extra]',
+                            'route'    => '/Item[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditItem',
                                 'action'        => 'index',
@@ -502,7 +502,7 @@ return array(
                     'link' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Link[/:id][/:action][/:extra]',
+                            'route'    => '/Link[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditLink',
                                 'action'        => 'index',
@@ -597,7 +597,7 @@ return array(
                     'person' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Person[/:id][/:action][/:extra]',
+                            'route'    => '/Person[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditPerson',
                                 'action'        => 'index',
@@ -703,7 +703,7 @@ return array(
                     'publisher' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Publisher[/:id][/:action][/:extra]',
+                            'route'    => '/Publisher[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditPublisher',
                                 'action'        => 'index',
@@ -725,7 +725,7 @@ return array(
                     'series' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Series[/:id][/:action][/:extra]',
+                            'route'    => '/Series[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditSeries',
                                 'action'        => 'index',
@@ -768,7 +768,7 @@ return array(
                     'tag' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Tag[/:id][/:action][/:extra]',
+                            'route'    => '/Tag[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditTag',
                                 'action'        => 'index',
@@ -780,7 +780,7 @@ return array(
                     'tag_relationship_linker' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Tag/:id/Relationship/:relationship_id[/:extra]',
+                            'route'    => '/Tag/:id/Relationship/:relationship_id[/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditTag',
                                 'action'        => 'Relationship',
@@ -863,7 +863,7 @@ return array(
                     'user' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/User[/:id][/:action][/:extra]',
+                            'route'    => '/User[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditUser',
                                 'action'        => 'index',
@@ -885,7 +885,7 @@ return array(
                     'usergroup' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/UserGroup[/:id][/:action][/:extra]',
+                            'route'    => '/UserGroup[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditUser',
                                 'action'        => 'usergroup',
@@ -909,7 +909,7 @@ return array(
             'edition' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Edition[/:id][/:action][/:extra]',
+                    'route'    => '/Edition[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Edition',
@@ -922,7 +922,7 @@ return array(
             'faqs' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/FAQs[/:extra]',
+                    'route'    => '/FAQs[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'FAQs',
@@ -933,7 +933,7 @@ return array(
             'files' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Files[/:extra]',
+                    'route'    => '/Files[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'File',
@@ -944,7 +944,7 @@ return array(
             'item' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Item[/:id][/:action][/:extra]',
+                    'route'    => '/Item[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Item',
@@ -957,7 +957,7 @@ return array(
             'items' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Items[/:extra]',
+                    'route'    => '/Items[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Item',
@@ -968,7 +968,7 @@ return array(
             'language' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Language[/:id][/:action][/:extra]',
+                    'route'    => '/Language[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Language',
@@ -981,7 +981,7 @@ return array(
             'languages' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Languages[/:extra]',
+                    'route'    => '/Languages[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Language',
@@ -992,7 +992,7 @@ return array(
             'links' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Links[/:extra]',
+                    'route'    => '/Links[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Link',
@@ -1025,7 +1025,7 @@ return array(
             'material' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Material[/:id][/:action][/:extra]',
+                    'route'    => '/Material[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'MaterialType',
@@ -1038,7 +1038,7 @@ return array(
             'materials' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Materials[/:extra]',
+                    'route'    => '/Materials[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'MaterialType',
@@ -1049,7 +1049,7 @@ return array(
             'people' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/People[/:extra]',
+                    'route'    => '/People[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Person',
@@ -1060,7 +1060,7 @@ return array(
             'person' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Person[/:id][/:action][/:extra]',
+                    'route'    => '/Person[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Person',
@@ -1073,7 +1073,7 @@ return array(
             'platform' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Platform[/:id][/:action][/:extra]',
+                    'route'    => '/Platform[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Platform',
@@ -1086,7 +1086,7 @@ return array(
             'platforms' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Platforms[/:extra]',
+                    'route'    => '/Platforms[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Platform',
@@ -1097,7 +1097,7 @@ return array(
             'publisher' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Publisher[/:id][/:action][/:extra]',
+                    'route'    => '/Publisher[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Publisher',
@@ -1110,7 +1110,7 @@ return array(
             'publishers' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Publishers[/:extra]',
+                    'route'    => '/Publishers[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Publisher',
@@ -1121,7 +1121,7 @@ return array(
             'reviews' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Reviews[/:extra]',
+                    'route'    => '/Reviews[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Reviews',
@@ -1143,7 +1143,7 @@ return array(
             'series' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Series[/:id][/:action][/:extra]',
+                    'route'    => '/Series[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Series',
@@ -1178,7 +1178,7 @@ return array(
             'tag' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Tag[/:id][/:action][/:extra]',
+                    'route'    => '/Tag[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Tag',
@@ -1191,7 +1191,7 @@ return array(
             'tags' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Tags[/:extra]',
+                    'route'    => '/Tags[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Tag',
@@ -1202,7 +1202,7 @@ return array(
             'user' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/User[/:id][/:action][/:extra]',
+                    'route'    => '/User[/:id][/:action][/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'User',
@@ -1215,7 +1215,7 @@ return array(
             'users' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Users[/:extra]',
+                    'route'    => '/Users[/[:extra]]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'User',
