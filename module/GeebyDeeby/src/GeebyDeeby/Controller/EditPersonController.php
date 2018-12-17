@@ -185,7 +185,7 @@ class EditPersonController extends AbstractBase
     public function showAction()
     {
         return $this->redirect()->toRoute(
-            'edit/item',
+            'edit/person',
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
