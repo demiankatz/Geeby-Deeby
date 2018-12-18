@@ -187,6 +187,11 @@ table td {padding-bottom:6px}
   padding:5px 8px;
 }
 
+/*table*/.approve {
+  width: 100%;
+}
+.approve textarea { width: 100%; }
+
 /* --- AUTOCOMPLETE --- */
 .ui-autocomplete {
   max-width: 500px;

@@ -37,9 +37,9 @@
       <tr id="PendingReview_<?=$current['User_ID']?>_<?=$current['Item_ID']?>">
         <td><?=$this->escapeHtml($current['Item_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
         <td>
-          <textarea id="ReviewText_<?=$current['User_ID']?>_<?=$current['Item_ID']?>"><?=$this->escapeHtml($current['Review'])?></textarea>
+          <textarea id="ReviewText_<?=$current['User_ID']?>_<?=$current['Item_ID']?>" rows="8" cols="60"><?=$this->escapeHtml($current['Review'])?></textarea>
         </td>
-        <td id="ReviewButtons_<?=$current['User_ID']?>_<?=$current['Item_ID']?>">
+        <td id="ReviewButtons_<?=$current['User_ID']?>_<?=$current['Item_ID']?>" style="text-align: center">
           <button onclick="approveReview(<?=$current['User_ID']?>, <?=$current['Item_ID']?>);">Approve</button>
           <button onclick="rejectReview(<?=$current['User_ID']?>, <?=$current['Item_ID']?>);">Reject</button>
         </td>
@@ -59,9 +59,9 @@
       <tr id="PendingComment_<?=$current['User_ID']?>_<?=$current['Series_ID']?>">
         <td><?=$this->escapeHtml($current['Series_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
         <td>
-          <textarea id="CommentText_<?=$current['User_ID']?>_<?=$current['Series_ID']?>"><?=$this->escapeHtml($current['Review'])?></textarea>
+          <textarea id="CommentText_<?=$current['User_ID']?>_<?=$current['Series_ID']?>" rows="8" cols="60"><?=$this->escapeHtml($current['Review'])?></textarea>
         </td>
-        <td id="CommentButtons_<?=$current['User_ID']?>_<?=$current['Series_ID']?>">
+        <td id="CommentButtons_<?=$current['User_ID']?>_<?=$current['Series_ID']?>" style="text-align: center">
           <button onclick="approveComment(<?=$current['User_ID']?>, <?=$current['Series_ID']?>);">Approve</button>
           <button onclick="rejectComment(<?=$current['User_ID']?>, <?=$current['Series_ID']?>);">Reject</button>
         </td>
