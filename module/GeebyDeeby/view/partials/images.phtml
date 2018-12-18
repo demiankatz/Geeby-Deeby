@@ -1,5 +1,8 @@
 <? if (count($images) > 0): ?>
-    <? foreach ($images as $image): ?>
+    <? foreach ($images as $index=>$image): ?>
+      <? if ($index > 0 && $index % 6 == 0): ?>
+        </div><div class="row">
+      <? endif; ?>
       <?
         if (!isset($linkType) || $linkType == 'image') {
           $path = $image['Image_Path'];
@@ -18,7 +21,7 @@
           $thumb = $image['IIIF_URI'] . '/full/,120/0/default.jpg';
         }
       ?>
-      <div class="col-md-2" style="text-align:center">
+      <div class="col-md-2 <?=$index ?>" style="text-align:center">
         <?=$openAnchor?><img class="img-polaroid" src="<?=$this->escapeHtml($thumb)?>" style="display:block;margin:auto"/></a>
         <?
           $note = '';
