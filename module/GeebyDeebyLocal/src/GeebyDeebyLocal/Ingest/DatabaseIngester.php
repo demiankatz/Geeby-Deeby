@@ -290,7 +290,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function parseDate($date)
     {
-        $parts = preg_split('|[-/]|', $date);
+        $parts = preg_split('|[-/]|', str_replace(['[', ']', '?'], '', $date));
         if (isset($parts[2]) && $parts[2] > 50) {
             $year = isset($parts[2]) ? $parts[2] : null;
             $month = isset($parts[0]) ? $parts[0] : null;
