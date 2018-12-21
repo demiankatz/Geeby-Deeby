@@ -39,6 +39,13 @@ namespace GeebyDeeby\View\Helper;
 class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
 {
     /**
+     * Items_Creators_Citations table.
+     *
+     * @var object
+     */
+    protected $citationsTable;
+
+    /**
      * Pseudonyms table.
      *
      * @var object
@@ -63,10 +70,12 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      * Constructor
      *
      * @param object $pseudonyms Pseudonyms table.
+     * @param object $citations  Items_Creators_Citations table.
      */
-    public function __construct($pseudonyms)
+    public function __construct($pseudonyms, $citations)
     {
         $this->pseudonymsTable = $pseudonyms;
+        $this->citationsTable = $citations;
     }
 
     /**
@@ -245,6 +254,25 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
+     * Given an item creator, turn the citation IDs into a lookup key.
+     *
+     * @param int $id Item_Creator_ID value
+     *
+     * @return string
+     */
+    protected function getCitationGroup($id)
+    {
+        $citations = array();
+        foreach ($this->citationsTable->getCitations($id) as $citation) {
+            $citations[] = $citation['Citation'];
+        }
+        if (empty($citations)) {
+            $citations[] = 'an uncited source';
+        }
+        return implode(' and ', $citations);
+    }
+
+    /**
      * Group creators by citation. Return an array of arrays keyed by Person_ID
      *
      * @param array $creators Creators to group
@@ -256,8 +284,8 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     {
         $groups = [];
         foreach ($creators as $creator) {
-            // TODO: determine group key by looking up citation IDs
-            $key = 0;
+            // Determine group key by looking up citation IDs
+            $key = $this->getCitationGroup($creator['Item_Creator_ID']);
             $groups[$key][$creator['Person_ID']] = $creator;
         }
         return $groups;
@@ -277,11 +305,15 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
         $final = [];
         $itemId = current($editions)['Item_ID'];
         $groupedCreators = $this->groupCreators($creators, $itemId);
-        foreach ($groupedCreators as $currentCreators) {
+        if (empty($groupedCreators)) {
+            $groupedCreators = ['an uncited source' => []];
+        }
+        foreach ($groupedCreators as $groupLabel => $currentCreators) {
             $groups = $this->groupCredits($currentCreators, $credits);
             foreach ($groups as $role => $details) {
-                $final[$role] = $this
-                    ->analyzeGroup($currentCreators, $editions, $details);
+                $data = $this->analyzeGroup($currentCreators, $editions, $details);
+                $citation = count($groupedCreators) > 1 ? $groupLabel : null;
+                $final[] = compact('role', 'data', 'citation');
             }
         }
         return $final;

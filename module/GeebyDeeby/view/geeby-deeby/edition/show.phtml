@@ -108,9 +108,14 @@
         </tr>
       <? endif; ?>
 
-      <? foreach ($this->analyzeCredits($creators, $credits, [$edition]) as $role => $group): ?>
+      <? foreach ($this->analyzeCredits($creators, $credits, [$edition]) as $current): ?>
+        <? $role = $current['role']; $citation = $current['citation']; $group = $current['data']; ?>
         <tr>
-          <th><?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's') ?>:</th>
+          <th>
+            <?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's')
+                . (empty($citation) ? '' : ' (according to ' . $citation . ')')
+            ?>:
+          </th>
           <td>
             <? foreach ($group as $person => $details): ?>
               <a href="<?=$this->url('person', array('id' => $person))?>">

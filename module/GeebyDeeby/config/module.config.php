@@ -1347,8 +1347,9 @@ return array(
     'view_helpers' => array(
         'factories' => array(
             'analyzecredits' => function ($sm) {
+                $tables = $sm->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager');
                 return new \GeebyDeeby\View\Helper\AnalyzeCredits(
-                    $sm->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager')->get('pseudonyms')
+                    $tables->get('pseudonyms'), $tables->get('itemscreatorscitations')
                 );
             },
             'auth' => function ($sm) {
