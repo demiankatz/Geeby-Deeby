@@ -79,9 +79,11 @@ header {
   header .container {padding-right:0}
 }
 .headerRight {
-  display:table;
   float:right;
   padding:0;
+}
+@media(min-width: 768px) {
+  .headerRight { display: table; }
 }
 .account-links {
   display:inline;
@@ -108,7 +110,7 @@ header {
   header {text-align:center}
   .headerRight {float:none;margin:0 auto}
   .account-links,.searchbox {display:inline}
-  .siteTitle {margin-bottom:10px;width:100%}
+  .siteTitle { width:100%; }
 }
 @media (max-width:650px) {
   .siteTitle {margin-bottom:0}
@@ -119,6 +121,8 @@ header {
     width:100%;
   }
   .account-links .last {display:none}
+  .searchbox input[type="text"] { margin-bottom: 4px; width: 100%; }
+  .container.main { padding-left: 4px; padding-right: 4px; }
 }
 
 /* --- SEARCH --- */
@@ -186,6 +190,11 @@ table td {padding-bottom:6px}
   margin:5px;
   padding:5px 8px;
 }
+
+/*table*/.approve {
+  width: 100%;
+}
+.approve textarea { width: 100%; }
 
 /* --- AUTOCOMPLETE --- */
 .ui-autocomplete {

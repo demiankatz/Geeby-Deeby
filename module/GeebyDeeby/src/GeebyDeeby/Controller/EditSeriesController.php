@@ -414,7 +414,7 @@ class EditSeriesController extends AbstractBase
     public function showAction()
     {
         return $this->redirect()->toRoute(
-            'edit/item',
+            'edit/series',
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
