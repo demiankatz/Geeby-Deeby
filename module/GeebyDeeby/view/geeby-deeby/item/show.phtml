@@ -491,6 +491,7 @@
           <tr>
             <th><?=$this->escapeHtml($review['Username'])?>'s Thoughts:</th>
             <td>
+              <?=substr(trim($review['Review']), 0, 3) === '<p>' ? '' : '<p>'?>
               <?=$review['Review']?>
               <p>
                 <a href="<?=$this->url('user', array('id' => $review['User_ID'], 'action' => 'Reviews'))?>">
