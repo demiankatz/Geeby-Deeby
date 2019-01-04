@@ -235,59 +235,27 @@
         </tr>
       <? endif; ?>
 
-      <?
-        if (count($credits) > 0) {
-          $groupedCredits = array();
-          foreach ($credits as $credit) {
-            if (!isset($groupedCredits[$credit['Role_Name']])) {
-              $groupedCredits[$credit['Role_Name']] = array();
-            }
-            if (!isset($groupedCredits[$credit['Role_Name']][$credit['Person_ID']])) {
-              $groupedCredits[$credit['Role_Name']][$credit['Person_ID']] = array();
-            }
-            $groupedCredits[$credit['Role_Name']][$credit['Person_ID']][] = $credit;
-          }
-        } else {
-          $groupedCredits = array();
-        }
-      ?>
-
-      <? if (count($groupedCredits) > 0): ?>
-        <? foreach ($groupedCredits as $role => $group): ?>
-          <tr>
-            <th><?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's') ?>:</th>
-            <td>
-              <? foreach ($group as $person => $credits): ?>
-                <?
-                    $notes = array();
-                    if (count($credits) != count($editions)) {
-                        foreach ($credits as $credit) {
-                            $note = $this->fixtitle($credit['Edition_Name']);
-                            if (!empty($credit['Note'])) {
-                                $note .= ' - ' . $credit['Note'];
-                            }
-                            $notes[] = $note;
-                        }
-                    } else {
-                        foreach ($credits as $credit) {
-                            if (!empty($credit['Note'])) {
-                                $notes[] = $credit['Note'];
-                            }
-                        }
-                    }
-                ?>
-                <a href="<?=$this->url('person', array('id' => $credit['Person_ID']))?>">
-                  <?=$this->showperson($credit)?>
-                </a>
-                <? $realNameCount = count($this->realNames[$credit['Person_ID']]); if ($realNameCount > 0): ?>
-                  (pseudonym used by <?=$realNameCount == 1 ? '<a href="' . $this->url('person', array('id' => $this->realNames[$credit['Person_ID']][0]['Person_ID'])) . '">' . $this->showperson($this->realNames[$credit['Person_ID']][0]) . '</a>' : 'multiple people' ?>)
-                <? endif; ?>
-                <? if (!empty($notes)): ?>(<?=$this->escapeHtml(implode(', ', array_unique($notes)))?>)<? endif; ?><br />
-              <? endforeach; ?>
-            </td>
-          </tr>
-        <? endforeach; ?>
-      <? endif; ?>
+      <? foreach ($this->analyzeCredits($creators, $credits, $editions) as $current): ?>
+        <? $role = $current['role']; $citation = $current['citation']; $group = $current['data']; ?>
+        <tr>
+          <th>
+            <?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's')
+                . (empty($citation) ? '' : ' (according to ' . $citation . ')')
+            ?>:
+          </th>
+          <td>
+            <? foreach ($group as $person => $details): ?>
+              <a href="<?=$this->url('person', array('id' => $person))?>">
+                <?=$this->showperson($details['person'])?>
+              </a>
+              <? $realNameCount = count($details['realPerson']); if ($realNameCount > 0): ?>
+                (pseudonym used by <?=$realNameCount == 1 ? '<a href="' . $this->url('person', array('id' => $details['realPerson'][0]['Person_ID'])) . '">' . $this->showperson($details['realPerson'][0]) . '</a>' : 'multiple people' ?>)
+              <? endif; ?>
+              <? if (!empty($details['notes'])): ?>(<?=$this->escapeHtml($details['notes'])?>)<? endif; ?><br />
+            <? endforeach; ?>
+          </td>
+        </tr>
+      <? endforeach; ?>
 
       <? $dateCount = count($dates); if ($dateCount > 0): ?>
         <tr>

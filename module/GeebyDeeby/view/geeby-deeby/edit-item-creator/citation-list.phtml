@@ -1,0 +1,17 @@
+<? if (count($this->selectedCitations) == 0): ?>
+  No citations.
+<? else: ?>
+  <table>
+    <? foreach ($this->selectedCitations as $current): ?>
+      <tr>
+        <td>
+          <?=$this->escapeHtml($current['Citation'])?>
+        </td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="ItemCreator.unlink('Citation', <?=$this->escapeHtml($current['Citation_ID'])?>); return false;">
+          </a>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>

@@ -1,0 +1,6 @@
+<? $this->layout()->title = 'Edit Citations' ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_citations']) ?>
+<p><b>Citations:</b></p>
+<button id="add_citation" type="button" onclick="Citation.edit('NEW');">Add Citation</button>
+<br /><br />
+<div id="citation_list"><?=$this->render('geeby-deeby/edit-citation/render-citations.phtml')?></div>
