@@ -272,8 +272,11 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                 $modsTag = 'genre';
                 $auth = null;
             } else {
+                continue;
+                /* subjects disabled for now -- not useful
                 $modsTag = 'subject';
                 $auth = null;
+                 */
             }
             $tag = $xml->addChild($modsTag, $tag->Tag);
             if (!empty($auth)) {
