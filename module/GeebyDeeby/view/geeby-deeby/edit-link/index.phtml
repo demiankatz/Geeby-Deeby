@@ -15,7 +15,7 @@
     </tr>
     <tr>
       <th>Date Checked<br/>(YYYY-MM-DD):</th>
-      <td><input type="text" id="Date_Checked" value="<?=isset($link['Date_Checked']) ? $this->escapeHtml($link['Date_Checked']) : ''?>" /></td>
+      <td><input type="text" id="Date_Checked" value="<?=isset($link['Date_Checked']) ? $this->escapeHtml($link['Date_Checked']) : date('Y-m-d')?>" /></td>
     </tr>
     <tr>
       <th>Description:</th>

@@ -21,8 +21,8 @@
           $thumb = $image['IIIF_URI'] . '/full/,120/0/default.jpg';
         }
       ?>
-      <div class="col-md-2 <?=$index ?>" style="text-align:center">
-        <?=$openAnchor?><img class="img-polaroid" src="<?=$this->escapeHtml($thumb)?>" style="display:block;margin:auto"/></a>
+      <div class="col-md-2" style="text-align:center">
+        <?=$openAnchor?><img class="item-image" src="<?=$this->escapeHtml($thumb)?>" style="display:block;margin:auto"/></a>
         <?
           $note = '';
           if (isset($editions) && count($editions) > 1) {
