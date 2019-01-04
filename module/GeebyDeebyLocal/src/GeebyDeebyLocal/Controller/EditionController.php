@@ -152,6 +152,29 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     }
 
     /**
+     * Add date details to an XML object.
+     *
+     * @param \SimpleXMLElement $xml   The MODS document
+     * @param \Iterable         $dates Date information to analyze
+     *
+     * @return void
+     */
+    protected function addModsDates($xml, $dates)
+    {
+        foreach ($dates as $date) {
+            if ($date['Year'] > 0 && $date['Month'] > 0 && $date['Day'] > 0) {
+                $formattedDate = $date['Year'] . '-'
+                    . str_pad($date['Month'], 2, '0', STR_PAD_LEFT) . '-'
+                    . str_pad($date['Day'], 2, '0', STR_PAD_LEFT);
+                $dateXml = $xml->addChild('dateIssued', $formattedDate);
+                $dateXml['encoding'] = 'w3cdtf';
+                // Quit after the first eligible date is added:
+                return;
+            }
+        }
+    }
+
+    /**
      * Add part details to an XML object.
      *
      * @param \SimpleXMLElement $xml  An empty <mods:part> element
@@ -316,6 +339,9 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $template = '<mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"></mods:mods>';
         $xml = simplexml_load_string($template);
         $this->addModsTitle($xml->addChild('titleInfo'), $view->item['Item_Name']);
+        if (!empty($view->dates)) {
+            $this->addModsDates($xml, $view->dates);
+        }
         $xml->typeOfResource = 'text';
         if (!empty($view->children)) {
             foreach ($view->children as $child) {
