@@ -229,7 +229,7 @@ class Edition extends Gateway
             $select->join(
                 array('pa' => 'Publishers_Addresses'),
                 'sp.Address_ID = pa.Address_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                array('Street'), Select::JOIN_LEFT
             );
             $select->join(
                 array('c' => 'Countries'), 'pa.Country_ID = c.Country_ID',
