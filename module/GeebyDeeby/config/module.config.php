@@ -22,6 +22,7 @@ return array(
             'invokables' => array(
                 'authority' => 'GeebyDeeby\Db\Table\Authority',
                 'category' => 'GeebyDeeby\Db\Table\Category',
+                'citation' => 'GeebyDeeby\Db\Table\Citation',
                 'city' => 'GeebyDeeby\Db\Table\City',
                 'collections' => 'GeebyDeeby\Db\Table\Collections',
                 'country' => 'GeebyDeeby\Db\Table\Country',
@@ -44,6 +45,8 @@ return array(
                 'itemsadaptations' => 'GeebyDeeby\Db\Table\ItemsAdaptations',
                 'itemsalttitles' => 'GeebyDeeby\Db\Table\ItemsAltTitles',
                 'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
+                'itemscreators' => 'GeebyDeeby\Db\Table\ItemsCreators',
+                'itemscreatorscitations' => 'GeebyDeeby\Db\Table\ItemsCreatorsCitations',
                 'itemscredits' => 'GeebyDeeby\Db\Table\ItemsCredits',
                 'itemsdescriptions' => 'GeebyDeeby\Db\Table\ItemsDescriptions',
                 'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
@@ -283,6 +286,27 @@ return array(
                             ),
                         ),
                     ),
+                    'citation' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Citation[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditCitation',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'citation_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/CitationList',
+                            'defaults' => array(
+                                'controller'    => 'EditCitation',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                     'city' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -463,6 +487,18 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditItem',
                                 'action'        => 'index',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
+                    'item_creator' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Item_Creator[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditItemCreator',
+                                'action'        => 'citation',
                                 'id'            => 'NEW',
                                 'extra'         => null,
                             ),
@@ -1264,6 +1300,7 @@ return array(
             'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
+            'GeebyDeeby\Controller\EditCitation' => 'GeebyDeeby\Controller\EditCitationController',
             'GeebyDeeby\Controller\EditCity' => 'GeebyDeeby\Controller\EditCityController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
@@ -1272,6 +1309,7 @@ return array(
             'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
+            'GeebyDeeby\Controller\EditItemCreator' => 'GeebyDeeby\Controller\EditItemCreatorController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
@@ -1308,6 +1346,12 @@ return array(
     ),
     'view_helpers' => array(
         'factories' => array(
+            'analyzecredits' => function ($sm) {
+                $tables = $sm->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager');
+                return new \GeebyDeeby\View\Helper\AnalyzeCredits(
+                    $tables->get('pseudonyms'), $tables->get('itemscreatorscitations')
+                );
+            },
             'auth' => function ($sm) {
                 return new \GeebyDeeby\View\Helper\Auth(
                     $sm->getServiceLocator()->get('GeebyDeeby\Authentication')

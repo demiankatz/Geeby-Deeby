@@ -9,6 +9,7 @@
   <li><a href="#adaptations-tab" data-toggle="tab"><span>Adaptations</span></a></li>
   <li><a href="#alt-titles-tab" data-toggle="tab"><span>Alternate Titles</span></a></li>
   <li><a href="#attached-tab" data-toggle="tab"><span>Attached Items</span></a></li>
+  <li><a href="#creators-tab" data-toggle="tab"><span>Creators</span></a></li>
   <li><a href="#credits-tab" data-toggle="tab"><span>Credits</span></a></li>
   <li><a href="#desc-tab" data-toggle="tab"><span>Descriptions</span></a></li>
   <li><a href="#bib-tab" data-toggle="tab"><span>References</span></a></li>
@@ -100,6 +101,32 @@
     <button onclick="Item.link('AboutPerson');">Add Reference</button>
     <div id="aboutperson_list">
       <?=$this->render('geeby-deeby/edit-item/person-ref-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="creators-tab" class="tab-pane">
+    <p class="disclaimer">This section is for listing known, real people who
+    contributed to the creation of this item. Use Credits for listing attributed
+    authors.
+    </p>
+    <div class="edit_container">
+      <table class="edit">
+        <tr>
+          <th>Person:</th>
+          <td><input id="creator_person" class="Person_ID" /></td>
+        </tr>
+        <tr>
+          <th>Role:</th>
+          <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml', array('idPrefix' => 'Creator_', 'roles' => $this->roles))?></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td><button onclick="Item.link('Creator');">Add</button></td>
+        </tr>
+      </table>
+    </div>
+    <div id="creator_list">
+      <?=$this->render('geeby-deeby/edit-item/creators.phtml')?>
     </div>
   </div>
 

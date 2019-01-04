@@ -1,0 +1,12 @@
+<? if (isset($citations) && count($citations) > 0): ?>
+  <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Citation_ID">
+    <option value="">-- no citation set --</option>
+    <? foreach ($citations as $current): ?>
+      <option value="<?=$current['Citation_ID']?>"<?=(isset($selected) && $current['Citation_ID'] == $selected) ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current['Citation'])?>
+      </option>
+    <? endforeach; ?>
+  </select>
+<? else: ?>
+  Please define citations.
+<? endif; ?>

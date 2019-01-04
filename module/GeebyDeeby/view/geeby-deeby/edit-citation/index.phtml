@@ -1,0 +1,11 @@
+<div id="editForm">
+  <input type="hidden" id="Citation_ID" value="<?=$this->escapeHtml($citation['Citation_ID'])?>" />
+  <table class="edit">
+    <tr>
+      <th>Citation:</th>
+      <td><input type="text" id="Citation" value="<?=isset($citation['Citation']) ? $this->escapeHtml($citation['Citation']) : ''?>" /></td>
+    </tr>
+  </table>
+  <button id="save_citation" onclick="Citation.save();">Save</button>
+  <div id="save_citation_status"></div>
+</div>
