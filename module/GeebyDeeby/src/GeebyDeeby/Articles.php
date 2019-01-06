@@ -63,7 +63,7 @@ class Articles
             'An','A','¡','Les','"', 'I', 'Ein', 'Lo',
             'Un','Das','Die','Der','Den','Det','Et', 
             'Las','¿','¡La "', 'Els', 'The "', 'El "',
-            'Una', 'Gli', 'A "', 'The "', '¡La', '"The'
+            'Una', 'Gli', 'A "', 'The "', '¡La', '"The', 'Ta',
         );
         $this->unspacedArticles = array(
             "¡", "¿", "L'", '"', '¡La "', 'The "', 'El "', 'A "'
