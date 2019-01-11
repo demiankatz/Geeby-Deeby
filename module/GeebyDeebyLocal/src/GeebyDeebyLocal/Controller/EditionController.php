@@ -56,7 +56,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $edition = parent::addPrimaryResourceToGraph($graph, $view, $class);
         foreach ($view->credits as $credit) {
             $personUri = $this->getServerUrl('person', ['id' => $credit['Person_ID']]);
-            $edition->add('dime:HasCredit', $graph->resource($personUri));
+            $edition->add('dime:HasCredit', $graph->resource($personUri . '#name'));
         }
         if (!empty($view->item)) {
             $itemUri = $this->getServerUrl('item', ['id' => $view->item['Item_ID']]);

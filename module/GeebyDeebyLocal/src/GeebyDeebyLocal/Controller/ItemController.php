@@ -64,6 +64,10 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
             $editionUri = $this->getServerUrl('edition', ['id' => $edition['Edition_ID']]);
             $item->add($relationship, $graph->resource($editionUri));
         }
+        foreach ($view->creators as $creator) {
+            $personUri = $this->getServerUrl('person', ['id' => $creator['Person_ID']]);
+            $item->add('rda:author', $graph->resource($personUri));
+        }
         return $item;
     }
 

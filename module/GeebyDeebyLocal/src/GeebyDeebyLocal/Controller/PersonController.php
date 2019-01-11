@@ -57,6 +57,13 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
         }
         $authName .= $view->person['Extra_Details'];
         $person->set('rda:preferredNameForTheAgent', $authName);
+
+        $id = $view->person['Person_ID'];
+        $uri = $this->getServerUrl('person', ['id' => $id]) . '#name';
+        $name = $graph->resource($uri, 'skos:Concept');
+        $name->set('foaf:focus', $person);
+        $name->set('rdfs:label', $authName);
+
         return $person;
     }
 
