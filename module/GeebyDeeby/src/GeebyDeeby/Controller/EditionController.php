@@ -193,7 +193,8 @@ class EditionController extends AbstractBase
             ->getCreatorsForItem($view->edition['Item_ID']);
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForEdition($id);
-        $view->images = $this->getDbTable('editionsimages')->getImagesForEdition($id);
+        $view->images = $this->getDbTable('editionsimages')
+            ->getImagesForEditionOrParentEdition($id);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForEdition($id);
         $view->dates = $this->getDbTable('editionsreleasedates')
