@@ -95,7 +95,7 @@ class EditionsFullText extends Gateway
             $fields = array('Full_Text_Source_Name', 'Full_Text_URL');
             $select->order($fields);
             $select->where->equalTo('eds.Edition_ID', $edition)
-                ->OR->where->equalTo('eds.Parent_Edition_ID', $editionID);
+                ->OR->where->equalTo('eds.Parent_Edition_ID', $edition);
         };
         return $this->select($callback);
     }
