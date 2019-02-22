@@ -126,8 +126,7 @@ class EditionsImages extends Gateway
                 ['Edition_ID']
             );
             $select->order(array('Editions_Images.Position'));
-            $select->where->equalTo('eds.Edition_ID', $editionID)
-                ->OR->where->equalTo('eds.Parent_Edition_ID', $editionID);
+            $select->where->equalTo('eds.Edition_ID', $editionID);
         };
         return $this->select($callback);
     }

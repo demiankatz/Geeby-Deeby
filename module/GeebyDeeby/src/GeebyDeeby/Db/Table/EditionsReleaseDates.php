@@ -121,8 +121,7 @@ class EditionsReleaseDates extends Gateway
                 . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
                 ['Edition_ID']
             );
-            $select->where->equalTo('eds.Edition_ID', $editionID)
-                ->OR->where->equalTo('eds.Parent_Edition_ID', $editionID);
+            $select->where->equalTo('eds.Edition_ID', $editionID);
             $select->order(array('Year', 'Month', 'Day'));
         };
         return $this->select($callback);
