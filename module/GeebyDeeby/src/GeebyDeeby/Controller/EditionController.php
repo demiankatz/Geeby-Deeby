@@ -196,7 +196,8 @@ class EditionController extends AbstractBase
         $view->images = $this->getDbTable('editionsimages')->getImagesForEdition($id);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForEdition($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForEdition($id);
+        $view->dates = $this->getDbTable('editionsreleasedates')
+            ->getDatesForEditionOrParentEdition($id);
         $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForEdition($id);
         $view->codes = $this->getDbTable('editionsproductcodes')
             ->getProductCodesForEdition($id);
