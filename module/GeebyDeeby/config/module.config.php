@@ -112,8 +112,10 @@ return array(
                 'links' => array(
                     'Amazon.ca' => 'http://www.amazon.ca/exec/obidos/ASIN/%isbn10%',
                     'Amazon.com' => 'http://www.amazon.com/exec/obidos/ASIN/%isbn10%',
+                    'Amazon.com.au' => 'http://www.amazon.com.au/exec/obidos/ASIN/%isbn10%',
                     'Amazon.com.br' => 'http://www.amazon.com.br/exec/obidos/ASIN/%isbn10%',
                     'Amazon.co.jp' => 'http://www.amazon.co.jp/exec/obidos/ASIN/%isbn10%',
+                    'Amazon.com.mx' => 'http://www.amazon.com.mx/exec/obidos/ASIN/%isbn10%',
                     'Amazon.co.uk' => 'http://www.amazon.co.uk/exec/obidos/ASIN/%isbn10%',
                     'Amazon.de' => 'http://www.amazon.de/exec/obidos/ASIN/%isbn10%',
                     'Amazon.es' => 'http://www.amazon.es/exec/obidos/ASIN/%isbn10%',
@@ -121,7 +123,6 @@ return array(
                     'Amazon.it' => 'http://www.amazon.it/exec/obidos/ASIN/%isbn10%',
                     'Barnes & Noble' => 'http://search.barnesandnoble.com/booksearch/isbninquiry.asp?ISBN=%isbn10%',
                     'BookFinder.com' => 'http://www.bookfinder.com/search/?author=&title=&submit=Begin+Search&new_used=*&binding=*&isbn=%isbn10%&keywords=&minprice=&maxprice=&currency=USD&mode=advanced&st=sr&ac=qr',
-                    'Half.com' => 'http://search.half.ebay.com/ws/web/HalfSearch?query=%isbn10%',
                 ),
             ),
         ),
