@@ -89,29 +89,33 @@ class Series extends Gateway
     {
         $callback = function ($select) use ($query, $limit) {
             $select2 = clone($select);
-            $select2->columns(['Series_ID', 'Series_Name']);
+            $select2->columns(
+                [
+                    'Series_ID',
+                    'Series_Name' => new Expression(
+                        "Concat(Series_AltName, ' [alt. title for ', Series_Name, ']')"
+                    )
+                ]
+            );
             $select2->join(
                 array('sat' => 'Series_AltTitles'),
                 'Series.Series_ID = sat.Series_ID',
-                array('Series_AltName'), Select::JOIN_LEFT
+                [], Select::JOIN_LEFT
             );
             $select2->where->like('Series_AltName', $query . '%');
             $select->columns(
                 [
                     'Series_ID',
                     'Series_Name',
-                    // workaround to create a blank spot so the UNION works:
-                    'Series_AltName' => new Expression("Concat('','')"),
                 ]
             );
             $select->where->like('Series_Name', $query . '%');
             $select->combine($select2);
-            $select->order('Series_Name');
             if ($limit !== false) {
                 $select->limit($limit);
             }
         };
-        return $this->select($callback);
+        return $this->sortAndFilterUnion($this->select($callback));
     }
 
     /**

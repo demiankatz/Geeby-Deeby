@@ -163,4 +163,26 @@ class Gateway extends AbstractTableGateway implements ServiceLocatorAwareInterfa
     {
         return $this->serviceLocator;
     }
+
+    /**
+     * Zend_DB doesn't do a good job of sorting or limiting UNIONs, so we have to
+     * do it manually after the fact with this support method.
+     *
+     * @param mixed $rawResults Iterable result set.
+     * @param mixed $limit      Result size limit (or false for none)
+     *
+     * @return array
+     */
+    protected function sortAndFilterUnion($rawResults, $limit)
+    {
+        $results = [];
+        foreach ($rawResults as $current) {
+            $results[] = $current;
+        };
+        $sort = function ($a, $b) {
+            return strcasecmp($a->getDisplayName(), $b->getDisplayName());
+        };
+        usort($results, $sort);
+        return $limit ? array_slice($array, 0, $limit) : $results;
+    }
 }

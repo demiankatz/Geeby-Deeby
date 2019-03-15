@@ -86,10 +86,6 @@ class Series extends ServiceLocatorAwareGateway
      */
     public function getDisplayName()
     {
-        $name = $this->Series_Name;
-        if (!empty($this->Series_AltName)) {
-            $name .= ' [alt. name: ' . $this->Series_AltName . ']';
-        }
-        return $name;
+        return $this->Series_Name;
     }
 }
