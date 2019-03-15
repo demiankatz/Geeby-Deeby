@@ -221,7 +221,7 @@ class EditItemController extends AbstractBase
             if (empty($row->Note_ID)) {
                 $row->Note_ID = null;
             }
-            $row->Item_AltName = $this->params()->fromPost('title');
+            $row->Item_AltName = trim($this->params()->fromPost('title'));
             if (empty($row->Item_AltName)) {
                 return $this->jsonDie('Title must not be empty.');
             }
