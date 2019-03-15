@@ -183,6 +183,6 @@ class Gateway extends AbstractTableGateway implements ServiceLocatorAwareInterfa
             return strcasecmp($a->getDisplayName(), $b->getDisplayName());
         };
         usort($results, $sort);
-        return $limit ? array_slice($array, 0, $limit) : $results;
+        return $limit ? array_slice($results, 0, $limit) : $results;
     }
 }

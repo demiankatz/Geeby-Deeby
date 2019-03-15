@@ -87,7 +87,7 @@ class Series extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query, $limit) {
+        $callback = function ($select) use ($query) {
             $select2 = clone($select);
             $select2->columns(
                 [
@@ -111,11 +111,8 @@ class Series extends Gateway
             );
             $select->where->like('Series_Name', $query . '%');
             $select->combine($select2);
-            if ($limit !== false) {
-                $select->limit($limit);
-            }
         };
-        return $this->sortAndFilterUnion($this->select($callback));
+        return $this->sortAndFilterUnion($this->select($callback), $limit);
     }
 
     /**
