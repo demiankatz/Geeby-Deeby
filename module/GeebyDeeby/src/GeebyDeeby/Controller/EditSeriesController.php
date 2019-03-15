@@ -197,7 +197,7 @@ class EditSeriesController extends AbstractBase
             if (empty($row->Note_ID)) {
                 $row->Note_ID = null;
             }
-            $row->Series_AltName = $this->params()->fromPost('title');
+            $row->Series_AltName = trim($this->params()->fromPost('title'));
             if (empty($row->Series_AltName)) {
                 return $this->jsonDie('Title must not be empty.');
             }
