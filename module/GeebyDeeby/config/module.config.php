@@ -1359,7 +1359,7 @@ return array(
                 );
             },
             'config' => function ($sm) {
-                $cfg = $sm->getServiceLocator()->get('Config');
+                $cfg = $sm->getServiceLocator()->get('config');
                 return new \GeebyDeeby\View\Helper\Config($cfg['geeby-deeby']);
             },
             'fixtitle' => function ($sm) {
