@@ -71,14 +71,32 @@ class Item extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query, $limit) {
-            if ($limit !== false) {
-                $select->limit($limit);
-            }
+        $callback = function ($select) use ($query) {
+            $select2 = clone($select);
+            $select2->columns(
+                [
+                    'Item_ID',
+                    'Item_Name' => new Expression(
+                        "Concat(Item_AltName, ' [alt. title for ', Item_Name, ']')"
+                    )
+                ]
+            );
+            $select2->join(
+                array('iat' => 'Items_AltTitles'),
+                'Items.Item_ID = iat.Item_ID',
+                [], Select::JOIN_LEFT
+            );
+            $select2->where->like('Item_AltName', $query . '%');
+            $select->columns(
+                [
+                    'Item_ID',
+                    'Item_Name',
+                ]
+            );
             $select->where->like('Item_Name', $query . '%');
-            $select->order('Item_Name');
+            $select->combine($select2);
         };
-        return $this->select($callback);
+        return $this->sortAndFilterUnion($this->select($callback), $limit);
     }
 
     /**
