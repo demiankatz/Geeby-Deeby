@@ -1298,7 +1298,7 @@ class DatabaseIngester extends BaseIngester
 
     protected function processTitle($title, $db)
     {
-        if ($this->fuzzyCompare($title, $db['item']['Item_Name'])) {
+        if ($this->checkItemTitle($db['item'], $title)) {
             return true;
         }
         if ($this->hasMatchingAltTitle($title, $db['item']['Item_ID'], $db['item']['Item_Name'], true)) {
@@ -1734,8 +1734,24 @@ class DatabaseIngester extends BaseIngester
     {
         $itemTitle = (isset($item['Item_AltName']) && !empty($item['Item_AltName']))
             ? $item['Item_AltName'] : $item['Item_Name'];
-        return $this->fuzzyCompare($title, $itemTitle);
-    }
+        $match = $this->fuzzyCompare($title, $itemTitle);
+        if (!$match) {
+            $stripped1 = $this->articles->separateArticle($title)[1];
+            $stripped2 = $this->articles->separateArticle($itemTitle)[1];
+            if (strlen($stripped1) > strlen($stripped2)) {
+                $longer = $stripped1;
+                $shorter = $stripped2;
+            } else {
+                $shorter = $stripped1;
+                $longer = $stripped2;
+            }
+            if ($this->fuzzyContains($longer, $shorter)) {
+                Console::writeLine("WARNING: inexact title match {$title} vs. {$itemTitle}");
+                return true;
+            }
+        }
+        return $match;
+   }
 
     /**
      * Do a fuzzy compare to validate if any of the incoming titles match. Checks
