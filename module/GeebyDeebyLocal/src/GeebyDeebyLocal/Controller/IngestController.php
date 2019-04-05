@@ -187,6 +187,35 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
+     * Map a line from a spreadsheet into a details array.
+     *
+     * @param array $line Raw input line
+     *
+     * @return array
+     */
+    protected function spreadsheetLineToDetails($line)
+    {
+        list($title, $author, $date, $place, $publisher, $series, $number, $url)
+            = $line;
+        $content = compact('title');
+        if (!empty($author)) {
+            $content['authors'] = [['name' => $author]];
+        }
+        $details = [
+            'contents' => [$content],
+            'series' => [$series => $number],
+            'url' => [$url],
+        ];
+        if (!empty($publisher)) {
+            $details['publisher'] = ['name' => $publisher, 'place' => $place];
+        }
+        if (!empty($date)) {
+            $details['date'] = $date;
+        }
+        return $details;
+    }
+
+    /**
      * Ingest the contents of a spreadsheet.
      *
      * @return mixed
@@ -206,17 +235,9 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
                 Console::writeLine("Short line encountered; breaking out...");
                 break;
             }
-            list($title, $author, $date, $place, $publisher, $series, $number, $url)
-                = $line;
-            $details = [
-                'contents' => [['title' => $title, 'authors' => [['name' => $author]]]],
-                'publisher' => ['name' => $publisher, 'place' => $place],
-                'series' => [$series => $number],
-                'date' => $date,
-                'url' => [$url],
-            ];
             $total++;
-            $seriesObj = $this->getSeriesByTitle($series);
+            $details = $this->spreadsheetLineToDetails($line);
+            $seriesObj = $this->getSeriesByTitle(array_keys($details['series'])[0]);
             if (!$seriesObj) {
                 Console::writeLine("Cannot find series match for $series");
                 if (Prompt\Confirm::prompt('Continue with next item anyway? (y/n) ')) {
