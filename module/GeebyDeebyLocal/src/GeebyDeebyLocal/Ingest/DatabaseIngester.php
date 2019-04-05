@@ -559,6 +559,8 @@ class DatabaseIngester extends BaseIngester
             return self::FULLTEXT_SOURCE_VU;
         } elseif (strstr($url, 'digitalgallery.bgsu.edu')) {
             return self::FULLTEXT_SOURCE_BGSU;
+        } elseif (strstr($url, 'archive.org')) {
+            return self::FULLTEXT_SOURCE_IA;
         }
         return null;
     }

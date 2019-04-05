@@ -40,6 +40,7 @@ abstract class BaseIngester
 {
     // constant values drawn from dimenovels.org database:
     const FULLTEXT_SOURCE_VU = 1;
+    const FULLTEXT_SOURCE_IA = 3;
     const FULLTEXT_SOURCE_NIU = 10;
     const FULLTEXT_SOURCE_BGSU = 14;
     const MATERIALTYPE_WORK = 1;
