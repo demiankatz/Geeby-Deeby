@@ -1544,6 +1544,19 @@ class DatabaseIngester extends BaseIngester
             if (count($sorted) > 1) {
                 Console::writeLine("Trying replacement no. $replacementNo");
             }
+            if (count($children) > 1) {
+                Console::writeLine("Multiple editions found at same position.");
+                Console::writeLine("Please pick one:");
+                $options = '';
+                foreach ($children as $i => $current) {
+                    $letter = chr(65 + $i);
+                    $options .= $letter;
+                    Console::writeLine($letter . '. ' . $current->Edition_Name);
+                }
+                $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
+                $char = strtoupper($prompt->show());
+                $children = [$children[ord($char) - 65]];
+            }
             $success = $this->synchronizeSeriesEntriesHelper($children, $contents);
             if ($success) {
                 return $success;
