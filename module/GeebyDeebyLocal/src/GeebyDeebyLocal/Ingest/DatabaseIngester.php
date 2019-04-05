@@ -1483,8 +1483,12 @@ class DatabaseIngester extends BaseIngester
                 }
             }
             if (count($stillUnexpected) > 0) {
-                Console::writeLine("Found unexpected author ID(s) in database: " . implode(', ', $unexpected));
-                return true;
+                if (count($incomingList) == 0) {
+                    Console::writeLine("WARNING: no incoming authors, but authors found in database.");
+                } else {
+                    Console::writeLine("Found unexpected author ID(s) in database: " . implode(', ', $unexpected));
+                    return true;
+                }
             }
         }
         return false;
