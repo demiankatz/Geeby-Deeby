@@ -237,7 +237,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             }
             $total++;
             $details = $this->spreadsheetLineToDetails($line);
-            $seriesObj = $this->getSeriesByTitle(array_keys($details['series'])[0]);
+            $series = array_keys($details['series'])[0];
+            $seriesObj = $this->getSeriesByTitle($series);
             if (!$seriesObj) {
                 Console::writeLine("Cannot find series match for $series");
                 if (Prompt\Confirm::prompt('Continue with next item anyway? (y/n) ')) {
