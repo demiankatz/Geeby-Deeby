@@ -204,8 +204,10 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $details = [
             'contents' => [$content],
             'series' => [$series => $number],
-            'url' => [$url],
         ];
+        if (!empty($url)) {
+            $details['url'] = [$url];
+        }
         if (!empty($publisher)) {
             $details['publisher'] = ['name' => $publisher, 'place' => $place];
         }
@@ -231,9 +233,12 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $total = $success = 0;
         $handle = fopen($file, 'r');
         while ($line = fgetcsv($handle)) {
-            if (count($line) < 8) {
+            if (count($line) < 7) {
                 Console::writeLine("Short line encountered; breaking out...");
                 break;
+            }
+            if (!isset($line[7])) {
+                $line[7] = null;
             }
             $total++;
             $details = $this->spreadsheetLineToDetails($line);
