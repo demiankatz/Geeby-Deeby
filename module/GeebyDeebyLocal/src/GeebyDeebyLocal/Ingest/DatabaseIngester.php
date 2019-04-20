@@ -1371,13 +1371,14 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given first and last names, try to find a matching person.
      *
-     * @param string $first First name
-     * @param string $last  Last name
-     * @param string $raw   Raw name string
+     * @param string $first    First name
+     * @param string $last     Last name
+     * @param string $raw      Raw name string
+     * @param array  $expected IDs we're expecting to find (if any)
      *
      * @return int|bool
      */
-    protected function fuzzyPersonMatch($first, $last, $raw)
+    protected function fuzzyPersonMatch($first, $last, $raw, $expected)
     {
         $peopleTable = $this->getDbTable('person');
         $callback = function ($select) use ($first, $last) {
@@ -1398,6 +1399,16 @@ class DatabaseIngester extends BaseIngester
                 $select->order(['Last_Name', 'First_Name']);
             };
             $result = $peopleTable->select($fuzzierCallback);
+        }
+        foreach ($result as $option) {
+            if (in_array($option->Person_ID, $expected)) {
+                Console::writeLine(
+                    "WARNING: Fuzzy person match between $raw and "
+                    . $option->First_Name . ' ' . $option->Last_Name
+                    . $option->Extra_Details
+                );
+                return $option->Person_ID;
+            }
         }
         if (count($result) > 1) {
             Console::writeLine("Possible matches found for $raw...");
@@ -1422,11 +1433,13 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given a name string, look up a matching person ID.
      *
-     * @param string $str Name string
+     * @param string $str      Name string
+     * @param array  $expected Person IDs we're expecting to find (from database,
+     * if we're trying to match an existing entry)
      *
      * @return int|bool Person ID, or false for no match.
      */
-    protected function getPersonIdForString($str)
+    protected function getPersonIdForString($str, $expected = [])
     {
         $bad = '(dime novelist)';
         if (substr(strtolower($str), -strlen($bad)) === $bad) {
@@ -1460,12 +1473,22 @@ class DatabaseIngester extends BaseIngester
             }
             Console::writeLine('Extra detail mismatch in person.');
         }
-        return $this->fuzzyPersonMatch($first, $last, $str);
+        return $this->fuzzyPersonMatch($first, $last, $str, $expected);
     }
 
     protected function addAuthorDetails($details)
     {
         foreach ($details as & $match) {
+            if ($match[1]) {
+                $credits = $this->getDbTable('editionscredits')
+                    ->getCreditsForEdition($match[1]['edition']['Edition_ID']);
+                $match[1]['authorIds'] = [];
+                foreach ($credits as $credit) {
+                    if ($credit->Role_ID == self::ROLE_AUTHOR) {
+                        $match[1]['authorIds'][] = $credit->Person_ID;
+                    }
+                }
+            }
             $match[0]['authorIds'] = [];
             if (isset($match[0]['authors'])) {
                 foreach ($match[0]['authors'] as $current) {
@@ -1473,7 +1496,8 @@ class DatabaseIngester extends BaseIngester
                         $id = $this->getPersonIdForUri($current['uri']);
                     } else {
                         Console::writeLine("WARNING: Missing URI for {$current['name']}...");
-                        $id = $this->getPersonIdForString($current['name']);
+                        $expected = isset($match[1]['authorIds']) ? $match[1]['authorIds'] : [];
+                        $id = $this->getPersonIdForString($current['name'], $expected);
                     }
                     if (!$id) {
                         $text = isset($current['uri'])
@@ -1483,16 +1507,6 @@ class DatabaseIngester extends BaseIngester
                         return false;
                     }
                     $match[0]['authorIds'][] = $id;
-                }
-            }
-            if ($match[1]) {
-                $credits = $this->getDbTable('editionscredits')
-                    ->getCreditsForEdition($match[1]['edition']['Edition_ID']);
-                $match[1]['authorIds'] = [];
-                foreach ($credits as $credit) {
-                    if ($credit->Role_ID == self::ROLE_AUTHOR) {
-                        $match[1]['authorIds'][] = $credit->Person_ID;
-                    }
                 }
             }
         }
