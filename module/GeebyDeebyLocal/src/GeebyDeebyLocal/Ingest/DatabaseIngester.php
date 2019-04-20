@@ -1369,6 +1369,57 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
+     * Given first and last names, try to find a matching person.
+     *
+     * @param string $first First name
+     * @param string $last  Last name
+     * @param string $raw   Raw name string
+     *
+     * @return int|bool
+     */
+    protected function fuzzyPersonMatch($first, $last, $raw)
+    {
+        $peopleTable = $this->getDbTable('person');
+        $callback = function ($select) use ($first, $last) {
+            if (strlen($first) > 0) {
+                $initial = substr($first, 0, 1);
+                $select->where->like('First_Name', $initial . '%');
+            }
+            $select->where->like('Last_Name', $last);
+            $select->order(['Last_Name', 'First_Name']);
+        };
+        $people = [];
+        $options = '';
+        $result = $peopleTable->select($callback);
+        if (count($result) === 0) {
+            $fuzzierCallback = function ($select) use ($last) {
+                $chunk = substr($last, 0, strlen($last) - 1);
+                $select->where->like('Last_Name', $chunk . '%');
+                $select->order(['Last_Name', 'First_Name']);
+            };
+            $result = $peopleTable->select($fuzzierCallback);
+        }
+        if (count($result) > 1) {
+            Console::writeLine("Possible matches found for $raw...");
+        }
+        foreach ($result as $option) {
+            $people[] = $option->Person_ID;
+            $letter = chr(64 + count($people));
+            $options .= $letter;
+            Console::writeLine(
+                $letter . '. ' . $option->First_Name . ' ' . $option->Last_Name
+                . $option->Extra_Details
+            );
+        };
+        if (empty($options)) {
+            return false;
+        }
+        $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
+        $char = strtoupper($prompt->show());
+        return $people[ord($char) - 65];
+}
+
+    /**
      * Given a name string, look up a matching person ID.
      *
      * @param string $str Name string
@@ -1382,8 +1433,8 @@ class DatabaseIngester extends BaseIngester
             $str = trim(substr($str, 0, strlen($str) - strlen($bad)));
         }
         $parts = explode(',', $str, 3);
-        $last = $parts[0];
-        $first = isset($parts[1]) ? $parts[1] : '';
+        $last = trim($parts[0]);
+        $first = isset($parts[1]) ? trim($parts[1]) : '';
         // handle special case -- last name with date, no first:
         if (preg_match('/\d{4}-\d{4}/', $first)) {
             $parts[2] = $first;
@@ -1392,23 +1443,24 @@ class DatabaseIngester extends BaseIngester
         $extra = isset($parts[2]) ? (', ' . trim($parts[2])) : '';
         $people = $this->getDbTable('person');
         $query = [
-            'First_Name' => trim($first),
-            'Last_Name' => trim($last),
+            'Last_Name' => $last,
         ];
+        if (!empty($first)) {
+            $query['First_Name'] = $first;
+        }
         if (!empty($extra)) {
             $query['Extra_Details'] = $extra;
         }
         $result = $people->select($query);
-        if (count($result) == 1) {
+        if (count($result) >= 1) {
             foreach ($result as $current) {
-                if ($current->Extra_Details != $extra) {
-                    Console::writeLine('Extra detail mismatch in person.');
-                    return false;
+                if ($current->Extra_Details == $extra) {
+                    return $current->Person_ID;
                 }
-                return $current->Person_ID;
             }
+            Console::writeLine('Extra detail mismatch in person.');
         }
-        return false;
+        return $this->fuzzyPersonMatch($first, $last, $str);
     }
 
     protected function addAuthorDetails($details)
