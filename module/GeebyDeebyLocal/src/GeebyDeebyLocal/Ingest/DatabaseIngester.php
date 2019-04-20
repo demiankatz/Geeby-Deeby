@@ -1400,6 +1400,9 @@ class DatabaseIngester extends BaseIngester
             };
             $result = $peopleTable->select($fuzzierCallback);
         }
+        if (count($result) === 0) {
+            return false;
+        }
         foreach ($result as $option) {
             if (in_array($option->Person_ID, $expected)) {
                 Console::writeLine(
@@ -1410,9 +1413,7 @@ class DatabaseIngester extends BaseIngester
                 return $option->Person_ID;
             }
         }
-        if (count($result) > 1) {
-            Console::writeLine("Possible matches found for $raw...");
-        }
+        Console::writeLine("Possible matches found for $raw...");
         foreach ($result as $option) {
             $people[] = $option->Person_ID;
             $letter = chr(64 + count($people));
@@ -1422,9 +1423,6 @@ class DatabaseIngester extends BaseIngester
                 . $option->Extra_Details
             );
         };
-        if (empty($options)) {
-            return false;
-        }
         $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
         $char = strtoupper($prompt->show());
         return $people[ord($char) - 65];
@@ -1449,7 +1447,7 @@ class DatabaseIngester extends BaseIngester
         $last = trim($parts[0]);
         $first = isset($parts[1]) ? trim($parts[1]) : '';
         // handle special case -- last name with date, no first:
-        if (preg_match('/\d{4}-\d{4}/', $first)) {
+        if (preg_match('/\d{4}\\??-\d{4}\\??/', $first)) {
             $parts[2] = $first;
             $first = null;
         }
