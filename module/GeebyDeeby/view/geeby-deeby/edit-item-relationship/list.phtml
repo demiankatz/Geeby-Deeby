@@ -1,0 +1,6 @@
+<? $this->layout()->title = 'Edit Item Relationships' ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_attributes']) ?>
+<p><b>Item Relationships:</b></p>
+<button id="add_item_relationship" type="button" onclick="ItemsRelationship.edit('NEW');">Add Item Relationship</button>
+<br /><br />
+<div id="items_relationship_list"><?=$this->render('geeby-deeby/edit-item-relationship/render-item-relationships.phtml')?></div>

@@ -1,10 +1,10 @@
 <?php
 /**
- * Edit tag relationship controller
+ * Row Definition for Items_Relationships
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2018.
+ * Copyright (C) Demian Katz 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,55 +20,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Controller;
+namespace GeebyDeeby\Db\Row;
 
 /**
- * Edit tag relationship controller
+ * Row Definition for Items_Relationships
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditTagRelationshipController extends AbstractBase
+class ItemsRelationship extends RowGateway
 {
     /**
-     * Display a list of types
+     * Constructor
      *
-     * @return mixed
+     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function listAction()
+    public function __construct($adapter)
     {
-        return $this->getGenericList(
-            'tagsrelationship', 'relationships',
-            'geeby-deeby/edit-tag-relationship/render-tag-relationships'
-        );
+        parent::__construct('Items_Relationship_ID', 'Items_Relationships', $adapter);
     }
 
     /**
-     * Operate on a single type
+     * Validate the fields in the current object.  Return error message if problem
+     * found, boolean false if no errors were found.
      *
-     * @return mixed
+     * @return string|bool
      */
-    public function indexAction()
+    public function validate()
     {
-        $assignMap = array(
-            'relationship_name' => 'Tags_Relationship_Name',
-            'rdf_property' => 'Tags_Relationship_RDF_Property',
-            'priority' => 'Display_Priority',
-            'inverse_relationship_name' => 'Tags_Inverse_Relationship_Name',
-            'inverse_rdf_property' => 'Tags_Inverse_Relationship_RDF_Property',
-            'inverse_priority' => 'Inverse_Display_Priority',
-        );
-        $response = $this
-            ->handleGenericItem('tagsrelationship', $assignMap, 'relationship');
-
-        return $response;
+        if (empty($this->Items_Relationship_Name)) {
+            return 'Name cannot be blank.';
+        }
+        return false;
     }
 }

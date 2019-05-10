@@ -112,6 +112,19 @@
           <? endif; ?>
         </td>
   <? endforeach; ?>
+
+  <? foreach ($this->relationshipsValues as $current): ?>
+    <tr>
+      <th><?=$this->escapeHtml($current['label'])?>:</th>
+      <td>
+        <? foreach ($current['values'] as $value): ?>
+          <a href="<?=$this->url('series', ['id' => $value['Series_ID']])?>">
+            <?=$this->escapeHtml($value['Series_Name'])?>
+          </a><br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endforeach; ?>
 </table>
 
 <? if (!empty($series['Series_Description'])): ?>
