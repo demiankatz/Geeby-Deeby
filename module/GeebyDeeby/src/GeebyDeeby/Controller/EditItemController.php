@@ -94,6 +94,9 @@ class EditItemController extends AbstractBase
                 ->getTags($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->itemObj->Item_ID);
+            $view->relationships = $this->getDbTable('itemsrelationship')->getOptionList();
+            $view->relationshipsValues = $this->getDbTable('itemsrelationshipsvalues')
+                ->getRelationshipsForItem($view->itemObj->Item_ID);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
             $view->editions = $this->getDbTable('edition')
@@ -527,6 +530,34 @@ class EditItemController extends AbstractBase
                 'id' => $this->params()->fromRoute('id'),
                 'extra' => $this->params()->fromRoute('extra')
             ]
+        );
+    }
+
+    /**
+     * Deal with arbitrary relationships.
+     *
+     * @return mixed
+     */
+    public function relationshipAction()
+    {
+        // The relationship ID may have a leading 'i' indicating an inverse
+        // relationship; if we find this, we should handle it here to keep
+        // the standard behavior consistent.
+        $rid = $this->params()->fromRoute('relationship_id');
+        if (substr($rid, 0, 1) === 'i') {
+            $linkFrom = 'Object_Item_ID';
+            $linkTo = 'Subject_Item_ID';
+            $rid = substr($rid, 1);
+        } else {
+            $linkFrom = 'Subject_Item_ID';
+            $linkTo = 'Object_Item_ID';
+        }
+        $extras = ['Items_Relationship_ID' => $rid];
+        return $this->handleGenericLink(
+            'itemsrelationshipsvalues', $linkFrom, $linkTo,
+            'relationshipsValues', 'getRelationshipsForItem',
+            'geeby-deeby/edit-item/relationship-list.phtml',
+            $extras
         );
     }
 

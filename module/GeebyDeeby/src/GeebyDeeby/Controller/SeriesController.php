@@ -57,7 +57,8 @@ class SeriesController extends AbstractBase
         }
         $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
             ->getAttributesForSeries($id);
-
+        $extras['relationshipsValues'] = $this->getDbTable('seriesrelationshipsvalues')
+            ->getRelationshipsForSeries($id);
         return $this->createViewModel(
             array('series' => $rowObj->toArray()) + $extras
         );
@@ -137,7 +138,7 @@ class SeriesController extends AbstractBase
             $select->group('Series_ID');
         };
         $view->dateStats = current($editions->select($callback)->toArray());
-        
+
         // Check for missing items
         $callback = function ($select) use ($seriesId) {
             $select->where(['Series_ID' => $seriesId]);
@@ -418,6 +419,16 @@ class SeriesController extends AbstractBase
                     $current['Series_Attribute_RDF_Property'],
                     $current['Series_Attribute_Value']
                 );
+            }
+        }
+        foreach ($view->relationshipsValues as $current) {
+            if (!empty($current['predicate'])) {
+                foreach ($current['values'] as $value) {
+                    $series->add(
+                        $current['predicate'],
+                        $this->getServerUrl('series', ['id' => $value['Series_ID']])
+                    );
+                }
             }
         }
         $name = $view->series['Series_Name'];

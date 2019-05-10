@@ -13,6 +13,7 @@
   <li><a href="#credits-tab" data-toggle="tab"><span>Credits</span></a></li>
   <li><a href="#desc-tab" data-toggle="tab"><span>Descriptions</span></a></li>
   <li><a href="#bib-tab" data-toggle="tab"><span>References</span></a></li>
+  <li><a href="#relationships-tab" data-toggle="tab">Relationships</a></li>
   <li><a href="#tags-tab" data-toggle="tab"><span>Subjects/Tags</span></a></li>
   <li><a href="#translations-tab" data-toggle="tab"><span>Translations</span></a></li>
 </ul>
@@ -189,6 +190,22 @@
     </div>
     <div id="description_list">
       <?=$this->render('geeby-deeby/edit-item/description-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="relationships-tab" class="tab-pane">
+    <div>
+      <select id="relationship_type">
+        <? foreach ($this->relationships as $value => $label): ?>
+          <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
+        <? endforeach; ?>
+      </select>
+      <input id="target_item" />
+      <button onclick="Item.link('Relationship');">Add Relationship</button>
+    </div>
+    <hr/>
+    <div id="relationship_list">
+      <?=$this->render('geeby-deeby/edit-item/relationship-list.phtml')?>
     </div>
   </div>
 

@@ -35,6 +35,11 @@ var SeriesEditor = function() {
                 'note_id': { 'id': '#Publisher_Note_ID', 'nonNumericDefault': '' }
             }
         },
+        'Relationship': {
+            'subtypeSelector': { 'id': '#relationship_type' },
+            'targetSelector': '#relationship_list',
+            'uriField': { 'id': '#target_series', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid series.' }
+        },
         'Translation': {
             'subtypeSelector': { 'id': '#trans_type' },
             'uriField': { 'id': '#trans_name', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid series.' }
@@ -88,7 +93,7 @@ if (typeof Item === "object") {
 $(document).ready(function() {
     if (typeof registerAutocomplete === 'function') {
         registerAutocomplete('#Publisher_ID', 'Publisher');
-        registerAutocomplete('#trans_name', 'Series');
+        registerAutocomplete('#trans_name,#target_series', 'Series');
         registerAutocomplete('#item_name', 'Item');
         // .Note_ID autocomplete is already registered by edit_items.js
     }

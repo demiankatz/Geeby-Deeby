@@ -1,10 +1,10 @@
 <?php
 /**
- * Edit series attribute controller
+ * Edit series relationship controller
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Controller;
 
 /**
- * Edit series attribute controller
+ * Edit series relationship controller
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,7 +36,7 @@ namespace GeebyDeeby\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditSeriesAttributeController extends AbstractBase
+class EditSeriesRelationshipController extends AbstractBase
 {
     /**
      * Display a list of types
@@ -45,16 +45,10 @@ class EditSeriesAttributeController extends AbstractBase
      */
     public function listAction()
     {
-        $view = $this->getGenericList(
-            'seriesattribute', 'attributes',
-            'geeby-deeby/edit-series-attribute/render-series-attributes'
+        return $this->getGenericList(
+            'seriesrelationship', 'relationships',
+            'geeby-deeby/edit-series-relationship/render-series-relationships'
         );
-        // If this is not an AJAX request, we also want to display relationships:
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->relationships
-                = $this->forwardTo(__NAMESPACE__ . '\EditSeriesRelationship', 'list')->relationships;
-        }
-        return $view;
     }
 
     /**
@@ -65,14 +59,15 @@ class EditSeriesAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = array(
-            'attribute_name' => 'Series_Attribute_Name',
-            'rdf_property' => 'Series_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority'
-
+            'relationship_name' => 'Series_Relationship_Name',
+            'rdf_property' => 'Series_Relationship_RDF_Property',
+            'priority' => 'Display_Priority',
+            'inverse_relationship_name' => 'Series_Inverse_Relationship_Name',
+            'inverse_rdf_property' => 'Series_Inverse_Relationship_RDF_Property',
+            'inverse_priority' => 'Inverse_Display_Priority',
         );
         $response = $this
-            ->handleGenericItem('seriesattribute', $assignMap, 'attribute');
+            ->handleGenericItem('seriesrelationship', $assignMap, 'relationship');
 
         return $response;
     }
