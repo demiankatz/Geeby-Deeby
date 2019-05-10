@@ -49,7 +49,7 @@ class EditTagAttributeController extends AbstractBase
             'tagsattribute', 'attributes',
             'geeby-deeby/edit-tag-attribute/render-tag-attributes'
         );
-        // If this is not an AJAX request, we also want to display cities:
+        // If this is not an AJAX request, we also want to display relationships:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->relationships
                 = $this->forwardTo(__NAMESPACE__ . '\EditTagRelationship', 'list')->relationships;
@@ -69,7 +69,7 @@ class EditTagAttributeController extends AbstractBase
             'rdf_property' => 'Tags_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
             'priority' => 'Display_Priority'
-            
+
         );
         $response = $this
             ->handleGenericItem('tagsattribute', $assignMap, 'attribute');
