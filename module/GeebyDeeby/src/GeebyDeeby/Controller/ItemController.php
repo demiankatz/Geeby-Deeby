@@ -55,6 +55,8 @@ class ItemController extends AbstractBase
         }
         $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
             ->getAttributesForItem($id);
+        $extras['relationshipsValues'] = $this->getDbTable('itemsrelationshipsvalues')
+            ->getRelationshipsForItem($id);
         return $this->createViewModel(
             array('item' => $rowObj->toArray()) + $extras
         );

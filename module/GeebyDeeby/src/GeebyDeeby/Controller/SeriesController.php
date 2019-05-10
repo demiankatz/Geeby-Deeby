@@ -57,7 +57,8 @@ class SeriesController extends AbstractBase
         }
         $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
             ->getAttributesForSeries($id);
-
+        $extras['relationshipsValues'] = $this->getDbTable('seriesrelationshipsvalues')
+            ->getRelationshipsForSeries($id);
         return $this->createViewModel(
             array('series' => $rowObj->toArray()) + $extras
         );
@@ -137,7 +138,7 @@ class SeriesController extends AbstractBase
             $select->group('Series_ID');
         };
         $view->dateStats = current($editions->select($callback)->toArray());
-        
+
         // Check for missing items
         $callback = function ($select) use ($seriesId) {
             $select->where(['Series_ID' => $seriesId]);
