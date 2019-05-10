@@ -519,6 +519,16 @@ return array(
                             ),
                         ),
                     ),
+                    'item_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Item/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditItem',
+                                'action'        => 'Relationship',
+                            ),
+                        ),
+                    ),
                     'language' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -785,6 +795,16 @@ return array(
                             ),
                         ),
                     ),
+                    'series_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Series/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditSeries',
+                                'action'        => 'Relationship',
+                            ),
+                        ),
+                    ),
                     'seriesattribute' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -818,16 +838,6 @@ return array(
                             ),
                         ),
                     ),
-                    'tag_relationship_linker' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/Tag/:id/Relationship/:relationship_id[/[:extra]]',
-                            'defaults' => array(
-                                'controller'    => 'EditTag',
-                                'action'        => 'Relationship',
-                            ),
-                        ),
-                    ),
                     'tag_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -835,6 +845,16 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditTag',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'tag_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Tag/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditTag',
+                                'action'        => 'Relationship',
                             ),
                         ),
                     ),

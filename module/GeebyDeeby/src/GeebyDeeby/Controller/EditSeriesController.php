@@ -406,6 +406,34 @@ class EditSeriesController extends AbstractBase
     }
 
     /**
+     * Deal with arbitrary relationships.
+     *
+     * @return mixed
+     */
+    public function relationshipAction()
+    {
+        // The relationship ID may have a leading 'i' indicating an inverse
+        // relationship; if we find this, we should handle it here to keep
+        // the standard behavior consistent.
+        $rid = $this->params()->fromRoute('relationship_id');
+        if (substr($rid, 0, 1) === 'i') {
+            $linkFrom = 'Object_Series_ID';
+            $linkTo = 'Subject_Series_ID';
+            $rid = substr($rid, 1);
+        } else {
+            $linkFrom = 'Subject_Series_ID';
+            $linkTo = 'Object_Series_ID';
+        }
+        $extras = ['Series_Relationship_ID' => $rid];
+        return $this->handleGenericLink(
+            'seriesrelationshipsvalues', $linkFrom, $linkTo,
+            'relationshipsValues', 'getRelationshipsForSeries',
+            'geeby-deeby/edit-series/relationship-list.phtml',
+            $extras
+        );
+    }
+
+    /**
      * Show action -- allows tolerance of URLs where the user has inserted 'edit'
      * into an existing front-end link.
      *
