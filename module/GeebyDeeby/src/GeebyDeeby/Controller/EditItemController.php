@@ -94,6 +94,9 @@ class EditItemController extends AbstractBase
                 ->getTags($view->itemObj->Item_ID);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->itemObj->Item_ID);
+            $view->relationships = $this->getDbTable('itemsrelationship')->getOptionList();
+            $view->relationshipsValues = $this->getDbTable('itemsrelationshipsvalues')
+                ->getRelationshipsForItem($tagId);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($view->itemObj->Item_ID);
             $view->editions = $this->getDbTable('edition')

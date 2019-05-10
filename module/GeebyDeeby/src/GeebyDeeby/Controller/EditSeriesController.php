@@ -129,6 +129,9 @@ class EditSeriesController extends AbstractBase
                 ->getMaterials($seriesId);
             $view->series_publishers = $this->getDbTable('seriespublishers')
                 ->getPublishers($seriesId);
+            $view->relationships = $this->getDbTable('seriesrelationship')->getOptionList();
+            $view->relationshipsValues = $this->getDbTable('seriesrelationshipsvalues')
+                ->getRelationshipsForSeries($seriesId);
             $view->translatedInto = $this->getDbTable('seriestranslations')
                 ->getTranslatedFrom($seriesId);
             $view->translatedFrom = $this->getDbTable('seriestranslations')
