@@ -156,6 +156,16 @@ class ItemController extends AbstractBase
         $item = $graph->resource($uri, $class);
         $name = $view->item['Item_Name'];
         $item->set('dcterms:title', $articleHelper->formatTrailingArticles($name));
+        foreach ($view->relationshipsValues as $current) {
+            if (!empty($current['predicate'])) {
+                foreach ($current['values'] as $value) {
+                    $item->add(
+                        $current['predicate'],
+                        $this->getServerUrl('item', ['id' => $value['Item_ID']])
+                    );
+                }
+            }
+        }
         return $item;
     }
 

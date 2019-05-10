@@ -421,6 +421,16 @@ class SeriesController extends AbstractBase
                 );
             }
         }
+        foreach ($view->relationshipsValues as $current) {
+            if (!empty($current['predicate'])) {
+                foreach ($current['values'] as $value) {
+                    $series->add(
+                        $current['predicate'],
+                        $this->getServerUrl('series', ['id' => $value['Series_ID']])
+                    );
+                }
+            }
+        }
         $name = $view->series['Series_Name'];
         $series->set('dcterms:title', $articleHelper->formatTrailingArticles($name));
         return $series;
