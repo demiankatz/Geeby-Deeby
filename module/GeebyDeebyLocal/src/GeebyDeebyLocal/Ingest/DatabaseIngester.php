@@ -1143,6 +1143,7 @@ class DatabaseIngester extends BaseIngester
         $edName = $parentEdition->Edition_Name;
         $seriesID = $parentEdition->Series_ID;
         $edsTable = $this->getDbTable('edition');
+        $altName = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
         $edsTable->insert(
             [
                 'Edition_Name' => $edName,
@@ -1150,6 +1151,7 @@ class DatabaseIngester extends BaseIngester
                 'Item_ID' => $item,
                 'Parent_Edition_ID' => $parentEdition->Edition_ID,
                 'Position_In_Parent' => $pos,
+                'Preferred_Item_AltName_ID' => $altName ? $altName : null,
             ]
         );
         $newObj = $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
