@@ -991,7 +991,18 @@ class DatabaseIngester extends BaseIngester
             return [];
         }
         $candidates = [];
+        $allAuthors = [];
+        $pseudo = $this->getDbTable('pseudonyms');
         foreach ($data['authorIds'] as $author) {
+            $allAuthors[] = $author;
+            foreach ($pseudo->getPseudonyms($author) as $p) {
+                $allAuthors[] = $p['Person_ID'];
+            }
+            foreach ($pseudo->getRealNames($author) as $p) {
+                $allAuthors[] = $p['Person_ID'];
+            }
+        }
+        foreach (array_unique($allAuthors) as $author) {
             $candidates = array_merge($candidates, $this->getItemMatchCandidatesUsingAuthor($author, $data));
         }
         return $candidates;
