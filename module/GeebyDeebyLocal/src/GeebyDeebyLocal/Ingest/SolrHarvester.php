@@ -101,6 +101,27 @@ class SolrHarvester
     }
 
     /**
+     * Given the PID of an item, get PIDs of all of its pages.
+     *
+     * @param string $pid PID
+     *
+     * @return array
+     */
+    public function getAllPagePIDs($pid)
+    {
+        $query = 'RELS_EXT_isPageOf_uri_ms:"info:fedora/' . $pid . '"';
+        $field = $this->settings->solrIdField . ',RELS_EXT_isSequenceNumber_literal_ms';
+        $solr = $this->querySolr($query, $field);
+        $results = array();
+        if (isset($solr->response->docs)) {
+            foreach ($solr->response->docs as $doc) {
+                $results[$doc->RELS_EXT_isSequenceNumber_literal_ms[0]] = $doc->{$this->settings->solrIdField};
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Given an edition, retrieve a PID. Return false if no match found.
      *
      * @param string $edition Edition

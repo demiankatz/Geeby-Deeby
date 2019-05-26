@@ -132,6 +132,31 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
+     * Harvest TIFFs from a pid to a directory for later processing.
+     *
+     * @return mixed
+     */
+    public function harvesttiffsAction()
+    {
+        $dir = rtrim($this->params()->fromRoute('dir'), '/');
+        if (!is_dir($dir)) {
+            if (!mkdir($dir)) {
+                Console::writeLine("Cannot create directory '$dir'");
+                return;
+            }
+        }
+        $pid = $this->params()->fromRoute('pid');
+        $results = $this->solr->getAllPagePIDs($pid);
+        foreach ($results as $page => $pid) {
+            Console::writeLine("Downloading page $page...");
+            file_put_contents(
+                $dir . '/' . str_pad($page, 5, '0', STR_PAD_LEFT) . '.tiff',
+                file_get_contents("https://dimenovels.lib.niu.edu/islandora/object/" . urlencode($pid) . "/datastream/OBJ/download")
+            );
+        }
+    }
+
+    /**
      * Ingest the contents of a harvest directory.
      *
      * @return mixed

@@ -51,6 +51,16 @@ return array(
                         )
                     )
                 ),
+                'harvest-tiffs' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'harvest tiffs <pid> <dir>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'harvesttiffs',
+                        )
+                    )
+                ),
                 'ingest-directory' => array(
                     'type' => 'simple',
                     'options' => array(
