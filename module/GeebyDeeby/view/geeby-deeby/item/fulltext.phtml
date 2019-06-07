@@ -8,7 +8,7 @@
 <? endif; ?>
 
 <form action="<?=$this->url(isset($series) ? 'series' : 'items', array('extra' => 'FullText') + (isset($series) ? array('id' => $series['Series_ID']) : array()))?>" method="GET">
-  Showing results from:
+  Showing <?=count($fulltext)?> result<? if (count($fulltext) > 1): ?>s<? endif; ?> from:
   <input type="hidden" name="fuzzy" value="<?=$fuzzy ? 1 : 0?>" />
   <select name="source">
     <option value="">All Sources</option>
