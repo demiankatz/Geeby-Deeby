@@ -241,7 +241,7 @@
           <td>
             <? foreach ($current['values'] as $value): ?>
               <a href="<?=$this->url('item', ['id' => $value['Item_ID']])?>">
-                <?=$this->escapeHtml($value['Item_Name'])?>
+                <?=$this->fixTitle($value['Item_Name'])?>
               </a><br />
             <? endforeach; ?>
           </td>
