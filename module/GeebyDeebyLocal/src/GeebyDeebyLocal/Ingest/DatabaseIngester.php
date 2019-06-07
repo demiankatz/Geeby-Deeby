@@ -1252,11 +1252,7 @@ class DatabaseIngester extends BaseIngester
                 return $current;
             }
         }
-        Console::writeLine(
-            'ERROR: Found ' . count($lookup) . ' items at position ' . $pos . ' of '
-            . $series->Series_Name
-        );
-        return false;
+        return $this->pickEdition($lookup);
     }
 
     /**
@@ -1591,6 +1587,32 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
+     * Given a list of editions, make the user pick one.
+     *
+     * @param \Iterable $children List of editions to check.
+     *
+     * @return object
+     */
+    protected function pickEdition($children)
+    {
+        $options = '';
+        $menu = [];
+        $choices = [];
+        foreach ($children as $i => $current) {
+            $letter = chr(65 + $i);
+            $options .= $letter;
+            $menu[] = $letter . '. ' . $current->Edition_Name;
+            $choices[] = $current;
+        }
+        Console::writeLine("Multiple editions found at same position.");
+        Console::writeLine("Please pick one:");
+        Console::writeLine(implode("\n", $menu));
+        $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
+        $char = strtoupper($prompt->show());
+        return $choices[ord($char) - 65];
+    }
+
+    /**
      * Match up incoming contents against an existing series entry; return an array of
      * arrays, each containing an array of incoming contents data as the first element
      * and a matching array of edition/item data (or false) as the second element.
@@ -1622,17 +1644,7 @@ class DatabaseIngester extends BaseIngester
                 Console::writeLine("Trying replacement no. $replacementNo");
             }
             if (count($children) > 1) {
-                Console::writeLine("Multiple editions found at same position.");
-                Console::writeLine("Please pick one:");
-                $options = '';
-                foreach ($children as $i => $current) {
-                    $letter = chr(65 + $i);
-                    $options .= $letter;
-                    Console::writeLine($letter . '. ' . $current->Edition_Name);
-                }
-                $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
-                $char = strtoupper($prompt->show());
-                $children = [$children[ord($char) - 65]];
+                $children = [$this->pickEdition($children)];
             }
             $success = $this->synchronizeSeriesEntriesHelper($children, $contents);
             if ($success) {
