@@ -61,6 +61,7 @@ class ItemsRelationshipsValues extends Gateway
                 'Items_Relationships_Values.Subject_Item_ID = t.Item_ID'
             );
             $select->where(['Object_Item_ID' => $itemID]);
+            $select->order(['Item_Name']);
         };
         return $this->select($callback);
     }
@@ -80,6 +81,7 @@ class ItemsRelationshipsValues extends Gateway
                 'Items_Relationships_Values.Object_Item_ID = t.Item_ID'
             );
             $select->where(['Subject_Item_ID' => $itemID]);
+            $select->order(['Item_Name']);
         };
         return $this->select($callback);
     }

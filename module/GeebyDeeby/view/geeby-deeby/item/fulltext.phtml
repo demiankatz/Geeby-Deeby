@@ -8,7 +8,7 @@
 <? endif; ?>
 
 <form action="<?=$this->url(isset($series) ? 'series' : 'items', array('extra' => 'FullText') + (isset($series) ? array('id' => $series['Series_ID']) : array()))?>" method="GET">
-  Showing results from:
+  Showing <?=count($fulltext)?> result<? if (count($fulltext) > 1): ?>s<? endif; ?> from:
   <input type="hidden" name="fuzzy" value="<?=$fuzzy ? 1 : 0?>" />
   <select name="source">
     <option value="">All Sources</option>
@@ -33,6 +33,10 @@
       <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
         <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
       </a>
+      <? if (!empty($current['Child_Items'])): ?>
+        <? $parts = array_unique(explode('||', $current['Child_Items'])); ?>
+        (<i><?=$this->escapeHtml($this->fixtitle($parts[0]))?></i><? if (count($parts) == 2): ?> and 1 more item<? elseif (count($parts) > 2): ?> and <?=(count($parts) - 1)?> more items<?endif ;?>)
+      <? endif; ?>
       <br />
     </span>
   <? endforeach; ?>

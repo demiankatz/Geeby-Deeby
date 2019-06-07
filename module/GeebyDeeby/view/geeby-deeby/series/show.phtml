@@ -146,7 +146,7 @@
       <?=$this->escapeHtml($this->fixtitle(isset($item['Item_AltName']) && !empty($item['Item_AltName']) ? $item['Item_AltName'] : $item['Item_Name']))?>
     </a>
     <? if (!empty($item['Child_Items'])): ?>
-      <? $parts = explode('||', $item['Child_Items']); ?>
+      <? $parts = array_unique(explode('||', $item['Child_Items'])); ?>
       (<i><?=$this->escapeHtml($this->fixtitle($parts[0]))?></i><? if (count($parts) == 2): ?> and 1 more item<? elseif (count($parts) > 2): ?> and <?=(count($parts) - 1)?> more items<?endif ;?>)
     <? endif; ?>
     <br />
