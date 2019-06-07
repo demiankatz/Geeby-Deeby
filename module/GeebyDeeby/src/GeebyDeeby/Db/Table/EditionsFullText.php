@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
 /**
@@ -169,6 +170,36 @@ class EditionsFullText extends Gateway
             $select->join(
                 array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
             );
+            $select->join(
+                array('childEds' => 'Editions'),
+                'eds.Edition_ID = childEds.Parent_Edition_ID',
+                array(),
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                array('childItems' => 'Items'),
+                'childEds.Item_ID = childItems.Item_ID',
+                array(
+                    'Child_Items' => new Expression(
+                        'GROUP_CONCAT('
+                            . 'COALESCE(?, ?) ORDER BY ? SEPARATOR \'||\')',
+                        array(
+                            'childIat.Item_AltName', 'childItems.Item_Name',
+                            'childEds.Position_In_Parent'),
+                        array(
+                            Expression::TYPE_IDENTIFIER,
+                            Expression::TYPE_IDENTIFIER,
+                            Expression::TYPE_IDENTIFIER
+                        )
+                    )
+                ),
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                array('childIat' => 'Items_AltTitles'),
+                'childEds.Preferred_Item_AltName_ID = childIat.Sequence_ID',
+                array(), Select::JOIN_LEFT
+            );
             if (null !== $series) {
                 $select->where->equalTo('eds.Series_ID', $series);
             }
@@ -178,10 +209,14 @@ class EditionsFullText extends Gateway
             }
             $select->group(
                 array(
-                    'eds.Item_ID', 'eds.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number'
+                    'eds.Item_ID', 'eds.Series_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number'
                 )
             );
-            $ord = array('Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Item_Name');
+            $ord = array(
+                'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
+                'eds.Replacement_Number', 'Item_Name'
+            );
             $select->order($ord);
         };
         return $this->select($callback);

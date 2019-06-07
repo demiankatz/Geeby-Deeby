@@ -116,6 +116,19 @@
         </tr>
       <? endif; ?>
 
+      <? foreach ($this->relationshipsValues as $current): ?>
+        <tr>
+          <th><?=$this->escapeHtml($current['label'])?>:</th>
+          <td>
+            <? foreach ($current['values'] as $value): ?>
+              <a href="<?=$this->url('item', ['id' => $value['Item_ID']])?>">
+                <?=$this->fixTitle($value['Item_Name'])?>
+              </a><br />
+            <? endforeach; ?>
+          </td>
+        </tr>
+      <? endforeach; ?>
+
       <? if (count($descriptions) > 0): ?>
         <? foreach ($descriptions as $desc): ?>
           <tr>

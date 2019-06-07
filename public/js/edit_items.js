@@ -60,6 +60,11 @@ var ItemEditor = function() {
             }
         },
         'Editions': { /* dummy placeholder to make copyEdition function work correctly */ },
+        'Relationship': {
+            'subtypeSelector': { 'id': '#relationship_type' },
+            'targetSelector': '#relationship_list',
+            'uriField': { 'id': '#target_item', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }
+        },
         'Tag': {
             'uriField': { 'id': '#Tag_ID', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid tag.' }
         },
@@ -103,7 +108,7 @@ var ItemCreator = new ItemCreatorEditor();
 // Load data and setup autocomplete.
 $(document).ready(function() {
     if (typeof registerAutocomplete === 'function') {
-        registerAutocomplete('.Item_ID', 'Item');
+        registerAutocomplete('.Item_ID,#target_item', 'Item');
         registerAutocomplete('.Note_ID', 'Note');
         registerAutocomplete('.Person_ID', 'Person');
         registerAutocomplete('.Series_ID', 'Series');

@@ -303,7 +303,9 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     public function __invoke($creators, $credits, $editions)
     {
         $final = [];
-        $itemId = current($editions)['Item_ID'];
+        $currentEdition = current($editions);
+        $itemId = isset($currentEdition['Item_ID'])
+            ? $currentEdition['Item_ID'] : null;
         $groupedCreators = $this->groupCreators($creators, $itemId);
         if (empty($groupedCreators)) {
             $groupedCreators = ['an uncited source' => []];

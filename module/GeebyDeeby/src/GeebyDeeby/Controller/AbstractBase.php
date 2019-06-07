@@ -358,7 +358,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function getViewRenderer()
     {
-        return $this->getServiceLocator()->get('viewmanager')->getRenderer();
+        return $this->getServiceLocator()->get('ViewRenderer');
     }
 
     /**

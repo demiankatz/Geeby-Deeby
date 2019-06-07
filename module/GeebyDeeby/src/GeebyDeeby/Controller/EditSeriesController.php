@@ -129,6 +129,9 @@ class EditSeriesController extends AbstractBase
                 ->getMaterials($seriesId);
             $view->series_publishers = $this->getDbTable('seriespublishers')
                 ->getPublishers($seriesId);
+            $view->relationships = $this->getDbTable('seriesrelationship')->getOptionList();
+            $view->relationshipsValues = $this->getDbTable('seriesrelationshipsvalues')
+                ->getRelationshipsForSeries($seriesId);
             $view->translatedInto = $this->getDbTable('seriestranslations')
                 ->getTranslatedFrom($seriesId);
             $view->translatedFrom = $this->getDbTable('seriestranslations')
@@ -197,7 +200,7 @@ class EditSeriesController extends AbstractBase
             if (empty($row->Note_ID)) {
                 $row->Note_ID = null;
             }
-            $row->Series_AltName = $this->params()->fromPost('title');
+            $row->Series_AltName = trim($this->params()->fromPost('title'));
             if (empty($row->Series_AltName)) {
                 return $this->jsonDie('Title must not be empty.');
             }
@@ -403,6 +406,34 @@ class EditSeriesController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Deal with arbitrary relationships.
+     *
+     * @return mixed
+     */
+    public function relationshipAction()
+    {
+        // The relationship ID may have a leading 'i' indicating an inverse
+        // relationship; if we find this, we should handle it here to keep
+        // the standard behavior consistent.
+        $rid = $this->params()->fromRoute('relationship_id');
+        if (substr($rid, 0, 1) === 'i') {
+            $linkFrom = 'Object_Series_ID';
+            $linkTo = 'Subject_Series_ID';
+            $rid = substr($rid, 1);
+        } else {
+            $linkFrom = 'Subject_Series_ID';
+            $linkTo = 'Object_Series_ID';
+        }
+        $extras = ['Series_Relationship_ID' => $rid];
+        return $this->handleGenericLink(
+            'seriesrelationshipsvalues', $linkFrom, $linkTo,
+            'relationshipsValues', 'getRelationshipsForSeries',
+            'geeby-deeby/edit-series/relationship-list.phtml',
+            $extras
+        );
     }
 
     /**

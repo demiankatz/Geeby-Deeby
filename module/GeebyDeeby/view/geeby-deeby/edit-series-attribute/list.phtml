@@ -1,6 +1,16 @@
-<? $this->layout()->title = 'Edit Series Attributes' ?>
+<? $this->layout()->title = 'Edit Series Attributes and Relationships' ?>
 <? $this->scriptManager()->add(['base_editor', 'edit_attributes']) ?>
-<p><b>Series Attributes:</b></p>
-<button id="add_series_attribute" type="button" onclick="SeriesAttribute.edit('NEW');">Add Series Attribute</button>
-<br /><br />
-<div id="series_attribute_list"><?=$this->render('geeby-deeby/edit-series-attribute/render-series-attributes.phtml')?></div>
+<div class="row">
+  <div class="col-md-3">
+    <p><b>Series Attributes:</b></p>
+    <button id="add_series_attribute" type="button" onclick="SeriesAttribute.edit('NEW');">Add Series Attribute</button>
+    <br /><br />
+    <div id="series_attribute_list"><?=$this->render('geeby-deeby/edit-series-attribute/render-series-attributes.phtml')?></div>
+    </div>
+  <div class="col-md-3">
+    <p><b>Series Relationships:</b></p>
+    <button id="add_series_relationship" type="button" onclick="SeriesRelationship.edit('NEW');">Add Series Relationship</button>
+    <br /><br />
+    <div id="series_relationship_list"><?=$this->render('geeby-deeby/edit-series-relationship/render-series-relationships.phtml')?></div>
+  </div>
+</div>
