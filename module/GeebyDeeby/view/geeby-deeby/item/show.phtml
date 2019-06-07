@@ -52,14 +52,25 @@
         <tr>
           <th>Online Full Text:</th>
           <td>
+            <? $fullTextCount = count($fullText); ?>
+            <? $previousFullTextName = $skippedFullText = false; ?>
             <? foreach ($fullText as $current): ?>
-              <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
-                <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
-                <? if (count($editions) > 1): ?>
-                  (<?=$this->escapeHtml($this->fixtitle($current['Edition_Name']))?>)
-                <? endif; ?>
-              </a><br />
+              <? if ($fullTextCount > 6 && $current['Edition_Name'] == $previousFullTextName): ?>
+                <? $skippedFullText = true; ?>
+              <? else: ?>
+                <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
+                  <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
+                  <? if (count($editions) > 1): ?>
+                    (<?=$this->escapeHtml($this->fixtitle($current['Edition_Name']))?>)
+                  <? endif; ?>
+                </a><br />
+              <? endif; ?>
+              <? $previousFullTextName = $current['Edition_Name'] ?>
             <? endforeach; ?>
+            <? if ($skippedFullText): ?>
+              <i>To see all <?=$fullTextCount?> full text links, switch to
+              <a href="<?=$editionViewLink?>">Edition View</a>.</i>
+            <? endif; ?>
           </td>
         </tr>
       <? endif; ?>
