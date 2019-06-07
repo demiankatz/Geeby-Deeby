@@ -259,14 +259,17 @@ class EditEditionController extends AbstractBase
                 return $this->jsonDie('Title cannot be empty.');
             } else {
                 $table = $this->getDbTable('itemsalttitles');
-                $row = $table->createRow();
-                $row->Item_ID = $edition->Item_ID;
-                if (empty($row->Item_ID)) {
-                    return $this->jsonDie('Edition must be attached to an Item.');
+                $results = $table->select(['Item_AltName' => $titleText]);
+                if (count($results) == 0) {
+                    $row = $table->createRow();
+                    $row->Item_ID = $edition->Item_ID;
+                    if (empty($row->Item_ID)) {
+                        return $this->jsonDie('Edition must be attached to an Item.');
+                    }
+                    $row->Item_AltName = $titleText;
+                    $table->insert((array)$row);
+                    $results = $table->select((array)$row);
                 }
-                $row->Item_AltName = $titleText;
-                $table->insert((array)$row);
-                $results = $table->select((array)$row);
                 foreach ($results as $result) {
                     $result = (array)$result;
                     $title = $result['Sequence_ID'];
@@ -340,14 +343,17 @@ class EditEditionController extends AbstractBase
                 return $this->jsonDie('Title cannot be empty.');
             } else {
                 $table = $this->getDbTable('seriesalttitles');
-                $row = $table->createRow();
-                $row->Series_ID = $edition->Series_ID;
-                if (empty($row->Series_ID)) {
-                    return $this->jsonDie('Edition must be attached to a Series.');
+                $results = $table->select(['Series_AltName' => $titleText]);
+                if (count($results) == 0) {
+                    $row = $table->createRow();
+                    $row->Series_ID = $edition->Series_ID;
+                    if (empty($row->Series_ID)) {
+                        return $this->jsonDie('Edition must be attached to a Series.');
+                    }
+                    $row->Series_AltName = $titleText;
+                    $table->insert((array)$row);
+                    $results = $table->select((array)$row);
                 }
-                $row->Series_AltName = $titleText;
-                $table->insert((array)$row);
-                $results = $table->select((array)$row);
                 foreach ($results as $result) {
                     $result = (array)$result;
                     $title = $result['Sequence_ID'];
