@@ -1,15 +1,49 @@
 <?
     $title = $this->fixtitle($item['Item_Name']);
     $this->layout()->title = 'Item - ' . $title;
+    $editionViewLink = $this->url('item', array('id' => $item['Item_ID'], 'extra' => 'Editions'));
+
+    // If there are too many images to display comfortably, pick a smaller number
+    // and set a flag to display a link to edition view, where everything is visible.
+    // We'll try to pick at least one image for each distinct label, to the greatest
+    // extent possible.
+    $imageLimit = 12;
+    $truncatedImages = false;
+    if (count($images) > $imageLimit) {
+      $sortedImages = [];
+      foreach ($images as $image) {
+        $sortedImages[$image['Edition_Name']][] = $image;
+      }
+      $remainingGroups = count($sortedImages);
+      $newImages = [];
+      foreach ($sortedImages as $name => $contents) {
+        $remainingGroups--;
+        foreach ($contents as $current) {
+          if (count($newImages) + $remainingGroups < $imageLimit) {
+            $newImages[] = $current;
+          } else {
+            break;
+          }
+        }
+      }
+      $images = $newImages;
+      $truncatedImages = true;
+    }
 ?>
 <div class="row">
-  <?=$this->render('partials/images.phtml')?>
+  <?=$this->render('partials/images.phtml', compact('images'))?>
+  <? if ($truncatedImages): ?>
+    <div class="col-md-12">
+      To see more images, switch to
+      <a href="<?=$editionViewLink?>">Edition View</a>.
+    </div>
+  <? endif; ?>
   <div class="col-md-<?=count($images) > 0 ? 10 : 12?>">
     <div class="pull-right" style="padding:6px 0;">
       View:
       <div class="btn-group" style="margin-top:-4px;">
         <a href="" class="btn btn-primary">Combined</a>
-        <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'extra' => 'Editions'))?>" class="btn btn-default">By Edition</a>
+        <a href="<?=$editionViewLink?>" class="btn btn-default">By Edition</a>
       </div>
     </div>
     <? if (count($editions) > 1): ?><h2>Combined Summary</h2><? endif; ?>
