@@ -38,4 +38,7 @@
         <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : '<br />'?>
       </div>
     <? endforeach; ?>
+    <? if (count($images) > 1): // close the last row, unless we have a single floating image ?>
+      </div><div class="row">
+    <? endif; ?>
 <? endif; ?>

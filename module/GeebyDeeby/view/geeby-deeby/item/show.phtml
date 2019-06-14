@@ -8,6 +8,7 @@
     // We'll try to pick at least one image for each distinct label, to the greatest
     // extent possible.
     $imageLimit = 12;
+    $maxPerGroup = 3;
     $truncatedImages = false;
     if (count($images) > $imageLimit) {
       $sortedImages = [];
@@ -18,8 +19,10 @@
       $newImages = [];
       foreach ($sortedImages as $name => $contents) {
         $remainingGroups--;
-        foreach ($contents as $current) {
-          if (count($newImages) + $remainingGroups < $imageLimit) {
+        foreach ($contents as $posInGroup => $current) {
+          if (count($newImages) + $remainingGroups < $imageLimit
+            && $posInGroup < $maxPerGroup
+          ) {
             $newImages[] = $current;
           } else {
             break;
