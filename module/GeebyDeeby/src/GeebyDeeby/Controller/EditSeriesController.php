@@ -352,7 +352,7 @@ class EditSeriesController extends AbstractBase
         $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
             ->articleAwareAppend($series->Series_Name, ' edition');
         $insertCallback = function ($new, $row, $sm) {
-            $edsTable = $sm->get('GeebyDeeby\DbTablePluginManager')
+            $edsTable = $sm->get('GeebyDeeby\Db\Table\PluginManager')
                 ->get('edition');
             $rows = $edsTable->select(array('Item_ID' => $row['Item_ID']));
             foreach ($rows as $row) {

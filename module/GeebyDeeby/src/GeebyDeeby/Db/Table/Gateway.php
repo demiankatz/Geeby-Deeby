@@ -26,9 +26,10 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
-use Zend\Db\TableGateway\AbstractTableGateway,
-    Zend\ServiceManager\ServiceLocatorAwareInterface,
-    Zend\ServiceManager\ServiceLocatorInterface;
+
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+use Zend\Db\TableGateway\AbstractTableGateway;
 
 /**
  * Generic table gateway.
@@ -39,28 +40,33 @@ use Zend\Db\TableGateway\AbstractTableGateway,
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Gateway extends AbstractTableGateway implements ServiceLocatorAwareInterface
+class Gateway extends AbstractTableGateway
 {
-    protected $rowClass = null;
-    
     /**
-     * Service locator
+     * Table manager
      *
-     * @var ServiceLocatorInterface
+     * @var PluginManager
      */
-    protected $serviceLocator;
+    protected $tableManager;
 
     /**
      * Constructor
      *
-     * @param string $table    Name of database table to interface with
-     * @param string $rowClass Name of class used to represent rows (null for
-     * default)
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct($table, $rowClass = null)
-    {
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null, $table = null
+    ) {
+        $this->adapter = $adapter;
+        $this->tableManager = $tm;
         $this->table = $table;
-        $this->rowClass = $rowClass;
+        $this->initialize();
+        if (null !== $rowObj) {
+            $resultSetPrototype = $this->getResultSetPrototype();
+            $resultSetPrototype->setArrayObjectPrototype($rowObj);
+        }
     }
 
     /**
@@ -73,27 +79,6 @@ class Gateway extends AbstractTableGateway implements ServiceLocatorAwareInterfa
     public function setAdapter(\Zend\Db\Adapter\Adapter $adapter)
     {
         $this->adapter = $adapter;
-    }
-
-    /**
-     * Initialize
-     *
-     * @return void
-     */
-    public function initialize()
-    {
-        if ($this->isInitialized) {
-            return;
-        }
-        parent::initialize();
-        if (null !== $this->rowClass) {
-            $resultSetPrototype = $this->getResultSetPrototype();
-            $prototype = new $this->rowClass($this->getAdapter());
-            if ($prototype instanceof ServiceLocatorAwareInterface) {
-                $prototype->setServiceLocator($this->getServiceLocator());
-            }
-            $resultSetPrototype->setArrayObjectPrototype($prototype);
-        }
     }
 
     /**
@@ -138,30 +123,7 @@ class Gateway extends AbstractTableGateway implements ServiceLocatorAwareInterfa
      */
     public function getDbTable($table)
     {
-        return $this->getServiceLocator()->get($table);
-    }
-
-    /**
-     * Set the service locator.
-     *
-     * @param ServiceLocatorInterface $serviceLocator Locator to register
-     *
-     * @return Gateway
-     */
-    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
-    {
-        $this->serviceLocator = $serviceLocator;
-        return $this;
-    }
-
-    /**
-     * Get the service locator.
-     *
-     * @return \Zend\ServiceManager\ServiceLocatorInterface
-     */
-    public function getServiceLocator()
-    {
-        return $this->serviceLocator;
+        return $this->tableManager->get($table);
     }
 
     /**

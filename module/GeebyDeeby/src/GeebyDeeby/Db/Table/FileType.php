@@ -27,6 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+
 /**
  * Table Definition for File_Types
  *
@@ -40,10 +43,15 @@ class FileType extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('File_Types', 'GeebyDeeby\Db\Row\FileType');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'File_Types');
     }
 
     /**

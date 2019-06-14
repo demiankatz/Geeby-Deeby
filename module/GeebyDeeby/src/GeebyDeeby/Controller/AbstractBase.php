@@ -67,7 +67,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function getDbTable($table)
     {
-        return $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager')
+        return $this->getServiceLocator()->get('GeebyDeeby\Db\Table\PluginManager')
             ->get($table);
     }
 
@@ -96,7 +96,7 @@ class AbstractBase extends AbstractActionController
         $response->setContent(json_encode($output));
         return $response;
     }
-    
+
     /**
      * Die with a JSON success status.
      *
