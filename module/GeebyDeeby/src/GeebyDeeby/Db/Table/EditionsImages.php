@@ -105,6 +105,33 @@ class EditionsImages extends Gateway
     }
 
     /**
+     * Get a list of images for the specified edition (or its immediate parent).
+     *
+     * @param int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getImagesForEditionOrParentEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->quantifier('DISTINCT');
+            $select->join(
+                array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
+                ['Note'], Select::JOIN_LEFT
+            );
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Images.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Images.Edition_ID',
+                ['Edition_ID']
+            );
+            $select->order(array('Editions_Images.Position'));
+            $select->where->equalTo('eds.Edition_ID', $editionID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of images for the specified item.
      *
      * @var int $itemID Item ID
@@ -114,18 +141,21 @@ class EditionsImages extends Gateway
     public function getImagesForItem($itemID)
     {
         $callback = function ($select) use ($itemID) {
+            $select->quantifier('DISTINCT');
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Images.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Images.Edition_ID',
+                ['Edition_Name']
             );
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID', ['Item_ID']
             );
             $select->join(
                 array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['Note'], Select::JOIN_LEFT
             );
-            $select->order(array('Editions_Images.Position'));
+            $select->order(['Position']);
             $select->where->equalTo('i.Item_ID', $itemID);
         };
         return $this->select($callback);

@@ -57,16 +57,20 @@ class EditionsReleaseDates extends Gateway
     public function getDatesForItem($itemID)
     {
         $callback = function ($select) use ($itemID) {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Year', 'Month', 'Day']);
             $select->join(
                 array('n' => 'Notes'),
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['Note'], Select::JOIN_LEFT
             );
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
+                ['Edition_ID', 'Edition_Name']
             );
-            $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
+            $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID', ['Item_ID']);
             $select->order(array('Year', 'Month', 'Day', 'Edition_Name'));
             $select->where->equalTo('i.Item_ID', $itemID);
         };
@@ -90,6 +94,35 @@ class EditionsReleaseDates extends Gateway
             );
             $select->order(array('Year', 'Month', 'Day'));
             $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get a list of dates for the specified edition (or its immediate parent).
+     *
+     * @var int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getDatesForEditionOrParentEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Year', 'Month', 'Day']);
+            $select->join(
+                array('n' => 'Notes'),
+                'Editions_Release_Dates.Note_ID = n.Note_ID',
+                ['Note'], Select::JOIN_LEFT
+            );
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
+                ['Edition_ID']
+            );
+            $select->where->equalTo('eds.Edition_ID', $editionID);
+            $select->order(array('Year', 'Month', 'Day'));
         };
         return $this->select($callback);
     }
