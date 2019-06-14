@@ -57,6 +57,8 @@ return array(
                 'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
                 'itemsplatforms' => 'GeebyDeeby\Db\Table\ItemsPlatforms',
                 'itemsproductcodes' => 'GeebyDeeby\Db\Table\ItemsProductCodes',
+                'itemsrelationship' => 'GeebyDeeby\Db\Table\ItemsRelationship',
+                'itemsrelationshipsvalues' => 'GeebyDeeby\Db\Table\ItemsRelationshipsValues',
                 'itemsreleasedates' => 'GeebyDeeby\Db\Table\ItemsReleaseDates',
                 'itemsreviews' => 'GeebyDeeby\Db\Table\ItemsReviews',
                 'itemstags' => 'GeebyDeeby\Db\Table\ItemsTags',
@@ -90,6 +92,8 @@ return array(
                 'serieslinks' => 'GeebyDeeby\Db\Table\SeriesLinks',
                 'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',
                 'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
+                'seriesrelationship' => 'GeebyDeeby\Db\Table\SeriesRelationship',
+                'seriesrelationshipsvalues' => 'GeebyDeeby\Db\Table\SeriesRelationshipsValues',
                 'seriestranslations' => 'GeebyDeeby\Db\Table\SeriesTranslations',
                 'tag' => 'GeebyDeeby\Db\Table\Tag',
                 'tagsattribute' => 'GeebyDeeby\Db\Table\TagsAttribute',
@@ -515,6 +519,37 @@ return array(
                             ),
                         ),
                     ),
+                    'item_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Item/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditItem',
+                                'action'        => 'Relationship',
+                            ),
+                        ),
+                    ),
+                    'itemrelationship' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/ItemsRelationship[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditItemRelationship',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'itemrelationship_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/ItemsRelationshipList',
+                            'defaults' => array(
+                                'controller'    => 'EditItemRelationship',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                     'language' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -781,6 +816,16 @@ return array(
                             ),
                         ),
                     ),
+                    'series_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Series/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditSeries',
+                                'action'        => 'Relationship',
+                            ),
+                        ),
+                    ),
                     'seriesattribute' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -802,6 +847,27 @@ return array(
                             ),
                         ),
                     ),
+                    'seriesrelationship' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/SeriesRelationship[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditSeriesRelationship',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'seriesrelationship_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/SeriesRelationshipList',
+                            'defaults' => array(
+                                'controller'    => 'EditSeriesRelationship',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                     'tag' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -814,16 +880,6 @@ return array(
                             ),
                         ),
                     ),
-                    'tag_relationship_linker' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/Tag/:id/Relationship/:relationship_id[/[:extra]]',
-                            'defaults' => array(
-                                'controller'    => 'EditTag',
-                                'action'        => 'Relationship',
-                            ),
-                        ),
-                    ),
                     'tag_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -831,6 +887,16 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditTag',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'tag_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Tag/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditTag',
+                                'action'        => 'Relationship',
                             ),
                         ),
                     ),
@@ -1311,6 +1377,7 @@ return array(
             'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
             'GeebyDeeby\Controller\EditItemCreator' => 'GeebyDeeby\Controller\EditItemCreatorController',
+            'GeebyDeeby\Controller\EditItemRelationship' => 'GeebyDeeby\Controller\EditItemRelationshipController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
@@ -1321,6 +1388,7 @@ return array(
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\EditSeriesAttribute' => 'GeebyDeeby\Controller\EditSeriesAttributeController',
+            'GeebyDeeby\Controller\EditSeriesRelationship' => 'GeebyDeeby\Controller\EditSeriesRelationshipController',
             'GeebyDeeby\Controller\EditTag' => 'GeebyDeeby\Controller\EditTagController',
             'GeebyDeeby\Controller\EditTagAttribute' => 'GeebyDeeby\Controller\EditTagAttributeController',
             'GeebyDeeby\Controller\EditTagRelationship' => 'GeebyDeeby\Controller\EditTagRelationshipController',

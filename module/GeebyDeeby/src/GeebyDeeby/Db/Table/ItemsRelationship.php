@@ -1,10 +1,10 @@
 <?php
 /**
- * Table Definition for Tags_Relationships
+ * Table Definition for Items_Relationships
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2018.
+ * Copyright (C) Demian Katz 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Db\Table;
 
 /**
- * Table Definition for Tags_Relationships
+ * Table Definition for Items_Relationships
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -36,13 +36,13 @@ namespace GeebyDeeby\Db\Table;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class TagsRelationship extends AbstractRelationship
+class ItemsRelationship extends AbstractRelationship
 {
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct('Tags');
+        parent::__construct('Items');
     }
 }
