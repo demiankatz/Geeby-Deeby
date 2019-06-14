@@ -118,7 +118,7 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbTable('materialtype')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
-            $config = $this->getServiceLocator()->get('config');
+            $config = $this->serviceLocator->get('config');
             $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
                 ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
             $view->item_list = $this->getDbTable('item')
@@ -349,7 +349,7 @@ class EditSeriesController extends AbstractBase
         $series = $this->getDbTable('series')->getByPrimaryKey(
             $this->params()->fromRoute('id')
         );
-        $edName = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+        $edName = $this->serviceLocator->get('GeebyDeeby\Articles')
             ->articleAwareAppend($series->Series_Name, ' edition');
         $insertCallback = function ($new, $row, $sm) {
             $edsTable = $sm->get('GeebyDeeby\Db\Table\PluginManager')
@@ -365,7 +365,7 @@ class EditSeriesController extends AbstractBase
                 $edsTable->copyAssociatedInfo($row['Edition_ID'], $new);
             }
         };
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
             ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
         $listCallback = $groupByMaterial

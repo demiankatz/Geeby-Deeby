@@ -1,10 +1,10 @@
 <?php
 /**
- * Link controller
+ * Abstract controller factory
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -27,8 +27,10 @@
  */
 namespace GeebyDeeby\Controller;
 
+use Zend\ServiceManager\ServiceLocatorInterface;
+
 /**
- * Link controller
+ * Abstract controller factory
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -36,40 +38,31 @@ namespace GeebyDeeby\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class LinkController extends AbstractBase
+class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
 {
     /**
-     * Link list
+     * Determine if we can create a service with name
      *
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param $name
+     * @param $requestedName
+     * @return bool
+     */
+    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    {
+        return class_exists($requestedName);
+    }
+
+    /**
+     * Create service with name
+     *
+     * @param ServiceLocatorInterface $tm
+     * @param $name
+     * @param $requestedName
      * @return mixed
      */
-    public function listAction()
+    public function createServiceWithName(ServiceLocatorInterface $sm, $name, $requestedName)
     {
-        // Get link group configuration:
-        $config = $this->serviceLocator->get('config');
-        $groups = isset($config['geeby-deeby']['link_groups'])
-            ? $config['geeby-deeby']['link_groups'] : array();
-        $extra = $this->params()->fromRoute('extra');
-        $group = ($extra && isset($groups[$extra]))
-            ? $groups[$extra] : false;
-
-        // Initialize values:
-        $table = $this->getDbTable('link');
-
-        // Retrieve the relevant links:
-        $links = $table->getListByType(
-            isset($group['typeMatch']) ? $group['typeMatch'] : null
-        );
-
-        // Send back the details:
-        return $this->createViewModel(
-            array(
-                'links' => $links,
-                'title' => isset($group['title'])
-                    ? $group['title'] : 'Link List',
-                'desc' => isset($group['desc']) ? $group['desc'] : '',
-                'typeTrim' => isset($group['typeTrim']) ? $group['typeTrim'] : 0,
-            )
-        );
+        return new $requestedName($sm);
     }
 }

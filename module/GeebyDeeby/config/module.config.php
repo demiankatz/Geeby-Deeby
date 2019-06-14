@@ -1269,7 +1269,10 @@ return array(
         ),
     ),
     'controllers' => array(
-        'invokables' => array(
+        'abstract_factories' => array(
+            'GeebyDeeby\Controller\AbstractFactory',
+        ),
+        'aliases' => array(
             'GeebyDeeby\Controller\Approve' => 'GeebyDeeby\Controller\ApproveController',
             'GeebyDeeby\Controller\Category' => 'GeebyDeeby\Controller\CategoryController',
             'GeebyDeeby\Controller\City' => 'GeebyDeeby\Controller\CityController',
