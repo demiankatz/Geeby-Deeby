@@ -65,6 +65,9 @@ class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
     {
         $container = $rm->getServiceLocator();
         $adapter = $container->get('Zend\Db\Adapter\Adapter');
-        return new $requestedName($adapter);
+        $row = new $requestedName($adapter);
+        return ($row instanceof TableAwareGateway)
+            ? $row->setTableManager($container->get('GeebyDeeby\Db\Table\PluginManager'))
+            : $row;
     }
 }
