@@ -70,6 +70,37 @@ class EditionsFullText extends Gateway
     }
 
     /**
+     * Get a list of full text links for a particular edition (or its immediate
+     * parent).
+     *
+     * @param int $edition Edition ID
+     *
+     * @return mixed
+     */
+    public function getFullTextForEditionOrParentEdition($edition)
+    {
+        $callback = function ($select) use ($edition) {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Full_Text_URL']);
+            $select->join(
+                array('fts' => 'Full_Text_Sources'),
+                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
+                ['Full_Text_Source_Name']
+            );
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
+                ['Edition_ID']
+            );
+            $fields = array('Full_Text_Source_Name', 'Full_Text_URL');
+            $select->order($fields);
+            $select->where->equalTo('eds.Edition_ID', $edition);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of full text links for a particular item.
      *
      * @param int $item Item ID
@@ -79,13 +110,18 @@ class EditionsFullText extends Gateway
     public function getFullTextForItem($item)
     {
         $callback = function ($select) use ($item) {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Full_Text_URL']);
             $select->join(
                 array('fts' => 'Full_Text_Sources'),
-                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID'
+                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
+                ['Full_Text_Source_Name']
             );
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
+                ['Edition_Name']
             );
             $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
             $fields

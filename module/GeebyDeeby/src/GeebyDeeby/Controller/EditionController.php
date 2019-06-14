@@ -193,17 +193,19 @@ class EditionController extends AbstractBase
             ->getCreatorsForItem($view->edition['Item_ID']);
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForEdition($id);
-        $view->images = $this->getDbTable('editionsimages')->getImagesForEdition($id);
+        $view->images = $this->getDbTable('editionsimages')
+            ->getImagesForEditionOrParentEdition($id);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForEdition($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForEdition($id);
+        $view->dates = $this->getDbTable('editionsreleasedates')
+            ->getDatesForEditionOrParentEdition($id);
         $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForEdition($id);
         $view->codes = $this->getDbTable('editionsproductcodes')
             ->getProductCodesForEdition($id);
         $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
             ->getOCLCNumbersForEdition($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
-            ->getFullTextForEdition($id);
+            ->getFullTextForEditionOrParentEdition($id);
         $edTable = $this->getDbTable('edition');
         $view->publishers = $edTable->getPublishersForEdition($id);
         $view->parent = $edTable->getParentItemForEdition($id);
