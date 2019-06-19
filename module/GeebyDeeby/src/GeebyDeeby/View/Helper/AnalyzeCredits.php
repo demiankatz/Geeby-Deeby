@@ -247,7 +247,7 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
                 'person' => $credit,
                 'realPerson' => $this
                     ->getRealPersonDetails($person, array_keys($creators)),
-                'notes' => implode(', ', array_unique($notes))
+                'notes' => implode('; ', array_unique($notes))
             ];
         }
         return $final;
