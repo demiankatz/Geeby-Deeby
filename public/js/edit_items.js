@@ -59,7 +59,11 @@ var ItemEditor = function() {
                 'desc': { 'id': '#Description', 'emptyError': 'Description must not be blank.' }
             }
         },
-        'Editions': { /* dummy placeholder to make copyEdition function work correctly */ },
+        'Editions': {
+            'reorderPositionCallback': function(type, details, subtype) {
+                return parseInt($('#order' + details['edition_id']).val());
+            }
+        },
         'Relationship': {
             'subtypeSelector': { 'id': '#relationship_type' },
             'targetSelector': '#relationship_list',

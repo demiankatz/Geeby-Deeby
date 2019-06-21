@@ -516,6 +516,29 @@ class EditItemController extends AbstractBase
     }
 
     /**
+     * Set the order of an edition
+     *
+     * @return mixed
+     */
+    public function editionsorderAction()
+    {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        if ($this->getRequest()->isPost()) {
+            $edition = $this->params()->fromPost('edition_id');
+            $pos = $this->params()->fromPost('pos');
+            $this->getDbTable('edition')->update(
+                array('Item_Display_Order' => intval($pos)),
+                array('Edition_ID' => $edition)
+            );
+            return $this->jsonReportSuccess();
+        }
+        return $this->jsonDie('Unexpected method');
+    }
+
+    /**
      * Show action -- allows tolerance of URLs where the user has inserted 'edit'
      * into an existing front-end link.
      *

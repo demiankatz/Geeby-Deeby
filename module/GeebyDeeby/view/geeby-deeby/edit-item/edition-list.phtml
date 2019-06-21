@@ -1,4 +1,21 @@
-<? foreach ($editions as $current): ?>
-  <input type="radio" class="selectedEdition" name="selectedEdition" value="<?=$current['Edition_ID']?>" />
-  <a href="<?=$this->url('edit/edition', array('id' => $current['Edition_ID']))?>"><?=$this->escapeHtml($current['Edition_Name'])?></a><br />
-<? endforeach; ?>
+<? if (!isset($editions) || count($editions) == 0): ?>
+  No editions.
+<? else: ?>
+  <table class="list_item">
+    <tr><th>Display Order within Item</th><th><button onclick="return Item.copyEdition();">Copy Selected Edition</button></th><th colspan="2">Title</th></tr>
+    <? foreach ($editions as $current): ?>
+      <tr>
+        <td>
+          <input class="number" type="text" value="<?=isset($current['Item_Display_Order']) ? $this->escapeHtml($current['Item_Display_Order']) : 0 ?>" id="order<?=$current['Edition_ID']?>" />
+          <button onclick="Item.reorderLink('Editions', { 'edition_id': <?=$current['Edition_ID']?> });">Set</button>
+        </td>
+        <td align="center">
+          <input type="radio" class="selectedEdition" name="selectedEdition" value="<?=$current['Edition_ID']?>" />
+        </td>
+        <td>
+          <a href="<?=$this->url('edit/edition', array('id' => $current['Edition_ID']))?>"><?=$this->escapeHtml($current['Edition_Name'])?></a>
+        </td>
+      </tr>
+    <? endforeach; ?>
+  </table>
+<? endif; ?>
