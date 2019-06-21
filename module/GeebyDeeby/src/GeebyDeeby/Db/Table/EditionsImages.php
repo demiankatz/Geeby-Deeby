@@ -151,6 +151,15 @@ class EditionsImages extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->quantifier('DISTINCT');
+            $fields = [
+                'Edition_ID',
+                'Image_Path',
+                'Thumb_Path',
+                'IIIF_URI',
+                'Position',
+                'Note_ID',
+            ];
+            $select->columns($fields);
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Images.Edition_ID = eds.Edition_ID'
@@ -160,11 +169,22 @@ class EditionsImages extends Gateway
             $select->join(
                 array('i' => 'Items'), 'eds.Item_ID = i.Item_ID', ['Item_ID']
             );
+            $year = new Expression(
+                'min(?)', array('erd.Year'),
+                array(Expression::TYPE_IDENTIFIER)
+            );
+            $select->join(
+                array('erd' => 'Editions_Release_Dates'),
+                'eds.Edition_ID = erd.Edition_ID OR eds.Parent_Edition_ID = erd.Edition_ID',
+                array('Earliest_Year' => $year), Select::JOIN_LEFT
+            );
             $select->join(
                 array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
                 ['Note'], Select::JOIN_LEFT
             );
-            $select->order(['Item_Display_Order', 'Position']);
+            $fields = array_merge($fields, ['Edition_Name', 'Item_ID', 'Note']);
+            $select->group($fields);
+            $select->order(['Item_Display_Order', 'Position', 'Earliest_Year']);
             $select->where->equalTo('i.Item_ID', $itemID);
         };
         return $this->select($callback);
