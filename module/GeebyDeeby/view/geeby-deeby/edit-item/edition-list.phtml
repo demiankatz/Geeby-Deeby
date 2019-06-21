@@ -2,7 +2,7 @@
   No editions.
 <? else: ?>
   <table class="list_item">
-    <tr><th>Display Order within Item</th><th><button onclick="return Item.copyEdition();">Copy Selected Edition</button></th><th colspan="2">Title</th></tr>
+    <tr><th>Display Order within Item</th><th><button onclick="return Item.copyEdition();">Copy Selected Edition</button></th><th>Title</th><th>Details</th></tr>
     <? foreach ($editions as $current): ?>
       <tr>
         <td>
@@ -14,6 +14,10 @@
         </td>
         <td>
           <a href="<?=$this->url('edit/edition', array('id' => $current['Edition_ID']))?>"><?=$this->escapeHtml($current['Edition_Name'])?></a>
+        </td>
+        <td>
+          <? $parts = array_filter([$current['Earliest_Year'], $current['Extent_In_Parent']]); ?>
+          <?=$this->escapeHtml(implode(', ', $parts))?>
         </td>
       </tr>
     <? endforeach; ?>
