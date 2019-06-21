@@ -15,7 +15,7 @@ return array(
         'groupSeriesByMaterialType' => false,
     ),
     'controllers' => array(
-        'invokables' => array(
+        'aliases' => array(
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeebyLocal\Controller\EditionController',
             'GeebyDeeby\Controller\Ingest' => 'GeebyDeebyLocal\Controller\IngestController',
