@@ -34,7 +34,7 @@
     }
 ?>
 <div class="row">
-  <?=$this->render('partials/images.phtml', compact('images'))?>
+  <?=$this->render('partials/images.phtml', compact('images', 'editions'))?>
   <? if ($truncatedImages): ?>
     <div class="col-md-12">
       To see more images, switch to
