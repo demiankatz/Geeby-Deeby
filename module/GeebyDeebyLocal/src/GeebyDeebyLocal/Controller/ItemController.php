@@ -49,7 +49,7 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
      */
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $item = parent::addPrimaryResourceToGraph($graph, $view, $class);
         $item->set(
             'rda:preferredTitleForTheResource',

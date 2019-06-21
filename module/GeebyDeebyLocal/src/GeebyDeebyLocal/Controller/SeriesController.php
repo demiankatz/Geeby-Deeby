@@ -49,7 +49,7 @@ class SeriesController extends \GeebyDeeby\Controller\SeriesController
      */
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $class[] = 'dime:Series';
         $series = parent::addPrimaryResourceToGraph($graph, $view, $class);
         foreach ($view->items as $item) {

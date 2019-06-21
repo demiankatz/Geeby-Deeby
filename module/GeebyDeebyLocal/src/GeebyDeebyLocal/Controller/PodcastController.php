@@ -128,7 +128,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     protected function getRssFeed()
     {
         // Get access to view helper:
-        $serverUrl = $this->getServiceLocator()->get('viewmanager')->getRenderer()
+        $serverUrl = $this->serviceLocator->get('ViewManager')->getRenderer()
             ->plugin('serverurl');
 
         $feed = new Feed();

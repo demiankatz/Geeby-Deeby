@@ -461,7 +461,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
      */
     protected function getImageIngester()
     {
-        $tables = $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager');
+        $tables = $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager');
         return new ImageIngester($tables, $this->solr);
     }
 
@@ -472,8 +472,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
      */
     protected function getIngester()
     {
-        $tables = $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager');
-        return new DatabaseIngester($tables, $this->getServiceLocator()->get('GeebyDeeby\Articles'));
+        $tables = $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager');
+        return new DatabaseIngester($tables, $this->serviceLocator->get('GeebyDeeby\Articles'));
     }
 
     /**
@@ -483,7 +483,7 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
      */
     protected function getIssueMaker()
     {
-        $tables = $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager');
-        return new IssueMaker($tables, $this->getServiceLocator()->get('GeebyDeeby\Articles'));
+        $tables = $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager');
+        return new IssueMaker($tables, $this->serviceLocator->get('GeebyDeeby\Articles'));
     }
 }

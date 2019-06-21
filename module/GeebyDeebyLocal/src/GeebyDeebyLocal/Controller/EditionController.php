@@ -51,7 +51,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      */
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $class[] = 'dime:Edition';
         $edition = parent::addPrimaryResourceToGraph($graph, $view, $class);
         foreach ($view->credits as $credit) {
@@ -139,7 +139,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      */
     protected function addModsTitle($xml, $title)
     {
-        list($article, $body) = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+        list($article, $body) = $this->serviceLocator->get('GeebyDeeby\Articles')
             ->separateArticle($title, false);
         if (!empty($article)) {
             $xml->nonSort = $article;
@@ -270,7 +270,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             }
             $name->role->roleTerm = strtolower($credit->Role_Name);
             $name->role->roleTerm['type'] = 'text';
-            
+
         }
     }
 
