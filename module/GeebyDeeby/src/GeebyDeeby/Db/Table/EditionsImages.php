@@ -164,7 +164,7 @@ class EditionsImages extends Gateway
                 array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
                 ['Note'], Select::JOIN_LEFT
             );
-            $select->order(['Position']);
+            $select->order(['Item_Display_Order', 'Position']);
             $select->where->equalTo('i.Item_ID', $itemID);
         };
         return $this->select($callback);
