@@ -318,7 +318,7 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
             ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
         $view->images = $this->getDbTable('editionsimages')
@@ -372,7 +372,7 @@ class SeriesController extends AbstractBase
      */
     protected function addSeriesToGraph($graph, $series)
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $series->Series_ID;
         $uri = $this->getServerUrl('series', ['id' => $id]);
         $seriesResource = $graph->resource($uri, $this->getSeriesRdfClass());
@@ -410,7 +410,7 @@ class SeriesController extends AbstractBase
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
         $id = $view->series['Series_ID'];
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $uri = $this->getServerUrl('series', ['id' => $id]);
         $series = $graph->resource($uri, (array)$class + $this->getSeriesRdfClass());
         foreach ($view->seriesAttributes as $current) {
@@ -498,7 +498,7 @@ class SeriesController extends AbstractBase
         $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         $view->groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
             ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
         $view->items = $this->getDbTable('item')->getItemsForSeries($id, true, $view->groupByMaterial);

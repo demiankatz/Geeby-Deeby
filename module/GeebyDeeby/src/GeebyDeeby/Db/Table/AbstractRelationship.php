@@ -27,6 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+
 /**
  * Abstract Table Definition for Relationship Tables.
  *
@@ -48,15 +51,16 @@ abstract class AbstractRelationship extends Gateway
     /**
      * Constructor
      *
-     * @param string $prefix Prefix to use in table/class names.
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param string        $prefix  Prefix to use in table/class names.
      */
-    public function __construct($prefix)
-    {
-        parent::__construct(
-            $prefix . '_Relationships',
-            'GeebyDeeby\Db\Row\\' . $prefix . 'Relationship'
-        );
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null, $prefix
+    ) {
         $this->prefix = $prefix;
+        parent::__construct($adapter, $tm, $rowObj, $prefix . '_Relationships');
     }
 
     /**

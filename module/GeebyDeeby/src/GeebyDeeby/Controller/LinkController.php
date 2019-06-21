@@ -46,7 +46,7 @@ class LinkController extends AbstractBase
     public function listAction()
     {
         // Get link group configuration:
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         $groups = isset($config['geeby-deeby']['link_groups'])
             ? $config['geeby-deeby']['link_groups'] : array();
         $extra = $this->params()->fromRoute('extra');

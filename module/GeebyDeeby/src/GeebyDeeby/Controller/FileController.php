@@ -46,7 +46,7 @@ class FileController extends AbstractBase
     public function listAction()
     {
         // Get file group configuration:
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         $groups = isset($config['geeby-deeby']['file_groups'])
             ? $config['geeby-deeby']['file_groups'] : array();
 

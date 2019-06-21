@@ -1,10 +1,10 @@
 <?php
 /**
- * Table Definition for Tags_Attributes
+ * Abstract row factory
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2018.
+ * Copyright (C) Demian Katz 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,54 +20,54 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Db\Row;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\RowGateway\RowGateway;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Table Definition for Tags_Attributes
+ * Abstract row factory
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class TagsAttribute extends Gateway
+class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
 {
     /**
-     * Constructor
+     * Determine if we can create a service with name
      *
-     * @param Adapter       $adapter Database adapter
-     * @param PluginManager $tm      Table manager
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param $name
+     * @param $requestedName
+     * @return bool
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
-        RowGateway $rowObj = null
-    ) {
-        parent::__construct($adapter, $tm, $rowObj, 'Tags_Attributes');
+    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    {
+        return class_exists($requestedName);
     }
 
     /**
-     * Get a list of roles.
+     * Create service with name
      *
-     * @param mixed $where Where clause for list.
+     * @param ServiceLocatorInterface $rm
+     * @param $name
+     * @param $requestedName
      * @return mixed
      */
-    public function getList($where = null)
+    public function createServiceWithName(ServiceLocatorInterface $rm, $name, $requestedName)
     {
-        $callback = function ($select) use ($where) {
-            if (null !== $where) {
-                $select->where($where);
-            }
-            $select->order('Tags_Attribute_Name');
-        };
-        return $this->select($callback);
+        $container = $rm->getServiceLocator();
+        $adapter = $container->get('Zend\Db\Adapter\Adapter');
+        $row = new $requestedName($adapter);
+        return ($row instanceof TableAwareGateway)
+            ? $row->setTableManager($container->get('GeebyDeeby\Db\Table\PluginManager'))
+            : $row;
     }
 }

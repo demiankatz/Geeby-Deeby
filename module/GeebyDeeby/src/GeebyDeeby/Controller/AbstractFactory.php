@@ -1,10 +1,10 @@
 <?php
 /**
- * Table Definition for Items_Credits
+ * Abstract controller factory
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,37 +20,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Table;
+namespace GeebyDeeby\Controller;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\RowGateway\RowGateway;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Table Definition for Items_Credits
+ * Abstract controller factory
  *
  * @category GeebyDeeby
- * @package  Db_Table
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ItemsCredits extends Gateway
+class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
 {
     /**
-     * Constructor
+     * Determine if we can create a service with name
      *
-     * @param Adapter       $adapter Database adapter
-     * @param PluginManager $tm      Table manager
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param $name
+     * @param $requestedName
+     * @return bool
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
-        RowGateway $rowObj = null
-    ) {
-        parent::__construct($adapter, $tm, $rowObj, 'Items_Credits');
+    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    {
+        return class_exists($requestedName);
+    }
+
+    /**
+     * Create service with name
+     *
+     * @param ServiceLocatorInterface $tm
+     * @param $name
+     * @param $requestedName
+     * @return mixed
+     */
+    public function createServiceWithName(ServiceLocatorInterface $sm, $name, $requestedName)
+    {
+        return new $requestedName($sm);
     }
 }

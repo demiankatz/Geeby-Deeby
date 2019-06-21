@@ -36,7 +36,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Item extends ServiceLocatorAwareGateway
+class Item extends RowGateway
 {
     /**
      * Constructor
