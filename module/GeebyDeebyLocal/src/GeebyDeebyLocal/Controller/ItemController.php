@@ -68,6 +68,9 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
             $personUri = $this->getServerUrl('person', ['id' => $creator['Person_ID']]);
             $item->add('rda:author', $graph->resource($personUri));
         }
+        foreach ($view->altTitles as $altTitle) {
+            $item->add('rda:variantTitle', $altTitle['Item_AltName']);
+        }
         return $item;
     }
 
