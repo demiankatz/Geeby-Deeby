@@ -130,6 +130,7 @@ CREATE TABLE `Editions` (
   `Parent_Edition_ID` int(11) DEFAULT NULL,
   `Position_In_Parent` int(11) DEFAULT NULL,
   `Extent_In_Parent` text,
+  `Item_Display_Order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Edition_ID`),
   FOREIGN KEY (`Item_ID`) REFERENCES `Items`(`Item_ID`),
   FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
