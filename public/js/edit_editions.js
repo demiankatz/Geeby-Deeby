@@ -39,7 +39,8 @@ var EditionEditor = function() {
         'endings': { 'id': '#Edition_Endings' },
         'parent_edition_id': { 'id': '#Parent_Edition_ID' },
         'position_in_parent': { 'id': '#Position_In_Parent' },
-        'extent_in_parent': { 'id': '#Extent_In_Parent' }
+        'extent_in_parent': { 'id': '#Extent_In_Parent' },
+        'item_display_order': { 'id': '#Item_Display_Order' }
     };
     this.attributeSelector = '.edition-attribute';
     this.links = {
