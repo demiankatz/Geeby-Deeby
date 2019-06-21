@@ -29,6 +29,7 @@ namespace GeebyDeeby\Db\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
 /**
@@ -191,6 +192,36 @@ class Edition extends Gateway
     public function getEditionsForItem($itemID, $includeParents = false)
     {
         $callback = function ($select) use ($itemID, $includeParents) {
+            $year = new Expression(
+                'min(?)', array('erd.Year'),
+                array(Expression::TYPE_IDENTIFIER)
+            );
+            $select->join(
+                array('erd' => 'Editions_Release_Dates'),
+                'Editions.Edition_ID = erd.Edition_ID OR Editions.Parent_Edition_ID = erd.Edition_ID',
+                array('Earliest_Year' => $year), Select::JOIN_LEFT
+            );
+            $order = ['Item_Display_Order', 'Earliest_Year', 'Edition_Name'];
+            $fields = [
+                'Edition_ID',
+                'Edition_Name',
+                'Item_ID',
+                'Series_ID',
+                'Volume',
+                'Position',
+                'Replacement_Number',
+                'Preferred_Item_AltName_ID',
+                'Preferred_Series_AltName_ID',
+                'Edition_Length',
+                'Edition_Endings',
+                'Edition_Description',
+                'Preferred_Series_Publisher_ID',
+                'Parent_Edition_ID',
+                'Position_In_Parent',
+                'Extent_In_Parent',
+                'Item_Display_Order',
+            ];
+            $select->columns($fields);
             $select->where->equalTo('Editions.Item_ID', $itemID);
             if ($includeParents) {
                 $select->join(
@@ -200,17 +231,22 @@ class Edition extends Gateway
                 );
                 $select->join(
                     array('i' => 'Items'), 'pe.Item_ID = i.Item_ID',
-                    Select::SQL_STAR, Select::JOIN_LEFT
+                    array('Item_Name'), Select::JOIN_LEFT
                 );
                 $select->join(
                     array('iat' => 'Items_AltTitles'),
                     'pe.Preferred_Item_AltName_ID = iat.Sequence_ID',
                     array('Item_AltName'), Select::JOIN_LEFT
                 );
-                $select->order(['Edition_Name', 'pe.Series_ID', 'pe.Volume', 'pe.Position', 'pe.Replacement_Number']);
-            } else {
-                $select->order('Edition_Name');
+                $fields[] = 'Item_Name';
+                $fields[] = 'Item_AltName';
+                $order = array_merge(
+                    $order,
+                    ['pe.Series_ID', 'pe.Volume', 'pe.Position', 'pe.Replacement_Number']
+                );
             }
+            $select->group($fields);
+            $select->order($order);
         };
         return $this->select($callback);
     }
