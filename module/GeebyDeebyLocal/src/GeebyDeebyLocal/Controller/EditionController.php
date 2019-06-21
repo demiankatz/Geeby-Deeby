@@ -115,6 +115,9 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         if (!empty($view->edition['Edition_Length'])) {
             $edition->add('rda:extent', $view->edition['Edition_Length']);
         }
+        if (!empty($view->edition['Extent_In_Parent'])) {
+            $edition->add('rda:numberingOfPart', $view->edition['Extent_In_Parent']);
+        }
         foreach ($view->dates as $date) {
             if ($date['Year'] > 0) {
                 $dateStr = $date['Year'];
