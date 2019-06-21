@@ -103,7 +103,7 @@ class EditionsCredits extends Gateway
             );
             $select->join(
                 array('erd' => 'Editions_Release_Dates'),
-                'eds.Edition_ID = erd.Edition_ID',
+                'eds.Edition_ID = erd.Edition_ID OR eds.Parent_Edition_ID = erd.Edition_ID',
                 array('Earliest_Year' => $year), Select::JOIN_LEFT
             );
             $select->join(
