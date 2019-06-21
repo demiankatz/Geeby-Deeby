@@ -144,7 +144,7 @@ class ItemController extends AbstractBase
      */
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $view->item['Item_ID'];
         $uri = $this->getServerUrl('item', ['id' => $id]);
         $type = $this->getDbTable('materialtype')
@@ -334,7 +334,7 @@ class ItemController extends AbstractBase
     public function isbndetailsAction()
     {
         $isbn = $this->params()->fromRoute('extra');
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         return $this->createViewModel(
             array(
                 'isbn' => new \VuFindCode\ISBN($isbn),

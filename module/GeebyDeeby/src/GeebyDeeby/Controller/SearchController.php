@@ -143,7 +143,7 @@ class SearchController extends AbstractBase
     {
         // Rather than tokenizing, we'll do a substring search after normalizing
         // for leading articles:
-        $q = $this->getServiceLocator()->get('GeebyDeeby\Articles')
+        $q = $this->serviceLocator->get('GeebyDeeby\Articles')
             ->stripLeadingArticles($this->layout()->query);
         $tokens = array($q);
         $view = $this->createViewModel();

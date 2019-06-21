@@ -26,7 +26,9 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -40,6 +42,16 @@ use Zend\View\Model\ViewModel;
  */
 class AbstractBase extends AbstractActionController
 {
+    /**
+     * Constructor
+     *
+     * @param ServiceLocatorInterface $sm Service Manager
+     */
+    public function __construct($sm)
+    {
+        $this->serviceLocator = $sm;
+    }
+
     /**
      * Provide a fresh view model.
      *
@@ -67,7 +79,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function getDbTable($table)
     {
-        return $this->getServiceLocator()->get('GeebyDeeby\DbTablePluginManager')
+        return $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager')
             ->get($table);
     }
 
@@ -96,7 +108,7 @@ class AbstractBase extends AbstractActionController
         $response->setContent(json_encode($output));
         return $response;
     }
-    
+
     /**
      * Die with a JSON success status.
      *
@@ -299,7 +311,7 @@ class AbstractBase extends AbstractActionController
                     if (is_callable($insertCallback)) {
                         $insertCallback(
                             $table->getLastInsertValue(), $row,
-                            $this->getServiceLocator()
+                            $this->serviceLocator
                         );
                     }
                 } else if ($this->getRequest()->isDelete()) {
@@ -328,7 +340,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function getAuth()
     {
-        return $this->getServiceLocator()->get('GeebyDeeby\Authentication');
+        return $this->serviceLocator->get('GeebyDeeby\Authentication');
     }
 
     /**
@@ -358,7 +370,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function getViewRenderer()
     {
-        return $this->getServiceLocator()->get('ViewRenderer');
+        return $this->serviceLocator->get('ViewRenderer');
     }
 
     /**

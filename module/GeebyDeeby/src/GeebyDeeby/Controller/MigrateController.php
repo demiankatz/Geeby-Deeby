@@ -103,7 +103,7 @@ class MigrateController extends AbstractBase
         $count = 0;
         foreach ($iis->getAll() as $current) {
             $row = $eds->createRow();
-            $row->Edition_Name = $this->getServiceLocator()
+            $row->Edition_Name = $this->serviceLocator
                 ->get('GeebyDeeby\Articles')
                 ->articleAwareAppend($current->Series_Name, ' edition');
             $row->Item_ID = $current->Item_ID;

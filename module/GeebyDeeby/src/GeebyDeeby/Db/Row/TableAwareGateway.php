@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract base class for rows that need access to the service locator.
+ * Abstract base class for rows that need access to other tables.
  *
  * PHP version 5
  *
@@ -25,26 +25,25 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  */
 namespace GeebyDeeby\Db\Row;
-use Zend\ServiceManager\ServiceLocatorAwareInterface,
-    Zend\ServiceManager\ServiceLocatorInterface;
+
+use GeebyDeeby\Db\Table\PluginManager as TableManager;
 
 /**
- * Abstract base class for rows that need access to the service locator.
+ * Abstract base class for rows that need access to other tables.
  *
  * @category GeebyDeeby
  * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  */
-class ServiceLocatorAwareGateway extends RowGateway
-    implements ServiceLocatorAwareInterface
+class TableAwareGateway extends RowGateway
 {
     /**
-     * Service locator
+     * Table manager
      *
-     * @var ServiceLocatorInterface
+     * @var TableManager
      */
-    protected $serviceLocator;
+    protected $tableManager = null;
 
     /**
      * Get access to another table.
@@ -55,29 +54,32 @@ class ServiceLocatorAwareGateway extends RowGateway
      */
     public function getDbTable($table)
     {
-        return $this->getServiceLocator()->get($table);
+        return $this->getTableManager()->get($table);
     }
 
     /**
      * Set the service locator.
      *
-     * @param ServiceLocatorInterface $serviceLocator Locator to register
+     * @param TableManager $tm Table manager
      *
-     * @return ServiceLocatorAwareGateway
+     * @return TableAwareGateway
      */
-    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+    public function setTableManager(TableManager $tm)
     {
-        $this->serviceLocator = $serviceLocator;
+        $this->tableManager = $tm;
         return $this;
     }
 
     /**
-     * Get the service locator.
+     * Get the table manager
      *
-     * @return \Zend\ServiceManager\ServiceLocatorInterface
+     * @return TableManager
      */
-    public function getServiceLocator()
+    public function getTableManager()
     {
-        return $this->serviceLocator;
+        if (null === $this->tableManager) {
+            throw new \Exception('Expected table manager is missing.');
+        }
+        return $this->tableManager;
     }
 }

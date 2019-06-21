@@ -837,7 +837,7 @@ class EditEditionController extends AbstractBase
         $edName = $parentEdition->Edition_Name;
         $seriesID = $parentEdition->Series_ID;
         $insertCallback = function ($new, $row, $sm) {
-            $edsTable = $sm->get('GeebyDeeby\DbTablePluginManager')
+            $edsTable = $sm->get('GeebyDeeby\Db\Table\PluginManager')
                 ->get('edition');
             $newObj = $edsTable->getByPrimaryKey($new);
             if ($error = $newObj->validate()) {

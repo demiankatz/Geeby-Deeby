@@ -27,6 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+
 /**
  * Table Definition for People_Files
  *
@@ -40,10 +43,15 @@ class PeopleFiles extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('People_Files');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'People_Files');
     }
 
     /**
