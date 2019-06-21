@@ -49,19 +49,31 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
      */
     protected function addPrimaryResourceToGraph($graph, $view, $class = 'foaf:Person')
     {
-        $person = parent::addPrimaryResourceToGraph($graph, $view, $class);
         $authName = $view->person['Last_Name'];
         $first = trim($view->person['First_Name'] . ' ' . $view->person['Middle_Name']);
         if (!empty($first)) {
             $authName .= ', ' . $first;
         }
         $authName .= $view->person['Extra_Details'];
-        $person->set('rda:preferredNameForTheAgent', $authName);
+
+        // Only focus name to real person if the person is known to be real (through cited
+        // attributions) or no known pseudonyms are recorded.
+        $isRealPerson = count($view->citations) > 0 || count($view->realNames) == 0;
+        if ($isRealPerson) {
+            $person = parent::addPrimaryResourceToGraph($graph, $view, $class);
+            $person->set('rda:preferredNameForTheAgent', $authName);
+        }
 
         $id = $view->person['Person_ID'];
         $uri = $this->getServerUrl('person', ['id' => $id]) . '#name';
         $name = $graph->resource($uri, 'skos:Concept');
-        $name->set('foaf:focus', $person);
+        if ($isRealPerson) {
+            $name->add('foaf:focus', $person);
+        }
+        foreach ($view->realNames as $realName) {
+            $realNameUri = $this->getServerUrl('person', ['id' => $realName['Person_ID']]);
+            $name->add('foaf:focus', $graph->resource($realNameUri));
+        }
         $name->set('rdfs:label', $authName);
 
         return $person;
