@@ -24,7 +24,7 @@
   <p><?=$person['Biography']?></p>
 <? endif; ?>
 
-<? if (count($credits) > 0): $displayedSomething = true; ?>
+<? if (count($credits) > 0 || count($citations) > 0): $displayedSomething = true; ?>
   <? $sorts = [ 'series', 'title', 'year' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
   <div class="pull-right" style="padding:12px 0;">
     Sort by: 
