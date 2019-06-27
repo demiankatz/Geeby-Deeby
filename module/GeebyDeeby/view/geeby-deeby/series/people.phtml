@@ -1,0 +1,22 @@
+<?
+    $title = $this->fixtitle($series['Series_Name']);
+    $this->layout()->title = 'Series People - ' . $title;
+    $lastPerson = null;
+?>
+<? if (count($people) < 1): ?>
+  <p>No people listed for this series.</p>
+<? else: ?>
+  <? foreach ($people as $i=>$current): ?>
+    <? if (($currentPerson = $this->showperson($current)) !== $lastPerson): ?>
+      <? $lastPerson = $currentPerson; ?>
+      <h2>
+        <a href="<?=$this->url('person', array('id' => $current['Person_ID']))?>">
+          <?=$this->escapeHtml($currentPerson)?>
+        </a>
+      </h2>
+    <? endif; ?>
+    <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+      <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
+    </a><br />
+  <? endforeach; ?>
+<? endif; ?>

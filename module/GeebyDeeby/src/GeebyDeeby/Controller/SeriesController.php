@@ -356,6 +356,23 @@ class SeriesController extends AbstractBase
     }
 
     /**
+     * "Show series people" page
+     *
+     * @return mixed
+     */
+    public function peopleAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        $view->people = $this->getDbTable('editionscredits')
+            ->getPeopleForSeries($view->series['Series_ID']);
+        //$view->setTemplate('geeby-deeby/series/tags');
+        return $view;
+    }
+
+    /**
      * "Show series tags" page
      *
      * @return mixed
