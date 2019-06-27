@@ -356,6 +356,23 @@ class SeriesController extends AbstractBase
     }
 
     /**
+     * "Show series tags" page
+     *
+     * @return mixed
+     */
+    public function tagsAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        $view->tags = $this->getDbTable('tag')
+            ->getTagsForSeries($view->series['Series_ID']);
+        //$view->setTemplate('geeby-deeby/series/tags');
+        return $view;
+    }
+
+    /**
      * Return the RDF class(es) used for series, if any.
      *
      * @return array
