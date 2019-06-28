@@ -411,6 +411,9 @@ class DatabaseIngester extends BaseIngester
      */
     protected function normalizePublisher($pub)
     {
+        // trim leading article
+        $pub = preg_replace('/^The /i', '', $pub);
+        // normalize abbreviations
         return str_replace(
             [', inc.', '. ', 'co.', '&'],
             ['', '.', 'company', 'and'],
