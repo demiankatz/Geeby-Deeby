@@ -261,6 +261,11 @@ class EditionsCredits extends Gateway
                 array(), Select::JOIN_RIGHT
             );
             $select->join(
+                array('i' => 'Items'),
+                'eds.Item_ID = i.Item_ID',
+                array('Item_ID', 'Item_Name')
+            );
+            $select->join(
                 array('ic' => 'Items_Creators'), 'eds.Item_ID = ic.Item_ID',
                 array(), Select::JOIN_LEFT
             );
