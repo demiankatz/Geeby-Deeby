@@ -1247,28 +1247,13 @@ return array(
         'factories' => array(
             'GeebyDeeby\Articles' =>
                 'Zend\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\Db\Row\PluginManager' => function ($sm) {
-                return new \GeebyDeeby\Db\Row\PluginManager($sm);
-            },
-            'GeebyDeeby\Db\Table\PluginManager' => function ($sm) {
-                return new \GeebyDeeby\Db\Table\PluginManager($sm);
-            },
+            'GeebyDeeby\Db\Row\PluginManager' =>
+                'GeebyDeeby\Db\PluginManagerFactory',
+            'GeebyDeeby\Db\Table\PluginManager' =>
+                'GeebyDeeby\Db\PluginManagerFactory',
             'Zend\Authentication\AuthenticationService' =>
                 'Zend\ServiceManager\Factory\InvokableFactory',
-            'Zend\Db\Adapter\Adapter' => function ($sm) {
-                $config = $sm->get('Config');
-                return new \Zend\Db\Adapter\Adapter(
-                    array(
-                        'driver' => 'mysqli',
-                        'charset' => 'utf8',
-                        'hostname' => $config['geeby-deeby']['dbHost'],
-                        'username' => $config['geeby-deeby']['dbUser'],
-                        'password' => $config['geeby-deeby']['dbPass'],
-                        'database' => $config['geeby-deeby']['dbName'],
-                        'options' => array('buffer_results' => true)
-                    )
-                );
-            },
+            'Zend\Db\Adapter\Adapter' => 'GeebyDeeby\Db\AdapterFactory',
         ),
         'aliases' => array(
             'GeebyDeeby\Authentication' => 'Zend\Authentication\AuthenticationService',
