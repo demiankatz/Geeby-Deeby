@@ -1354,7 +1354,7 @@ return array(
                     $sm->get('GeebyDeeby\Articles')
                 );
             },
-            'scriptManager' => function ($sm) {
+            'GeebyDeeby\View\Helper\ScriptManager' => function ($sm) {
                 $base = $sm->get('ViewHelperManager')->get('basePath')->__invoke();
                 return new \GeebyDeeby\View\Helper\ScriptManager(
                     $base, $sm->get('ViewHelperManager')->get('headScript')
@@ -1382,13 +1382,21 @@ return array(
         ),
         'aliases' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
+            'descriptionSource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
+            'firstLetter' => 'GeebyDeeby\View\Helper\FirstLetter',
+            'firstlettermenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
             'firstLetterMenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
+            'formatReleaseDate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'formatitemnumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
+            'formatItemNumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
-            'scriptmanager' => 'scriptManager',
+            'groupEditions' => 'GeebyDeeby\View\Helper\GroupEditions',
+            'scriptmanager' => 'GeebyDeeby\View\Helper\ScriptManager',
+            'scriptManager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
+            'showPerson' => 'GeebyDeeby\View\Helper\ShowPerson',
         ),
     ),
     'view_manager' => array(
