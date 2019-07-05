@@ -60,8 +60,11 @@ return array(
         ),
     ),
     'controller_plugins' => array(
-        'invokables' => array(
+        'aliases' => array(
             'followup' => 'GeebyDeeby\Controller\Plugin\Followup',
+        ),
+        'factories' => array(
+            'GeebyDeeby\Controller\Plugin\Followup' => 'Zend\ServiceManager\Factory\InvokableFactory',
         )
     ),
     'router' => array(
@@ -1242,12 +1245,16 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
+            'GeebyDeeby\Articles' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\Db\Row\PluginManager' => function ($sm) {
                 return new \GeebyDeeby\Db\Row\PluginManager($sm);
             },
             'GeebyDeeby\Db\Table\PluginManager' => function ($sm) {
                 return new \GeebyDeeby\Db\Table\PluginManager($sm);
             },
+            'Zend\Authentication\AuthenticationService' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
             'Zend\Db\Adapter\Adapter' => function ($sm) {
                 $config = $sm->get('Config');
                 return new \Zend\Db\Adapter\Adapter(
@@ -1263,8 +1270,7 @@ return array(
                 );
             },
         ),
-        'invokables' => array(
-            'GeebyDeeby\Articles' => 'GeebyDeeby\Articles',
+        'aliases' => array(
             'GeebyDeeby\Authentication' => 'Zend\Authentication\AuthenticationService',
         ),
     ),
@@ -1329,44 +1335,59 @@ return array(
     'view_helpers' => array(
         'factories' => array(
             'analyzecredits' => function ($sm) {
-                $tables = $sm->getServiceLocator()->get('GeebyDeeby\Db\Table\PluginManager');
+                $tables = $sm->get('GeebyDeeby\Db\Table\PluginManager');
                 return new \GeebyDeeby\View\Helper\AnalyzeCredits(
                     $tables->get('pseudonyms'), $tables->get('itemscreatorscitations')
                 );
             },
             'auth' => function ($sm) {
                 return new \GeebyDeeby\View\Helper\Auth(
-                    $sm->getServiceLocator()->get('GeebyDeeby\Authentication')
+                    $sm->get('GeebyDeeby\Authentication')
                 );
             },
             'config' => function ($sm) {
-                $cfg = $sm->getServiceLocator()->get('config');
+                $cfg = $sm->get('config');
                 return new \GeebyDeeby\View\Helper\Config($cfg['geeby-deeby']);
             },
             'fixtitle' => function ($sm) {
                 return new \GeebyDeeby\View\Helper\FixTitle(
-                    $sm->getServiceLocator()->get('GeebyDeeby\Articles')
+                    $sm->get('GeebyDeeby\Articles')
                 );
             },
-            'scriptmanager' => function ($sm) {
-                $base = $sm->get('basepath')->__invoke();
+            'scriptManager' => function ($sm) {
+                $base = $sm->get('ViewHelperManager')->get('basePath')->__invoke();
                 return new \GeebyDeeby\View\Helper\ScriptManager(
-                    $base, $sm->get('headscript')
+                    $base, $sm->get('ViewHelperManager')->get('headScript')
                 );
             },
             'showedition' => function ($sm) {
-                $controller = $sm->getServiceLocator()->get('ControllerLoader')
+                $controller = $sm->get('ControllerLoader')
                     ->get('GeebyDeeby\Controller\Edition');
                 return new \GeebyDeeby\View\Helper\ShowEdition($controller);
             },
+            'GeebyDeeby\View\Helper\DescriptionSource' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\FirstLetter' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\FirstLetterMenu' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\FormatReleaseDate' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\FormatItemNumber' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\GroupEditions' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\ShowPerson' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
         ),
-        'invokables' => array(
+        'aliases' => array(
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
             'firstLetterMenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
             'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'formatitemnumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
+            'scriptmanager' => 'scriptManager',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
         ),
     ),

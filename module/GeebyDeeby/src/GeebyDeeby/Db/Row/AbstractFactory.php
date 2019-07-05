@@ -27,7 +27,7 @@
  */
 namespace GeebyDeeby\Db\Row;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 /**
  * Abstract row factory
@@ -38,32 +38,34 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
+class AbstractFactory implements \Zend\ServiceManager\Factory\AbstractFactoryInterface
 {
     /**
-     * Determine if we can create a service with name
+     * Does the factory have a way to create an instance for the service?
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName)
     {
         return class_exists($requestedName);
     }
 
     /**
-     * Create service with name
+     * Create a service for the specified name.
      *
-     * @param ServiceLocatorInterface $rm
-     * @param $name
-     * @param $requestedName
-     * @return mixed
+     * @param ContainerInterface $container     Service container
+     * @param string             $requestedName Name of service
+     * @param array              $options       Options (unused)
+     *
+     * @return object
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function createServiceWithName(ServiceLocatorInterface $rm, $name, $requestedName)
-    {
-        $container = $rm->getServiceLocator();
+    public function __invoke(ContainerInterface $container, $requestedName,
+        array $options = null
+    ) {
         $adapter = $container->get('Zend\Db\Adapter\Adapter');
         $row = new $requestedName($adapter);
         return ($row instanceof TableAwareGateway)
