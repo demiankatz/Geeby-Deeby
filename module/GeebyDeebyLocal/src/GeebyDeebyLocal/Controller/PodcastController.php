@@ -128,8 +128,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     protected function getRssFeed()
     {
         // Get access to view helper:
-        $serverUrl = $this->serviceLocator->get('ViewManager')->getRenderer()
-            ->plugin('serverurl');
+        $serverUrl = $this->getViewRenderer()->plugin('serverurl');
 
         $feed = new Feed();
         $feed->setTitle('The Spare Change Library');
