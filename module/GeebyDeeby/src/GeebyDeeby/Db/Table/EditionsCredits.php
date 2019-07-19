@@ -243,6 +243,55 @@ class EditionsCredits extends Gateway
     }
 
     /**
+     * Get a list of people associated with a particular series (not just
+     * credits but also creators).
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getPeopleForSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->quantifier('DISTINCT');
+            $select->columns(array());
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Credits.Edition_ID = eds.Edition_ID',
+                array(), Select::JOIN_RIGHT
+            );
+            $select->join(
+                array('i' => 'Items'),
+                'eds.Item_ID = i.Item_ID',
+                array('Item_ID', 'Item_Name')
+            );
+            $select->join(
+                array('ic' => 'Items_Creators'), 'eds.Item_ID = ic.Item_ID',
+                array(), Select::JOIN_LEFT
+            );
+            $select->join(
+                array('p' => 'People'),
+                'Editions_Credits.Person_ID = p.Person_ID '
+                . 'OR ic.Person_ID = p.Person_ID'
+            );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
+            $bestTitle = new Expression(
+                'COALESCE(?, ?)', array('Item_AltName', 'Item_Name')
+            );
+            $fields = array(
+                'Last_Name', 'First_Name', 'Middle_Name', $bestTitle
+            );
+            $select->order($fields);
+            $select->where->equalTo('Series_ID', $seriesID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Delete credits for all editions of an item.
      *
      * @param int   $item  Item ID
