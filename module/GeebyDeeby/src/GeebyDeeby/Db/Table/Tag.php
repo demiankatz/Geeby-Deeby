@@ -29,6 +29,8 @@ namespace GeebyDeeby\Db\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
+use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Tags
@@ -83,6 +85,49 @@ class Tag extends Gateway
             }
             $select->where->like('Tag', $query . '%');
             $select->order('Tag');
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get a list of tags and related items for the specified series.
+     *
+     * @var int  $seriesID        Series ID
+     *
+     * @return mixed
+     */
+    public function getTagsForSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Tag_ID', 'Tag']);
+            $select->join(
+                array('it' => 'Items_Tags'), 'it.Tag_ID = Tags.Tag_ID',
+                array()
+            );
+            $select->join(
+                array('i' => 'Items'), 'it.Item_ID = i.Item_ID',
+                array('Item_ID', 'Item_Name')
+            );
+            $select->join(
+                array('eds' => 'Editions'), 'eds.Item_ID = i.Item_ID',
+                array()
+            );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
+            $bestTitle = new Expression(
+                'COALESCE(?, ?)',
+                array('Item_AltName', 'Item_Name'),
+                array(
+                    Expression::TYPE_IDENTIFIER,
+                    Expression::TYPE_IDENTIFIER
+                )
+            );
+            $select->order(['Tag', $bestTitle]);
+            $select->where->equalTo('eds.Series_ID', $seriesID);
         };
         return $this->select($callback);
     }

@@ -356,6 +356,38 @@ class SeriesController extends AbstractBase
     }
 
     /**
+     * "Show series people" page
+     *
+     * @return mixed
+     */
+    public function peopleAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        $view->people = $this->getDbTable('editionscredits')
+            ->getPeopleForSeries($view->series['Series_ID']);
+        return $view;
+    }
+
+    /**
+     * "Show series tags" page
+     *
+     * @return mixed
+     */
+    public function tagsAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        $view->tags = $this->getDbTable('tag')
+            ->getTagsForSeries($view->series['Series_ID']);
+        return $view;
+    }
+
+    /**
      * Return the RDF class(es) used for series, if any.
      *
      * @return array
