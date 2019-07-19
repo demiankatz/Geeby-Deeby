@@ -31,16 +31,18 @@
   <? endforeach; ?>
 </table>
 <? if (count($items) > 0): $displayedSomething = true; ?>
-  <? $series = false; foreach ($items as $credit): ?>
-    <? if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
+  <? $series = false; foreach ($items as $item): ?>
+    <? if ($series !== $item['Series_ID']): $series = $item['Series_ID']; ?>
       <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
-        <?=$this->fixtitle($credit['Series_Name']);?>
+        <?=$this->fixtitle($item['Series_Name']);?>
       </a></h2>
     <? endif; ?>
     <span class="item">
-      <?=$this->escapeHtml($this->formatItemNumber($credit))?>
-      <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
-        <?=$this->fixtitle($credit['Item_Name'])?>
+      <?=$this->escapeHtml($this->formatItemNumber($item))?>
+      <a href="<?=$this->url('item', array('id' => $item['Item_ID']))?>">
+        <?=$this->fixtitle(
+          empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']
+        )?>
       </a>
       <br />
     </span>
