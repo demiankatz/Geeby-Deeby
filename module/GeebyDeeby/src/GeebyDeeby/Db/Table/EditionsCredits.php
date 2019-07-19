@@ -280,7 +280,12 @@ class EditionsCredits extends Gateway
                 array('Item_AltName'), Select::JOIN_LEFT
             );
             $bestTitle = new Expression(
-                'COALESCE(?, ?)', array('Item_AltName', 'Item_Name')
+                'COALESCE(?, ?)',
+                array('Item_AltName', 'Item_Name'),
+                array(
+                    Expression::TYPE_IDENTIFIER,
+                    Expression::TYPE_IDENTIFIER
+                )
             );
             $fields = array(
                 'Last_Name', 'First_Name', 'Middle_Name', $bestTitle
