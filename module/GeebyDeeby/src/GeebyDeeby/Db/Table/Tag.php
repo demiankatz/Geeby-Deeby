@@ -30,6 +30,7 @@ namespace GeebyDeeby\Db\Table;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Tags
@@ -109,7 +110,7 @@ class Tag extends Gateway
                 array('Item_ID', 'Item_Name')
             );
             $select->join(
-                array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
+                array('eds' => 'Editions'), 'eds.Item_ID = i.Item_ID',
                 array()
             );
             $select->join(
@@ -118,9 +119,14 @@ class Tag extends Gateway
                 array('Item_AltName'), Select::JOIN_LEFT
             );
             $bestTitle = new Expression(
-                'COALESCE(?, ?)', array('Item_AltName', 'Item_Name')
+                'COALESCE(?, ?)',
+                array('Item_AltName', 'Item_Name'),
+                array(
+                    Expression::TYPE_IDENTIFIER,
+                    Expression::TYPE_IDENTIFIER
+                )
             );
-            $select->order('Tag.Tag', $bestTitle);
+            $select->order(['Tag', $bestTitle]);
             $select->where->equalTo('eds.Series_ID', $seriesID);
         };
         return $this->select($callback);
