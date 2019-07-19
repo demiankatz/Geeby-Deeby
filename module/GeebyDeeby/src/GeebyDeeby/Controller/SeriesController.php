@@ -368,7 +368,6 @@ class SeriesController extends AbstractBase
         }
         $view->people = $this->getDbTable('editionscredits')
             ->getPeopleForSeries($view->series['Series_ID']);
-        //$view->setTemplate('geeby-deeby/series/tags');
         return $view;
     }
 
@@ -385,7 +384,6 @@ class SeriesController extends AbstractBase
         }
         $view->tags = $this->getDbTable('tag')
             ->getTagsForSeries($view->series['Series_ID']);
-        //$view->setTemplate('geeby-deeby/series/tags');
         return $view;
     }
 
