@@ -1354,7 +1354,10 @@ class DatabaseIngester extends BaseIngester
         }
         Console::writeLine('FATAL: Unexpected title mismatch.');
         Console::writeLine('Incoming: ' . $title);
-        Console::writeLine('Database: ' . $db['item']['Item_Name']);
+        $dbTitle = isset($db['item']['Item_AltName'])
+            ? $db['item']['Item_AltName']
+            : $db['item']['Item_Name'];
+        Console::writeLine('Database: ' . $dbTitle);
         return false;
     }
 
