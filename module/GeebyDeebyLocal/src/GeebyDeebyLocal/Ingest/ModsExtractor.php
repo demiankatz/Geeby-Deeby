@@ -98,7 +98,7 @@ class ModsExtractor
             $firstName = isset($name[0]) ? (string) $name[0] : null;
             if (!empty($firstName)) {
                 // If the same series name has multiple numbers, favor the lowest non-zero value:
-                if (!isset($seriesInfo[$firstName]) || 
+                if (!isset($seriesInfo[$firstName]) ||
                     ((string) $number[0] > 0 && intval($seriesInfo[$firstName]) < (string) $number[0])
                 ) {
                     $seriesInfo[$firstName] = isset($number[0]) ? (string) $number[0] : '';
@@ -125,9 +125,12 @@ class ModsExtractor
                 }
             }
         }
-        // If we have an authorized name with a date in it, override the one extracted above:
-        if (isset($authMods[0]) && preg_match('/\(\d{4}/', (string) $authMods[0])) {
-            $parts = explode(',', isset($pub['name']) ? $pub['name'] : '');
+        // If we have an authorized name with a date in it, or if the authorized name is
+        // longer than the imprint name, override the one extracted above:
+        $parts = explode(',', isset($pub['name']) ? $pub['name'] : '');
+        if (isset($authMods[0])
+            && (preg_match('/\(\d{4}/', (string) $authMods[0]) || strlen($authMods[0]) > strlen($parts[0]))
+        ) {
             $newParts = explode(',', (string) $authMods[0]);
             foreach ($newParts as $i => $part) {
                 $parts[$i] = $part;
@@ -136,7 +139,7 @@ class ModsExtractor
         }
         return empty($pub) ? false : $pub;
     }
-    
+
     protected function extractDetails($mods)
     {
         $details = [];
