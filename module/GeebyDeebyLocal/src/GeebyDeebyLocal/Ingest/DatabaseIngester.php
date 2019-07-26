@@ -167,6 +167,15 @@ class DatabaseIngester extends BaseIngester
             ? preg_replace('/[^0-9]/', '', $matches[0][$index]) : '0';
     }
 
+    protected function getAllSeriesTitles($seriesObj)
+    {
+        $titles = [$seriesObj->Series_Name];
+        $san = $this->getDbTable('seriesalttitles');
+        foreach ($san->getAltTitles($seriesObj->Series_ID) as $alt) {
+            $titles[] = $alt->Series_AltName;
+        }
+        return $titles;
+    }
     /**
      * Ingest series entry
      *
@@ -190,8 +199,24 @@ class DatabaseIngester extends BaseIngester
         $details['contents'] = $childDetails;
         // Special case: multi-part work:
         if (count($childDetails) > 1) {
-            $container = trim(current(array_keys($details['series']))) . ' ' . trim(current($details['series']));
-            $newEdition = $this->getChildIssueForSeries($seriesObj, ['title' => $container], $pos);
+            $newChildData = [];
+            $baseContainerTitle = trim(current(array_keys($details['series'])));
+            // Check if the first child is named the same as the series; this is probably a sign
+            // that it actually contains metadata about the container, rather than one of its
+            // contents. We'll issue a warning so this can be double-checked by hand, just in
+            // case.
+            foreach ($this->getAllSeriesTitles($seriesObj) as $seriesTitle) {
+                if ($this->fuzzyCompare($seriesTitle, $childDetails[0][0]['title'])) {
+                    Console::writeLine("WARNING: assuming first child is top-level item due to series title match.");
+                    $baseContainerTitle = trim($childDetails[0][0]['title']);
+                    $newChildData = array_shift($childDetails)[0];
+                    break;
+                }
+            }
+            $newChildData['title'] = $this->articles->articleAwareAppend(
+                $baseContainerTitle, ' ' . trim(current($details['series']))
+            );
+            $newEdition = $this->getChildIssueForSeries($seriesObj, $newChildData, $pos);
             if (!$newEdition || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)) {
                 return false;
             };
@@ -1249,13 +1274,22 @@ class DatabaseIngester extends BaseIngester
             $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
             $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
             Console::writeLine("Added edition ID " . $newObj->Edition_ID);
-            return $newObj;
+            $edition = $newObj;
         } else if (count($lookup) == 1) {
             foreach ($lookup as $current) {
-                return $current;
+                $edition = $current;
             }
+        } else {
+            $edition = $this->pickEdition($lookup);
         }
-        return $this->pickEdition($lookup);
+        return $this->updateWorkInDatabase(
+            $data,
+            [
+                'edition' => $edition,
+                'authorIds' => [],
+                'item' => $this->getItemForEdition($edition)
+            ]
+        );
     }
 
     /**
@@ -1350,7 +1384,7 @@ class DatabaseIngester extends BaseIngester
      * @param array $data Incoming data about a single work.
      * @param array $db   Existing data about the same work.
      *
-     * @return bool True on success.
+     * @return object|bool Edition object on success, false otherwise.
      */
     protected function updateWorkInDatabase($data, $db)
     {
