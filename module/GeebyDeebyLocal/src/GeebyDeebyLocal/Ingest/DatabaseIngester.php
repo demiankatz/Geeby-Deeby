@@ -195,6 +195,9 @@ class DatabaseIngester extends BaseIngester
         Console::writeLine(
             "Contents (" . count($contentSummary) . "): " . implode(" -- ", $contentSummary)
         );
+        if (isset($details['publisher']['name'])) {
+            Console::writeLine("Publisher: " . $details['publisher']['name']);
+        }
         $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents']);
         if (!$childDetails) {
             return false;
