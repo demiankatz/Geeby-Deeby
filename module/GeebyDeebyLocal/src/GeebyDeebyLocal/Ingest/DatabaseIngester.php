@@ -48,6 +48,13 @@ class DatabaseIngester extends BaseIngester
     protected $articles;
 
     /**
+     * Cache for user-entered edition preferences.
+     *
+     * @var array
+     */
+    protected $editionPreferences = [];
+
+    /**
      * Constructor
      *
      * @param object $tables Table plugin manager
@@ -198,6 +205,7 @@ class DatabaseIngester extends BaseIngester
         if (isset($details['publisher']['name'])) {
             Console::writeLine("Publisher: " . $details['publisher']['name']);
         }
+        $this->editionPreferences = [];
         $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents']);
         if (!$childDetails) {
             return false;
@@ -1654,11 +1662,18 @@ class DatabaseIngester extends BaseIngester
             $menu[] = $letter . '. ' . $current->Edition_Name;
             $choices[] = $current;
         }
-        Console::writeLine("Multiple editions found at same position.");
-        Console::writeLine("Please pick one:");
-        Console::writeLine(implode("\n", $menu));
-        $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
-        $char = strtoupper($prompt->show());
+        $menuString = implode("\n", $menu);
+        $menuHash = md5($menuString);
+        if (isset($this->editionPreferences[$menuHash])) {
+            $char = $this->editionPreferences[$menuHash];
+        } else {
+            Console::writeLine("Multiple editions found at same position.");
+            Console::writeLine("Please pick one:");
+            Console::writeLine($menuString);
+            $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
+            $char = strtoupper($prompt->show());
+            $this->editionPreferences[$menuHash] = $char;
+        }
         return $choices[ord($char) - 65];
     }
 
