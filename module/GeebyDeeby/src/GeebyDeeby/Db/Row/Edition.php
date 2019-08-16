@@ -281,6 +281,9 @@ class Edition extends TableAwareGateway
         if (empty($this->Parent_Edition_ID)) {
             $this->Parent_Edition_ID = null;
         }
+        if (strlen(trim($this->Position_In_Parent)) == 0) {
+            $this->Position_In_Parent = null;
+        }
         parent::save();
     }
 }
