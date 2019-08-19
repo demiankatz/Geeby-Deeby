@@ -292,7 +292,9 @@ class ModsExtractor
 
     protected function extractTitleInfo($mods, $includeSubtitle = false)
     {
-        $matches = $mods->xpath('mods:titleInfo[not(@type="alternative")]');
+        $matches = $mods->xpath(
+            'mods:titleInfo[not(@type="alternative") and not(@type="uniform")]'
+        );
         if (empty($matches)) {
             return '';
         }
