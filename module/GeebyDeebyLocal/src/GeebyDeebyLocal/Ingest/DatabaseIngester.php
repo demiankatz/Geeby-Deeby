@@ -1169,6 +1169,7 @@ class DatabaseIngester extends BaseIngester
                 Console::writeLine(
                     chr(65 + $i) . '. ' . $current['title']
                     . (!empty($current['authors']) ? ' by ' . $current['authors'] : ' - no credits')
+                    . ' [ID = ' . $current['id']  . ']'
                     . ' (confidence: ' . $current['confidence'] . '%)'
                 );
             }
