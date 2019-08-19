@@ -1749,15 +1749,28 @@ class DatabaseIngester extends BaseIngester
         $result = [];
         foreach ($contents as $currentContent) {
             $match = false;
+            // First try exact match:
             foreach ($children as & $currentChild) {
                 $titlesChecked[] = $currentChild['item']['Item_Name'] . ' vs. ' . $currentContent['title'];
-                if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
+                if ($this->checkItemTitles($currentChild['item'], $currentContent, false)) {
                     $match = true;
                     $result[] = [$currentContent, $currentChild];
                     $currentChild['matched'] = true;
                     break;
                 }
             }
+            // Next try inexact match:
+            if (!$match) {
+                foreach ($children as & $currentChild) {
+                    if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
+                        $match = true;
+                        $result[] = [$currentContent, $currentChild];
+                        $currentChild['matched'] = true;
+                        break;
+                    }
+                }
+            }
+            // No match found:
             if (!$match) {
                 $result[] = [$currentContent, false];
             }
@@ -1802,14 +1815,28 @@ class DatabaseIngester extends BaseIngester
         $result = [];
         foreach ($contents as $currentContent) {
             $match = false;
+            // First try exact match:
             foreach ($children as & $currentChild) {
-                if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
+                $titlesChecked[] = $currentChild['item']['Item_Name'] . ' vs. ' . $currentContent['title'];
+                if ($this->checkItemTitles($currentChild['item'], $currentContent, false)) {
                     $match = true;
                     $result[] = [$currentContent, $currentChild];
                     $currentChild['matched'] = true;
                     break;
                 }
             }
+            // Next try inexact match:
+            if (!$match) {
+                foreach ($children as & $currentChild) {
+                    if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
+                        $match = true;
+                        $result[] = [$currentContent, $currentChild];
+                        $currentChild['matched'] = true;
+                        break;
+                    }
+                }
+            }
+            // No match found:
             if (!$match) {
                 $result[] = [$currentContent, false];
             }
@@ -1898,12 +1925,13 @@ class DatabaseIngester extends BaseIngester
     /**
      * Do a fuzzy compare to validate an item title.
      *
-     * @param array  $item  Item summary array (see getItemForEdition)
-     * @param string $title Title from incoming data, to be checked.
+     * @param array  $item    Item summary array (see getItemForEdition)
+     * @param string $title   Title from incoming data, to be checked.
+     * @param bool   $inexact Allow inexact matching?
      *
      * @return bool
      */
-    protected function checkItemTitle($item, $title)
+    protected function checkItemTitle($item, $title, $inexact = true)
     {
         $itemTitle = (isset($item['Item_AltName']) && !empty($item['Item_AltName']))
             ? $item['Item_AltName'] : $item['Item_Name'];
@@ -1918,7 +1946,7 @@ class DatabaseIngester extends BaseIngester
                 $shorter = $stripped1;
                 $longer = $stripped2;
             }
-            if ($this->fuzzyContains($longer, $shorter)) {
+            if ($inexact && $this->fuzzyContains($longer, $shorter)) {
                 Console::writeLine("WARNING: inexact title match {$title} vs. {$itemTitle}");
                 return true;
             }
@@ -1933,17 +1961,18 @@ class DatabaseIngester extends BaseIngester
      * @param array $item           Item summary array (see getItemForEdition)
      * @param array $currentContent Incoming data to be checked (must contain 'title'
      * key; may contain 'altTitles' key)
+     * @param bool  $inexact        Allow inexact matching?
      *
      * @return bool
      */
-    protected function checkItemTitles($item, $currentContent)
+    protected function checkItemTitles($item, $currentContent, $inexact = true)
     {
-        if ($this->checkItemTitle($item, $currentContent['title'])) {
+        if ($this->checkItemTitle($item, $currentContent['title'], $inexact)) {
             return true;
         }
         if (isset($currentContent['altTitles'])) {
             foreach ($currentContent['altTitles'] as $title) {
-                if ($this->checkItemTitle($item, $title)) {
+                if ($this->checkItemTitle($item, $title, $inexact)) {
                     return true;
                 }
             }
