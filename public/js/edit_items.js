@@ -13,6 +13,7 @@ var ItemEditor = function() {
         // Edition_ID is only set when we are creating a child edition....
         'edition_id': { 'id': '#Edition_ID' }
     };
+    this.attributeSelector = '.item-attribute';
     this.links = {
         'AboutItem': {
             'uriField': { 'id': '#item_bib_id', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }

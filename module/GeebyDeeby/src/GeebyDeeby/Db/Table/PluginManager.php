@@ -68,6 +68,8 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'item' => 'GeebyDeeby\Db\Table\Item',
         'itemsadaptations' => 'GeebyDeeby\Db\Table\ItemsAdaptations',
         'itemsalttitles' => 'GeebyDeeby\Db\Table\ItemsAltTitles',
+        'itemsattribute' => 'GeebyDeeby\Db\Table\ItemsAttribute',
+        'itemsattributesvalues' => 'GeebyDeeby\Db\Table\ItemsAttributesValues',
         'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
         'itemscreators' => 'GeebyDeeby\Db\Table\ItemsCreators',
         'itemscreatorscitations' => 'GeebyDeeby\Db\Table\ItemsCreatorsCitations',
