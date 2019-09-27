@@ -193,7 +193,10 @@ class DatabaseIngester extends BaseIngester
      */
     protected function ingestSeries($details, $seriesObj)
     {
-        $pos = $this->getPositionFromSeriesString(current($details['series']));
+        $pos = empty($details['series'])
+            ? 0
+            : $this->getPositionFromSeriesString(current($details['series']));
+        $item = ($pos === 0) ? $this->getItemForNewEdition($details['contents'][0]) : null;
         $contentSummary = array_map(
             function ($n) { return $n['title']; },
             $details['contents']
@@ -206,7 +209,7 @@ class DatabaseIngester extends BaseIngester
             Console::writeLine("Publisher: " . $details['publisher']['name']);
         }
         $this->editionPreferences = [];
-        $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents']);
+        $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents'], $item);
         if (!$childDetails) {
             return false;
         }
@@ -1687,12 +1690,17 @@ class DatabaseIngester extends BaseIngester
      * @param int    $pos       Position of incoming contents within series.
      * @param array  $contents  The 'contents' section of the details from
      * ModsExtractor or equivalent
+     * @param int    $item      Optional item ID (used for disambiguation when
+     * $pos == 0)
      *
      * @return array
      */
-    protected function synchronizeSeriesEntries($seriesObj, $pos, $contents)
+    protected function synchronizeSeriesEntries($seriesObj, $pos, $contents, $item)
     {
         $params = ['Series_ID' => $seriesObj->Series_ID, 'Position' => $pos];
+        if ($pos === 0 && !empty($item)) {
+            $params['Item_ID'] = $item;
+        }
         $lookup = $this->getDbTable('edition')->select($params);
         $sorted = [];
         foreach ($lookup as $child) {
