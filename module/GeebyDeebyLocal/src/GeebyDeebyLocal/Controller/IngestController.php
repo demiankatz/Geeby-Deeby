@@ -97,6 +97,46 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
+     * Harvest records from a collection to a directory for later processing.
+     *
+     * @return mixed
+     */
+    public function harvestcollectionAction()
+    {
+        $dir = rtrim($this->params()->fromRoute('dir'), '/');
+        if (!is_dir($dir)) {
+            if (!mkdir($dir)) {
+                Console::writeLine("Cannot create directory '$dir'");
+                return;
+            }
+        }
+        $collection = $this->params()->fromRoute('collection');
+        if (empty($collection)) {
+            Console::writeLine("Please specify a collection to harvest");
+            return;
+        }
+        $series = $this->params()->fromRoute('series');
+        $seriesObj = $this->getSeriesByTitle($series);
+        if (!$seriesObj) {
+            Console::writeLine("Cannot find series match for $series");
+            return;
+        }
+        $entries = $this->solr->getCollectionEntries($collection);
+        $count = 0;
+        foreach ($entries as $pid) {
+            $rawMods = $this->fedora->getModsForPid($pid);
+            if (!$rawMods) {
+                Console::writeLine("Could not retrieve MODS for $pid.");
+                return;
+            }
+            file_put_contents($dir . '/' . $count . '.mods', $rawMods);
+            $count++;
+        }
+        file_put_contents($dir . '/job.json', json_encode(['type' => 'series', 'id' => $seriesObj->Series_ID, 'count' => $count]));
+        Console::writeLine("Successfully harvested $count records.");
+    }
+
+    /**
      * Harvest records from a series to a directory for later processing.
      *
      * @return mixed

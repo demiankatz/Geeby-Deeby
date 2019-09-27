@@ -31,6 +31,16 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
+                'harvest-collection' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'harvest collection <collection> <series> <dir>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'harvestcollection',
+                        )
+                    )
+                ),
                 'harvest-existing' => array(
                     'type' => 'simple',
                     'options' => array(

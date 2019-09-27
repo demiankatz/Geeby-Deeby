@@ -163,6 +163,30 @@ class SolrHarvester
     }
 
     /**
+     * Retrieve Fedora PIDs matching a given collection name.
+     *
+     * @param string $collection Collection to retrieve.
+     *
+     * @return array Fedora PIDs.
+     */
+    public function getCollectionEntries($collection)
+    {
+        $query = $this->settings->solrCollectionField . ':"' . addcslashes($collection, '"') . '"';
+        $field = $this->settings->solrIdField;
+        $sort = isset($this->settings->solrCollectionSortField)
+            ? $this->settings->solrCollectionSortField : null;
+        $solr = $this->querySolr($query, $field, $sort);
+        $retVal = [];
+        foreach ($solr->response->docs as $doc) {
+            $pid = isset($doc->$field) ? $doc->$field : false;
+            if ($pid) {
+                $retVal[] = $pid;
+            }
+        }
+        return $retVal;
+    }
+
+    /**
      * Perform a Solr query.
      *
      * @param string $query Query to execute
