@@ -209,7 +209,7 @@ class DatabaseIngester extends BaseIngester
             Console::writeLine("Publisher: " . $details['publisher']['name']);
         }
         $this->editionPreferences = [];
-        $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details['contents'], $item);
+        $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details, $item);
         if (!$childDetails) {
             return false;
         }
@@ -1649,18 +1649,43 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
+     * Check if the provided edition matches any of the provided URLs.
+     *
+     * @param object $edition Edition to check
+     * @param array  $urls    URLs to check
+     *
+     * @return bool
+     */
+    protected function checkEditionFullTextMatch($edition, $urls)
+    {
+        if (!empty($urls)) {
+            $fulltext = $this->getDbTable('editionsfulltext');
+        }
+        foreach ($fulltext->getFullTextForEdition($edition->Edition_ID) as $ft) {
+            if (in_array($ft->Full_Text_URL, $urls)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
      * Given a list of editions, make the user pick one.
      *
      * @param \Iterable $children List of editions to check.
+     * @param array     $urls     URLs identifying the desired edition; if a
+     * match is found, the selection menu will be automatically bypassed.
      *
      * @return object
      */
-    protected function pickEdition($children)
+    protected function pickEdition($children, $urls = [])
     {
         $options = '';
         $menu = [];
         $choices = [];
         foreach ($children as $i => $current) {
+            if ($this->checkEditionFullTextMatch($current, $urls)) {
+                return $current;
+            }
             $letter = chr(65 + $i);
             $options .= $letter;
             $menu[] = $letter . '. ' . $current->Edition_Name;
@@ -1688,15 +1713,15 @@ class DatabaseIngester extends BaseIngester
      *
      * @param object $seriesObj Series row for containing series.
      * @param int    $pos       Position of incoming contents within series.
-     * @param array  $contents  The 'contents' section of the details from
-     * ModsExtractor or equivalent
+     * @param array  $details   The details from ModsExtractor or equivalent
      * @param int    $item      Optional item ID (used for disambiguation when
      * $pos == 0)
      *
      * @return array
      */
-    protected function synchronizeSeriesEntries($seriesObj, $pos, $contents, $item)
+    protected function synchronizeSeriesEntries($seriesObj, $pos, $details, $item)
     {
+        $contents = $details['contents'];
         $params = ['Series_ID' => $seriesObj->Series_ID, 'Position' => $pos];
         if ($pos === 0 && !empty($item)) {
             $params['Item_ID'] = $item;
@@ -1718,7 +1743,7 @@ class DatabaseIngester extends BaseIngester
                 Console::writeLine("Trying replacement no. $replacementNo");
             }
             if (count($children) > 1) {
-                $children = [$this->pickEdition($children)];
+                $children = [$this->pickEdition($children, $details['url'])];
             }
             $success = $this->synchronizeSeriesEntriesHelper($children, $contents);
             if ($success) {
