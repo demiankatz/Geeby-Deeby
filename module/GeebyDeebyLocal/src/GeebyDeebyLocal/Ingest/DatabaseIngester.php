@@ -1387,9 +1387,11 @@ class DatabaseIngester extends BaseIngester
     {
         $ed = $db['edition'];
         if (!empty($ed->Extent_In_Parent) && $ed->Extent_In_Parent !== $extent) {
-            Console::writeLine("FATAL ERROR: Unexpected extent: " . $extent);
-            Console::writeLine("Expected: " . $ed->Extent_In_Parent);
-            return false;
+            Console::writeLine(
+                "WARNING: Unexpected extent: " . $extent
+                . "; Expected: " . $ed->Extent_In_Parent
+            );
+            return true;
         }
         if (empty($ed->Parent_Edition_ID)) {
             Console::writeLine("FATAL ERROR: Missing parent ID.");
@@ -1660,10 +1662,10 @@ class DatabaseIngester extends BaseIngester
     {
         if (!empty($urls)) {
             $fulltext = $this->getDbTable('editionsfulltext');
-        }
-        foreach ($fulltext->getFullTextForEdition($edition->Edition_ID) as $ft) {
-            if (in_array($ft->Full_Text_URL, $urls)) {
-                return true;
+            foreach ($fulltext->getFullTextForEdition($edition->Edition_ID) as $ft) {
+                if (in_array($ft->Full_Text_URL, $urls)) {
+                    return true;
+                }
             }
         }
         return false;
