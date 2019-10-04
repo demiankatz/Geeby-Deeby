@@ -237,6 +237,9 @@ class DatabaseIngester extends BaseIngester
             $newChildData['title'] = $this->articles->articleAwareAppend(
                 $baseContainerTitle, ' ' . trim(current($details['series']))
             );
+            if (isset($details['url'])) {
+                $newChildData['url'] = $details['url'];
+            }
             $newEdition = $this->getChildIssueForSeries($seriesObj, $newChildData, $pos);
             if (!$newEdition || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)) {
                 return false;
@@ -1302,7 +1305,7 @@ class DatabaseIngester extends BaseIngester
                 $edition = $current;
             }
         } else {
-            $edition = $this->pickEdition($lookup);
+            $edition = $this->pickEdition($lookup, isset($data['url']) ? $data['url'] : []);
         }
         return $this->updateWorkInDatabase(
             $data,
