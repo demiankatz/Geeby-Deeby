@@ -38,8 +38,27 @@
       <input class="form-control" type="text" id="Item_Thanks" value="<?=isset($item['Item_Thanks']) ? $this->escapeHtml($item['Item_Thanks']) : ''?>" />
     </div>
   </div>
+  <? if (count($attributes) > 0): ?>
+    <div class="collapse" id="extraAttributes">
+      <? foreach ($attributes as $attribute): $attrId = $attribute['Items_Attribute_ID']; ?>
+        <div class="form-group">
+          <label for="Item_Attribute_<?=$attrId?>" class="col-sm-2 control-label"><?=$this->escapeHtml($attribute['Items_Attribute_Name'])?>:</label>
+          <div class="col-sm-10">
+            <? if ($attribute['Allow_HTML'] != 1): ?>
+              <input class="form-control item-attribute" type="text" id="Item_Attribute_<?=$attrId?>" value="<?=isset($attributeValues[$attrId]) ? $this->escapeHtml($attributeValues[$attrId]) : ''?>" />
+            <? else: ?>
+              <textarea class="form-control item-attribute" style="width:100%" rows="6" id="Item_Attribute_<?=$attrId?>"><?=isset($attributeValues[$attrId]) ? $this->escapeHtml($attributeValues[$attrId]) : ''?></textarea>
+            <? endif; ?>
+          </div>
+        </div>
+      <? endforeach; ?>
+    </div>
+  <? endif; ?>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
+      <? if (count($attributes) > 0): ?>
+        <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
+      <? endif; ?>
       <button id="save_item" onclick="Item.save();">Save</button>
     </div>
   </div>

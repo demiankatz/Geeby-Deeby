@@ -479,6 +479,19 @@
         </td></tr>
       <? endif; ?>
 
+      <? foreach ($itemAttributes as $current): ?>
+        <tr>
+          <th><?=$this->escapeHtml($current['Items_Attribute_Name'])?>:</th>
+          <td>
+            <? if ($current->Allow_HTML == 1): ?>
+              <?=$current->Items_Attribute_Value?><br />
+            <? else: ?>
+              <?=$this->escapeHtml($current->Items_Attribute_Value)?><br />
+            <? endif; ?>
+          </td>
+        </tr>
+      <? endforeach; ?>
+
       <?
         $groupedAttribs = [];
         foreach ($editionAttributes as $current) {

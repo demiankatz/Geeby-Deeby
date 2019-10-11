@@ -51,6 +51,33 @@ class EditItemController extends AbstractBase
     }
 
     /**
+     * Save attributes for the current item.
+     *
+     * @param int   $itemId  Item ID
+     * @param array $attribs Attribute values
+     *
+     * @return void
+     */
+     protected function saveAttributes($itemId, $attribs)
+     {
+         $table = $this->getDbTable('itemsattributesvalues');
+         // Delete old values:
+         $table->delete(['Item_ID' => $itemId]);
+         // Save new values:
+         foreach ($attribs as $id => $val) {
+             if (!empty($val)) {
+                 $table->insert(
+                     [
+                         'Item_ID' => $itemId,
+                         'Items_Attribute_ID' => $id,
+                         'Items_Attribute_Value' => $val
+                     ]
+                 );
+             }
+         }
+     }
+ 
+     /**
      * Operate on a single item
      *
      * @return mixed
@@ -64,43 +91,66 @@ class EditItemController extends AbstractBase
             'material' => 'Material_Type_ID'
         );
         $view = $this->handleGenericItem('item', $assignMap, 'item');
+        $itemId = isset($view->itemObj->Item_ID)
+            ? $view->itemObj->Item_ID
+            : (isset($view->affectedRow->Item_ID) ? $view->affectedRow->Item_ID : null);
+
+        // Special handling for saving attributes:
+        if ($this->getRequest()->isPost()
+            && ($attribs = $this->params()->fromPost('attribs'))
+        ) {
+            $this->saveAttributes($itemId, $attribs);
+        }
+
+        // Add attribute details if we have an Item_ID.
+        if ($itemId) {
+            $view->attributes = $this->getDbTable('itemsattribute')->getList();
+            $attributeValues = [];
+            $values = $this->getDbTable('itemsattributesvalues')
+                ->getAttributesForItem($itemId);
+            foreach ($values as $current) {
+                $attributeValues[$current->Items_Attribute_ID]
+                    = $current->Items_Attribute_Value;
+            }
+            $view->attributeValues = $attributeValues;
+        }
 
         $view->materials = $this->getDbTable('materialtype')->getList();
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->adaptedInto = $this->getDbTable('itemsadaptations')
-                ->getAdaptedFrom($view->itemObj->Item_ID);
+                ->getAdaptedFrom($itemId);
             $view->adaptedFrom = $this->getDbTable('itemsadaptations')
-                ->getAdaptedInto($view->itemObj->Item_ID);
+                ->getAdaptedInto($itemId);
             $view->roles = $this->getDbTable('role')->getList();
             $view->creators = $this->getDbTable('itemscreators')
-                ->getCreatorsForItem($view->itemObj->Item_ID);
+                ->getCreatorsForItem($itemId);
             $view->credits= $this->getDbTable('editionscredits')
-                ->getCreditsForItem($view->itemObj->Item_ID, true);
+                ->getCreditsForItem($itemId, true);
             $view->itemsBib = $this->getDbTable('itemsbibliography')
-                ->getItemsDescribedByItem($view->itemObj->Item_ID);
+                ->getItemsDescribedByItem($itemId);
             $view->peopleBib = $this->getDbTable('peoplebibliography')
-                ->getPeopleDescribedByItem($view->itemObj->Item_ID);
+                ->getPeopleDescribedByItem($itemId);
             $view->seriesBib = $this->getDbTable('seriesbibliography')
-                ->getSeriesDescribedByItem($view->itemObj->Item_ID);
+                ->getSeriesDescribedByItem($itemId);
             $view->item_list = $this->getDbTable('itemsincollections')
-                ->getItemsForCollection($view->itemObj->Item_ID);
+                ->getItemsForCollection($itemId);
             $view->translatedInto = $this->getDbTable('itemstranslations')
-                ->getTranslatedFrom($view->itemObj->Item_ID);
+                ->getTranslatedFrom($itemId);
             $view->descriptions = $this->getDbTable('itemsdescriptions')
-                ->getDescriptions($view->itemObj->Item_ID);
+                ->getDescriptions($itemId);
             $view->tags = $this->getDbTable('itemstags')
-                ->getTags($view->itemObj->Item_ID);
+                ->getTags($itemId);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
-                ->getAltTitles($view->itemObj->Item_ID);
+                ->getAltTitles($itemId);
             $view->relationships = $this->getDbTable('itemsrelationship')->getOptionList();
             $view->relationshipsValues = $this->getDbTable('itemsrelationshipsvalues')
-                ->getRelationshipsForItem($view->itemObj->Item_ID);
+                ->getRelationshipsForItem($itemId);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
-                ->getTranslatedInto($view->itemObj->Item_ID);
+                ->getTranslatedInto($itemId);
             $view->editions = $this->getDbTable('edition')
-                ->getEditionsForItem($view->itemObj->Item_ID);
+                ->getEditionsForItem($itemId);
             $view->setTemplate('geeby-deeby/edit-item/edit-full');
         }
 

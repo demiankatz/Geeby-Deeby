@@ -441,6 +441,27 @@ return array(
                             ),
                         ),
                     ),
+                    'itemattribute' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/ItemsAttribute[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditItemAttribute',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'itemattribute_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/ItemsAttributeList',
+                            'defaults' => array(
+                                'controller'    => 'EditItemAttribute',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                     'itemrelationship' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -1289,6 +1310,7 @@ return array(
             'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
+            'GeebyDeeby\Controller\EditItemAttribute' => 'GeebyDeeby\Controller\EditItemAttributeController',
             'GeebyDeeby\Controller\EditItemCreator' => 'GeebyDeeby\Controller\EditItemCreatorController',
             'GeebyDeeby\Controller\EditItemRelationship' => 'GeebyDeeby\Controller\EditItemRelationshipController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
