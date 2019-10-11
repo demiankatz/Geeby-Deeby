@@ -169,7 +169,7 @@ DROP TABLE IF EXISTS `Editions_Attributes_Values`;
 CREATE TABLE `Editions_Attributes_Values` (
   `Edition_ID` int(11) NOT NULL DEFAULT '0',
   `Editions_Attribute_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `Editions_Attribute_Value` varchar(32768) NOT NULL,
+  `Editions_Attribute_Value` mediumtext NOT NULL,
   PRIMARY KEY (`Edition_ID`, `Editions_Attribute_ID`),
   FOREIGN KEY (`Edition_ID`) REFERENCES `Editions` (`Edition_ID`),
   FOREIGN KEY (`Editions_Attribute_ID`) REFERENCES `Editions_Attributes` (`Editions_Attribute_ID`)
@@ -1015,7 +1015,7 @@ DROP TABLE IF EXISTS `Series_Attributes_Values`;
 CREATE TABLE `Series_Attributes_Values` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Series_Attribute_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `Series_Attribute_Value` varchar(32768) NOT NULL,
+  `Series_Attribute_Value` mediumtext NOT NULL,
   PRIMARY KEY (`Series_ID`, `Series_Attribute_ID`),
   FOREIGN KEY (`Series_ID`) REFERENCES `Series` (`Series_ID`),
   FOREIGN KEY (`Series_Attribute_ID`) REFERENCES `Series_Attributes` (`Series_Attribute_ID`)
@@ -1260,7 +1260,7 @@ DROP TABLE IF EXISTS `Tags_Attributes_Values`;
 CREATE TABLE `Tags_Attributes_Values` (
   `Tag_ID` int(11) NOT NULL DEFAULT '0',
   `Tags_Attribute_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `Tags_Attribute_Value` varchar(32768) NOT NULL,
+  `Tags_Attribute_Value` mediumtext NOT NULL,
   PRIMARY KEY (`Tag_ID`, `Tags_Attribute_ID`),
   FOREIGN KEY (`Tag_ID`) REFERENCES `Tags` (`Tag_ID`),
   FOREIGN KEY (`Tags_Attribute_ID`) REFERENCES `Tags_Attributes` (`Tags_Attribute_ID`)
