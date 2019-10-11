@@ -55,6 +55,8 @@ class ItemController extends AbstractBase
         }
         $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
             ->getAttributesForItem($id);
+        $extras['itemAttributes'] = $this->getDbTable('itemsattributesvalues')
+            ->getAttributesForItem($id);
         $extras['relationshipsValues'] = $this->getDbTable('itemsrelationshipsvalues')
             ->getRelationshipsForItem($id);
         return $this->createViewModel(
@@ -156,6 +158,14 @@ class ItemController extends AbstractBase
         $item = $graph->resource($uri, $class);
         $name = $view->item['Item_Name'];
         $item->set('dcterms:title', $articleHelper->formatTrailingArticles($name));
+        foreach ($view->itemAttributes as $current) {
+            if (!empty($current['Items_Attribute_RDF_Property'])) {
+                $item->set(
+                    $current['Items_Attribute_RDF_Property'],
+                    $current['Items_Attribute_Value']
+                );
+            }
+        }
         foreach ($view->relationshipsValues as $current) {
             if (!empty($current['predicate'])) {
                 foreach ($current['values'] as $value) {

@@ -1,0 +1,23 @@
+<div id="editForm">
+  <input type="hidden" id="Items_Attribute_ID" value="<?=$attribute['Items_Attribute_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Attribute Name:</th>
+      <td><input type="text" id="Items_Attribute_Name" value="<?=isset($attribute['Items_Attribute_Name']) ? $this->escapeHtml($attribute['Items_Attribute_Name']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>RDF Property (optional URI):</th>
+      <td><input type="text" id="Items_Attribute_RDF_Property" value="<?=isset($attribute['Items_Attribute_RDF_Property']) ? $this->escapeHtml($attribute['Items_Attribute_RDF_Property']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Display Priority (lower numbers displayed first):</th>
+      <td><input type="text" id="Display_Priority" value="<?=isset($attribute['Display_Priority']) ? $this->escapeHtml($attribute['Display_Priority']) : '0'?>" /></td>
+    </tr>
+    <tr>
+      <th>Allow HTML in Value (checked = yes, unchecked = no):</th>
+      <td><input type="checkbox" id="Allow_HTML" value="1" <?=isset($attribute['Allow_HTML']) && $attribute['Allow_HTML'] == 1 ? 'checked="checked" ' : ''?>/></td>
+    </tr>
+  </table>
+  <button id="save_item_attribute" onclick="ItemsAttribute.save();">Save</button>
+  <div id="save_item_attribute_status"></div>
+</div>

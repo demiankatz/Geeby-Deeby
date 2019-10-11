@@ -1,0 +1,6 @@
+<? $this->layout()->title = 'Edit Item Attributes' ?>
+<? $this->scriptManager()->add(['base_editor', 'edit_attributes']) ?>
+<p><b>Item Attributes:</b></p>
+<button id="add_item_attribute" type="button" onclick="ItemsAttribute.edit('NEW');">Add Item Attribute</button>
+<br /><br />
+<div id="items_attribute_list"><?=$this->render('geeby-deeby/edit-item-attribute/render-item-attributes.phtml')?></div>
