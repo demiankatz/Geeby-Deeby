@@ -29,6 +29,8 @@ namespace GeebyDeeby\Db\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
+use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Items_Tags
@@ -71,11 +73,27 @@ class ItemsTags extends Gateway
                 array('Volume', 'Position', 'Replacement_Number')
             );
             $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
+            $select->join(
                 array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
             );
             $select->group(array('i.Item_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number'));
             $select->order(
-                array('Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Item_Name')
+                array(
+                    'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number',
+                    new Expression(
+                        'COALESCE(?, ?)',
+                        array('Item_AltName', 'Item_Name'),
+                        array(
+                            Expression::TYPE_IDENTIFIER,
+                            Expression::TYPE_IDENTIFIER
+                        )
+                    )
+                )
             );
             $select->where->equalTo('Tag_ID', $tagID);
         };
