@@ -37,6 +37,18 @@ var EditionsAttributeEditor = function() {
 BaseEditor.prototype.registerSubclass(EditionsAttributeEditor);
 var EditionsAttribute = new EditionsAttributeEditor();
 
+var ItemsAttributeEditor = function() {
+    this.type = "Items Attribute";
+    this.saveFields = {
+        'attribute_name': { 'id': '#Items_Attribute_Name', emptyError: 'Name cannot be blank.' },
+        'rdf_property': { 'id': '#Items_Attribute_RDF_Property' },
+        'priority': { 'id': '#Display_Priority' },
+        'allow_html': { 'id': '#Allow_HTML' }
+    };
+};
+BaseEditor.prototype.registerSubclass(ItemsAttributeEditor);
+var ItemsAttribute = new ItemsAttributeEditor();
+
 var ItemsRelationshipEditor = function() {
     this.type = "Items Relationship";
     this.saveFields = {
