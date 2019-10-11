@@ -10,7 +10,7 @@ CREATE TABLE `Tags_Attributes` (
 CREATE TABLE `Tags_Attributes_Values` (
   `Tag_ID` int(11) NOT NULL DEFAULT '0',
   `Tags_Attribute_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `Tags_Attribute_Value` varchar(32768) NOT NULL,
+  `Tags_Attribute_Value` mediumtext NOT NULL,
   PRIMARY KEY (`Tag_ID`, `Tags_Attribute_ID`),
   FOREIGN KEY (`Tag_ID`) REFERENCES `Tags` (`Tag_ID`),
   FOREIGN KEY (`Tags_Attribute_ID`) REFERENCES `Tags_Attributes` (`Tags_Attribute_ID`)

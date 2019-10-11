@@ -10,6 +10,6 @@ CREATE TABLE `Series_Attributes` (
 CREATE TABLE `Series_Attributes_Values` (
   `Series_ID` int(11) NOT NULL DEFAULT '0',
   `Series_Attribute_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `Series_Attribute_Value` varchar(32768) NOT NULL,
+  `Series_Attribute_Value` mediumtext NOT NULL,
   PRIMARY KEY (`Series_ID`, `Series_Attribute_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
