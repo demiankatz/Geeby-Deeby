@@ -286,6 +286,11 @@ class ModsExtractor
                 $title .= ' : ' . $subtitle;
             }
         }
+	$partParts = $current->xpath('mods:partNumber');
+        $part = isset($partParts[0]) ? trim((string)$partParts[0]) : '';
+        if (!empty($part)) {
+            $title .= ', ' . $part;
+        }
         $article = $current->xpath('mods:nonSort');
         return $title . (empty($article) ? '' : ', ' . trim((string)$article[0]));
     }
