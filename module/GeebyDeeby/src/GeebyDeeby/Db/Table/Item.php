@@ -157,10 +157,18 @@ class Item extends Gateway
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
                 array('Item_AltName'), Select::JOIN_LEFT
             );
+            $itemName = new Expression(
+                'COALESCE(?, ?)',
+                array('iat.Item_AltName', 'Items.Item_Name'),
+                array(
+                    Expression::TYPE_IDENTIFIER,
+                    Expression::TYPE_IDENTIFIER
+                )
+            );
             $select->order(
                 $groupByMaterial
-                    ? array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', 'Item_Name')
-                    : array('Volume', 'Position', 'Replacement_Number', 'Item_Name')
+                    ? array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', $itemName)
+                    : array('Volume', 'Position', 'Replacement_Number', $itemName)
             );
             $select->group(
                 array('Items.Item_ID', 'Volume', 'Position', 'Replacement_Number', 'Items.Material_Type_ID')
