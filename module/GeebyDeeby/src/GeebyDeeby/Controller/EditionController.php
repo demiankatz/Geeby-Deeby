@@ -126,6 +126,11 @@ class EditionController extends AbstractBase
                 );
             }
         }
+        foreach ($view->oclcNumbers as $oclc) {
+            $edition->add(
+                'owl:sameAs', 'http://www.worldcat.org/oclc/' . $oclc['OCLC_Number']
+            );
+        }
         return $edition;
     }
 
