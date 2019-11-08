@@ -62,6 +62,10 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
         if ($isRealPerson) {
             $person = parent::addPrimaryResourceToGraph($graph, $view, $class);
             $person->set('rda:preferredNameForTheAgent', $authName);
+            foreach ($view->pseudonyms as $pseudo) {
+                $pseudoUri = $this->getServerUrl('person', ['id' => $pseudo['Person_ID']]) . '#name';
+                $person->add('rda:alternateIdentity', $pseudoUri);
+            }
         }
 
         $id = $view->person['Person_ID'];
