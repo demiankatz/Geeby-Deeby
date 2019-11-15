@@ -27,8 +27,6 @@
  */
 namespace GeebyDeebyLocal\Ingest\ImageIngester;
 
-use Zend\Console\Console;
-
 /**
  * Class to load NIU thumbnails into the database.
  *
