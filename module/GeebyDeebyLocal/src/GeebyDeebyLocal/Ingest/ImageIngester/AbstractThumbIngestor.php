@@ -1,10 +1,10 @@
 <?php
 /**
- * Class to load information into the database.
+ * Abstract thumbnail loader.
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -25,12 +25,13 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeebyLocal\Ingest;
+namespace GeebyDeebyLocal\Ingest\ImageIngester;
 
+use GeebyDeebyLocal\Ingest\BaseIngester;
 use Zend\Console\Console;
 
 /**
- * Class to load information into the database.
+ * Abstract thumbnail loader.
  *
  * @category GeebyDeeby
  * @package  Ingest
@@ -38,26 +39,43 @@ use Zend\Console\Console;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ImageIngester extends BaseIngester
+abstract class AbstractThumbIngestor extends BaseIngester
 {
     /**
-     * Solr harvester
+     * Domain for full text links
      *
-     * @var SolrHarvester
+     * @var string
      */
-    protected $solr;
+    protected $domain;
 
     /**
-     * Constructor
+     * Full text source ID for this provider
      *
-     * @param object        $tables Table plugin manager
-     * @param SolrHarvester $solr   Solr harvester
+     * @var int
      */
-    public function __construct($tables, $solr)
+    protected $fullTextSource;
+
+    /**
+     * PID prefix
+     *
+     * @var string
+     */
+    protected $pidPrefix;
+
+    /**
+     * Extract a PID from a URI.
+     *
+     * @param string $uri URI
+     *
+     * @return string|bool
+     */
+    protected function extractPID($uri)
     {
-        parent::__construct($tables);
-        $this->solr = $solr;
+        $regex = '/' . $this->pidPrefix . ':[0-9]+/';
+        preg_match($regex, str_replace('%3A', ':', $uri), $matches);
+        return empty($matches[0]) ? false : $matches[0];
     }
+
 
     /**
      * Load missing NIU images.
@@ -88,35 +106,6 @@ class ImageIngester extends BaseIngester
     }
 
     /**
-     * Convert a full-text link to an image URI.
-     *
-     * @param string $uri Full text link
-     *
-     * @return string
-     */
-    protected function getIIIFURI($uri)
-    {
-        $pid = $this->solr->getFirstPagePID($this->extractPID($uri));
-        if (!$pid) {
-            throw new \Exception("Could not find first page PID for $uri");
-        }
-        return "https://dimenovels.lib.niu.edu/iiif/2/" . urlencode($pid);
-    }
-
-    /**
-     * Extract a PID from a URI.
-     *
-     * @param string $uri URI
-     *
-     * @return string|bool
-     */
-    protected function extractPID($uri)
-    {
-        preg_match('/dimenovels:[0-9]+/', str_replace('%3A', ':', $uri), $matches);
-        return empty($matches[0]) ? false : $matches[0];
-    }
-
-    /**
      * Get a list of Edition_ID values that already have images.
      *
      * @return array
@@ -124,7 +113,7 @@ class ImageIngester extends BaseIngester
     protected function getExistingImages()
     {
         $callback = function ($select) {
-            $select->where->like('Image_Path', '%niu.edu%');
+            $select->where->like('Image_Path', '%' . $this->domain . '%');
         };
         $results = [];
         foreach ($this->getDbTable('editionsimages')->select($callback) as $current) {
@@ -134,6 +123,15 @@ class ImageIngester extends BaseIngester
     }
 
     /**
+     * Convert a full-text link to an image URI.
+     *
+     * @param string $uri Full text link
+     *
+     * @return string
+     */
+    abstract protected function getIIIFURI($uri);
+
+    /**
      * Get a list of full text links that lack corresponding images.
      *
      * @return \Iterable
@@ -141,7 +139,7 @@ class ImageIngester extends BaseIngester
     protected function getMissingImageLinks()
     {
         $callback = function ($select) {
-            $select->where(['Full_Text_Source_ID' => self::FULLTEXT_SOURCE_NIU]);
+            $select->where(['Full_Text_Source_ID' => $this->fullTextSource]);
         };
         return $this->getDbTable('editionsfulltext')->select($callback);
     }

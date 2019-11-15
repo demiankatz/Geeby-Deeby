@@ -357,7 +357,10 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function loadiiifAction()
     {
-        $this->getImageIngester()->ingestImages();
+        foreach ($this->getImageIngesters() as $label => $ingester) {
+            Console::writeLine("Checking images for " . $label);
+            $ingester->ingestImages();
+        }
     }
 
     /**
@@ -495,14 +498,17 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     }
 
     /**
-     * Construct the image ingestion tool.
+     * Construct the image ingestion tools.
      *
-     * @return DatabaseIngester
+     * @return \GeebyDeebyLocal\Ingest\ImageIngester\AbstractThumbIngestor[]
      */
-    protected function getImageIngester()
+    protected function getImageIngesters()
     {
         $tables = $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager');
-        return new ImageIngester($tables, $this->solr);
+        return [
+            'NIU' => new ImageIngester\NIU($tables, $this->solr),
+            'Villanova' => new ImageIngester\VU($tables),
+        ];
     }
 
     /**
