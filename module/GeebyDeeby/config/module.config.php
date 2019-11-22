@@ -227,11 +227,12 @@ return array(
                     'city' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/City[/:id]',
+                            'route'    => '/City[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditCity',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null,
                             ),
                         ),
                     ),
@@ -281,11 +282,12 @@ return array(
                     'country' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/Country[/:id]',
+                            'route'    => '/Country[/:id][/:action][/[:extra]]',
                             'defaults' => array(
                                 'controller'    => 'EditCountry',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null,
                             ),
                         ),
                     ),
