@@ -58,7 +58,7 @@ class CountryController extends AbstractBase
      * @return \EasyRdf\Resource
      */
     protected function addPrimaryResourceToGraph($graph, $view,
-        $class = 'owl:Thing'
+        $class = 'skos:Concept'
     ) {
         $uri = $this->getServerUrl(
             'country', ['id' => $view->country['Country_ID']]
