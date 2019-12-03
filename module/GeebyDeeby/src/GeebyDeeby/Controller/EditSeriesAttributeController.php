@@ -45,10 +45,16 @@ class EditSeriesAttributeController extends AbstractBase
      */
     public function listAction()
     {
-        return $this->getGenericList(
+        $view = $this->getGenericList(
             'seriesattribute', 'attributes',
             'geeby-deeby/edit-series-attribute/render-series-attributes'
         );
+        // If this is not an AJAX request, we also want to display relationships:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->relationships
+                = $this->forwardTo(__NAMESPACE__ . '\EditSeriesRelationship', 'list')->relationships;
+        }
+        return $view;
     }
 
     /**
@@ -63,7 +69,7 @@ class EditSeriesAttributeController extends AbstractBase
             'rdf_property' => 'Series_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
             'priority' => 'Display_Priority'
-            
+
         );
         $response = $this
             ->handleGenericItem('seriesattribute', $assignMap, 'attribute');

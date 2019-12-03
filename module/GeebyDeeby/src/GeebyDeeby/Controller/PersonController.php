@@ -169,6 +169,8 @@ class PersonController extends AbstractBase
             array('person' => $rowObj->toArray())
         );
         $view->sort = $sort;
+        $view->citations = $this->getDbTable('itemscreators')
+            ->getCitationsForPerson($id, $view->sort);
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForPerson($id, $view->sort);
         $pseudo = $this->getDbTable('pseudonyms');

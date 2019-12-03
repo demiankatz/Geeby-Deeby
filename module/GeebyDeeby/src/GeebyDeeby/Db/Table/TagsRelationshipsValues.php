@@ -27,6 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+
 /**
  * Table Definition for Tags_Relationships_Values
  *
@@ -40,10 +43,15 @@ class TagsRelationshipsValues extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('Tags_Relationships_Values');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'Tags_Relationships_Values');
     }
 
     /**

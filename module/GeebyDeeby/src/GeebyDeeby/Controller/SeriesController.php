@@ -57,7 +57,8 @@ class SeriesController extends AbstractBase
         }
         $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
             ->getAttributesForSeries($id);
-
+        $extras['relationshipsValues'] = $this->getDbTable('seriesrelationshipsvalues')
+            ->getRelationshipsForSeries($id);
         return $this->createViewModel(
             array('series' => $rowObj->toArray()) + $extras
         );
@@ -137,7 +138,7 @@ class SeriesController extends AbstractBase
             $select->group('Series_ID');
         };
         $view->dateStats = current($editions->select($callback)->toArray());
-        
+
         // Check for missing items
         $callback = function ($select) use ($seriesId) {
             $select->where(['Series_ID' => $seriesId]);
@@ -317,7 +318,7 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
             ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
         $view->images = $this->getDbTable('editionsimages')
@@ -355,6 +356,38 @@ class SeriesController extends AbstractBase
     }
 
     /**
+     * "Show series people" page
+     *
+     * @return mixed
+     */
+    public function peopleAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        $view->people = $this->getDbTable('editionscredits')
+            ->getPeopleForSeries($view->series['Series_ID']);
+        return $view;
+    }
+
+    /**
+     * "Show series tags" page
+     *
+     * @return mixed
+     */
+    public function tagsAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
+        }
+        $view->tags = $this->getDbTable('tag')
+            ->getTagsForSeries($view->series['Series_ID']);
+        return $view;
+    }
+
+    /**
      * Return the RDF class(es) used for series, if any.
      *
      * @return array
@@ -371,7 +404,7 @@ class SeriesController extends AbstractBase
      */
     protected function addSeriesToGraph($graph, $series)
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $series->Series_ID;
         $uri = $this->getServerUrl('series', ['id' => $id]);
         $seriesResource = $graph->resource($uri, $this->getSeriesRdfClass());
@@ -409,7 +442,7 @@ class SeriesController extends AbstractBase
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
         $id = $view->series['Series_ID'];
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $uri = $this->getServerUrl('series', ['id' => $id]);
         $series = $graph->resource($uri, (array)$class + $this->getSeriesRdfClass());
         foreach ($view->seriesAttributes as $current) {
@@ -418,6 +451,16 @@ class SeriesController extends AbstractBase
                     $current['Series_Attribute_RDF_Property'],
                     $current['Series_Attribute_Value']
                 );
+            }
+        }
+        foreach ($view->relationshipsValues as $current) {
+            if (!empty($current['predicate'])) {
+                foreach ($current['values'] as $value) {
+                    $series->add(
+                        $current['predicate'],
+                        $this->getServerUrl('series', ['id' => $value['Series_ID']])
+                    );
+                }
             }
         }
         $name = $view->series['Series_Name'];
@@ -487,7 +530,7 @@ class SeriesController extends AbstractBase
         $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         $view->groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
             ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
         $view->items = $this->getDbTable('item')->getItemsForSeries($id, true, $view->groupByMaterial);

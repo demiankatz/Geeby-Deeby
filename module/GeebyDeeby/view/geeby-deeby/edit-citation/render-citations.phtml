@@ -1,0 +1,7 @@
+<? if (isset($citations) && count($citations) > 0): ?>
+  <? foreach ($citations as $current): ?>
+    <a href="#" onclick="Citation.edit(<?=$this->escapeHtml($current['Citation_ID'])?>); return false;"><?=$this->escapeHtml($current['Citation'])?></a><br />
+  <? endforeach; ?>
+<? else: ?>
+  No citations defined.
+<? endif; ?>

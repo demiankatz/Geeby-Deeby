@@ -284,7 +284,7 @@ class ApproveController extends AbstractBase
         if (empty($address)) {
             return true;
         }
-        $view = $this->getServiceLocator()->get('viewmanager')->getRenderer();
+        $view = $this->getViewRenderer();
         $subject = $view->config('siteTitle') . " Membership";
         $message = $view->render('emails/account-approval.phtml');
         $from = "From: " . $view->config('siteEmail');

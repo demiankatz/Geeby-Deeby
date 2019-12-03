@@ -18,87 +18,6 @@ return array(
         'dbPass' => 'gbdb', // database password
         // Should we group series entries by material type (true), or display them as one continuous list (false)?
         'groupSeriesByMaterialType' => true,
-        'db_table_plugin_manager' => array(
-            'invokables' => array(
-                'authority' => 'GeebyDeeby\Db\Table\Authority',
-                'category' => 'GeebyDeeby\Db\Table\Category',
-                'city' => 'GeebyDeeby\Db\Table\City',
-                'collections' => 'GeebyDeeby\Db\Table\Collections',
-                'country' => 'GeebyDeeby\Db\Table\Country',
-                'edition' => 'GeebyDeeby\Db\Table\Edition',
-                'editionsattribute' => 'GeebyDeeby\Db\Table\EditionsAttribute',
-                'editionsattributesvalues' => 'GeebyDeeby\Db\Table\EditionsAttributesValues',
-                'editionscredits' => 'GeebyDeeby\Db\Table\EditionsCredits',
-                'editionsfulltext' => 'GeebyDeeby\Db\Table\EditionsFullText',
-                'editionsimages' => 'GeebyDeeby\Db\Table\EditionsImages',
-                'editionsisbns' => 'GeebyDeeby\Db\Table\EditionsISBNs',
-                'editionsoclcnumbers' => 'GeebyDeeby\Db\Table\EditionsOCLCNumbers',
-                'editionsplatforms' => 'GeebyDeeby\Db\Table\EditionsPlatforms',
-                'editionsproductcodes' => 'GeebyDeeby\Db\Table\EditionsProductCodes',
-                'editionsreleasedates' => 'GeebyDeeby\Db\Table\EditionsReleaseDates',
-                'faqs' => 'GeebyDeeby\Db\Table\FAQs',
-                'file' => 'GeebyDeeby\Db\Table\File',
-                'filetype' => 'GeebyDeeby\Db\Table\FileType',
-                'fulltextsource' => 'GeebyDeeby\Db\Table\FullTextSource',
-                'item' => 'GeebyDeeby\Db\Table\Item',
-                'itemsadaptations' => 'GeebyDeeby\Db\Table\ItemsAdaptations',
-                'itemsalttitles' => 'GeebyDeeby\Db\Table\ItemsAltTitles',
-                'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
-                'itemscredits' => 'GeebyDeeby\Db\Table\ItemsCredits',
-                'itemsdescriptions' => 'GeebyDeeby\Db\Table\ItemsDescriptions',
-                'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
-                'itemsimages' => 'GeebyDeeby\Db\Table\ItemsImages',
-                'itemsincollections' => 'GeebyDeeby\Db\Table\ItemsInCollections',
-                'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
-                'itemsisbns' => 'GeebyDeeby\Db\Table\ItemsISBNs',
-                'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
-                'itemsplatforms' => 'GeebyDeeby\Db\Table\ItemsPlatforms',
-                'itemsproductcodes' => 'GeebyDeeby\Db\Table\ItemsProductCodes',
-                'itemsreleasedates' => 'GeebyDeeby\Db\Table\ItemsReleaseDates',
-                'itemsreviews' => 'GeebyDeeby\Db\Table\ItemsReviews',
-                'itemstags' => 'GeebyDeeby\Db\Table\ItemsTags',
-                'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',
-                'language' => 'GeebyDeeby\Db\Table\Language',
-                'link' => 'GeebyDeeby\Db\Table\Link',
-                'linktype' => 'GeebyDeeby\Db\Table\LinkType',
-                'materialtype' => 'GeebyDeeby\Db\Table\MaterialType',
-                'note' => 'GeebyDeeby\Db\Table\Note',
-                'peoplebibliography' => 'GeebyDeeby\Db\Table\PeopleBibliography',
-                'peoplefiles' => 'GeebyDeeby\Db\Table\PeopleFiles',
-                'peoplelinks' => 'GeebyDeeby\Db\Table\PeopleLinks',
-                'peopleuris' => 'GeebyDeeby\Db\Table\PeopleURIs',
-                'person' => 'GeebyDeeby\Db\Table\Person',
-                'platform' => 'GeebyDeeby\Db\Table\Platform',
-                'predicate' => 'GeebyDeeby\Db\Table\Predicate',
-                'pseudonyms' => 'GeebyDeeby\Db\Table\Pseudonyms',
-                'publisher' => 'GeebyDeeby\Db\Table\Publisher',
-                'publishersaddresses' => 'GeebyDeeby\Db\Table\PublishersAddresses',
-                'publishersimprints' => 'GeebyDeeby\Db\Table\PublishersImprints',
-                'recentreviews' => 'GeebyDeeby\Db\Table\RecentReviews',
-                'role' => 'GeebyDeeby\Db\Table\Role',
-                'series' => 'GeebyDeeby\Db\Table\Series',
-                'seriesalttitles' => 'GeebyDeeby\Db\Table\SeriesAltTitles',
-                'seriesattribute' => 'GeebyDeeby\Db\Table\SeriesAttribute',
-                'seriesattributesvalues' => 'GeebyDeeby\Db\Table\SeriesAttributesValues',
-                'seriesbibliography' => 'GeebyDeeby\Db\Table\SeriesBibliography',
-                'seriescategories' => 'GeebyDeeby\Db\Table\SeriesCategories',
-                'seriesreviews' => 'GeebyDeeby\Db\Table\SeriesReviews',
-                'seriesfiles' => 'GeebyDeeby\Db\Table\SeriesFiles',
-                'serieslinks' => 'GeebyDeeby\Db\Table\SeriesLinks',
-                'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',
-                'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
-                'seriestranslations' => 'GeebyDeeby\Db\Table\SeriesTranslations',
-                'tag' => 'GeebyDeeby\Db\Table\Tag',
-                'tagsattribute' => 'GeebyDeeby\Db\Table\TagsAttribute',
-                'tagsattributesvalues' => 'GeebyDeeby\Db\Table\TagsAttributesValues',
-                'tagsrelationship' => 'GeebyDeeby\Db\Table\TagsRelationship',
-                'tagsrelationshipsvalues' => 'GeebyDeeby\Db\Table\TagsRelationshipsValues',
-                'tagsuris' => 'GeebyDeeby\Db\Table\TagsURIs',
-                'tagtype' => 'GeebyDeeby\Db\Table\TagType',
-                'user' => 'GeebyDeeby\Db\Table\User',
-                'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
-            ),
-        ),
         'file_groups' => array(
             // Fill this array with 'Group Name' => array(id1, id2, id3, ...)
             // if you wish to create custom file groupings on the "List Files"
@@ -280,6 +199,27 @@ return array(
                             'route'    => '/CategoryList',
                             'defaults' => array(
                                 'controller'    => 'EditCategory',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'citation' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Citation[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditCitation',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'citation_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/CitationList',
+                            'defaults' => array(
+                                'controller'    => 'EditCitation',
                                 'action'        => 'list',
                             ),
                         ),
@@ -469,12 +409,76 @@ return array(
                             ),
                         ),
                     ),
+                    'item_creator' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Item_Creator[/:id][/:action][/:extra]',
+                            'defaults' => array(
+                                'controller'    => 'EditItemCreator',
+                                'action'        => 'citation',
+                                'id'            => 'NEW',
+                                'extra'         => null,
+                            ),
+                        ),
+                    ),
                     'item_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
                             'route'    => '/ItemList',
                             'defaults' => array(
                                 'controller'    => 'EditItem',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'item_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Item/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditItem',
+                                'action'        => 'Relationship',
+                            ),
+                        ),
+                    ),
+                    'itemattribute' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/ItemsAttribute[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditItemAttribute',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'itemattribute_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/ItemsAttributeList',
+                            'defaults' => array(
+                                'controller'    => 'EditItemAttribute',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'itemrelationship' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/ItemsRelationship[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditItemRelationship',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'itemrelationship_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/ItemsRelationshipList',
+                            'defaults' => array(
+                                'controller'    => 'EditItemRelationship',
                                 'action'        => 'list',
                             ),
                         ),
@@ -745,6 +749,16 @@ return array(
                             ),
                         ),
                     ),
+                    'series_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Series/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditSeries',
+                                'action'        => 'Relationship',
+                            ),
+                        ),
+                    ),
                     'seriesattribute' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -766,6 +780,27 @@ return array(
                             ),
                         ),
                     ),
+                    'seriesrelationship' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/SeriesRelationship[/:id]',
+                            'defaults' => array(
+                                'controller'    => 'EditSeriesRelationship',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ),
+                        ),
+                    ),
+                    'seriesrelationship_list' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => '/SeriesRelationshipList',
+                            'defaults' => array(
+                                'controller'    => 'EditSeriesRelationship',
+                                'action'        => 'list',
+                            ),
+                        ),
+                    ),
                     'tag' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -778,16 +813,6 @@ return array(
                             ),
                         ),
                     ),
-                    'tag_relationship_linker' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/Tag/:id/Relationship/:relationship_id[/[:extra]]',
-                            'defaults' => array(
-                                'controller'    => 'EditTag',
-                                'action'        => 'Relationship',
-                            ),
-                        ),
-                    ),
                     'tag_list' => array(
                         'type'    => 'Literal',
                         'options' => array(
@@ -795,6 +820,16 @@ return array(
                             'defaults' => array(
                                 'controller'    => 'EditTag',
                                 'action'        => 'list',
+                            ),
+                        ),
+                    ),
+                    'tag_relationship_linker' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/Tag/:id/Relationship/:relationship_id[/[:extra]]',
+                            'defaults' => array(
+                                'controller'    => 'EditTag',
+                                'action'        => 'Relationship',
                             ),
                         ),
                     ),
@@ -1228,7 +1263,13 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
-            'GeebyDeeby\DbAdapter' => function ($sm) {
+            'GeebyDeeby\Db\Row\PluginManager' => function ($sm) {
+                return new \GeebyDeeby\Db\Row\PluginManager($sm);
+            },
+            'GeebyDeeby\Db\Table\PluginManager' => function ($sm) {
+                return new \GeebyDeeby\Db\Table\PluginManager($sm);
+            },
+            'Zend\Db\Adapter\Adapter' => function ($sm) {
                 $config = $sm->get('Config');
                 return new \Zend\Db\Adapter\Adapter(
                     array(
@@ -1242,14 +1283,6 @@ return array(
                     )
                 );
             },
-            'GeebyDeeby\DbTablePluginManager' => function ($sm) {
-                $config = $sm->get('Config');
-                return new \GeebyDeeby\Db\Table\PluginManager(
-                    new Zend\ServiceManager\Config(
-                        $config['geeby-deeby']['db_table_plugin_manager']
-                    )
-                );
-            },
         ),
         'invokables' => array(
             'GeebyDeeby\Articles' => 'GeebyDeeby\Articles',
@@ -1257,7 +1290,10 @@ return array(
         ),
     ),
     'controllers' => array(
-        'invokables' => array(
+        'abstract_factories' => array(
+            'GeebyDeeby\Controller\AbstractFactory',
+        ),
+        'aliases' => array(
             'GeebyDeeby\Controller\Approve' => 'GeebyDeeby\Controller\ApproveController',
             'GeebyDeeby\Controller\Category' => 'GeebyDeeby\Controller\CategoryController',
             'GeebyDeeby\Controller\City' => 'GeebyDeeby\Controller\CityController',
@@ -1265,6 +1301,7 @@ return array(
             'GeebyDeeby\Controller\Country' => 'GeebyDeeby\Controller\CountryController',
             'GeebyDeeby\Controller\Edit' => 'GeebyDeeby\Controller\EditController',
             'GeebyDeeby\Controller\EditCategory' => 'GeebyDeeby\Controller\EditCategoryController',
+            'GeebyDeeby\Controller\EditCitation' => 'GeebyDeeby\Controller\EditCitationController',
             'GeebyDeeby\Controller\EditCity' => 'GeebyDeeby\Controller\EditCityController',
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
@@ -1273,6 +1310,9 @@ return array(
             'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',
             'GeebyDeeby\Controller\EditItem' => 'GeebyDeeby\Controller\EditItemController',
+            'GeebyDeeby\Controller\EditItemAttribute' => 'GeebyDeeby\Controller\EditItemAttributeController',
+            'GeebyDeeby\Controller\EditItemCreator' => 'GeebyDeeby\Controller\EditItemCreatorController',
+            'GeebyDeeby\Controller\EditItemRelationship' => 'GeebyDeeby\Controller\EditItemRelationshipController',
             'GeebyDeeby\Controller\EditMaterialType' => 'GeebyDeeby\Controller\EditMaterialTypeController',
             'GeebyDeeby\Controller\EditNote' => 'GeebyDeeby\Controller\EditNoteController',
             'GeebyDeeby\Controller\EditLanguage' => 'GeebyDeeby\Controller\EditLanguageController',
@@ -1283,6 +1323,7 @@ return array(
             'GeebyDeeby\Controller\EditPublisher' => 'GeebyDeeby\Controller\EditPublisherController',
             'GeebyDeeby\Controller\EditSeries' => 'GeebyDeeby\Controller\EditSeriesController',
             'GeebyDeeby\Controller\EditSeriesAttribute' => 'GeebyDeeby\Controller\EditSeriesAttributeController',
+            'GeebyDeeby\Controller\EditSeriesRelationship' => 'GeebyDeeby\Controller\EditSeriesRelationshipController',
             'GeebyDeeby\Controller\EditTag' => 'GeebyDeeby\Controller\EditTagController',
             'GeebyDeeby\Controller\EditTagAttribute' => 'GeebyDeeby\Controller\EditTagAttributeController',
             'GeebyDeeby\Controller\EditTagRelationship' => 'GeebyDeeby\Controller\EditTagRelationshipController',
@@ -1309,13 +1350,19 @@ return array(
     ),
     'view_helpers' => array(
         'factories' => array(
+            'analyzecredits' => function ($sm) {
+                $tables = $sm->getServiceLocator()->get('GeebyDeeby\Db\Table\PluginManager');
+                return new \GeebyDeeby\View\Helper\AnalyzeCredits(
+                    $tables->get('pseudonyms'), $tables->get('itemscreatorscitations')
+                );
+            },
             'auth' => function ($sm) {
                 return new \GeebyDeeby\View\Helper\Auth(
                     $sm->getServiceLocator()->get('GeebyDeeby\Authentication')
                 );
             },
             'config' => function ($sm) {
-                $cfg = $sm->getServiceLocator()->get('Config');
+                $cfg = $sm->getServiceLocator()->get('config');
                 return new \GeebyDeeby\View\Helper\Config($cfg['geeby-deeby']);
             },
             'fixtitle' => function ($sm) {

@@ -97,6 +97,7 @@ class EditEditionController extends AbstractBase
             'parent_edition_id' => 'Parent_Edition_ID',
             'position_in_parent' => 'Position_In_Parent',
             'extent_in_parent' => 'Extent_In_Parent',
+            'item_display_order' => 'Item_Display_Order',
         );
         $view = $this->handleGenericItem('edition', $assignMap, 'edition');
         $editionId = isset($view->edition['Edition_ID'])
@@ -259,14 +260,17 @@ class EditEditionController extends AbstractBase
                 return $this->jsonDie('Title cannot be empty.');
             } else {
                 $table = $this->getDbTable('itemsalttitles');
-                $row = $table->createRow();
-                $row->Item_ID = $edition->Item_ID;
-                if (empty($row->Item_ID)) {
-                    return $this->jsonDie('Edition must be attached to an Item.');
+                $results = $table->select(['Item_AltName' => $titleText]);
+                if (count($results) == 0) {
+                    $row = $table->createRow();
+                    $row->Item_ID = $edition->Item_ID;
+                    if (empty($row->Item_ID)) {
+                        return $this->jsonDie('Edition must be attached to an Item.');
+                    }
+                    $row->Item_AltName = $titleText;
+                    $table->insert((array)$row);
+                    $results = $table->select((array)$row);
                 }
-                $row->Item_AltName = $titleText;
-                $table->insert((array)$row);
-                $results = $table->select((array)$row);
                 foreach ($results as $result) {
                     $result = (array)$result;
                     $title = $result['Sequence_ID'];
@@ -340,14 +344,17 @@ class EditEditionController extends AbstractBase
                 return $this->jsonDie('Title cannot be empty.');
             } else {
                 $table = $this->getDbTable('seriesalttitles');
-                $row = $table->createRow();
-                $row->Series_ID = $edition->Series_ID;
-                if (empty($row->Series_ID)) {
-                    return $this->jsonDie('Edition must be attached to a Series.');
+                $results = $table->select(['Series_AltName' => $titleText]);
+                if (count($results) == 0) {
+                    $row = $table->createRow();
+                    $row->Series_ID = $edition->Series_ID;
+                    if (empty($row->Series_ID)) {
+                        return $this->jsonDie('Edition must be attached to a Series.');
+                    }
+                    $row->Series_AltName = $titleText;
+                    $table->insert((array)$row);
+                    $results = $table->select((array)$row);
                 }
-                $row->Series_AltName = $titleText;
-                $table->insert((array)$row);
-                $results = $table->select((array)$row);
                 foreach ($results as $result) {
                     $result = (array)$result;
                     $title = $result['Sequence_ID'];
@@ -831,7 +838,7 @@ class EditEditionController extends AbstractBase
         $edName = $parentEdition->Edition_Name;
         $seriesID = $parentEdition->Series_ID;
         $insertCallback = function ($new, $row, $sm) {
-            $edsTable = $sm->get('GeebyDeeby\DbTablePluginManager')
+            $edsTable = $sm->get('GeebyDeeby\Db\Table\PluginManager')
                 ->get('edition');
             $newObj = $edsTable->getByPrimaryKey($new);
             if ($error = $newObj->validate()) {
@@ -878,5 +885,23 @@ class EditEditionController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
+    }
+
+    /**
+     * Show action -- allows tolerance of URLs where the user has inserted 'edit'
+     * into an existing front-end link.
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        return $this->redirect()->toRoute(
+            'edit/edition',
+            [
+                'action' => 'index',
+                'id' => $this->params()->fromRoute('id'),
+                'extra' => $this->params()->fromRoute('extra')
+            ]
+        );
     }
 }

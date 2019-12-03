@@ -26,6 +26,9 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
@@ -42,10 +45,15 @@ class Item extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('Items', 'GeebyDeeby\Db\Row\Item');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'Items');
     }
 
     /**
@@ -71,14 +79,32 @@ class Item extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query, $limit) {
-            if ($limit !== false) {
-                $select->limit($limit);
-            }
+        $callback = function ($select) use ($query) {
+            $select2 = clone($select);
+            $select2->columns(
+                [
+                    'Item_ID',
+                    'Item_Name' => new Expression(
+                        "Concat(Item_AltName, ' [alt. title for ', Item_Name, ']')"
+                    )
+                ]
+            );
+            $select2->join(
+                array('iat' => 'Items_AltTitles'),
+                'Items.Item_ID = iat.Item_ID',
+                [], Select::JOIN_LEFT
+            );
+            $select2->where->like('Item_AltName', $query . '%');
+            $select->columns(
+                [
+                    'Item_ID',
+                    'Item_Name',
+                ]
+            );
             $select->where->like('Item_Name', $query . '%');
-            $select->order('Item_Name');
+            $select->combine($select2);
         };
-        return $this->select($callback);
+        return $this->sortAndFilterUnion($this->select($callback), $limit);
     }
 
     /**
@@ -131,10 +157,18 @@ class Item extends Gateway
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
                 array('Item_AltName'), Select::JOIN_LEFT
             );
+            $itemName = new Expression(
+                'COALESCE(?, ?)',
+                array('iat.Item_AltName', 'Items.Item_Name'),
+                array(
+                    Expression::TYPE_IDENTIFIER,
+                    Expression::TYPE_IDENTIFIER
+                )
+            );
             $select->order(
                 $groupByMaterial
-                    ? array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', 'Item_Name')
-                    : array('Volume', 'Position', 'Replacement_Number', 'Item_Name')
+                    ? array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', $itemName)
+                    : array('Volume', 'Position', 'Replacement_Number', $itemName)
             );
             $select->group(
                 array('Items.Item_ID', 'Volume', 'Position', 'Replacement_Number', 'Items.Material_Type_ID')

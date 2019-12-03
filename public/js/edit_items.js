@@ -13,6 +13,7 @@ var ItemEditor = function() {
         // Edition_ID is only set when we are creating a child edition....
         'edition_id': { 'id': '#Edition_ID' }
     };
+    this.attributeSelector = '.item-attribute';
     this.links = {
         'AboutItem': {
             'uriField': { 'id': '#item_bib_id', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }
@@ -39,6 +40,12 @@ var ItemEditor = function() {
                 'note_id': { 'id': '#Attachment_Note', 'nonNumericDefault': '' },
             }
         },
+        'Creator': {
+            'saveFields': {
+                'person_id': { 'id': '#creator_person', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid person' },
+                'role_id': { 'id': '#Creator_Role_ID' }
+            }
+        },
         'Credit': {
             'saveFields': {
                 'note_id': { 'id': '#credit_note', 'nonNumericDefault': '' },
@@ -53,7 +60,16 @@ var ItemEditor = function() {
                 'desc': { 'id': '#Description', 'emptyError': 'Description must not be blank.' }
             }
         },
-        'Editions': { /* dummy placeholder to make copyEdition function work correctly */ },
+        'Editions': {
+            'reorderPositionCallback': function(type, details, subtype) {
+                return parseInt($('#order' + details['edition_id']).val());
+            }
+        },
+        'Relationship': {
+            'subtypeSelector': { 'id': '#relationship_type' },
+            'targetSelector': '#relationship_list',
+            'uriField': { 'id': '#target_item', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }
+        },
         'Tag': {
             'uriField': { 'id': '#Tag_ID', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid tag.' }
         },
@@ -81,10 +97,23 @@ ItemEditor.prototype.copyEdition = function() {
 
 var Item = new ItemEditor();
 
+var ItemCreatorEditor = function() {
+    this.type = "Item_Creator";
+    this.saveFields = [];
+    this.links = {
+        'Citation': {
+            'uriField': { 'id' : '#Citation_ID', 'nonNumericDefault': '', 'emptyError': 'Please select a citation.' }
+        }
+    };
+};
+BaseEditor.prototype.registerSubclass(ItemCreatorEditor);
+
+var ItemCreator = new ItemCreatorEditor();
+
 // Load data and setup autocomplete.
 $(document).ready(function() {
     if (typeof registerAutocomplete === 'function') {
-        registerAutocomplete('.Item_ID', 'Item');
+        registerAutocomplete('.Item_ID,#target_item', 'Item');
         registerAutocomplete('.Note_ID', 'Note');
         registerAutocomplete('.Person_ID', 'Person');
         registerAutocomplete('.Series_ID', 'Series');

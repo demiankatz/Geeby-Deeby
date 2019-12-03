@@ -27,6 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+
 /**
  * Table Definition for Tags_Relationships
  *
@@ -36,72 +39,18 @@ namespace GeebyDeeby\Db\Table;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class TagsRelationship extends Gateway
+class TagsRelationship extends AbstractRelationship
 {
     /**
      * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct('Tags_Relationships', 'GeebyDeeby\Db\Row\TagsRelationship');
-    }
-
-    /**
-     * Get a list of relationships, formatted to populate a select control.
      *
-     * @param bool $includePredicate Should we return labels only (false) or an
-     * array with label and predicate (true)?
-     *
-     * @return array
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function getOptionList($includePredicate = false)
-    {
-        $options = [];
-        foreach ($this->getList() as $current) {
-            $id = $current['Tags_Relationship_ID'];
-            $options[] = [
-                $current['Display_Priority'],
-                $id,
-                $current['Tags_Relationship_Name'],
-                $current['Tags_Relationship_RDF_Property']
-            ];
-            if (!empty($current['Tags_Inverse_Relationship_Name'])) {
-                $options[] = [
-                    $current['Inverse_Display_Priority'],
-                    'i' . $id,
-                    $current['Tags_Inverse_Relationship_Name'],
-                    $current['Tags_Inverse_Relationship_RDF_Property']
-                ];
-            }
-        }
-        $callback = function ($a, $b) {
-            return $a[0] - $b[0];
-        };
-        usort($options, $callback);
-        $retval = [];
-        foreach ($options as $current) {
-            $value = $includePredicate
-                ? ['label' => $current[2], 'predicate' => $current[3]]
-                : $current[2];
-            $retval[$current[1]] = $value;
-        }
-        return $retval;
-    }
-
-    /**
-     * Get a list of relationships.
-     *
-     * @param mixed $where Where clause for list.
-     * @return mixed
-     */
-    public function getList($where = null)
-    {
-        $callback = function ($select) use ($where) {
-            if (null !== $where) {
-                $select->where($where);
-            }
-            $select->order('Tags_Relationship_Name');
-        };
-        return $this->select($callback);
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'Tags');
     }
 }

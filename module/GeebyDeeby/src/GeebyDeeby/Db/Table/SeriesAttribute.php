@@ -27,6 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+
 /**
  * Table Definition for Series_Attributes
  *
@@ -40,10 +43,15 @@ class SeriesAttribute extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('Series_Attributes', 'GeebyDeeby\Db\Row\SeriesAttribute');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'Series_Attributes');
     }
 
     /**

@@ -55,6 +55,10 @@ class ItemController extends AbstractBase
         }
         $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
             ->getAttributesForItem($id);
+        $extras['itemAttributes'] = $this->getDbTable('itemsattributesvalues')
+            ->getAttributesForItem($id);
+        $extras['relationshipsValues'] = $this->getDbTable('itemsrelationshipsvalues')
+            ->getRelationshipsForItem($id);
         return $this->createViewModel(
             array('item' => $rowObj->toArray()) + $extras
         );
@@ -142,7 +146,7 @@ class ItemController extends AbstractBase
      */
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $view->item['Item_ID'];
         $uri = $this->getServerUrl('item', ['id' => $id]);
         $type = $this->getDbTable('materialtype')
@@ -154,6 +158,24 @@ class ItemController extends AbstractBase
         $item = $graph->resource($uri, $class);
         $name = $view->item['Item_Name'];
         $item->set('dcterms:title', $articleHelper->formatTrailingArticles($name));
+        foreach ($view->itemAttributes as $current) {
+            if (!empty($current['Items_Attribute_RDF_Property'])) {
+                $item->set(
+                    $current['Items_Attribute_RDF_Property'],
+                    $current['Items_Attribute_Value']
+                );
+            }
+        }
+        foreach ($view->relationshipsValues as $current) {
+            if (!empty($current['predicate'])) {
+                foreach ($current['values'] as $value) {
+                    $item->add(
+                        $current['predicate'],
+                        $this->getServerUrl('item', ['id' => $value['Item_ID']])
+                    );
+                }
+            }
+        }
         return $item;
     }
 
@@ -219,9 +241,8 @@ class ItemController extends AbstractBase
      */
     protected function addEditionRelationships($id, $view)
     {
+        $view->creators = $this->getDbTable('itemscreators')->getCreatorsForItem($id);
         $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
-        $view->realNames = $this->getDbTable('pseudonyms')
-            ->getRealNamesBatch($view->credits);
         $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
         $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
         $view->platforms = $this->getDbTable('editionsplatforms')
@@ -323,7 +344,7 @@ class ItemController extends AbstractBase
     public function isbndetailsAction()
     {
         $isbn = $this->params()->fromRoute('extra');
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->serviceLocator->get('config');
         return $this->createViewModel(
             array(
                 'isbn' => new \VuFindCode\ISBN($isbn),

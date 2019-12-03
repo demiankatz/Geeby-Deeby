@@ -112,7 +112,7 @@ class EditionController extends AbstractBase
      */
     protected function addPrimaryResourceToGraph($graph, $view, $class = array())
     {
-        $articleHelper = $this->getServiceLocator()->get('GeebyDeeby\Articles');
+        $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $view->edition['Edition_ID'];
         $uri = $this->getServerUrl('edition', ['id' => $id]);
         $edition = $graph->resource($uri, $class);
@@ -125,6 +125,11 @@ class EditionController extends AbstractBase
                     $current['Editions_Attribute_Value']
                 );
             }
+        }
+        foreach ($view->oclcNumbers as $oclc) {
+            $edition->add(
+                'owl:sameAs', 'http://www.worldcat.org/oclc/' . $oclc['OCLC_Number']
+            );
         }
         return $edition;
     }
@@ -189,21 +194,23 @@ class EditionController extends AbstractBase
             return false;
         }
         $id = $view->edition['Edition_ID'];
+        $view->creators = $this->getDbTable('itemscreators')
+            ->getCreatorsForItem($view->edition['Item_ID']);
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForEdition($id);
-        $view->realNames = $this->getDbTable('pseudonyms')
-            ->getRealNamesBatch($view->credits);
-        $view->images = $this->getDbTable('editionsimages')->getImagesForEdition($id);
+        $view->images = $this->getDbTable('editionsimages')
+            ->getImagesForEditionOrParentEdition($id);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForEdition($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForEdition($id);
+        $view->dates = $this->getDbTable('editionsreleasedates')
+            ->getDatesForEditionOrParentEdition($id);
         $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForEdition($id);
         $view->codes = $this->getDbTable('editionsproductcodes')
             ->getProductCodesForEdition($id);
         $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
             ->getOCLCNumbersForEdition($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
-            ->getFullTextForEdition($id);
+            ->getFullTextForEditionOrParentEdition($id);
         $edTable = $this->getDbTable('edition');
         $view->publishers = $edTable->getPublishersForEdition($id);
         $view->parent = $edTable->getParentItemForEdition($id);

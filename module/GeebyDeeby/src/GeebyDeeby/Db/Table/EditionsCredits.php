@@ -26,6 +26,9 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
@@ -42,10 +45,15 @@ class EditionsCredits extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('Editions_Credits');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'Editions_Credits');
     }
 
     /**
@@ -95,7 +103,7 @@ class EditionsCredits extends Gateway
             );
             $select->join(
                 array('erd' => 'Editions_Release_Dates'),
-                'eds.Edition_ID = erd.Edition_ID',
+                'eds.Edition_ID = erd.Edition_ID OR eds.Parent_Edition_ID = erd.Edition_ID',
                 array('Earliest_Year' => $year), Select::JOIN_LEFT
             );
             $select->join(
@@ -230,6 +238,60 @@ class EditionsCredits extends Gateway
                 $select->group(array('r.Role_ID', 'p.Person_ID', 'n.Note_ID'));
             }
             $select->where->equalTo('Item_ID', $itemID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get a list of people associated with a particular series (not just
+     * credits but also creators).
+     *
+     * @var int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getPeopleForSeries($seriesID)
+    {
+        $callback = function ($select) use ($seriesID) {
+            $select->quantifier('DISTINCT');
+            $select->columns(array());
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Credits.Edition_ID = eds.Edition_ID',
+                array(), Select::JOIN_RIGHT
+            );
+            $select->join(
+                array('i' => 'Items'),
+                'eds.Item_ID = i.Item_ID',
+                array('Item_ID', 'Item_Name')
+            );
+            $select->join(
+                array('ic' => 'Items_Creators'), 'eds.Item_ID = ic.Item_ID',
+                array(), Select::JOIN_LEFT
+            );
+            $select->join(
+                array('p' => 'People'),
+                'Editions_Credits.Person_ID = p.Person_ID '
+                . 'OR ic.Person_ID = p.Person_ID'
+            );
+            $select->join(
+                array('iat' => 'Items_AltTitles'),
+                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                array('Item_AltName'), Select::JOIN_LEFT
+            );
+            $bestTitle = new Expression(
+                'COALESCE(?, ?)',
+                array('Item_AltName', 'Item_Name'),
+                array(
+                    Expression::TYPE_IDENTIFIER,
+                    Expression::TYPE_IDENTIFIER
+                )
+            );
+            $fields = array(
+                'Last_Name', 'First_Name', 'Middle_Name', $bestTitle
+            );
+            $select->order($fields);
+            $select->where->equalTo('Series_ID', $seriesID);
         };
         return $this->select($callback);
     }

@@ -6,6 +6,8 @@
   <a href="<?=$this->url('series')?>">[List All Series]</a>
   <a href="<?=$this->url('series', array('id' => $series['Series_ID'], 'extra' => 'FullText'))?>">[List Series Full Text]</a>
   <a href="<?=$this->url('series', array('id' => $series['Series_ID'], 'extra' => 'Images'))?>">[List Series Images]</a>
+  <a href="<?=$this->url('series', array('id' => $series['Series_ID'], 'extra' => 'People'))?>">[List Series People]</a>
+  <a href="<?=$this->url('series', array('id' => $series['Series_ID'], 'extra' => 'Tags'))?>">[List Series Subjects/Tags]</a>
 </p>
 
 <table class="series">
@@ -112,6 +114,19 @@
           <? endif; ?>
         </td>
   <? endforeach; ?>
+
+  <? foreach ($this->relationshipsValues as $current): ?>
+    <tr>
+      <th><?=$this->escapeHtml($current['label'])?>:</th>
+      <td>
+        <? foreach ($current['values'] as $value): ?>
+          <a href="<?=$this->url('series', ['id' => $value['Series_ID']])?>">
+            <?=$this->escapeHtml($value['Series_Name'])?>
+          </a><br />
+        <? endforeach; ?>
+      </td>
+    </tr>
+  <? endforeach; ?>
 </table>
 
 <? if (!empty($series['Series_Description'])): ?>
@@ -133,7 +148,7 @@
       <?=$this->escapeHtml($this->fixtitle(isset($item['Item_AltName']) && !empty($item['Item_AltName']) ? $item['Item_AltName'] : $item['Item_Name']))?>
     </a>
     <? if (!empty($item['Child_Items'])): ?>
-      <? $parts = explode('||', $item['Child_Items']); ?>
+      <? $parts = array_unique(explode('||', $item['Child_Items'])); ?>
       (<i><?=$this->escapeHtml($this->fixtitle($parts[0]))?></i><? if (count($parts) == 2): ?> and 1 more item<? elseif (count($parts) > 2): ?> and <?=(count($parts) - 1)?> more items<?endif ;?>)
     <? endif; ?>
     <br />

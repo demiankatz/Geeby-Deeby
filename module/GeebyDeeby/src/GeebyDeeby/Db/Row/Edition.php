@@ -36,7 +36,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Edition extends ServiceLocatorAwareGateway
+class Edition extends TableAwareGateway
 {
     /**
      * Constructor
@@ -280,6 +280,9 @@ class Edition extends ServiceLocatorAwareGateway
         // Ensure integrity of parent value.
         if (empty($this->Parent_Edition_ID)) {
             $this->Parent_Edition_ID = null;
+        }
+        if (strlen(trim($this->Position_In_Parent)) == 0) {
+            $this->Position_In_Parent = null;
         }
         parent::save();
     }

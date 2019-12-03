@@ -10,6 +10,20 @@ var SeriesAttributeEditor = function() {
 BaseEditor.prototype.registerSubclass(SeriesAttributeEditor);
 var SeriesAttribute = new SeriesAttributeEditor();
 
+var SeriesRelationshipEditor = function() {
+    this.type = "Series Relationship";
+    this.saveFields = {
+        'relationship_name': { 'id': '#Series_Relationship_Name', emptyError: 'Name cannot be blank.' },
+        'rdf_property': { 'id': '#Series_Relationship_RDF_Property' },
+        'priority': { 'id': '#Display_Priority' },
+        'inverse_relationship_name': { 'id': '#Series_Inverse_Relationship_Name' },
+        'inverse_rdf_property': { 'id': '#Series_Inverse_Relationship_RDF_Property' },
+        'inverse_priority': { 'id': '#Inverse_Display_Priority' }
+    };
+};
+BaseEditor.prototype.registerSubclass(SeriesRelationshipEditor);
+var SeriesRelationship = new SeriesRelationshipEditor();
+
 var EditionsAttributeEditor = function() {
     this.type = "Editions Attribute";
     this.saveFields = {
@@ -22,6 +36,32 @@ var EditionsAttributeEditor = function() {
 };
 BaseEditor.prototype.registerSubclass(EditionsAttributeEditor);
 var EditionsAttribute = new EditionsAttributeEditor();
+
+var ItemsAttributeEditor = function() {
+    this.type = "Items Attribute";
+    this.saveFields = {
+        'attribute_name': { 'id': '#Items_Attribute_Name', emptyError: 'Name cannot be blank.' },
+        'rdf_property': { 'id': '#Items_Attribute_RDF_Property' },
+        'priority': { 'id': '#Display_Priority' },
+        'allow_html': { 'id': '#Allow_HTML' }
+    };
+};
+BaseEditor.prototype.registerSubclass(ItemsAttributeEditor);
+var ItemsAttribute = new ItemsAttributeEditor();
+
+var ItemsRelationshipEditor = function() {
+    this.type = "Items Relationship";
+    this.saveFields = {
+        'relationship_name': { 'id': '#Items_Relationship_Name', emptyError: 'Name cannot be blank.' },
+        'rdf_property': { 'id': '#Items_Relationship_RDF_Property' },
+        'priority': { 'id': '#Display_Priority' },
+        'inverse_relationship_name': { 'id': '#Items_Inverse_Relationship_Name' },
+        'inverse_rdf_property': { 'id': '#Items_Inverse_Relationship_RDF_Property' },
+        'inverse_priority': { 'id': '#Inverse_Display_Priority' }
+    };
+};
+BaseEditor.prototype.registerSubclass(ItemsRelationshipEditor);
+var ItemsRelationship = new ItemsRelationshipEditor();
 
 var TagsAttributeEditor = function() {
     this.type = "Tags Attribute";

@@ -26,6 +26,10 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
 /**
@@ -41,10 +45,15 @@ class Series extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('Series', 'GeebyDeeby\Db\Row\Series');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'Series');
     }
 
     /**
@@ -86,14 +95,32 @@ class Series extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query, $limit) {
-            if ($limit !== false) {
-                $select->limit($limit);
-            }
+        $callback = function ($select) use ($query) {
+            $select2 = clone($select);
+            $select2->columns(
+                [
+                    'Series_ID',
+                    'Series_Name' => new Expression(
+                        "Concat(Series_AltName, ' [alt. title for ', Series_Name, ']')"
+                    )
+                ]
+            );
+            $select2->join(
+                array('sat' => 'Series_AltTitles'),
+                'Series.Series_ID = sat.Series_ID',
+                [], Select::JOIN_LEFT
+            );
+            $select2->where->like('Series_AltName', $query . '%');
+            $select->columns(
+                [
+                    'Series_ID',
+                    'Series_Name',
+                ]
+            );
             $select->where->like('Series_Name', $query . '%');
-            $select->order('Series_Name');
+            $select->combine($select2);
         };
-        return $this->select($callback);
+        return $this->sortAndFilterUnion($this->select($callback), $limit);
     }
 
     /**

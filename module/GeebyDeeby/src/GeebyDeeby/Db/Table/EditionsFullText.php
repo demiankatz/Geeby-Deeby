@@ -26,6 +26,10 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
+
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
 /**
@@ -41,10 +45,15 @@ class EditionsFullText extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('Editions_Full_Text');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'Editions_Full_Text');
     }
 
     /**
@@ -69,6 +78,37 @@ class EditionsFullText extends Gateway
     }
 
     /**
+     * Get a list of full text links for a particular edition (or its immediate
+     * parent).
+     *
+     * @param int $edition Edition ID
+     *
+     * @return mixed
+     */
+    public function getFullTextForEditionOrParentEdition($edition)
+    {
+        $callback = function ($select) use ($edition) {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Full_Text_URL']);
+            $select->join(
+                array('fts' => 'Full_Text_Sources'),
+                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
+                ['Full_Text_Source_Name']
+            );
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
+                ['Edition_ID']
+            );
+            $fields = array('Full_Text_Source_Name', 'Full_Text_URL');
+            $select->order($fields);
+            $select->where->equalTo('eds.Edition_ID', $edition);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of full text links for a particular item.
      *
      * @param int $item Item ID
@@ -78,13 +118,18 @@ class EditionsFullText extends Gateway
     public function getFullTextForItem($item)
     {
         $callback = function ($select) use ($item) {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Full_Text_URL']);
             $select->join(
                 array('fts' => 'Full_Text_Sources'),
-                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID'
+                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
+                ['Full_Text_Source_Name']
             );
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
+                ['Edition_Name']
             );
             $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
             $fields
@@ -133,6 +178,36 @@ class EditionsFullText extends Gateway
             $select->join(
                 array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
             );
+            $select->join(
+                array('childEds' => 'Editions'),
+                'eds.Edition_ID = childEds.Parent_Edition_ID',
+                array(),
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                array('childItems' => 'Items'),
+                'childEds.Item_ID = childItems.Item_ID',
+                array(
+                    'Child_Items' => new Expression(
+                        'GROUP_CONCAT('
+                            . 'COALESCE(?, ?) ORDER BY ? SEPARATOR \'||\')',
+                        array(
+                            'childIat.Item_AltName', 'childItems.Item_Name',
+                            'childEds.Position_In_Parent'),
+                        array(
+                            Expression::TYPE_IDENTIFIER,
+                            Expression::TYPE_IDENTIFIER,
+                            Expression::TYPE_IDENTIFIER
+                        )
+                    )
+                ),
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                array('childIat' => 'Items_AltTitles'),
+                'childEds.Preferred_Item_AltName_ID = childIat.Sequence_ID',
+                array(), Select::JOIN_LEFT
+            );
             if (null !== $series) {
                 $select->where->equalTo('eds.Series_ID', $series);
             }
@@ -142,10 +217,14 @@ class EditionsFullText extends Gateway
             }
             $select->group(
                 array(
-                    'eds.Item_ID', 'eds.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number'
+                    'eds.Item_ID', 'eds.Series_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number'
                 )
             );
-            $ord = array('Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Item_Name');
+            $ord = array(
+                'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
+                'eds.Replacement_Number', 'Item_Name'
+            );
             $select->order($ord);
         };
         return $this->select($callback);

@@ -1,0 +1,31 @@
+<div id="editForm">
+  <input type="hidden" id="Items_Relationship_ID" value="<?=$relationship['Items_Relationship_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th>Relationship Name:</th>
+      <td><input type="text" id="Items_Relationship_Name" value="<?=isset($relationship['Items_Relationship_Name']) ? $this->escapeHtml($relationship['Items_Relationship_Name']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>RDF Property (optional URI):</th>
+      <td><input type="text" id="Items_Relationship_RDF_Property" value="<?=isset($relationship['Items_Relationship_RDF_Property']) ? $this->escapeHtml($relationship['Items_Relationship_RDF_Property']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Display Priority (lower numbers displayed first):</th>
+      <td><input type="text" id="Display_Priority" value="<?=isset($relationship['Display_Priority']) ? $this->escapeHtml($relationship['Display_Priority']) : '0'?>" /></td>
+    </tr>
+    <tr>
+      <th>Inverse Relationship Name (optional):</th>
+      <td><input type="text" id="Items_Inverse_Relationship_Name" value="<?=isset($relationship['Items_Inverse_Relationship_Name']) ? $this->escapeHtml($relationship['Items_Inverse_Relationship_Name']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Inverse RDF Property (optional URI):</th>
+      <td><input type="text" id="Items_Inverse_Relationship_RDF_Property" value="<?=isset($relationship['Items_Inverse_Relationship_RDF_Property']) ? $this->escapeHtml($relationship['Items_Inverse_Relationship_RDF_Property']) : ''?>" /></td>
+    </tr>
+    <tr>
+      <th>Inverse Display Priority (lower numbers displayed first):</th>
+      <td><input type="text" id="Inverse_Display_Priority" value="<?=isset($relationship['Inverse_Display_Priority']) ? $this->escapeHtml($relationship['Inverse_Display_Priority']) : '0'?>" /></td>
+    </tr>
+  </table>
+  <button id="save_item_relationship" onclick="ItemsRelationship.save();">Save</button>
+  <div id="save_item_relationship_status"></div>
+</div>

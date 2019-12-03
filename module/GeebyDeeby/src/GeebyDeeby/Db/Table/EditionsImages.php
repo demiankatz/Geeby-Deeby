@@ -26,7 +26,11 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Table;
-use Zend\Db\Sql\Expression, Zend\Db\Sql\Select;
+
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\RowGateway\RowGateway;
+use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Editions_Images
@@ -41,10 +45,15 @@ class EditionsImages extends Gateway
 {
     /**
      * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct()
-    {
-        parent::__construct('Editions_Images');
+    public function __construct(Adapter $adapter, PluginManager $tm,
+        RowGateway $rowObj = null
+    ) {
+        parent::__construct($adapter, $tm, $rowObj, 'Editions_Images');
     }
 
     /**
@@ -105,6 +114,33 @@ class EditionsImages extends Gateway
     }
 
     /**
+     * Get a list of images for the specified edition (or its immediate parent).
+     *
+     * @param int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getImagesForEditionOrParentEdition($editionID)
+    {
+        $callback = function ($select) use ($editionID) {
+            $select->quantifier('DISTINCT');
+            $select->join(
+                array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
+                ['Note'], Select::JOIN_LEFT
+            );
+            $select->join(
+                array('eds' => 'Editions'),
+                'Editions_Images.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Images.Edition_ID',
+                ['Edition_ID']
+            );
+            $select->order(array('Editions_Images.Position'));
+            $select->where->equalTo('eds.Edition_ID', $editionID);
+        };
+        return $this->select($callback);
+    }
+
+    /**
      * Get a list of images for the specified item.
      *
      * @var int $itemID Item ID
@@ -114,18 +150,41 @@ class EditionsImages extends Gateway
     public function getImagesForItem($itemID)
     {
         $callback = function ($select) use ($itemID) {
+            $select->quantifier('DISTINCT');
+            $fields = [
+                'Edition_ID',
+                'Image_Path',
+                'Thumb_Path',
+                'IIIF_URI',
+                'Position',
+                'Note_ID',
+            ];
+            $select->columns($fields);
             $select->join(
                 array('eds' => 'Editions'),
                 'Editions_Images.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Images.Edition_ID',
+                ['Edition_Name']
             );
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID', ['Item_ID']
+            );
+            $year = new Expression(
+                'min(?)', array('erd.Year'),
+                array(Expression::TYPE_IDENTIFIER)
+            );
+            $select->join(
+                array('erd' => 'Editions_Release_Dates'),
+                'eds.Edition_ID = erd.Edition_ID OR eds.Parent_Edition_ID = erd.Edition_ID',
+                array('Earliest_Year' => $year), Select::JOIN_LEFT
             );
             $select->join(
                 array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['Note'], Select::JOIN_LEFT
             );
-            $select->order(array('Editions_Images.Position'));
+            $fields = array_merge($fields, ['Edition_Name', 'Item_ID', 'Note']);
+            $select->group($fields);
+            $select->order(['Item_Display_Order', 'Position', 'Earliest_Year']);
             $select->where->equalTo('i.Item_ID', $itemID);
         };
         return $this->select($callback);
