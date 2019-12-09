@@ -532,4 +532,30 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $tables = $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager');
         return new IssueMaker($tables, $this->serviceLocator->get('GeebyDeeby\Articles'));
     }
+
+    /**
+     * Check links.
+     *
+     * @return mixed
+     */
+    public function checklinksAction()
+    {
+        $series = $this->params()->fromRoute('series');
+        if ($series == '*') {
+            $series = null;
+        }
+        $provider = $this->params()->fromRoute('provider');
+        if ($provider == '*') {
+            $provider = null;
+        }
+        $ft = $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager')
+            ->get('editionsfulltext');
+        $client = new \Zend\Http\Client();
+        foreach ($ft->getItemsWithFullText($series, false, $provider) as $current) {
+            $url = $current->Full_Text_URL;
+            $request = new \Zend\Http\Request();
+            $response = $client->send($request->setUri($url));
+            Console::writeLine($url . ',' . $response->getStatusCode());
+        }
+    }
 }

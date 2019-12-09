@@ -31,6 +31,16 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
+                'check-links' => array(
+                    'type' => 'simple',
+                    'options' => array(
+                        'route' => 'check links <series> <provider>',
+                        'defaults' => array(
+                            'controller' => 'GeebyDeeby\Controller\Ingest',
+                            'action' => 'checklinks',
+                        )
+                    )
+                ),
                 'harvest-collection' => array(
                     'type' => 'simple',
                     'options' => array(
