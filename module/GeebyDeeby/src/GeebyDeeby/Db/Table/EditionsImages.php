@@ -220,8 +220,8 @@ class EditionsImages extends Gateway
             );
             $select->order(
                 $groupByMaterial
-                    ? array('mt.Material_Type_Name', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'i.Item_Name', 'Editions_Images.Position')
-                    : array('eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'i.Item_Name', 'Editions_Images.Position')
+                    ? array('mt.Material_Type_Name', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'eds.Item_Display_Order', 'i.Item_Name', 'Editions_Images.Position')
+                    : array('eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'eds.Item_Display_Order', 'i.Item_Name', 'Editions_Images.Position')
             );
             $select->group(
                 array(
