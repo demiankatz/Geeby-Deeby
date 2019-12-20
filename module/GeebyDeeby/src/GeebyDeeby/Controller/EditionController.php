@@ -39,6 +39,27 @@ namespace GeebyDeeby\Controller;
 class EditionController extends AbstractBase
 {
     /**
+     * RDF predicate for representing copies of editions (null to omit).
+     *
+     * @var string
+     */
+    protected $copyRdfClass = null;
+
+    /**
+     * RDF predicate for linking editions to copies (null to omit).
+     *
+     * @var string
+     */
+    protected $hasCopyPredicate = null;
+
+    /**
+     * RDF predicate for linking full text URIs to copies (null to omit).
+     *
+     * @var string
+     */
+    protected $fullTextPredicate = null;
+
+    /**
      * Get a view model containing an edition object (or return false if missing)
      *
      * @param array $extras     Extra parameters to send to view model
@@ -130,6 +151,16 @@ class EditionController extends AbstractBase
             $edition->add(
                 'owl:sameAs', 'http://www.worldcat.org/oclc/' . $oclc['OCLC_Number']
             );
+        }
+        if (!empty($this->copyRdfClass) && !empty($this->hasCopyPredicate)) {
+            if (!empty($this->fullTextPredicate)) {
+                foreach ($view->fullText as $i => $fullText) {
+                    $copyUri = $uri . '#copy' . $i;
+                    $copy = $graph->resource($copyUri, $this->copyRdfClass);
+                    $edition->add($this->hasCopyPredicate, $copy);
+                    $copy->set($this->fullTextPredicate, $fullText['Full_Text_URL']);
+                }
+            }
         }
         return $edition;
     }
