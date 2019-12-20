@@ -218,6 +218,7 @@ class DatabaseIngester extends BaseIngester
             return false;
         }
         $details['contents'] = $childDetails;
+
         // Special case: multi-part work:
         if (count($childDetails) > 1) {
             $newChildData = [];
@@ -1418,7 +1419,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function updateWorkInDatabase($data, $db)
     {
-        if (!$this->processTitle($data['title'], $db)) {
+        if (isset($data['title']) && !$this->processTitle($data['title'], $db)) {
             return false;
         }
         if (isset($data['altTitles'])) {
@@ -1882,15 +1883,22 @@ class DatabaseIngester extends BaseIngester
         }
 
         // Fail if we have any existing data not matched up with new data....
+        $matches = 0;
         foreach ($children as $child) {
             if (!isset($child['matched'])) {
                 Console::writeLine("Unmatched item: {$child['item']['Item_Name']}");
                 foreach ($contents as $current) {
                     Console::writeLine("Possible match: " . $current['title']);
                 }
-                Console::writeLine("FATAL: No child match found for edition {$child['edition']->Edition_ID}");
-                return false;
+                Console::writeLine("WARNING: No child match found for edition {$child['edition']->Edition_ID}");
+                $result[] = [null, $child];
+            } else {
+                $matches++;
             }
+        }
+        if ($matches === 0) {
+            Console::writeLine("FATAL: No child matches found.");
+            return false;
         }
         return $result;
     }
