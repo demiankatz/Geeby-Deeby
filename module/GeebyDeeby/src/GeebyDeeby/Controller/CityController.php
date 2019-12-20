@@ -63,9 +63,12 @@ class CityController extends AbstractBase
         $uri = $this->getServerUrl(
             'city', ['id' => $view->city['City_ID']]
         );
-        $pub = $graph->resource($uri, $class);
-        $pub->set('rdf:label', $view->city['City_Name']);
-        return $pub;
+        $city = $graph->resource($uri, $class);
+        $city->set('rdf:label', $view->city['City_Name']);
+        foreach ($view->uris as $uri) {
+            $city->add($uri->Predicate, $graph->resource($uri->URI));
+        }
+        return $city;
     }
 
     /**
@@ -128,6 +131,7 @@ class CityController extends AbstractBase
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForCity($id);
+        $view->uris = $this->getDbTable('citiesuris')->getURIsForCity($id);
         return $view;
     }
 

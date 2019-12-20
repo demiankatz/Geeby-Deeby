@@ -63,9 +63,12 @@ class CountryController extends AbstractBase
         $uri = $this->getServerUrl(
             'country', ['id' => $view->country['Country_ID']]
         );
-        $pub = $graph->resource($uri, $class);
-        $pub->set('rdf:label', $view->country['Country_Name']);
-        return $pub;
+        $country = $graph->resource($uri, $class);
+        $country->set('rdf:label', $view->country['Country_Name']);
+        foreach ($view->uris as $uri) {
+            $country->add($uri->Predicate, $graph->resource($uri->URI));
+        }
+        return $country;
     }
 
     /**
@@ -128,6 +131,7 @@ class CountryController extends AbstractBase
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForCountry($id);
+        $view->uris = $this->getDbTable('countriesuris')->getURIsForCountry($id);
         return $view;
     }
 
