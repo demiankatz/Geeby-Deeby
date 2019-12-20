@@ -39,6 +39,36 @@ namespace GeebyDeeby\Controller;
 class ItemController extends AbstractBase
 {
     /**
+     * Default predicate to use for creators, if no specific predicate is included
+     * in the role data. (Null to omit predicate-free creators in RDF output).
+     *
+     * @var string
+     */
+    protected $defaultCreatorPredicate = null;
+
+    /**
+     * Add creators to an item graph.
+     *
+     * @param \EasyRdf\Graph $graph Graph to populate
+     * @param object         $item  Item graph to populate
+     * @param object         $view  View model populated with information.
+     *
+     * @return void
+     */
+    protected function addCreatorsToGraph($graph, $item, $view)
+    {
+        foreach ($view->creators as $creator) {
+            $personUri = $this->getServerUrl('person', ['id' => $creator['Person_ID']]);
+            $predicate = isset($creator['Item_Creator_Predicate'])
+                ? $creator['Item_Creator_Predicate']
+                : $this->defaultCreatorPredicate;
+            if (!empty($predicate)) {
+                $item->add($predicate, $graph->resource($personUri));
+            }
+        }
+    }
+
+    /**
      * Get a view model containing an item object (or return false if missing)
      *
      * @param array $extras Extra parameters to send to view model
@@ -176,6 +206,7 @@ class ItemController extends AbstractBase
                 }
             }
         }
+        $this->addCreatorsToGraph($graph, $item, $view);
         return $item;
     }
 
