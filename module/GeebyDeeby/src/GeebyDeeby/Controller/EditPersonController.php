@@ -172,7 +172,11 @@ class EditPersonController extends AbstractBase
      */
     public function roleAction()
     {
-        $assignMap = array('role' => 'Role_Name');
+        $assignMap = array(
+            'role' => 'Role_Name',
+            'Item_Creator_Predicate' => 'Item_Creator_Predicate',
+            'Edition_Credit_Predicate' => 'Edition_Credit_Predicate',
+        );
         return $this->handleGenericItem('role', $assignMap, 'role');
     }
 

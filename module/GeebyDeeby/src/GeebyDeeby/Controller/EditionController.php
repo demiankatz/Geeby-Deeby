@@ -39,6 +39,36 @@ namespace GeebyDeeby\Controller;
 class EditionController extends AbstractBase
 {
     /**
+     * Default predicate to use for credits, if no specific predicate is included
+     * in the role data. (Null to omit predicate-free credits in RDF output).
+     *
+     * @var string
+     */
+    protected $defaultCreditPredicate = null;
+
+    /**
+     * Add credits to an edition graph.
+     *
+     * @param \EasyRdf\Graph $graph   Graph to populate
+     * @param object         $edition Edition graph to populate
+     * @param object         $view    View model populated with information.
+     *
+     * @return void
+     */
+    protected function addCreditsToGraph($graph, $edition, $view)
+    {
+        foreach ($view->credits as $credit) {
+            $personUri = $this->getServerUrl('person', ['id' => $credit['Person_ID']]);
+            $predicate = isset($credit['Edition_Credit_Predicate'])
+                ? $credit['Edition_Credit_Predicate']
+                : $this->defaultCreditPredicate;
+            if (!empty($predicate)) {
+                $edition->add($predicate, $graph->resource($personUri . '#name'));
+            }
+        }
+    }
+
+    /**
      * Get a view model containing an edition object (or return false if missing)
      *
      * @param array $extras     Extra parameters to send to view model
@@ -131,6 +161,7 @@ class EditionController extends AbstractBase
                 'owl:sameAs', 'http://www.worldcat.org/oclc/' . $oclc['OCLC_Number']
             );
         }
+        $this->addCreditsToGraph($graph, $edition, $view);
         return $edition;
     }
 
