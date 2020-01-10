@@ -58,6 +58,30 @@ class EditCityController extends AbstractBase
     public function indexAction()
     {
         $assignMap = array('city' => 'City_Name');
-        return $this->handleGenericItem('city', $assignMap, 'city');
+        $view = $this->handleGenericItem('city', $assignMap, 'city');
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->uris = $this->getDbTable('citiesuris')
+                ->getURIsForCity($view->cityObj->City_ID);
+            $view->setTemplate('geeby-deeby/edit-city/edit-full');
+            $view->predicates = $this->getDbTable('predicate')->getList();
+        }
+        return $view;
+    }
+
+    /**
+     * Deal with URIs
+     *
+     * @return mixed
+     */
+    public function uriAction()
+    {
+        $extras = ($pid = $this->params()->fromPost('predicate_id'))
+            ? ['Predicate_ID' => $pid] : [];
+        return $this->handleGenericLink(
+            'citiesuris', 'City_ID', 'URI',
+            'uris', 'getURIsForCity',
+            'geeby-deeby/edit-city/uri-list.phtml',
+            $extras
+        );
     }
 }

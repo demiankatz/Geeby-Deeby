@@ -45,6 +45,14 @@ class EditionController extends AbstractBase
      */
     protected $copyRdfClass = null;
 
+    /*
+     * Default predicate to use for credits, if no specific predicate is included
+     * in the role data. (Null to omit predicate-free credits in RDF output).
+     *
+     * @var string
+     */
+    protected $defaultCreditPredicate = null;
+
     /**
      * RDF predicate for linking editions to copies (null to omit).
      *
@@ -58,6 +66,28 @@ class EditionController extends AbstractBase
      * @var string
      */
     protected $fullTextPredicate = null;
+
+    /**
+     * Add credits to an edition graph.
+     *
+     * @param \EasyRdf\Graph $graph   Graph to populate
+     * @param object         $edition Edition graph to populate
+     * @param object         $view    View model populated with information.
+     *
+     * @return void
+     */
+    protected function addCreditsToGraph($graph, $edition, $view)
+    {
+        foreach ($view->credits as $credit) {
+            $personUri = $this->getServerUrl('person', ['id' => $credit['Person_ID']]);
+            $predicate = isset($credit['Edition_Credit_Predicate'])
+                ? $credit['Edition_Credit_Predicate']
+                : $this->defaultCreditPredicate;
+            if (!empty($predicate)) {
+                $edition->add($predicate, $graph->resource($personUri . '#name'));
+            }
+        }
+    }
 
     /**
      * Get a view model containing an edition object (or return false if missing)
@@ -162,6 +192,7 @@ class EditionController extends AbstractBase
                 }
             }
         }
+        $this->addCreditsToGraph($graph, $edition, $view);
         return $edition;
     }
 
