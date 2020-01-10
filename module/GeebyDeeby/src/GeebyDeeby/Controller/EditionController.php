@@ -39,7 +39,7 @@ namespace GeebyDeeby\Controller;
 class EditionController extends AbstractBase
 {
     /**
-     * RDF predicate for representing copies of editions (null to omit).
+     * RDF class for representing copies of editions (null to omit).
      *
      * @var string
      */
