@@ -39,12 +39,33 @@ namespace GeebyDeeby\Controller;
 class EditionController extends AbstractBase
 {
     /**
+     * RDF class for representing copies of editions (null to omit).
+     *
+     * @var string
+     */
+    protected $copyRdfClass = null;
+
+    /*
      * Default predicate to use for credits, if no specific predicate is included
      * in the role data. (Null to omit predicate-free credits in RDF output).
      *
      * @var string
      */
     protected $defaultCreditPredicate = null;
+
+    /**
+     * RDF predicate for linking editions to copies (null to omit).
+     *
+     * @var string
+     */
+    protected $hasCopyPredicate = null;
+
+    /**
+     * RDF predicate for linking full text URIs to copies (null to omit).
+     *
+     * @var string
+     */
+    protected $fullTextPredicate = null;
 
     /**
      * Add credits to an edition graph.
@@ -160,6 +181,16 @@ class EditionController extends AbstractBase
             $edition->add(
                 'owl:sameAs', 'http://www.worldcat.org/oclc/' . $oclc['OCLC_Number']
             );
+        }
+        if (!empty($this->copyRdfClass) && !empty($this->hasCopyPredicate)) {
+            if (!empty($this->fullTextPredicate)) {
+                foreach ($view->fullText as $i => $fullText) {
+                    $copyUri = $uri . '#copy' . $i;
+                    $copy = $graph->resource($copyUri, $this->copyRdfClass);
+                    $edition->add($this->hasCopyPredicate, $copy);
+                    $copy->set($this->fullTextPredicate, $fullText['Full_Text_URL']);
+                }
+            }
         }
         $this->addCreditsToGraph($graph, $edition, $view);
         return $edition;
