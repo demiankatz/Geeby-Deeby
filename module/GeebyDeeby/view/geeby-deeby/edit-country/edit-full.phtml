@@ -1,0 +1,20 @@
+<? $this->layout()->title = 'Edit Country' ?>
+<? $this->scriptManager()->add(['base_editor', 'autocomplete', 'edit_countries']) ?>
+<div class="edit_container">
+  <?=$this->render('geeby-deeby/edit-country/index.phtml')?>
+</div>
+<hr />
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#uris-tab" data-toggle="tab">URIs (for linked data)</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="uris-tab" class="tab-pane active">
+    <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
+    <input type="text" id="uri" />
+    <button onclick="Country.link('URI');">Add URI</button>
+    <div id="uri_list">
+      <?=$this->render('geeby-deeby/edit-country/uri-list.phtml')?>
+    </div>
+  </div>
+</div>

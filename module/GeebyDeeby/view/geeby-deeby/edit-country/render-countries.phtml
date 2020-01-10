@@ -1,6 +1,6 @@
 <? if (isset($countries) && count($countries) > 0): ?>
   <? foreach ($countries as $current): ?>
-    <a href="#" onclick="Country.edit(<?=$this->escapeHtml($current['Country_ID'])?>); return false;"><?=$this->escapeHtml($current['Country_Name'])?></a><br />
+    <a href="<?=$this->url('edit/country', array('id' => $current['Country_ID']))?>"><?=$this->escapeHtml($current['Country_Name'])?></a><br />
   <? endforeach; ?>
 <? else: ?>
   No countries defined.
