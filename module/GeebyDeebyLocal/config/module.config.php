@@ -145,8 +145,11 @@ return [
         ]
     ],
     'controller_plugins' => [
-        'invokables' => [
+        'aliases' => [
             'podcast' => 'GeebyDeebyLocal\Controller\Plugin\Podcast',
+        ],
+        'factories' => [
+            'GeebyDeebyLocal\Controller\Plugin\Podcast' => 'Zend\ServiceManager\Factory\InvokableFactory',
         ]
     ],
     'router' => [
