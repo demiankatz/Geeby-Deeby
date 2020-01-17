@@ -57,7 +57,7 @@ class TagsAttribute extends Gateway
     /**
      * Get a list of roles.
      *
-     * @param  mixed $where Where clause for list.
+     * @param mixed $where Where clause for list.
      *
      * @return mixed
      */

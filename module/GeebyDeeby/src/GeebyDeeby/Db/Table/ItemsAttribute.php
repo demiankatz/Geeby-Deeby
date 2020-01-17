@@ -57,7 +57,7 @@ class ItemsAttribute extends Gateway
     /**
      * Get a list of attributes.
      *
-     * @param  mixed $where Where clause for list.
+     * @param mixed $where Where clause for list.
      *
      * @return mixed
      */
