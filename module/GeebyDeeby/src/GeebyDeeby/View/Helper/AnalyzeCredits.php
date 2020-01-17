@@ -157,6 +157,8 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      *
      * @param array $names  Names to filter
      * @param array $filter Person IDs to keep (or empty to keep all).
+     *
+     * @return array
      */
     protected function filterNames($names, $filter)
     {

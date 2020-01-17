@@ -135,11 +135,16 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      *
      * Make sure Row gateways are properly initialized.
      *
-     * @param mixed                configOrContainerInstance Config or container (for backward compatibility)
+     * @param mixed                $configOrContainerInstance Config or container
+     * (for backward compatibility)
+     * @param null|ConfigInterface $v3config                  Configuration settings
+     * (optional)
+     *
      * @param null|ConfigInterface                                                                            $v3config Configuration settings (optional)
      */
-    public function __construct($configOrContainerInstance = null, array $v3config = [])
-    {
+    public function __construct($configOrContainerInstance = null,
+        array $v3config = []
+    ) {
         $this->addAbstractFactory('GeebyDeeby\Db\Row\AbstractFactory');
         parent::__construct($configOrContainerInstance, $v3config);
     }

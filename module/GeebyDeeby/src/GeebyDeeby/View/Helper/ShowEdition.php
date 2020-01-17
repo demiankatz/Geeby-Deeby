@@ -68,7 +68,10 @@ class ShowEdition extends \Zend\View\Helper\AbstractHelper
     {
         $view = $this->controller->getViewModelWithEditionAndDetails($id);
         $view->skipTitle = true;
-        return '<h2>' . $this->view->escapeHtml($this->view->fixtitle($view->edition['Edition_Name'])) . '</h2>'
+        return '<h2>'
+            . $this->view->escapeHtml(
+                $this->view->fixtitle($view->edition['Edition_Name'])
+            ) . '</h2>'
             . $this->view->partial('geeby-deeby/edition/show', $view);
     }
 }

@@ -221,10 +221,15 @@ class Edition extends TableAwareGateway
         $pos = $this->Position;
         $rep = $this->Replacement_Number;
         $name = $this->Edition_Name;
-        $callback = function ($select) use ($edition, $series, $name, $vol, $pos, $rep, $next) {
+        $callback = function ($select) use ($edition, $series, $name, $vol, $pos,
+            $rep, $next
+        ) {
             $select->where->equalTo('Series_ID', $series);
             $select->where->notEqualTo('Edition_ID', $edition);
-            $fields = ['Volume', 'Position', 'Replacement_Number', 'Edition_Name', 'Edition_ID'];
+            $fields = [
+                'Volume', 'Position', 'Replacement_Number', 'Edition_Name',
+                'Edition_ID'
+            ];
             $vals = [$vol, $pos, $rep, $name, $edition];
             $nest = $select->where->NEST;
             for ($i = 0; $i < count($fields); $i++) {
