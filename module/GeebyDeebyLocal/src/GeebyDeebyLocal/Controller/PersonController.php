@@ -47,23 +47,27 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = 'foaf:Person')
-    {
+    protected function addPrimaryResourceToGraph($graph, $view,
+        $class = 'foaf:Person'
+    ) {
         $authName = $view->person['Last_Name'];
-        $first = trim($view->person['First_Name'] . ' ' . $view->person['Middle_Name']);
+        $first = trim($view->person['First_Name'] . ' '
+            . $view->person['Middle_Name']);
         if (!empty($first)) {
             $authName .= ', ' . $first;
         }
         $authName .= $view->person['Extra_Details'];
 
-        // Only focus name to real person if the person is known to be real (through cited
-        // attributions) or no known pseudonyms are recorded.
+        // Only focus name to real person if the person is known to be real (through
+        // cited attributions) or no known pseudonyms are recorded.
         $isRealPerson = count($view->citations) > 0 || count($view->realNames) == 0;
         if ($isRealPerson) {
             $person = parent::addPrimaryResourceToGraph($graph, $view, $class);
             $person->set('rda:preferredNameForTheAgent', $authName);
             foreach ($view->pseudonyms as $pseudo) {
-                $pseudoUri = $this->getServerUrl('person', ['id' => $pseudo['Person_ID']]) . '#name';
+                $pseudoUri = $this
+                    ->getServerUrl('person', ['id' => $pseudo['Person_ID']])
+                    . '#name';
                 $person->add('rda:alternateIdentity', $pseudoUri);
             }
         }
@@ -75,7 +79,8 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
             $name->add('foaf:focus', $person);
         }
         foreach ($view->realNames as $realName) {
-            $realNameUri = $this->getServerUrl('person', ['id' => $realName['Person_ID']]);
+            $realNameUri = $this
+                ->getServerUrl('person', ['id' => $realName['Person_ID']]);
             $name->add('foaf:focus', $graph->resource($realNameUri));
         }
         $name->set('rdfs:label', $authName);

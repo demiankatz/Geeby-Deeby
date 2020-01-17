@@ -47,10 +47,13 @@ class PublisherController extends \GeebyDeeby\Controller\PublisherController
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = 'foaf:Organization')
-    {
+    protected function addPrimaryResourceToGraph($graph, $view,
+        $class = 'foaf:Organization'
+    ) {
         $person = parent::addPrimaryResourceToGraph($graph, $view, $class);
-        $person->set('rda:preferredNameForTheAgent', $view->publisher['Publisher_Name']);
+        $person->set(
+            'rda:preferredNameForTheAgent', $view->publisher['Publisher_Name']
+        );
         return $person;
     }
 }

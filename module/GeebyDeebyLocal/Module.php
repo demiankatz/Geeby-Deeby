@@ -46,7 +46,7 @@ class Module
     /**
      * On bootstrap event
      *
-     * @param MvcEvent $e Event object
+     * @param MvcEvent $event Event object
      *
      * @return void
      */

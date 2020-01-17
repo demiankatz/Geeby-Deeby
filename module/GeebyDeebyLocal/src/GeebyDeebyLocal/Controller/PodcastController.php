@@ -49,8 +49,10 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         return $this->createViewModel(
             ['episodes' => [
-                'mittie'    => $this->podcast()->getMetadata(4, 'Mittie\'s Storytime'),
-                'professor' => $this->podcast()->getMetadata(4, 'Professor M\'s Lecture Series'),
+                'mittie'    => $this->podcast()
+                    ->getMetadata(4, 'Mittie\'s Storytime'),
+                'professor' => $this->podcast()
+                    ->getMetadata(4, 'Professor M\'s Lecture Series'),
             ]]
         );
     }
@@ -91,7 +93,8 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         return $this->createViewModel(
             [
-              'episodes' => $this->podcast()->getMetadata(0, 'Professor M\'s Lecture Series')
+                'episodes' =>
+                    $this->podcast()->getMetadata(0, 'Professor M\'s Lecture Series')
             ]
         );
     }

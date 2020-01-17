@@ -47,7 +47,8 @@ class InjectTemplateListener extends \Zend\Mvc\View\Http\InjectTemplateListener
      * Template is derived from the controller found in the route match, and,
      * optionally, the action, if present.
      *
-     * @param  MvcEvent $e
+     * @param  MvcEvent $e MVC event
+     *
      * @return void
      */
     public function injectTemplate(MvcEvent $e)
