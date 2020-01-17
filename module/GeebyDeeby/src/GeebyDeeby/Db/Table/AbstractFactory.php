@@ -27,7 +27,7 @@
  */
 namespace GeebyDeeby\Db\Table;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 /**
  * Abstract table factory
@@ -38,7 +38,8 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
+class AbstractFactory
+    implements \Zend\ServiceManager\Factory\AbstractFactoryInterface
 {
     /**
      * Return row prototype object (null if unavailable)
@@ -57,34 +58,34 @@ class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
     }
 
     /**
-     * Determine if we can create a service with name
+     * Does the factory have a way to create an instance for the service?
      *
-     * @param ServiceLocatorInterface $serviceLocator Service manager
-     * @param string                  $name           Service name
-     * @param string                  $requestedName  Requested service name
+     * @param ContainerInterface $container     Service container
+     * @param string             $requestedName Name of service
      *
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator,
-        $name, $requestedName
-    ) {
+    public function canCreate(ContainerInterface $container, $requestedName)
+    {
         return class_exists($requestedName);
     }
 
     /**
-     * Create service with name
+     * Create a service for the specified name.
      *
-     * @param ServiceLocatorInterface $tm            Table manager
-     * @param string                  $name          Service name
-     * @param string                  $requestedName Requested service name
+     * @param ContainerInterface $container     Service container
+     * @param string             $requestedName Name of service
+     * @param array              $options       Options (unused)
      *
-     * @return mixed
+     * @return object
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function createServiceWithName(ServiceLocatorInterface $tm, $name,
-        $requestedName
+    public function __invoke(ContainerInterface $container, $requestedName,
+        array $options = null
     ) {
-        $container = $tm->getServiceLocator();
         $adapter = $container->get('Zend\Db\Adapter\Adapter');
+        $tm = $container->get('GeebyDeeby\Db\Table\PluginManager');
         $rowPrototype = $this->getRowPrototype($container, $requestedName);
         return new $requestedName($adapter, $tm, $rowPrototype);
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract controller factory
+ * Database adapter factory.
  *
  * PHP version 5
  *
@@ -20,54 +20,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Controller;
+namespace GeebyDeeby\Db;
 
 use Interop\Container\ContainerInterface;
 
 /**
- * Abstract controller factory
+ * Database adapter factory.
  *
  * @category GeebyDeeby
- * @package  Controller
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AbstractFactory
-    implements \Zend\ServiceManager\Factory\AbstractFactoryInterface
+class AdapterFactory implements \Zend\ServiceManager\Factory\FactoryInterface
 {
     /**
-     * Does the factory have a way to create an instance for the service?
+     * Create service
      *
-     * @param ContainerInterface $container     Service container
-     * @param string             $requestedName Name of service
+     * @param ContainerInterface $container Service manager
+     * @param string             $name      Requested service name
+     * @param array              $options   Extra options
      *
-     * @return bool
-     */
-    public function canCreate(ContainerInterface $container, $requestedName)
-    {
-        return class_exists($requestedName);
-    }
-
-    /**
-     * Create a service for the specified name.
-     *
-     * @param ContainerInterface $container     Service container
-     * @param string             $requestedName Name of service
-     * @param array              $options       Options (unused)
-     *
-     * @return object
+     * @return mixed
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(ContainerInterface $container, $name,
         array $options = null
     ) {
-        return new $requestedName($container);
+        $config = $container->get('Config');
+        return new \Zend\Db\Adapter\Adapter(
+            [
+                'driver' => 'mysqli',
+                'charset' => 'utf8',
+                'hostname' => $config['geeby-deeby']['dbHost'],
+                'username' => $config['geeby-deeby']['dbUser'],
+                'password' => $config['geeby-deeby']['dbPass'],
+                'database' => $config['geeby-deeby']['dbName'],
+                'options' => ['buffer_results' => true]
+            ]
+        );
     }
 }
