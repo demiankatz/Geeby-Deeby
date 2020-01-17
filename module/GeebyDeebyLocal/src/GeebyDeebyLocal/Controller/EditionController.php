@@ -67,7 +67,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      *
      * @var string
      */
-    protected $fullTextPredicate = null; // TODO: 'dime:HasFullText';
+    protected $fullTextPredicate = 'rda:uniformResourceLocator';
 
     /**
      * Build the primary resource in an RDF graph.
