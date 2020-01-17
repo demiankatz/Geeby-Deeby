@@ -41,6 +41,35 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     const LC_NAME_AUTHORITY = 1;
 
     /**
+     * RDF class for representing copies of editions (null to omit).
+     *
+     * @var string
+     */
+    protected $copyRdfClass = 'dime:Copy';
+
+    /*
+     * Default predicate to use for credits, if no specific predicate is included
+     * in the role data. (Null to omit predicate-free credits in RDF output).
+     *
+     * @var string
+     */
+    protected $defaultCreditPredicate = 'dime:HasCredit';
+
+    /**
+     * RDF predicate for linking editions to copies (null to omit).
+     *
+     * @var string
+     */
+    protected $hasCopyPredicate = 'dime:HasCopy';
+
+    /**
+     * RDF predicate for linking full text URIs to copies (null to omit).
+     *
+     * @var string
+     */
+    protected $fullTextPredicate = null; // TODO: 'dime:HasFullText';
+
+    /**
      * Build the primary resource in an RDF graph.
      *
      * @param \EasyRdf\Graph $graph Graph to populate
@@ -54,10 +83,6 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $class[] = 'dime:Edition';
         $edition = parent::addPrimaryResourceToGraph($graph, $view, $class);
-        foreach ($view->credits as $credit) {
-            $personUri = $this->getServerUrl('person', ['id' => $credit['Person_ID']]);
-            $edition->add('dime:HasCredit', $graph->resource($personUri . '#name'));
-        }
         if (!empty($view->item)) {
             $itemUri = $this->getServerUrl('item', ['id' => $view->item['Item_ID']]);
             $itemType = $this->getDbTable('materialtype')->getByPrimaryKey(

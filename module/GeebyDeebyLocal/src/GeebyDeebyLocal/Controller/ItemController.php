@@ -39,6 +39,14 @@ namespace GeebyDeebyLocal\Controller;
 class ItemController extends \GeebyDeeby\Controller\ItemController
 {
     /**
+     * Default predicate to use for creators, if no specific predicate is included
+     * in the role data. (Null to omit predicate-free creators in RDF output).
+     *
+     * @var string
+     */
+    protected $defaultCreatorPredicate = 'rda:author';
+
+    /**
      * Build the primary resource in an RDF graph.
      *
      * @param \EasyRdf\Graph $graph Graph to populate
@@ -63,10 +71,6 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
         foreach ($view->editions as $edition) {
             $editionUri = $this->getServerUrl('edition', ['id' => $edition['Edition_ID']]);
             $item->add($relationship, $graph->resource($editionUri));
-        }
-        foreach ($view->creators as $creator) {
-            $personUri = $this->getServerUrl('person', ['id' => $creator['Person_ID']]);
-            $item->add('rda:author', $graph->resource($personUri));
         }
         foreach ($view->altTitles as $altTitle) {
             $item->add('rda:variantTitle', $altTitle['Item_AltName']);
