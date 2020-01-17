@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/demiankatz/Geeby-Deeby.svg?branch=master)](https://travis-ci.org/demiankatz/Geeby-Deeby)
+
 Geeby-Deeby
 ===========
 
