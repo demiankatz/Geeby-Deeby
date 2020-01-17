@@ -78,7 +78,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = [])
     {
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $class[] = 'dime:Edition';
@@ -298,7 +298,6 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             }
             $name->role->roleTerm = strtolower($credit->Role_Name);
             $name->role->roleTerm['type'] = 'text';
-
         }
     }
 
@@ -319,7 +318,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             if (in_array($tag->Tag, $knownForms)) {
                 $modsTag = 'genre';
                 $auth = 'aat';
-            } else if (in_array($tag->Tag, $knownGenres)) {
+            } elseif (in_array($tag->Tag, $knownGenres)) {
                 $modsTag = 'genre';
                 $auth = null;
             } else {

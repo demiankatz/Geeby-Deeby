@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Controller;
+
 use Zend\Cache\StorageFactory;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
@@ -69,17 +70,17 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
     public function progressAction()
     {
         $dir = __DIR__ . '/../../../../../data/cache';
-        $opts = array('cache_dir' => $dir, 'ttl' => 60 * 60 * 24);
-        $settings = array(
-            'adapter' => array('name' => 'filesystem', 'options' => $opts),
-            'plugins' => array('serializer')
-        );
+        $opts = ['cache_dir' => $dir, 'ttl' => 60 * 60 * 24];
+        $settings = [
+            'adapter' => ['name' => 'filesystem', 'options' => $opts],
+            'plugins' => ['serializer']
+        ];
         $cache = StorageFactory::factory($settings);
         if (!($stats = $cache->getItem('progressStats'))) {
             $stats = $this->getProgressStatistics();
             $cache->setItem('progressStats', $stats);
         }
-        return $this->createViewModel(array('progress' => $stats));
+        return $this->createViewModel(['progress' => $stats]);
     }
 
     /**
@@ -92,24 +93,24 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
         $s = $this->getDbTable('series');
         $callback = function ($select) {
             $select->columns(
-                array(
+                [
                     'Series_ID' => 'Series_ID',
                     'Series_Name' => 'Series_Name',
                     'Item_Count' => new Expression(
-                        'count(distinct(?))', array('Item_ID'),
-                        array(Expression::TYPE_IDENTIFIER)
+                        'count(distinct(?))', ['Item_ID'],
+                        [Expression::TYPE_IDENTIFIER]
                     ),
                     'Complete' => new Expression(
                         'if (Series_Description like \'%in progress%\', 0, 1)'
                     ),
-                )
+                ]
             );
             $select->join(
-                array('e' => 'Editions'),
-                'Series.Series_ID = e.Series_ID', array(), Select::JOIN_LEFT
+                ['e' => 'Editions'],
+                'Series.Series_ID = e.Series_ID', [], Select::JOIN_LEFT
             );
-            $select->group(array('Series.Series_ID'));
-            $select->order(array('Series.Series_Name'));
+            $select->group(['Series.Series_ID']);
+            $select->order(['Series.Series_Name']);
         };
         return $s->select($callback)->toArray();
     }

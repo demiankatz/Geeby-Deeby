@@ -1,4 +1,4 @@
-<? $this->layout()->title = 'Professor M\'s Lecture Series' ?>
+<?php $this->layout()->title = 'Professor M\'s Lecture Series' ?>
 
 <div style="text-align:center">
   <img src="/images/professor-text.png" alt="Professor M's Lecture Series" />
@@ -7,15 +7,15 @@
 </div>
 
 <h2>Latest Episode</h2>
-<? $this->latest = current($episodes) ?>
+<?php $this->latest = current($episodes) ?>
 <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
 
-<? if(count($episodes) > 1): ?>
+<?php if(count($episodes) > 1): ?>
   <h2>Previous Episodes</h2>
-  <? next($episodes) ?>
-  <? while($this->latest = current($episodes)): ?>
+  <?php next($episodes) ?>
+  <?php while($this->latest = current($episodes)): ?>
     <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
     <hr/>
-    <? next($episodes) ?>
-  <? endwhile; ?>
-<? endif; ?>
+    <?php next($episodes) ?>
+  <?php endwhile; ?>
+<?php endif; ?>

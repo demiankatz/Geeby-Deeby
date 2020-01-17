@@ -1,4 +1,4 @@
-<? $this->layout()->title = 'Mittie\'s Storytime' ?>
+<?php $this->layout()->title = 'Mittie\'s Storytime' ?>
 
 <div style="text-align:center">
   <img src="/images/mittie-text.png" style="display:block;margin:auto" alt="Mittie's Storytime" />
@@ -8,15 +8,15 @@
 </div>
 
 <h2>Latest Episode</h2>
-<? $this->latest = current($episodes) ?>
+<?php $this->latest = current($episodes) ?>
 <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
 
-<? if(count($episodes) > 1): ?>
+<?php if(count($episodes) > 1): ?>
   <h2>Previous Episodes</h2>
-  <? next($episodes) ?>
-  <? while($this->latest = current($episodes)): ?>
+  <?php next($episodes) ?>
+  <?php while($this->latest = current($episodes)): ?>
     <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
     <hr/>
-    <? next($episodes) ?>
-  <? endwhile; ?>
-<? endif; ?>
+    <?php next($episodes) ?>
+  <?php endwhile; ?>
+<?php endif; ?>

@@ -25,7 +25,8 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  */
 namespace GeebyDeebyLocal\Controller\Plugin;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin, Zend\Session\Container;
+
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
 /**
  * Zend action helper to deal with login followup; responsible for remembering URLs
@@ -49,9 +50,9 @@ class Podcast extends AbstractPlugin
     public function getMetadata($limit = 0, $filter = null)
     {
         $handle = fopen(__DIR__ . '/../../../../../../public/mp3/metadata', 'r');
-        $result = array();
+        $result = [];
         while (true) {
-            $current = array(
+            $current = [
                 'filename' => trim(fgets($handle)),
                 'date' => trim(fgets($handle)),
                 'category' => trim(fgets($handle)),
@@ -59,7 +60,7 @@ class Podcast extends AbstractPlugin
                 'author' => trim(fgets($handle)),
                 'duration' => trim(fgets($handle)),
                 'description' => trim(fgets($handle))
-            );
+            ];
             fgets($handle);
             if (empty($current['filename'])) {
                 break;

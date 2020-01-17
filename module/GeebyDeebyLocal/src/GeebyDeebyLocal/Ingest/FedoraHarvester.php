@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Ingest;
+
 use Zend\Console\Console;
 
 /**
@@ -59,12 +60,12 @@ class FedoraHarvester
      * @var bool
      */
     protected $cache = false;
-    
+
     /**
      * Constructor
      *
      * @param string        $modsUrl Base URL for retrieving MODS.
-     * @param SolrHarvester $solr    Solr Harvester 
+     * @param SolrHarvester $solr    Solr Harvester
      */
     public function __construct($modsUrl, SolrHarvester $solr)
     {

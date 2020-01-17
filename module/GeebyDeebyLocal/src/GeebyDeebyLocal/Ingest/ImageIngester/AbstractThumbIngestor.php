@@ -76,7 +76,6 @@ abstract class AbstractThumbIngestor extends BaseIngester
         return empty($matches[0]) ? false : $matches[0];
     }
 
-
     /**
      * Load missing NIU images.
      */

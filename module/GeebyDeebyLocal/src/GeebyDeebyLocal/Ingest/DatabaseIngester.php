@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Ingest;
+
 use Zend\Console\Console;
 use Zend\Console\Prompt;
 
@@ -115,8 +116,8 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool True for success
      */
-     protected function ingestExistingWork($details, $editionObj, $item, $series)
-     {
+    protected function ingestExistingWork($details, $editionObj, $item, $series)
+    {
         if (count($details['contents']) != 1) {
             Console::writeLine("FATAL: too many contents for single-part item.");
             return false;
@@ -156,7 +157,7 @@ class DatabaseIngester extends BaseIngester
 
         if ($item['Material_Type_ID'] == self::MATERIALTYPE_ISSUE) {
             return $this->ingestExistingIssue($details, $editionObj, $series);
-        } else if ($item['Material_Type_ID'] == self::MATERIALTYPE_WORK) {
+        } elseif ($item['Material_Type_ID'] == self::MATERIALTYPE_WORK) {
             return $this->ingestExistingWork($details, $editionObj, $item, $series);
         }
 
@@ -183,6 +184,7 @@ class DatabaseIngester extends BaseIngester
         }
         return $titles;
     }
+
     /**
      * Ingest series entry
      *
@@ -198,7 +200,9 @@ class DatabaseIngester extends BaseIngester
             : $this->getPositionFromSeriesString(current($details['series']));
         $item = ($pos === 0) ? $this->getItemForNewEdition($details['contents'][0]) : null;
         $contentSummary = array_map(
-            function ($n) { return $n['title']; },
+            function ($n) {
+                return $n['title'];
+            },
             $details['contents']
         );
         Console::writeLine("Working on " . $seriesObj->Series_Name . " no. $pos...");
@@ -244,7 +248,7 @@ class DatabaseIngester extends BaseIngester
             $newEdition = $this->getChildIssueForSeries($seriesObj, $newChildData, $pos);
             if (!$newEdition || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)) {
                 return false;
-            };
+            }
             return $this->updateChildWorks($newEdition, $childDetails);
         }
         // Standard case: single-part work:
@@ -342,16 +346,17 @@ class DatabaseIngester extends BaseIngester
     {
         $parts = preg_split('|[-/]|', str_replace(['[', ']', '?'], '', $date));
         if (isset($parts[2]) && $parts[2] > 50) {
-            $year = isset($parts[2]) ? $parts[2] : null;
-            $month = isset($parts[0]) ? $parts[0] : null;
-            $day = isset($parts[1]) ? $parts[1] : null;
+            $year = $parts[2] ?? null;
+            $month = $parts[0] ?? null;
+            $day = $parts[1] ?? null;
         } else {
-            $year = isset($parts[0]) ? $parts[0] : null;
-            $month = isset($parts[1]) ? $parts[1] : null;
-            $day = isset($parts[2]) ? $parts[2] : null;
+            $year = $parts[0] ?? null;
+            $month = $parts[1] ?? null;
+            $day = $parts[2] ?? null;
         }
         return [$year, $month, $day];
     }
+
     /**
      * Given a date, update the edition.
      *
@@ -520,7 +525,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function processPublisher($publisher, $editionObj, $seriesId)
     {
-        list ($name, $street) = $this->separateNameAndStreet($publisher['name']);
+        list($name, $street) = $this->separateNameAndStreet($publisher['name']);
         if (empty($street)) {
             Console::writeLine("WARNING: No street address; skipping publisher.");
             return true;
@@ -682,7 +687,7 @@ class DatabaseIngester extends BaseIngester
     protected function extractIdFromDimeNovelsUri($uri, $type)
     {
         $parts = explode('://dimenovels.org/' . $type . '/', $uri);
-        return isset($parts[1]) ? $parts[1] : false;
+        return $parts[1] ?? false;
     }
 
     /**
@@ -1019,7 +1024,7 @@ class DatabaseIngester extends BaseIngester
                         $currentCredits = $this->getPeopleForItem($current['Item_ID']);
                         $candidates[] = [
                             'id' => $current['Item_ID'],
-                            'title' => $currentAlt['Item_AltName'] . ' (alt. title for ' . $current['Item_Name']. ')',
+                            'title' => $currentAlt['Item_AltName'] . ' (alt. title for ' . $current['Item_Name'] . ')',
                             'authors' => implode(', ', $currentCredits),
                             'confidence' => $score,
                         ];
@@ -1176,7 +1181,7 @@ class DatabaseIngester extends BaseIngester
                 Console::writeLine(
                     chr(65 + $i) . '. ' . $current['title']
                     . (!empty($current['authors']) ? ' by ' . $current['authors'] : ' - no credits')
-                    . ' [ID = ' . $current['id']  . ']'
+                    . ' [ID = ' . $current['id'] . ']'
                     . ' (confidence: ' . $current['confidence'] . '%)'
                 );
             }
@@ -1301,12 +1306,12 @@ class DatabaseIngester extends BaseIngester
             $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
             Console::writeLine("Added edition ID " . $newObj->Edition_ID);
             $edition = $newObj;
-        } else if (count($lookup) == 1) {
+        } elseif (count($lookup) == 1) {
             foreach ($lookup as $current) {
                 $edition = $current;
             }
         } else {
-            $edition = $this->pickEdition($lookup, isset($data['url']) ? $data['url'] : []);
+            $edition = $this->pickEdition($lookup, $data['url'] ?? []);
         }
         return $this->updateWorkInDatabase(
             $data,
@@ -1380,9 +1385,8 @@ class DatabaseIngester extends BaseIngester
         }
         Console::writeLine('FATAL: Unexpected title mismatch.');
         Console::writeLine('Incoming: ' . $title);
-        $dbTitle = isset($db['item']['Item_AltName'])
-            ? $db['item']['Item_AltName']
-            : $db['item']['Item_Name'];
+        $dbTitle = $db['item']['Item_AltName']
+            ?? $db['item']['Item_Name'];
         Console::writeLine('Database: ' . $dbTitle);
         return false;
     }
@@ -1499,11 +1503,11 @@ class DatabaseIngester extends BaseIngester
                 $letter . '. ' . $option->First_Name . ' ' . $option->Last_Name
                 . $option->Extra_Details
             );
-        };
+        }
         $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
         $char = strtoupper($prompt->show());
         return $people[ord($char) - 65];
-}
+    }
 
     /**
      * Given a name string, look up a matching person ID.
@@ -1571,7 +1575,7 @@ class DatabaseIngester extends BaseIngester
                         $id = $this->getPersonIdForUri($current['uri']);
                     } else {
                         Console::writeLine("WARNING: Missing URI for {$current['name']}...");
-                        $expected = isset($match[1]['authorIds']) ? $match[1]['authorIds'] : [];
+                        $expected = $match[1]['authorIds'] ?? [];
                         $id = $this->getPersonIdForString($current['name'], $expected);
                     }
                     if (!$id) {
@@ -1674,6 +1678,7 @@ class DatabaseIngester extends BaseIngester
         }
         return false;
     }
+
     /**
      * Given a list of editions, make the user pick one.
      *
@@ -1999,7 +2004,7 @@ class DatabaseIngester extends BaseIngester
             }
         }
         return $match;
-   }
+    }
 
     /**
      * Do a fuzzy compare to validate if any of the incoming titles match. Checks
@@ -2060,7 +2065,7 @@ class DatabaseIngester extends BaseIngester
         if (!empty($rowObj->Preferred_Item_AltName_ID)) {
             $ian = $this->getDbTable('itemsalttitles');
             $tmpRow = $ian->select(
-                array('Sequence_ID' => $rowObj->Preferred_Item_AltName_ID)
+                ['Sequence_ID' => $rowObj->Preferred_Item_AltName_ID]
             )->current();
             $item['Item_AltName'] = $tmpRow['Item_AltName'];
         }
@@ -2082,7 +2087,7 @@ class DatabaseIngester extends BaseIngester
         if (!empty($rowObj->Preferred_Series_AltName_ID)) {
             $san = $this->getDbTable('seriesalttitles');
             $tmpRow = $san->select(
-                array('Sequence_ID' => $rowObj->Preferred_Series_AltName_ID)
+                ['Sequence_ID' => $rowObj->Preferred_Series_AltName_ID]
             )->current();
             $series['Series_AltName'] = $tmpRow['Series_AltName'];
         }

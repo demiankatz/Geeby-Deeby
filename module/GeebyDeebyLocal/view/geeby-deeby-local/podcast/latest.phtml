@@ -1,6 +1,6 @@
-<? if (!empty($latest)): ?>
+<?php if (!empty($latest)): ?>
   <h2>Latest Episode</h2>
   <p><a href="<?=$this->url('podcast-about')?>?file=<?=urlencode($latest['filename'])?>"><?=$this->escapeHtml($latest['category'] . ': ' . $latest['title'])?></a></p>
   <p>Released on <?=date('M d, Y', strtotime($latest['date']))?>.</p>
   <p>Download: <a href="<?=$this->url('home')?>mp3/<?=$this->escapeHtml($latest['filename'])?>">MP3</a> (<?=number_format(($latest['size'] / 1024) / 1024, 2)?> MB, Duration: <?=$this->escapeHtml($latest['duration'])?>)</p>
-<? endif; ?>
+<?php endif; ?>

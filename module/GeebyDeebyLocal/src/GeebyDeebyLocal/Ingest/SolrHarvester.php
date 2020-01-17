@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Ingest;
+
 use Zend\Console\Console;
 
 /**
@@ -112,7 +113,7 @@ class SolrHarvester
         $query = 'RELS_EXT_isPageOf_uri_ms:"info:fedora/' . $pid . '"';
         $field = $this->settings->solrIdField . ',RELS_EXT_isSequenceNumber_literal_ms';
         $solr = $this->querySolr($query, $field);
-        $results = array();
+        $results = [];
         if (isset($solr->response->docs)) {
             foreach ($solr->response->docs as $doc) {
                 $results[$doc->RELS_EXT_isSequenceNumber_literal_ms[0]] = $doc->{$this->settings->solrIdField};
@@ -154,7 +155,7 @@ class SolrHarvester
         $solr = $this->querySolr($query, $field, $sort);
         $retVal = [];
         foreach ($solr->response->docs as $doc) {
-            $pid = isset($doc->$field) ? $doc->$field : false;
+            $pid = $doc->$field ?? false;
             if ($pid) {
                 $retVal[] = $pid;
             }
@@ -178,7 +179,7 @@ class SolrHarvester
         $solr = $this->querySolr($query, $field, $sort);
         $retVal = [];
         foreach ($solr->response->docs as $doc) {
-            $pid = isset($doc->$field) ? $doc->$field : false;
+            $pid = $doc->$field ?? false;
             if ($pid) {
                 $retVal[] = $pid;
             }

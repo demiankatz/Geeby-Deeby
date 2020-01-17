@@ -26,7 +26,8 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Controller;
-use DateTime, Zend\Feed\Writer\Feed;
+
+use Zend\Feed\Writer\Feed;
 
 /**
  * Podcast controller
@@ -47,10 +48,10 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     public function indexAction()
     {
         return $this->createViewModel(
-            array('episodes' => array(
+            ['episodes' => [
                 'mittie'    => $this->podcast()->getMetadata(4, 'Mittie\'s Storytime'),
                 'professor' => $this->podcast()->getMetadata(4, 'Professor M\'s Lecture Series'),
-            ))
+            ]]
         );
     }
 
@@ -75,9 +76,9 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     public function mittieAction()
     {
         return $this->createViewModel(
-            array(
+            [
               'episodes' => $this->podcast()->getMetadata(0, 'Mittie\'s Storytime')
-            )
+            ]
         );
     }
 
@@ -89,9 +90,9 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     public function professorAction()
     {
         return $this->createViewModel(
-            array(
+            [
               'episodes' => $this->podcast()->getMetadata(0, 'Professor M\'s Lecture Series')
-            )
+            ]
         );
     }
 
@@ -112,11 +113,11 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             }
         }
         return $this->createViewModel(
-            array(
+            [
                 'prev' => $details && isset($meta[$i + 1]) ? $meta[$i + 1] : false,
                 'details' => $details,
                 'next' => $details && isset($meta[$i - 1]) ? $meta[$i - 1] : false,
-            )
+            ]
         );
     }
 
@@ -139,12 +140,12 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         $feed->setFeedLink(
             $serverUrl($this->url()->fromRoute('podcast-rss')), 'rss'
         );
-        $feed->setItunesCategories(array('Arts' => array('Literature')));
+        $feed->setItunesCategories(['Arts' => ['Literature']]);
         $feed->addItunesOwner(
-            array(
+            [
                 'name' => 'Lancelot Darling & Friends',
                 'email' => 'lancelot.darling@gmail.com'
-            )
+            ]
         );
         $feed->setLanguage('en');
         $feed->setItunesExplicit('clean');
@@ -162,7 +163,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
             $entry->setDateModified(strtotime($current['date']));
             $mp3 = $baseUrl . 'mp3/' . $current['filename'];
             $entry->setEnclosure(
-                array('uri' => $mp3, 'length' => $current['size'], 'type' => 'audio/mpeg')
+                ['uri' => $mp3, 'length' => $current['size'], 'type' => 'audio/mpeg']
             );
             $entry->addItunesAuthor($current['author']);
             $entry->setItunesDuration($current['duration']);

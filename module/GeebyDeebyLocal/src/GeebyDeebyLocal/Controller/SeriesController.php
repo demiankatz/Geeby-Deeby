@@ -47,7 +47,7 @@ class SeriesController extends \GeebyDeeby\Controller\SeriesController
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = [])
     {
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $class[] = 'dime:Series';

@@ -1,4 +1,4 @@
-<? $this->layout()->title = 'The Spare Change Library' ?>
+<?php $this->layout()->title = 'The Spare Change Library' ?>
 
 <p>The Spare Change Library is the dime novel and popular literature podcast, featuring audio editions of stories, as well as scholarship. The podcast is broken into "substreams" based on the content. We currently have two of these substreams: Mittie's Storytime (fiction) and Professor M's Lecture Series (scholarship). These are all available through a shared <a href="<?=$this->url('podcast-rss')?>">RSS feed</a>.</p>
 
@@ -20,37 +20,37 @@
 <h2 style="text-align:center">Latest Episodes</h2>
 <div class="row" style="text-align:center">
   <div class="col-sm-6">
-    <? $this->latest = current($episodes['mittie']) ?>
+    <?php $this->latest = current($episodes['mittie']) ?>
     <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
   </div>
   <div class="col-sm-6">
-    <? $this->latest = current($episodes['professor']) ?>
+    <?php $this->latest = current($episodes['professor']) ?>
     <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
   </div>
 </div>
 <h2 style="text-align:center">Previous Episodes</h2>
 <div class="row" style="text-align:center">
   <div class="col-sm-6">
-    <? if(count($episodes['mittie']) > 1): ?>
-      <? next($episodes['mittie']) ?>
-      <? while($this->latest = current($episodes['mittie'])): ?>
+    <?php if(count($episodes['mittie']) > 1): ?>
+      <?php next($episodes['mittie']) ?>
+      <?php while($this->latest = current($episodes['mittie'])): ?>
         <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
         <hr/>
-        <? next($episodes['mittie']) ?>
-      <? endwhile; ?>
+        <?php next($episodes['mittie']) ?>
+      <?php endwhile; ?>
       <a href="<?=$this->url('podcast-mitties')?>">More...</a>
-    <? endif; ?>
+    <?php endif; ?>
   </div>
   <div class="col-sm-6">
-    <? if(count($episodes['professor']) > 1): ?>
-      <? next($episodes['professor']) ?>
-      <? while($this->latest = current($episodes['professor'])): ?>
+    <?php if(count($episodes['professor']) > 1): ?>
+      <?php next($episodes['professor']) ?>
+      <?php while($this->latest = current($episodes['professor'])): ?>
         <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
         <hr/>
-        <? next($episodes['professor']) ?>
-      <? endwhile; ?>
+        <?php next($episodes['professor']) ?>
+      <?php endwhile; ?>
       <a href="<?=$this->url('podcast-professor')?>">More...</a>
-    <? endif; ?>
+    <?php endif; ?>
   </div>
 </div>
 

@@ -63,7 +63,7 @@ class ModsExtractor
         }
         $date = $mods->xpath('/mods:mods/mods:originInfo[@eventType="publication"]/mods:dateIssued');
         if (isset($date[0])) {
-            $retVal['date'] = (string) $date[0];
+            $retVal['date'] = (string)$date[0];
         }
         if ($seriesInfo = $this->extractSeries($mods->xpath('/mods:mods/mods:relatedItem[@type="series"]/mods:titleInfo[@type="uniform"]'))) {
             $retVal['series'] = $seriesInfo;
@@ -81,7 +81,7 @@ class ModsExtractor
     {
         $all = [];
         foreach ($mods as $current) {
-            $current = (string) $current;
+            $current = (string)$current;
             if (!empty($current)) {
                 $all[] = $current;
             }
@@ -95,13 +95,13 @@ class ModsExtractor
         foreach ($series as $current) {
             $name = $current->xpath('mods:title');
             $number = $current->xpath('mods:partNumber');
-            $firstName = isset($name[0]) ? (string) $name[0] : null;
+            $firstName = isset($name[0]) ? (string)$name[0] : null;
             if (!empty($firstName)) {
                 // If the same series name has multiple numbers, favor the lowest non-zero value:
                 if (!isset($seriesInfo[$firstName]) ||
-                    ((string) $number[0] > 0 && intval($seriesInfo[$firstName]) < (string) $number[0])
+                    ((string)$number[0] > 0 && intval($seriesInfo[$firstName]) < (string)$number[0])
                 ) {
-                    $seriesInfo[$firstName] = isset($number[0]) ? (string) $number[0] : '';
+                    $seriesInfo[$firstName] = isset($number[0]) ? (string)$number[0] : '';
                 }
             }
         }
@@ -118,20 +118,20 @@ class ModsExtractor
             $mods = $mods[0];
             $publisher = $mods->xpath('mods:publisher');
             if (isset($publisher[0])) {
-                $pub['name'] = (string) $publisher[0];
+                $pub['name'] = (string)$publisher[0];
                 $place = $mods->xpath('mods:place/mods:placeTerm[@type="text"]');
                 if (isset($place[0])) {
-                    $pub['place'] = (string) $place[0];
+                    $pub['place'] = (string)$place[0];
                 }
             }
         }
         // If we have an authorized name with a date in it, or if the authorized name is
         // longer than the imprint name, override the one extracted above:
-        $parts = explode(',', isset($pub['name']) ? $pub['name'] : '');
+        $parts = explode(',', $pub['name'] ?? '');
         if (isset($authMods[0])
-            && (preg_match('/\(\d{4}/', (string) $authMods[0]) || strlen($authMods[0]) > strlen($parts[0]))
+            && (preg_match('/\(\d{4}/', (string)$authMods[0]) || strlen($authMods[0]) > strlen($parts[0]))
         ) {
-            $newParts = explode(',', (string) $authMods[0]);
+            $newParts = explode(',', (string)$authMods[0]);
             foreach ($newParts as $i => $part) {
                 $parts[$i] = $part;
             }
@@ -179,9 +179,9 @@ class ModsExtractor
         $currentName = '';
         foreach ($parts as $namePart) {
             $type = $namePart->xpath('@type');
-            $namePartStr = (string) $namePart;
+            $namePartStr = (string)$namePart;
             if (strlen($currentName) > 0) {
-                $type = isset($type[0]) ? (string) $type[0] : 'default';
+                $type = isset($type[0]) ? (string)$type[0] : 'default';
                 switch ($type) {
                     case 'date':
                         $currentName .= ', ';
@@ -206,7 +206,7 @@ class ModsExtractor
         $matches = $mods->xpath('mods:name');
         foreach ($matches as $current) {
             $nameType = $current->xpath('@type');
-            $nameType = isset($nameType[0]) ? (string) $nameType[0] : 'default';
+            $nameType = isset($nameType[0]) ? (string)$nameType[0] : 'default';
             $role = $current->xpath('mods:role/mods:roleTerm');
             if (isset($role[0]) && (string)$role[0] == 'author') {
                 $currentAuthor = [];
@@ -262,7 +262,7 @@ class ModsExtractor
                 if (empty($value)) {
                     $nameType = $current->xpath('@type');
                     $nameType = isset($nameType[0])
-                        ? (string) $nameType[0] : 'default';
+                        ? (string)$nameType[0] : 'default';
                     $value = $this->getStringFromNameParts(
                         $current->xpath('mods:namePart'), $nameType
                     );
@@ -286,7 +286,7 @@ class ModsExtractor
                 $title .= ' : ' . $subtitle;
             }
         }
-	$partParts = $current->xpath('mods:partNumber');
+        $partParts = $current->xpath('mods:partNumber');
         $part = isset($partParts[0]) ? trim((string)$partParts[0]) : '';
         if (!empty($part)) {
             $title .= ', ' . $part;

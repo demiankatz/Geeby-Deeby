@@ -41,10 +41,10 @@ class IndexController extends \GeebyDeeby\Controller\IndexController
     public function indexAction()
     {
         return $this->createViewModel(
-            array('episodes' => array(
+            ['episodes' => [
                 'mittie'    => $this->podcast()->getMetadata(4, 'Mittie\'s Storytime'),
                 'professor' => $this->podcast()->getMetadata(4, 'Professor M\'s Lecture Series'),
-            ))
+            ]]
         );
     }
 

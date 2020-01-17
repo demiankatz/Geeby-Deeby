@@ -55,7 +55,7 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = [])
     {
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $item = parent::addPrimaryResourceToGraph($graph, $view, $class);

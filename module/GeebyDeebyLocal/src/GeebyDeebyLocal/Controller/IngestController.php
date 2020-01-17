@@ -26,11 +26,13 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal\Controller;
+
 use GeebyDeebyLocal\Ingest\DatabaseIngester;
 use GeebyDeebyLocal\Ingest\ImageIngester;
 use GeebyDeebyLocal\Ingest\IssueMaker;
 use GeebyDeebyLocal\Ingest\ModsExtractor;
-use Zend\Console\Console, Zend\Console\Prompt;
+use Zend\Console\Console;
+use Zend\Console\Prompt;
 
 /**
  * Ingest controller
@@ -206,8 +208,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
         $dir = rtrim($this->params()->fromRoute('dir'), '/');
         $job = json_decode(file_get_contents($dir . '/job.json'));
         if (!is_object($job)) {
-           Console::writeLine("Invalid/missing job.json in $dir");
-           return;
+            Console::writeLine("Invalid/missing job.json in $dir");
+            return;
         }
         switch ($job->type) {
             case 'series':
@@ -291,8 +293,8 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
     {
         $file = $this->params()->fromRoute('file');
         if (!file_exists($file)) {
-           Console::writeLine("Invalid/missing spreadsheet: $file");
-           return;
+            Console::writeLine("Invalid/missing spreadsheet: $file");
+            return;
         }
         $ingester = $this->getIngester();
         $total = $success = 0;

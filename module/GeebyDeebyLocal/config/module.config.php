@@ -7,15 +7,15 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-return array(
-    'geeby-deeby' => array(
+return [
+    'geeby-deeby' => [
         'siteTitle' => 'The Edward T. LeBlanc Memorial Dime Novel Bibliography',
         'siteEmail' => 'demian.katz@villanova.edu',
         'siteOwner' => 'Demian Katz',
         'groupSeriesByMaterialType' => false,
-    ),
-    'controllers' => array(
-        'aliases' => array(
+    ],
+    'controllers' => [
+        'aliases' => [
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeebyLocal\Controller\EditionController',
             'GeebyDeeby\Controller\Ingest' => 'GeebyDeebyLocal\Controller\IngestController',
@@ -26,237 +26,237 @@ return array(
             'GeebyDeeby\Controller\Podcast' => 'GeebyDeebyLocal\Controller\PodcastController',
             'GeebyDeeby\Controller\Publisher' => 'GeebyDeebyLocal\Controller\PublisherController',
             'GeebyDeeby\Controller\Series' => 'GeebyDeebyLocal\Controller\SeriesController',
-        ),
-    ),
-    'console' => array(
-        'router' => array(
-            'routes' => array(
-                'check-links' => array(
+        ],
+    ],
+    'console' => [
+        'router' => [
+            'routes' => [
+                'check-links' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'check links <series> <provider>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'checklinks',
-                        )
-                    )
-                ),
-                'harvest-collection' => array(
+                        ]
+                    ]
+                ],
+                'harvest-collection' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'harvest collection <collection> <series> <dir>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'harvestcollection',
-                        )
-                    )
-                ),
-                'harvest-existing' => array(
+                        ]
+                    ]
+                ],
+                'harvest-existing' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'harvest existing <dir>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'harvestexisting',
-                        )
-                    )
-                ),
-                'harvest-series' => array(
+                        ]
+                    ]
+                ],
+                'harvest-series' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'harvest series <series> <dir>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'harvestseries',
-                        )
-                    )
-                ),
-                'harvest-tiffs' => array(
+                        ]
+                    ]
+                ],
+                'harvest-tiffs' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'harvest tiffs <pid> <dir>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'harvesttiffs',
-                        )
-                    )
-                ),
-                'ingest-directory' => array(
+                        ]
+                    ]
+                ],
+                'ingest-directory' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'ingest directory <dir>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'directory',
-                        )
-                    )
-                ),
-                'ingest-spreadsheet' => array(
+                        ]
+                    ]
+                ],
+                'ingest-spreadsheet' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'ingest spreadsheet <file>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'spreadsheet',
-                        )
-                    )
-                ),
-                'ingest-existing' => array(
+                        ]
+                    ]
+                ],
+                'ingest-existing' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'ingest [existing]',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'existing',
-                        )
-                    )
-                ),
-                'ingest-images' => array(
+                        ]
+                    ]
+                ],
+                'ingest-images' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'load iiif',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'loadiiif',
-                        )
-                    )
-                ),
-                'ingest-makeissues' => array(
+                        ]
+                    ]
+                ],
+                'ingest-makeissues' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'makeissues <series> <prefix>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'makeissues',
-                        )
-                    )
-                ),
-                'ingest-series' => array(
+                        ]
+                    ]
+                ],
+                'ingest-series' => [
                     'type' => 'simple',
-                    'options' => array(
+                    'options' => [
                         'route' => 'ingest series <series>',
-                        'defaults' => array(
+                        'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'series',
-                        )
-                    )
-                ),
-            )
-        )
-    ),
-    'controller_plugins' => array(
-        'invokables' => array(
+                        ]
+                    ]
+                ],
+            ]
+        ]
+    ],
+    'controller_plugins' => [
+        'invokables' => [
             'podcast' => 'GeebyDeebyLocal\Controller\Plugin\Podcast',
-        )
-    ),
-    'router' => array(
-        'routes' => array(
-            'about' => array(
+        ]
+    ],
+    'router' => [
+        'routes' => [
+            'about' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/About',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\About',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-            'about-credits' => array(
+                    ],
+                ],
+            ],
+            'about-credits' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/About/Credits',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\About',
                         'action'     => 'credits',
-                    ),
-                ),
-            ),
-            'about-progress' => array(
+                    ],
+                ],
+            ],
+            'about-progress' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/About/Progress',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\About',
                         'action'     => 'progress',
-                    ),
-                ),
-            ),
-            'ontology' => array(
+                    ],
+                ],
+            ],
+            'ontology' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/ontology[/]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\Ontology',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-            'podcast' => array(
+                    ],
+                ],
+            ],
+            'podcast' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Podcast[/]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-            'podcast-about' => array(
+                    ],
+                ],
+            ],
+            'podcast-about' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Podcast/About[/]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'about',
-                    ),
-                ),
-            ),
-            'podcast-mitties' => array(
+                    ],
+                ],
+            ],
+            'podcast-mitties' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Podcast/Mittie[/]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'mittie',
-                    ),
-                ),
-            ),
-            'podcast-professor' => array(
+                    ],
+                ],
+            ],
+            'podcast-professor' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Podcast/Professor[/]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'professor',
-                    ),
-                ),
-            ),
-            'podcast-rss' => array(
+                    ],
+                ],
+            ],
+            'podcast-rss' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Podcast/RSS[/]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'rss',
-                    ),
-                ),
-            ),
-            'podcast-rss-lowercase-for-apple' => array(
+                    ],
+                ],
+            ],
+            'podcast-rss-lowercase-for-apple' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/podcast/rss[/]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\Podcast',
                         'action'     => 'rss',
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'view_manager' => array(
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'view_manager' => [
         'display_exceptions' => false,
-        'template_path_stack' => array(
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
-    ),
-);
+        ],
+    ],
+];
