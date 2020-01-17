@@ -1,4 +1,4 @@
-<? foreach ($usergroups as $current): ?>
+<?php foreach ($usergroups as $current): ?>
   <table class="list_item">
     <tr>
       <td>
@@ -9,5 +9,5 @@
       </td>
     </tr>
   </table>
-<? endforeach; ?>
-<? if (count($usergroups) == 0): ?>No groups defined.<? endif; ?>
+<?php endforeach; ?>
+<?php if (count($usergroups) == 0): ?>No groups defined.<?php endif; ?>

@@ -57,7 +57,7 @@ class ItemsLinks extends Gateway
     /**
      * Get a list of links for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -65,9 +65,9 @@ class ItemsLinks extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('l' => 'Links'), 'Items_Links.Link_ID = l.Link_ID'
+                ['l' => 'Links'], 'Items_Links.Link_ID = l.Link_ID'
             );
-            $select->order(array('Link_Name'));
+            $select->order(['Link_Name']);
             $select->where->equalTo('Item_ID', $itemID);
         };
         return $this->select($callback);
@@ -76,7 +76,7 @@ class ItemsLinks extends Gateway
     /**
      * Get a list of items for the specified link.
      *
-     * @var int $linkID Link ID
+     * @param int $linkID Link ID
      *
      * @return mixed
      */
@@ -84,7 +84,7 @@ class ItemsLinks extends Gateway
     {
         $callback = function ($select) use ($linkID) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_Links.Item_ID = i.Item_ID'
             );
             $select->order('i.Item_Name');

@@ -1,4 +1,4 @@
-<?
+<?php
     $this->layout()->title = 'Sign Up';
 ?>
 
@@ -6,16 +6,16 @@
 
 <h2>Your Information</h2>
 <form action="" method="post">
-<? if (isset($error)): ?>
+<?php if (isset($error)): ?>
   <div class="error"><?=$this->escapeHtml($error)?></div>
-<? endif; ?>
+<?php endif; ?>
 <table class="signup"><tr>
 <th>Username (not case sensitive):</th><td>
-<input type="text" name="Username" value="<?=$this->escapeHtml(isset($user) ? $user : '')?>" size="25" maxlength="25" /></td></tr>
+<input type="text" name="Username" value="<?=$this->escapeHtml($user ?? '')?>" size="25" maxlength="25" /></td></tr>
 <th>Full Name:</th><td>
-<input type="text" name="Fullname" value="<?=$this->escapeHtml(isset($fullname) ? $fullname : '')?>" size="25" maxlength="50" /></td></tr>
+<input type="text" name="Fullname" value="<?=$this->escapeHtml($fullname ?? '')?>" size="25" maxlength="50" /></td></tr>
 <th>E-Mail Address (optional):</th><td>
-<input type="text" name="Address" value="<?=$this->escapeHtml(isset($address) ? $address : '')?>" size="25" maxlength="50" /></td></tr>
+<input type="text" name="Address" value="<?=$this->escapeHtml($address ?? '')?>" size="25" maxlength="50" /></td></tr>
 <tr><th>Password:</th><td>
 <input type="password" name="Password1" size="25" maxlength="25" /></td></tr>
 <tr><th>Retype Password:</th><td>

@@ -58,7 +58,7 @@ class ItemsAltTitles extends Gateway
     /**
      * Get a list of alternate titles for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -66,7 +66,7 @@ class ItemsAltTitles extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Items_AltTitles.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );

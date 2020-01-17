@@ -86,7 +86,7 @@ class SearchController extends AbstractBase
         // Validate query length:
         if (strlen($this->layout()->query) < 3) {
             return $this->createViewModel(
-                array('error' => 'Search string must be at least 3 characters long.')
+                ['error' => 'Search string must be at least 3 characters long.']
             );
         }
 
@@ -102,7 +102,7 @@ class SearchController extends AbstractBase
 
         // If we got this far, no valid type was found:
         return $this->createViewModel(
-            array('error' => 'This search type is unsupported.')
+            ['error' => 'This search type is unsupported.']
         );
     }
 
@@ -145,7 +145,7 @@ class SearchController extends AbstractBase
         // for leading articles:
         $q = $this->serviceLocator->get('GeebyDeeby\Articles')
             ->stripLeadingArticles($this->layout()->query);
-        $tokens = array($q);
+        $tokens = [$q];
         $view = $this->createViewModel();
         $view->series = $this->getDbTable('series')->keywordSearch($tokens);
         $view->seriesAltTitles = $this->getDbTable('seriesalttitles')

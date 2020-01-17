@@ -1,22 +1,22 @@
-<?
+<?php
     $this->layout()->title = 'User List';
 ?>
-<? if (count($users) < 1): ?>
+<?php if (count($users) < 1): ?>
   <p>No users listed in this database yet.</p>
-<? else: ?>
+<?php else: ?>
   <h2>
     <?=$this->firstLetterMenu($users, 'Username'); ?>
   </h2>
-  <? $currentLetter = false; foreach ($users as $i=>$current): ?>
-    <? $first = $this->firstletter($current['Username']); ?>
-    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <? if ($i > 0): ?>
+  <?php $currentLetter = false; foreach ($users as $i => $current): ?>
+    <?php $first = $this->firstletter($current['Username']); ?>
+    <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <?php if ($i > 0): ?>
         <a name="<?=$this->escapeHtml($currentLetter)?>"/>
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
-      <? endif; ?>
-    <? endif; ?>
-    <a href="<?=$this->url('user', array('id' => $current['User_ID']))?>">
+      <?php endif; ?>
+    <?php endif; ?>
+    <a href="<?=$this->url('user', ['id' => $current['User_ID']])?>">
       <?=$this->escapeHtml($this->fixtitle($current['Username']))?>
     </a><br />
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

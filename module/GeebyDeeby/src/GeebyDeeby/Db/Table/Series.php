@@ -96,17 +96,18 @@ class Series extends Gateway
     public function getSuggestions($query, $limit = false)
     {
         $callback = function ($select) use ($query) {
-            $select2 = clone($select);
+            $select2 = clone $select;
             $select2->columns(
                 [
                     'Series_ID',
                     'Series_Name' => new Expression(
-                        "Concat(Series_AltName, ' [alt. title for ', Series_Name, ']')"
+                        "Concat(Series_AltName, " .
+                        "' [alt. title for ', Series_Name, ']')"
                     )
                 ]
             );
             $select2->join(
-                array('sat' => 'Series_AltTitles'),
+                ['sat' => 'Series_AltTitles'],
                 'Series.Series_ID = sat.Series_ID',
                 [], Select::JOIN_LEFT
             );
@@ -144,32 +145,44 @@ class Series extends Gateway
     /**
      * Get a list of series for the specified item.
      *
-     * @var int  $itemID                Item ID
-     * @var bool $includePosition       Should we include position information?
-     * @var bool $includeParentPosition Should we include information about parent edition(s)?
+     * @param int  $itemID                Item ID
+     * @param bool $includePosition       Should we include position information?
+     * @param bool $includeParentPosition Should we include information about parent
+     * edition(s)?
      *
      * @return mixed
      */
-    public function getSeriesForItem($itemID, $includePosition = true, $includeParentPosition = false)
-    {
-        $callback = function ($select) use ($itemID, $includePosition, $includeParentPosition) {
+    public function getSeriesForItem($itemID, $includePosition = true,
+        $includeParentPosition = false
+    ) {
+        $callback = function ($select) use ($itemID, $includePosition,
+            $includeParentPosition
+        ) {
             $select->join(
-                array('eds' => 'Editions'), 'Series.Series_ID = eds.Series_ID',
-                $includePosition ? array('Volume', 'Position', 'Replacement_Number', 'Extent_In_Parent') : array()
+                ['eds' => 'Editions'], 'Series.Series_ID = eds.Series_ID',
+                $includePosition ? [
+                    'Volume', 'Position', 'Replacement_Number', 'Extent_In_Parent'
+                ] : []
             );
             if ($includePosition && $includeParentPosition) {
                 $select->join(
-                    ['parent_eds' => 'Editions'], 'parent_eds.Edition_ID = eds.Parent_Edition_ID',
-                    ['Parent_Volume' => 'Volume', 'Parent_Position' => 'Position', 'Parent_Replacement_Number' => 'Replacement_Number', 'Parent_Item_ID' => 'Item_ID'],
+                    ['parent_eds' => 'Editions'],
+                    'parent_eds.Edition_ID = eds.Parent_Edition_ID',
+                    [
+                        'Parent_Volume' => 'Volume',
+                        'Parent_Position' => 'Position',
+                        'Parent_Replacement_Number' => 'Replacement_Number',
+                        'Parent_Item_ID' => 'Item_ID'
+                    ],
                     Select::JOIN_LEFT
                 );
             }
             $select->join(
-                array('sat' => 'Series_AltTitles'),
+                ['sat' => 'Series_AltTitles'],
                 'eds.Preferred_Series_AltName_ID = sat.Sequence_ID',
-                array('Series_AltName'), Select::JOIN_LEFT
+                ['Series_AltName'], Select::JOIN_LEFT
             );
-            $fields = array('Series_Name', 'Series_ID');
+            $fields = ['Series_Name', 'Series_ID'];
             if ($includePosition) {
                 if ($includeParentPosition) {
                     $fields[] = 'Parent_Volume';

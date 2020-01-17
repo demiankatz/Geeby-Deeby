@@ -57,7 +57,7 @@ class TagsRelationshipsValues extends Gateway
     /**
      * Get a list of tags related to the provided subject tag ID.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */
@@ -65,7 +65,7 @@ class TagsRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($tagID) {
             $select->join(
-                array('t' => 'Tags'),
+                ['t' => 'Tags'],
                 'Tags_Relationships_Values.Subject_Tag_ID = t.Tag_ID'
             );
             $select->where(['Object_Tag_ID' => $tagID]);
@@ -76,7 +76,7 @@ class TagsRelationshipsValues extends Gateway
     /**
      * Get a list of tags related to the provided subject tag ID.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */
@@ -84,7 +84,7 @@ class TagsRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($tagID) {
             $select->join(
-                array('t' => 'Tags'),
+                ['t' => 'Tags'],
                 'Tags_Relationships_Values.Object_Tag_ID = t.Tag_ID'
             );
             $select->where(['Subject_Tag_ID' => $tagID]);
@@ -95,7 +95,7 @@ class TagsRelationshipsValues extends Gateway
     /**
      * Get a list of relationships for the specified tag.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */

@@ -63,15 +63,15 @@ class RecentReviews extends Gateway
     {
         $callback = function ($select) {
             $select->join(
-                array('u' => 'Users'),
+                ['u' => 'Users'],
                 'Recent_Reviews.User_ID = u.User_ID'
             );
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Recent_Reviews.Item_ID = i.Item_ID'
             );
             $select->where->equalTo('Type', 'item');
-            $select->order(array('Added desc', 'Username'));
+            $select->order(['Added desc', 'Username']);
         };
         return $this->select($callback);
     }
@@ -85,15 +85,15 @@ class RecentReviews extends Gateway
     {
         $callback = function ($select) {
             $select->join(
-                array('u' => 'Users'),
+                ['u' => 'Users'],
                 'Recent_Reviews.User_ID = u.User_ID'
             );
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Recent_Reviews.Item_ID = s.Series_ID'
             );
             $select->where->equalTo('Type', 'series');
-            $select->order(array('Added desc', 'Username'));
+            $select->order(['Added desc', 'Username']);
         };
         return $this->select($callback);
     }

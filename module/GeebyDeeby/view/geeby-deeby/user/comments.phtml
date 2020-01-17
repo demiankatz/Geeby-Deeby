@@ -1,17 +1,17 @@
-<?
+<?php
     $title = $user['Username'];
     $this->layout()->title = 'User Comments - ' . $title;
 ?>
-<p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>
-<? if (count($comments) > 0): ?>
-  <? $currentLetter = false; foreach ($comments as $current): ?>
-    <? $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
+<p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
+<?php if (count($comments) > 0): ?>
+  <?php $currentLetter = false; foreach ($comments as $current): ?>
+    <?php $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
-    <? endif; ?>
-    <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+    <?php endif; ?>
+    <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
       <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
     </a><br />
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   <p>No comments listed.</p>
-<? endif; ?>
+<?php endif; ?>

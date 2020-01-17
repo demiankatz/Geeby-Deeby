@@ -1,5 +1,5 @@
-<? if (isset($fullText) && count($fullText) > 0): ?>
-  <? foreach ($fullText as $current): ?>
+<?php if (isset($fullText) && count($fullText) > 0): ?>
+  <?php foreach ($fullText as $current): ?>
     <table class="list_item">
       <tr>
         <td>
@@ -11,7 +11,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No full text set.
-<? endif; ?>
+<?php endif; ?>

@@ -1,10 +1,10 @@
 <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Address_ID">
   <option value="">-- none selected --</option>
-  <? if (isset($addresses) && count($addresses) > 0): ?>
-    <? foreach ($addresses as $current): ?>
+  <?php if (isset($addresses) && count($addresses) > 0): ?>
+    <?php foreach ($addresses as $current): ?>
       <option value="<?=$current['Address_ID']?>"<?=(isset($selected) && $current['Address_ID'] == $selected) ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['Country_Name'] . (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']) . (empty($current['Street']) ? '' : ' -- ' . $current['Street']))?>
       </option>
-    <? endforeach; ?>
-  <? endif; ?>
+    <?php endforeach; ?>
+  <?php endif; ?>
 </select>

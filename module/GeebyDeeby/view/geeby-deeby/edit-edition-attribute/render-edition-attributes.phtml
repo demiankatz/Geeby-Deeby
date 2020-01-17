@@ -1,3 +1,3 @@
-<? foreach ($attributes as $current): ?>
+<?php foreach ($attributes as $current): ?>
   <a href="#" onclick="EditionsAttribute.edit(<?=$current['Editions_Attribute_ID']?>); return false;"><?=$this->escapeHtml($current['Editions_Attribute_Name'])?></a><br />
-<? endforeach; ?>
+<?php endforeach; ?>

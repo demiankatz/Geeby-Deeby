@@ -54,18 +54,18 @@ class GroupEditions extends \Zend\View\Helper\AbstractHelper
         $fixTitle = $this->getView()->plugin('fixtitle');
 
         // Group the data:
-        $grouped = array();
-        $editionsByGroup = array();
+        $grouped = [];
+        $editionsByGroup = [];
         foreach ($data as $current) {
             $groupValue = $current[$groupField];
             if (!empty($idField)) {
                 $groupValue = $current[$idField] . '|' . $groupValue;
             }
             if (!isset($grouped[$groupValue])) {
-                $grouped[$groupValue] = array();
+                $grouped[$groupValue] = [];
             }
             if (!isset($editionsByGroup[$groupValue])) {
-                $editionsByGroup[$groupValue] = array();
+                $editionsByGroup[$groupValue] = [];
             }
             $grouped[$groupValue][] = $current;
             $editionsByGroup[$groupValue][$current['Edition_ID']] = 1;
@@ -73,12 +73,12 @@ class GroupEditions extends \Zend\View\Helper\AbstractHelper
 
         // Format the grouped data:
         $edCount = count($editions);
-        $final = array();
+        $final = [];
         foreach ($grouped as $value => $details) {
             $showEds = (count($editionsByGroup[$value]) != $edCount && $edCount > 1);
-            $notes = array();
+            $notes = [];
             foreach ($details as $detail) {
-                $note = isset($detail['Note']) ? $detail['Note'] : '';
+                $note = $detail['Note'] ?? '';
                 if ($showEds) {
                     $name = $fixTitle($detail['Edition_Name']);
                     $note = empty($note) ? $name : $name . ' - ' . $note;

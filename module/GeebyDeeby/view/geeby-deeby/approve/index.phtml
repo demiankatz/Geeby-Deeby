@@ -1,7 +1,7 @@
-<? $this->layout()->title = 'Approve New Users / Content' ?>
-<? $this->scriptManager()->add(['autocomplete', 'approve']) ?>
-<? $displayedSomething = false; ?>
-<? if (count($newUsers) > 0): $displayedSomething = true; ?>
+<?php $this->layout()->title = 'Approve New Users / Content' ?>
+<?php $this->scriptManager()->add(['autocomplete', 'approve']) ?>
+<?php $displayedSomething = false; ?>
+<?php if (count($newUsers) > 0): $displayedSomething = true; ?>
   <h2>New Users</h2>
   <table>
     <tr>
@@ -11,7 +11,7 @@
       <th>Person Record</th>
       <th>Options</th>
     </tr>
-    <? foreach ($newUsers as $current): ?>
+    <?php foreach ($newUsers as $current): ?>
       <tr id="NewUser_<?=$current['User_ID']?>">
         <td><input type="text" id="Username_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Username'])?>"/></td>
         <td><input type="text" id="Name_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Name'])?>"/></td>
@@ -22,10 +22,10 @@
           <button onclick="rejectUser(<?=$current['User_ID']?>);">Reject</button>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
-<? if (count($pendingReviews) > 0): $displayedSomething = true; ?>
+<?php endif; ?>
+<?php if (count($pendingReviews) > 0): $displayedSomething = true; ?>
   <h2>New Item Reviews</h2>
   <table class="approve">
     <tr>
@@ -33,7 +33,7 @@
       <th>Review</th>
       <th>Options</th>
     </tr>
-    <? foreach ($pendingReviews as $current): ?>
+    <?php foreach ($pendingReviews as $current): ?>
       <tr id="PendingReview_<?=$current['User_ID']?>_<?=$current['Item_ID']?>">
         <td><?=$this->escapeHtml($current['Item_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
         <td>
@@ -44,10 +44,10 @@
           <button onclick="rejectReview(<?=$current['User_ID']?>, <?=$current['Item_ID']?>);">Reject</button>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
-<? if (count($pendingComments) > 0): $displayedSomething = true; ?>
+<?php endif; ?>
+<?php if (count($pendingComments) > 0): $displayedSomething = true; ?>
   <h2>New Series Comments</h2>
   <table class="approve">
     <tr>
@@ -55,7 +55,7 @@
       <th>Comment</th>
       <th>Options</th>
     </tr>
-    <? foreach ($pendingComments as $current): ?>
+    <?php foreach ($pendingComments as $current): ?>
       <tr id="PendingComment_<?=$current['User_ID']?>_<?=$current['Series_ID']?>">
         <td><?=$this->escapeHtml($current['Series_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
         <td>
@@ -66,9 +66,9 @@
           <button onclick="rejectComment(<?=$current['User_ID']?>, <?=$current['Series_ID']?>);">Reject</button>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
-<? if (!$displayedSomething): ?>
+<?php endif; ?>
+<?php if (!$displayedSomething): ?>
   <p>No pending approvals.</p>
-<? endif; ?>
+<?php endif; ?>

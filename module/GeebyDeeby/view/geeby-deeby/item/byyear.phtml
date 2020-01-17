@@ -1,19 +1,19 @@
-<?
+<?php
     $this->layout()->title = 'Item List By Year';
 ?>
-<? if (count($items) < 1): ?>
+<?php if (count($items) < 1): ?>
   <p>No items listed in this database yet.</p>
-<? else: ?>
-  <? $currentYear = false; foreach ($items as $current): ?>
-    <? if ($currentYear !== $current['Year']): $currentYear = $current['Year']; ?>
+<?php else: ?>
+  <?php $currentYear = false; foreach ($items as $current): ?>
+    <?php if ($currentYear !== $current['Year']): $currentYear = $current['Year']; ?>
       <h2><?=$this->escapeHtml($current['Year'] == -1 ? 'Never Published' : $current['Year'])?></h2>
-    <? endif; ?>
-    <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+    <?php endif; ?>
+    <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
       <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
     </a>
-    <? if (!empty($current['Note'])): ?>
+    <?php if (!empty($current['Note'])): ?>
       (<?=$this->escapeHtml($current['Note'])?>)
-    <? endif; ?>
+    <?php endif; ?>
     <br />
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

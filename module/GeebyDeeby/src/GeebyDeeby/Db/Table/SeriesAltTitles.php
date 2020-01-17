@@ -58,7 +58,7 @@ class SeriesAltTitles extends Gateway
     /**
      * Get a list of alternate titles for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -66,7 +66,7 @@ class SeriesAltTitles extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Series_AltTitles.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );

@@ -36,7 +36,9 @@ var PersonAuthority = new PersonAuthorityEditor();
 var PersonRoleEditor = function() {
     this.type = "Person Role";
     this.saveFields = {
-        'role': { 'id': '#Role_Name', emptyError: 'Role cannot be blank.' }
+        'role': { 'id': '#Role_Name', emptyError: 'Role cannot be blank.' },
+        'Item_Creator_Predicate': { 'id': '#Item_Creator_Predicate'},
+        'Edition_Credit_Predicate': { 'id': '#Edition_Credit_Predicate'}
     };
 };
 BaseEditor.prototype.registerSubclass(PersonRoleEditor);

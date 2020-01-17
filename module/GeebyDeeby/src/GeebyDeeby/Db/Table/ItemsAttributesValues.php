@@ -57,7 +57,7 @@ class ItemsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -65,11 +65,11 @@ class ItemsAttributesValues extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('ia' => 'Items_Attributes'),
+                ['ia' => 'Items_Attributes'],
                 'ia.Items_Attribute_ID = '
                 . 'Items_Attributes_Values.Items_Attribute_ID'
             );
-            $select->order(array('ia.Display_Priority', 'ia.Items_Attribute_Name'));
+            $select->order(['ia.Display_Priority', 'ia.Items_Attribute_Name']);
             $select->where->equalTo('Item_ID', $itemID);
         };
         return $this->select($callback);

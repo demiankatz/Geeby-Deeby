@@ -1,9 +1,9 @@
-<? if (!isset($editions) || count($editions) == 0): ?>
+<?php if (!isset($editions) || count($editions) == 0): ?>
   No editions.
-<? else: ?>
+<?php else: ?>
   <table class="list_item">
     <tr><th>Display Order within Item</th><th><button onclick="return Item.copyEdition();">Copy Selected Edition</button></th><th>Title</th><th>Details</th></tr>
-    <? foreach ($editions as $current): ?>
+    <?php foreach ($editions as $current): ?>
       <tr>
         <td>
           <input class="number" type="text" value="<?=isset($current['Item_Display_Order']) ? $this->escapeHtml($current['Item_Display_Order']) : 0 ?>" id="order<?=$current['Edition_ID']?>" />
@@ -13,13 +13,13 @@
           <input type="radio" class="selectedEdition" name="selectedEdition" value="<?=$current['Edition_ID']?>" />
         </td>
         <td>
-          <a href="<?=$this->url('edit/edition', array('id' => $current['Edition_ID']))?>"><?=$this->escapeHtml($current['Edition_Name'])?></a>
+          <a href="<?=$this->url('edit/edition', ['id' => $current['Edition_ID']])?>"><?=$this->escapeHtml($current['Edition_Name'])?></a>
         </td>
         <td>
-          <? $parts = array_filter([$current['Earliest_Year'], $current['Extent_In_Parent']]); ?>
+          <?php $parts = array_filter([$current['Earliest_Year'], $current['Extent_In_Parent']]); ?>
           <?=$this->escapeHtml(implode(', ', $parts))?>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

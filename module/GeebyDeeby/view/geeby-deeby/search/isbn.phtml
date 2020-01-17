@@ -1,16 +1,16 @@
-<?
+<?php
     $this->layout()->title = 'Search Results - ISBN';
 ?>
-<? if (count($results) < 1): ?>
+<?php if (count($results) < 1): ?>
   <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
-<? else: ?>
+<?php else: ?>
   <p>
-    <? foreach ($results as $result): ?>
-      <a href="<?=$this->url('item', array('id' => $result['Item_ID']))?>">
+    <?php foreach ($results as $result): ?>
+      <a href="<?=$this->url('item', ['id' => $result['Item_ID']])?>">
         <?=$this->escapeHtml($this->fixtitle($result['Item_Name']))?>
       </a>
       (<?=empty($result['ISBN']) ? '' : $this->escapeHtml($result['ISBN']) . ' / '?><?=$this->escapeHtml($result['ISBN13'])?>)
       <br />
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </p>
-<? endif; ?>
+<?php endif; ?>

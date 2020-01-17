@@ -3,7 +3,7 @@
   <table class="edit">
     <tr>
       <th>Authority:</th>
-      <td><input type="text" id="Authority_Name" value="<?=$this->escapeHtml(isset($authority['Authority_Name']) ? $authority['Authority_Name'] : '')?>" /></td>
+      <td><input type="text" id="Authority_Name" value="<?=$this->escapeHtml($authority['Authority_Name'] ?? '')?>" /></td>
     </tr>
   </table>
   <button id="save_person_authority" onclick="PersonAuthority.save();">Save</button>

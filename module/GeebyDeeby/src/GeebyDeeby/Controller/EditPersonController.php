@@ -64,11 +64,11 @@ class EditPersonController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'first' => 'First_Name', 'middle' => 'Middle_Name',
             'last' => 'Last_Name', 'extra' => 'Extra_Details',
             'bio' => 'Biography', 'authority' => 'Authority_ID'
-        );
+        ];
         $view = $this->handleGenericItem('person', $assignMap, 'person');
         $view->authorities = $this->authoritylistAction()->authorities;
         // Add extra fields/controls if outside of a lightbox:
@@ -149,7 +149,7 @@ class EditPersonController extends AbstractBase
      */
     public function authorityAction()
     {
-        $assignMap = array('authority' => 'Authority_Name');
+        $assignMap = ['authority' => 'Authority_Name'];
         return $this->handleGenericItem('authority', $assignMap, 'authority');
     }
 
@@ -172,7 +172,11 @@ class EditPersonController extends AbstractBase
      */
     public function roleAction()
     {
-        $assignMap = array('role' => 'Role_Name');
+        $assignMap = [
+            'role' => 'Role_Name',
+            'Item_Creator_Predicate' => 'Item_Creator_Predicate',
+            'Edition_Credit_Predicate' => 'Edition_Credit_Predicate',
+        ];
         return $this->handleGenericItem('role', $assignMap, 'role');
     }
 

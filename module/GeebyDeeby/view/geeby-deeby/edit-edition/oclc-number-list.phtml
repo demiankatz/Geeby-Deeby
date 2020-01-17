@@ -1,9 +1,9 @@
-<? if (isset($oclcNumbers) && count($oclcNumbers) > 0): ?>
-  <? foreach ($oclcNumbers as $current): ?>
+<?php if (isset($oclcNumbers) && count($oclcNumbers) > 0): ?>
+  <?php foreach ($oclcNumbers as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <?=$this->escapeHtml($current['OCLC_Number'])?><? if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<? endif; ?>
+          <?=$this->escapeHtml($current['OCLC_Number'])?><?php if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
         </td>
         <td>
           <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('OCLCNumber', <?=$current['Sequence_ID']?>); return false;">
@@ -11,7 +11,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No OCLC numbers set.
-<? endif; ?>
+<?php endif; ?>

@@ -57,7 +57,7 @@ class PeopleLinks extends Gateway
     /**
      * Get a list of links for the specified person.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */
@@ -65,9 +65,9 @@ class PeopleLinks extends Gateway
     {
         $callback = function ($select) use ($personID) {
             $select->join(
-                array('l' => 'Links'), 'People_Links.Link_ID = l.Link_ID'
+                ['l' => 'Links'], 'People_Links.Link_ID = l.Link_ID'
             );
-            $select->order(array('Link_Name'));
+            $select->order(['Link_Name']);
             $select->where->equalTo('Person_ID', $personID);
         };
         return $this->select($callback);
@@ -76,7 +76,7 @@ class PeopleLinks extends Gateway
     /**
      * Get a list of people for the specified link.
      *
-     * @var int $linkID Link ID
+     * @param int $linkID Link ID
      *
      * @return mixed
      */
@@ -84,10 +84,10 @@ class PeopleLinks extends Gateway
     {
         $callback = function ($select) use ($linkID) {
             $select->join(
-                array('p' => 'People'),
+                ['p' => 'People'],
                 'People_Links.Person_ID = p.Person_ID'
             );
-            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
+            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
             $select->where->equalTo('Link_ID', $linkID);
         };
         return $this->select($callback);

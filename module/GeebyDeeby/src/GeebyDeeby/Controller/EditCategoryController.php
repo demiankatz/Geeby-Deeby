@@ -57,7 +57,7 @@ class EditCategoryController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array('name' => 'Category', 'desc' => 'Description');
+        $assignMap = ['name' => 'Category', 'desc' => 'Description'];
         return $this->handleGenericItem('category', $assignMap, 'category');
     }
 }

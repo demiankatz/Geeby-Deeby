@@ -52,7 +52,7 @@ class MaterialTypeController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\MaterialType', 'notfound');
         }
         $view = $this->createViewModel(
-            array('materialType' => $rowObj->toArray())
+            ['materialType' => $rowObj->toArray()]
         );
         $view->series = $this->getDbTable('seriesmaterialtypes')
             ->getSeriesForMaterialType($id);
@@ -67,10 +67,10 @@ class MaterialTypeController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array(
+            [
                 'materialTypes' =>
                     $this->getDbTable('seriesmaterialtypes')->getMaterials()
-            )
+            ]
         );
     }
 

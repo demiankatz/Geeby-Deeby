@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <?
-      echo $this->headTitle($this->layout()->title .' - '. $this->config('siteTitle'));
+    <?php
+      echo $this->headTitle($this->layout()->title . ' - ' . $this->config('siteTitle'));
       echo $this->headLink()
         ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-1.7.2.custom.css')
         ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
@@ -15,7 +15,7 @@
       // Set global path for Javascript code:
       $this->headScript()->prependScript("basePath = '" . rtrim($this->basePath(), '/') . "';");
       $this->scriptManager()->add(['jquery', 'jquery-ui', 'bootstrap.min'], true);
-      echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9'))
+      echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', ['conditional' => 'lt IE 9'])
     ?>
   </head>
   <body>
@@ -27,7 +27,7 @@
     <div class="container main">
       <h1><?=$this->layout()->title ?></h1>
       <div class="content">
-        <? echo $this->content; ?>
+        <?php echo $this->content; ?>
         <?=$this->render('partials/modal.phtml')?>
       </div>
       <footer>

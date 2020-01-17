@@ -65,10 +65,10 @@ class EditionsImages extends Gateway
     {
         $callback = function ($select) {
             $count = new Expression(
-                'count(?)', array('Thumb_Path'), array(Expression::TYPE_IDENTIFIER)
+                'count(?)', ['Thumb_Path'], [Expression::TYPE_IDENTIFIER]
             );
-            $select->columns(array('Thumb_Path', 'c' => $count));
-            $select->group(array('Thumb_Path'));
+            $select->columns(['Thumb_Path', 'c' => $count]);
+            $select->group(['Thumb_Path']);
             $select->having('c > 1');
         };
         return $this->select($callback);
@@ -85,7 +85,7 @@ class EditionsImages extends Gateway
     {
         $callback = function ($select) use ($thumb) {
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Images.Edition_ID = eds.Edition_ID'
             );
             $select->where->equalTo('Thumb_Path', $thumb);
@@ -104,10 +104,10 @@ class EditionsImages extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
+                ['n' => 'Notes'], 'Editions_Images.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->order(array('Editions_Images.Position'));
+            $select->order(['Editions_Images.Position']);
             $select->where->equalTo('Edition_ID', $editionID);
         };
         return $this->select($callback);
@@ -125,16 +125,16 @@ class EditionsImages extends Gateway
         $callback = function ($select) use ($editionID) {
             $select->quantifier('DISTINCT');
             $select->join(
-                array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
+                ['n' => 'Notes'], 'Editions_Images.Note_ID = n.Note_ID',
                 ['Note'], Select::JOIN_LEFT
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Images.Edition_ID = eds.Edition_ID'
                 . ' OR eds.Parent_Edition_ID = Editions_Images.Edition_ID',
                 ['Edition_ID']
             );
-            $select->order(array('Editions_Images.Position'));
+            $select->order(['Editions_Images.Position']);
             $select->where->equalTo('eds.Edition_ID', $editionID);
         };
         return $this->select($callback);
@@ -143,7 +143,7 @@ class EditionsImages extends Gateway
     /**
      * Get a list of images for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -161,25 +161,26 @@ class EditionsImages extends Gateway
             ];
             $select->columns($fields);
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Images.Edition_ID = eds.Edition_ID'
                 . ' OR eds.Parent_Edition_ID = Editions_Images.Edition_ID',
                 ['Edition_Name']
             );
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID', ['Item_ID']
+                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID', ['Item_ID']
             );
             $year = new Expression(
-                'min(?)', array('erd.Year'),
-                array(Expression::TYPE_IDENTIFIER)
+                'min(?)', ['erd.Year'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
-                array('erd' => 'Editions_Release_Dates'),
-                'eds.Edition_ID = erd.Edition_ID OR eds.Parent_Edition_ID = erd.Edition_ID',
-                array('Earliest_Year' => $year), Select::JOIN_LEFT
+                ['erd' => 'Editions_Release_Dates'],
+                'eds.Edition_ID = erd.Edition_ID '
+                . 'OR eds.Parent_Edition_ID = erd.Edition_ID',
+                ['Earliest_Year' => $year], Select::JOIN_LEFT
             );
             $select->join(
-                array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
+                ['n' => 'Notes'], 'Editions_Images.Note_ID = n.Note_ID',
                 ['Note'], Select::JOIN_LEFT
             );
             $fields = array_merge($fields, ['Edition_Name', 'Item_ID', 'Note']);
@@ -193,41 +194,49 @@ class EditionsImages extends Gateway
     /**
      * Get image information for the specified series.
      *
-     * @var int  $seriesID        Series ID
-     * @var bool $groupByMaterial Should we group results by material type?
+     * @param int  $seriesID        Series ID
+     * @param bool $groupByMaterial Should we group results by material type?
      *
      * @return mixed
      */
     public function getImagesForSeries($seriesID, $groupByMaterial = true)
     {
         $callback = function ($select) use ($seriesID, $groupByMaterial) {
-            $select->columns(array('Thumb_Path', 'IIIF_URI'));
+            $select->columns(['Thumb_Path', 'IIIF_URI']);
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Images.Edition_ID = eds.Edition_ID'
             );
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'i.Material_Type_ID = mt.Material_Type_ID',
-                array()
+                []
             );
             $select->join(
-                array('n' => 'Notes'), 'Editions_Images.Note_ID = n.Note_ID',
-                array('Note'), Select::JOIN_LEFT
+                ['n' => 'Notes'], 'Editions_Images.Note_ID = n.Note_ID',
+                ['Note'], Select::JOIN_LEFT
             );
             $select->order(
                 $groupByMaterial
-                    ? array('mt.Material_Type_Name', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'i.Item_Name', 'Editions_Images.Position')
-                    : array('eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'i.Item_Name', 'Editions_Images.Position')
+                    ? [
+                        'mt.Material_Type_Name', 'eds.Volume', 'eds.Position',
+                        'eds.Replacement_Number', 'eds.Item_Display_Order',
+                        'i.Item_Name', 'Editions_Images.Position'
+                    ] : [
+                        'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
+                        'eds.Item_Display_Order', 'i.Item_Name',
+                        'Editions_Images.Position'
+                    ]
             );
             $select->group(
-                array(
-                    'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Editions_Images.Position',
+                [
+                    'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number', 'Editions_Images.Position',
                     'i.Item_ID', 'Note'
-                )
+                ]
             );
             $select->where->equalTo('Series_ID', $seriesID);
         };

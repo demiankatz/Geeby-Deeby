@@ -1,11 +1,11 @@
-<? if (isset($countries) && count($countries) > 0): ?>
+<?php if (isset($countries) && count($countries) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Country_ID">
-    <? foreach ($countries as $current): ?>
+    <?php foreach ($countries as $current): ?>
       <option value="<?=$current['Country_ID']?>"<?=(isset($selected) && $current['Country_ID'] == $selected) ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['Country_Name'])?>
       </option>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </select>
-<? else: ?>
+<?php else: ?>
   Please define countries.
-<? endif; ?>
+<?php endif; ?>

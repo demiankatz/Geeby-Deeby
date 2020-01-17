@@ -1,11 +1,11 @@
 <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Series_Publisher_ID">
   <option value="">-- none --</option>
-  <? if (isset($publishers) && count($publishers) > 0): ?>
-    <? foreach ($publishers as $current): ?>
+  <?php if (isset($publishers) && count($publishers) > 0): ?>
+    <?php foreach ($publishers as $current): ?>
       <option value="<?=$current['Series_Publisher_ID']?>"<?=(isset($selected) && $current['Series_Publisher_ID'] == $selected) ? ' selected="selected"' : ''?>>
           <?=$this->escapeHtml($current['Publisher_Name'])?>
-          <? if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
-            (<?
+          <?php if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
+            (<?php
               $city = (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']);
               $street = (empty($current['Street']) ? '' : ' -- ' . $current['Street']);
               $address = $current['Country_Name'] . $city . $street;
@@ -13,8 +13,8 @@
               echo strlen($address) > 0 ? $this->escapeHtml($address) : '';
               echo strlen($current['Note']) > 0 ? ((strlen($address) > 0 || strlen($current['Imprint_Name']) > 0) ? ' - ' : '') . $this->escapeHtml($current['Note']) : '';
             ?>)
-          <? endif; ?>
+          <?php endif; ?>
        </option>
-    <? endforeach; ?>
-  <? endif; ?>
+    <?php endforeach; ?>
+  <?php endif; ?>
 </select>

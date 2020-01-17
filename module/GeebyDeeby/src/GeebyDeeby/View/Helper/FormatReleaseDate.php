@@ -50,10 +50,10 @@ class FormatReleaseDate extends \Zend\View\Helper\AbstractHelper
      */
     public function __construct()
     {
-        $this->months = array(
+        $this->months = [
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
-        );
+        ];
     }
 
     /**

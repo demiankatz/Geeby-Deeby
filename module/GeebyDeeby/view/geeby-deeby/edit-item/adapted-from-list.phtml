@@ -1,9 +1,9 @@
-<? if (isset($adaptedFrom) && count($adaptedFrom) > 0): ?>
-  <? foreach ($adaptedFrom as $current): ?>
+<?php if (isset($adaptedFrom) && count($adaptedFrom) > 0): ?>
+  <?php foreach ($adaptedFrom as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>#adaptations-tab">
+          <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>#adaptations-tab">
             <?=$this->escapeHtml($current['Item_Name'])?>
           </a>
         </td>
@@ -13,7 +13,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No relevant items.
-<? endif; ?>
+<?php endif; ?>

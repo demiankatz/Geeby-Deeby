@@ -65,7 +65,7 @@ class User extends Gateway
         $callback = function ($select) {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
-                array('User_ID', 'Username', 'Name', 'Address', 'Person_ID')
+                ['User_ID', 'Username', 'Name', 'Address', 'Person_ID']
             );
             $select->where->equalTo('Person_ID', 0);
             $select->order('Username');
@@ -83,7 +83,7 @@ class User extends Gateway
         $callback = function ($select) {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
-                array('User_ID', 'Username', 'Name', 'Address', 'Person_ID')
+                ['User_ID', 'Username', 'Name', 'Address', 'Person_ID']
             );
             $select->order('Username');
         };

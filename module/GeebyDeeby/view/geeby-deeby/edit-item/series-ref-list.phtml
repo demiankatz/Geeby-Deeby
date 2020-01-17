@@ -1,9 +1,9 @@
-<? if (isset($seriesBib) && count($seriesBib) > 0): ?>
-  <? foreach ($seriesBib as $current): ?>
+<?php if (isset($seriesBib) && count($seriesBib) > 0): ?>
+  <?php foreach ($seriesBib as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <a href="<?=$this->url('edit/series', array('id' => $current['Series_ID']))?>#bib-tab">
+          <a href="<?=$this->url('edit/series', ['id' => $current['Series_ID']])?>#bib-tab">
             <?=$this->escapeHtml($current['Series_Name'])?>
           </a>
         </td>
@@ -13,7 +13,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No relevant series.
-<? endif; ?>
+<?php endif; ?>

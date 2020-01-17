@@ -56,15 +56,15 @@ class AdapterFactory implements \Zend\ServiceManager\Factory\FactoryInterface
     ) {
         $config = $container->get('Config');
         return new \Zend\Db\Adapter\Adapter(
-            array(
+            [
                 'driver' => 'mysqli',
                 'charset' => 'utf8',
                 'hostname' => $config['geeby-deeby']['dbHost'],
                 'username' => $config['geeby-deeby']['dbUser'],
                 'password' => $config['geeby-deeby']['dbPass'],
                 'database' => $config['geeby-deeby']['dbName'],
-                'options' => array('buffer_results' => true)
-            )
+                'options' => ['buffer_results' => true]
+            ]
         );
     }
 }

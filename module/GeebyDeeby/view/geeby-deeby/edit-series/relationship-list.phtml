@@ -1,10 +1,10 @@
-<? if (empty($this->relationshipsValues)): ?>
+<?php if (empty($this->relationshipsValues)): ?>
   <p>No relationships defined.</p>
-<? else: ?>
-    <? foreach ($this->relationshipsValues as $current): ?>
+<?php else: ?>
+    <?php foreach ($this->relationshipsValues as $current): ?>
       <h3><?=$this->escapeHtml($current['label'])?>:</h3>
       <table class="list_item">
-        <? foreach ($current['values'] as $value): ?>
+        <?php foreach ($current['values'] as $value): ?>
           <tr>
             <td>
               <a href="<?=$this->url('edit/series', ['id' => $value['Series_ID']])?>">
@@ -15,8 +15,8 @@
               </a>
             </td>
           </tr>
-        <? endforeach; ?>
+        <?php endforeach; ?>
       </table>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

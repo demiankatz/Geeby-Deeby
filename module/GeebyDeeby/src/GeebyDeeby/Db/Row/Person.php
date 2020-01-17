@@ -71,6 +71,6 @@ class Person extends RowGateway
     {
         $n = $this->First_Name . ' ' . $this->Middle_Name . ' ' . $this->Last_Name
             . ' ' . $this->Extra_Details;
-        return trim(preg_replace(array('/\s+/', '/\s+,/'), array(' ', ','), $n));
+        return trim(preg_replace(['/\s+/', '/\s+,/'], [' ', ','], $n));
     }
 }

@@ -104,7 +104,7 @@ class AbstractBase extends AbstractActionController
         $headers->addHeaderLine(
             'Expires', 'Mon, 26 Jul 1997 05:00:00 GMT'
         );
-        $output = array('success' => $success, 'msg' => $msg);
+        $output = ['success' => $success, 'msg' => $msg];
         $response->setContent(json_encode($output));
         return $response;
     }
@@ -129,14 +129,15 @@ class AbstractBase extends AbstractActionController
      *
      * @return mixed
      */
-    protected function getGenericList($table, $assignTo, $tpl, $permission = 'Content_Editor')
-    {
+    protected function getGenericList($table, $assignTo, $tpl,
+        $permission = 'Content_Editor'
+    ) {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
         }
         $table = $this->getDbTable($table);
-        $view = $this->createViewModel(array($assignTo => $table->getList()));
+        $view = $this->createViewModel([$assignTo => $table->getList()]);
 
         // If this is an AJAX request, render the core list only, not the
         // framing layout and buttons.
@@ -239,10 +240,10 @@ class AbstractBase extends AbstractActionController
         if (!$id) {
             $rowObj = $table->createRow();
             $key = $rowObj->getPrimaryKeyColumn();
-            $row = array($key[0] => 'NEW');
+            $row = [$key[0] => 'NEW'];
         }
         return $this->createViewModel(
-            array($assignTo => $row, $assignTo . 'Obj' => $rowObj)
+            [$assignTo => $row, $assignTo . 'Obj' => $rowObj]
         );
     }
 
@@ -256,15 +257,16 @@ class AbstractBase extends AbstractActionController
      *
      * @return mixed
      */
-    protected function handleGenericItem($table, $assignMap, $assignTo, $permission = 'Content_Editor')
-    {
+    protected function handleGenericItem($table, $assignMap, $assignTo,
+        $permission = 'Content_Editor'
+    ) {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
             $view = $this->saveGenericItem($table, $assignMap);
-        } else if ($this->getRequest()->isDelete()) {
+        } elseif ($this->getRequest()->isDelete()) {
             $view = $this->deleteGenericItem($table);
         } else {
             $view = $this->showGenericItem($table, $assignTo);
@@ -293,7 +295,7 @@ class AbstractBase extends AbstractActionController
      * @return mixed
      */
     public function handleGenericLink($tableName, $primaryColumn, $secondaryColumn,
-        $listVariable, $listMethod, $listTemplate, $extraFields = array(),
+        $listVariable, $listMethod, $listTemplate, $extraFields = [],
         $insertCallback = null
     ) {
         $ok = $this->checkPermission('Content_Editor');
@@ -304,7 +306,7 @@ class AbstractBase extends AbstractActionController
         $secondary = $this->params()->fromRoute('extra');
         $table = $this->getDbTable($tableName);
         if (!empty($primary) && !empty($secondary)) {
-            $row = array($primaryColumn => $primary, $secondaryColumn => $secondary);
+            $row = [$primaryColumn => $primary, $secondaryColumn => $secondary];
             $row += $extraFields;
             try {
                 if ($this->getRequest()->isPut() || $this->getRequest()->isPost()) {
@@ -315,7 +317,7 @@ class AbstractBase extends AbstractActionController
                             $this->serviceLocator
                         );
                     }
-                } else if ($this->getRequest()->isDelete()) {
+                } elseif ($this->getRequest()->isDelete()) {
                     $table->delete($row);
                 } else {
                     return $this->jsonDie('Unexpected method');
@@ -355,7 +357,7 @@ class AbstractBase extends AbstractActionController
      * @return bool              Returns false so this can be returned by a
      * controller without causing duplicate ViewModel attachment.
      */
-    public function forwardTo($controller, $action, $params = array())
+    public function forwardTo($controller, $action, $params = [])
     {
         // Inject action into the RouteMatch parameters
         $params['action'] = $action;
@@ -431,12 +433,12 @@ class AbstractBase extends AbstractActionController
     /**
      * Redirect the user to the login screen.
      *
-     * @param array  $extras  Associative array of extra fields to store
-     * @param bool   $forward True to forward, false to redirect
+     * @param array $extras  Associative array of extra fields to store
+     * @param bool  $forward True to forward, false to redirect
      *
      * @return mixed
      */
-    protected function forceLogin($extras = array(), $forward = true)
+    protected function forceLogin($extras = [], $forward = true)
     {
         $this->followup()->store($extras);
 
@@ -493,11 +495,11 @@ class AbstractBase extends AbstractActionController
         // Order of preference: earlier items in list are preferred; later
         // items will only be chosen if they're explicitly given a higher
         // priority in the accept headers.
-        $rdfForms = array(
+        $rdfForms = [
             'text/turtle', 'application/x-turtle',  // Turtle
             'text/plain', 'application/n-triples',  // N-Triples
             'application/rdf+xml',                  // RDF-XML
-        );
+        ];
         $bestMatch = $force ? -1 : $accept->match('text/html')->getPriority();
         $bestFormat = false;            // HTML by default
         foreach ($rdfForms as $current) {

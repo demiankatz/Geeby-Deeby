@@ -1,11 +1,11 @@
-<? if (isset($fileTypes) && count($fileTypes) > 0): ?>
+<?php if (isset($fileTypes) && count($fileTypes) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>File_Type_ID">
-    <? foreach ($fileTypes as $current): ?>
+    <?php foreach ($fileTypes as $current): ?>
       <option value="<?=$current['File_Type_ID']?>"<?=($current['File_Type_ID'] == $selected) ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['File_Type'])?>
       </option>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </select>
-<? else: ?>
+<?php else: ?>
   Please define file types.
-<? endif; ?>
+<?php endif; ?>

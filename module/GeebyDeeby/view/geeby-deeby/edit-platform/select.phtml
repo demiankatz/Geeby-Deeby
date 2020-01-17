@@ -1,11 +1,11 @@
-<? if (isset($platforms) && count($platforms) > 0): ?>
+<?php if (isset($platforms) && count($platforms) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Platform_ID">
-    <? foreach ($platforms as $current): ?>
+    <?php foreach ($platforms as $current): ?>
       <option value="<?=$current['Platform_ID']?>"<?=(isset($selected) && $current['Platform_ID'] == $selected) ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['Platform'])?>
       </option>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </select>
-<? else: ?>
+<?php else: ?>
   Please define platforms.
-<? endif; ?>
+<?php endif; ?>

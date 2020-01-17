@@ -1,3 +1,3 @@
-<? foreach ($categories as $current): ?>
+<?php foreach ($categories as $current): ?>
   <a href="#" onclick="Category.edit(<?=$current->Category_ID?>); return false;"><?=$this->escapeHtml($current->Category)?></a><br />
-<? endforeach; ?>
+<?php endforeach; ?>

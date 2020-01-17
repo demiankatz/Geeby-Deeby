@@ -1,54 +1,54 @@
-<?
+<?php
     $title = $tag['Tag'];
     $this->layout()->title = 'Subject/Tag - ' . $title;
     $displayedSomething = false;
 ?>
 <table class="item">
-  <? foreach ($tagAttributes as $current): ?>
+  <?php foreach ($tagAttributes as $current): ?>
     <tr>
       <th><?=$this->escapeHtml($current->Tags_Attribute_Name)?>:</th>
       <td>
-        <? $displayedSomething = true; ?>
-        <? if ($current->Allow_HTML == 1): ?>
+        <?php $displayedSomething = true; ?>
+        <?php if ($current->Allow_HTML == 1): ?>
           <?=$current->Tags_Attribute_Value?>
-        <? else: ?>
+        <?php else: ?>
           <?=$this->escapeHtml($current->Tags_Attribute_Value)?>
-        <? endif; ?>
+        <?php endif; ?>
       </td>
     </tr>
-  <? endforeach; ?>
-  <? foreach ($this->relationshipsValues as $current): ?>
+  <?php endforeach; ?>
+  <?php foreach ($this->relationshipsValues as $current): ?>
     <tr>
       <th><?=$this->escapeHtml($current['label'])?>:</th>
       <td>
-        <? foreach ($current['values'] as $value): ?>
+        <?php foreach ($current['values'] as $value): ?>
           <a href="<?=$this->url('tag', ['id' => $value['Tag_ID']])?>">
             <?=$this->escapeHtml($value['Tag'])?>
           </a><br />
-        <? endforeach; ?>
+        <?php endforeach; ?>
       </td>
     </tr>
-  <? endforeach; ?>
+  <?php endforeach; ?>
 </table>
-<? if (count($items) > 0): $displayedSomething = true; ?>
-  <? $series = false; foreach ($items as $item): ?>
-    <? if ($series !== $item['Series_ID']): $series = $item['Series_ID']; ?>
-      <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+<?php if (count($items) > 0): $displayedSomething = true; ?>
+  <?php $series = false; foreach ($items as $item): ?>
+    <?php if ($series !== $item['Series_ID']): $series = $item['Series_ID']; ?>
+      <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($item['Series_Name']);?>
       </a></h2>
-    <? endif; ?>
+    <?php endif; ?>
     <span class="item">
       <?=$this->escapeHtml($this->formatItemNumber($item))?>
-      <a href="<?=$this->url('item', array('id' => $item['Item_ID']))?>">
+      <a href="<?=$this->url('item', ['id' => $item['Item_ID']])?>">
         <?=$this->fixtitle(
           empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']
         )?>
       </a>
       <br />
     </span>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>
 
-<? if (!$displayedSomething): ?>
+<?php if (!$displayedSomething): ?>
   <p>No information is available about this subject/tag.</p>
-<? endif; ?>
+<?php endif; ?>

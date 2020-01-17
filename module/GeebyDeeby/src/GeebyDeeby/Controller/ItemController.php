@@ -39,13 +39,43 @@ namespace GeebyDeeby\Controller;
 class ItemController extends AbstractBase
 {
     /**
+     * Default predicate to use for creators, if no specific predicate is included
+     * in the role data. (Null to omit predicate-free creators in RDF output).
+     *
+     * @var string
+     */
+    protected $defaultCreatorPredicate = null;
+
+    /**
+     * Add creators to an item graph.
+     *
+     * @param \EasyRdf\Graph $graph Graph to populate
+     * @param object         $item  Item graph to populate
+     * @param object         $view  View model populated with information.
+     *
+     * @return void
+     */
+    protected function addCreatorsToGraph($graph, $item, $view)
+    {
+        foreach ($view->creators as $creator) {
+            $personUri = $this
+                ->getServerUrl('person', ['id' => $creator['Person_ID']]);
+            $predicate = $creator['Item_Creator_Predicate']
+                ?? $this->defaultCreatorPredicate;
+            if (!empty($predicate)) {
+                $item->add($predicate, $graph->resource($personUri));
+            }
+        }
+    }
+
+    /**
      * Get a view model containing an item object (or return false if missing)
      *
      * @param array $extras Extra parameters to send to view model
      *
      * @return mixed
      */
-    protected function getViewModelWithItem($extras = array())
+    protected function getViewModelWithItem($extras = [])
     {
         $id = $this->params()->fromRoute('id');
         $table = $this->getDbTable('item');
@@ -57,10 +87,11 @@ class ItemController extends AbstractBase
             ->getAttributesForItem($id);
         $extras['itemAttributes'] = $this->getDbTable('itemsattributesvalues')
             ->getAttributesForItem($id);
-        $extras['relationshipsValues'] = $this->getDbTable('itemsrelationshipsvalues')
+        $extras['relationshipsValues'] = $this
+            ->getDbTable('itemsrelationshipsvalues')
             ->getRelationshipsForItem($id);
         return $this->createViewModel(
-            array('item' => $rowObj->toArray()) + $extras
+            ['item' => $rowObj->toArray()] + $extras
         );
     }
 
@@ -74,17 +105,17 @@ class ItemController extends AbstractBase
         $raw = $this->getDbTable('editionsreleasedates')->getItemsByYear();
 
         // Sort out information about editions:
-        $editionsByItem = array();
-        $sortedData = array();
+        $editionsByItem = [];
+        $sortedData = [];
         foreach ($raw as $current) {
             if (!isset($editionsByItem[$current->Item_ID])) {
-                $editionsByItem[$current->Item_ID] = array();
+                $editionsByItem[$current->Item_ID] = [];
             }
             $editionsByItem[$current->Item_ID][$current->Edition_ID] = 1;
             $dateKey = $current->Year . '|' . $current->Month . '|' . $current->Day
                 . '|' . $current->Item_ID;
             if (!isset($sortedData[$dateKey])) {
-                $sortedData[$dateKey] = array();
+                $sortedData[$dateKey] = [];
             }
             $sortedData[$dateKey][] = $current;
         }
@@ -96,9 +127,9 @@ class ItemController extends AbstractBase
 
         // Use the information collected above to decide what edition information
         // to display to the user:
-        $items = array();
+        $items = [];
         foreach ($sortedData as $currentSet) {
-            $editions = array();
+            $editions = [];
             foreach ($currentSet as $current) {
                 $editions[] = $current['Edition_ID'];
             }
@@ -122,7 +153,7 @@ class ItemController extends AbstractBase
             }
         }
 
-        return $this->createViewModel(array('items' => $items));
+        return $this->createViewModel(['items' => $items]);
     }
 
     /**
@@ -144,7 +175,7 @@ class ItemController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = [])
     {
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $view->item['Item_ID'];
@@ -176,6 +207,7 @@ class ItemController extends AbstractBase
                 }
             }
         }
+        $this->addCreatorsToGraph($graph, $item, $view);
         return $item;
     }
 
@@ -241,22 +273,27 @@ class ItemController extends AbstractBase
      */
     protected function addEditionRelationships($id, $view)
     {
-        $view->creators = $this->getDbTable('itemscreators')->getCreatorsForItem($id);
-        $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
+        $view->creators = $this->getDbTable('itemscreators')
+            ->getCreatorsForItem($id);
+        $view->credits = $this->getDbTable('editionscredits')
+            ->getCreditsForItem($id);
         $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
-        $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
+        $view->series = $this->getDbTable('series')
+            ->getSeriesForItem($id, true, true);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForItem($id);
-        // Contains/containedIn are item-level relationships (see addItemRelationships
-        // below), while children/parents are edition-level relationships. These are
-        // very similar, but the edition relationships are preferred and more valuable.
+        // Contains/containedIn are item-level relationships (see
+        // addItemRelationships below), while children/parents are edition-level
+        // relationships. These are very similar, but the edition relationships
+        // are preferred and more valuable.
         $itemTable = $this->getDbTable('item');
         $view->children = $itemTable->getItemChildren($id);
         $view->parents = $itemTable->getItemParents($id);
 
         $edTable = $this->getDbTable('edition');
         $view->publishers = $edTable->getPublishersForItem($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
+        $view->dates = $this->getDbTable('editionsreleasedates')
+            ->getDatesForItem($id);
         $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
         $view->codes = $this->getDbTable('editionsproductcodes')
             ->getProductCodesForItem($id);
@@ -299,7 +336,7 @@ class ItemController extends AbstractBase
         if ($user) {
             $view->userHasReview = (bool)count(
                 $reviews->select(
-                    array('User_ID' => $user->User_ID, 'Item_ID' => $id)
+                    ['User_ID' => $user->User_ID, 'Item_ID' => $id]
                 )
             );
         } else {
@@ -319,6 +356,8 @@ class ItemController extends AbstractBase
 
     /**
      * Get the view model representing the item and all relevant related details.
+     *
+     * @param bool $includeEditionData Include edition data?
      *
      * @return \Zend\View\Model\ViewModel|bool
      */
@@ -346,11 +385,10 @@ class ItemController extends AbstractBase
         $isbn = $this->params()->fromRoute('extra');
         $config = $this->serviceLocator->get('config');
         return $this->createViewModel(
-            array(
+            [
                 'isbn' => new \VuFindCode\ISBN($isbn),
-                'config' => isset($config['geeby-deeby']['isbn_links'])
-                    ? $config['geeby-deeby']['isbn_links'] : []
-            )
+                'config' => $config['geeby-deeby']['isbn_links'] ?? []
+            ]
         );
     }
 
@@ -378,7 +416,7 @@ class ItemController extends AbstractBase
 
         // Standard case: all items:
         return $this->createViewModel(
-            array('items' => $this->getDbTable('item')->getList())
+            ['items' => $this->getDbTable('item')->getList()]
         );
     }
 
@@ -406,10 +444,10 @@ class ItemController extends AbstractBase
 
         // Check for existing review.
         $table = $this->getDbTable('itemsreviews');
-        $params = array(
+        $params = [
             'Item_ID' => $this->params()->fromRoute('id'),
             'User_ID' => $user->User_ID
-        );
+        ];
 
         $existing = $table->select($params)->toArray();
         $existing = count($existing) > 0 ? $existing[0] : false;
@@ -417,7 +455,7 @@ class ItemController extends AbstractBase
         // Save comment if found.
         if ($this->getRequest()->isPost()) {
             $view = $this->createViewModel(
-                array('noChange' => false, 'item' => $params['Item_ID'])
+                ['noChange' => false, 'item' => $params['Item_ID']]
             );
             $params['Approved'] = 'n';
             $params['Review'] = $this->params()->fromPost('Review');
@@ -441,7 +479,7 @@ class ItemController extends AbstractBase
         // Send review to the view.
         $review = $existing ? $existing['Review'] : '';
 
-        $view = $this->getViewModelWithItem(array('review' => $review));
+        $view = $this->getViewModelWithItem(['review' => $review]);
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'notfound');
         }
@@ -530,7 +568,7 @@ class ItemController extends AbstractBase
             $seriesOptions = $this->getDbTable('series')
                 ->getSeriesForItem($item, false)->toArray();
             if (count($seriesOptions) > 1) {
-                $view = $this->createViewModel(array('series' => $seriesOptions));
+                $view = $this->createViewModel(['series' => $seriesOptions]);
                 $view->setTemplate('geeby-deeby/item/collection-pick-series');
                 return $view;
             }
@@ -539,10 +577,10 @@ class ItemController extends AbstractBase
 
         // Check for an existing entry:
         $table = $this->getDbTable('collections');
-        $where = array(
+        $where = [
             'User_ID' => $user->User_ID, 'Item_ID' => $item,
             'Series_ID' => $series, 'Collection_Status' => $list
-        );
+        ];
         $existing = $table->select($where)->toArray();
         $existing = count($existing) > 0 ? $existing[0] : false;
 
@@ -553,17 +591,17 @@ class ItemController extends AbstractBase
                 $table->delete($where);
             } else {
                 if ($existing) {
-                    $table->update(array('Collection_Note' => $comment), $where);
+                    $table->update(['Collection_Note' => $comment], $where);
                 } else {
-                    $table->insert(array('Collection_Note' => $comment) + $where);
+                    $table->insert(['Collection_Note' => $comment] + $where);
                 }
             }
-            return $this->redirect()->toRoute('item', array('id' => $item));
+            return $this->redirect()->toRoute('item', ['id' => $item]);
         }
 
         // If we go this far, we need to prompt the user for more information:
         $view = $this->createViewModel(
-            array('list' => $list, 'existing' => $existing, 'series' => $series)
+            ['list' => $list, 'existing' => $existing, 'series' => $series]
         );
         $view->setTemplate('geeby-deeby/item/collection-add');
         return $view;
