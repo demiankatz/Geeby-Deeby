@@ -57,7 +57,7 @@ class PublishersImprints extends Gateway
     /**
      * Get a list of imprints for the specified publisher.
      *
-     * @var int $pubID Publisher ID
+     * @param int $pubID Publisher ID
      *
      * @return mixed
      */

@@ -58,8 +58,9 @@ class SeriesController extends AbstractBase
         }
         $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
             ->getAttributesForSeries($id);
-        $extras['relationshipsValues'] = $this->getDbTable('seriesrelationshipsvalues')
-            ->getRelationshipsForSeries($id);
+        $extras['relationshipsValues']
+            = $this->getDbTable('seriesrelationshipsvalues')
+                ->getRelationshipsForSeries($id);
         return $this->createViewModel(
             ['series' => $rowObj->toArray()] + $extras
         );
@@ -90,7 +91,9 @@ class SeriesController extends AbstractBase
             );
             $select->where->isNull('ec.Person_ID');
             $select->where(['Series_ID' => $seriesId]);
-            $select->order('Editions.Volume, Editions.Position, Editions.Replacement_Number');
+            $select->order(
+                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
+            );
         };
         $view->missingCredits = $editions->select($callback)->toArray();
 
@@ -109,7 +112,9 @@ class SeriesController extends AbstractBase
             $select->where->isNull('d.Year');
             $select->where->isNull('Editions.Parent_Edition_ID');
             $select->where(['Series_ID' => $seriesId]);
-            $select->order('Editions.Volume, Editions.Position, Editions.Replacement_Number');
+            $select->order(
+                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
+            );
         };
         $view->missingDates = $editions->select($callback)->toArray();
 
@@ -155,7 +160,8 @@ class SeriesController extends AbstractBase
                         'min(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
                     ),
                     'Rep' => new Expression(
-                        'min(?)', ['Replacement_Number'], [Expression::TYPE_IDENTIFIER]
+                        'min(?)', ['Replacement_Number'],
+                        [Expression::TYPE_IDENTIFIER]
                     ),
                     'Total' => new Expression(
                         'count(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
@@ -181,7 +187,8 @@ class SeriesController extends AbstractBase
             }
             $pos = $current['Pos'];
             $overallTotal += $current['Total'];
-            $total[$vol] = isset($total[$vol]) ? $total[$vol] + $current['Total'] : $current['Total'];
+            $total[$vol] = isset($total[$vol])
+                ? $total[$vol] + $current['Total'] : $current['Total'];
             if ($current['Total'] > 1) {
                 $dupes[$vol][$pos][] = $current['Rep'];
             }
@@ -320,7 +327,8 @@ class SeriesController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
         $config = $this->serviceLocator->get('config');
-        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
+        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
+            ?? true;
         $view->images = $this->getDbTable('editionsimages')
             ->getImagesForSeries($view->series['Series_ID'], $groupByMaterial);
         return $view;
@@ -399,6 +407,9 @@ class SeriesController extends AbstractBase
 
     /**
      * Create a series resource for inclusion in the list.
+     *
+     * @param \EasyRdf\Graph $graph  Graph to update
+     * @param object         $series Series object to update graph with
      *
      * @return \EasyRdf\Resource
      */
@@ -531,8 +542,10 @@ class SeriesController extends AbstractBase
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
         $config = $this->serviceLocator->get('config');
-        $view->groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
-        $view->items = $this->getDbTable('item')->getItemsForSeries($id, true, $view->groupByMaterial);
+        $view->groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
+            ?? true;
+        $view->items = $this->getDbTable('item')
+            ->getItemsForSeries($id, true, $view->groupByMaterial);
         $view->language = $this->getDbTable('language')
             ->getByPrimaryKey($view->series['Language_ID']);
         $view->publishers = $this->getDbTable('seriespublishers')

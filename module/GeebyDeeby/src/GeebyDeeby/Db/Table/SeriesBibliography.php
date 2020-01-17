@@ -57,7 +57,7 @@ class SeriesBibliography extends Gateway
     /**
      * Get a list of items describing the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -81,7 +81,7 @@ class SeriesBibliography extends Gateway
     /**
      * Get a list of series described by the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

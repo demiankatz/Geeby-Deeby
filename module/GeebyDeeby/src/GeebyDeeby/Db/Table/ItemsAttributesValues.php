@@ -57,7 +57,7 @@ class ItemsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

@@ -58,7 +58,7 @@ class EditionsISBNs extends Gateway
     /**
      * Get a list of ISBNs for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -79,7 +79,7 @@ class EditionsISBNs extends Gateway
     /**
      * Get a list of ISBNs for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -104,7 +104,7 @@ class EditionsISBNs extends Gateway
     /**
      * Find items matching an ISBN search query.
      *
-     * @var string $q Query
+     * @param string $q Query
      *
      * @return mixed
      */

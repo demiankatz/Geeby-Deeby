@@ -57,7 +57,7 @@ class ItemsAdaptations extends Gateway
     /**
      * Get a list of items adapted from the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -81,7 +81,7 @@ class ItemsAdaptations extends Gateway
     /**
      * Get a list of items adapted into the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

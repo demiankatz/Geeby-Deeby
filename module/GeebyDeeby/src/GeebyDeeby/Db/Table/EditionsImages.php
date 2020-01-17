@@ -143,7 +143,7 @@ class EditionsImages extends Gateway
     /**
      * Get a list of images for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -193,8 +193,8 @@ class EditionsImages extends Gateway
     /**
      * Get image information for the specified series.
      *
-     * @var int  $seriesID        Series ID
-     * @var bool $groupByMaterial Should we group results by material type?
+     * @param int  $seriesID        Series ID
+     * @param bool $groupByMaterial Should we group results by material type?
      *
      * @return mixed
      */

@@ -90,9 +90,9 @@ class EditSeriesController extends AbstractBase
             'lang' => 'Language_ID'
         ];
         $view = $this->handleGenericItem('series', $assignMap, 'series');
-        $seriesId = isset($view->seriesObj->Series_ID)
-            ? $view->seriesObj->Series_ID
-            : (isset($view->affectedRow->Series_ID) ? $view->affectedRow->Series_ID : null);
+        $seriesId = $view->seriesObj->Series_ID
+            ?? $view->affectedRow->Series_ID
+            ?? null;
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost() && $this->params()->fromPost('attribs')) {
@@ -119,7 +119,8 @@ class EditSeriesController extends AbstractBase
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
             $config = $this->serviceLocator->get('config');
-            $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
+            $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
+                ?? true;
             $view->item_list = $this->getDbTable('item')
                 ->getItemsForSeries($seriesId, true, $groupByMaterial);
             $view->series_alt_titles = $this->getDbTable('seriesalttitles')
@@ -128,8 +129,10 @@ class EditSeriesController extends AbstractBase
                 ->getMaterials($seriesId);
             $view->series_publishers = $this->getDbTable('seriespublishers')
                 ->getPublishers($seriesId);
-            $view->relationships = $this->getDbTable('seriesrelationship')->getOptionList();
-            $view->relationshipsValues = $this->getDbTable('seriesrelationshipsvalues')
+            $view->relationships = $this->getDbTable('seriesrelationship')
+                ->getOptionList();
+            $view->relationshipsValues = $this
+                ->getDbTable('seriesrelationshipsvalues')
                 ->getRelationshipsForSeries($seriesId);
             $view->translatedInto = $this->getDbTable('seriestranslations')
                 ->getTranslatedFrom($seriesId);
@@ -365,7 +368,8 @@ class EditSeriesController extends AbstractBase
             }
         };
         $config = $this->serviceLocator->get('config');
-        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
+        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
+            ?? true;
         $listCallback = $groupByMaterial
             ? 'getItemsForSeriesGroupedByMaterial' : 'getItemsForSeries';
         return $this->handleGenericLink(

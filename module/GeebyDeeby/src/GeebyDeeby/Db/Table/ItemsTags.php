@@ -59,7 +59,7 @@ class ItemsTags extends Gateway
     /**
      * Get items for the specified tag.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      */
     public function getItemsForTag($tagID)
     {
@@ -103,7 +103,7 @@ class ItemsTags extends Gateway
     /**
      * Get a list of tags for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

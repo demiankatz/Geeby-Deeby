@@ -57,7 +57,7 @@ class TagsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified tag.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */

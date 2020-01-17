@@ -144,9 +144,10 @@ class Series extends Gateway
     /**
      * Get a list of series for the specified item.
      *
-     * @var int  $itemID                Item ID
-     * @var bool $includePosition       Should we include position information?
-     * @var bool $includeParentPosition Should we include information about parent edition(s)?
+     * @param int  $itemID                Item ID
+     * @param bool $includePosition       Should we include position information?
+     * @param bool $includeParentPosition Should we include information about parent
+     * edition(s)?
      *
      * @return mixed
      */

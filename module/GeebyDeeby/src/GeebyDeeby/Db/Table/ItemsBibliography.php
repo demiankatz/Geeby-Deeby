@@ -57,7 +57,7 @@ class ItemsBibliography extends Gateway
     /**
      * Get a list of items describing the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -81,7 +81,7 @@ class ItemsBibliography extends Gateway
     /**
      * Get a list of items described by the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

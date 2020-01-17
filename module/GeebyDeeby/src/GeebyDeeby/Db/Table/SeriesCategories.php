@@ -57,7 +57,7 @@ class SeriesCategories extends Gateway
     /**
      * Get a list of categories for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -77,7 +77,7 @@ class SeriesCategories extends Gateway
     /**
      * Get a list of series for the specified category.
      *
-     * @var int $catID Category ID
+     * @param int $catID Category ID
      *
      * @return mixed
      */

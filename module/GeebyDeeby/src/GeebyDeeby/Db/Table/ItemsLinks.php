@@ -57,7 +57,7 @@ class ItemsLinks extends Gateway
     /**
      * Get a list of links for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class ItemsLinks extends Gateway
     /**
      * Get a list of items for the specified link.
      *
-     * @var int $linkID Link ID
+     * @param int $linkID Link ID
      *
      * @return mixed
      */

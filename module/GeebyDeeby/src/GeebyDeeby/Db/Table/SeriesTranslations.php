@@ -57,7 +57,7 @@ class SeriesTranslations extends Gateway
     /**
      * Get a list of series translated from the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -81,7 +81,7 @@ class SeriesTranslations extends Gateway
     /**
      * Get a list of series translated into the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

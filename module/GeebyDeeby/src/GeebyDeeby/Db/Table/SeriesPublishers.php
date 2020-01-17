@@ -58,7 +58,7 @@ class SeriesPublishers extends Gateway
     /**
      * Get a list of series for the specified city.
      *
-     * @var int $cityID City ID
+     * @param int $cityID City ID
      *
      * @return mixed
      */
@@ -83,7 +83,7 @@ class SeriesPublishers extends Gateway
     /**
      * Get a list of series for the specified country.
      *
-     * @var int $countryID Country ID
+     * @param int $countryID Country ID
      *
      * @return mixed
      */
@@ -108,7 +108,7 @@ class SeriesPublishers extends Gateway
     /**
      * Get a list of series for the specified publisher.
      *
-     * @var int $publisherID Publisher ID
+     * @param int $publisherID Publisher ID
      *
      * @return mixed
      */
@@ -129,7 +129,7 @@ class SeriesPublishers extends Gateway
     /**
      * Get a list of publishers for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

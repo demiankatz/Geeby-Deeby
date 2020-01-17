@@ -77,7 +77,7 @@ class ItemsInCollections extends Gateway
     /**
      * Get a list of collections for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -108,7 +108,7 @@ class ItemsInCollections extends Gateway
     /**
      * Get a list of items for the specified collection.
      *
-     * @var int $collectionID Item ID
+     * @param int $collectionID Item ID
      *
      * @return mixed
      */

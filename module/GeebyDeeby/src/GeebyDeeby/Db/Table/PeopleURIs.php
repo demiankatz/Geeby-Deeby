@@ -57,7 +57,7 @@ class PeopleURIs extends Gateway
     /**
      * Get a list of URIs for the specified person.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class PeopleURIs extends Gateway
     /**
      * Get a list of people for the specified URI.
      *
-     * @var string $uri URI
+     * @param string $uri URI
      *
      * @return mixed
      */

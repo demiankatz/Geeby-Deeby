@@ -59,8 +59,8 @@ class ItemsCreators extends Gateway
     /**
      * Get a list of credits attached to the specified person.
      *
-     * @var int    $personID Person ID
-     * @var string $sort     Type of sorting (series/title/year)
+     * @param int    $personID Person ID
+     * @param string $sort     Type of sorting (series/title/year)
      *
      * @return mixed
      */
@@ -77,8 +77,8 @@ class ItemsCreators extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * item.
      *
-     * @var int    $personID Person ID
-     * @var string $sort     Type of sorting (title or year)
+     * @param int    $personID Person ID
+     * @param string $sort     Type of sorting (title or year)
      *
      * @return mixed
      */
@@ -127,7 +127,7 @@ class ItemsCreators extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * series.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */

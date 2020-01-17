@@ -57,7 +57,7 @@ class CountriesURIs extends Gateway
     /**
      * Get a list of URIs for the specified country.
      *
-     * @var int $countryID Country ID
+     * @param int $countryID Country ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class CountriesURIs extends Gateway
     /**
      * Get a list of countries for the specified URI.
      *
-     * @var string $uri URI
+     * @param string $uri URI
      *
      * @return mixed
      */

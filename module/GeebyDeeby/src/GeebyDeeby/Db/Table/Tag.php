@@ -92,7 +92,7 @@ class Tag extends Gateway
     /**
      * Get a list of tags and related items for the specified series.
      *
-     * @var int  $seriesID        Series ID
+     * @param int  $seriesID        Series ID
      *
      * @return mixed
      */

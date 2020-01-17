@@ -58,7 +58,7 @@ class ItemsAltTitles extends Gateway
     /**
      * Get a list of alternate titles for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

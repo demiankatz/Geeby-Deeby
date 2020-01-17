@@ -57,7 +57,7 @@ class TagsURIs extends Gateway
     /**
      * Get a list of URIs for the specified tag.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class TagsURIs extends Gateway
     /**
      * Get a list of tags for the specified URI.
      *
-     * @var string $uri URI
+     * @param string $uri URI
      *
      * @return mixed
      */

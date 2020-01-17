@@ -57,7 +57,7 @@ class ItemsRelationshipsValues extends Gateway
     /**
      * Get a list of items related to the provided subject item ID.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -77,7 +77,7 @@ class ItemsRelationshipsValues extends Gateway
     /**
      * Get a list of items related to the provided subject item ID.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -97,7 +97,7 @@ class ItemsRelationshipsValues extends Gateway
     /**
      * Get a list of relationships for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

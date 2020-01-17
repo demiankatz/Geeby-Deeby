@@ -57,7 +57,7 @@ class PeopleBibliography extends Gateway
     /**
      * Get a list of items describing the specified person.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */
@@ -81,7 +81,7 @@ class PeopleBibliography extends Gateway
     /**
      * Get a list of people described by the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

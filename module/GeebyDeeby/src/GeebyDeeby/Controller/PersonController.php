@@ -154,7 +154,8 @@ class PersonController extends AbstractBase
      * Get the view model representing the specified person (or false if
      * invalid ID)
      *
-     * @param int $id ID of person to load
+     * @param int    $id   ID of person to load
+     * @param string $sort Sort type
      *
      * @return \Zend\View\Model\ViewModel|bool
      */

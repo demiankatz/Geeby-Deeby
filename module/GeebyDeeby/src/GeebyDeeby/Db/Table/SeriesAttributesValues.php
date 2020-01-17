@@ -57,7 +57,7 @@ class SeriesAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

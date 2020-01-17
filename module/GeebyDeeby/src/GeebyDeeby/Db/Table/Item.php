@@ -128,9 +128,9 @@ class Item extends Gateway
     /**
      * Get a list of items for the specified series.
      *
-     * @var int  $seriesID        Series ID
-     * @var bool $topOnly         Retrieve only top-level items?
-     * @var bool $groupByMaterial Should we group results by material type?
+     * @param int  $seriesID        Series ID
+     * @param bool $topOnly         Retrieve only top-level items?
+     * @param bool $groupByMaterial Should we group results by material type?
      *
      * @return mixed
      */
@@ -167,11 +167,16 @@ class Item extends Gateway
             );
             $select->order(
                 $groupByMaterial
-                    ? ['mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', $itemName]
-                    : ['Volume', 'Position', 'Replacement_Number', $itemName]
+                    ? [
+                        'mt.Material_Type_Name', 'Volume', 'Position',
+                        'Replacement_Number', $itemName
+                    ] : ['Volume', 'Position', 'Replacement_Number', $itemName]
             );
             $select->group(
-                ['Items.Item_ID', 'Volume', 'Position', 'Replacement_Number', 'Items.Material_Type_ID']
+                [
+                    'Items.Item_ID', 'Volume', 'Position', 'Replacement_Number',
+                    'Items.Material_Type_ID'
+                ]
             );
             $select->where->equalTo('eds.Series_ID', $seriesID);
             if ($topOnly) {
@@ -214,7 +219,7 @@ class Item extends Gateway
     /**
      * Get a list of children for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -262,7 +267,7 @@ class Item extends Gateway
     /**
      * Get a list of parents for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -308,7 +313,7 @@ class Item extends Gateway
     /**
      * Get a list of items for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */

@@ -52,7 +52,8 @@ class EditTagAttributeController extends AbstractBase
         // If this is not an AJAX request, we also want to display relationships:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->relationships
-                = $this->forwardTo(__NAMESPACE__ . '\EditTagRelationship', 'list')->relationships;
+                = $this->forwardTo(__NAMESPACE__ . '\EditTagRelationship', 'list')
+                    ->relationships;
         }
         return $view;
     }

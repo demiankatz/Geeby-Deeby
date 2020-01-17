@@ -79,7 +79,8 @@ class EditionController extends AbstractBase
     protected function addCreditsToGraph($graph, $edition, $view)
     {
         foreach ($view->credits as $credit) {
-            $personUri = $this->getServerUrl('person', ['id' => $credit['Person_ID']]);
+            $personUri = $this
+                ->getServerUrl('person', ['id' => $credit['Person_ID']]);
             $predicate = $credit['Edition_Credit_Predicate']
                 ?? $this->defaultCreditPredicate;
             if (!empty($predicate)) {
@@ -198,7 +199,6 @@ class EditionController extends AbstractBase
     /**
      * Build an RDF graph from the available data.
      *
-     * @param string $id   ID of primary resource in graph.
      * @param object $view View model populated with information.
      *
      * @return \EasyRdf\Graph

@@ -97,9 +97,7 @@ class EditTagController extends AbstractBase
         $view->tagTypes = $this->typelistAction()->tagTypes;
 
         // Get tag ID
-        $tagId = isset($view->tag['Tag_ID'])
-            ? $view->tag['Tag_ID']
-            : (isset($view->affectedRow->Tag_ID) ? $view->affectedRow->Tag_ID : null);
+        $tagId = $view->tag['Tag_ID'] ?? $view->affectedRow->Tag_ID ?? null;
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost()
@@ -127,7 +125,8 @@ class EditTagController extends AbstractBase
                 ->getURIsForTag($view->tagObj->Tag_ID);
             $view->setTemplate('geeby-deeby/edit-tag/edit-full');
             $view->predicates = $this->getDbTable('predicate')->getList();
-            $view->relationships = $this->getDbTable('tagsrelationship')->getOptionList();
+            $view->relationships = $this->getDbTable('tagsrelationship')
+                ->getOptionList();
             $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
                 ->getRelationshipsForTag($tagId);
         }

@@ -110,7 +110,7 @@ class Edition extends Gateway
     /**
      * Get parent item for the specified edition (false if none).
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -142,7 +142,7 @@ class Edition extends Gateway
     /**
      * Get a list of items for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -156,7 +156,7 @@ class Edition extends Gateway
     /**
      * Get a list of items for the specified series (not grouped by material type).
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -170,7 +170,7 @@ class Edition extends Gateway
     /**
      * Get a list of items for the specified series ( grouped by material type).
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

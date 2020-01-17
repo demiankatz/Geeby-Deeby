@@ -57,7 +57,7 @@ class SeriesRelationshipsValues extends Gateway
     /**
      * Get a list of series related to the provided subject series ID.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class SeriesRelationshipsValues extends Gateway
     /**
      * Get a list of series related to the provided subject series ID.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -95,7 +95,7 @@ class SeriesRelationshipsValues extends Gateway
     /**
      * Get a list of relationships for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

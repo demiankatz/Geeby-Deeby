@@ -58,7 +58,7 @@ class SeriesAltTitles extends Gateway
     /**
      * Get a list of alternate titles for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

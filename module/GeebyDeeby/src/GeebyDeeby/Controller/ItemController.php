@@ -58,7 +58,8 @@ class ItemController extends AbstractBase
     protected function addCreatorsToGraph($graph, $item, $view)
     {
         foreach ($view->creators as $creator) {
-            $personUri = $this->getServerUrl('person', ['id' => $creator['Person_ID']]);
+            $personUri = $this
+                ->getServerUrl('person', ['id' => $creator['Person_ID']]);
             $predicate = $creator['Item_Creator_Predicate']
                 ?? $this->defaultCreatorPredicate;
             if (!empty($predicate)) {
@@ -86,7 +87,8 @@ class ItemController extends AbstractBase
             ->getAttributesForItem($id);
         $extras['itemAttributes'] = $this->getDbTable('itemsattributesvalues')
             ->getAttributesForItem($id);
-        $extras['relationshipsValues'] = $this->getDbTable('itemsrelationshipsvalues')
+        $extras['relationshipsValues'] = $this
+            ->getDbTable('itemsrelationshipsvalues')
             ->getRelationshipsForItem($id);
         return $this->createViewModel(
             ['item' => $rowObj->toArray()] + $extras
@@ -271,22 +273,27 @@ class ItemController extends AbstractBase
      */
     protected function addEditionRelationships($id, $view)
     {
-        $view->creators = $this->getDbTable('itemscreators')->getCreatorsForItem($id);
-        $view->credits = $this->getDbTable('editionscredits')->getCreditsForItem($id);
+        $view->creators = $this->getDbTable('itemscreators')
+            ->getCreatorsForItem($id);
+        $view->credits = $this->getDbTable('editionscredits')
+            ->getCreditsForItem($id);
         $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
-        $view->series = $this->getDbTable('series')->getSeriesForItem($id, true, true);
+        $view->series = $this->getDbTable('series')
+            ->getSeriesForItem($id, true, true);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForItem($id);
-        // Contains/containedIn are item-level relationships (see addItemRelationships
-        // below), while children/parents are edition-level relationships. These are
-        // very similar, but the edition relationships are preferred and more valuable.
+        // Contains/containedIn are item-level relationships (see
+        // addItemRelationships below), while children/parents are edition-level
+        // relationships. These are very similar, but the edition relationships
+        // are preferred and more valuable.
         $itemTable = $this->getDbTable('item');
         $view->children = $itemTable->getItemChildren($id);
         $view->parents = $itemTable->getItemParents($id);
 
         $edTable = $this->getDbTable('edition');
         $view->publishers = $edTable->getPublishersForItem($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')->getDatesForItem($id);
+        $view->dates = $this->getDbTable('editionsreleasedates')
+            ->getDatesForItem($id);
         $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
         $view->codes = $this->getDbTable('editionsproductcodes')
             ->getProductCodesForItem($id);
@@ -349,6 +356,8 @@ class ItemController extends AbstractBase
 
     /**
      * Get the view model representing the item and all relevant related details.
+     *
+     * @param bool $includeEditionData Include edition data?
      *
      * @return \Zend\View\Model\ViewModel|bool
      */

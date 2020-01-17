@@ -57,7 +57,7 @@ class PeopleLinks extends Gateway
     /**
      * Get a list of links for the specified person.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class PeopleLinks extends Gateway
     /**
      * Get a list of people for the specified link.
      *
-     * @var int $linkID Link ID
+     * @param int $linkID Link ID
      *
      * @return mixed
      */

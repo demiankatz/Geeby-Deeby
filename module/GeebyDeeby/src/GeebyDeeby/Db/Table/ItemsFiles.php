@@ -57,7 +57,7 @@ class ItemsFiles extends Gateway
     /**
      * Get a list of items for the specified file.
      *
-     * @var int $fileID File ID
+     * @param int $fileID File ID
      *
      * @return mixed
      */
@@ -77,7 +77,7 @@ class ItemsFiles extends Gateway
     /**
      * Get a list of files for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

@@ -100,9 +100,9 @@ class EditEditionController extends AbstractBase
             'item_display_order' => 'Item_Display_Order',
         ];
         $view = $this->handleGenericItem('edition', $assignMap, 'edition');
-        $editionId = isset($view->edition['Edition_ID'])
-            ? $view->edition['Edition_ID']
-            : (isset($view->affectedRow->Edition_ID) ? $view->affectedRow->Edition_ID : null);
+        $editionId = $view->edition['Edition_ID']
+            ?? $view->affectedRow->Edition_ID
+            ?? null;
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost()
@@ -265,7 +265,9 @@ class EditEditionController extends AbstractBase
                     $row = $table->createRow();
                     $row->Item_ID = $edition->Item_ID;
                     if (empty($row->Item_ID)) {
-                        return $this->jsonDie('Edition must be attached to an Item.');
+                        return $this->jsonDie(
+                            'Edition must be attached to an Item.'
+                        );
                     }
                     $row->Item_AltName = $titleText;
                     $table->insert((array)$row);
@@ -349,7 +351,9 @@ class EditEditionController extends AbstractBase
                     $row = $table->createRow();
                     $row->Series_ID = $edition->Series_ID;
                     if (empty($row->Series_ID)) {
-                        return $this->jsonDie('Edition must be attached to a Series.');
+                        return $this->jsonDie(
+                            'Edition must be attached to a Series.'
+                        );
                     }
                     $row->Series_AltName = $titleText;
                     $table->insert((array)$row);

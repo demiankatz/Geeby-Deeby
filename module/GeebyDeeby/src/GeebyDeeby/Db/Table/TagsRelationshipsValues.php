@@ -57,7 +57,7 @@ class TagsRelationshipsValues extends Gateway
     /**
      * Get a list of tags related to the provided subject tag ID.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class TagsRelationshipsValues extends Gateway
     /**
      * Get a list of tags related to the provided subject tag ID.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */
@@ -95,7 +95,7 @@ class TagsRelationshipsValues extends Gateway
     /**
      * Get a list of relationships for the specified tag.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */

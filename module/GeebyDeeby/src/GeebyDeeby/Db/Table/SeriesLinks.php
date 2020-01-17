@@ -57,7 +57,7 @@ class SeriesLinks extends Gateway
     /**
      * Get a list of links for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class SeriesLinks extends Gateway
     /**
      * Get a list of series for the specified link.
      *
-     * @var int $linkID Link ID
+     * @param int $linkID Link ID
      *
      * @return mixed
      */

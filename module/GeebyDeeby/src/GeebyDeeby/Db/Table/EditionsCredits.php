@@ -59,8 +59,8 @@ class EditionsCredits extends Gateway
     /**
      * Get a list of credits attached to the specified person.
      *
-     * @var int    $personID Person ID
-     * @var string $sort     Type of sorting (series/title/year)
+     * @param int    $personID Person ID
+     * @param string $sort     Type of sorting (series/title/year)
      *
      * @return mixed
      */
@@ -77,8 +77,8 @@ class EditionsCredits extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * item.
      *
-     * @var int    $personID Person ID
-     * @var string $sort     Type of sorting (title or year)
+     * @param int    $personID Person ID
+     * @param string $sort     Type of sorting (title or year)
      *
      * @return mixed
      */
@@ -124,7 +124,7 @@ class EditionsCredits extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * series.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */
@@ -170,7 +170,7 @@ class EditionsCredits extends Gateway
     /**
      * Get a list of credits attached to the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -203,8 +203,8 @@ class EditionsCredits extends Gateway
     /**
      * Get a list of credits attached to the specified item.
      *
-     * @var int  $itemID Item ID
-     * @var bool $group  Should we group by person/role?
+     * @param int  $itemID Item ID
+     * @param bool $group  Should we group by person/role?
      *
      * @return mixed
      */
@@ -246,7 +246,7 @@ class EditionsCredits extends Gateway
      * Get a list of people associated with a particular series (not just
      * credits but also creators).
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

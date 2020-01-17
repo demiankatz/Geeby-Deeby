@@ -85,8 +85,8 @@ class ItemsTranslations extends Gateway
     /**
      * Get a list of items translated from the specified item.
      *
-     * @var int  $itemID      Item ID
-     * @var bool $includeLang Should we also load language information?
+     * @param int  $itemID      Item ID
+     * @param bool $includeLang Should we also load language information?
      *
      * @return mixed
      */
@@ -109,8 +109,8 @@ class ItemsTranslations extends Gateway
     /**
      * Get a list of items translated into the specified item.
      *
-     * @var int  $itemID      Item ID
-     * @var bool $includeLang Should we also load language information?
+     * @param int  $itemID      Item ID
+     * @param bool $includeLang Should we also load language information?
      *
      * @return mixed
      */

@@ -110,7 +110,8 @@ class CountryController extends AbstractBase
     public function showAction()
     {
         $view = $this->getCountryViewModel();
-        return $view ? $view : $this->forwardTo(__NAMESPACE__ . '\Country', 'notfound');
+        return $view
+            ? $view : $this->forwardTo(__NAMESPACE__ . '\Country', 'notfound');
     }
 
     /**

@@ -57,7 +57,7 @@ class CitiesURIs extends Gateway
     /**
      * Get a list of URIs for the specified city.
      *
-     * @var int $cityID City ID
+     * @param int $cityID City ID
      *
      * @return mixed
      */
@@ -76,7 +76,7 @@ class CitiesURIs extends Gateway
     /**
      * Get a list of cities for the specified URI.
      *
-     * @var string $uri URI
+     * @param string $uri URI
      *
      * @return mixed
      */

@@ -57,7 +57,7 @@ class SeriesMaterialTypes extends Gateway
     /**
      * Get a list of series for the specified material type.
      *
-     * @var int $typeID Material Type ID
+     * @param int $typeID Material Type ID
      *
      * @return mixed
      */
@@ -77,7 +77,7 @@ class SeriesMaterialTypes extends Gateway
     /**
      * Get a list of material types for the specified series.
      *
-     * @var int $seriesID Series ID (null for all series)
+     * @param int $seriesID Series ID (null for all series)
      *
      * @return mixed
      */

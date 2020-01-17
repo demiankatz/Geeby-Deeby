@@ -91,7 +91,6 @@ class TagController extends AbstractBase
     /**
      * Build an RDF graph from the available data.
      *
-     * @param string $id   ID of primary resource in graph.
      * @param object $view View model populated with information.
      *
      * @return \EasyRdf\Graph

@@ -57,7 +57,7 @@ class EditionsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -78,7 +78,7 @@ class EditionsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

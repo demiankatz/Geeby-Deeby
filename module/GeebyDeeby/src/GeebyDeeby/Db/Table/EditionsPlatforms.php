@@ -57,7 +57,7 @@ class EditionsPlatforms extends Gateway
     /**
      * Get editions for the specified platform.
      *
-     * @var int $platformID Platform ID
+     * @param int $platformID Platform ID
      */
     public function getItemsForPlatform($platformID)
     {
@@ -85,7 +85,7 @@ class EditionsPlatforms extends Gateway
     /**
      * Get a list of platforms for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -109,7 +109,7 @@ class EditionsPlatforms extends Gateway
     /**
      * Get a list of platforms for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */

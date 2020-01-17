@@ -58,8 +58,8 @@ class ItemsReviews extends Gateway
     /**
      * Get a list of reviews for the specified item.
      *
-     * @var int    $itemID   Item ID
-     * @var string $approved 'y' to get only approved items, 'n' for only unapproved
+     * @param int    $itemID   Item ID
+     * @param string $approved 'y' to get only approved items, 'n' for only unapproved
      * items, null for all items
      *
      * @return mixed
@@ -83,8 +83,8 @@ class ItemsReviews extends Gateway
     /**
      * Get a list of item IDs reviewed by the specified user.
      *
-     * @var int    $userID   User ID
-     * @var string $approved 'y' to get only approved items, 'n' for only unapproved
+     * @param int    $userID   User ID
+     * @param string $approved 'y' to get only approved items, 'n' for only unapproved
      * items, null for all items
      */
     public function getReviewIDsByUser($userID, $approved = 'y')

@@ -57,7 +57,7 @@ class SeriesFiles extends Gateway
     /**
      * Get a list of series for the specified file.
      *
-     * @var int $fileID File ID
+     * @param int $fileID File ID
      *
      * @return mixed
      */
@@ -77,7 +77,7 @@ class SeriesFiles extends Gateway
     /**
      * Get a list of files for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

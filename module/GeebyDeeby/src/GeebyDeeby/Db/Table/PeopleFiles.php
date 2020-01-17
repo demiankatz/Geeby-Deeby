@@ -57,7 +57,7 @@ class PeopleFiles extends Gateway
     /**
      * Get a list of people for the specified file.
      *
-     * @var int $fileID File ID
+     * @param int $fileID File ID
      *
      * @return mixed
      */
@@ -77,7 +77,7 @@ class PeopleFiles extends Gateway
     /**
      * Get a list of files for the specified person.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */

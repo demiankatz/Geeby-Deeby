@@ -91,9 +91,9 @@ class EditItemController extends AbstractBase
             'material' => 'Material_Type_ID'
         ];
         $view = $this->handleGenericItem('item', $assignMap, 'item');
-        $itemId = isset($view->itemObj->Item_ID)
-            ? $view->itemObj->Item_ID
-            : (isset($view->affectedRow->Item_ID) ? $view->affectedRow->Item_ID : null);
+        $itemId = $view->itemObj->Item_ID
+            ?? $view->affectedRow->Item_ID
+            ?? null;
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost()
@@ -144,8 +144,10 @@ class EditItemController extends AbstractBase
                 ->getTags($itemId);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($itemId);
-            $view->relationships = $this->getDbTable('itemsrelationship')->getOptionList();
-            $view->relationshipsValues = $this->getDbTable('itemsrelationshipsvalues')
+            $view->relationships = $this->getDbTable('itemsrelationship')
+                ->getOptionList();
+            $view->relationshipsValues = $this
+                ->getDbTable('itemsrelationshipsvalues')
                 ->getRelationshipsForItem($itemId);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($itemId);
