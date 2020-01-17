@@ -58,14 +58,14 @@ class EditItemRelationshipController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'relationship_name' => 'Items_Relationship_Name',
             'rdf_property' => 'Items_Relationship_RDF_Property',
             'priority' => 'Display_Priority',
             'inverse_relationship_name' => 'Items_Inverse_Relationship_Name',
             'inverse_rdf_property' => 'Items_Inverse_Relationship_RDF_Property',
             'inverse_priority' => 'Inverse_Display_Priority',
-        );
+        ];
         $response = $this
             ->handleGenericItem('itemsrelationship', $assignMap, 'relationship');
 

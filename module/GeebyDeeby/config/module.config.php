@@ -7,8 +7,8 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-return array(
-    'geeby-deeby' => array(
+return [
+    'geeby-deeby' => [
         'siteTitle' => 'My Gamebook Web Page',
         'siteEmail' => 'me@emailhost.com',
         'siteOwner' => 'Webmaster',
@@ -18,17 +18,17 @@ return array(
         'dbPass' => 'gbdb', // database password
         // Should we group series entries by material type (true), or display them as one continuous list (false)?
         'groupSeriesByMaterialType' => true,
-        'file_groups' => array(
+        'file_groups' => [
             // Fill this array with 'Group Name' => array(id1, id2, id3, ...)
             // if you wish to create custom file groupings on the "List Files"
             // page.  Leave it empty to group by standard File Type values.
-        ),
-        'isbn_links' => array(
-            'Shopping' => array(
+        ],
+        'isbn_links' => [
+            'Shopping' => [
                 'description' => 'These shopping links are included for your convenience. '
                     . 'This site is not affiliated with any of these retailers, and their '
                     . 'inclusion here is not intended as an endorsement.',
-                'links' => array(
+                'links' => [
                     'Amazon.ca' => 'http://www.amazon.ca/exec/obidos/ASIN/%isbn10%',
                     'Amazon.com' => 'http://www.amazon.com/exec/obidos/ASIN/%isbn10%',
                     'Amazon.com.au' => 'http://www.amazon.com.au/exec/obidos/ASIN/%isbn10%',
@@ -42,10 +42,10 @@ return array(
                     'Amazon.it' => 'http://www.amazon.it/exec/obidos/ASIN/%isbn10%',
                     'Barnes & Noble' => 'http://search.barnesandnoble.com/booksearch/isbninquiry.asp?ISBN=%isbn10%',
                     'BookFinder.com' => 'http://www.bookfinder.com/search/?author=&title=&submit=Begin+Search&new_used=*&binding=*&isbn=%isbn10%&keywords=&minprice=&maxprice=&currency=USD&mode=advanced&st=sr&ac=qr',
-                ),
-            ),
-        ),
-        'link_groups' => array(
+                ],
+            ],
+        ],
+        'link_groups' => [
             // Fill this array with 'Group Name' => array(
             //     'desc' => string value (HTML description to show on page)
             //     'title' => string value (page title override)
@@ -57,1214 +57,1214 @@ return array(
             // if you wish to create custom link groupings. These custom groups
             // may be accessed by adding the group name as a subdirectory of the
             // main /Links URL. (e.g. http://mysite.org/Links/MyGroupName).
-        ),
-    ),
-    'controller_plugins' => array(
-        'invokables' => array(
+        ],
+    ],
+    'controller_plugins' => [
+        'invokables' => [
             'followup' => 'GeebyDeeby\Controller\Plugin\Followup',
-        )
-    ),
-    'router' => array(
-        'routes' => array(
-            'home' => array(
+        ]
+    ],
+    'router' => [
+        'routes' => [
+            'home' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\Index',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-            'category' => array(
+                    ],
+                ],
+            ],
+            'category' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Category[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Category',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'categories' => array(
+                    ],
+                ],
+            ],
+            'categories' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Categories[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Category',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'city' => array(
+                    ],
+                ],
+            ],
+            'city' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/City[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'City',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'cities' => array(
+                    ],
+                ],
+            ],
+            'cities' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Cities[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'City',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'country' => array(
+                    ],
+                ],
+            ],
+            'country' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Country[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Country',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'countries' => array(
+                    ],
+                ],
+            ],
+            'countries' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Countries[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Country',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'edit' => array(
+                    ],
+                ],
+            ],
+            'edit' => [
                 'type'    => 'Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/edit',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Edit',
                         'action'        => 'index',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-                'child_routes' => array(
-                    'default' => array(
+                'child_routes' => [
+                    'default' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/[:controller[/:action]]',
-                            'constraints' => array(
+                            'constraints' => [
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                            ),
-                            'defaults' => array(
-                            ),
-                        ),
-                    ),
-                    'approve' => array(
+                            ],
+                            'defaults' => [
+                            ],
+                        ],
+                    ],
+                    'approve' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Approve',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'Approve',
                                 'action'        => 'index',
-                            ),
-                        ),
-                    ),
-                    'category' => array(
+                            ],
+                        ],
+                    ],
+                    'category' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Category[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditCategory',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'category_list' => array(
+                            ],
+                        ],
+                    ],
+                    'category_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/CategoryList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditCategory',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'citation' => array(
+                            ],
+                        ],
+                    ],
+                    'citation' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Citation[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditCitation',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'citation_list' => array(
+                            ],
+                        ],
+                    ],
+                    'citation_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/CitationList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditCitation',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'city' => array(
+                            ],
+                        ],
+                    ],
+                    'city' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/City[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditCity',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'city_list' => array(
+                            ],
+                        ],
+                    ],
+                    'city_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/CityList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditCity',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'cleanup' => array(
+                            ],
+                        ],
+                    ],
+                    'cleanup' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Cleanup',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'Cleanup',
                                 'action'        => 'index',
-                            ),
-                        ),
+                            ],
+                        ],
                         'may_terminate' => true,
-                        'child_routes' => array(
-                            'hierarchies' => array(
+                        'child_routes' => [
+                            'hierarchies' => [
                                 'type'    => 'Literal',
-                                'options' => array(
+                                'options' => [
                                     'route'    => '/Hierarchies',
-                                    'defaults' => array(
+                                    'defaults' => [
                                         'controller'    => 'Cleanup',
                                         'action'        => 'hierarchies',
-                                    ),
-                                ),
-                            ),
-                            'imagedupes' => array(
+                                    ],
+                                ],
+                            ],
+                            'imagedupes' => [
                                 'type'    => 'Literal',
-                                'options' => array(
+                                'options' => [
                                     'route'    => '/ImageDupes',
-                                    'defaults' => array(
+                                    'defaults' => [
                                         'controller'    => 'Cleanup',
                                         'action'        => 'imagedupes',
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    'country' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'country' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Country[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditCountry',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'country_list' => array(
+                            ],
+                        ],
+                    ],
+                    'country_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/CountryList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditCountry',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'edition' => array(
+                            ],
+                        ],
+                    ],
+                    'edition' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Edition[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditEdition',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'editionattribute' => array(
+                            ],
+                        ],
+                    ],
+                    'editionattribute' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/EditionsAttribute[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditEditionAttribute',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'editionattribute_list' => array(
+                            ],
+                        ],
+                    ],
+                    'editionattribute_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/EditionsAttributeList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditEditionAttribute',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'file' => array(
+                            ],
+                        ],
+                    ],
+                    'file' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/File[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditFile',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'file_list' => array(
+                            ],
+                        ],
+                    ],
+                    'file_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/FileList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditFile',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'file_type' => array(
+                            ],
+                        ],
+                    ],
+                    'file_type' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/FileType[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditFile',
                                 'action'        => 'type',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'file_type_list' => array(
+                            ],
+                        ],
+                    ],
+                    'file_type_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/FileTypeList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditFile',
                                 'action'        => 'typelist',
-                            ),
-                        ),
-                    ),
-                    'fulltextsource' => array(
+                            ],
+                        ],
+                    ],
+                    'fulltextsource' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/FullTextSource[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditFullTextSource',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'fulltextsource_list' => array(
+                            ],
+                        ],
+                    ],
+                    'fulltextsource_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/FullTextSourceList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditFullTextSource',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'item' => array(
+                            ],
+                        ],
+                    ],
+                    'item' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Item[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditItem',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'item_creator' => array(
+                            ],
+                        ],
+                    ],
+                    'item_creator' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Item_Creator[/:id][/:action][/:extra]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditItemCreator',
                                 'action'        => 'citation',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'item_list' => array(
+                            ],
+                        ],
+                    ],
+                    'item_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/ItemList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditItem',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'item_relationship_linker' => array(
+                            ],
+                        ],
+                    ],
+                    'item_relationship_linker' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Item/:id/Relationship/:relationship_id[/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditItem',
                                 'action'        => 'Relationship',
-                            ),
-                        ),
-                    ),
-                    'itemattribute' => array(
+                            ],
+                        ],
+                    ],
+                    'itemattribute' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/ItemsAttribute[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditItemAttribute',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'itemattribute_list' => array(
+                            ],
+                        ],
+                    ],
+                    'itemattribute_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/ItemsAttributeList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditItemAttribute',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'itemrelationship' => array(
+                            ],
+                        ],
+                    ],
+                    'itemrelationship' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/ItemsRelationship[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditItemRelationship',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'itemrelationship_list' => array(
+                            ],
+                        ],
+                    ],
+                    'itemrelationship_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/ItemsRelationshipList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditItemRelationship',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'language' => array(
+                            ],
+                        ],
+                    ],
+                    'language' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Language[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditLanguage',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'language_list' => array(
+                            ],
+                        ],
+                    ],
+                    'language_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/LanguageList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditLanguage',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'link' => array(
+                            ],
+                        ],
+                    ],
+                    'link' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Link[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditLink',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'link_list' => array(
+                            ],
+                        ],
+                    ],
+                    'link_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/LinkList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditLink',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'link_type' => array(
+                            ],
+                        ],
+                    ],
+                    'link_type' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/LinkType[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditLink',
                                 'action'        => 'type',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'link_type_list' => array(
+                            ],
+                        ],
+                    ],
+                    'link_type_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/LinkTypeList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditLink',
                                 'action'        => 'typelist',
-                            ),
-                        ),
-                    ),
-                    'material' => array(
+                            ],
+                        ],
+                    ],
+                    'material' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/MaterialType[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditMaterialType',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'material_list' => array(
+                            ],
+                        ],
+                    ],
+                    'material_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/MaterialTypeList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditMaterialType',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'migrate' => array(
+                            ],
+                        ],
+                    ],
+                    'migrate' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Migrate',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'Migrate',
                                 'action'        => 'index',
-                            ),
-                        ),
-                    ),
-                    'note' => array(
+                            ],
+                        ],
+                    ],
+                    'note' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Note[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditNote',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'note_list' => array(
+                            ],
+                        ],
+                    ],
+                    'note_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/NoteList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditNote',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'person' => array(
+                            ],
+                        ],
+                    ],
+                    'person' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Person[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPerson',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'person_authority' => array(
+                            ],
+                        ],
+                    ],
+                    'person_authority' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/PersonAuthority[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPerson',
                                 'action'        => 'authority',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'person_authority_list' => array(
+                            ],
+                        ],
+                    ],
+                    'person_authority_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/PersonAuthorityList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPerson',
                                 'action'        => 'authoritylist',
-                            ),
-                        ),
-                    ),
-                    'person_list' => array(
+                            ],
+                        ],
+                    ],
+                    'person_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/PersonList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPerson',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'person_role' => array(
+                            ],
+                        ],
+                    ],
+                    'person_role' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/PersonRole[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPerson',
                                 'action'        => 'role',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'person_role_list' => array(
+                            ],
+                        ],
+                    ],
+                    'person_role_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/PersonRoleList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPerson',
                                 'action'        => 'rolelist',
-                            ),
-                        ),
-                    ),
-                    'platform' => array(
+                            ],
+                        ],
+                    ],
+                    'platform' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Platform[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPlatform',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'platform_list' => array(
+                            ],
+                        ],
+                    ],
+                    'platform_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/PlatformList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPlatform',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'predicate' => array(
+                            ],
+                        ],
+                    ],
+                    'predicate' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Predicate[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPredicate',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'predicate_list' => array(
+                            ],
+                        ],
+                    ],
+                    'predicate_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/PredicateList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPredicate',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'publisher' => array(
+                            ],
+                        ],
+                    ],
+                    'publisher' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Publisher[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPublisher',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null
-                            ),
-                        ),
-                    ),
-                    'publisher_list' => array(
+                            ],
+                        ],
+                    ],
+                    'publisher_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/PublisherList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditPublisher',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'series' => array(
+                            ],
+                        ],
+                    ],
+                    'series' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Series[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditSeries',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'series_list' => array(
+                            ],
+                        ],
+                    ],
+                    'series_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/SeriesList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditSeries',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'series_relationship_linker' => array(
+                            ],
+                        ],
+                    ],
+                    'series_relationship_linker' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Series/:id/Relationship/:relationship_id[/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditSeries',
                                 'action'        => 'Relationship',
-                            ),
-                        ),
-                    ),
-                    'seriesattribute' => array(
+                            ],
+                        ],
+                    ],
+                    'seriesattribute' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/SeriesAttribute[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditSeriesAttribute',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'seriesattribute_list' => array(
+                            ],
+                        ],
+                    ],
+                    'seriesattribute_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/SeriesAttributeList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditSeriesAttribute',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'seriesrelationship' => array(
+                            ],
+                        ],
+                    ],
+                    'seriesrelationship' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/SeriesRelationship[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditSeriesRelationship',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'seriesrelationship_list' => array(
+                            ],
+                        ],
+                    ],
+                    'seriesrelationship_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/SeriesRelationshipList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditSeriesRelationship',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'tag' => array(
+                            ],
+                        ],
+                    ],
+                    'tag' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Tag[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTag',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'tag_list' => array(
+                            ],
+                        ],
+                    ],
+                    'tag_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/TagList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTag',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'tag_relationship_linker' => array(
+                            ],
+                        ],
+                    ],
+                    'tag_relationship_linker' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/Tag/:id/Relationship/:relationship_id[/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTag',
                                 'action'        => 'Relationship',
-                            ),
-                        ),
-                    ),
-                    'tag_type' => array(
+                            ],
+                        ],
+                    ],
+                    'tag_type' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/TagType[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTag',
                                 'action'        => 'type',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'tag_type_list' => array(
+                            ],
+                        ],
+                    ],
+                    'tag_type_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/TagTypeList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTag',
                                 'action'        => 'typelist',
-                            ),
-                        ),
-                    ),
-                    'tagattribute' => array(
+                            ],
+                        ],
+                    ],
+                    'tagattribute' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/TagsAttribute[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTagAttribute',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'tagattribute_list' => array(
+                            ],
+                        ],
+                    ],
+                    'tagattribute_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/TagsAttributeList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTagAttribute',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'tagrelationship' => array(
+                            ],
+                        ],
+                    ],
+                    'tagrelationship' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/TagsRelationship[/:id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTagRelationship',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                            ),
-                        ),
-                    ),
-                    'tagrelationship_list' => array(
+                            ],
+                        ],
+                    ],
+                    'tagrelationship_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/TagsRelationshipList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditTagRelationship',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'user' => array(
+                            ],
+                        ],
+                    ],
+                    'user' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/User[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditUser',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'user_list' => array(
+                            ],
+                        ],
+                    ],
+                    'user_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/UserList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditUser',
                                 'action'        => 'list',
-                            ),
-                        ),
-                    ),
-                    'usergroup' => array(
+                            ],
+                        ],
+                    ],
+                    'usergroup' => [
                         'type'    => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/UserGroup[/:id][/:action][/[:extra]]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditUser',
                                 'action'        => 'usergroup',
                                 'id'            => 'NEW',
                                 'extra'         => null,
-                            ),
-                        ),
-                    ),
-                    'usergroup_list' => array(
+                            ],
+                        ],
+                    ],
+                    'usergroup_list' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => '/UserGroupList',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller'    => 'EditUser',
                                 'action'        => 'usergrouplist',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'edition' => array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'edition' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Edition[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Edition',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'faqs' => array(
+                    ],
+                ],
+            ],
+            'faqs' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/FAQs[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'FAQs',
                         'action'        => 'index',
-                    ),
-                ),
-            ),
-            'files' => array(
+                    ],
+                ],
+            ],
+            'files' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Files[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'File',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'item' => array(
+                    ],
+                ],
+            ],
+            'item' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Item[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Item',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'items' => array(
+                    ],
+                ],
+            ],
+            'items' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Items[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Item',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'language' => array(
+                    ],
+                ],
+            ],
+            'language' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Language[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Language',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'languages' => array(
+                    ],
+                ],
+            ],
+            'languages' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Languages[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Language',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'links' => array(
+                    ],
+                ],
+            ],
+            'links' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Links[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Link',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'login' => array(
+                    ],
+                ],
+            ],
+            'login' => [
                 'type'    => 'Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/login',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Index',
                         'action'        => 'login',
-                    ),
-                ),
-            ),
-            'logout' => array(
+                    ],
+                ],
+            ],
+            'logout' => [
                 'type'    => 'Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/logout',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Index',
                         'action'        => 'logout',
-                    ),
-                ),
-            ),
-            'material' => array(
+                    ],
+                ],
+            ],
+            'material' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Material[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'MaterialType',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'materials' => array(
+                    ],
+                ],
+            ],
+            'materials' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Materials[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'MaterialType',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'people' => array(
+                    ],
+                ],
+            ],
+            'people' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/People[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Person',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'person' => array(
+                    ],
+                ],
+            ],
+            'person' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Person[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Person',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'platform' => array(
+                    ],
+                ],
+            ],
+            'platform' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Platform[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Platform',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'platforms' => array(
+                    ],
+                ],
+            ],
+            'platforms' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Platforms[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Platform',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'publisher' => array(
+                    ],
+                ],
+            ],
+            'publisher' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Publisher[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Publisher',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'publishers' => array(
+                    ],
+                ],
+            ],
+            'publishers' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Publishers[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Publisher',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'reviews' => array(
+                    ],
+                ],
+            ],
+            'reviews' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Reviews[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Reviews',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'search' => array(
+                    ],
+                ],
+            ],
+            'search' => [
                 'type'    => 'Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/Search',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Search',
                         'action'        => 'index',
-                    ),
-                ),
-            ),
-            'series' => array(
+                    ],
+                ],
+            ],
+            'series' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Series[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Series',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'signup' => array(
+                    ],
+                ],
+            ],
+            'signup' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Signup[/:action]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Signup',
                         'action'        => 'index',
-                    ),
-                ),
-            ),
-            'suggest' => array(
+                    ],
+                ],
+            ],
+            'suggest' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Suggest[/:table]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Suggest',
                         'action'        => 'index',
-                    ),
-                ),
-            ),
-            'tag' => array(
+                    ],
+                ],
+            ],
+            'tag' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Tag[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Tag',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'tags' => array(
+                    ],
+                ],
+            ],
+            'tags' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Tags[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Tag',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-            'user' => array(
+                    ],
+                ],
+            ],
+            'user' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/User[/:id][/:action][/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'User',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-            'users' => array(
+                    ],
+                ],
+            ],
+            'users' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/Users[/[:extra]]',
-                    'defaults' => array(
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'User',
                         'action'        => 'list',
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'service_manager' => array(
-        'factories' => array(
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
             'GeebyDeeby\Db\Row\PluginManager' => function ($sm) {
                 return new \GeebyDeeby\Db\Row\PluginManager($sm);
             },
@@ -1274,28 +1274,28 @@ return array(
             'Zend\Db\Adapter\Adapter' => function ($sm) {
                 $config = $sm->get('Config');
                 return new \Zend\Db\Adapter\Adapter(
-                    array(
+                    [
                         'driver' => 'mysqli',
                         'charset' => 'utf8',
                         'hostname' => $config['geeby-deeby']['dbHost'],
                         'username' => $config['geeby-deeby']['dbUser'],
                         'password' => $config['geeby-deeby']['dbPass'],
                         'database' => $config['geeby-deeby']['dbName'],
-                        'options' => array('buffer_results' => true)
-                    )
+                        'options' => ['buffer_results' => true]
+                    ]
                 );
             },
-        ),
-        'invokables' => array(
+        ],
+        'invokables' => [
             'GeebyDeeby\Articles' => 'GeebyDeeby\Articles',
             'GeebyDeeby\Authentication' => 'Zend\Authentication\AuthenticationService',
-        ),
-    ),
-    'controllers' => array(
-        'abstract_factories' => array(
+        ],
+    ],
+    'controllers' => [
+        'abstract_factories' => [
             'GeebyDeeby\Controller\AbstractFactory',
-        ),
-        'aliases' => array(
+        ],
+        'aliases' => [
             'GeebyDeeby\Controller\Approve' => 'GeebyDeeby\Controller\ApproveController',
             'GeebyDeeby\Controller\Category' => 'GeebyDeeby\Controller\CategoryController',
             'GeebyDeeby\Controller\City' => 'GeebyDeeby\Controller\CityController',
@@ -1348,10 +1348,10 @@ return array(
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
             'GeebyDeeby\Controller\Tag' => 'GeebyDeeby\Controller\TagController',
             'GeebyDeeby\Controller\User' => 'GeebyDeeby\Controller\UserController',
-        ),
-    ),
-    'view_helpers' => array(
-        'factories' => array(
+        ],
+    ],
+    'view_helpers' => [
+        'factories' => [
             'analyzecredits' => function ($sm) {
                 $tables = $sm->getServiceLocator()->get('GeebyDeeby\Db\Table\PluginManager');
                 return new \GeebyDeeby\View\Helper\AnalyzeCredits(
@@ -1383,8 +1383,8 @@ return array(
                     ->get('GeebyDeeby\Controller\Edition');
                 return new \GeebyDeeby\View\Helper\ShowEdition($controller);
             },
-        ),
-        'invokables' => array(
+        ],
+        'invokables' => [
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
             'firstLetterMenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
@@ -1392,22 +1392,22 @@ return array(
             'formatitemnumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
-        ),
-    ),
-    'view_manager' => array(
+        ],
+    ],
+    'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
-        'template_map' => array(
+        'template_map' => [
             'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
             'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
             'error/404'               => __DIR__ . '/../view/error/404.phtml',
             'error/index'             => __DIR__ . '/../view/error/index.phtml',
-        ),
-        'template_path_stack' => array(
+        ],
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
-    ),
-);
+        ],
+    ],
+];

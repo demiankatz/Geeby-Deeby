@@ -1,11 +1,11 @@
-<? if (isset($linkTypes) && count($linkTypes) > 0): ?>
+<?php if (isset($linkTypes) && count($linkTypes) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Link_Type_ID">
-    <? foreach ($linkTypes as $current): ?>
+    <?php foreach ($linkTypes as $current): ?>
       <option value="<?=$current['Link_Type_ID']?>"<?=($current['Link_Type_ID'] == $selected) ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['Link_Type'])?>
       </option>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </select>
-<? else: ?>
+<?php else: ?>
   Please define link types.
-<? endif; ?>
+<?php endif; ?>

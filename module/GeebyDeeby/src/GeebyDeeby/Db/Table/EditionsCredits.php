@@ -59,8 +59,8 @@ class EditionsCredits extends Gateway
     /**
      * Get a list of credits attached to the specified person.
      *
-     * @var int    $personID Person ID
-     * @var string $sort     Type of sorting (series/title/year)
+     * @param int    $personID Person ID
+     * @param string $sort     Type of sorting (series/title/year)
      *
      * @return mixed
      */
@@ -77,8 +77,8 @@ class EditionsCredits extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * item.
      *
-     * @var int    $personID Person ID
-     * @var string $sort     Type of sorting (title or year)
+     * @param int    $personID Person ID
+     * @param string $sort     Type of sorting (title or year)
      *
      * @return mixed
      */
@@ -86,35 +86,36 @@ class EditionsCredits extends Gateway
     {
         $callback = function ($select) use ($personID, $sort) {
             $count = new Expression(
-                'count(?)', array('eds.Edition_ID'),
-                array(Expression::TYPE_IDENTIFIER)
+                'count(?)', ['eds.Edition_ID'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Credits.Edition_ID = eds.Edition_ID',
-                array('Edition_Count' => $count)
+                ['Edition_Count' => $count]
             );
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
             );
             $year = new Expression(
-                'min(?)', array('erd.Year'),
-                array(Expression::TYPE_IDENTIFIER)
+                'min(?)', ['erd.Year'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
-                array('erd' => 'Editions_Release_Dates'),
-                'eds.Edition_ID = erd.Edition_ID OR eds.Parent_Edition_ID = erd.Edition_ID',
-                array('Earliest_Year' => $year), Select::JOIN_LEFT
+                ['erd' => 'Editions_Release_Dates'],
+                'eds.Edition_ID = erd.Edition_ID '
+                . 'OR eds.Parent_Edition_ID = erd.Edition_ID',
+                ['Earliest_Year' => $year], Select::JOIN_LEFT
             );
             $select->join(
-                array('r' => 'Roles'),
+                ['r' => 'Roles'],
                 'Editions_Credits.Role_ID = r.Role_ID'
             );
             $sortFields = $sort === 'year'
-                ? array('Role_Name', 'Earliest_Year', 'Item_Name')
-                : array('Role_Name', 'Item_Name', 'Earliest_Year');
+                ? ['Role_Name', 'Earliest_Year', 'Item_Name']
+                : ['Role_Name', 'Item_Name', 'Earliest_Year'];
             $select->order($sortFields);
-            $select->group(array('Role_Name', 'Item_Name'));
+            $select->group(['Role_Name', 'Item_Name']);
             $select->where->equalTo('Person_ID', $personID);
         };
         return $this->select($callback);
@@ -124,7 +125,7 @@ class EditionsCredits extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * series.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */
@@ -132,34 +133,35 @@ class EditionsCredits extends Gateway
     {
         $callback = function ($select) use ($personID) {
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Credits.Edition_ID = eds.Edition_ID',
-                array('Edition_Name', 'Volume', 'Position', 'Replacement_Number')
+                ['Edition_Name', 'Volume', 'Position', 'Replacement_Number']
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
+                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
             );
             $select->join(
-                array('r' => 'Roles'),
+                ['r' => 'Roles'],
                 'Editions_Credits.Role_ID = r.Role_ID'
             );
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Credits.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $fields = array(
-                'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
+            $fields = [
+                'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Volume',
+                'eds.Position', 'eds.Replacement_Number',
                 'Item_Name', 'Note'
-            );
+            ];
             $select->order($fields);
             $select->group($fields);
             $select->where->equalTo('Person_ID', $personID);
@@ -170,7 +172,7 @@ class EditionsCredits extends Gateway
     /**
      * Get a list of credits attached to the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -178,22 +180,22 @@ class EditionsCredits extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('p' => 'People'),
+                ['p' => 'People'],
                 'Editions_Credits.Person_ID = p.Person_ID'
             );
             $select->join(
-                array('r' => 'Roles'),
+                ['r' => 'Roles'],
                 'Editions_Credits.Role_ID = r.Role_ID'
             );
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Credits.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $fields = array(
+            $fields = [
                 'Role_Name', 'Position', 'Last_Name',
                 'First_Name', 'Middle_Name'
-            );
+            ];
             $select->order($fields);
             $select->where->equalTo('Edition_ID', $editionID);
         };
@@ -203,8 +205,8 @@ class EditionsCredits extends Gateway
     /**
      * Get a list of credits attached to the specified item.
      *
-     * @var int  $itemID Item ID
-     * @var bool $group  Should we group by person/role?
+     * @param int  $itemID Item ID
+     * @param bool $group  Should we group by person/role?
      *
      * @return mixed
      */
@@ -212,30 +214,30 @@ class EditionsCredits extends Gateway
     {
         $callback = function ($select) use ($itemID, $group) {
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Credits.Edition_ID = eds.Edition_ID',
-                array('Item_ID', 'Edition_Name')
+                ['Item_ID', 'Edition_Name']
             );
             $select->join(
-                array('p' => 'People'),
+                ['p' => 'People'],
                 'Editions_Credits.Person_ID = p.Person_ID'
             );
             $select->join(
-                array('r' => 'Roles'),
+                ['r' => 'Roles'],
                 'Editions_Credits.Role_ID = r.Role_ID'
             );
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Credits.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $fields = array(
+            $fields = [
                 'Role_Name', 'Editions_Credits.Position', 'Last_Name',
                 'First_Name', 'Middle_Name'
-            );
+            ];
             $select->order($fields);
             if ($group) {
-                $select->group(array('r.Role_ID', 'p.Person_ID', 'n.Note_ID'));
+                $select->group(['r.Role_ID', 'p.Person_ID', 'n.Note_ID']);
             }
             $select->where->equalTo('Item_ID', $itemID);
         };
@@ -246,7 +248,7 @@ class EditionsCredits extends Gateway
      * Get a list of people associated with a particular series (not just
      * credits but also creators).
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -254,42 +256,42 @@ class EditionsCredits extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->quantifier('DISTINCT');
-            $select->columns(array());
+            $select->columns([]);
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Credits.Edition_ID = eds.Edition_ID',
-                array(), Select::JOIN_RIGHT
+                [], Select::JOIN_RIGHT
             );
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'eds.Item_ID = i.Item_ID',
-                array('Item_ID', 'Item_Name')
+                ['Item_ID', 'Item_Name']
             );
             $select->join(
-                array('ic' => 'Items_Creators'), 'eds.Item_ID = ic.Item_ID',
-                array(), Select::JOIN_LEFT
+                ['ic' => 'Items_Creators'], 'eds.Item_ID = ic.Item_ID',
+                [], Select::JOIN_LEFT
             );
             $select->join(
-                array('p' => 'People'),
+                ['p' => 'People'],
                 'Editions_Credits.Person_ID = p.Person_ID '
                 . 'OR ic.Person_ID = p.Person_ID'
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $bestTitle = new Expression(
                 'COALESCE(?, ?)',
-                array('Item_AltName', 'Item_Name'),
-                array(
+                ['Item_AltName', 'Item_Name'],
+                [
                     Expression::TYPE_IDENTIFIER,
                     Expression::TYPE_IDENTIFIER
-                )
+                ]
             );
-            $fields = array(
+            $fields = [
                 'Last_Name', 'First_Name', 'Middle_Name', $bestTitle
-            );
+            ];
             $select->order($fields);
             $select->where->equalTo('Series_ID', $seriesID);
         };
@@ -309,7 +311,7 @@ class EditionsCredits extends Gateway
         $table = $this->getDbTable('edition');
         $eds = $table->getEditionsForItem($item);
         foreach ($eds as $ed) {
-            $this->delete(array('Edition_ID' => $ed->Edition_ID) + $where);
+            $this->delete(['Edition_ID' => $ed->Edition_ID] + $where);
         }
     }
 
@@ -326,7 +328,7 @@ class EditionsCredits extends Gateway
         $table = $this->getDbTable('edition');
         $eds = $table->getEditionsForItem($item);
         foreach ($eds as $ed) {
-            $this->insert(array('Edition_ID' => $ed->Edition_ID) + $fields);
+            $this->insert(['Edition_ID' => $ed->Edition_ID] + $fields);
         }
     }
 
@@ -344,7 +346,7 @@ class EditionsCredits extends Gateway
         $table = $this->getDbTable('edition');
         $eds = $table->getEditionsForItem($item);
         foreach ($eds as $ed) {
-            $this->update($fields, array('Edition_ID' => $ed->Edition_ID) + $where);
+            $this->update($fields, ['Edition_ID' => $ed->Edition_ID] + $where);
         }
     }
 }

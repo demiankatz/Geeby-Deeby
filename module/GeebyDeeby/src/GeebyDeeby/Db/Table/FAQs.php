@@ -63,10 +63,10 @@ class FAQs extends Gateway
     {
         $callback = function ($select) {
             $select->join(
-                array('fc' => 'FAQ_Categories'),
+                ['fc' => 'FAQ_Categories'],
                 'FAQs.FAQ_Category_ID= fc.FAQ_Category_ID'
             );
-            $select->order(array('FAQs.FAQ_Category_ID', 'FAQ_ID'));
+            $select->order(['FAQs.FAQ_Category_ID', 'FAQ_ID']);
         };
         return $this->select($callback);
     }

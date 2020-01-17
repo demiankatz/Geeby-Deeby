@@ -59,8 +59,8 @@ class ItemsCreators extends Gateway
     /**
      * Get a list of credits attached to the specified person.
      *
-     * @var int    $personID Person ID
-     * @var string $sort     Type of sorting (series/title/year)
+     * @param int    $personID Person ID
+     * @param string $sort     Type of sorting (series/title/year)
      *
      * @return mixed
      */
@@ -77,8 +77,8 @@ class ItemsCreators extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * item.
      *
-     * @var int    $personID Person ID
-     * @var string $sort     Type of sorting (title or year)
+     * @param int    $personID Person ID
+     * @param string $sort     Type of sorting (title or year)
      *
      * @return mixed
      */
@@ -86,38 +86,39 @@ class ItemsCreators extends Gateway
     {
         $callback = function ($select) use ($personID, $sort) {
             $count = new Expression(
-                'count(distinct(?))', array('icc.Citation_ID'),
-                array(Expression::TYPE_IDENTIFIER)
+                'count(distinct(?))', ['icc.Citation_ID'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
-                array('icc' => 'Items_Creators_Citations'),
+                ['icc' => 'Items_Creators_Citations'],
                 'Items_Creators.Item_Creator_ID = icc.Item_Creator_ID',
-                array('Citation_Count' => $count), Select::JOIN_LEFT
+                ['Citation_Count' => $count], Select::JOIN_LEFT
             );
             $select->join(
-                array('i' => 'Items'), 'Items_Creators.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'Items_Creators.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('eds' => 'Editions'), 'eds.Item_ID = i.Item_ID'
+                ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID'
             );
             $year = new Expression(
-                'min(?)', array('erd.Year'),
-                array(Expression::TYPE_IDENTIFIER)
+                'min(?)', ['erd.Year'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
-                array('erd' => 'Editions_Release_Dates'),
-                'eds.Edition_ID = erd.Edition_ID OR eds.Parent_Edition_ID = erd.Edition_ID',
-                array('Earliest_Year' => $year), Select::JOIN_LEFT
+                ['erd' => 'Editions_Release_Dates'],
+                'eds.Edition_ID = erd.Edition_ID OR '
+                . 'eds.Parent_Edition_ID = erd.Edition_ID',
+                ['Earliest_Year' => $year], Select::JOIN_LEFT
             );
             $select->join(
-                array('r' => 'Roles'),
+                ['r' => 'Roles'],
                 'Items_Creators.Role_ID = r.Role_ID'
             );
             $sortFields = $sort === 'year'
-                ? array('Role_Name', 'Earliest_Year', 'Item_Name')
-                : array('Role_Name', 'Item_Name', 'Earliest_Year');
+                ? ['Role_Name', 'Earliest_Year', 'Item_Name']
+                : ['Role_Name', 'Item_Name', 'Earliest_Year'];
             $select->order($sortFields);
-            $select->group(array('Role_Name', 'Item_Name'));
+            $select->group(['Role_Name', 'Item_Name']);
             $select->where->equalTo('Person_ID', $personID);
         };
         return $this->select($callback);
@@ -127,7 +128,7 @@ class ItemsCreators extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * series.
      *
-     * @var int $personID Person ID
+     * @param int $personID Person ID
      *
      * @return mixed
      */
@@ -135,28 +136,28 @@ class ItemsCreators extends Gateway
     {
         $callback = function ($select) use ($personID) {
             $select->join(
-                array('i' => 'Items'), 'Items_Creators.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'Items_Creators.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('eds' => 'Editions'), 'eds.Item_ID = i.Item_ID',
-                array('Edition_Name', 'Volume', 'Position', 'Replacement_Number')
+                ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID',
+                ['Edition_Name', 'Volume', 'Position', 'Replacement_Number']
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->join(
-                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
+                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
             );
             $select->join(
-                array('r' => 'Roles'),
+                ['r' => 'Roles'],
                 'Items_Creators.Role_ID = r.Role_ID'
             );
-            $fields = array(
+            $fields = [
                 'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Volume',
                 'eds.Position', 'eds.Replacement_Number', 'Item_Name'
-            );
+            ];
             $select->order($fields);
             $select->group($fields);
             $select->where->equalTo('Person_ID', $personID);
@@ -175,16 +176,16 @@ class ItemsCreators extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('p' => 'People'),
+                ['p' => 'People'],
                 'Items_Creators.Person_ID = p.Person_ID'
             );
             $select->join(
-                array('r' => 'Roles'),
+                ['r' => 'Roles'],
                 'Items_Creators.Role_ID = r.Role_ID'
             );
-            $fields = array(
+            $fields = [
                 'Role_Name', 'Last_Name', 'First_Name', 'Middle_Name'
-            );
+            ];
             $select->order($fields);
             $select->where->equalTo('Item_ID', $itemID);
         };

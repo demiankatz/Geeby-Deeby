@@ -43,7 +43,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      *
      * @var array
      */
-    protected $aliases = array(
+    protected $aliases = [
         'authority' => 'GeebyDeeby\Db\Row\Authority',
         'category' => 'GeebyDeeby\Db\Row\Category',
         'citation' => 'GeebyDeeby\Db\Row\Citation',
@@ -128,18 +128,21 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'tagtype' => 'GeebyDeeby\Db\Row\TagType',
         'user' => 'GeebyDeeby\Db\Row\User',
         'usergroup' => 'GeebyDeeby\Db\Row\UserGroup',
-    );
+    ];
 
     /**
      * Constructor
      *
      * Make sure Row gateways are properly initialized.
      *
-     * @param mixed                configOrContainerInstance Config or container (for backward compatibility)
-     * @param null|ConfigInterface $v3config                 Configuration settings (optional)
+     * @param mixed                $configOrContainerInstance Config or container
+     * (for backward compatibility)
+     * @param null|ConfigInterface $v3config                  Configuration settings
+     * (optional)
      */
-    public function __construct($configOrContainerInstance = null, array $v3config = [])
-    {
+    public function __construct($configOrContainerInstance = null,
+        array $v3config = []
+    ) {
         $this->addAbstractFactory('GeebyDeeby\Db\Row\AbstractFactory');
         parent::__construct($configOrContainerInstance, $v3config);
     }

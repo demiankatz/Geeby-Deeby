@@ -1,20 +1,20 @@
-<?
+<?php
     $title = 'ISBN Details';
     $this->layout()->title = $title;
 ?>
-<? if (!$isbn->isValid()): ?>
+<?php if (!$isbn->isValid()): ?>
   <p>Invalid ISBN!</p>
-<? else: ?>
-  <? if (empty($config)): ?>
+<?php else: ?>
+  <?php if (empty($config)): ?>
     <p>No links available.</p>
-  <? else: ?>
-    <? foreach ($config as $section => $details): ?>
+  <?php else: ?>
+    <?php foreach ($config as $section => $details): ?>
       <h2><?=$this->escapeHtml($section)?></h2>
-      <? if (!empty($details['description'])): ?><p><?=$details['description']?></p><? endif; ?>
+      <?php if (!empty($details['description'])): ?><p><?=$details['description']?></p><?php endif; ?>
       <p>
-        <? foreach ($details['links'] as $label => $url): ?>
+        <?php foreach ($details['links'] as $label => $url): ?>
           <a href="<?=$this->escapeHtml(str_replace('%isbn10%', $isbn->get10(), $url))?>"><?=$this->escapeHtml($label)?></a><br />
-        <? endforeach; ?>
-    <? endforeach ?>
-  <? endif; ?>
-<? endif; ?>
+        <?php endforeach; ?>
+    <?php endforeach ?>
+  <?php endif; ?>
+<?php endif; ?>

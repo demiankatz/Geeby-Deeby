@@ -1,8 +1,8 @@
-<? if (count($this->selectedCitations) == 0): ?>
+<?php if (count($this->selectedCitations) == 0): ?>
   No citations.
-<? else: ?>
+<?php else: ?>
   <table>
-    <? foreach ($this->selectedCitations as $current): ?>
+    <?php foreach ($this->selectedCitations as $current): ?>
       <tr>
         <td>
           <?=$this->escapeHtml($current['Citation'])?>
@@ -12,6 +12,6 @@
           </a>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

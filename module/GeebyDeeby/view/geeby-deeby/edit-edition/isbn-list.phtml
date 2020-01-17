@@ -1,9 +1,9 @@
-<? if (isset($ISBNs) && count($ISBNs) > 0): ?>
-  <? foreach ($ISBNs as $current): ?>
+<?php if (isset($ISBNs) && count($ISBNs) > 0): ?>
+  <?php foreach ($ISBNs as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <? if (!empty($current['ISBN'])): ?><?=$this->escapeHtml($current['ISBN'])?> / <? endif; ?><?=$this->escapeHtml($current['ISBN13'])?><? if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<? endif; ?>
+          <?php if (!empty($current['ISBN'])): ?><?=$this->escapeHtml($current['ISBN'])?> / <?php endif; ?><?=$this->escapeHtml($current['ISBN13'])?><?php if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
         </td>
         <td>
           <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('ISBN', <?=$current['Sequence_ID']?>); return false;">
@@ -11,7 +11,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No ISBNs set.
-<? endif; ?>
+<?php endif; ?>

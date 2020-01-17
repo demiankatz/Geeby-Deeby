@@ -57,7 +57,7 @@ class TagsURIs extends Gateway
     /**
      * Get a list of URIs for the specified tag.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */
@@ -65,7 +65,7 @@ class TagsURIs extends Gateway
     {
         $callback = function ($select) use ($tagID) {
             $select->join(
-                array('pr' => 'Predicates'),
+                ['pr' => 'Predicates'],
                 'Tags_URIs.Predicate_ID = pr.Predicate_ID'
             );
             $select->where->equalTo('Tag_ID', $tagID);
@@ -76,7 +76,7 @@ class TagsURIs extends Gateway
     /**
      * Get a list of tags for the specified URI.
      *
-     * @var string $uri URI
+     * @param string $uri URI
      *
      * @return mixed
      */
@@ -84,14 +84,14 @@ class TagsURIs extends Gateway
     {
         $callback = function ($select) use ($uri) {
             $select->join(
-                array('t' => 'Tags'),
+                ['t' => 'Tags'],
                 'Tags_URIs.Tag_ID = t.Tag_ID'
             );
             $select->join(
-                array('pr' => 'Predicates'),
+                ['pr' => 'Predicates'],
                 'Tags_URIs.Predicate_ID = pr.Predicate_ID'
             );
-            $select->order(array('Tag'));
+            $select->order(['Tag']);
             $select->where->equalTo('URI', $uri);
         };
         return $this->select($callback);

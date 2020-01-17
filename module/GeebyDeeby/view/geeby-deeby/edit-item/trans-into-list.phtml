@@ -1,9 +1,9 @@
-<? if (isset($translatedInto) && count($translatedInto) > 0): ?>
-  <? foreach ($translatedInto as $current): ?>
+<?php if (isset($translatedInto) && count($translatedInto) > 0): ?>
+  <?php foreach ($translatedInto as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>#translations-tab">
+          <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>#translations-tab">
             <?=$this->escapeHtml($current['Item_Name'])?>
           </a>
         </td>
@@ -13,7 +13,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No relevant items.
-<? endif; ?>
+<?php endif; ?>

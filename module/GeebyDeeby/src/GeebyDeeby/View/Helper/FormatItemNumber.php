@@ -55,7 +55,7 @@ class FormatItemNumber extends \Zend\View\Helper\AbstractHelper
             : '';
         if (isset($arr['Position']) && $arr['Position'] > 0) {
             $str .= $arr['Position'];
-            $str .= (isset($arr['Replacement_Number']) && $arr['Replacement_Number'] > 0)
+            $str .= (($arr['Replacement_Number'] ?? 0) > 0)
                 ? ' (replacement title)' : '';
         }
         return empty($str) ? $default : $prefix . $str . $suffix;

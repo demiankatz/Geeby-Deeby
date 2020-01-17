@@ -67,10 +67,10 @@ class EditionsFullText extends Gateway
     {
         $callback = function ($select) use ($edition) {
             $select->join(
-                array('fts' => 'Full_Text_Sources'),
+                ['fts' => 'Full_Text_Sources'],
                 'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID'
             );
-            $fields = array('Full_Text_Source_Name', 'Full_Text_URL');
+            $fields = ['Full_Text_Source_Name', 'Full_Text_URL'];
             $select->order($fields);
             $select->where->equalTo('Edition_ID', $edition);
         };
@@ -91,17 +91,17 @@ class EditionsFullText extends Gateway
             $select->quantifier('DISTINCT');
             $select->columns(['Full_Text_URL']);
             $select->join(
-                array('fts' => 'Full_Text_Sources'),
+                ['fts' => 'Full_Text_Sources'],
                 'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
                 ['Full_Text_Source_Name']
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Full_Text.Edition_ID = eds.Edition_ID'
                 . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
                 ['Edition_ID']
             );
-            $fields = array('Full_Text_Source_Name', 'Full_Text_URL');
+            $fields = ['Full_Text_Source_Name', 'Full_Text_URL'];
             $select->order($fields);
             $select->where->equalTo('eds.Edition_ID', $edition);
         };
@@ -121,19 +121,19 @@ class EditionsFullText extends Gateway
             $select->quantifier('DISTINCT');
             $select->columns(['Full_Text_URL']);
             $select->join(
-                array('fts' => 'Full_Text_Sources'),
+                ['fts' => 'Full_Text_Sources'],
                 'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
                 ['Full_Text_Source_Name']
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Full_Text.Edition_ID = eds.Edition_ID'
                 . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
                 ['Edition_Name']
             );
-            $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
+            $select->join(['i' => 'Items'], 'eds.Item_ID = i.Item_ID');
             $fields
-                = array('Full_Text_Source_Name', 'Edition_Name', 'Full_Text_URL');
+                = ['Full_Text_Source_Name', 'Edition_Name', 'Full_Text_URL'];
             $select->order($fields);
             $select->where->equalTo('i.Item_ID', $item);
         };
@@ -155,58 +155,58 @@ class EditionsFullText extends Gateway
         $callback = function ($select) use ($series, $fuzzy, $source) {
             if ($fuzzy) {
                 $select->join(
-                    array('eds2' => 'Editions'),
+                    ['eds2' => 'Editions'],
                     'Editions_Full_Text.Edition_ID = eds2.Edition_ID'
                 );
                 $select->join(
-                    array('eds' => 'Editions'), 'eds2.Item_ID = eds.Item_ID'
+                    ['eds' => 'Editions'], 'eds2.Item_ID = eds.Item_ID'
                 );
             } else {
                 $select->join(
-                    array('eds' => 'Editions'),
+                    ['eds' => 'Editions'],
                     'Editions_Full_Text.Edition_ID = eds.Edition_ID'
                 );
             }
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->join(
-                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
+                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
             );
             $select->join(
-                array('childEds' => 'Editions'),
+                ['childEds' => 'Editions'],
                 'eds.Edition_ID = childEds.Parent_Edition_ID',
-                array(),
+                [],
                 Select::JOIN_LEFT
             );
             $select->join(
-                array('childItems' => 'Items'),
+                ['childItems' => 'Items'],
                 'childEds.Item_ID = childItems.Item_ID',
-                array(
+                [
                     'Child_Items' => new Expression(
                         'GROUP_CONCAT('
                             . 'COALESCE(?, ?) ORDER BY ? SEPARATOR \'||\')',
-                        array(
+                        [
                             'childIat.Item_AltName', 'childItems.Item_Name',
-                            'childEds.Position_In_Parent'),
-                        array(
+                            'childEds.Position_In_Parent'],
+                        [
                             Expression::TYPE_IDENTIFIER,
                             Expression::TYPE_IDENTIFIER,
                             Expression::TYPE_IDENTIFIER
-                        )
+                        ]
                     )
-                ),
+                ],
                 Select::JOIN_LEFT
             );
             $select->join(
-                array('childIat' => 'Items_AltTitles'),
+                ['childIat' => 'Items_AltTitles'],
                 'childEds.Preferred_Item_AltName_ID = childIat.Sequence_ID',
-                array(), Select::JOIN_LEFT
+                [], Select::JOIN_LEFT
             );
             if (null !== $series) {
                 $select->where->equalTo('eds.Series_ID', $series);
@@ -216,15 +216,15 @@ class EditionsFullText extends Gateway
                     ->equalTo('Editions_Full_Text.Full_Text_Source_ID', $source);
             }
             $select->group(
-                array(
+                [
                     'eds.Item_ID', 'eds.Series_ID', 'eds.Volume', 'eds.Position',
                     'eds.Replacement_Number'
-                )
+                ]
             );
-            $ord = array(
+            $ord = [
                 'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
                 'eds.Replacement_Number', 'Item_Name'
-            );
+            ];
             $select->order($ord);
         };
         return $this->select($callback);

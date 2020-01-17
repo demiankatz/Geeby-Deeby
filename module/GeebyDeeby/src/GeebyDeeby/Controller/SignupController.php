@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+
 use Zend\Crypt\Password\Bcrypt;
 
 /**
@@ -55,28 +56,28 @@ class SignupController extends AbstractBase
             $password2 = $this->params()->fromPost('Password2');
             if ($view->user == '' || $view->fullname == '' || $password1 == '') {
                 $view->error = 'Please fill out all required fields.';
-            } else if (!preg_match('/^[0-9a-zA-Z-_]+$/', $view->user)) {
+            } elseif (!preg_match('/^[0-9a-zA-Z-_]+$/', $view->user)) {
                 $view->error = 'Username must consist of letters, '
                     . 'numbers, dashes and underscores.';
-            } else if ($password1 != $password2
+            } elseif ($password1 != $password2
                 || strpos($view->address, '://') !== false // block spam addresses
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
             } else {
                 $table = $this->getDbTable('user');
-                $exists = $table->select(array('Username' => $view->user));
+                $exists = $table->select(['Username' => $view->user]);
                 if (count($exists) > 0) {
                     $view->error = 'The username you selected is already in use.';
                 } else {
                     $bcrypt = new Bcrypt();
                     $table->insert(
-                        array(
+                        [
                             'Username' => $view->user,
                             'Password_Hash' => $bcrypt->create($password1),
                             'Name' => $view->fullname,
                             'Address' => $view->address,
                             'Person_ID' => 0
-                        )
+                        ]
                     );
                     $view->setTemplate('geeby-deeby/signup/success');
                 }

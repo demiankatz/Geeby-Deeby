@@ -57,7 +57,7 @@ class SeriesAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -65,11 +65,11 @@ class SeriesAttributesValues extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('sa' => 'Series_Attributes'),
+                ['sa' => 'Series_Attributes'],
                 'sa.Series_Attribute_ID = '
                 . 'Series_Attributes_Values.Series_Attribute_ID'
             );
-            $select->order(array('sa.Display_Priority', 'sa.Series_Attribute_Name'));
+            $select->order(['sa.Display_Priority', 'sa.Series_Attribute_Name']);
             $select->where->equalTo('Series_ID', $seriesID);
         };
         return $this->select($callback);

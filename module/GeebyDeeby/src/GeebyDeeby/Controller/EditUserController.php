@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+
 use Zend\Crypt\Password\Bcrypt;
 
 /**
@@ -70,13 +71,13 @@ class EditUserController extends AbstractBase
         }
 
         // Process standard values:
-        $assignMap = array(
+        $assignMap = [
             'username' => 'Username',
             'name' => 'Name',
             'address' => 'Address',
             'person_id' => 'Person_ID',
             'group_id' => 'User_Group_ID',
-        );
+        ];
         $view = $this->handleGenericItem('user', $assignMap, 'user', 'User_Editor');
 
         // Add associated person details, if necessary:
@@ -110,7 +111,8 @@ class EditUserController extends AbstractBase
     public function usergrouplistAction()
     {
         return $this->getGenericList(
-            'usergroup', 'usergroups', 'geeby-deeby/edit-user/render-usergroups', 'User_Editor'
+            'usergroup', 'usergroups', 'geeby-deeby/edit-user/render-usergroups',
+            'User_Editor'
         );
     }
 
@@ -121,13 +123,14 @@ class EditUserController extends AbstractBase
      */
     public function usergroupAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'name' => 'Group_Name',
             'content_editor' => 'Content_Editor',
             'user_editor' => 'User_Editor',
             'approver' => 'Approver',
             'data_manager' => 'Data_Manager',
-        );
-        return $this->handleGenericItem('usergroup', $assignMap, 'usergroup', 'User_Editor');
+        ];
+        return $this
+            ->handleGenericItem('usergroup', $assignMap, 'usergroup', 'User_Editor');
     }
 }

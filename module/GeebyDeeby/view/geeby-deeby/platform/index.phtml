@@ -1,25 +1,25 @@
-<?
+<?php
     $title = $platform['Platform'];
     $this->layout()->title = 'Platform - ' . $title;
     $displayedSomething = false;
 ?>
-<? if (count($items) > 0): $displayedSomething = true; ?>
-  <? $series = false; foreach ($items as $credit): ?>
-    <? if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
-      <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+<?php if (count($items) > 0): $displayedSomething = true; ?>
+  <?php $series = false; foreach ($items as $credit): ?>
+    <?php if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
+      <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($credit['Series_Name']);?>
       </a></h2>
-    <? endif; ?>
+    <?php endif; ?>
     <span class="item">
       <?=$this->escapeHtml($this->formatItemNumber($credit))?>
-      <a href="<?=$this->url('item', array('id' => $credit['Item_ID']))?>">
+      <a href="<?=$this->url('item', ['id' => $credit['Item_ID']])?>">
         <?=$this->fixtitle($credit['Item_Name'])?>
       </a>
       <br />
     </span>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>
 
-<? if (!$displayedSomething): ?>
+<?php if (!$displayedSomething): ?>
   <p>No information is available about this platform.</p>
-<? endif; ?>
+<?php endif; ?>

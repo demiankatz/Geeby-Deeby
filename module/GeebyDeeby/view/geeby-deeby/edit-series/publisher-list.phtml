@@ -1,11 +1,11 @@
-<? if (isset($series_publishers) && count($series_publishers) > 0): ?>
-  <? foreach ($series_publishers as $current): ?>
+<?php if (isset($series_publishers) && count($series_publishers) > 0): ?>
+  <?php foreach ($series_publishers as $current): ?>
     <table class="list_item">
       <tr>
         <td>
           <a href="#" onclick="Series.editLink('Publisher', <?=$current['Series_Publisher_ID']?>); return false;"><?=$this->escapeHtml($current['Publisher_Name'])?></a>
-          <? if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
-            (<?
+          <?php if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
+            (<?php
               $city = (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']);
               $street = (empty($current['Street']) ? '' : ' -- ' . $current['Street']);
               $address = $current['Country_Name'] . $city . $street;
@@ -13,7 +13,7 @@
               echo strlen($address) > 0 ? $this->escapeHtml($address) : '';
               echo strlen($current['Note']) > 0 ? ((strlen($address) > 0 || strlen($current['Imprint_Name']) > 0) ? ' - ' : '') . $this->escapeHtml($current['Note']) : '';
             ?>)
-          <? endif; ?>
+          <?php endif; ?>
         </td>
         <td>
           <a class="ui-icon ui-icon-gear" href="#" onclick="Series.editLink('Publisher', <?=$current['Series_Publisher_ID']?>); return false;">
@@ -25,7 +25,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No publishers set.
-<? endif; ?>
+<?php endif; ?>

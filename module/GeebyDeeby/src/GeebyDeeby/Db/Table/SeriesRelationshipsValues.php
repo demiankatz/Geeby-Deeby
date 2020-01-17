@@ -57,7 +57,7 @@ class SeriesRelationshipsValues extends Gateway
     /**
      * Get a list of series related to the provided subject series ID.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -65,7 +65,7 @@ class SeriesRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Relationships_Values.Subject_Series_ID = s.Series_ID'
             );
             $select->where(['Object_Series_ID' => $seriesID]);
@@ -76,7 +76,7 @@ class SeriesRelationshipsValues extends Gateway
     /**
      * Get a list of series related to the provided subject series ID.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -84,7 +84,7 @@ class SeriesRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Relationships_Values.Object_Series_ID = s.Series_ID'
             );
             $select->where(['Subject_Series_ID' => $seriesID]);
@@ -95,7 +95,7 @@ class SeriesRelationshipsValues extends Gateway
     /**
      * Get a list of relationships for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */

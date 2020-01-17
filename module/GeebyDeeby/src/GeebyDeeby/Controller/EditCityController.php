@@ -57,7 +57,7 @@ class EditCityController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array('city' => 'City_Name');
+        $assignMap = ['city' => 'City_Name'];
         $view = $this->handleGenericItem('city', $assignMap, 'city');
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->uris = $this->getDbTable('citiesuris')

@@ -1,10 +1,10 @@
-<? $this->layout()->title = 'A 404 error occurred' ?>
+<?php $this->layout()->title = 'A 404 error occurred' ?>
 <h2><?php echo $this->message ?></h2>
 
 <?php if (isset($this->reason) && $this->reason): ?>
 
 <?php
-$reasonMessage= '';
+$reasonMessage = '';
 switch ($this->reason) {
     case 'error-controller-cannot-dispatch':
         $reasonMessage = 'The requested controller was unable to dispatch the request.';

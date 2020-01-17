@@ -1,15 +1,15 @@
-<?
+<?php
     $this->layout()->title = 'Choose Series';
 ?>
 <p class="disclaimer">This item is contained within multiple series; please select one.</p>
 
 <form action="" method="post">
   <select name="series">
-    <? foreach ($series as $current): ?>
+    <?php foreach ($series as $current): ?>
       <option value="<?=$current['Series_ID']?>">
         <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
       </option>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </select>
   <input type="submit" value="Submit" />
 </form>

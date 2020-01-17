@@ -1,19 +1,19 @@
-<? if (count($publishers) < 1): ?>
+<?php if (count($publishers) < 1): ?>
   <p>No publishers listed in this database yet.</p>
-<? else: ?>
+<?php else: ?>
   <h2>
     <?=$this->firstLetterMenu($publishers, 'Publisher_Name'); ?>
   </h2>
-  <? $currentLetter = false; foreach ($publishers as $i=>$current): ?>
-    <? $first = $this->firstletter($current['Publisher_Name']); ?>
-    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <? if ($i > 0): ?>
+  <?php $currentLetter = false; foreach ($publishers as $i => $current): ?>
+    <?php $first = $this->firstletter($current['Publisher_Name']); ?>
+    <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <?php if ($i > 0): ?>
         <a name="<?=$this->escapeHtml($currentLetter)?>"/>
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
-      <? endif; ?>
-    <? endif; ?>
-    <a href="<?=$this->url('edit/publisher', array('id' => $current['Publisher_ID']))?>">
+      <?php endif; ?>
+    <?php endif; ?>
+    <a href="<?=$this->url('edit/publisher', ['id' => $current['Publisher_ID']])?>">
       <?=$this->escapeHtml($this->fixtitle($current['Publisher_Name']))?>
     </a><br />
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

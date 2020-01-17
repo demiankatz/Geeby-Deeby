@@ -1,11 +1,11 @@
-<?
+<?php
     $this->layout()->title = 'Review Submitted';
 ?>
 
-<? if ($noChange): ?>
+<?php if ($noChange): ?>
   <p>You did not make any changes; nothing has been saved.</p>
-<? else: ?>
+<?php else: ?>
   <p>Your review has been saved. It will appear on the site once it has been approved by an administrator.</p>
-<? endif; ?>
+<?php endif; ?>
 
-<p><a href="<?=$this->url('item', array('id' => $item))?>">Back to Item</a></p>
+<p><a href="<?=$this->url('item', ['id' => $item])?>">Back to Item</a></p>

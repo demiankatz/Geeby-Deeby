@@ -1,22 +1,22 @@
-<?
+<?php
     $title = $this->fixtitle($series['Series_Name']);
     $this->layout()->title = 'Series Subjects/Tags - ' . $title;
     $lastTag = null;
 ?>
-<? if (count($tags) < 1): ?>
+<?php if (count($tags) < 1): ?>
   <p>No subjects/tags listed for this series.</p>
-<? else: ?>
-  <? foreach ($tags as $i=>$current): ?>
-    <? if ($current['Tag'] !== $lastTag): ?>
-      <? $lastTag = $current['Tag']; ?>
+<?php else: ?>
+  <?php foreach ($tags as $i => $current): ?>
+    <?php if ($current['Tag'] !== $lastTag): ?>
+      <?php $lastTag = $current['Tag']; ?>
       <h2>
-        <a href="<?=$this->url('tag', array('id' => $current['Tag_ID']))?>">
+        <a href="<?=$this->url('tag', ['id' => $current['Tag_ID']])?>">
           <?=$this->escapeHtml($current['Tag'])?>
         </a>
       </h2>
-    <? endif; ?>
-    <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+    <?php endif; ?>
+    <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
       <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
     </a><br />
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

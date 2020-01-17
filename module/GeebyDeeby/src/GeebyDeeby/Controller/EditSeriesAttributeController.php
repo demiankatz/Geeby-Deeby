@@ -52,7 +52,8 @@ class EditSeriesAttributeController extends AbstractBase
         // If this is not an AJAX request, we also want to display relationships:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->relationships
-                = $this->forwardTo(__NAMESPACE__ . '\EditSeriesRelationship', 'list')->relationships;
+                = $this->forwardTo(__NAMESPACE__ . '\EditSeriesRelationship', 'list')
+                ->relationships;
         }
         return $view;
     }
@@ -64,13 +65,13 @@ class EditSeriesAttributeController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'attribute_name' => 'Series_Attribute_Name',
             'rdf_property' => 'Series_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
             'priority' => 'Display_Priority'
 
-        );
+        ];
         $response = $this
             ->handleGenericItem('seriesattribute', $assignMap, 'attribute');
 

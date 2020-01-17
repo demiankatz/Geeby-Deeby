@@ -47,10 +47,10 @@ class ReviewsController extends AbstractBase
     {
         $table = $this->getDbTable('recentreviews');
         return $this->createViewModel(
-            array(
+            [
                 'reviews' => $table->getRecentItemReviews(),
                 'comments' => $table->getRecentSeriesComments()
-            )
+            ]
         );
     }
 }

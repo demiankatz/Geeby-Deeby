@@ -100,7 +100,7 @@ class CountryController extends AbstractBase
         }
 
         return $this->getRdfResponse($this->getGraphFromView($view));
-     }
+    }
 
     /**
      * "Show country" page
@@ -110,7 +110,8 @@ class CountryController extends AbstractBase
     public function showAction()
     {
         $view = $this->getCountryViewModel();
-        return $view ? $view : $this->forwardTo(__NAMESPACE__ . '\Country', 'notfound');
+        return $view
+            ? $view : $this->forwardTo(__NAMESPACE__ . '\Country', 'notfound');
     }
 
     /**
@@ -127,7 +128,7 @@ class CountryController extends AbstractBase
             return false;
         }
         $view = $this->createViewModel(
-            array('country' => $rowObj->toArray())
+            ['country' => $rowObj->toArray()]
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForCountry($id);
@@ -143,7 +144,7 @@ class CountryController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array('countries' => $this->getDbTable('country')->getList())
+            ['countries' => $this->getDbTable('country')->getList()]
         );
     }
 

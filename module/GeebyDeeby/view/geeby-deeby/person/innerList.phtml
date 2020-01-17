@@ -1,43 +1,43 @@
-<? $role = $series = $year = false; foreach ($list as $current): ?>
-  <? if ($role !== $current['Role_Name']): $role = $current['Role_Name']; $series = false; ?>
+<?php $role = $series = $year = false; foreach ($list as $current): ?>
+  <?php if ($role !== $current['Role_Name']): $role = $current['Role_Name']; $series = false; ?>
     <h2>Items with "<?=$this->escapeHtml($title)?>" as <?=$labelPrefix . ' ' . $this->escapeHtml($role)?></h2>
-      <? if ($sort == 'year'): ?>
+      <?php if ($sort == 'year'): ?>
         <div class="alert alert-info">Note: This list is sorted by the earliest known
         dated edition for each title; earlier editions may exist.</div>
-      <? endif; ?>
-  <? endif; ?>
-  <? if ($sort === 'series' && $series !== $current['Series_ID']): $series = $current['Series_ID']; ?>
-    <h3 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+      <?php endif; ?>
+  <?php endif; ?>
+  <?php if ($sort === 'series' && $series !== $current['Series_ID']): $series = $current['Series_ID']; ?>
+    <h3 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
       <?=$this->fixtitle($current['Series_Name']);?>
     </a></h3>
-  <? endif; ?>
-  <? if ($sort === 'year' && $year !== $current['Earliest_Year']): $year = $current['Earliest_Year']; ?>
+  <?php endif; ?>
+  <?php if ($sort === 'year' && $year !== $current['Earliest_Year']): $year = $current['Earliest_Year']; ?>
     <h3 class="year">
-      <? if ($year < 0): ?>
+      <?php if ($year < 0): ?>
         Unpublished
-      <? elseif (empty($year)): ?>
+      <?php elseif (empty($year)): ?>
         Date Unknown
-      <? else: ?>
+      <?php else: ?>
         <?=$this->escapeHtml($year);?>
-      <? endif; ?>
+      <?php endif; ?>
     </h3>
-  <? endif; ?>
+  <?php endif; ?>
   <span class="item">
-    <? if ($sort === 'series'): ?>
+    <?php if ($sort === 'series'): ?>
       <span class="number">
         <?=$this->escapeHtml($this->formatItemNumber($current))?>
       </span>
-    <? endif; ?>
-    <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+    <?php endif; ?>
+    <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
       <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
     </a>
-    <? if (!empty($current['Note'])): ?> (<?=$this->escapeHtml($current['Note'])?>)<? endif; ?>
-    <? if ($sort === 'title' && !empty($current['Edition_Count'])): ?>
+    <?php if (!empty($current['Note'])): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
+    <?php if ($sort === 'title' && !empty($current['Edition_Count'])): ?>
       (<?=$current['Edition_Count'] === 1 ? '1 edition' : intval($current['Edition_Count']) . ' editions'?>)
-    <? endif; ?>
-    <? if ($sort === 'title' && !empty($current['Citation_Count'])): ?>
+    <?php endif; ?>
+    <?php if ($sort === 'title' && !empty($current['Citation_Count'])): ?>
       (<?=$current['Citation_Count'] === 1 ? '1 citation' : intval($current['Citation_Count']) . ' citations'?>)
-    <? endif; ?>
+    <?php endif; ?>
     <br />
   </span>
-<? endforeach; ?>
+<?php endforeach; ?>

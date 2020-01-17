@@ -1,13 +1,13 @@
-<?
+<?php
     $this->layout()->title = 'Edit Review';
 ?>
 
-<? if (!empty($review)): ?>
+<?php if (!empty($review)): ?>
   <p class="disclaimer">You have already reviewed this item.  You can make changes
   to the text below and resubmit it, but if you do so, it will
   temporarily disappear from the site until your changes are
   approved.  Sorry for any inconvenience!</p>
-<? endif; ?>
+<?php endif; ?>
 
 <form action="" method="post">
   <h2>Review of <?=$this->escapeHtml($this->fixtitle($item['Item_Name']))?>:</h2>

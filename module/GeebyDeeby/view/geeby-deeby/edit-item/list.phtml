@@ -1,9 +1,9 @@
-<? if (!isset($item_list) || count($item_list) < 1): ?>
+<?php if (!isset($item_list) || count($item_list) < 1): ?>
   No items.
-<? else: ?>
+<?php else: ?>
   <table class="list_item">
     <tr><th>Order</th><th colspan="2">Title / Material Type</th></tr>
-    <? foreach ($item_list as $current): ?>
+    <?php foreach ($item_list as $current): ?>
       <tr>
         <td>
           <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="attachment_order_<?=$current['Item_ID']?>" />
@@ -14,12 +14,12 @@
           </a>
         </td>
         <td>
-          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>">
+          <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>">
             <?=$this->escapeHtml($current['Item_Name'])?>
           </a>
-          (<?=$this->escapeHtml($current['Material_Type_Name'])?><? if (!empty($current['Note'])): ?>, <?=$this->escapeHtml($current['Note'])?><? endif; ?>)
+          (<?=$this->escapeHtml($current['Material_Type_Name'])?><?php if (!empty($current['Note'])): ?>, <?=$this->escapeHtml($current['Note'])?><?php endif; ?>)
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

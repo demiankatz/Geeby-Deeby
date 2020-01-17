@@ -1,9 +1,9 @@
-<? if (isset($translatedFrom) && count($translatedFrom) > 0): ?>
-  <? foreach ($translatedFrom as $current): ?>
+<?php if (isset($translatedFrom) && count($translatedFrom) > 0): ?>
+  <?php foreach ($translatedFrom as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <a href="<?=$this->url('edit/series', array('id' => $current['Series_ID']))?>#translations-tab">
+          <a href="<?=$this->url('edit/series', ['id' => $current['Series_ID']])?>#translations-tab">
             <?=$this->escapeHtml($current['Series_Name'])?>
           </a>
         </td>
@@ -13,7 +13,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No relevant series.
-<? endif; ?>
+<?php endif; ?>

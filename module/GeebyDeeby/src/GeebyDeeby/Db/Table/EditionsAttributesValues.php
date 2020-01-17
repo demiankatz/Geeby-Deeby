@@ -57,7 +57,7 @@ class EditionsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -65,11 +65,11 @@ class EditionsAttributesValues extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('ea' => 'Editions_Attributes'),
+                ['ea' => 'Editions_Attributes'],
                 'ea.Editions_Attribute_ID = '
                 . 'Editions_Attributes_Values.Editions_Attribute_ID'
             );
-            $select->order(array('ea.Display_Priority', 'ea.Editions_Attribute_Name'));
+            $select->order(['ea.Display_Priority', 'ea.Editions_Attribute_Name']);
             $select->where->equalTo('Edition_ID', $editionID);
         };
         return $this->select($callback);
@@ -78,7 +78,7 @@ class EditionsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -86,18 +86,18 @@ class EditionsAttributesValues extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('e' => 'Editions'),
+                ['e' => 'Editions'],
                 'e.Edition_ID = Editions_Attributes_Values.Edition_ID'
             );
             $select->join(
-                array('i' => 'Items'), 'e.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'e.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('ea' => 'Editions_Attributes'),
+                ['ea' => 'Editions_Attributes'],
                 'ea.Editions_Attribute_ID = '
                 . 'Editions_Attributes_Values.Editions_Attribute_ID'
             );
-            $select->order(array('ea.Display_Priority', 'ea.Editions_Attribute_Name'));
+            $select->order(['ea.Display_Priority', 'ea.Editions_Attribute_Name']);
             $select->where->equalTo('i.Item_ID', $itemID);
         };
         return $this->select($callback);

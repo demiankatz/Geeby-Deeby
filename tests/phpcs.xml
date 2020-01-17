@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ruleset name="Geeby-Deeby Coding Standards" namespace="GeebyDeeby\PHPCS">
+  <description>Coding standards for Geeby-Deeby.</description>
+  <file>../module</file>
+  <exclude-pattern>module/[^/]+/config/*</exclude-pattern>
+  <exclude-pattern>module/[^/]+/tests/*</exclude-pattern>
+  <arg name="extensions" value="php"/>
+  <rule ref="PEAR">
+    <exclude name="PEAR.Commenting.FunctionComment.ParamCommentAlignment" />
+  </rule>
+</ruleset>

@@ -1,21 +1,21 @@
-<?
+<?php
     $this->layout()->title = 'Search Results - Title';
     $empty = true;
-    $lists = array(
+    $lists = [
       'Series' => $series,
       'Series Alternate Titles' => $seriesAltTitles,
       'Item' => $items,
       'Item Alternate Titles' => $itemsAltTitles,
-    );
+    ];
 ?>
 <div class="results row">
-  <? foreach($lists as $title=>$results): ?>
-    <? if (count($results) > 0): $empty = false; ?>
-      <? $prefix = explode(' ', $title); ?>
-      <?=$this->render('geeby-deeby/search/list.phtml', array('title'=>$title,'items'=>$results,'prefix'=>$prefix[0])) ?>
-    <? endif; ?>
-  <? endforeach; ?>
-  <? if ($empty): ?>
+  <?php foreach($lists as $title => $results): ?>
+    <?php if (count($results) > 0): $empty = false; ?>
+      <?php $prefix = explode(' ', $title); ?>
+      <?=$this->render('geeby-deeby/search/list.phtml', ['title' => $title,'items' => $results,'prefix' => $prefix[0]]) ?>
+    <?php endif; ?>
+  <?php endforeach; ?>
+  <?php if ($empty): ?>
     <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
-  <? endif; ?>
+  <?php endif; ?>
 </div>

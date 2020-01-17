@@ -57,14 +57,14 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      *
      * @var array
      */
-    protected $pseudonyms = array();
+    protected $pseudonyms = [];
 
     /**
      * Real name information.
      *
      * @var array
      */
-    protected $realNames = array();
+    protected $realNames = [];
 
     /**
      * Constructor
@@ -88,7 +88,7 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      */
     protected function groupCredits($creators, $credits)
     {
-        $groupedCredits = array();
+        $groupedCredits = [];
 
         // First group and associate the credits:
         foreach ($credits as $credit) {
@@ -97,10 +97,10 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
                 ? '' : 'Incorrectly Attributed ';
             $role = $prefix . $credit['Role_Name'];
             if (!isset($groupedCredits[$role])) {
-                $groupedCredits[$role] = array();
+                $groupedCredits[$role] = [];
             }
             if (!isset($groupedCredits[$role][$personId])) {
-                $groupedCredits[$role][$personId] = array();
+                $groupedCredits[$role][$personId] = [];
             }
             $groupedCredits[$role][$personId][] = $credit;
         }
@@ -110,7 +110,7 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
             $role = $creator['Role_Name'];
             $personId = $creator['Person_ID'];
             $creditedIds = array_keys(
-                isset($groupedCredits[$role]) ? $groupedCredits[$role] : []
+                $groupedCredits[$role] ?? []
             );
             if (empty($creditedIds)
                 || !$this->isMatchingPerson($personId, $creditedIds)
@@ -157,13 +157,15 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      *
      * @param array $names  Names to filter
      * @param array $filter Person IDs to keep (or empty to keep all).
+     *
+     * @return array
      */
     protected function filterNames($names, $filter)
     {
         if (empty($filter)) {
             return $names;
         }
-        $filtered = array();
+        $filtered = [];
         foreach ($names as $name) {
             if (in_array($name['Real_Person_ID'], $filter)) {
                 $filtered[] = $name;
@@ -180,7 +182,7 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      *
      * @return array
      */
-    protected function getPseudonymDetails($person, $filter = array())
+    protected function getPseudonymDetails($person, $filter = [])
     {
         if (!isset($this->pseudonyms[$person])) {
             $this->pseudonyms[$person] = $this->pseudonymsTable
@@ -197,7 +199,7 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      *
      * @return array
      */
-    protected function getRealPersonDetails($person, $filter = array())
+    protected function getRealPersonDetails($person, $filter = [])
     {
         if (!isset($this->realNames[$person])) {
             $this->realNames[$person] = $this->pseudonymsTable
@@ -262,7 +264,7 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
      */
     protected function getCitationGroup($id)
     {
-        $citations = array();
+        $citations = [];
         foreach ($this->citationsTable->getCitations($id) as $citation) {
             $citations[] = $citation['Citation'];
         }
@@ -294,9 +296,9 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     /**
      * Analyze and reformat a list of credits
      *
-     * @param array $creators  Known creators to analyze
-     * @param array $credits   Credits to analyze
-     * @param array $editions  Information on editions containing credits
+     * @param array $creators Known creators to analyze
+     * @param array $credits  Credits to analyze
+     * @param array $editions Information on editions containing credits
      *
      * @return array
      */
@@ -304,8 +306,7 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     {
         $final = [];
         $currentEdition = current($editions);
-        $itemId = isset($currentEdition['Item_ID'])
-            ? $currentEdition['Item_ID'] : null;
+        $itemId = $currentEdition['Item_ID'] ?? null;
         $groupedCreators = $this->groupCreators($creators, $itemId);
         if (empty($groupedCreators)) {
             $groupedCreators = ['an uncited source' => []];

@@ -1,22 +1,22 @@
-<?
+<?php
     $this->layout()->title = 'Series List';
 ?>
-<? if (count($series) < 1): ?>
+<?php if (count($series) < 1): ?>
   <p>No series listed in this database yet.</p>
-<? else: ?>
+<?php else: ?>
   <h2>
     <?=$this->firstLetterMenu($series, 'Series_Name'); ?>
   </h2>
-  <? $currentLetter = false; foreach ($series as $i=>$current): ?>
-    <? $first = $this->firstletter($current['Series_Name']); ?>
-    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <? if($i > 0): ?>
+  <?php $currentLetter = false; foreach ($series as $i => $current): ?>
+    <?php $first = $this->firstletter($current['Series_Name']); ?>
+    <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <?php if($i > 0): ?>
         <a name="<?=$this->escapeHtml($currentLetter)?>"/>
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
-      <? endif ?>
-    <? endif; ?>
-    <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+      <?php endif ?>
+    <?php endif; ?>
+    <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
       <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
     </a><br />
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

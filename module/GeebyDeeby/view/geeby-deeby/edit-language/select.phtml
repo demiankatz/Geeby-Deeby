@@ -1,11 +1,11 @@
-<? if (isset($languages) && count($languages) > 0): ?>
+<?php if (isset($languages) && count($languages) > 0): ?>
   <select id="Language_ID">
-    <? foreach ($languages as $current): ?>
+    <?php foreach ($languages as $current): ?>
       <option value="<?=$current['Language_ID']?>"<?=($current['Language_ID'] == $selected) ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['Language_Name'])?>
       </option>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </select>
-<? else: ?>
+<?php else: ?>
   Please define languages.
-<? endif; ?>
+<?php endif; ?>
