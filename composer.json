@@ -7,11 +7,6 @@
             "email": "demian.katz@villanova.edu"
         }
     ],
-    "config": {
-        "platform": {
-            "php": "5.6.0"
-        }
-    },
     "license": "GPL-2.0",
     "config": {
         "platform": {
@@ -21,7 +16,6 @@
     "require": {
         "php": ">=7.1",
         "easyrdf/easyrdf": "dev-master",
-        "php": ">=5.6",
         "vufind-org/vufindcode": "1.0.3",
         "zendframework/zend-authentication": "2.7.0",
         "zendframework/zend-crypt": "3.3.1",
