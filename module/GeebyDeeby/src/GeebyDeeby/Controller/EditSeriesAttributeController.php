@@ -53,7 +53,7 @@ class EditSeriesAttributeController extends AbstractBase
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->relationships
                 = $this->forwardTo(__NAMESPACE__ . '\EditSeriesRelationship', 'list')
-                    ->relationships;
+                ->relationships;
         }
         return $view;
     }

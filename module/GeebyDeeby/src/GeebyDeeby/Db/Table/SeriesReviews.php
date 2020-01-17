@@ -57,7 +57,7 @@ class SeriesReviews extends Gateway
     /**
      * Get a list of reviews for the specified series.
      *
-     * @param int    $seriesID   Series ID
+     * @param int    $seriesID Series ID
      * @param string $approved 'y' to get only approved items, 'n' for only unapproved
      * items, null for all items
      *

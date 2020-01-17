@@ -60,7 +60,7 @@ class SeriesController extends AbstractBase
             ->getAttributesForSeries($id);
         $extras['relationshipsValues']
             = $this->getDbTable('seriesrelationshipsvalues')
-                ->getRelationshipsForSeries($id);
+            ->getRelationshipsForSeries($id);
         return $this->createViewModel(
             ['series' => $rowObj->toArray()] + $extras
         );
