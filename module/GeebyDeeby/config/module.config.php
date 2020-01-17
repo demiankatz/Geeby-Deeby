@@ -59,14 +59,14 @@ return [
             // main /Links URL. (e.g. http://mysite.org/Links/MyGroupName).
         ],
     ],
-    'controller_plugins' => array(
-        'aliases' => array(
+    'controller_plugins' => [
+        'aliases' => [
             'followup' => 'GeebyDeeby\Controller\Plugin\Followup',
-        ),
-        'factories' => array(
+        ],
+        'factories' => [
             'GeebyDeeby\Controller\Plugin\Followup' => 'Zend\ServiceManager\Factory\InvokableFactory',
-        )
-    ),
+        ]
+    ],
     'router' => [
         'routes' => [
             'home' => [
@@ -230,12 +230,11 @@ return [
                     'city' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/City[/:id][/:action][/[:extra]]',
+                            'route'    => '/City[/:id]',
                             'defaults' => [
                                 'controller'    => 'EditCity',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                                'extra'         => null,
                             ],
                         ],
                     ],
@@ -285,12 +284,11 @@ return [
                     'country' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/Country[/:id][/:action][/[:extra]]',
+                            'route'    => '/Country[/:id]',
                             'defaults' => [
                                 'controller'    => 'EditCountry',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                                'extra'         => null,
                             ],
                         ],
                     ],
@@ -1261,14 +1259,13 @@ return [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'User',
                         'action'        => 'list',
-<<<<<<< HEAD
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'service_manager' => array(
-        'factories' => array(
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
             'GeebyDeeby\Articles' =>
                 'Zend\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\Db\Row\PluginManager' =>
@@ -1278,40 +1275,8 @@ return [
             'Zend\Authentication\AuthenticationService' =>
                 'Zend\ServiceManager\Factory\InvokableFactory',
             'Zend\Db\Adapter\Adapter' => 'GeebyDeeby\Db\AdapterFactory',
-        ),
-        'aliases' => array(
-=======
-                    ],
-                ],
-            ],
         ],
-    ],
-    'service_manager' => [
-        'factories' => [
-            'GeebyDeeby\Db\Row\PluginManager' => function ($sm) {
-                return new \GeebyDeeby\Db\Row\PluginManager($sm);
-            },
-            'GeebyDeeby\Db\Table\PluginManager' => function ($sm) {
-                return new \GeebyDeeby\Db\Table\PluginManager($sm);
-            },
-            'Zend\Db\Adapter\Adapter' => function ($sm) {
-                $config = $sm->get('Config');
-                return new \Zend\Db\Adapter\Adapter(
-                    [
-                        'driver' => 'mysqli',
-                        'charset' => 'utf8',
-                        'hostname' => $config['geeby-deeby']['dbHost'],
-                        'username' => $config['geeby-deeby']['dbUser'],
-                        'password' => $config['geeby-deeby']['dbPass'],
-                        'database' => $config['geeby-deeby']['dbName'],
-                        'options' => ['buffer_results' => true]
-                    ]
-                );
-            },
-        ],
-        'invokables' => [
-            'GeebyDeeby\Articles' => 'GeebyDeeby\Articles',
->>>>>>> master
+        'aliases' => [
             'GeebyDeeby\Authentication' => 'Zend\Authentication\AuthenticationService',
         ],
     ],
@@ -1372,11 +1337,10 @@ return [
             'GeebyDeeby\Controller\Suggest' => 'GeebyDeeby\Controller\SuggestController',
             'GeebyDeeby\Controller\Tag' => 'GeebyDeeby\Controller\TagController',
             'GeebyDeeby\Controller\User' => 'GeebyDeeby\Controller\UserController',
-<<<<<<< HEAD
-        ),
-    ),
-    'view_helpers' => array(
-        'factories' => array(
+        ],
+    ],
+    'view_helpers' => [
+        'factories' => [
             'GeebyDeeby\View\Helper\AnalyzeCredits' =>
                 'GeebyDeeby\View\Helper\AnalyzeCreditsFactory',
             'GeebyDeeby\View\Helper\Auth' => 'GeebyDeeby\View\Helper\AuthFactory',
@@ -1402,51 +1366,12 @@ return [
                 'GeebyDeeby\View\Helper\ShowEditionFactory',
             'GeebyDeeby\View\Helper\ShowPerson' =>
                 'Zend\ServiceManager\Factory\InvokableFactory',
-        ),
-        'aliases' => array(
+        ],
+        'aliases' => [
             'analyzecredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
             'analyzeCredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
             'auth' => 'GeebyDeeby\View\Helper\Auth',
             'config' => 'GeebyDeeby\View\Helper\Config',
-=======
-        ],
-    ],
-    'view_helpers' => [
-        'factories' => [
-            'analyzecredits' => function ($sm) {
-                $tables = $sm->getServiceLocator()->get('GeebyDeeby\Db\Table\PluginManager');
-                return new \GeebyDeeby\View\Helper\AnalyzeCredits(
-                    $tables->get('pseudonyms'), $tables->get('itemscreatorscitations')
-                );
-            },
-            'auth' => function ($sm) {
-                return new \GeebyDeeby\View\Helper\Auth(
-                    $sm->getServiceLocator()->get('GeebyDeeby\Authentication')
-                );
-            },
-            'config' => function ($sm) {
-                $cfg = $sm->getServiceLocator()->get('config');
-                return new \GeebyDeeby\View\Helper\Config($cfg['geeby-deeby']);
-            },
-            'fixtitle' => function ($sm) {
-                return new \GeebyDeeby\View\Helper\FixTitle(
-                    $sm->getServiceLocator()->get('GeebyDeeby\Articles')
-                );
-            },
-            'scriptmanager' => function ($sm) {
-                $base = $sm->get('basepath')->__invoke();
-                return new \GeebyDeeby\View\Helper\ScriptManager(
-                    $base, $sm->get('headscript')
-                );
-            },
-            'showedition' => function ($sm) {
-                $controller = $sm->getServiceLocator()->get('ControllerLoader')
-                    ->get('GeebyDeeby\Controller\Edition');
-                return new \GeebyDeeby\View\Helper\ShowEdition($controller);
-            },
-        ],
-        'invokables' => [
->>>>>>> master
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'descriptionSource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
@@ -1466,16 +1391,10 @@ return [
             'showedition' => 'GeebyDeeby\View\Helper\ShowEdition',
             'showEdition' => 'GeebyDeeby\View\Helper\ShowEdition',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
-<<<<<<< HEAD
             'showPerson' => 'GeebyDeeby\View\Helper\ShowPerson',
-        ),
-    ),
-    'view_manager' => array(
-=======
         ],
     ],
     'view_manager' => [
->>>>>>> master
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
