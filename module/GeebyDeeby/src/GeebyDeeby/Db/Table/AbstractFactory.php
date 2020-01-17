@@ -38,7 +38,8 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AbstractFactory implements \Zend\ServiceManager\Factory\AbstractFactoryInterface
+class AbstractFactory
+    implements \Zend\ServiceManager\Factory\AbstractFactoryInterface
 {
     /**
      * Return row prototype object (null if unavailable)
@@ -59,8 +60,9 @@ class AbstractFactory implements \Zend\ServiceManager\Factory\AbstractFactoryInt
     /**
      * Does the factory have a way to create an instance for the service?
      *
-     * @param  ContainerInterface $container
-     * @param  string $requestedName
+     * @param ContainerInterface $container     Service container
+     * @param string             $requestedName Name of service
+     *
      * @return bool
      */
     public function canCreate(ContainerInterface $container, $requestedName)
