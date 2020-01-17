@@ -77,16 +77,4 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
         }
         return $item;
     }
-
-    /**
-     * Get the module namespace for use in template resolution. See
-     * \GeebyDeebyLocal\View\InjectTemplateListener. This allows us to extend core
-     * controllers without duplicating templates.
-     *
-     * @return string
-     */
-    public static function getModuleTemplateNamespace()
-    {
-        return 'geeby-deeby';
-    }
 }

@@ -1,33 +1,93 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Geeby-Deeby local code module
  *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * PHP version 5
+ *
+ * Copyright (C) Demian Katz 2020.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @category GeebyDeeby
+ * @package  Modules
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeebyLocal;
 
+use GeebyDeebyLocal\View\InjectTemplateListener;
 use Zend\Mvc\MvcEvent;
+use Zend\Mvc\View\Http\InjectTemplateListener as ZendInjectTemplateListener;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
+/**
+ * Geeby-Deeby local code module
+ *
+ * @category GeebyDeeby
+ * @package  Modules
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
+ */
 class Module
 {
+    /**
+     * On bootstrap event
+     *
+     * @param MvcEvent $e Event object
+     *
+     * @return void
+     */
     public function onBootstrap($event)
     {
-        $application  = $event->getApplication();
-        $events       = $application->getEventManager();
-        $sharedEvents = $events->getSharedManager();
-        $injectTemplateListener  = new \GeebyDeebyLocal\View\InjectTemplateListener();
-        $sharedEvents->attach('Zend\Stdlib\DispatchableInterface', MvcEvent::EVENT_DISPATCH, [$injectTemplateListener, 'injectTemplate'], -89);
         \EasyRdf\RdfNamespace::set('dime', 'https://dimenovels.org/ontology#');
         \EasyRdf\RdfNamespace::set('rda', 'http://rdaregistry.info/Elements/u/');
     }
 
+    /**
+     * Get module configuration.
+     *
+     * @return array
+     */
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
+    /**
+     * Return service configuration.
+     *
+     * @return array
+     */
+    public function getServiceConfig()
+    {
+        return [
+            'aliases' => [
+                ZendInjectTemplateListener::class => InjectTemplateListener::class,
+            ],
+            'factories' => [
+                InjectTemplateListener::class => InvokableFactory::class,
+            ],
+        ];
+    }
+
+    /**
+     * Get autoloader configuration.
+     *
+     * @return array
+     */
     public function getAutoloaderConfig()
     {
         return [

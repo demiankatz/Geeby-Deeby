@@ -53,16 +53,4 @@ class PublisherController extends \GeebyDeeby\Controller\PublisherController
         $person->set('rda:preferredNameForTheAgent', $view->publisher['Publisher_Name']);
         return $person;
     }
-
-    /**
-     * Get the module namespace for use in template resolution. See
-     * \GeebyDeebyLocal\View\InjectTemplateListener. This allows us to extend core
-     * controllers without duplicating templates.
-     *
-     * @return string
-     */
-    public static function getModuleTemplateNamespace()
-    {
-        return 'geeby-deeby';
-    }
 }
