@@ -139,8 +139,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      * (for backward compatibility)
      * @param null|ConfigInterface $v3config                  Configuration settings
      * (optional)
-     *
-     * @param null|ConfigInterface                                                                            $v3config Configuration settings (optional)
      */
     public function __construct($configOrContainerInstance = null,
         array $v3config = []
