@@ -1,6 +1,7 @@
 <?php
 return [
     'modules' => [
+        'Zend\Router',
         'GeebyDeeby',
     ],
     'module_listener_options' => [

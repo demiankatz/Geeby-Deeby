@@ -60,14 +60,17 @@ return [
         ],
     ],
     'controller_plugins' => [
-        'invokables' => [
+        'aliases' => [
             'followup' => 'GeebyDeeby\Controller\Plugin\Followup',
+        ],
+        'factories' => [
+            'GeebyDeeby\Controller\Plugin\Followup' => 'Zend\ServiceManager\Factory\InvokableFactory',
         ]
     ],
     'router' => [
         'routes' => [
             'home' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -1265,29 +1268,17 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-            'GeebyDeeby\Db\Row\PluginManager' => function ($sm) {
-                return new \GeebyDeeby\Db\Row\PluginManager($sm);
-            },
-            'GeebyDeeby\Db\Table\PluginManager' => function ($sm) {
-                return new \GeebyDeeby\Db\Table\PluginManager($sm);
-            },
-            'Zend\Db\Adapter\Adapter' => function ($sm) {
-                $config = $sm->get('Config');
-                return new \Zend\Db\Adapter\Adapter(
-                    [
-                        'driver' => 'mysqli',
-                        'charset' => 'utf8',
-                        'hostname' => $config['geeby-deeby']['dbHost'],
-                        'username' => $config['geeby-deeby']['dbUser'],
-                        'password' => $config['geeby-deeby']['dbPass'],
-                        'database' => $config['geeby-deeby']['dbName'],
-                        'options' => ['buffer_results' => true]
-                    ]
-                );
-            },
+            'GeebyDeeby\Articles' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\Db\Row\PluginManager' =>
+                'GeebyDeeby\Db\PluginManagerFactory',
+            'GeebyDeeby\Db\Table\PluginManager' =>
+                'GeebyDeeby\Db\PluginManagerFactory',
+            'Zend\Authentication\AuthenticationService' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'Zend\Db\Adapter\Adapter' => 'GeebyDeeby\Db\AdapterFactory',
         ],
-        'invokables' => [
-            'GeebyDeeby\Articles' => 'GeebyDeeby\Articles',
+        'aliases' => [
             'GeebyDeeby\Authentication' => 'Zend\Authentication\AuthenticationService',
         ],
     ],
@@ -1352,46 +1343,57 @@ return [
     ],
     'view_helpers' => [
         'factories' => [
-            'analyzecredits' => function ($sm) {
-                $tables = $sm->getServiceLocator()->get('GeebyDeeby\Db\Table\PluginManager');
-                return new \GeebyDeeby\View\Helper\AnalyzeCredits(
-                    $tables->get('pseudonyms'), $tables->get('itemscreatorscitations')
-                );
-            },
-            'auth' => function ($sm) {
-                return new \GeebyDeeby\View\Helper\Auth(
-                    $sm->getServiceLocator()->get('GeebyDeeby\Authentication')
-                );
-            },
-            'config' => function ($sm) {
-                $cfg = $sm->getServiceLocator()->get('config');
-                return new \GeebyDeeby\View\Helper\Config($cfg['geeby-deeby']);
-            },
-            'fixtitle' => function ($sm) {
-                return new \GeebyDeeby\View\Helper\FixTitle(
-                    $sm->getServiceLocator()->get('GeebyDeeby\Articles')
-                );
-            },
-            'scriptmanager' => function ($sm) {
-                $base = $sm->get('basepath')->__invoke();
-                return new \GeebyDeeby\View\Helper\ScriptManager(
-                    $base, $sm->get('headscript')
-                );
-            },
-            'showedition' => function ($sm) {
-                $controller = $sm->getServiceLocator()->get('ControllerLoader')
-                    ->get('GeebyDeeby\Controller\Edition');
-                return new \GeebyDeeby\View\Helper\ShowEdition($controller);
-            },
+            'GeebyDeeby\View\Helper\AnalyzeCredits' =>
+                'GeebyDeeby\View\Helper\AnalyzeCreditsFactory',
+            'GeebyDeeby\View\Helper\Auth' => 'GeebyDeeby\View\Helper\AuthFactory',
+            'GeebyDeeby\View\Helper\Config' =>
+                'GeebyDeeby\View\Helper\ConfigFactory',
+            'GeebyDeeby\View\Helper\DescriptionSource' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\FirstLetter' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\FirstLetterMenu' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\FixTitle' =>
+                'GeebyDeeby\View\Helper\FixTitleFactory',
+            'GeebyDeeby\View\Helper\FormatItemNumber' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\FormatReleaseDate' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\GroupEditions' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\ScriptManager' =>
+                'GeebyDeeby\View\Helper\ScriptManagerFactory',
+            'GeebyDeeby\View\Helper\ShowEdition' =>
+                'GeebyDeeby\View\Helper\ShowEditionFactory',
+            'GeebyDeeby\View\Helper\ShowPerson' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
         ],
-        'invokables' => [
+        'aliases' => [
+            'analyzecredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
+            'analyzeCredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
+            'auth' => 'GeebyDeeby\View\Helper\Auth',
+            'config' => 'GeebyDeeby\View\Helper\Config',
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
+            'descriptionSource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
+            'firstLetter' => 'GeebyDeeby\View\Helper\FirstLetter',
+            'firstlettermenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
             'firstLetterMenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
-            'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
+            'fixtitle' => 'GeebyDeeby\View\Helper\FixTitle',
+            'fixTitle' => 'GeebyDeeby\View\Helper\FixTitle',
             'formatitemnumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
+            'formatItemNumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
+            'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
+            'formatReleaseDate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
+            'groupEditions' => 'GeebyDeeby\View\Helper\GroupEditions',
+            'scriptmanager' => 'GeebyDeeby\View\Helper\ScriptManager',
+            'scriptManager' => 'GeebyDeeby\View\Helper\ScriptManager',
+            'showedition' => 'GeebyDeeby\View\Helper\ShowEdition',
+            'showEdition' => 'GeebyDeeby\View\Helper\ShowEdition',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
+            'showPerson' => 'GeebyDeeby\View\Helper\ShowPerson',
         ],
     ],
     'view_manager' => [
