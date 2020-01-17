@@ -129,8 +129,9 @@ class AbstractBase extends AbstractActionController
      *
      * @return mixed
      */
-    protected function getGenericList($table, $assignTo, $tpl, $permission = 'Content_Editor')
-    {
+    protected function getGenericList($table, $assignTo, $tpl,
+        $permission = 'Content_Editor'
+    ) {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
@@ -256,8 +257,9 @@ class AbstractBase extends AbstractActionController
      *
      * @return mixed
      */
-    protected function handleGenericItem($table, $assignMap, $assignTo, $permission = 'Content_Editor')
-    {
+    protected function handleGenericItem($table, $assignMap, $assignTo,
+        $permission = 'Content_Editor'
+    ) {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;

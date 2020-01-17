@@ -60,6 +60,8 @@ class ItemsTags extends Gateway
      * Get items for the specified tag.
      *
      * @param int $tagID Tag ID
+     *
+     * @return mixed
      */
     public function getItemsForTag($tagID)
     {
@@ -80,7 +82,12 @@ class ItemsTags extends Gateway
             $select->join(
                 ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
             );
-            $select->group(['i.Item_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number']);
+            $select->group(
+                [
+                    'i.Item_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number'
+                ]
+            );
             $select->order(
                 [
                     'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',

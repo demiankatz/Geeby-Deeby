@@ -198,7 +198,8 @@ class Edition extends Gateway
             );
             $select->join(
                 ['erd' => 'Editions_Release_Dates'],
-                'Editions.Edition_ID = erd.Edition_ID OR Editions.Parent_Edition_ID = erd.Edition_ID',
+                'Editions.Edition_ID = erd.Edition_ID OR '
+                . 'Editions.Parent_Edition_ID = erd.Edition_ID',
                 ['Earliest_Year' => $year], Select::JOIN_LEFT
             );
             $order = ['Item_Display_Order', 'Earliest_Year', 'Edition_Name'];
@@ -242,7 +243,10 @@ class Edition extends Gateway
                 $fields[] = 'Item_AltName';
                 $order = array_merge(
                     $order,
-                    ['pe.Series_ID', 'pe.Volume', 'pe.Position', 'pe.Replacement_Number']
+                    [
+                        'pe.Series_ID', 'pe.Volume', 'pe.Position',
+                        'pe.Replacement_Number'
+                    ]
                 );
             }
             $select->group($fields);
@@ -339,7 +343,9 @@ class Edition extends Gateway
         if (count($this->getDbTable('editionsreleasedates')->select($select)) > 0) {
             throw new \Exception('Cannot delete - attached dates.');
         }
-        if (count($this->getDbTable('edition')->select(['Parent_Edition_ID' => $id])) > 0) {
+        $children = $this->getDbTable('edition')
+            ->select(['Parent_Edition_ID' => $id]);
+        if (count($children) > 0) {
             throw new \Exception('Cannot delete - has child editions.');
         }
         $this->delete($select);

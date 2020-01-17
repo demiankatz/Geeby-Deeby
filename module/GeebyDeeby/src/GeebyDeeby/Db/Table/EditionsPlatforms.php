@@ -58,6 +58,8 @@ class EditionsPlatforms extends Gateway
      * Get editions for the specified platform.
      *
      * @param int $platformID Platform ID
+     *
+     * @return mixed
      */
     public function getItemsForPlatform($platformID)
     {
@@ -73,9 +75,17 @@ class EditionsPlatforms extends Gateway
             $select->join(
                 ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
             );
-            $select->group(['i.Item_ID', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number']);
+            $select->group(
+                [
+                    'i.Item_ID', 's.Series_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number'
+                ]
+            );
             $select->order(
-                ['Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Item_Name']
+                [
+                    'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number', 'Item_Name'
+                ]
             );
             $select->where->equalTo('Platform_ID', $platformID);
         };

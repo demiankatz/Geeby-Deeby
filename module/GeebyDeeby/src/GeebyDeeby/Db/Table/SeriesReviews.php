@@ -58,8 +58,8 @@ class SeriesReviews extends Gateway
      * Get a list of reviews for the specified series.
      *
      * @param int    $seriesID Series ID
-     * @param string $approved 'y' to get only approved items, 'n' for only unapproved
-     * items, null for all items
+     * @param string $approved 'y' to get only approved items, 'n' for only
+     * unapproved items, null for all items
      *
      * @return mixed
      */
@@ -83,8 +83,10 @@ class SeriesReviews extends Gateway
      * Get a list of series reviewed by the specified user.
      *
      * @param int    $userID   User ID (null for all reviews)
-     * @param string $approved 'y' to get only approved items, 'n' for only unapproved
-     * items, null for all items
+     * @param string $approved 'y' to get only approved items, 'n' for only
+     * unapproved items, null for all items
+     *
+     * @return mixed
      */
     public function getReviewsByUser($userID, $approved = 'y')
     {

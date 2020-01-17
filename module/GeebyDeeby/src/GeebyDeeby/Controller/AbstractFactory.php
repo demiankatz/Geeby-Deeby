@@ -43,9 +43,9 @@ class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
     /**
      * Determine if we can create a service with name
      *
-     * @param ServiceLocatorInterface $sm            Service manager
-     * @param string                  $name          Service name
-     * @param string                  $requestedName Requested service name
+     * @param ServiceLocatorInterface $serviceLocator Service manager
+     * @param string                  $name           Service name
+     * @param string                  $requestedName  Requested service name
      *
      * @return bool
      */

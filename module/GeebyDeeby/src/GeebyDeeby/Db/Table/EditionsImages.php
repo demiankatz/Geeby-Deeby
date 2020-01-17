@@ -175,7 +175,8 @@ class EditionsImages extends Gateway
             );
             $select->join(
                 ['erd' => 'Editions_Release_Dates'],
-                'eds.Edition_ID = erd.Edition_ID OR eds.Parent_Edition_ID = erd.Edition_ID',
+                'eds.Edition_ID = erd.Edition_ID '
+                . 'OR eds.Parent_Edition_ID = erd.Edition_ID',
                 ['Earliest_Year' => $year], Select::JOIN_LEFT
             );
             $select->join(
@@ -220,12 +221,20 @@ class EditionsImages extends Gateway
             );
             $select->order(
                 $groupByMaterial
-                    ? ['mt.Material_Type_Name', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'eds.Item_Display_Order', 'i.Item_Name', 'Editions_Images.Position']
-                    : ['eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'eds.Item_Display_Order', 'i.Item_Name', 'Editions_Images.Position']
+                    ? [
+                        'mt.Material_Type_Name', 'eds.Volume', 'eds.Position',
+                        'eds.Replacement_Number', 'eds.Item_Display_Order',
+                        'i.Item_Name', 'Editions_Images.Position'
+                    ] : [
+                        'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
+                        'eds.Item_Display_Order', 'i.Item_Name',
+                        'Editions_Images.Position'
+                    ]
             );
             $select->group(
                 [
-                    'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Editions_Images.Position',
+                    'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number', 'Editions_Images.Position',
                     'i.Item_ID', 'Note'
                 ]
             );
