@@ -45,7 +45,9 @@ class SeriesRelationship extends RowGateway
      */
     public function __construct($adapter)
     {
-        parent::__construct('Series_Relationship_ID', 'Series_Relationships', $adapter);
+        parent::__construct(
+            'Series_Relationship_ID', 'Series_Relationships', $adapter
+        );
     }
 
     /**

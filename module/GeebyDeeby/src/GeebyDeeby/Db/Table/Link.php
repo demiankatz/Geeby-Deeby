@@ -62,7 +62,7 @@ class Link extends Gateway
     public function getList()
     {
         $callback = function ($select) {
-            $select->order(array('Link_Name'));
+            $select->order(['Link_Name']);
         };
         return $this->select($callback);
     }
@@ -78,12 +78,12 @@ class Link extends Gateway
     {
         $callback = function ($select) use ($typeFilter) {
             $select->join(
-                array('lt' => 'Link_Types'), 'Links.Link_Type_ID = lt.Link_Type_ID'
+                ['lt' => 'Link_Types'], 'Links.Link_Type_ID = lt.Link_Type_ID'
             );
             if (null !== $typeFilter) {
                 $select->where->like('Link_Type', $typeFilter . '%');
             }
-            $select->order(array('Link_Type', 'Link_Name'));
+            $select->order(['Link_Type', 'Link_Name']);
         };
         return $this->select($callback);
     }

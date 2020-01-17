@@ -1,4 +1,4 @@
-<? $this->layout()->title = 'Duplicate Image Cleanup' ?>
+<?php $this->layout()->title = 'Duplicate Image Cleanup' ?>
 <script>
     function removeImage(obj)
     {
@@ -26,24 +26,24 @@
     }
 </script>
 
-<? if (empty($details)): ?>
+<?php if (empty($details)): ?>
   <p>No dupes found.</p>
-<? else: ?>
+<?php else: ?>
   <table>
-  <? $group = 0; foreach ($details as $thumb => $current): $group++; ?>
+  <?php $group = 0; foreach ($details as $thumb => $current): $group++; ?>
     <tr>
       <td><img src="<?=$this->escapeHtml($thumb)?>" /><br /></td>
       <td>
-        <? foreach ($current as $ed): ?>
-          <? $combinedId = $ed['Edition_ID'] . '_' . $ed['Sequence_ID']?>
+        <?php foreach ($current as $ed): ?>
+          <?php $combinedId = $ed['Edition_ID'] . '_' . $ed['Sequence_ID']?>
           <span id="box_<?=$combinedId?>">
             <input type="checkbox" class="group<?=$group?>" value="<?=$combinedId?>" checked="checked" />
             <?=$this->escapeHtml($this->fixTitle($ed['Edition_Name']))?><br />
           </span>
-        <? endforeach; ?>
+        <?php endforeach; ?>
         <button onclick="processGroup(<?=$group?>);">Delete Selected</button>
       </td>
     </tr>
-  <? endforeach; ?>
+  <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

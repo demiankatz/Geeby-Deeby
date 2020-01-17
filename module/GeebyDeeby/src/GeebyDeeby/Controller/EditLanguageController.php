@@ -57,7 +57,7 @@ class EditLanguageController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array('language' => 'Language_Name');
+        $assignMap = ['language' => 'Language_Name'];
         return $this->handleGenericItem('language', $assignMap, 'language');
     }
 }

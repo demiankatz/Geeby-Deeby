@@ -52,7 +52,7 @@ class CategoryController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Category', 'notfound');
         }
         $view = $this->createViewModel(
-            array('category' => $rowObj->toArray())
+            ['category' => $rowObj->toArray()]
         );
         $view->series = $this->getDbTable('seriescategories')
             ->getSeriesForCategory($id);
@@ -67,7 +67,7 @@ class CategoryController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array('categories' => $this->getDbTable('category')->getList())
+            ['categories' => $this->getDbTable('category')->getList()]
         );
     }
 

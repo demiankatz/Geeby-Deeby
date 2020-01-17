@@ -1,6 +1,6 @@
-<? if (is_object($previous)): ?>
-  <a href="<?=$this->url('edit/edition', array('id' => $previous->Edition_ID))?>">Previous in Series</a><br />
-<? endif; ?>
-<? if (is_object($next)): ?>
-  <a href="<?=$this->url('edit/edition', array('id' => $next->Edition_ID))?>">Next in Series</a>
-<? endif; ?>
+<?php if (is_object($previous)): ?>
+  <a href="<?=$this->url('edit/edition', ['id' => $previous->Edition_ID])?>">Previous in Series</a><br />
+<?php endif; ?>
+<?php if (is_object($next)): ?>
+  <a href="<?=$this->url('edit/edition', ['id' => $next->Edition_ID])?>">Next in Series</a>
+<?php endif; ?>

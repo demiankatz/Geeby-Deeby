@@ -63,7 +63,7 @@ class EditCountryController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array('country' => 'Country_Name');
+        $assignMap = ['country' => 'Country_Name'];
         $view = $this->handleGenericItem('country', $assignMap, 'country');
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {

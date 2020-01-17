@@ -59,41 +59,48 @@ class ItemsTags extends Gateway
     /**
      * Get items for the specified tag.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
+     *
+     * @return mixed
      */
     public function getItemsForTag($tagID)
     {
         $callback = function ($select) use ($tagID) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_Tags.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID',
-                array('Volume', 'Position', 'Replacement_Number')
+                ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID',
+                ['Volume', 'Position', 'Replacement_Number']
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->join(
-                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
+                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
             );
-            $select->group(array('i.Item_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number'));
+            $select->group(
+                [
+                    'i.Item_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number'
+                ]
+            );
             $select->order(
-                array(
+                [
                     'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
                     'eds.Replacement_Number',
                     new Expression(
                         'COALESCE(?, ?)',
-                        array('Item_AltName', 'Item_Name'),
-                        array(
+                        ['Item_AltName', 'Item_Name'],
+                        [
                             Expression::TYPE_IDENTIFIER,
                             Expression::TYPE_IDENTIFIER
-                        )
+                        ]
                     )
-                )
+                ]
             );
             $select->where->equalTo('Tag_ID', $tagID);
         };
@@ -103,14 +110,14 @@ class ItemsTags extends Gateway
     /**
      * Get a list of tags for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
     public function getTags($itemID)
     {
         $callback = function ($select) use ($itemID) {
-            $select->join(array('t' => 'Tags'), 't.Tag_ID = Items_Tags.Tag_ID');
+            $select->join(['t' => 'Tags'], 't.Tag_ID = Items_Tags.Tag_ID');
             $select->order('Tag');
             $select->where->equalTo('Item_ID', $itemID);
         };

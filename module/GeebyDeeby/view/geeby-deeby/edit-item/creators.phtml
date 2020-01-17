@@ -1,13 +1,13 @@
-<? if (!isset($creators) || count($creators) < 1): ?>
+<?php if (!isset($creators) || count($creators) < 1): ?>
   No creators.
-<? else: ?>
+<?php else: ?>
   <table class="list_item">
     <tr><th colspan="3">Creator</th></tr>
-    <? foreach ($creators as $current): ?>
+    <?php foreach ($creators as $current): ?>
       <tr>
         <td>
           <?=$this->escapeHtml($current['Role_Name'])?>:
-          <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
+          <a href="<?=$this->url('edit/person', ['id' => $current['Person_ID']])?>">
             <?=$this->escapeHtml($this->showperson($current))?>
           </a>
         </td>
@@ -20,6 +20,6 @@
           </a>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

@@ -1,9 +1,9 @@
-<? if (isset($descriptions) && count($descriptions) > 0): ?>
-  <? foreach ($descriptions as $current): ?>
+<?php if (isset($descriptions) && count($descriptions) > 0): ?>
+  <?php foreach ($descriptions as $current): ?>
   <table class="list_item">
     <tr>
       <td>
-        <? /* Note: Description is not escaped since it may contain HTML! */ ?>
+        <?php /* Note: Description is not escaped since it may contain HTML! */ ?>
         <?=$current['Description']?> (Source: <?=$this->descriptionSource()->getName($current['Source'])?>)
       </td>
       <td>
@@ -12,7 +12,7 @@
       </td>
     </tr>
   </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No descriptions set.
-<? endif; ?>
+<?php endif; ?>

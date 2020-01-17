@@ -55,6 +55,7 @@ class Gateway extends AbstractTableGateway
      * @param Adapter       $adapter Database adapter
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param string        $table   Table name
      */
     public function __construct(Adapter $adapter, PluginManager $tm,
         RowGateway $rowObj = null, $table = null
@@ -88,7 +89,7 @@ class Gateway extends AbstractTableGateway
      */
     public function createRow()
     {
-        return clone($this->getResultSetPrototype()->getArrayObjectPrototype());
+        return clone $this->getResultSetPrototype()->getArrayObjectPrototype();
     }
 
     /**
@@ -100,7 +101,7 @@ class Gateway extends AbstractTableGateway
      */
     public function getByPrimaryKey($key)
     {
-        $key = (array) $key;
+        $key = (array)$key;
         $keyCols = $this->getResultSetPrototype()->getArrayObjectPrototype()
             ->getPrimaryKeyColumn();
         if (count($key) != count($keyCols)) {
@@ -140,7 +141,7 @@ class Gateway extends AbstractTableGateway
         $results = [];
         foreach ($rawResults as $current) {
             $results[] = $current;
-        };
+        }
         $sort = function ($a, $b) {
             return strcasecmp($a->getDisplayName(), $b->getDisplayName());
         };

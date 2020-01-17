@@ -3,7 +3,7 @@
   <table class="edit">
     <tr>
       <th>Group:</th>
-      <td><input type="text" id="Group_Name" value="<?=$this->escapeHtml(isset($usergroup['Group_Name']) ? $usergroup['Group_Name'] : '')?>" /></td>
+      <td><input type="text" id="Group_Name" value="<?=$this->escapeHtml($usergroup['Group_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
       <th>Content Editor:</th>

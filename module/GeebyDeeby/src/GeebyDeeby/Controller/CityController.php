@@ -100,7 +100,7 @@ class CityController extends AbstractBase
         }
 
         return $this->getRdfResponse($this->getGraphFromView($view));
-     }
+    }
 
     /**
      * "Show city" page
@@ -127,7 +127,7 @@ class CityController extends AbstractBase
             return false;
         }
         $view = $this->createViewModel(
-            array('city' => $rowObj->toArray())
+            ['city' => $rowObj->toArray()]
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForCity($id);
@@ -143,7 +143,7 @@ class CityController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array('cities' => $this->getDbTable('city')->getList())
+            ['cities' => $this->getDbTable('city')->getList()]
         );
     }
 

@@ -29,7 +29,6 @@ namespace GeebyDeeby\Db\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
-use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Publishers_Imprints
@@ -58,7 +57,7 @@ class PublishersImprints extends Gateway
     /**
      * Get a list of imprints for the specified publisher.
      *
-     * @var int $pubID Publisher ID
+     * @param int $pubID Publisher ID
      *
      * @return mixed
      */

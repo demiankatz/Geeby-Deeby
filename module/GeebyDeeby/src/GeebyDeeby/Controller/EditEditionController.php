@@ -84,7 +84,7 @@ class EditEditionController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'name' => 'Edition_Name',
             'desc' => 'Edition_Description',
             'item_id' => 'Item_ID',
@@ -98,11 +98,11 @@ class EditEditionController extends AbstractBase
             'position_in_parent' => 'Position_In_Parent',
             'extent_in_parent' => 'Extent_In_Parent',
             'item_display_order' => 'Item_Display_Order',
-        );
+        ];
         $view = $this->handleGenericItem('edition', $assignMap, 'edition');
-        $editionId = isset($view->edition['Edition_ID'])
-            ? $view->edition['Edition_ID']
-            : (isset($view->affectedRow->Edition_ID) ? $view->affectedRow->Edition_ID : null);
+        $editionId = $view->edition['Edition_ID']
+            ?? $view->affectedRow->Edition_ID
+            ?? null;
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost()
@@ -265,7 +265,9 @@ class EditEditionController extends AbstractBase
                     $row = $table->createRow();
                     $row->Item_ID = $edition->Item_ID;
                     if (empty($row->Item_ID)) {
-                        return $this->jsonDie('Edition must be attached to an Item.');
+                        return $this->jsonDie(
+                            'Edition must be attached to an Item.'
+                        );
                     }
                     $row->Item_AltName = $titleText;
                     $table->insert((array)$row);
@@ -349,7 +351,9 @@ class EditEditionController extends AbstractBase
                     $row = $table->createRow();
                     $row->Series_ID = $edition->Series_ID;
                     if (empty($row->Series_ID)) {
-                        return $this->jsonDie('Edition must be attached to a Series.');
+                        return $this->jsonDie(
+                            'Edition must be attached to a Series.'
+                        );
                     }
                     $row->Series_AltName = $titleText;
                     $table->insert((array)$row);
@@ -493,12 +497,12 @@ class EditEditionController extends AbstractBase
         list($year, $month, $day)
             = explode(',', $this->params()->fromRoute('extra'));
         $this->getDbTable('editionsreleasedates')->delete(
-            array(
+            [
                 'Edition_ID' => $this->params()->fromRoute('id'),
                 'Year' => $year,
                 'Month' => $month,
                 'Day' => $day
-            )
+            ]
         );
         return $this->jsonReportSuccess();
     }
@@ -533,11 +537,11 @@ class EditEditionController extends AbstractBase
         if ($this->getRequest()->isDelete()) {
             list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
             $this->getDbTable('editionscredits')->delete(
-                array(
+                [
                     'Edition_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $person,
                     'Role_ID' => $role
-                )
+                ]
             );
             return $this->jsonReportSuccess();
         }
@@ -564,12 +568,12 @@ class EditEditionController extends AbstractBase
         }
         if ($this->getRequest()->isPost()) {
             $this->getDbTable('editionscredits')->update(
-                array('Position' => $this->params()->fromPost('pos')),
-                array(
+                ['Position' => $this->params()->fromPost('pos')],
+                [
                     'Edition_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $this->params()->fromPost('person_id'),
                     'Role_ID' => $this->params()->fromPost('role_id')
-                )
+                ]
             );
             return $this->jsonReportSuccess();
         }
@@ -589,26 +593,26 @@ class EditEditionController extends AbstractBase
         }
         $table = $this->getDbTable('editionsfulltext');
         if ($this->getRequest()->isPost()) {
-            $insert = array(
+            $insert = [
                 'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
                 'Edition_ID' => $this->params()->fromRoute('id'),
                 'Full_Text_URL' => trim($this->params()->fromPost('url'))
-            );
+            ];
             if (empty($insert['Full_Text_URL'])) {
                 return $this->jsonDie('URL must not be empty.');
             }
             $table->insert($insert);
             return $this->jsonReportSuccess();
-        } else if ($this->getRequest()->isDelete()) {
+        } elseif ($this->getRequest()->isDelete()) {
             $delete = $this->params()->fromRoute('extra');
-            $table->delete(array('Sequence_ID' => $delete));
+            $table->delete(['Sequence_ID' => $delete]);
             return $this->jsonReportSuccess();
         }
         // Default behavior: display list:
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-            $view->fullText = $this->getDbTable('editionsfulltext')
-                ->getFullTextForEdition($primary);
+        $view->fullText = $this->getDbTable('editionsfulltext')
+            ->getFullTextForEdition($primary);
         $view->setTemplate('geeby-deeby/edit-edition/fulltext-list.phtml');
         $view->setTerminal(true);
         return $view;
@@ -789,7 +793,7 @@ class EditEditionController extends AbstractBase
             $image = $this->params()->fromPost('sequence_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('editionsimages')->update(
-                array('Position' => $pos), array('Sequence_ID' => $image)
+                ['Position' => $pos], ['Sequence_ID' => $image]
             );
             return $this->jsonReportSuccess();
         }
@@ -845,7 +849,7 @@ class EditEditionController extends AbstractBase
                 $newObj->delete();
                 throw new \Exception($error);
             }
-            $rows = $edsTable->select(array('Item_ID' => $row['Item_ID']));
+            $rows = $edsTable->select(['Item_ID' => $row['Item_ID']]);
             foreach ($rows as $row) {
                 $row = $row->toArray();
                 if ($row['Edition_ID'] != $new) {
@@ -860,7 +864,7 @@ class EditEditionController extends AbstractBase
             'edition', 'Parent_Edition_ID', 'Item_ID',
             'item_list', 'getItemsForEdition',
             'geeby-deeby/edit-edition/item-list.phtml',
-            array('Edition_Name' => $edName, 'Series_ID' => $seriesID),
+            ['Edition_Name' => $edName, 'Series_ID' => $seriesID],
             $insertCallback
         );
     }
@@ -880,7 +884,7 @@ class EditEditionController extends AbstractBase
             $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('edition')->update(
-                array('Position_in_Parent' => $pos), array('Edition_ID' => $edition)
+                ['Position_in_Parent' => $pos], ['Edition_ID' => $edition]
             );
             return $this->jsonReportSuccess();
         }

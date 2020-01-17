@@ -57,7 +57,7 @@ class SeriesTranslations extends Gateway
     /**
      * Get a list of series translated from the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -65,11 +65,11 @@ class SeriesTranslations extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Translations.Trans_Series_ID = s.Series_ID'
             );
             $select->join(
-                array('l' => 'Languages'),
+                ['l' => 'Languages'],
                 'l.Language_ID = s.Language_ID'
             );
             $select->where->equalTo('Source_Series_ID', $seriesID);
@@ -81,7 +81,7 @@ class SeriesTranslations extends Gateway
     /**
      * Get a list of series translated into the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -89,11 +89,11 @@ class SeriesTranslations extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Translations.Source_Series_ID = s.Series_ID'
             );
             $select->join(
-                array('l' => 'Languages'),
+                ['l' => 'Languages'],
                 'l.Language_ID = s.Language_ID'
             );
             $select->where->equalTo('Trans_Series_ID', $seriesID);

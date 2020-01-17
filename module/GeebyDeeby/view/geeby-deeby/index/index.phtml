@@ -1,4 +1,4 @@
-<? $this->layout()->title = 'Main Menu' ?>
+<?php $this->layout()->title = 'Main Menu' ?>
 <h2>Database</h2>
 <p>List Series
   [<a href="<?=$this->url('series')?>">by name</a>,
@@ -8,19 +8,19 @@
   <a href="<?=$this->url('languages')?>">by language</a>,
   <a href="<?=$this->url('materials')?>">by material type</a>,
   <a href="<?=$this->url('publishers')?>">by publisher</a>,
-  <a href="<?=$this->url('series', array('extra' => 'Comments'))?>">with comments</a>]
+  <a href="<?=$this->url('series', ['extra' => 'Comments'])?>">with comments</a>]
 </p>
 <p>List People
   [<a href="<?=$this->url('people')?>">by name</a>,
-  <a href="<?=$this->url('people', array('extra' => 'Bios'))?>">with biographical notes</a>]
+  <a href="<?=$this->url('people', ['extra' => 'Bios'])?>">with biographical notes</a>]
 </p>
 <p>List Items
   [<a href="<?=$this->url('items')?>">by name</a>,
   <a href="<?=$this->url('platforms')?>">by platform</a>,
   <a href="<?=$this->url('tags')?>">by subject/tag</a>,
-  <a href="<?=$this->url('items', array('extra' => 'ByYear'))?>">by year</a>,
-  <a href="<?=$this->url('items', array('extra' => 'FullText'))?>">with full text</a>,
-  <a href="<?=$this->url('items', array('extra' => 'Reviews'))?>">with reviews</a>]
+  <a href="<?=$this->url('items', ['extra' => 'ByYear'])?>">by year</a>,
+  <a href="<?=$this->url('items', ['extra' => 'FullText'])?>">with full text</a>,
+  <a href="<?=$this->url('items', ['extra' => 'Reviews'])?>">with reviews</a>]
 </p>
 <p><a href="<?=$this->url('files')?>">List Files</a></p>
 <p><a href="<?=$this->url('links')?>">List Links</a></p>

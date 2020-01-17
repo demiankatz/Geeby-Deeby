@@ -58,42 +58,42 @@ class EditItemController extends AbstractBase
      *
      * @return void
      */
-     protected function saveAttributes($itemId, $attribs)
-     {
-         $table = $this->getDbTable('itemsattributesvalues');
-         // Delete old values:
-         $table->delete(['Item_ID' => $itemId]);
-         // Save new values:
-         foreach ($attribs as $id => $val) {
-             if (!empty($val)) {
-                 $table->insert(
-                     [
+    protected function saveAttributes($itemId, $attribs)
+    {
+        $table = $this->getDbTable('itemsattributesvalues');
+        // Delete old values:
+        $table->delete(['Item_ID' => $itemId]);
+        // Save new values:
+        foreach ($attribs as $id => $val) {
+            if (!empty($val)) {
+                $table->insert(
+                    [
                          'Item_ID' => $itemId,
                          'Items_Attribute_ID' => $id,
                          'Items_Attribute_Value' => $val
                      ]
-                 );
-             }
-         }
-     }
- 
-     /**
+                );
+            }
+        }
+    }
+
+    /**
      * Operate on a single item
      *
      * @return mixed
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'name' => 'Item_Name',
             'errata' => 'Item_Errata',
             'thanks' => 'Item_Thanks',
             'material' => 'Material_Type_ID'
-        );
+        ];
         $view = $this->handleGenericItem('item', $assignMap, 'item');
-        $itemId = isset($view->itemObj->Item_ID)
-            ? $view->itemObj->Item_ID
-            : (isset($view->affectedRow->Item_ID) ? $view->affectedRow->Item_ID : null);
+        $itemId = $view->itemObj->Item_ID
+            ?? $view->affectedRow->Item_ID
+            ?? null;
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost()
@@ -144,8 +144,10 @@ class EditItemController extends AbstractBase
                 ->getTags($itemId);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($itemId);
-            $view->relationships = $this->getDbTable('itemsrelationship')->getOptionList();
-            $view->relationshipsValues = $this->getDbTable('itemsrelationshipsvalues')
+            $view->relationships = $this->getDbTable('itemsrelationship')
+                ->getOptionList();
+            $view->relationshipsValues = $this
+                ->getDbTable('itemsrelationshipsvalues')
                 ->getRelationshipsForItem($itemId);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($itemId);
@@ -160,27 +162,27 @@ class EditItemController extends AbstractBase
                 $parentEdition = $this->getDbTable('edition')
                     ->getByPrimaryKey($editionID);
                 $this->getDbTable('edition')->insert(
-                    array(
+                    [
                         'Edition_Name' => $parentEdition->Edition_Name,
                         'Item_ID' => $view->affectedRow->Item_ID,
                         'Series_ID' => $parentEdition->Series_ID,
                         'Edition_Length' => $this->params()->fromPost('len'),
                         'Edition_Endings' => $this->params()->fromPost('endings'),
                         'Parent_Edition_ID' => $editionID
-                    )
+                    ]
                 );
             } elseif ($seriesID = $this->params()->fromPost('series_id', false)) {
                 $series = $this->getDbTable('series')->getByPrimaryKey($seriesID);
                 $edName = $this->serviceLocator->get('GeebyDeeby\Articles')
                     ->articleAwareAppend($series->Series_Name, ' edition');
                 $this->getDbTable('edition')->insert(
-                    array(
+                    [
                         'Edition_Name' => $edName,
                         'Item_ID' => $view->affectedRow->Item_ID,
                         'Series_ID' => $seriesID,
                         'Edition_Length' => $this->params()->fromPost('len'),
                         'Edition_Endings' => $this->params()->fromPost('endings')
-                    )
+                    ]
                 );
             }
         }
@@ -285,7 +287,7 @@ class EditItemController extends AbstractBase
             if ($this->getRequest()->isDelete()) {
                 $extra = $this->params()->fromRoute('extra');
                 $result = $this->getDbTable('edition')->select(
-                    array('Preferred_Item_AltName_ID' => $extra)
+                    ['Preferred_Item_AltName_ID' => $extra]
                 );
                 if (count($result) > 0) {
                     $ed = $result->current();
@@ -311,7 +313,7 @@ class EditItemController extends AbstractBase
     public function attachmentAction()
     {
         $note = intval($this->params()->fromPost('note_id'));
-        $extras = $note > 0 ? array('Note_ID' => $note) : array();
+        $extras = $note > 0 ? ['Note_ID' => $note] : [];
         return $this->handleGenericLink(
             'itemsincollections', 'Collection_Item_ID', 'Item_ID',
             'item_list', 'getItemsForCollection',
@@ -345,8 +347,8 @@ class EditItemController extends AbstractBase
             $item = $this->params()->fromPost('item_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('itemsincollections')->update(
-                array('Position' => $pos),
-                array('Item_ID' => $item, 'Collection_Item_ID' => $collection)
+                ['Position' => $pos],
+                ['Item_ID' => $item, 'Collection_Item_ID' => $collection]
             );
             return $this->jsonReportSuccess();
         }
@@ -420,11 +422,11 @@ class EditItemController extends AbstractBase
     protected function addCreator()
     {
         $table = $this->getDbTable('itemscreators');
-        $row = array(
+        $row = [
             'Item_ID' => $this->params()->fromRoute('id'),
             'Person_ID' => $this->params()->fromPost('person_id'),
             'Role_ID' => $this->params()->fromPost('role_id'),
-        );
+        ];
         $table->insert($row);
         return $this->jsonReportSuccess();
     }
@@ -439,11 +441,11 @@ class EditItemController extends AbstractBase
         list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
         try {
             $this->getDbTable('itemscreators')->delete(
-                array(
+                [
                     'Item_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $person,
                     'Role_ID' => $role
-                )
+                ]
             );
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
@@ -487,12 +489,12 @@ class EditItemController extends AbstractBase
     {
         $table = $this->getDbTable('editionscredits');
         $item = $this->params()->fromRoute('id');
-        $row = array(
+        $row = [
             'Person_ID' => $this->params()->fromPost('person_id'),
             'Role_ID' => $this->params()->fromPost('role_id'),
             'Position' => $this->params()->fromPost('pos'),
             'Note_ID' => $this->params()->fromPost('note_id')
-        );
+        ];
         if (empty($row['Note_ID'])) {
             $row['Note_ID'] = null;
         }
@@ -510,7 +512,7 @@ class EditItemController extends AbstractBase
         list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
         $this->getDbTable('editionscredits')->deleteForItem(
             $this->params()->fromRoute('id'),
-            array('Person_ID' => $person, 'Role_ID' => $role)
+            ['Person_ID' => $person, 'Role_ID' => $role]
         );
         return $this->jsonReportSuccess();
     }
@@ -525,11 +527,11 @@ class EditItemController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             $this->getDbTable('editionscredits')->updateForItem(
                 $this->params()->fromRoute('id'),
-                array('Position' => $this->params()->fromPost('pos')),
-                array(
+                ['Position' => $this->params()->fromPost('pos')],
+                [
                     'Person_ID' => $this->params()->fromPost('person_id'),
                     'Role_ID' => $this->params()->fromPost('role_id')
-                )
+                ]
             );
             return $this->jsonReportSuccess();
         }
@@ -580,8 +582,8 @@ class EditItemController extends AbstractBase
             $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('edition')->update(
-                array('Item_Display_Order' => intval($pos)),
-                array('Edition_ID' => $edition)
+                ['Item_Display_Order' => intval($pos)],
+                ['Edition_ID' => $edition]
             );
             return $this->jsonReportSuccess();
         }

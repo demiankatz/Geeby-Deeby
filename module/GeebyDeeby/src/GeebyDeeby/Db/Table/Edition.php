@@ -110,7 +110,7 @@ class Edition extends Gateway
     /**
      * Get parent item for the specified edition (false if none).
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -123,12 +123,12 @@ class Edition extends Gateway
         $parent = $ed->Parent_Edition_ID;
         $callback = function ($select) use ($parent) {
             $select->join(
-                array('items' => 'Items'), 'Editions.Item_ID = items.Item_ID'
+                ['items' => 'Items'], 'Editions.Item_ID = items.Item_ID'
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'Editions.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->where->equalTo('Edition_ID', $parent);
         };
@@ -142,7 +142,7 @@ class Edition extends Gateway
     /**
      * Get a list of items for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -156,7 +156,7 @@ class Edition extends Gateway
     /**
      * Get a list of items for the specified series (not grouped by material type).
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -170,7 +170,7 @@ class Edition extends Gateway
     /**
      * Get a list of items for the specified series ( grouped by material type).
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -193,13 +193,14 @@ class Edition extends Gateway
     {
         $callback = function ($select) use ($itemID, $includeParents) {
             $year = new Expression(
-                'min(?)', array('erd.Year'),
-                array(Expression::TYPE_IDENTIFIER)
+                'min(?)', ['erd.Year'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
-                array('erd' => 'Editions_Release_Dates'),
-                'Editions.Edition_ID = erd.Edition_ID OR Editions.Parent_Edition_ID = erd.Edition_ID',
-                array('Earliest_Year' => $year), Select::JOIN_LEFT
+                ['erd' => 'Editions_Release_Dates'],
+                'Editions.Edition_ID = erd.Edition_ID OR '
+                . 'Editions.Parent_Edition_ID = erd.Edition_ID',
+                ['Earliest_Year' => $year], Select::JOIN_LEFT
             );
             $order = ['Item_Display_Order', 'Earliest_Year', 'Edition_Name'];
             $fields = [
@@ -225,24 +226,27 @@ class Edition extends Gateway
             $select->where->equalTo('Editions.Item_ID', $itemID);
             if ($includeParents) {
                 $select->join(
-                    array('pe' => 'Editions'),
+                    ['pe' => 'Editions'],
                     'Editions.Parent_Edition_ID = pe.Edition_ID',
                     [], Select::JOIN_LEFT
                 );
                 $select->join(
-                    array('i' => 'Items'), 'pe.Item_ID = i.Item_ID',
-                    array('Item_Name'), Select::JOIN_LEFT
+                    ['i' => 'Items'], 'pe.Item_ID = i.Item_ID',
+                    ['Item_Name'], Select::JOIN_LEFT
                 );
                 $select->join(
-                    array('iat' => 'Items_AltTitles'),
+                    ['iat' => 'Items_AltTitles'],
                     'pe.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                    array('Item_AltName'), Select::JOIN_LEFT
+                    ['Item_AltName'], Select::JOIN_LEFT
                 );
                 $fields[] = 'Item_Name';
                 $fields[] = 'Item_AltName';
                 $order = array_merge(
                     $order,
-                    ['pe.Series_ID', 'pe.Volume', 'pe.Position', 'pe.Replacement_Number']
+                    [
+                        'pe.Series_ID', 'pe.Volume', 'pe.Position',
+                        'pe.Replacement_Number'
+                    ]
                 );
             }
             $select->group($fields);
@@ -263,36 +267,36 @@ class Edition extends Gateway
     {
         $callback = function ($select) use ($field, $value) {
             $select->join(
-                array('sp' => 'Series_Publishers'),
+                ['sp' => 'Series_Publishers'],
                 'Editions.Preferred_Series_Publisher_ID = sp.Series_Publisher_ID'
             );
             $select->join(
-                array('p' => 'Publishers'),
+                ['p' => 'Publishers'],
                 'sp.Publisher_ID = p.Publisher_ID'
             );
             $select->join(
-                array('pa' => 'Publishers_Addresses'),
+                ['pa' => 'Publishers_Addresses'],
                 'sp.Address_ID = pa.Address_ID',
-                array('Street'), Select::JOIN_LEFT
+                ['Street'], Select::JOIN_LEFT
             );
             $select->join(
-                array('c' => 'Countries'), 'pa.Country_ID = c.Country_ID',
+                ['c' => 'Countries'], 'pa.Country_ID = c.Country_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('ci' => 'Cities'), 'pa.City_ID = ci.City_ID',
+                ['ci' => 'Cities'], 'pa.City_ID = ci.City_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('n' => 'Notes'), 'sp.Note_ID = n.Note_ID',
+                ['n' => 'Notes'], 'sp.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->where->equalTo($field, $value);
             $select->order(
-                array(
+                [
                     'Edition_Name',
                     'Publisher_Name', 'Country_Name', 'City_Name', 'Street',
-                )
+                ]
             );
         };
         return $this->select($callback);
@@ -309,6 +313,7 @@ class Edition extends Gateway
     {
         return $this->getPublishersForWhereClause('Edition_ID', $id);
     }
+
     /**
      * Retrieve publishers for the specified item.
      *
@@ -331,14 +336,16 @@ class Edition extends Gateway
      */
     public function safeDelete($id)
     {
-        $select = array('Edition_ID' => $id);
+        $select = ['Edition_ID' => $id];
         if (count($this->getDbTable('editionscredits')->select($select)) > 0) {
             throw new \Exception('Cannot delete - attached credits.');
         }
         if (count($this->getDbTable('editionsreleasedates')->select($select)) > 0) {
             throw new \Exception('Cannot delete - attached dates.');
         }
-        if (count($this->getDbTable('edition')->select(array('Parent_Edition_ID' => $id))) > 0) {
+        $children = $this->getDbTable('edition')
+            ->select(['Parent_Edition_ID' => $id]);
+        if (count($children) > 0) {
             throw new \Exception('Cannot delete - has child editions.');
         }
         $this->delete($select);
@@ -362,11 +369,11 @@ class Edition extends Gateway
         }
         foreach ($from->getChildren() as $child) {
             $child->copy(
-                array(
+                [
                     'Parent_Edition_ID' => $to->Edition_ID,
                     'Series_ID' => $to->Series_ID,
                     'Edition_Name' => $to->Edition_Name
-                )
+                ]
             );
         }
         $to->copyAttributes($from->Edition_ID);

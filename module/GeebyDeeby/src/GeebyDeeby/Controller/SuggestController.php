@@ -46,7 +46,7 @@ class SuggestController extends AbstractBase
     public function indexAction()
     {
         $table = $this->getDbTable($this->params()->fromRoute('table'));
-        if (!is_callable(array($table, 'getSuggestions'))) {
+        if (!is_callable([$table, 'getSuggestions'])) {
             throw new \Exception('Suggestions not supported.');
         }
         $suggestions = $table->getSuggestions(

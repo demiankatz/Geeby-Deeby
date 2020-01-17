@@ -1,22 +1,22 @@
-<?
+<?php
     $this->layout()->title = 'Platform List';
 ?>
-<? if (count($platforms) < 1): ?>
+<?php if (count($platforms) < 1): ?>
   <p>No platforms listed in this database yet.</p>
-<? else: ?>
+<?php else: ?>
   <h2>
     <?=$this->firstLetterMenu($platforms, 'Platform'); ?>
   </h2>
-  <? $currentLetter = false; foreach ($platforms as $i=>$current): ?>
-    <? $first = $this->firstletter($current['Platform']); ?>
-    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <? if ($i > 0): ?>
+  <?php $currentLetter = false; foreach ($platforms as $i => $current): ?>
+    <?php $first = $this->firstletter($current['Platform']); ?>
+    <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <?php if ($i > 0): ?>
         <a name="<?=$this->escapeHtml($currentLetter)?>"/>
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
-      <? endif; ?>
-    <? endif; ?>
-    <a href="<?=$this->url('platform', array('id' => $current['Platform_ID']))?>">
+      <?php endif; ?>
+    <?php endif; ?>
+    <a href="<?=$this->url('platform', ['id' => $current['Platform_ID']])?>">
       <?=$this->escapeHtml($this->fixtitle($current['Platform']))?>
     </a><br />
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

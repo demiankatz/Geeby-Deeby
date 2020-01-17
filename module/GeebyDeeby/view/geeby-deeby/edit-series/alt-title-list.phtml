@@ -1,5 +1,5 @@
-<? if (isset($series_alt_titles) && count($series_alt_titles) > 0): ?>
-  <? foreach ($series_alt_titles as $current): ?>
+<?php if (isset($series_alt_titles) && count($series_alt_titles) > 0): ?>
+  <?php foreach ($series_alt_titles as $current): ?>
     <table class="list_item">
       <tr>
         <td>
@@ -11,7 +11,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No alternate titles set.
-<? endif; ?>
+<?php endif; ?>

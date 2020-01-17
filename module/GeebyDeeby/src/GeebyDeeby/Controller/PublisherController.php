@@ -96,7 +96,7 @@ class PublisherController extends AbstractBase
         }
 
         return $this->getRdfResponse($this->getGraphFromView($view));
-     }
+    }
 
     /**
      * "Show publisher" page
@@ -126,7 +126,7 @@ class PublisherController extends AbstractBase
             return false;
         }
         $view = $this->createViewModel(
-            array('publisher' => $rowObj->toArray())
+            ['publisher' => $rowObj->toArray()]
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForPublisher($id);
@@ -141,7 +141,7 @@ class PublisherController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array('publishers' => $this->getDbTable('publisher')->getList())
+            ['publishers' => $this->getDbTable('publisher')->getList()]
         );
     }
 

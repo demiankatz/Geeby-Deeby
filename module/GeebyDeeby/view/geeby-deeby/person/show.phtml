@@ -1,80 +1,80 @@
-<?
+<?php
     $title = $this->showperson($person);
     $this->layout()->title = 'Person - ' . $title;
     $displayedSomething = false;
 ?>
-<? $realNameCount = count($realNames); if ($realNameCount > 0): $displayedSomething = true; ?>
+<?php $realNameCount = count($realNames); if ($realNameCount > 0): $displayedSomething = true; ?>
   <p><b>Pseudonym For:</b>
-    <? $i = 0; foreach ($realNames as $realName): $i++; ?>
-      <a href="<?=$this->url('person', array('id' => $realName['Person_ID']))?>"><?=$this->showperson($realName)?></a><?=$i < $realNameCount ? '; ' : ''?>
-    <? endforeach; ?>
+    <?php $i = 0; foreach ($realNames as $realName): $i++; ?>
+      <a href="<?=$this->url('person', ['id' => $realName['Person_ID']])?>"><?=$this->showperson($realName)?></a><?=$i < $realNameCount ? '; ' : ''?>
+    <?php endforeach; ?>
   </p>
-<? endif; ?>
+<?php endif; ?>
 
-<? $pseudoCount = count($pseudonyms); if ($pseudoCount > 0): $displayedSomething = true; ?>
+<?php $pseudoCount = count($pseudonyms); if ($pseudoCount > 0): $displayedSomething = true; ?>
   <p><b><?=$pseudoCount > 1 ? 'Pseudonyms' : 'Pseudonym'?>:</b>
-    <? $i = 0; foreach ($pseudonyms as $pseudonym): $i++; ?>
-      <a href="<?=$this->url('person', array('id' => $pseudonym['Person_ID']))?>"><?=$this->showperson($pseudonym)?></a><?=$i < $pseudoCount ? '; ' : ''?>
-    <? endforeach; ?>
+    <?php $i = 0; foreach ($pseudonyms as $pseudonym): $i++; ?>
+      <a href="<?=$this->url('person', ['id' => $pseudonym['Person_ID']])?>"><?=$this->showperson($pseudonym)?></a><?=$i < $pseudoCount ? '; ' : ''?>
+    <?php endforeach; ?>
   </p>
-<? endif; ?>
+<?php endif; ?>
 
-<? if (!empty($person['Biography'])): $displayedSomething = true; ?>
-  <? /* Don't escape biography -- contains HTML. */ ?>
+<?php if (!empty($person['Biography'])): $displayedSomething = true; ?>
+  <?php /* Don't escape biography -- contains HTML. */ ?>
   <p><?=$person['Biography']?></p>
-<? endif; ?>
+<?php endif; ?>
 
-<? if (count($credits) > 0 || count($citations) > 0): $displayedSomething = true; ?>
-  <? $sorts = [ 'series', 'title', 'year' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
+<?php if (count($credits) > 0 || count($citations) > 0): $displayedSomething = true; ?>
+  <?php $sorts = [ 'series', 'title', 'year' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
   <div class="pull-right" style="padding:12px 0;">
     Sort by: 
     <div class="btn-group" style="margin-top:-4px;">
-      <? foreach ($sorts as $current): ?>
+      <?php foreach ($sorts as $current): ?>
         <a href="?sort=<?=urlencode($current)?>" class="btn btn-<?=$sort == $current ? 'primary' : 'default'?>"><?=ucwords($current)?></a>
-      <? endforeach; ?>
+      <?php endforeach; ?>
     </div>
   </div>
-  <?=$this->render('geeby-deeby/person/innerList.phtml', array('title' => $title, 'sort' => $sort, 'list' => $citations, 'labelPrefix' => 'Cited'))?>
-  <?=$this->render('geeby-deeby/person/innerList.phtml', array('title' => $title, 'sort' => $sort, 'list' => $credits, 'labelPrefix' => 'Credited'))?>
-<? endif; ?>
+  <?=$this->render('geeby-deeby/person/innerList.phtml', ['title' => $title, 'sort' => $sort, 'list' => $citations, 'labelPrefix' => 'Cited'])?>
+  <?=$this->render('geeby-deeby/person/innerList.phtml', ['title' => $title, 'sort' => $sort, 'list' => $credits, 'labelPrefix' => 'Credited'])?>
+<?php endif; ?>
 
-<? if (count($files) > 0): $displayedSomething = true;?>
+<?php if (count($files) > 0): $displayedSomething = true;?>
   <h2>Related Documents</h2>
-  <? $type = false; foreach ($files as $file): ?>
-    <? if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
+  <?php $type = false; foreach ($files as $file): ?>
+    <?php if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
       <h3 class="filetype"><?=$this->escapeHtml($type)?></h3>
-    <? endif; ?>
+    <?php endif; ?>
     <p class="file">
       <a target="_new" href="<?=$this->escapeHtml($file['File_Path'])?>">
         <?=$this->escapeHtml($this->fixtitle($file['File_Name']))?>
       </a>
-      <? if (!empty($file['Description'])): ?>
+      <?php if (!empty($file['Description'])): ?>
         <br /><?=$file['Description']?>
-      <? endif; ?>
+      <?php endif; ?>
     </p>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>
 
-<? if (count($bibliography) > 0): $displayedSomething = true;?>
+<?php if (count($bibliography) > 0): $displayedSomething = true;?>
   <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
-  <? $type = false; foreach ($bibliography as $bib): ?>
-    <? if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
+  <?php $type = false; foreach ($bibliography as $bib): ?>
+    <?php if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
       <h3 class="materialType"><?=$this->escapeHtml($type)?></h3>
-    <? endif; ?>
-    <span class="item"><a href="<?=$this->url('item', array('id' => $bib['Item_ID']))?>"><?=$this->fixtitle($bib['Item_Name'])?></a></span><br />
-  <? endforeach; ?>
-<? endif; ?>
+    <?php endif; ?>
+    <span class="item"><a href="<?=$this->url('item', ['id' => $bib['Item_ID']])?>"><?=$this->fixtitle($bib['Item_Name'])?></a></span><br />
+  <?php endforeach; ?>
+<?php endif; ?>
 
-<? if (count($links) > 0): $displayedSomething = true;?>
+<?php if (count($links) > 0): $displayedSomething = true;?>
   <h2>Related Links</h2>
-  <? foreach ($links as $link): ?>
+  <?php foreach ($links as $link): ?>
     <p class="link">
       <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />
-      <? if (!empty($link['Description'])): ?><?=$link['Description']?><br /><? endif; ?>
+      <?php if (!empty($link['Description'])): ?><?=$link['Description']?><br /><?php endif; ?>
       <span class="url"><?=$this->escapeHtml($link['URL'])?></span>
       (last verified: <?=$this->escapeHtml($link['Date_Checked'])?>)
     </p>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>
 
-<? if (!$displayedSomething): ?><p>No further information on this person is available at the moment.</p><? endif; ?>
+<?php if (!$displayedSomething): ?><p>No further information on this person is available at the moment.</p><?php endif; ?>

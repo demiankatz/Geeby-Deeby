@@ -29,7 +29,6 @@ namespace GeebyDeeby\Db\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
-use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Items_Product_Codes

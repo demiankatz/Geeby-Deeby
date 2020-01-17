@@ -1,5 +1,5 @@
-<? if (isset($tags) && count($tags) > 0): ?>
-  <? foreach ($tags as $current): ?>
+<?php if (isset($tags) && count($tags) > 0): ?>
+  <?php foreach ($tags as $current): ?>
   <table class="list_item">
     <tr>
       <td>
@@ -11,7 +11,7 @@
       </td>
     </tr>
   </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No tags set.
-<? endif; ?>
+<?php endif; ?>

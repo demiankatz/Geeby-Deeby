@@ -1,9 +1,9 @@
-<? if (isset($itemsFiles) && count($itemsFiles) > 0): ?>
-  <? foreach ($itemsFiles as $current): ?>
+<?php if (isset($itemsFiles) && count($itemsFiles) > 0): ?>
+  <?php foreach ($itemsFiles as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>"><?=$this->escapeHtml($current['Item_Name'])?></a><br />
+          <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>"><?=$this->escapeHtml($current['Item_Name'])?></a><br />
         </td>
         <td>
           <a class="ui-icon ui-icon-trash" href="#" onclick="File.unlink('Item', <?=$current['Item_ID']?>); return false;">
@@ -11,7 +11,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No relevant items.
-<? endif; ?>
+<?php endif; ?>

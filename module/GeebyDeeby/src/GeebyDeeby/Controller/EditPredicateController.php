@@ -57,7 +57,7 @@ class EditPredicateController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array('predicate' => 'Predicate', 'abbrev' => 'Predicate_Abbrev');
+        $assignMap = ['predicate' => 'Predicate', 'abbrev' => 'Predicate_Abbrev'];
         return $this->handleGenericItem('predicate', $assignMap, 'predicate');
     }
 }

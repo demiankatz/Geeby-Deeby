@@ -29,8 +29,6 @@ namespace GeebyDeeby\Db\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Items_Creators_Citations
@@ -67,10 +65,10 @@ class ItemsCreatorsCitations extends Gateway
     {
         $callback = function ($select) use ($rowID) {
             $select->join(
-                array('c' => 'Citations'),
+                ['c' => 'Citations'],
                 'Items_Creators_Citations.Citation_ID = c.Citation_ID'
             );
-            $fields = array('Citation');
+            $fields = ['Citation'];
             $select->order($fields);
             $select->where->equalTo('Item_Creator_ID', $rowID);
         };

@@ -67,7 +67,7 @@ class EditMaterialTypeController extends AbstractBase
 
         // First clear existing default:
         $table = $this->getDbTable('materialtype');
-        $table->update(array('Default' => 0));
+        $table->update(['Default' => 0]);
 
         // Now set new default:
         $row->Default = 1;
@@ -81,11 +81,11 @@ class EditMaterialTypeController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'material' => 'Material_Type_Name',
             'material_plural' => 'Material_Type_Plural_Name',
             'material_rdf' => 'Material_Type_RDF_Class'
-        );
+        ];
         $response = $this->handleGenericItem('materialtype', $assignMap, 'material');
 
         // Special handling for "set as default" checkbox:

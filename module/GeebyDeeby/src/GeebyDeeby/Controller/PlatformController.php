@@ -52,7 +52,7 @@ class PlatformController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Platform', 'notfound');
         }
         $view = $this->createViewModel(
-            array('platform' => $rowObj->toArray())
+            ['platform' => $rowObj->toArray()]
         );
         $view->items = $this->getDbTable('editionsplatforms')
             ->getItemsForPlatform($id);
@@ -67,7 +67,7 @@ class PlatformController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array('platforms' => $this->getDbTable('platform')->getList())
+            ['platforms' => $this->getDbTable('platform')->getList()]
         );
     }
 

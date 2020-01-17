@@ -28,7 +28,7 @@
 namespace GeebyDeeby\View\Helper;
 
 /**
- * Title display view helper
+ * List first letters as a horizontal jump menu
  *
  * @category GeebyDeeby
  * @package  View_Helpers
@@ -37,11 +37,12 @@ namespace GeebyDeeby\View\Helper;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class FirstLetterMenu extends \Zend\View\Helper\AbstractHelper
-{    
+{
     /**
-     * Format a title with the article in the correct position.
+     * Build HTML to list first letters as a horizontal jump menu
      *
-     * @param string $title Title to reformat
+     * @param array  $list  List of values
+     * @param string $index Field in list items to use for display
      *
      * @return string
      */
@@ -49,8 +50,8 @@ class FirstLetterMenu extends \Zend\View\Helper\AbstractHelper
     {
         $list = $list->toArray();
         $currentLetter = false;
-        $letters = array();
-        for ($i=0;$i<count($list);$i++) {
+        $letters = [];
+        for ($i = 0; $i < count($list); $i++) {
             $first = $this->view->firstLetter($list[$i][$index]);
             if ($currentLetter !== $first) {
                 $currentLetter = $first;
@@ -58,8 +59,8 @@ class FirstLetterMenu extends \Zend\View\Helper\AbstractHelper
             }
         }
         $html = $letters[0];
-        for ($i=1;$i<count($letters);$i++) {
-          $html .= ' <a href="#' . $letters[$i] . '">' . $letters[$i] . '</a>';
+        for ($i=1;$i < count($letters);$i++) {
+            $html .= ' <a href="#' . $letters[$i] . '">' . $letters[$i] . '</a>';
         }
         return $html;
     }

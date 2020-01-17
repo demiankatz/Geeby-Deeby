@@ -1,9 +1,9 @@
-<? if (isset($itemsBib) && count($itemsBib) > 0): ?>
-  <? foreach ($itemsBib as $current): ?>
+<?php if (isset($itemsBib) && count($itemsBib) > 0): ?>
+  <?php foreach ($itemsBib as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>#bib-tab">
+          <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>#bib-tab">
             <?=$this->escapeHtml($current['Item_Name'])?>
           </a>
         </td>
@@ -13,7 +13,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No relevant items.
-<? endif; ?>
+<?php endif; ?>

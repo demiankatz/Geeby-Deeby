@@ -57,17 +57,17 @@ class Articles
      */
     public function __construct()
     {
-        $this->articles = array(
-            'The','Los','Il','La','Le','L\'','El','De', 
+        $this->articles = [
+            'The','Los','Il','La','Le','L\'','El','De',
             'Het','Een','Os','O','Un','Une','As','Uma',
             'An','A','¡','Les','"', 'I', 'Ein', 'Lo',
-            'Un','Das','Die','Der','Den','Det','Et', 
+            'Un','Das','Die','Der','Den','Det','Et',
             'Las','¿','¡La "', 'Els', 'The "', 'El "', '"A',
             'Una', 'Gli', 'A "', 'The "', '¡La', '"The', 'Ta',
-        );
-        $this->unspacedArticles = array(
+        ];
+        $this->unspacedArticles = [
             "¡", "¿", "L'", '"', '¡La "', 'The "', 'El "', 'A "'
-        );
+        ];
     }
 
     /**
@@ -90,7 +90,7 @@ class Articles
                 $prefix = $art . ($padArticleWhenAppropriate ? ' ' : '');
             }
             $suflen = strlen($suffix);
-            if (substr($title, strlen($title)-$suflen) == $suffix) {
+            if (substr($title, strlen($title) - $suflen) == $suffix) {
                 return [$prefix, substr($title, 0, strlen($title) - $suflen)];
             }
         }
@@ -123,7 +123,7 @@ class Articles
         foreach ($this->articles as $art) {
             $suffix = ", " . $art;
             $suflen = strlen($suffix);
-            if (substr($title, strlen($title)-$suflen) == $suffix) {
+            if (substr($title, strlen($title) - $suflen) == $suffix) {
                 return substr($title, 0, strlen($title) - $suflen)
                     . $extra . $suffix;
             }

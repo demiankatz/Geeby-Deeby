@@ -47,11 +47,10 @@ class FileController extends AbstractBase
     {
         // Get file group configuration:
         $config = $this->serviceLocator->get('config');
-        $groups = isset($config['geeby-deeby']['file_groups'])
-            ? $config['geeby-deeby']['file_groups'] : array();
+        $groups = $config['geeby-deeby']['file_groups'] ?? [];
 
         // Initialize values:
-        $files = $excludes = array();
+        $files = $excludes = [];
         $table = $this->getDbTable('file');
 
         // Build custom groups:
@@ -67,7 +66,7 @@ class FileController extends AbstractBase
         $list = $table->getFilesByType(null, empty($excludes) ? null : $excludes);
         foreach ($list as $current) {
             if (!isset($files[$current['File_Type']])) {
-                $files[$current['File_Type']] = array();
+                $files[$current['File_Type']] = [];
             }
             $files[$current['File_Type']][] = $current;
         }
@@ -76,6 +75,6 @@ class FileController extends AbstractBase
         ksort($files);
 
         // Send back the details:
-        return $this->createViewModel(array('files' => $files));
+        return $this->createViewModel(['files' => $files]);
     }
 }

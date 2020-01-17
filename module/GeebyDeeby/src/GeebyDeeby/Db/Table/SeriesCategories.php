@@ -57,7 +57,7 @@ class SeriesCategories extends Gateway
     /**
      * Get a list of categories for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -65,7 +65,7 @@ class SeriesCategories extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('c' => 'Categories'),
+                ['c' => 'Categories'],
                 'Series_Categories.Category_ID = c.Category_ID'
             );
             $select->order('Category');
@@ -77,7 +77,7 @@ class SeriesCategories extends Gateway
     /**
      * Get a list of series for the specified category.
      *
-     * @var int $catID Category ID
+     * @param int $catID Category ID
      *
      * @return mixed
      */
@@ -85,7 +85,7 @@ class SeriesCategories extends Gateway
     {
         $callback = function ($select) use ($catID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Categories.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');

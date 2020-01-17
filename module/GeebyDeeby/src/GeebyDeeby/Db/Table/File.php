@@ -62,7 +62,7 @@ class File extends Gateway
     public function getList()
     {
         $callback = function ($select) {
-            $select->order(array('File_Name'));
+            $select->order(['File_Name']);
         };
         return $this->select($callback);
     }
@@ -81,7 +81,7 @@ class File extends Gateway
     {
         $callback = function ($select) use ($include, $exclude) {
             $select->join(
-                array('ft' => 'File_Types'), 'Files.File_Type_ID = ft.File_Type_ID'
+                ['ft' => 'File_Types'], 'Files.File_Type_ID = ft.File_Type_ID'
             );
             if (null !== $include) {
                 $select->where->in('ft.File_Type_ID', $include);
@@ -91,7 +91,7 @@ class File extends Gateway
                     $select->where->notEqualTo('ft.File_Type_ID', $x);
                 }
             }
-            $select->order(array('File_Type', 'File_Name'));
+            $select->order(['File_Type', 'File_Name']);
         };
         return $this->select($callback);
     }

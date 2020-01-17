@@ -1,4 +1,4 @@
-<?
+<?php
     $title = $user['Username'];
     $this->layout()->title = 'User - ' . $title;
 ?>
@@ -8,62 +8,62 @@
   <tr>
     <th>Full Name:</th>
     <td>
-      <? if ($user['Person_ID'] > 0): ?>
-        <a href="<?=$this->url('person', array('id' => $user['Person_ID']))?>">
-      <? endif; ?>
+      <?php if ($user['Person_ID'] > 0): ?>
+        <a href="<?=$this->url('person', ['id' => $user['Person_ID']])?>">
+      <?php endif; ?>
       <?=$this->escapeHtml($user['Name'])?>
-      <? if ($user['Person_ID'] > 0): ?>
+      <?php if ($user['Person_ID'] > 0): ?>
         </a>
-      <? endif; ?>
+      <?php endif; ?>
     </td>
   </tr>
-  <? if (!empty($user['Address'])): ?>
+  <?php if (!empty($user['Address'])): ?>
     <tr>
       <th>Email Address:</th>
       <td>
-        <? if ($this->auth()->hasIdentity()): ?>
+        <?php if ($this->auth()->hasIdentity()): ?>
           <a href="mailto:<?=$this->escapeHtml($user['Address'])?>"><?=$this->escapeHtml($user['Address'])?></a>
-        <? else: ?>
+        <?php else: ?>
           Please <a href="<?=$this->url('login')?>">log in</a> to see this user's email address.
-        <? endif; ?>
+        <?php endif; ?>
       </td>
     </tr>
-  <? endif; ?>
+  <?php endif; ?>
   <tr>
     <th>Collections:</th>
     <td>
-      <a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Collection'))?>">View Have/Want Lists</a>
+      <a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Collection'])?>">View Have/Want Lists</a>
       (<?=$stats['have']?> items owned, <?=$stats['want']?> items wanted)
-      [<a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Sellers'))?>">List Potential Sellers</a>]
+      [<a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Sellers'])?>">List Potential Sellers</a>]
       <br />
-      <a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Extras'))?>">View Sale/Trade Lists</a>
+      <a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Extras'])?>">View Sale/Trade Lists</a>
       (<?=$stats['extra']?> items for sale/trade)
-      [<a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Buyers'))?>">List Potential Buyers</a>]
+      [<a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Buyers'])?>">List Potential Buyers</a>]
     </td>
   </tr>
   <tr>
     <th>Reviews and Comments:</th>
     <td>
-      <? $revCount = count($reviews); if ($revCount > 0): ?>
-        <a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Reviews'))?>"><?=$revCount?> item review<?=$revCount > 1 ? 's' : ''?>.</a>
-      <? else: ?>
+      <?php $revCount = count($reviews); if ($revCount > 0): ?>
+        <a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Reviews'])?>"><?=$revCount?> item review<?=$revCount > 1 ? 's' : ''?>.</a>
+      <?php else: ?>
         0 item reviews.
-      <? endif; ?>
+      <?php endif; ?>
       <br />
-      <? $commentCount = count($comments); if ($commentCount > 0): ?>
-        <a href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Comments'))?>"><?=$commentCount?> series comment<?=$commentCount > 1 ? 's' : ''?>.</a>
-      <? else: ?>
+      <?php $commentCount = count($comments); if ($commentCount > 0): ?>
+        <a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Comments'])?>"><?=$commentCount?> series comment<?=$commentCount > 1 ? 's' : ''?>.</a>
+      <?php else: ?>
         0 series comments.
-      <? endif; ?>
+      <?php endif; ?>
     </td>
   </tr>
 </table>
-<? if ($this->auth()->hasIdentity() && $this->auth()->getIdentity() == $user['User_ID']): ?>
+<?php if ($this->auth()->hasIdentity() && $this->auth()->getIdentity() == $user['User_ID']): ?>
   <div class="controls">
     <p>
-      <a class="button" href="<?=$this->url('user', array('id' => $user['User_ID'], 'extra' => 'Edit'))?>">
+      <a class="button" href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Edit'])?>">
         Edit Account Details
       </a>
     </p>
   </div>
-<? endif; ?>
+<?php endif; ?>

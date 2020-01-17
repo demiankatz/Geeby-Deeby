@@ -1,30 +1,30 @@
-<?
+<?php
     $title = $user['Username'];
     $this->layout()->title = 'Potential Buyers - ' . $title;
 ?>
-<p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>
+<p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
 
-<? if (count($buyers) < 1): ?>
+<?php if (count($buyers) < 1): ?>
   <p>No buyers available.</p>
-<? else: ?>
-  <? $series = $seller = false; foreach ($buyers as $extra): ?>
-    <? if ($seller !== $extra['User_ID']): $series = false; $seller = $extra['User_ID']; ?>
-      <h2 class="user"><a href="<?=$this->url('user', array('id' => $seller))?>">
+<?php else: ?>
+  <?php $series = $seller = false; foreach ($buyers as $extra): ?>
+    <?php if ($seller !== $extra['User_ID']): $series = false; $seller = $extra['User_ID']; ?>
+      <h2 class="user"><a href="<?=$this->url('user', ['id' => $seller])?>">
         <?=$this->fixtitle($extra['Username']);?>
       </a></h2>
-    <? endif; ?>
-    <? if ($series !== $extra['Series_ID']): $series = $extra['Series_ID']; ?>
-      <h3 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+    <?php endif; ?>
+    <?php if ($series !== $extra['Series_ID']): $series = $extra['Series_ID']; ?>
+      <h3 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($extra['Series_Name']);?>
       </a></h3>
-    <? endif; ?>
+    <?php endif; ?>
     <p class="extraitem">
       <?=$this->escapeHtml($this->formatItemNumber($extra))?>
-      <a href="<?=$this->url('item', array('id' => $extra['Item_ID']))?>">
+      <a href="<?=$this->url('item', ['id' => $extra['Item_ID']])?>">
         <?=$this->escapeHtml($this->fixtitle(isset($extra['Item_AltName']) && !empty($extra['Item_AltName']) ? $extra['Item_AltName'] : $extra['Item_Name']))?>
       </a>
-      <? if (!empty($extra['Collection_Note'])): ?><br /><b>Buyer's Note:</b> <?=$this->escapeHtml($extra['Collection_Note'])?><? endif; ?>
-      <? if (!empty($extra['Other_Note'])): ?><br /><b>Seller's Note:</b> <?=$this->escapeHtml($extra['Other_Note'])?><? endif; ?>
+      <?php if (!empty($extra['Collection_Note'])): ?><br /><b>Buyer's Note:</b> <?=$this->escapeHtml($extra['Collection_Note'])?><?php endif; ?>
+      <?php if (!empty($extra['Other_Note'])): ?><br /><b>Seller's Note:</b> <?=$this->escapeHtml($extra['Other_Note'])?><?php endif; ?>
     </p>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

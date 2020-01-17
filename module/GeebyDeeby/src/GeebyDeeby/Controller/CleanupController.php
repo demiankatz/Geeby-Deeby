@@ -156,7 +156,7 @@ class CleanupController extends AbstractBase
             }
         }
         $table = $this->getDbTable('itemsincollections');
-        return $this->createViewModel(array('details' => $table->getAllCollections()));
+        return $this->createViewModel(['details' => $table->getAllCollections()]);
     }
 
     /**
@@ -172,11 +172,11 @@ class CleanupController extends AbstractBase
         }
         $table = $this->getDbTable('editionsimages');
         $thumbs = $table->getDuplicateThumbs();
-        $details = array();
+        $details = [];
         foreach ($thumbs as $current) {
             $details[$current['Thumb_Path']]
                 = $table->getEditionsForThumb($current['Thumb_Path']);
         }
-        return $this->createViewModel(array('details' => $details));
+        return $this->createViewModel(['details' => $details]);
     }
 }

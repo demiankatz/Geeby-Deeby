@@ -58,9 +58,9 @@ class ItemsReviews extends Gateway
     /**
      * Get a list of reviews for the specified item.
      *
-     * @var int    $itemID   Item ID
-     * @var string $approved 'y' to get only approved items, 'n' for only unapproved
-     * items, null for all items
+     * @param int    $itemID   Item ID
+     * @param string $approved 'y' to get only approved items, 'n' for only
+     * unapproved items, null for all items
      *
      * @return mixed
      */
@@ -69,7 +69,7 @@ class ItemsReviews extends Gateway
         $callback = function ($select) use ($itemID, $approved) {
             $select->order('Username');
             $select->join(
-                array('u' => 'Users'),
+                ['u' => 'Users'],
                 'Items_Reviews.User_ID = u.User_ID'
             );
             if (null !== $approved) {
@@ -83,9 +83,11 @@ class ItemsReviews extends Gateway
     /**
      * Get a list of item IDs reviewed by the specified user.
      *
-     * @var int    $userID   User ID
-     * @var string $approved 'y' to get only approved items, 'n' for only unapproved
-     * items, null for all items
+     * @param int    $userID   User ID
+     * @param string $approved 'y' to get only approved items, 'n' for only
+     * unapproved items, null for all items
+     *
+     * @return mixed
      */
     public function getReviewIDsByUser($userID, $approved = 'y')
     {
@@ -112,40 +114,44 @@ class ItemsReviews extends Gateway
     {
         $callback = function ($select) use ($userID, $approved, $series) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_Reviews.Item_ID = i.Item_ID'
             );
             if ($series) {
                 $select->join(
-                    array('eds' => 'Editions'),
+                    ['eds' => 'Editions'],
                     'i.Item_ID = eds.Item_ID'
                 );
                 $select->join(
-                    array('iat' => 'Items_AltTitles'),
+                    ['iat' => 'Items_AltTitles'],
                     'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                    array('Item_AltName'), Select::JOIN_LEFT
+                    ['Item_AltName'], Select::JOIN_LEFT
                 );
                 $select->join(
-                    array('s' => 'Series'),
+                    ['s' => 'Series'],
                     'eds.Series_ID = s.Series_ID'
                 );
                 $select->group(
-                    array(
+                    [
                         'Items_Reviews.Item_ID', 'Items_Reviews.User_ID',
-                        's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number'
-                    )
+                        's.Series_ID', 'eds.Volume', 'eds.Position',
+                        'eds.Replacement_Number'
+                    ]
                 );
             }
             // If we don't already have a user in mind, let's pull in extra
             // user details in case we need them:
             if (null === $userID) {
                 $select->join(
-                    array('u' => 'Users'), 'Items_Reviews.User_ID = u.User_ID'
+                    ['u' => 'Users'], 'Items_Reviews.User_ID = u.User_ID'
                 );
             }
             // Different sort settings based on whether or not series are included:
-            $all = array('Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Item_Name');
-            $select->order($series ? $all : array('Item_Name'));
+            $all = [
+                'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position'
+                 'eds.Replacement_Number', 'Item_Name'
+            ];
+            $select->order($series ? $all : ['Item_Name']);
             if (null !== $approved) {
                 $select->where->equalTo('Approved', $approved);
             }
