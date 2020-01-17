@@ -8,9 +8,20 @@
         }
     ],
     "license": "GPL-2.0",
+    "config": {
+        "platform": {
+            "php": "7.1"
+        }
+    },
     "require": {
+        "php": ">=7.1",
         "easyrdf/easyrdf": "dev-master",
         "vufind-org/vufindcode": "1.0.3",
         "zendframework/zendframework": "2.5.3"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "2.16.1",
+        "phing/phing": "2.16.2",
+        "squizlabs/php_codesniffer": "3.5.3"
     }
 }
