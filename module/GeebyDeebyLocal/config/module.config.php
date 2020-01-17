@@ -152,7 +152,7 @@ return [
     'router' => [
         'routes' => [
             'about' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/About',
                     'defaults' => [
@@ -162,7 +162,7 @@ return [
                 ],
             ],
             'about-credits' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/About/Credits',
                     'defaults' => [
@@ -172,7 +172,7 @@ return [
                 ],
             ],
             'about-progress' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/About/Progress',
                     'defaults' => [
@@ -182,7 +182,7 @@ return [
                 ],
             ],
             'ontology' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/ontology[/]',
                     'defaults' => [
@@ -192,7 +192,7 @@ return [
                 ],
             ],
             'podcast' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast[/]',
                     'defaults' => [
@@ -202,7 +202,7 @@ return [
                 ],
             ],
             'podcast-about' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast/About[/]',
                     'defaults' => [
@@ -212,7 +212,7 @@ return [
                 ],
             ],
             'podcast-mitties' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast/Mittie[/]',
                     'defaults' => [
@@ -222,7 +222,7 @@ return [
                 ],
             ],
             'podcast-professor' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast/Professor[/]',
                     'defaults' => [
@@ -232,7 +232,7 @@ return [
                 ],
             ],
             'podcast-rss' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast/RSS[/]',
                     'defaults' => [
@@ -242,7 +242,7 @@ return [
                 ],
             ],
             'podcast-rss-lowercase-for-apple' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/podcast/rss[/]',
                     'defaults' => [
