@@ -89,10 +89,10 @@ class EditTagController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'tag' => 'Tag',
             'type_id' => 'Tag_Type_ID'
-        );
+        ];
         $view = $this->handleGenericItem('tag', $assignMap, 'tag');
         $view->tagTypes = $this->typelistAction()->tagTypes;
 
@@ -181,7 +181,7 @@ class EditTagController extends AbstractBase
      */
     public function typeAction()
     {
-        $assignMap = array('tagType' => 'Tag_Type');
+        $assignMap = ['tagType' => 'Tag_Type'];
         return $this->handleGenericItem('tagType', $assignMap, 'tagType');
     }
 

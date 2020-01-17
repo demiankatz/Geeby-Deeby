@@ -133,10 +133,10 @@ class PersonController extends AbstractBase
         $extra = $this->params()->fromRoute('extra');
         $bios = (strtolower($extra) == 'bios');
         return $this->createViewModel(
-            array(
+            [
                 'bioMode' => $bios,
                 'people' => $this->getDbTable('person')->getList($bios)
-            )
+            ]
         );
     }
 
@@ -166,7 +166,7 @@ class PersonController extends AbstractBase
             return false;
         }
         $view = $this->createViewModel(
-            array('person' => $rowObj->toArray())
+            ['person' => $rowObj->toArray()]
         );
         $view->sort = $sort;
         $view->citations = $this->getDbTable('itemscreators')

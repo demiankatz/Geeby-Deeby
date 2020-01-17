@@ -65,7 +65,7 @@ class TagsRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($tagID) {
             $select->join(
-                array('t' => 'Tags'),
+                ['t' => 'Tags'],
                 'Tags_Relationships_Values.Subject_Tag_ID = t.Tag_ID'
             );
             $select->where(['Object_Tag_ID' => $tagID]);
@@ -84,7 +84,7 @@ class TagsRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($tagID) {
             $select->join(
-                array('t' => 'Tags'),
+                ['t' => 'Tags'],
                 'Tags_Relationships_Values.Object_Tag_ID = t.Tag_ID'
             );
             $select->where(['Subject_Tag_ID' => $tagID]);

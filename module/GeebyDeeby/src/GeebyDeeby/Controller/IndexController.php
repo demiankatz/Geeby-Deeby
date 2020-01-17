@@ -89,7 +89,7 @@ class IndexController extends AbstractBase
             // Set followup to referer if not already set:
             $referer = $this->getRequest()->getServer()->get('HTTP_REFERER');
             if (!empty($referer) && !isset($followup->url)) {
-                $this->followup()->store(array(), $referer);
+                $this->followup()->store([], $referer);
             }
         }
         return $view;

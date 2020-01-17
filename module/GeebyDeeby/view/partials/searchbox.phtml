@@ -3,9 +3,9 @@
     Search:
     <input type="text" name="SearchQuery" value="<?=isset($this->layout()->query) ? $this->escapeHtml($this->layout()->query) : ''?>" size="35" maxlength="50" />
     <select name="SearchType">
-      <? foreach (array('Title', 'Person', 'Keyword', 'ISBN') as $current): ?>
+      <?php foreach (['Title', 'Person', 'Keyword', 'ISBN'] as $current): ?>
         <option value="<?=$this->escapeHtml($current)?>"<?=isset($this->layout()->type) && strtolower($this->layout()->type) == strtolower($current) ? ' selected="selected"' : ''?>><?=$this->escapeHtml($current)?></option>
-      <? endforeach; ?>
+      <?php endforeach; ?>
     </select>
     <input type="submit" value="Search" />
   </form>

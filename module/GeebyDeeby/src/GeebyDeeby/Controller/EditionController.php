@@ -80,9 +80,8 @@ class EditionController extends AbstractBase
     {
         foreach ($view->credits as $credit) {
             $personUri = $this->getServerUrl('person', ['id' => $credit['Person_ID']]);
-            $predicate = isset($credit['Edition_Credit_Predicate'])
-                ? $credit['Edition_Credit_Predicate']
-                : $this->defaultCreditPredicate;
+            $predicate = $credit['Edition_Credit_Predicate']
+                ?? $this->defaultCreditPredicate;
             if (!empty($predicate)) {
                 $edition->add($predicate, $graph->resource($personUri . '#name'));
             }
@@ -113,12 +112,12 @@ class EditionController extends AbstractBase
             if (!empty($rowObj->Preferred_Item_AltName_ID)) {
                 $ian = $this->getDbTable('itemsalttitles');
                 $tmpRow = $ian->select(
-                    array('Sequence_ID' => $rowObj->Preferred_Item_AltName_ID)
+                    ['Sequence_ID' => $rowObj->Preferred_Item_AltName_ID]
                 )->current();
                 $item['Item_AltName'] = $tmpRow['Item_AltName'];
             }
         } else {
-            $item = array();
+            $item = [];
         }
         if (!empty($rowObj->Series_ID)) {
             $seriesTable = $this->getDbTable('series');
@@ -127,17 +126,17 @@ class EditionController extends AbstractBase
             if (!empty($rowObj->Preferred_Series_AltName_ID)) {
                 $ian = $this->getDbTable('seriesalttitles');
                 $tmpSeriesRow = $ian->select(
-                    array('Sequence_ID' => $rowObj->Preferred_Series_AltName_ID)
+                    ['Sequence_ID' => $rowObj->Preferred_Series_AltName_ID]
                 )->current();
                 $series['Series_AltName'] = $tmpSeriesRow['Series_AltName'];
             }
         } else {
-            $series = array();
+            $series = [];
         }
         $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
             ->getAttributesForEdition($id);
         return $this->createViewModel(
-            array('edition' => $rowObj->toArray(), 'item' => $item, 'series' => $series)
+            ['edition' => $rowObj->toArray(), 'item' => $item, 'series' => $series]
             + $extras
         );
     }
@@ -161,7 +160,7 @@ class EditionController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = [])
     {
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $view->edition['Edition_ID'];

@@ -65,10 +65,10 @@ class PeopleFiles extends Gateway
     {
         $callback = function ($select) use ($fileID) {
             $select->join(
-                array('p' => 'People'),
+                ['p' => 'People'],
                 'People_Files.Person_ID = p.Person_ID'
             );
-            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
+            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
             $select->where->equalTo('File_ID', $fileID);
         };
         return $this->select($callback);
@@ -85,14 +85,14 @@ class PeopleFiles extends Gateway
     {
         $callback = function ($select) use ($personID) {
             $select->join(
-                array('f' => 'Files'),
+                ['f' => 'Files'],
                 'People_Files.File_ID = f.File_ID'
             );
             $select->join(
-                array('ft' => 'File_Types'),
+                ['ft' => 'File_Types'],
                 'f.File_Type_ID = ft.File_Type_ID'
             );
-            $select->order(array('File_Type', 'File_Name'));
+            $select->order(['File_Type', 'File_Name']);
             $select->where->equalTo('Person_ID', $personID);
         };
         return $this->select($callback);

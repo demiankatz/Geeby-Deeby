@@ -67,7 +67,7 @@ class Person extends Gateway
             if ($biosOnly) {
                 $select->where->notEqualTo('Biography', '');
             }
-            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
+            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
         };
         return $this->select($callback);
     }
@@ -101,7 +101,7 @@ class Person extends Gateway
                 $select->where->AND->NEST->like('First_Name', $last . '%')
                    ->OR->like('Last_Name', $last . '%')->UNNEST;
             }
-            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
+            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
         };
         return $this->select($callback);
     }
@@ -124,7 +124,7 @@ class Person extends Gateway
                 $nest->OR->like('Extra_Details', '%' . $token . '%');
                 $nest->UNNEST;
             }
-            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
+            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
         };
         return $this->select($callback);
     }

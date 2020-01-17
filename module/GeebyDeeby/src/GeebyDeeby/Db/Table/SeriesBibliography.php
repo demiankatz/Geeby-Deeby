@@ -65,14 +65,14 @@ class SeriesBibliography extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Series_Bibliography.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'i.Material_Type_ID = mt.Material_Type_ID'
             );
-            $select->order(array('Material_Type_Name', 'Item_Name'));
+            $select->order(['Material_Type_Name', 'Item_Name']);
             $select->where->equalTo('Series_ID', $seriesID);
         };
         return $this->select($callback);
@@ -89,7 +89,7 @@ class SeriesBibliography extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Bibliography.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');

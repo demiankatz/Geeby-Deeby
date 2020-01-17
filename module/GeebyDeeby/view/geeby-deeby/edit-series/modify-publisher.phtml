@@ -2,11 +2,11 @@
   <table class="edit">
     <tr>
       <th>Address:</th>
-      <td><?=$this->render('geeby-deeby/edit-publisher/address-select.phtml', array('addresses' => $addresses, 'selected' => $row['Address_ID']))?></td>
+      <td><?=$this->render('geeby-deeby/edit-publisher/address-select.phtml', ['addresses' => $addresses, 'selected' => $row['Address_ID']])?></td>
     </tr>
     <tr>
       <th>Imprint:</th>
-      <td><?=$this->render('geeby-deeby/edit-publisher/imprint-select.phtml', array('imprints' => $imprints, 'selected' => $row['Imprint_ID']))?></td>
+      <td><?=$this->render('geeby-deeby/edit-publisher/imprint-select.phtml', ['imprints' => $imprints, 'selected' => $row['Imprint_ID']])?></td>
     </tr>
   </table>
   <button id="save_series_publisher" onclick="Series.saveLink('Publisher', <?=$row['Series_Publisher_ID']?>);">Save</button>

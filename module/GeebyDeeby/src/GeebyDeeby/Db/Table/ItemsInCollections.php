@@ -63,9 +63,9 @@ class ItemsInCollections extends Gateway
     public function getAllCollections()
     {
         $callback = function ($select) {
-            $select->columns(array());
+            $select->columns([]);
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_In_Collections.Collection_Item_ID = i.Item_ID'
             );
             $select->order('Item_Name');
@@ -85,20 +85,20 @@ class ItemsInCollections extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_In_Collections.Collection_Item_ID = i.Item_ID'
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'i.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Items_In_Collections.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->order(
-                array('mt.Material_Type_Name', 'i.Item_Name')
+                ['mt.Material_Type_Name', 'i.Item_Name']
             );
             $select->where->equalTo('Items_In_Collections.Item_ID', $itemID);
         };
@@ -116,20 +116,20 @@ class ItemsInCollections extends Gateway
     {
         $callback = function ($select) use ($collectionID) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_In_Collections.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'i.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Items_In_Collections.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->order(
-                array('mt.Material_Type_Name', 'Position', 'i.Item_Name')
+                ['mt.Material_Type_Name', 'Position', 'i.Item_Name']
             );
             $select->where->equalTo('Collection_Item_ID', $collectionID);
         };

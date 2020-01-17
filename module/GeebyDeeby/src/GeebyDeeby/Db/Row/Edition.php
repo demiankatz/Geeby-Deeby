@@ -87,7 +87,7 @@ class Edition extends TableAwareGateway
      */
     public function getEditionParentChain()
     {
-        $parents = array();
+        $parents = [];
         $nextParent = $this->Parent_Edition_ID;
         $table = $this->getDbTable('edition');
         while (true) {
@@ -108,7 +108,7 @@ class Edition extends TableAwareGateway
     public function getItemParentChain()
     {
         $editions = $this->getEditionParentChain();
-        $items = array();
+        $items = [];
         $table = $this->getDbTable('edition');
         foreach ($editions as $edition) {
             $obj = $table->getByPrimaryKey($edition);
@@ -126,22 +126,22 @@ class Edition extends TableAwareGateway
      *
      * @return Edition
      */
-    public function copy($overrides = array())
+    public function copy($overrides = [])
     {
-            $table = $this->getDbTable('edition');
-            $new = $table->createRow();
-            foreach ($this->toArray() as $key => $value) {
-                if ($key != 'Edition_ID') {
-                    $new->$key = $value;
-                }
-            }
-            $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
-            foreach ($overrides as $key => $value) {
+        $table = $this->getDbTable('edition');
+        $new = $table->createRow();
+        foreach ($this->toArray() as $key => $value) {
+            if ($key != 'Edition_ID') {
                 $new->$key = $value;
             }
-            $new->save();
-            $table->copyAssociatedInfo($this, $new);
-            return $new;
+        }
+        $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
+        foreach ($overrides as $key => $value) {
+            $new->$key = $value;
+        }
+        $new->save();
+        $table->copyAssociatedInfo($this, $new);
+        return $new;
     }
 
     /**
@@ -152,7 +152,7 @@ class Edition extends TableAwareGateway
     public function getChildren()
     {
         return $this->getDbTable('edition')->select(
-            array('Parent_Edition_ID' => $this->Edition_ID)
+            ['Parent_Edition_ID' => $this->Edition_ID]
         );
     }
 
@@ -193,7 +193,7 @@ class Edition extends TableAwareGateway
     {
         $creditTable = $this->getDbTable('editionscredits');
         $credits = $creditTable->select(
-            array('Edition_ID' => $editionId)
+            ['Edition_ID' => $editionId]
         );
         foreach ($credits as $credit) {
             $arr = (array)$credit;
@@ -224,8 +224,8 @@ class Edition extends TableAwareGateway
         $callback = function ($select) use ($edition, $series, $name, $vol, $pos, $rep, $next) {
             $select->where->equalTo('Series_ID', $series);
             $select->where->notEqualTo('Edition_ID', $edition);
-            $fields = array('Volume', 'Position', 'Replacement_Number', 'Edition_Name', 'Edition_ID');
-            $vals = array($vol, $pos, $rep, $name, $edition);
+            $fields = ['Volume', 'Position', 'Replacement_Number', 'Edition_Name', 'Edition_ID'];
+            $vals = [$vol, $pos, $rep, $name, $edition];
             $nest = $select->where->NEST;
             for ($i = 0; $i < count($fields); $i++) {
                 $clause = $nest->OR->NEST;
@@ -243,7 +243,9 @@ class Edition extends TableAwareGateway
                 $clause->UNNEST;
             }
             $nest->UNNEST;
-            $select->order($next ? $fields : array_map(function ($i) { return "$i DESC"; }, $fields));
+            $select->order($next ? $fields : array_map(function ($i) {
+                return "$i DESC";
+            }, $fields));
             $select->limit(1);
         };
         $results = $table->select($callback);

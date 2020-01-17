@@ -1,12 +1,12 @@
-<? if (isset($materials) && count($materials) > 0): ?>
+<?php if (isset($materials) && count($materials) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Material_Type_ID">
-    <? foreach ($materials as $current): ?>
-      <? $isSelected = (isset($selected) && !empty($selected)) ? ($current['Material_Type_ID'] == $selected) : ($current['Default'] == 1) ?>
+    <?php foreach ($materials as $current): ?>
+      <?php $isSelected = (isset($selected) && !empty($selected)) ? ($current['Material_Type_ID'] == $selected) : ($current['Default'] == 1) ?>
       <option value="<?=$current['Material_Type_ID']?>"<?=$isSelected ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['Material_Type_Name'])?>
       </option>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </select>
-<? else: ?>
+<?php else: ?>
   Please define material types.
-<? endif; ?>
+<?php endif; ?>

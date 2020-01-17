@@ -52,7 +52,7 @@ class LanguageController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Language', 'notfound');
         }
         $view = $this->createViewModel(
-            array('language' => $rowObj->toArray())
+            ['language' => $rowObj->toArray()]
         );
         $view->series = $this->getDbTable('series')
             ->getSeriesForLanguage($id);
@@ -67,7 +67,7 @@ class LanguageController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array('languages' => $this->getDbTable('language')->getList())
+            ['languages' => $this->getDbTable('language')->getList()]
         );
     }
 

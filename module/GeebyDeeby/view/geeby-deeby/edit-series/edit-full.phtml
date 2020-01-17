@@ -1,5 +1,5 @@
-<? $this->layout()->title = 'Edit Series' ?>
-<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_items', 'edit_series']) ?>
+<?php $this->layout()->title = 'Edit Series' ?>
+<?php $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_items', 'edit_series']) ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-series/index.phtml')?>
 </div>
@@ -25,7 +25,7 @@
   </div>
 
   <div id="material-tab" class="tab-pane">
-    <?=$this->render('geeby-deeby/edit-material-type/select.phtml', array('materials' => $materials, 'idPrefix'=>'Series_'))?>
+    <?=$this->render('geeby-deeby/edit-material-type/select.phtml', ['materials' => $materials, 'idPrefix' => 'Series_'])?>
     <button onclick="Series.link('Material');">Add</button>
     <div id="material_list">
       <?=$this->render('geeby-deeby/edit-series/material-type-list.phtml')?>
@@ -64,25 +64,25 @@
   </div>
 
   <div id="categories-tab" class="tab-pane">
-    <? if (!empty($categories)): ?>
-      <? $selected_categories = $seriesObj->getCategoryIDs(); ?>
-      <? foreach ($categories as $current): ?>
+    <?php if (!empty($categories)): ?>
+      <?php $selected_categories = $seriesObj->getCategoryIDs(); ?>
+      <?php foreach ($categories as $current): ?>
         <input type="checkbox" id="Category_ID_<?=$current['Category_ID']?>" class="Category_ID" value="<?=$current['Category_ID']?>"<?=in_array($current['Category_ID'], $selected_categories) ? ' checked="checked"' : '' ?> />
         <label for="Category_ID_<?=$current['Category_ID']?>"><?=$this->escapeHtml($current['Category'])?></label><br />
-      <? endforeach; ?>
+      <?php endforeach; ?>
       <button id="save_categories" onclick="Series.saveCategories();">Save</button>
       <div id="save_categories_status"></div>
-    <? else: ?>
+    <?php else: ?>
       No categories defined.
-    <? endif; ?>
+    <?php endif; ?>
   </div>
 
   <div id="relationships-tab" class="tab-pane">
     <div>
       <select id="relationship_type">
-        <? foreach ($this->relationships as $value => $label): ?>
+        <?php foreach ($this->relationships as $value => $label): ?>
           <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
-        <? endforeach; ?>
+        <?php endforeach; ?>
       </select>
       <input id="target_series" />
       <button onclick="Series.link('Relationship');">Add Relationship</button>

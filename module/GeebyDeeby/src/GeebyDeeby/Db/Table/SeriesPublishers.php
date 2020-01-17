@@ -66,11 +66,11 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($cityID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->join(
-                array('pa' => 'Publishers_Addresses'),
+                ['pa' => 'Publishers_Addresses'],
                 'Series_Publishers.Address_ID = pa.Address_ID'
             );
             $select->order('s.Series_Name');
@@ -91,11 +91,11 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($countryID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->join(
-                array('pa' => 'Publishers_Addresses'),
+                ['pa' => 'Publishers_Addresses'],
                 'Series_Publishers.Address_ID = pa.Address_ID'
             );
             $select->order('s.Series_Name');
@@ -116,7 +116,7 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($publisherID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');
@@ -137,29 +137,29 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('p' => 'Publishers'),
+                ['p' => 'Publishers'],
                 'Series_Publishers.Publisher_ID = p.Publisher_ID'
             );
             $select->join(
-                array('pa' => 'Publishers_Addresses'),
+                ['pa' => 'Publishers_Addresses'],
                 'Series_Publishers.Address_ID = pa.Address_ID',
-                array('Street'), Select::JOIN_LEFT
+                ['Street'], Select::JOIN_LEFT
             );
             $select->join(
-                array('pi' => 'Publishers_Imprints'),
+                ['pi' => 'Publishers_Imprints'],
                 'Series_Publishers.Imprint_ID = pi.Imprint_ID',
-                array('Imprint_Name'), Select::JOIN_LEFT
+                ['Imprint_Name'], Select::JOIN_LEFT
             );
             $select->join(
-                array('c' => 'Countries'), 'pa.Country_ID = c.Country_ID',
+                ['c' => 'Countries'], 'pa.Country_ID = c.Country_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('ci' => 'Cities'), 'pa.City_ID = ci.City_ID',
+                ['ci' => 'Cities'], 'pa.City_ID = ci.City_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Series_Publishers.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );

@@ -66,7 +66,7 @@ class EditionsISBNs extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_ISBNs.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
@@ -87,12 +87,12 @@ class EditionsISBNs extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_ISBNs.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_ISBNs.Edition_ID = eds.Edition_ID'
             );
             $select->order('ISBN13');
@@ -112,11 +112,11 @@ class EditionsISBNs extends Gateway
     {
         $callback = function ($select) use ($q) {
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_ISBNs.Edition_ID = eds.Edition_ID'
             );
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
             );
             $select->order('Item_Name');
             $select->group('i.Item_ID');

@@ -25,7 +25,9 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  */
 namespace GeebyDeeby\Controller\Plugin;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin, Zend\Session\Container;
+
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\Session\Container;
 
 /**
  * Zend action helper to deal with login followup; responsible for remembering URLs
@@ -73,7 +75,7 @@ class Followup extends AbstractPlugin
      *
      * @return void
      */
-    public function store($extras = array(), $overrideUrl = null)
+    public function store($extras = [], $overrideUrl = null)
     {
         // Store the current URL:
         $this->session->url = !empty($overrideUrl)

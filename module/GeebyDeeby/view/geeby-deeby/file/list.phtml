@@ -1,19 +1,19 @@
-<?
+<?php
     $this->layout()->title = 'File List';
 ?>
-<? if (count($files) < 1): ?>
+<?php if (count($files) < 1): ?>
   <p>No files listed in this database yet.</p>
-<? else: ?>
-  <? foreach ($files as $group => $fileList): ?>
+<?php else: ?>
+  <?php foreach ($files as $group => $fileList): ?>
     <h2><?=$this->escapeHtml($this->fixtitle($group))?></h2>
     <p>
-      <? foreach ($fileList as $file): ?>
+      <?php foreach ($fileList as $file): ?>
         <a href="<?=$this->escapeHtml($file['File_Path'])?>">
           <?=$this->escapeHtml($this->fixtitle($file['File_Name']))?>
         </a>
-        <? if (!empty($file['Description'])): ?> - <?=$file['Description']?><? endif; ?>
+        <?php if (!empty($file['Description'])): ?> - <?=$file['Description']?><?php endif; ?>
         <br />
-      <? endforeach; ?>
+      <?php endforeach; ?>
     </p>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

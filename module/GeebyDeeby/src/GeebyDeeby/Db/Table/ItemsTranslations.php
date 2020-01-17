@@ -65,19 +65,19 @@ class ItemsTranslations extends Gateway
     public static function addLanguageToSelect($select)
     {
         $select->join(
-            array('eds' => 'Editions'), 'eds.Item_ID = i.Item_ID', array()
+            ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID', []
         );
         $select->join(
-            array('s' => 'Series'), 's.Series_ID = eds.Series_ID', array()
+            ['s' => 'Series'], 's.Series_ID = eds.Series_ID', []
         );
         $select->join(
-            array('l' => 'Languages'), 'l.Language_ID = s.Language_ID',
-            array(
+            ['l' => 'Languages'], 'l.Language_ID = s.Language_ID',
+            [
                 'Language_Name' => new Expression(
-                    'min(?)', array('Language_Name'),
-                    array(Expression::TYPE_IDENTIFIER)
+                    'min(?)', ['Language_Name'],
+                    [Expression::TYPE_IDENTIFIER]
                 )
-            )
+            ]
         );
         $select->group('i.Item_ID');
     }
@@ -94,7 +94,7 @@ class ItemsTranslations extends Gateway
     {
         $callback = function ($select) use ($itemID, $includeLang) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_Translations.Trans_Item_ID = i.Item_ID'
             );
             $select->where->equalTo('Source_Item_ID', $itemID);
@@ -118,7 +118,7 @@ class ItemsTranslations extends Gateway
     {
         $callback = function ($select) use ($itemID, $includeLang) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_Translations.Source_Item_ID = i.Item_ID'
             );
             $select->where->equalTo('Trans_Item_ID', $itemID);

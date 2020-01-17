@@ -65,7 +65,7 @@ class SeriesMaterialTypes extends Gateway
     {
         $callback = function ($select) use ($typeID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Material_Types.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');
@@ -85,7 +85,7 @@ class SeriesMaterialTypes extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'Series_Material_Types.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->columns([]);

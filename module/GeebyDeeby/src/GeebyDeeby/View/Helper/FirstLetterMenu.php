@@ -37,7 +37,7 @@ namespace GeebyDeeby\View\Helper;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class FirstLetterMenu extends \Zend\View\Helper\AbstractHelper
-{    
+{
     /**
      * Format a title with the article in the correct position.
      *
@@ -49,8 +49,8 @@ class FirstLetterMenu extends \Zend\View\Helper\AbstractHelper
     {
         $list = $list->toArray();
         $currentLetter = false;
-        $letters = array();
-        for ($i=0;$i<count($list);$i++) {
+        $letters = [];
+        for ($i=0;$i < count($list);$i++) {
             $first = $this->view->firstLetter($list[$i][$index]);
             if ($currentLetter !== $first) {
                 $currentLetter = $first;
@@ -58,8 +58,8 @@ class FirstLetterMenu extends \Zend\View\Helper\AbstractHelper
             }
         }
         $html = $letters[0];
-        for ($i=1;$i<count($letters);$i++) {
-          $html .= ' <a href="#' . $letters[$i] . '">' . $letters[$i] . '</a>';
+        for ($i=1;$i < count($letters);$i++) {
+            $html .= ' <a href="#' . $letters[$i] . '">' . $letters[$i] . '</a>';
         }
         return $html;
     }

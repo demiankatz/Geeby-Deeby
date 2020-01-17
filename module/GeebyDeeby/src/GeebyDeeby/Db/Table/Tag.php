@@ -64,7 +64,7 @@ class Tag extends Gateway
     public function getList()
     {
         $callback = function ($select) {
-            $select->order(array('Tag'));
+            $select->order(['Tag']);
         };
         return $this->select($callback);
     }
@@ -102,29 +102,29 @@ class Tag extends Gateway
             $select->quantifier('DISTINCT');
             $select->columns(['Tag_ID', 'Tag']);
             $select->join(
-                array('it' => 'Items_Tags'), 'it.Tag_ID = Tags.Tag_ID',
-                array()
+                ['it' => 'Items_Tags'], 'it.Tag_ID = Tags.Tag_ID',
+                []
             );
             $select->join(
-                array('i' => 'Items'), 'it.Item_ID = i.Item_ID',
-                array('Item_ID', 'Item_Name')
+                ['i' => 'Items'], 'it.Item_ID = i.Item_ID',
+                ['Item_ID', 'Item_Name']
             );
             $select->join(
-                array('eds' => 'Editions'), 'eds.Item_ID = i.Item_ID',
-                array()
+                ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID',
+                []
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $bestTitle = new Expression(
                 'COALESCE(?, ?)',
-                array('Item_AltName', 'Item_Name'),
-                array(
+                ['Item_AltName', 'Item_Name'],
+                [
                     Expression::TYPE_IDENTIFIER,
                     Expression::TYPE_IDENTIFIER
-                )
+                ]
             );
             $select->order(['Tag', $bestTitle]);
             $select->where->equalTo('eds.Series_ID', $seriesID);

@@ -29,7 +29,6 @@ namespace GeebyDeeby\Db\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
-use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Items_In_Series
@@ -64,11 +63,11 @@ class ItemsInSeries extends Gateway
     {
         $callback = function ($select) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Items_In_Series.Series_ID = s.Series_ID'
             );
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_In_Series.Item_ID = i.Item_ID'
             );
         };

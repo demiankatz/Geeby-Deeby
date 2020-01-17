@@ -1,9 +1,9 @@
-<? if (!isset($images) || count($images) < 1): ?>
+<?php if (!isset($images) || count($images) < 1): ?>
   No images.
-<? else: ?>
+<?php else: ?>
   <table class="list_item">
     <tr><th>Order</th><th colspan="2">Image</th><th>Details</th></tr>
-    <? foreach ($images as $current): ?>
+    <?php foreach ($images as $current): ?>
       <tr>
         <td>
           <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="image_order_<?=$this->escapeHtml($current['Sequence_ID'])?>" />
@@ -14,7 +14,7 @@
           </a>
         </td>
         <td>
-          <?
+          <?php
             $thumb = $current['Thumb_Path'];
             if (empty($thumb)) {
               $thumb = $current['IIIF_URI'] . '/full/,120/0/default.jpg';
@@ -29,20 +29,20 @@
           </a>
         </td>
         <td>
-          <? if (!empty($current['Image_Path'])): ?>
+          <?php if (!empty($current['Image_Path'])): ?>
             <b>Image Path:</b> <?=$this->escapeHtml($current['Image_Path'])?><br />
-          <? endif; ?>
-          <? if (!empty($current['Thumb_Path'])): ?>
+          <?php endif; ?>
+          <?php if (!empty($current['Thumb_Path'])): ?>
             <b>Thumb Path:</b> <?=$this->escapeHtml($current['Thumb_Path'])?><br />
-          <? endif; ?>
-          <? if (!empty($current['IIIF_URI'])): ?>
+          <?php endif; ?>
+          <?php if (!empty($current['IIIF_URI'])): ?>
             <b>IIIF URI:</b> <?=$this->escapeHtml($current['IIIF_URI'])?><br />
-          <? endif; ?>
-          <? if (!empty($current['Note'])): ?>
+          <?php endif; ?>
+          <?php if (!empty($current['Note'])): ?>
             <b>Note:</b> <?=$this->escapeHtml($current['Note'])?>
-          <? endif; ?>
+          <?php endif; ?>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

@@ -1,13 +1,13 @@
 <a class="siteTitle" href="<?=$this->url('home')?>"><?=$this->escapeHtml($this->config('siteTitle'))?></a>
 <div class="headerRight">
   <div class="account-links">
-    <? if ($this->auth()->hasIdentity()): ?>
-      <a href="<?=$this->url('user', array('id' => $this->auth()->getIdentity()))?>">Account</a> &bull;
+    <?php if ($this->auth()->hasIdentity()): ?>
+      <a href="<?=$this->url('user', ['id' => $this->auth()->getIdentity()])?>">Account</a> &bull;
       <a href="<?=$this->url('logout')?>">Log Out</a> <span class="last"> &bull;</span>
-    <? else: ?>
+    <?php else: ?>
       <a href="<?=$this->url('signup')?>">Sign Up</a> &bull;
       <a href="<?=$this->url('login')?>">Log In</a><span class="last"> &bull;</span>
-    <? endif; ?>
+    <?php endif; ?>
   </div>
   <?=$this->partial('partials/searchbox.phtml')?>
 </div>

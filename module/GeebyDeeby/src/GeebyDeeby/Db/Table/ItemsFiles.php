@@ -65,7 +65,7 @@ class ItemsFiles extends Gateway
     {
         $callback = function ($select) use ($fileID) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_Files.Item_ID = i.Item_ID'
             );
             $select->order('i.Item_Name');
@@ -85,14 +85,14 @@ class ItemsFiles extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('f' => 'Files'),
+                ['f' => 'Files'],
                 'Items_Files.File_ID = f.File_ID'
             );
             $select->join(
-                array('ft' => 'File_Types'),
+                ['ft' => 'File_Types'],
                 'f.File_Type_ID = ft.File_Type_ID'
             );
-            $select->order(array('File_Type', 'File_Name'));
+            $select->order(['File_Type', 'File_Name']);
             $select->where->equalTo('Item_ID', $itemID);
         };
         return $this->select($callback);

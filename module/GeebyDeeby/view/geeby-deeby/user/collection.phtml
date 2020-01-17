@@ -1,50 +1,50 @@
-<?
+<?php
     $title = $user['Username'];
     $this->layout()->title = 'Have/Want Lists - ' . $title;
 ?>
-<p><a href="<?=$this->url('user', array('id' => $user['User_ID']))?>">Get more information on this user.</a></p>
+<p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
 
-<? if (count($collection) < 1): ?>
+<?php if (count($collection) < 1): ?>
   <p>No items listed.</p>
-<? else: ?>
-  <? foreach ($collection as $language => $series_data): ?>
+<?php else: ?>
+  <?php foreach ($collection as $language => $series_data): ?>
     <h2 class="language">Items in <?=$this->escapeHtml($language)?></h2>
     <table class="table table-striped">
-      <? foreach ($series_data as $series => $parts): ?>
+      <?php foreach ($series_data as $series => $parts): ?>
         <tr>
-          <td class="series"><a href="<?=$this->url('series', array('id' => $series))?>"><?=$this->escapeHtml($this->fixtitle($seriesNames[$series]))?></a></td>
+          <td class="series"><a href="<?=$this->url('series', ['id' => $series])?>"><?=$this->escapeHtml($this->fixtitle($seriesNames[$series]))?></a></td>
           <td class="want">
             <b>Wants:</b>
-            <? if (!isset($parts['want']) || count($parts['want']) < 1): ?>
+            <?php if (!isset($parts['want']) || count($parts['want']) < 1): ?>
               None.
-            <? else: ?>
-              <? $output = []; foreach ($parts['want'] as $current): ?>
-                <? $output[] = '<a href="' . $this->url('item', array('id' => $current['Item_ID'])) . '">'
+            <?php else: ?>
+              <?php $output = []; foreach ($parts['want'] as $current): ?>
+                <?php $output[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
                   . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
                   . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
                 ?>
-              <? endforeach; ?>
+              <?php endforeach; ?>
               <?=implode(', ', $output)?>
-            <? endif; ?>
+            <?php endif; ?>
           </td>
           <td class="have">
             <b>Has:</b>
-            <? if (!isset($parts['have']) || count($parts['have']) < 1): ?>
+            <?php if (!isset($parts['have']) || count($parts['have']) < 1): ?>
               None.
-            <? else: ?>
-              <? $output = []; foreach ($parts['have'] as $current): ?>
-                <? $output[] = '<a href="' . $this->url('item', array('id' => $current['Item_ID'])) . '">'
+            <?php else: ?>
+              <?php $output = []; foreach ($parts['have'] as $current): ?>
+                <?php $output[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
                   . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
                   . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
                 ?>
-              <? endforeach; ?>
+              <?php endforeach; ?>
               <?=implode(', ', $output)?>
-            <? endif; ?>
+            <?php endif; ?>
           </td>
         </tr>
-      <? endforeach; ?>
+      <?php endforeach; ?>
     </table>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>
 
 <br />

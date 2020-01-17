@@ -46,9 +46,9 @@ class FAQsController extends AbstractBase
     public function indexAction()
     {
         return $this->createViewModel(
-            array(
+            [
                 'faqs' => $this->getDbTable('faqs')->getAll()
-            )
+            ]
         );
     }
 }

@@ -65,11 +65,11 @@ class ItemsAdaptations extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_Adaptations.Adapted_Item_ID = i.Item_ID'
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'i.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->where->equalTo('Source_Item_ID', $itemID);
@@ -89,11 +89,11 @@ class ItemsAdaptations extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Items_Adaptations.Source_Item_ID = i.Item_ID'
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'i.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->where->equalTo('Adapted_Item_ID', $itemID);

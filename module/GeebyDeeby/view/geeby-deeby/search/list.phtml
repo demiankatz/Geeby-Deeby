@@ -1,11 +1,11 @@
 <div class="col-md-3">
   <h2><?=$this->title ?></h2>
-  <? foreach ($this->items as $i=>$current): ?>
+  <?php foreach ($this->items as $i => $current): ?>
     <div class="result row">
-      <span class="number col-md-1"><?=$i+1 ?></span>
-      <a class="col-md-10" href="<?=$this->url(strtolower($this->prefix), array('id' => $current[$this->prefix.'_ID']))?>">
-        <?=$this->escapeHtml($this->fixtitle(isset($current[$this->prefix.'_Name']) ? $current[$this->prefix.'_Name'] : $current[$this->prefix.'_AltName']))?>
+      <span class="number col-md-1"><?=$i + 1 ?></span>
+      <a class="col-md-10" href="<?=$this->url(strtolower($this->prefix), ['id' => $current[$this->prefix . '_ID']])?>">
+        <?=$this->escapeHtml($this->fixtitle(isset($current[$this->prefix . '_Name']) ? $current[$this->prefix . '_Name'] : $current[$this->prefix . '_AltName']))?>
       </a>
     </div>
-  <? endforeach; ?>
+  <?php endforeach; ?>
 </div>

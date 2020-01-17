@@ -57,7 +57,7 @@ class TagController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = [])
     {
         $id = $view->tag['Tag_ID'];
         $uri = $this->getServerUrl('tag', ['id' => $id]);
@@ -126,7 +126,7 @@ class TagController extends AbstractBase
      *
      * @return mixed
      */
-    protected function getViewModelWithTag($extras = array())
+    protected function getViewModelWithTag($extras = [])
     {
         $id = $this->params()->fromRoute('id');
         $table = $this->getDbTable('tag');
@@ -135,7 +135,7 @@ class TagController extends AbstractBase
             return false;
         }
         $view = $this->createViewModel(
-            array('tag' => $rowObj->toArray())
+            ['tag' => $rowObj->toArray()]
         );
         $view->items = $this->getDbTable('itemstags')->getItemsForTag($id);
         $view->tagAttributes = $this->getDbTable('tagsattributesvalues')
@@ -165,7 +165,7 @@ class TagController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array('tags' => $this->getDbTable('tag')->getList())
+            ['tags' => $this->getDbTable('tag')->getList()]
         );
     }
 

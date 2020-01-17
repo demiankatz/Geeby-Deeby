@@ -1,11 +1,11 @@
-<?
+<?php
     $title = $this->fixtitle($series['Series_Name']);
     $this->layout()->title = 'Series Images - ' . $title;
 ?>
-<? if (count($images) < 1): ?>
+<?php if (count($images) < 1): ?>
   <p>No images available for this series.</p>
-<? else: ?>
+<?php else: ?>
   <div class="row">
-    <?=$this->render('partials/images.phtml', array('images' => $images, 'linkType' => 'item'))?>
+    <?=$this->render('partials/images.phtml', ['images' => $images, 'linkType' => 'item'])?>
   </div>
-<? endif; ?>
+<?php endif; ?>

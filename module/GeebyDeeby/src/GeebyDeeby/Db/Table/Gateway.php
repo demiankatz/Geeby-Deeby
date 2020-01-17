@@ -88,7 +88,7 @@ class Gateway extends AbstractTableGateway
      */
     public function createRow()
     {
-        return clone($this->getResultSetPrototype()->getArrayObjectPrototype());
+        return clone $this->getResultSetPrototype()->getArrayObjectPrototype();
     }
 
     /**
@@ -100,7 +100,7 @@ class Gateway extends AbstractTableGateway
      */
     public function getByPrimaryKey($key)
     {
-        $key = (array) $key;
+        $key = (array)$key;
         $keyCols = $this->getResultSetPrototype()->getArrayObjectPrototype()
             ->getPrimaryKeyColumn();
         if (count($key) != count($keyCols)) {
@@ -140,7 +140,7 @@ class Gateway extends AbstractTableGateway
         $results = [];
         foreach ($rawResults as $current) {
             $results[] = $current;
-        };
+        }
         $sort = function ($a, $b) {
             return strcasecmp($a->getDisplayName(), $b->getDisplayName());
         };

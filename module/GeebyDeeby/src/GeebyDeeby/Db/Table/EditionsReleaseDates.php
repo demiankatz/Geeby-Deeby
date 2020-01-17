@@ -68,18 +68,18 @@ class EditionsReleaseDates extends Gateway
             $select->quantifier('DISTINCT');
             $select->columns(['Year', 'Month', 'Day']);
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
                 ['Note'], Select::JOIN_LEFT
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
                 . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
                 ['Edition_ID', 'Edition_Name']
             );
-            $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID', ['Item_ID']);
-            $select->order(array('Year', 'Month', 'Day', 'Edition_Name'));
+            $select->join(['i' => 'Items'], 'eds.Item_ID = i.Item_ID', ['Item_ID']);
+            $select->order(['Year', 'Month', 'Day', 'Edition_Name']);
             $select->where->equalTo('i.Item_ID', $itemID);
         };
         return $this->select($callback);
@@ -96,11 +96,11 @@ class EditionsReleaseDates extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->order(array('Year', 'Month', 'Day'));
+            $select->order(['Year', 'Month', 'Day']);
             $select->where->equalTo('Edition_ID', $editionID);
         };
         return $this->select($callback);
@@ -119,18 +119,18 @@ class EditionsReleaseDates extends Gateway
             $select->quantifier('DISTINCT');
             $select->columns(['Year', 'Month', 'Day']);
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
                 ['Note'], Select::JOIN_LEFT
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
                 . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
                 ['Edition_ID']
             );
             $select->where->equalTo('eds.Edition_ID', $editionID);
-            $select->order(array('Year', 'Month', 'Day'));
+            $select->order(['Year', 'Month', 'Day']);
         };
         return $this->select($callback);
     }
@@ -144,21 +144,21 @@ class EditionsReleaseDates extends Gateway
     {
         $callback = function ($select) {
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
-            $select->join(array('i' => 'Items'), 'eds.Item_ID = i.Item_ID');
+            $select->join(['i' => 'Items'], 'eds.Item_ID = i.Item_ID');
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
-            $select->order(array('Year', 'Item_Name', 'Edition_Name'));
+            $select->order(['Year', 'Item_Name', 'Edition_Name']);
         };
         return $this->select($callback);
     }

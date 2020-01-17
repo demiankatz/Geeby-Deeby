@@ -66,7 +66,7 @@ class EditionsProductCodes extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Product_Codes.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
@@ -87,12 +87,12 @@ class EditionsProductCodes extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Product_Codes.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Product_Codes.Edition_ID = eds.Edition_ID'
             );
             $select->order('Product_Code');

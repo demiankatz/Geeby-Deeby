@@ -96,7 +96,7 @@ class Series extends Gateway
     public function getSuggestions($query, $limit = false)
     {
         $callback = function ($select) use ($query) {
-            $select2 = clone($select);
+            $select2 = clone $select;
             $select2->columns(
                 [
                     'Series_ID',
@@ -106,7 +106,7 @@ class Series extends Gateway
                 ]
             );
             $select2->join(
-                array('sat' => 'Series_AltTitles'),
+                ['sat' => 'Series_AltTitles'],
                 'Series.Series_ID = sat.Series_ID',
                 [], Select::JOIN_LEFT
             );
@@ -154,8 +154,8 @@ class Series extends Gateway
     {
         $callback = function ($select) use ($itemID, $includePosition, $includeParentPosition) {
             $select->join(
-                array('eds' => 'Editions'), 'Series.Series_ID = eds.Series_ID',
-                $includePosition ? array('Volume', 'Position', 'Replacement_Number', 'Extent_In_Parent') : array()
+                ['eds' => 'Editions'], 'Series.Series_ID = eds.Series_ID',
+                $includePosition ? ['Volume', 'Position', 'Replacement_Number', 'Extent_In_Parent'] : []
             );
             if ($includePosition && $includeParentPosition) {
                 $select->join(
@@ -165,11 +165,11 @@ class Series extends Gateway
                 );
             }
             $select->join(
-                array('sat' => 'Series_AltTitles'),
+                ['sat' => 'Series_AltTitles'],
                 'eds.Preferred_Series_AltName_ID = sat.Sequence_ID',
-                array('Series_AltName'), Select::JOIN_LEFT
+                ['Series_AltName'], Select::JOIN_LEFT
             );
-            $fields = array('Series_Name', 'Series_ID');
+            $fields = ['Series_Name', 'Series_ID'];
             if ($includePosition) {
                 if ($includeParentPosition) {
                     $fields[] = 'Parent_Volume';

@@ -3,11 +3,11 @@
   <table class="edit">
     <tr>
       <th>Category:</th>
-      <td><input type="text" id="Category" value="<?=$this->escapeHtml(isset($category['Category']) ? $category['Category'] : '')?>" /></td>
+      <td><input type="text" id="Category" value="<?=$this->escapeHtml($category['Category'] ?? '')?>" /></td>
     </tr>
     <tr>
       <th>Description:</th>
-      <td><textarea id="Description"><?=$this->escapeHtml(isset($category['Description']) ? $category['Description'] : '')?></textarea></td>
+      <td><textarea id="Description"><?=$this->escapeHtml($category['Description'] ?? '')?></textarea></td>
     </tr>
   </table>
   <button id="save_category" onclick="Category.save();">Save</button>

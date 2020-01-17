@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\View\Helper;
+
 use GeebyDeeby\Controller\EditionController;
 
 /**

@@ -1,5 +1,5 @@
-<? if (isset($uris) && count($uris) > 0): ?>
-  <? foreach ($uris as $current): ?>
+<?php if (isset($uris) && count($uris) > 0): ?>
+  <?php foreach ($uris as $current): ?>
     <table class="list_item">
       <tr>
         <td><?=$this->escapeHtml($current['URI'])?> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
@@ -9,7 +9,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No URIs defined.
-<? endif; ?>
+<?php endif; ?>

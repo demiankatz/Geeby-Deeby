@@ -1,26 +1,26 @@
-<?
+<?php
     $this->layout()->title = 'Items with Reviews';
 ?>
 
-<? if (count($reviews) > 0): ?>
-  <? $series = false; foreach ($reviews as $review): ?>
-    <? if ($series !== $review['Series_ID']): $series = $review['Series_ID']; ?>
-      <? $item = false; ?>
-      <h2 class="series"><a href="<?=$this->url('series', array('id' => $series))?>">
+<?php if (count($reviews) > 0): ?>
+  <?php $series = false; foreach ($reviews as $review): ?>
+    <?php if ($series !== $review['Series_ID']): $series = $review['Series_ID']; ?>
+      <?php $item = false; ?>
+      <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($review['Series_Name']);?>
       </a></h2>
-    <? endif; ?>
-    <? if ($item !== $review['Item_ID']): ?>
-      <? $item = $review['Item_ID']; ?>
+    <?php endif; ?>
+    <?php if ($item !== $review['Item_ID']): ?>
+      <?php $item = $review['Item_ID']; ?>
       <span class="item">
         <?=$this->escapeHtml($this->formatItemNumber($review))?>
-        <a href="<?=$this->url('item', array('id' => $review['Item_ID']))?>">
+        <a href="<?=$this->url('item', ['id' => $review['Item_ID']])?>">
           <?=$this->escapeHtml($this->fixtitle(isset($review['Item_AltName']) && !empty($review['Item_AltName']) ? $review['Item_AltName'] : $review['Item_Name']))?>
         </a>
         <br />
       </span>
-    <? endif; ?>
-  <? endforeach; ?>
-<? else: ?>
+    <?php endif; ?>
+  <?php endforeach; ?>
+<?php else: ?>
   <p>No reviews listed.</p>
-<? endif; ?>
+<?php endif; ?>

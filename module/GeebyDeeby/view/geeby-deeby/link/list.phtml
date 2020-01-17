@@ -1,19 +1,19 @@
-<?
+<?php
     $this->layout()->title = $title;
 ?>
-<? if (!empty($desc)): ?><?=$desc?><? endif; ?>
-<? if (count($links) < 1): ?>
+<?php if (!empty($desc)): ?><?=$desc?><?php endif; ?>
+<?php if (count($links) < 1): ?>
   <p>No links listed in this database yet.</p>
-<? else: ?>
-  <? $type = false; foreach ($links as $i=>$link): ?>
-    <? if ($type != $link['Link_Type']): $type = $link['Link_Type']; ?>
+<?php else: ?>
+  <?php $type = false; foreach ($links as $i => $link): ?>
+    <?php if ($type != $link['Link_Type']): $type = $link['Link_Type']; ?>
       <h2><?=$this->escapeHtml($type)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
-    <? endif; ?>
+    <?php endif; ?>
     <p class="link">
       <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />
-      <? if (!empty($link['Description'])): ?><?=$link['Description']?><br /><? endif; ?>
+      <?php if (!empty($link['Description'])): ?><?=$link['Description']?><br /><?php endif; ?>
       <span class="url"><?=$this->escapeHtml($link['URL'])?></span>
       (last verified: <?=$this->escapeHtml($link['Date_Checked'])?>)
     </p>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

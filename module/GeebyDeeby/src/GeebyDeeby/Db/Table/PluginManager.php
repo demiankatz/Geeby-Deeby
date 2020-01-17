@@ -43,7 +43,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      *
      * @var array
      */
-    protected $aliases = array(
+    protected $aliases = [
         'authority' => 'GeebyDeeby\Db\Table\Authority',
         'category' => 'GeebyDeeby\Db\Table\Category',
         'citation' => 'GeebyDeeby\Db\Table\Citation',
@@ -132,7 +132,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'tagtype' => 'GeebyDeeby\Db\Table\TagType',
         'user' => 'GeebyDeeby\Db\Table\User',
         'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
-    );
+    ];
 
     /**
      * Constructor

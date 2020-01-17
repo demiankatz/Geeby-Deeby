@@ -47,8 +47,7 @@ class LinkController extends AbstractBase
     {
         // Get link group configuration:
         $config = $this->serviceLocator->get('config');
-        $groups = isset($config['geeby-deeby']['link_groups'])
-            ? $config['geeby-deeby']['link_groups'] : array();
+        $groups = $config['geeby-deeby']['link_groups'] ?? [];
         $extra = $this->params()->fromRoute('extra');
         $group = ($extra && isset($groups[$extra]))
             ? $groups[$extra] : false;
@@ -58,18 +57,17 @@ class LinkController extends AbstractBase
 
         // Retrieve the relevant links:
         $links = $table->getListByType(
-            isset($group['typeMatch']) ? $group['typeMatch'] : null
+            $group['typeMatch'] ?? null
         );
 
         // Send back the details:
         return $this->createViewModel(
-            array(
+            [
                 'links' => $links,
-                'title' => isset($group['title'])
-                    ? $group['title'] : 'Link List',
-                'desc' => isset($group['desc']) ? $group['desc'] : '',
-                'typeTrim' => isset($group['typeTrim']) ? $group['typeTrim'] : 0,
-            )
+                'title' => $group['title'] ?? 'Link List',
+                'desc' => $group['desc'] ?? '',
+                'typeTrim' => $group['typeTrim'] ?? 0,
+            ]
         );
     }
 }

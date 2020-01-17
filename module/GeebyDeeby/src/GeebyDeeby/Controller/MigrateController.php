@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+
 use Zend\Crypt\Password\Bcrypt;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
 
@@ -52,8 +53,8 @@ class MigrateController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
-        $messages = array();
-        $migrations = array(
+        $messages = [];
+        $migrations = [
             'migrateItemsInSeriesToEditions' =>
                 'rows from Items_In_Series.',
             'migrateItemDatesToEditions' =>
@@ -76,10 +77,10 @@ class MigrateController extends AbstractBase
                 'countries from Series_Publishers',
             'migrateUserPasswords' =>
                 'user password hashes',
-        );
+        ];
         foreach ($migrations as $method => $msg) {
             try {
-                $migrated = call_user_func(array($this, $method));
+                $migrated = call_user_func([$this, $method]);
             } catch (InvalidQueryException $e) {
                 // Table no longer exists -- no migration necessary
                 $migrated = 0;
@@ -88,7 +89,7 @@ class MigrateController extends AbstractBase
                 $messages[] = 'Migrated ' . $migrated . ' ' . $msg;
             }
         }
-        return $this->createViewModel(array('messages' => $messages));
+        return $this->createViewModel(['messages' => $messages]);
     }
 
     /**
@@ -111,11 +112,11 @@ class MigrateController extends AbstractBase
             $row->Position = $current->Position;
             $row->save();
             $iis->delete(
-                array(
+                [
                     'Item_ID' => $current->Item_ID,
                     'Series_ID' => $current->Series_ID,
                     'Position' => $current->Position
-                )
+                ]
             );
             $count++;
         }
@@ -287,10 +288,10 @@ class MigrateController extends AbstractBase
     protected function getImprintID($current)
     {
         $pi = $this->getDbTable('publishersimprints');
-        $imprint = array(
+        $imprint = [
             'Publisher_ID' => $current->Publisher_ID,
             'Imprint_Name' => $current->Imprint
-        );
+        ];
         $row = $pi->select($imprint)->current();
         if (isset($row['Imprint_ID'])) {
             return $row['Imprint_ID'];
@@ -333,10 +334,10 @@ class MigrateController extends AbstractBase
     protected function getAddressID($current)
     {
         $pi = $this->getDbTable('publishersaddresses');
-        $address = array(
+        $address = [
             'Publisher_ID' => $current->Publisher_ID,
             'Country_ID' => $current->Country_ID
-        );
+        ];
         $row = $pi->select($address)->current();
         if (isset($row['Address_ID'])) {
             return $row['Address_ID'];

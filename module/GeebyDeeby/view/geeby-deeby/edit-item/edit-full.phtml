@@ -1,5 +1,5 @@
-<? $this->layout()->title = 'Edit Item' ?>
-<? $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_items']) ?>
+<?php $this->layout()->title = 'Edit Item' ?>
+<?php $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_items']) ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-item/index.phtml')?>
 </div>
@@ -117,7 +117,7 @@
         </tr>
         <tr>
           <th>Role:</th>
-          <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml', array('idPrefix' => 'Creator_', 'roles' => $this->roles))?></td>
+          <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml', ['idPrefix' => 'Creator_', 'roles' => $this->roles])?></td>
         </tr>
         <tr>
           <th></th>
@@ -169,9 +169,9 @@
           <th>Description Type:</th>
           <td>
             <select id='DescriptionType'>
-              <? foreach ($this->descriptionSource()->getList() as $currentVal => $currentDesc): ?>
+              <?php foreach ($this->descriptionSource()->getList() as $currentVal => $currentDesc): ?>
                 <option value="<?=$this->escapeHtml($currentVal)?>"><?=$this->escapeHtml($currentDesc)?></option>
-              <? endforeach; ?>
+              <?php endforeach; ?>
             </select>
           </td>
         </tr>
@@ -195,9 +195,9 @@
   <div id="relationships-tab" class="tab-pane">
     <div>
       <select id="relationship_type">
-        <? foreach ($this->relationships as $value => $label): ?>
+        <?php foreach ($this->relationships as $value => $label): ?>
           <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
-        <? endforeach; ?>
+        <?php endforeach; ?>
       </select>
       <input id="target_item" />
       <button onclick="Item.link('Relationship');">Add Relationship</button>

@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
@@ -47,7 +48,7 @@ class SeriesController extends AbstractBase
      *
      * @return mixed
      */
-    protected function getViewModelWithSeries($extras = array())
+    protected function getViewModelWithSeries($extras = [])
     {
         $id = $this->params()->fromRoute('id');
         $table = $this->getDbTable('series');
@@ -60,7 +61,7 @@ class SeriesController extends AbstractBase
         $extras['relationshipsValues'] = $this->getDbTable('seriesrelationshipsvalues')
             ->getRelationshipsForSeries($id);
         return $this->createViewModel(
-            array('series' => $rowObj->toArray()) + $extras
+            ['series' => $rowObj->toArray()] + $extras
         );
     }
 
@@ -78,12 +79,12 @@ class SeriesController extends AbstractBase
         $editions = $this->getDbTable('edition');
         $callback = function ($select) use ($seriesId) {
             $select->join(
-                array('ec' => 'Editions_Credits'),
+                ['ec' => 'Editions_Credits'],
                 'Editions.Edition_ID = ec.Edition_ID',
                 [], Select::JOIN_LEFT
             );
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Editions.Item_ID = i.Item_ID',
                 ['Item_Name'], Select::JOIN_LEFT
             );
@@ -96,12 +97,12 @@ class SeriesController extends AbstractBase
         // Check for missing dates
         $callback = function ($select) use ($seriesId) {
             $select->join(
-                array('d' => 'Editions_Release_Dates'),
+                ['d' => 'Editions_Release_Dates'],
                 'Editions.Edition_ID = d.Edition_ID',
                 [], Select::JOIN_LEFT
             );
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Editions.Item_ID = i.Item_ID',
                 ['Item_Name'], Select::JOIN_LEFT
             );
@@ -124,7 +125,7 @@ class SeriesController extends AbstractBase
                 ]
             );
             $select->join(
-                array('d' => 'Editions_Release_Dates'),
+                ['d' => 'Editions_Release_Dates'],
                 'Editions.Edition_ID = d.Edition_ID',
                 [
                     'Start' => new Expression(
@@ -204,7 +205,7 @@ class SeriesController extends AbstractBase
             $lastPos = $pos;
             $lastVol = $vol;
         }
-        $view->itemStats = array(
+        $view->itemStats = [
             'Different' =>  count($results),
             'Start' => $min,
             'End' => $max,
@@ -215,7 +216,7 @@ class SeriesController extends AbstractBase
             'Dupes' => $dupes,
             'Missing' => $missing,
             'MissingVol' => $missingVol,
-        );
+        ];
 
         return $view;
     }
@@ -234,10 +235,10 @@ class SeriesController extends AbstractBase
 
         // Check for existing review.
         $table = $this->getDbTable('seriesreviews');
-        $params = array(
+        $params = [
             'Series_ID' => $this->params()->fromRoute('id'),
             'User_ID' => $user->User_ID
-        );
+        ];
 
         $existing = $table->select($params)->toArray();
         $existing = count($existing) > 0 ? $existing[0] : false;
@@ -245,7 +246,7 @@ class SeriesController extends AbstractBase
         // Save comment if found.
         if ($this->getRequest()->isPost()) {
             $view = $this->createViewModel(
-                array('noChange' => false, 'series' => $params['Series_ID'])
+                ['noChange' => false, 'series' => $params['Series_ID']]
             );
             $params['Approved'] = 'n';
             $params['Review'] = $this->params()->fromPost('Review');
@@ -265,7 +266,7 @@ class SeriesController extends AbstractBase
         // Send review to the view.
         $review = $existing ? $existing['Review'] : '';
 
-        $view = $this->getViewModelWithSeries(array('review' => $review));
+        $view = $this->getViewModelWithSeries(['review' => $review]);
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
@@ -319,8 +320,7 @@ class SeriesController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
         $config = $this->serviceLocator->get('config');
-        $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
-            ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
+        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
         $view->images = $this->getDbTable('editionsimages')
             ->getImagesForSeries($view->series['Series_ID'], $groupByMaterial);
         return $view;
@@ -394,7 +394,7 @@ class SeriesController extends AbstractBase
      */
     protected function getSeriesRdfClass()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -439,7 +439,7 @@ class SeriesController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = [])
     {
         $id = $view->series['Series_ID'];
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
@@ -531,8 +531,7 @@ class SeriesController extends AbstractBase
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
         $config = $this->serviceLocator->get('config');
-        $view->groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
-            ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
+        $view->groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
         $view->items = $this->getDbTable('item')->getItemsForSeries($id, true, $view->groupByMaterial);
         $view->language = $this->getDbTable('language')
             ->getByPrimaryKey($view->series['Language_ID']);
@@ -555,7 +554,7 @@ class SeriesController extends AbstractBase
         if ($user) {
             $view->userHasComment = (bool)count(
                 $reviews->select(
-                    array('User_ID' => $user->User_ID, 'Series_ID' => $id)
+                    ['User_ID' => $user->User_ID, 'Series_ID' => $id]
                 )
             );
         } else {
@@ -572,9 +571,9 @@ class SeriesController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array(
+            [
                 'series' => $this->getDbTable('series')->getList()
-            )
+            ]
         );
     }
 

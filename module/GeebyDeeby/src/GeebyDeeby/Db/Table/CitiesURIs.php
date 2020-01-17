@@ -65,7 +65,7 @@ class CitiesURIs extends Gateway
     {
         $callback = function ($select) use ($cityID) {
             $select->join(
-                array('pr' => 'Predicates'),
+                ['pr' => 'Predicates'],
                 'Cities_URIs.Predicate_ID = pr.Predicate_ID'
             );
             $select->where->equalTo('City_ID', $cityID);
@@ -84,14 +84,14 @@ class CitiesURIs extends Gateway
     {
         $callback = function ($select) use ($uri) {
             $select->join(
-                array('c' => 'Cities'),
+                ['c' => 'Cities'],
                 'Cities_URIs.City_ID = c.City_ID'
             );
             $select->join(
-                array('pr' => 'Predicates'),
+                ['pr' => 'Predicates'],
                 'Cities_URIs.Predicate_ID = pr.Predicate_ID'
             );
-            $select->order(array('City_Name'));
+            $select->order(['City_Name']);
             $select->where->equalTo('URI', $uri);
         };
         return $this->select($callback);

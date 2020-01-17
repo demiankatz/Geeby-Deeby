@@ -65,7 +65,7 @@ class SeriesRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Relationships_Values.Subject_Series_ID = s.Series_ID'
             );
             $select->where(['Object_Series_ID' => $seriesID]);
@@ -84,7 +84,7 @@ class SeriesRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Relationships_Values.Object_Series_ID = s.Series_ID'
             );
             $select->where(['Subject_Series_ID' => $seriesID]);

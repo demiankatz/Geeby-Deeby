@@ -66,7 +66,7 @@ class SeriesAltTitles extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Series_AltTitles.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );

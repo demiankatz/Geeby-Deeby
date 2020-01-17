@@ -68,10 +68,10 @@ class Collections extends Gateway
     {
         $callback = function ($select) use ($itemID, $type) {
             $select->join(
-                array('u' => 'Users'),
+                ['u' => 'Users'],
                 'Collections.User_ID = u.User_ID'
             );
-            $select->order(array('Username'));
+            $select->order(['Username']);
             $select->where->equalTo('Item_ID', $itemID);
             if (null !== $type) {
                 $select->where->equalTo('Collection_Status', $type);
@@ -94,37 +94,37 @@ class Collections extends Gateway
     {
         $callback = function ($select) use ($userID, $type, $groupByLang) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Collections.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
+                ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID'
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'eds.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
             );
             if ($groupByLang) {
                 $select->join(
-                    array('l' => 'Languages'), 's.Language_ID = l.Language_ID'
+                    ['l' => 'Languages'], 's.Language_ID = l.Language_ID'
                 );
-                $fields = array(
+                $fields = [
                     'Language_Name', 'Series_Name', 's.Series_ID',
                     'Collection_Status', 'Volume', 'Position', 'Replacement_Number', 'Item_Name'
-                );
+                ];
             } else {
-                $fields = array(
+                $fields = [
                     'Series_Name', 's.Series_ID', 'Collection_Status', 'Volume', 'Position', 'Replacement_Number',
                     'Item_Name'
-                );
+                ];
             }
             $select->order($fields);
-            $select->group($fields + array('i.Item_ID'));
+            $select->group($fields + ['i.Item_ID']);
             $select->where->equalTo('Collections.User_ID', $userID);
             if (null !== $type) {
                 if (is_array($type)) {
@@ -152,36 +152,36 @@ class Collections extends Gateway
     {
         $callback = function ($select) use ($userID, $userStatus, $desiredStatus) {
             $select->join(
-                array('i' => 'Items'),
+                ['i' => 'Items'],
                 'Collections.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('u' => 'Users'),
+                ['u' => 'Users'],
                 'Collections.User_ID = u.User_ID'
             );
             $select->join(
-                array('Other' => 'Collections'),
+                ['Other' => 'Collections'],
                 'Other.Item_ID = Collections.Item_ID AND '
                 . 'Other.Series_ID = Collections.Series_ID',
-                array('Other_Note' => 'Collection_Note')
+                ['Other_Note' => 'Collection_Note']
             );
             $select->join(
-                array('eds' => 'Editions'), 'i.Item_ID = eds.Item_ID'
+                ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID'
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'eds.Series_ID = s.Series_ID AND Collections.Series_ID = s.Series_ID'
             );
-            $fields = array(
+            $fields = [
                 'Username', 'Series_Name', 's.Series_ID', 'Volume', 'Position', 'Replacement_Number', 'Item_Name'
-            );
+            ];
             $select->order($fields);
-            $select->group($fields + array('i.Item_ID'));
+            $select->group($fields + ['i.Item_ID']);
             $select->where->equalTo('Other.User_ID', $userID);
             $select->where->notEqualTo('Collections.User_ID', $userID);
             $select->where->equalTo('Other.Collection_Status', $userStatus);
@@ -201,14 +201,14 @@ class Collections extends Gateway
     {
         $callback = function ($select) use ($userID) {
             $count = new Expression(
-                'count(?)', array('Item_ID'), array(Expression::TYPE_IDENTIFIER)
+                'count(?)', ['Item_ID'], [Expression::TYPE_IDENTIFIER]
             );
-            $select->columns(array('Collection_Status', 'Count' => $count));
+            $select->columns(['Collection_Status', 'Count' => $count]);
             $select->group('Collection_Status');
             $select->where->equalTo('User_ID', $userID);
         };
         $result = $this->select($callback);
-        $retVal = array('have' => 0, 'want' => 0, 'extra' => 0);
+        $retVal = ['have' => 0, 'want' => 0, 'extra' => 0];
         foreach ($result as $current) {
             $retVal[$current['Collection_Status']] = $current['Count'];
         }

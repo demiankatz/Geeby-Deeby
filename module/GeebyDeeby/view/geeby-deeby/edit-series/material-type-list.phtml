@@ -1,5 +1,5 @@
-<? if (isset($series_materials) && count($series_materials) > 0): ?>
-  <? foreach ($series_materials as $current): ?>
+<?php if (isset($series_materials) && count($series_materials) > 0): ?>
+  <?php foreach ($series_materials as $current): ?>
     <table class="list_item">
       <tr>
         <td><?=$this->escapeHtml($current['Material_Type_Name'])?></td>
@@ -9,7 +9,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No material types set.
-<? endif; ?>
+<?php endif; ?>

@@ -1,19 +1,19 @@
-<? if (count($predicates) == 0): ?>
+<?php if (count($predicates) == 0): ?>
   <p>No predicates defined yet.</p>
-<? else: ?>
+<?php else: ?>
   <h2>
     <?=$this->firstLetterMenu($predicates, 'Predicate_Abbrev'); ?>
   </h2>
-  <? $currentLetter = false; foreach ($predicates as $i=>$current): ?>
-    <? $first = $this->firstletter($current['Predicate_Abbrev']); ?>
-    <? if ($currentLetter !== $first): $currentLetter = $first; ?>
-      <? if ($i > 0): ?>
+  <?php $currentLetter = false; foreach ($predicates as $i => $current): ?>
+    <?php $first = $this->firstletter($current['Predicate_Abbrev']); ?>
+    <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
+      <?php if ($i > 0): ?>
         <a name="<?=$this->escapeHtml($currentLetter)?>"/>
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
-      <? endif; ?>
-    <? endif; ?>
+      <?php endif; ?>
+    <?php endif; ?>
     <a href="#" onClick="Predicate.edit(<?=$current['Predicate_ID'] ?>);return false">
       <?=$this->escapeHtml($current['Predicate_Abbrev'] . ' (' . $current['Predicate'] . ')')?>
     </a><br />
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

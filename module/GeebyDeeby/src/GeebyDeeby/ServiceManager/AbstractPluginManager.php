@@ -26,8 +26,9 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\ServiceManager;
-use Zend\ServiceManager\AbstractPluginManager as Base,
-    Zend\ServiceManager\Exception\RuntimeException as ServiceManagerRuntimeException;
+
+use Zend\ServiceManager\AbstractPluginManager as Base;
+use Zend\ServiceManager\Exception\RuntimeException as ServiceManagerRuntimeException;
 
 /**
  * GeebyDeeby Plugin Manager

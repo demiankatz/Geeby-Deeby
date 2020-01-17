@@ -64,13 +64,13 @@ class EditTagAttributeController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'attribute_name' => 'Tags_Attribute_Name',
             'rdf_property' => 'Tags_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
             'priority' => 'Display_Priority'
 
-        );
+        ];
         $response = $this
             ->handleGenericItem('tagsattribute', $assignMap, 'attribute');
 

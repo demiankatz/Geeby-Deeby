@@ -65,7 +65,7 @@ class PeopleURIs extends Gateway
     {
         $callback = function ($select) use ($personID) {
             $select->join(
-                array('pr' => 'Predicates'),
+                ['pr' => 'Predicates'],
                 'People_URIs.Predicate_ID = pr.Predicate_ID'
             );
             $select->where->equalTo('Person_ID', $personID);
@@ -84,14 +84,14 @@ class PeopleURIs extends Gateway
     {
         $callback = function ($select) use ($uri) {
             $select->join(
-                array('p' => 'People'),
+                ['p' => 'People'],
                 'People_URIs.Person_ID = p.Person_ID'
             );
             $select->join(
-                array('pr' => 'Predicates'),
+                ['pr' => 'Predicates'],
                 'People_URIs.Predicate_ID = pr.Predicate_ID'
             );
-            $select->order(array('Last_Name', 'First_Name', 'Middle_Name'));
+            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
             $select->where->equalTo('URI', $uri);
         };
         return $this->select($callback);

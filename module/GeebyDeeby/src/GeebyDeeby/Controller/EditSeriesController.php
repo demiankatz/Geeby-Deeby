@@ -84,11 +84,11 @@ class EditSeriesController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'name' => 'Series_Name',
             'desc' => 'Series_Description',
             'lang' => 'Language_ID'
-        );
+        ];
         $view = $this->handleGenericItem('series', $assignMap, 'series');
         $seriesId = isset($view->seriesObj->Series_ID)
             ? $view->seriesObj->Series_ID
@@ -119,8 +119,7 @@ class EditSeriesController extends AbstractBase
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
             $config = $this->serviceLocator->get('config');
-            $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
-                ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
+            $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
             $view->item_list = $this->getDbTable('item')
                 ->getItemsForSeries($seriesId, true, $groupByMaterial);
             $view->series_alt_titles = $this->getDbTable('seriesalttitles')
@@ -156,10 +155,10 @@ class EditSeriesController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             $table = $this->getDbTable('seriescategories');
             $series = $this->params()->fromRoute('id');
-            $categories = $this->params()->fromPost('categories', array());
-            $table->delete(array('Series_ID' => $series));
+            $categories = $this->params()->fromPost('categories', []);
+            $table->delete(['Series_ID' => $series]);
             foreach ($categories as $cat) {
-                $table->insert(array('Series_ID' => $series, 'Category_ID' => $cat));
+                $table->insert(['Series_ID' => $series, 'Category_ID' => $cat]);
             }
             return $this->jsonReportSuccess();
         }
@@ -211,7 +210,7 @@ class EditSeriesController extends AbstractBase
             if ($this->getRequest()->isDelete()) {
                 $extra = $this->params()->fromRoute('extra');
                 $result = $this->getDbTable('edition')->select(
-                    array('Preferred_Series_AltName_ID' => $extra)
+                    ['Preferred_Series_AltName_ID' => $extra]
                 );
                 if (count($result) > 0) {
                     $ed = $result->current();
@@ -247,10 +246,10 @@ class EditSeriesController extends AbstractBase
             if (empty($address)) {
                 $address = null;
             }
-            $fields = array(
+            $fields = [
                 'Imprint_ID' => $imprint, 'Address_ID' => $address
-            );
-            $table->update($fields, array('Series_Publisher_ID' => $rowId));
+            ];
+            $table->update($fields, ['Series_Publisher_ID' => $rowId]);
             return $this->jsonReportSuccess();
         }
         $view = $this->createViewModel();
@@ -305,7 +304,7 @@ class EditSeriesController extends AbstractBase
             if ($this->getRequest()->isDelete()) {
                 $extra = $this->params()->fromRoute('extra');
                 $result = $this->getDbTable('edition')->select(
-                    array('Preferred_Series_Publisher_ID' => $extra)
+                    ['Preferred_Series_Publisher_ID' => $extra]
                 );
                 if (count($result) > 0) {
                     $ed = $result->current();
@@ -354,7 +353,7 @@ class EditSeriesController extends AbstractBase
         $insertCallback = function ($new, $row, $sm) {
             $edsTable = $sm->get('GeebyDeeby\Db\Table\PluginManager')
                 ->get('edition');
-            $rows = $edsTable->select(array('Item_ID' => $row['Item_ID']));
+            $rows = $edsTable->select(['Item_ID' => $row['Item_ID']]);
             foreach ($rows as $row) {
                 $row = $row->toArray();
                 if ($row['Edition_ID'] != $new) {
@@ -366,15 +365,14 @@ class EditSeriesController extends AbstractBase
             }
         };
         $config = $this->serviceLocator->get('config');
-        $groupByMaterial = isset($config['geeby-deeby']['groupSeriesByMaterialType'])
-            ? $config['geeby-deeby']['groupSeriesByMaterialType'] : true;
+        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
         $listCallback = $groupByMaterial
             ? 'getItemsForSeriesGroupedByMaterial' : 'getItemsForSeries';
         return $this->handleGenericLink(
             'edition', 'Series_ID', 'Item_ID',
             'item_list', $listCallback,
             'geeby-deeby/edit-series/item-list.phtml',
-            array('Edition_Name' => $edName), $insertCallback
+            ['Edition_Name' => $edName], $insertCallback
         );
     }
 
@@ -400,8 +398,8 @@ class EditSeriesController extends AbstractBase
                 list($vol, $pos) = $parts;
             }
             $this->getDbTable('edition')->update(
-                array('Position' => intval($pos), 'Volume' => intval($vol)),
-                array('Edition_ID' => $edition)
+                ['Position' => intval($pos), 'Volume' => intval($vol)],
+                ['Edition_ID' => $edition]
             );
             return $this->jsonReportSuccess();
         }

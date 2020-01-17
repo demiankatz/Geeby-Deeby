@@ -65,9 +65,9 @@ class SeriesLinks extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('l' => 'Links'), 'Series_Links.Link_ID = l.Link_ID'
+                ['l' => 'Links'], 'Series_Links.Link_ID = l.Link_ID'
             );
-            $select->order(array('Link_Name'));
+            $select->order(['Link_Name']);
             $select->where->equalTo('Series_ID', $seriesID);
         };
         return $this->select($callback);
@@ -84,7 +84,7 @@ class SeriesLinks extends Gateway
     {
         $callback = function ($select) use ($linkID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Links.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');
