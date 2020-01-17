@@ -230,11 +230,12 @@ return [
                     'city' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/City[/:id]',
+                            'route'    => '/City[/:id][/:action][/[:extra]]',
                             'defaults' => [
                                 'controller'    => 'EditCity',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null,
                             ],
                         ],
                     ],
@@ -284,11 +285,12 @@ return [
                     'country' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/Country[/:id]',
+                            'route'    => '/Country[/:id][/:action][/[:extra]]',
                             'defaults' => [
                                 'controller'    => 'EditCountry',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
+                                'extra'         => null,
                             ],
                         ],
                     ],

@@ -1,9 +1,0 @@
-{
-  "solrQueryField": "RELS_EXT_IsCopyOf_uri_t",
-  "solrIdField": "PID",
-  "solrSeriesField": "mods_series_title_preferred_ms",
-  "solrSeriesSortField": "mods_series_number_i asc",
-  "solrUrl": "http://localhost:8100/solr/collection1/select",
-  "modsUrl": "http://dimenovels.lib.niu.edu/islandora/object/%s/datastream/MODS"
-}
-
