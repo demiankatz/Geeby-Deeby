@@ -431,8 +431,8 @@ class AbstractBase extends AbstractActionController
     /**
      * Redirect the user to the login screen.
      *
-     * @param array  $extras  Associative array of extra fields to store
-     * @param bool   $forward True to forward, false to redirect
+     * @param array $extras  Associative array of extra fields to store
+     * @param bool  $forward True to forward, false to redirect
      *
      * @return mixed
      */

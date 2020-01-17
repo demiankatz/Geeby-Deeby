@@ -74,7 +74,6 @@ class User extends TableAwareGateway
 
     /**
      * Load permission data if not already available.
-     *
      */
     public function loadPermissions()
     {

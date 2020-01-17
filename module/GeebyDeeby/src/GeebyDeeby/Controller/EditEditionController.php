@@ -608,7 +608,7 @@ class EditEditionController extends AbstractBase
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
         $view->fullText = $this->getDbTable('editionsfulltext')
-                ->getFullTextForEdition($primary);
+            ->getFullTextForEdition($primary);
         $view->setTemplate('geeby-deeby/edit-edition/fulltext-list.phtml');
         $view->setTerminal(true);
         return $view;

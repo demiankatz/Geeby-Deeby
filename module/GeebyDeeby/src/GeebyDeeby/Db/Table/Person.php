@@ -99,7 +99,7 @@ class Person extends Gateway
             $nest->UNNEST;
             if ($last) {
                 $select->where->AND->NEST->like('First_Name', $last . '%')
-                   ->OR->like('Last_Name', $last . '%')->UNNEST;
+                    ->OR->like('Last_Name', $last . '%')->UNNEST;
             }
             $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
         };

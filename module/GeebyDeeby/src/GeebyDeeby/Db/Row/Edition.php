@@ -243,9 +243,13 @@ class Edition extends TableAwareGateway
                 $clause->UNNEST;
             }
             $nest->UNNEST;
-            $select->order($next ? $fields : array_map(function ($i) {
-                return "$i DESC";
-            }, $fields));
+            $select->order(
+                $next ? $fields : array_map(
+                    function ($i) {
+                        return "$i DESC";
+                    }, $fields
+                )
+            );
             $select->limit(1);
         };
         $results = $table->select($callback);

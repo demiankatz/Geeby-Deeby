@@ -43,9 +43,9 @@ class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
     /**
      * Determine if we can create a service with name
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
+     * @param  ServiceLocatorInterface $serviceLocator
+     * @param  $name
+     * @param  $requestedName
      * @return bool
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
@@ -56,9 +56,9 @@ class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
     /**
      * Create service with name
      *
-     * @param ServiceLocatorInterface $rm
-     * @param $name
-     * @param $requestedName
+     * @param  ServiceLocatorInterface $rm
+     * @param  $name
+     * @param  $requestedName
      * @return mixed
      */
     public function createServiceWithName(ServiceLocatorInterface $rm, $name, $requestedName)

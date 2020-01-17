@@ -294,9 +294,9 @@ class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
     /**
      * Analyze and reformat a list of credits
      *
-     * @param array $creators  Known creators to analyze
-     * @param array $credits   Credits to analyze
-     * @param array $editions  Information on editions containing credits
+     * @param array $creators Known creators to analyze
+     * @param array $credits  Credits to analyze
+     * @param array $editions Information on editions containing credits
      *
      * @return array
      */

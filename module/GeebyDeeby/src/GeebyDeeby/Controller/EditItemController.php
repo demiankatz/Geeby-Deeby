@@ -67,12 +67,12 @@ class EditItemController extends AbstractBase
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
                 $table->insert(
-                     [
+                    [
                          'Item_ID' => $itemId,
                          'Items_Attribute_ID' => $id,
                          'Items_Attribute_Value' => $val
                      ]
-                 );
+                );
             }
         }
     }
