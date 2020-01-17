@@ -212,15 +212,15 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
             return;
         }
         switch ($job->type) {
-            case 'series':
-                // for series, extra is series object, loaded once...
-                $extra = $this->getDbTable('series')->getByPrimaryKey($job->id);
-                break;
-            case 'existing':
-                break;
-            default:
-                Console::writeLine("Invalid/missing job.json in $dir");
-                return;
+        case 'series':
+            // for series, extra is series object, loaded once...
+            $extra = $this->getDbTable('series')->getByPrimaryKey($job->id);
+            break;
+        case 'existing':
+            break;
+        default:
+            Console::writeLine("Invalid/missing job.json in $dir");
+            return;
         }
 
         $extractor = new ModsExtractor();

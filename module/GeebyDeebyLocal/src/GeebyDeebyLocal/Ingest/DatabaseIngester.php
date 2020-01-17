@@ -552,7 +552,8 @@ class DatabaseIngester extends BaseIngester
             return true;
         }
         if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID != $match) {
-            foreach ($this->getDbTable('edition')->getPublishersForEdition($editionObj->Edition_ID) as $ed);
+            foreach ($this->getDbTable('edition')->getPublishersForEdition($editionObj->Edition_ID) as $ed) {
+            }
             Console::writeLine("Publisher mismatch in edition.");
             Console::writeLine("Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}");
             Console::writeLine("New: $name, $street, $place");
