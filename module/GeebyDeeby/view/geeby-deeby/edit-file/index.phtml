@@ -1,23 +1,23 @@
-<div id="editForm">
+<form id="editForm" onsubmit="File.save(); return false;">
   <input type="hidden" id="File_ID" value="<?=$file['File_ID']?>" />
   <table class="edit">
     <tr>
-      <th scope="row">File Name:</th>
+      <th scope="row"><label for="File_Name">File Name:</label></th>
       <td><input type="text" id="File_Name" value="<?=isset($file['File_Name']) ? $this->escapeHtml($file['File_Name']) : '' ?>" /></td>
     </tr>
     <tr>
-      <th scope="row">File Path:</th>
+      <th scope="row"><label for="File_Path">File Path:</label></th>
       <td><input type="text" id="File_Path" value="<?=isset($file['File_Path']) ? $this->escapeHtml($file['File_Path']) : '' ?>" /></td>
     </tr>
     <tr>
-      <th scope="row">File Type:</th>
+      <th scope="row"><label for="File_Type_ID">File Type:</label></th>
       <td><?=$this->render('geeby-deeby/edit-file/type-select.phtml', ['fileTypes' => $fileTypes, 'selected' => $file['File_Type_ID'] ?? null])?></td>
     </tr>
     <tr>
-      <th scope="row">Description:</th>
+      <th scope="row"><label for="Description">Description:</label></th>
       <td><textarea id="Description"><?=isset($file['Description']) ? $this->escapeHtml($file['Description']) : '' ?></textarea></td>
     </tr>
   </table>
-  <button id="save_file" onclick="File.save();">Save</button>
+  <input type="submit" id="save_file" value="Save" />
   <div id="save_file_status"></div>
-</div>
+</form>

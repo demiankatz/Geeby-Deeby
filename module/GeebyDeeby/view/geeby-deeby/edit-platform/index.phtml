@@ -1,11 +1,11 @@
-<div id="editForm">
+<form id="editForm" onsubmit="Platform.save(); return false;">
   <input type="hidden" id="Platform_ID" value="<?=$platform['Platform_ID']?>" />
   <table class="edit">
     <tr>
-      <th scope="row">Platform:</th>
-      <td><input type="text" id="Platform" value="<?=isset($platform['Platform']) ? $this->escapeHtml($platform['Platform']) : ''?>" /></td>
+      <th scope="row"><label for="Platform_Name">Platform:</label></th>
+      <td><input type="text" id="Platform_Name" value="<?=isset($platform['Platform']) ? $this->escapeHtml($platform['Platform']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_platform" onclick="Platform.save();">Save</button>
+  <input type="submit" value="Save" />
   <div id="save_platform_status"></div>
-</div>
+</form>
