@@ -21,28 +21,30 @@
     <p class="disclaimer">Credits added/removed here will affect only this edition of the item;
     to affect ALL editions, please go back to the Item Editor first.</p>
     <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th scope="row">Position:</th>
-          <td><input type="text" id="credit_position" /></td>
-        </tr>
-        <tr>
-          <th scope="row">Person:</th>
-          <td><input id="credit_person" class="Person_ID" /></td>
-        </tr>
-        <tr>
-          <th scope="row">Role:</th>
-          <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml')?></td>
-        </tr>
-        <tr>
-          <th scope="row">Note:</th>
-          <td><input id="credit_note" class="Note_ID" /></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><button onclick="Edition.link('Credit');">Add</button></td>
-        </tr>
-      </table>
+      <form onsubmit="Edition.link('Credit'); return false;">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="credit_position">Position:</label></th>
+            <td><input type="text" id="credit_position" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="credit_person">Person:</label></th>
+            <td><input id="credit_person" class="Person_ID" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="Role_ID">Role:</label></th>
+            <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml')?></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="credit_note">Note:</label></th>
+            <td><input id="credit_note" class="Note_ID" /></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" value="Add" /></td>
+          </tr>
+        </table>
+      </form>
     </div>
     <div id="credit_list">
       <?=$this->render('geeby-deeby/edit-edition/credits.phtml')?>
@@ -53,33 +55,39 @@
     <table>
       <tr>
         <td style="width: 33%;">
-          <table class="edit">
-            <tr><th scope="row">New ISBN</th><td><input type="text" id="isbn" /></td></tr>
-            <tr><th scope="row">Note:</th><td><input id="isbn_note" class="Note_ID" /></td></tr>
-            <tr><td></td><td><button onclick="Edition.link('ISBN');">Add</button></td></tr>
-          </table>
+          <form onsubmit="Edition.link('ISBN'); return false;">
+            <table class="edit">
+              <tr><th scope="row"><label for="isbn">New ISBN</label></th><td><input type="text" id="isbn" /></td></tr>
+              <tr><th scope="row"><label for="isbn_note">Note:</label></th><td><input id="isbn_note" class="Note_ID" /></td></tr>
+              <tr><td></td><td><input type="submit" value="Add" /></td></tr>
+            </table>
+          </form>
           <b>ISBNs:</b>
           <div id="isbn_list">
             <?=$this->render('geeby-deeby/edit-edition/isbn-list.phtml')?>
           </div>
         </td>
         <td style="width: 33%;">
-          <table class="edit">
-            <tr><th scope="row">New OCLC Number:</th><td><input type="text" id="oclc_number" /></td></tr>
-            <tr><th scope="row">Note:</th><td><input id="oclc_number_note" class="Note_ID" /></td></tr>
-            <tr><td></td><td><button onclick="Edition.link('OCLCNumber');">Add</button></td></tr>
-          </table>
+          <form onsubmit="Edition.link('OCLCNumber'); return false;">
+            <table class="edit">
+              <tr><th scope="row"><label for="oclc_number">New OCLC Number:</label></th><td><input type="text" id="oclc_number" /></td></tr>
+              <tr><th scope="row"><label for="oclc_number_note">Note:</label></th><td><input id="oclc_number_note" class="Note_ID" /></td></tr>
+              <tr><td></td><td><input type="submit" value="Add" /></td></tr>
+            </table>
+          </form>
           <b>OCLC Numbers:</b>
           <div id="oclcnumber_list">
             <?=$this->render('geeby-deeby/edit-edition/oclc-number-list.phtml')?>
           </div>
         </td>
         <td>
-          <table class="edit">
-            <tr><th scope="row">New Code</th><td><input type="text" id="product_code" /></td></tr>
-            <tr><th scope="row">Note:</th><td><input id="product_code_note" class="Note_ID" /></td></tr>
-            <tr><td></td><td><button onclick="Edition.link('ProductCode');">Add</button></td></tr>
-          </table>
+          <form onsubmit="Edition.link('ProductCode'); return false;">
+            <table class="edit">
+              <tr><th scope="row"><label for="product_code">New Code</label></th><td><input type="text" id="product_code" /></td></tr>
+              <tr><th scope="row"><label for="product_code_note">Note:</label></th><td><input id="product_code_note" class="Note_ID" /></td></tr>
+              <tr><td></td><td><input type="submit" value="Add" /></td></tr>
+            </table>
+          </form>
           <b>Product Codes:</b>
           <div id="productcode_list">
             <?=$this->render('geeby-deeby/edit-edition/product-code-list.phtml')?>
@@ -90,40 +98,47 @@
   </div>
 
   <div id="contents-tab" class="tab-pane">
-    <input id="item_name" class="Item_ID"/>
-    <button onclick="Edition.link('Item');">Add Existing Item</button>
-    <button onclick="Item.edit('NEW');">Add New Item</button>
-    <div id="item_list">
+    <form style="float: left;" onsubmit="Edition.link('Item'); return false;">
+      <label>
+        Item:
+        <input id="item_name" class="Item_ID"/>
+      </label>
+      <input type="submit" value="Add Existing Item" />
+    </form>
+    <button style="margin-left: 5px; float: left;" onclick="Item.edit('NEW');">Add New Item</button>
+    <div id="item_list" style="clear: left;">
       <?=$this->render('geeby-deeby/edit-edition/item-list.phtml')?>
     </div>
   </div>
 
   <div id="release-tab" class="tab-pane">
     <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th scope="row">Month:<br /><span class="note">(1-12, 0 for unknown)</span></th>
-          <td><input type="text" id="releaseMonth" /></td>
-        </tr>
-        <tr>
-          <th scope="row">Day:<br /><span class="note">(1-31, 0 for unknown)</span></th>
-          <td><input type="text" id="releaseDay" /></td>
-        </tr>
-        <tr>
-          <th scope="row">Year:<br /><span class="note">(-1 for unreleased)</span></th>
-          <td><input type="text" id="releaseYear" /></td>
-        </tr>
-        <tr>
-          <th scope="row">Note:</th>
-          <td><input id="releaseNote" class="Note_ID" /></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>
-            <button onclick="Edition.link('Date');">Add</button>
-          </td>
-        </tr>
-      </table>
+      <form onsubmit="Edition.link('Date'); return false;">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="releaseMonth">Month:<br /><span class="note">(1-12, 0 for unknown)</span></label></th>
+            <td><input type="text" id="releaseMonth" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="releaseDay">Day:<br /><span class="note">(1-31, 0 for unknown)</span></label></th>
+            <td><input type="text" id="releaseDay" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="releaseYear">Year:<br /><span class="note">(-1 for unreleased)</span></label></th>
+            <td><input type="text" id="releaseYear" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="releaseNote">Note:</label></th>
+            <td><input id="releaseNote" class="Note_ID" /></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <input type="submit" value="Add" />
+            </td>
+          </tr>
+        </table>
+      </form>
     </div>
     <div id="date_list">
       <?=$this->render('geeby-deeby/edit-edition/date-list.phtml')?>
@@ -132,14 +147,21 @@
 
   <div id="fulltext-tab" class="tab-pane">
     <div class="edit_container">
-      Add full text:
-      <select id="Full_Text_Source_ID">
-        <?php foreach ($this->fullTextSources as $current): ?>
-          <option value="<?=$current['Full_Text_Source_ID']?>"><?=$this->escapeHtml($current['Full_Text_Source_Name'])?></option>
-        <?php endforeach; ?>
-      </select>
-      <input type="text" id="Full_Text_URL" size="50" />
-      <button onclick="Edition.link('FullText')">Save</button>
+      <form onsubmit="Edition.link('FullText'); return false;">
+        <label>
+          Full Text Source:
+          <select id="Full_Text_Source_ID">
+            <?php foreach ($this->fullTextSources as $current): ?>
+              <option value="<?=$current['Full_Text_Source_ID']?>"><?=$this->escapeHtml($current['Full_Text_Source_Name'])?></option>
+            <?php endforeach; ?>
+          </select>
+        </label>
+        <label>
+          URL:
+          <input type="text" id="Full_Text_URL" size="50" />
+        </label>
+        <input type="submit" value="Save" />
+      </form>
     </div>
     <div id="fulltext_list">
       <?=$this->render('geeby-deeby/edit-edition/fulltext-list.phtml')?>
@@ -148,32 +170,34 @@
 
   <div id="images-tab" class="tab-pane">
     <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th scope="row">Image Path:</th>
-          <td><input type="text" id="image_path" /></td>
-        </tr>
-        <tr>
-          <th scope="row">Thumb Path:<br /><span class="note">(leave blank to add &quot;thumb&quot; to image filename)</span></th>
-          <td><input type="text" id="thumb_path" /></td>
-        </tr>
-        <tr>
-          <th scope="row">IIIF Base URI:<br /><span class="note">(optional; may be used instead of Image/Thumb)</span></th>
-          <td><input type="text" id="iiif_uri" /></td>
-        </tr>
-        <tr>
-          <th scope="row">Position:</th>
-          <td><input type="text" id="image_position" /></td>
-        </tr>
-        <tr>
-          <th scope="row">Note:</th>
-          <td><input id="image_note" class="Note_ID" /></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><button onclick="Edition.link('Image');">Add</button></td>
-        </tr>
-      </table>
+      <form onsubmit="Edition.link('Image'); return false;">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="image_path">Image Path:</label></th>
+            <td><input type="text" id="image_path" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="thumb_path">Thumb Path:<br /><span class="note">(leave blank to add &quot;thumb&quot; to image filename)</span></label></th>
+            <td><input type="text" id="thumb_path" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="iiif_uri">IIIF Base URI:<br /><span class="note">(optional; may be used instead of Image/Thumb)</span></label></th>
+            <td><input type="text" id="iiif_uri" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="image_position">Position:</label></th>
+            <td><input type="text" id="image_position" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="image_note">Note:</label></th>
+            <td><input id="image_note" class="Note_ID" /></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" value="Add" /></td>
+          </tr>
+        </table>
+      </form>
     </div>
     <div id="image_list">
       <?=$this->render('geeby-deeby/edit-edition/image-list.phtml')?>
@@ -181,9 +205,13 @@
   </div>
 
   <div id="platforms-tab" class="tab-pane">
-    <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
-    <button onclick="Edition.link('Platform');">Add Platform</button>
-    <br/>
+    <form onsubmit="Edition.link('Platform'); return false;">
+      <label>
+        Platform:
+        <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
+      </label>
+      <input type="submit" value="Add Platform" />
+    </form>
     <b>Platforms:</b>
     <div id="platform_list">
     <?=$this->render('geeby-deeby/edit-edition/platform-list.phtml')?>
@@ -192,30 +220,50 @@
 
   <div id="preferred-publisher" class="tab-pane">
     <div class="edit_container">
-      <h3>Preferred Publisher</h3>
-      <div id="preferredpublisher_list">
-        <?=$this->render('geeby-deeby/edit-edition/series-publisher-select.phtml', ['publishers' => $publishers, 'selected' => $edition['Preferred_Series_Publisher_ID']])?>
-      </div>
-      <button onclick="Edition.link('PreferredPublisher')">Save</button>
+      <form onsubmit="Edition.link('PreferredPublisher'); return false;">
+        <label>
+          Preferred Publisher:
+          <div id="preferredpublisher_list">
+            <?=$this->render('geeby-deeby/edit-edition/series-publisher-select.phtml', ['publishers' => $publishers, 'selected' => $edition['Preferred_Series_Publisher_ID']])?>
+          </div>
+          <input type="submit" value="Save" />
+        </label>
+      </form>
     </div>
   </div>
 
   <div id="preferred-titles" class="tab-pane">
     <div class="edit_container">
-      <h3>Preferred Item Title</h3>
-      <div id="preferreditemtitle_list">
-        <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', ['itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']])?>
-      </div>
-      <input type="text" id="Preferred_Item_Title_Text" onkeypress="$('#Preferred_Item_Title_ID').val('NEW');" size="50" />
-      <button onclick="Edition.link('PreferredItemTitle')">Save</button>
+      <h2>Preferred Item Title</h2>
+      <form onsubmit="Edition.link('PreferredItemTitle'); return false;">
+        <label class="sr-only" for="Preferred_Item_Title_ID">
+          Choose Existing Preferred Item Title:
+        </label>
+        <div id="preferreditemtitle_list">
+          <?=$this->render('geeby-deeby/edit-edition/item-alt-title-select.phtml', ['itemAltTitles' => $itemAltTitles, 'selected' => $edition['Preferred_Item_AltName_ID']])?>
+        </div>
+        <label class="sr-only" for="Preferred_Item_Title_Text">
+          Create New Preferred Item Title:
+        </label>
+        <input type="text" id="Preferred_Item_Title_Text" onkeypress="$('#Preferred_Item_Title_ID').val('NEW');" size="50" />
+        <input type="submit" value="Save" />
+      </form>
       <button onclick="Edition.unlink('PreferredItemTitle')">Clear</button>
 
-      <h3>Preferred Series Title</h3>
-      <div id="preferredseriestitle_list">
-        <?=$this->render('geeby-deeby/edit-edition/series-alt-title-select.phtml', ['seriesAltTitles' => $seriesAltTitles, 'selected' => $edition['Preferred_Series_AltName_ID']])?>
-      </div>
-      <input type="text" id="Preferred_Series_Title_Text" onkeypress="$('#Preferred_Series_Title_ID').val('NEW');" size="50" />
-      <button onclick="Edition.link('PreferredSeriesTitle')">Save</button>
+      <h2>Preferred Series Title</h2>
+      <form onsubmit="Edition.link('PreferredSeriesTitle'); return false;">
+        <label class="sr-only" for="Preferred_Series_Title_ID">
+          Choose Existing Preferred Series Title:
+        </label>
+        <div id="preferredseriestitle_list">
+          <?=$this->render('geeby-deeby/edit-edition/series-alt-title-select.phtml', ['seriesAltTitles' => $seriesAltTitles, 'selected' => $edition['Preferred_Series_AltName_ID']])?>
+        </div>
+        <label class="sr-only" for="Preferred_Series_Title_Text">
+          Create New Preferred Series Title:
+        </label>
+        <input type="text" id="Preferred_Series_Title_Text" onkeypress="$('#Preferred_Series_Title_ID').val('NEW');" size="50" />
+        <input type="submit" value="Save" />
+      </form>
       <button onclick="Edition.unlink('PreferredSeriesTitle')">Clear</button>
     </div>
   </div>
