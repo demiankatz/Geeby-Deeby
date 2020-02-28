@@ -6,7 +6,7 @@ series that have gaps in the original listings or that were not included in LeBl
 unlisted titles within the database.</p>
 
 <table class="table table-striped" style="width: auto;">
-  <tr><th style="text-align: left;">Series Title</th><th style="text-align: left;">Status</th></tr>
+  <tr><th style="text-align: left;" scope="col">Series Title</th><th style="text-align: left;" scope="col">Status</th></tr>
 <?php foreach ($progress as $current): ?>
   <tr>
     <td><a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>"><?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?></a></td>
