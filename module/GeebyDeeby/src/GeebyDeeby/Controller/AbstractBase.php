@@ -80,7 +80,7 @@ class AbstractBase extends AbstractActionController
     protected function getDbTable($table)
     {
         return $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager')
-            ->get($table);
+            ->get(strtolower($table));
     }
 
     /**
