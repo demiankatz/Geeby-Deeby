@@ -2,7 +2,7 @@
   <input type="hidden" id="Link_Type_ID" value="<?=$linkType['Link_Type_ID']?>" />
   <table class="edit">
     <tr>
-      <th>Link Type:</th>
+      <th scope="row">Link Type:</th>
       <td><input type="text" id="Link_Type" value="<?=isset($linkType['Link_Type']) ? $this->escapeHtml($linkType['Link_Type']) : ''?>" /></td>
     </tr>
   </table>

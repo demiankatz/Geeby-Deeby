@@ -6,7 +6,7 @@
 
 <table class="user">
   <tr>
-    <th>Full Name:</th>
+    <th scope="row">Full Name:</th>
     <td>
       <?php if ($user['Person_ID'] > 0): ?>
         <a href="<?=$this->url('person', ['id' => $user['Person_ID']])?>">
@@ -19,7 +19,7 @@
   </tr>
   <?php if (!empty($user['Address'])): ?>
     <tr>
-      <th>Email Address:</th>
+      <th scope="row">Email Address:</th>
       <td>
         <?php if ($this->auth()->hasIdentity()): ?>
           <a href="mailto:<?=$this->escapeHtml($user['Address'])?>"><?=$this->escapeHtml($user['Address'])?></a>
@@ -30,7 +30,7 @@
     </tr>
   <?php endif; ?>
   <tr>
-    <th>Collections:</th>
+    <th scope="row">Collections:</th>
     <td>
       <a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Collection'])?>">View Have/Want Lists</a>
       (<?=$stats['have']?> items owned, <?=$stats['want']?> items wanted)
@@ -42,7 +42,7 @@
     </td>
   </tr>
   <tr>
-    <th>Reviews and Comments:</th>
+    <th scope="row">Reviews and Comments:</th>
     <td>
       <?php $revCount = count($reviews); if ($revCount > 0): ?>
         <a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Reviews'])?>"><?=$revCount?> item review<?=$revCount > 1 ? 's' : ''?>.</a>

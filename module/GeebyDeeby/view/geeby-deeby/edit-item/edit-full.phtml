@@ -62,15 +62,15 @@
     <div class="edit_container">
       <table class="edit">
         <tr>
-          <th>Title:</th>
+          <th scope="row">Title:</th>
           <td><input id="attachment_name" class="Item_ID" /></td>
         </tr>
         <tr>
-          <th>Note:</th>
+          <th scope="row">Note:</th>
           <td><input id="Attachment_Note" class="Note_ID" /></td>
         </tr>
         <tr>
-          <th></th>
+          <td></td>
           <td><button onclick="Item.link('Attachment');">Add Item</button></td>
         </tr>
       </table>
@@ -112,15 +112,15 @@
     <div class="edit_container">
       <table class="edit">
         <tr>
-          <th>Person:</th>
+          <th scope="row">Person:</th>
           <td><input id="creator_person" class="Person_ID" /></td>
         </tr>
         <tr>
-          <th>Role:</th>
+          <th scope="row">Role:</th>
           <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml', ['idPrefix' => 'Creator_', 'roles' => $this->roles])?></td>
         </tr>
         <tr>
-          <th></th>
+          <td></td>
           <td><button onclick="Item.link('Creator');">Add</button></td>
         </tr>
       </table>
@@ -136,23 +136,23 @@
     <div class="edit_container">
       <table class="edit">
         <tr>
-          <th>Position:</th>
+          <th scope="row">Position:</th>
           <td><input type="text" id="credit_position" /></td>
         </tr>
         <tr>
-          <th>Person:</th>
+          <th scope="row">Person:</th>
           <td><input id="credit_person" class="Person_ID" /></td>
         </tr>
         <tr>
-          <th>Role:</th>
+          <th scope="row">Role:</th>
           <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml')?></td>
         </tr>
         <tr>
-          <th>Note:</th>
+          <th scope="row">Note:</th>
           <td><input id="credit_note" class="Note_ID" /></td>
         </tr>
         <tr>
-          <th></th>
+          <td></td>
           <td><button onclick="Item.link('Credit');">Add</button></td>
         </tr>
       </table>
@@ -166,7 +166,7 @@
     <div class="edit_container">
       <table class="edit">
         <tr>
-          <th>Description Type:</th>
+          <th scope="row">Description Type:</th>
           <td>
             <select id='DescriptionType'>
               <?php foreach ($this->descriptionSource()->getList() as $currentVal => $currentDesc): ?>
@@ -176,13 +176,13 @@
           </td>
         </tr>
         <tr>
-          <th>Description:</th>
+          <th scope="row">Description:</th>
           <td>
             <textarea id='Description'></textarea>
           </td>
         </tr>
         <tr>
-          <th></th>
+          <td></td>
           <td><button onclick="Item.link('Description');">Add</button></td>
         </tr>
       </table>
@@ -212,11 +212,11 @@
     <div class="edit_container">
       <table class="edit">
         <tr>
-          <th>Subject/Tag:</th>
+          <th scope="row">Subject/Tag:</th>
           <td><input id="Tag_ID" class="Tag_ID" /></td>
         </tr>
         <tr>
-          <th></th>
+          <td></td>
           <td><button onclick="Item.link('Tag');">Add</button></td>
         </tr>
       </table>

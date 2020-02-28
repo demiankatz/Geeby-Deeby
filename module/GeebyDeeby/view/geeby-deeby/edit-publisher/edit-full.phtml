@@ -12,10 +12,10 @@
   <div id="addr-tab" class="tab-pane active">
     <div class="edit_container">
       <table class="edit">
-        <tr><th>Country:</th><td><?=$this->render('geeby-deeby/edit-country/select.phtml')?></td></tr>
-        <tr><th>City:</th><td><?=$this->render('geeby-deeby/edit-city/select.phtml')?></td></tr>
-        <tr><th>Street:</th><td><input type="text" id="Street" /></td></tr>
-        <tr><th></th><td><button onclick="Publisher.link('Address');">Add</button></td></tr>
+        <tr><th scope="row">Country:</th><td><?=$this->render('geeby-deeby/edit-country/select.phtml')?></td></tr>
+        <tr><th scope="row">City:</th><td><?=$this->render('geeby-deeby/edit-city/select.phtml')?></td></tr>
+        <tr><th scope="row">Street:</th><td><input type="text" id="Street" /></td></tr>
+        <tr><td></td><td><button onclick="Publisher.link('Address');">Add</button></td></tr>
       </table>
     </div>
     <div id="address_list">

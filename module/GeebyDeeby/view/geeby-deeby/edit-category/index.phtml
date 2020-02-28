@@ -2,11 +2,11 @@
   <input type="hidden" id="Category_ID" value="<?=$this->escapeHtml($category['Category_ID'])?>" />
   <table class="edit">
     <tr>
-      <th>Category:</th>
+      <th scope="row">Category:</th>
       <td><input type="text" id="Category" value="<?=$this->escapeHtml($category['Category'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Description:</th>
+      <th scope="row">Description:</th>
       <td><textarea id="Description"><?=$this->escapeHtml($category['Description'] ?? '')?></textarea></td>
     </tr>
   </table>

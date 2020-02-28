@@ -2,15 +2,15 @@
   <input type="hidden" id="Person_Role_ID" value="<?=$this->escapeHtml($role['Role_ID'])?>" />
   <table class="edit">
   <tr>
-      <th>Role:</th>
+      <th scope="row">Role:</th>
       <td><input type="text" id="Role_Name" value="<?=$this->escapeHtml($role['Role_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Item Creator Predicate:</th>
+      <th scope="row">Item Creator Predicate:</th>
       <td><input type="text" id="Item_Creator_Predicate" value="<?=$this->escapeHtml($role['Item_Creator_Predicate'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Edition Credit Predicate:</th>
+      <th scope="row">Edition Credit Predicate:</th>
       <td><input type="text" id="Edition_Credit_Predicate" value="<?=$this->escapeHtml($role['Edition_Credit_Predicate'] ?? '')?>" /></td>
     </tr>
   </table>

@@ -1,11 +1,11 @@
 <div id="modifyPublisherForm">
   <table class="edit">
     <tr>
-      <th>Address:</th>
+      <th scope="row">Address:</th>
       <td><?=$this->render('geeby-deeby/edit-publisher/address-select.phtml', ['addresses' => $addresses, 'selected' => $row['Address_ID']])?></td>
     </tr>
     <tr>
-      <th>Imprint:</th>
+      <th scope="row">Imprint:</th>
       <td><?=$this->render('geeby-deeby/edit-publisher/imprint-select.phtml', ['imprints' => $imprints, 'selected' => $row['Imprint_ID']])?></td>
     </tr>
   </table>

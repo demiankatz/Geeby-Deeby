@@ -16,7 +16,7 @@
       <?php ob_start(); ?>
       <?php $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
         <tr>
-          <th>Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
+          <th scope="row">Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($altTitles as $altTitle): ?>
               <?=$this->escapeHtml($this->fixtitle($altTitle['Item_AltName']))?>
@@ -29,7 +29,7 @@
 
       <?php $tagCount = count($tags); if ($tagCount > 0): ?>
         <tr>
-          <th>Subject<?=$tagCount > 1 ? 's' : ''?> / Tag<?=$tagCount > 1 ? 's' : ''?>:</th>
+          <th scope="row">Subject<?=$tagCount > 1 ? 's' : ''?> / Tag<?=$tagCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($tags as $tag): ?>
               <a href="<?=$this->url('tag', ['id' => $tag['Tag_ID']])?>"><?=$this->escapeHtml($tag['Tag'])?></a><br />
@@ -40,7 +40,7 @@
 
       <?php if (count($containedIn) > 0): ?>
         <tr>
-          <th>Contained In:</th>
+          <th scope="row">Contained In:</th>
           <td>
             <?php foreach ($containedIn as $current): ?>
               <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
@@ -53,7 +53,7 @@
 
       <?php if (count($contains) > 0): ?>
         <tr>
-          <th>Contains:</th>
+          <th scope="row">Contains:</th>
           <td>
             <?php foreach ($contains as $current): ?>
               <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
@@ -66,7 +66,7 @@
 
       <?php if (count($translatedFrom) > 0): ?>
         <tr>
-          <th>Translated From:</th>
+          <th scope="row">Translated From:</th>
           <td>
             <?php foreach ($translatedFrom as $current): ?>
               <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
@@ -79,7 +79,7 @@
 
       <?php if (count($translatedInto) > 0): ?>
         <tr>
-          <th>Translated Into:</th>
+          <th scope="row">Translated Into:</th>
           <td>
             <?php foreach ($translatedInto as $current): ?>
               <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
@@ -92,7 +92,7 @@
 
       <?php if (count($adaptedFrom) > 0): ?>
         <tr>
-          <th>Adapted From:</th>
+          <th scope="row">Adapted From:</th>
           <td>
             <?php foreach ($adaptedFrom as $current): ?>
               <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
@@ -105,7 +105,7 @@
 
       <?php if (count($adaptedInto) > 0): ?>
         <tr>
-          <th>Adapted Into:</th>
+          <th scope="row">Adapted Into:</th>
           <td>
             <?php foreach ($adaptedInto as $current): ?>
               <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
@@ -118,7 +118,7 @@
 
       <?php foreach ($this->relationshipsValues as $current): ?>
         <tr>
-          <th><?=$this->escapeHtml($current['label'])?>:</th>
+          <th scope="row"><?=$this->escapeHtml($current['label'])?>:</th>
           <td>
             <?php foreach ($current['values'] as $value): ?>
               <a href="<?=$this->url('item', ['id' => $value['Item_ID']])?>">
@@ -132,7 +132,7 @@
       <?php if (count($descriptions) > 0): ?>
         <?php foreach ($descriptions as $desc): ?>
           <tr>
-            <th><?=$this->escapeHtml($this->descriptionsource()->getName($desc['Source']))?>:</th>
+            <th scope="row"><?=$this->escapeHtml($this->descriptionsource()->getName($desc['Source']))?>:</th>
             <td><?=$desc['Description']?></td>
           </tr>
         <?php endforeach; ?>
@@ -140,7 +140,7 @@
 
       <?php foreach ($itemAttributes as $current): ?>
         <tr>
-          <th><?=$this->escapeHtml($current['Items_Attribute_Name'])?>:</th>
+          <th scope="row"><?=$this->escapeHtml($current['Items_Attribute_Name'])?>:</th>
           <td>
             <?php if ($current->Allow_HTML == 1): ?>
               <?=$current->Items_Attribute_Value?><br />
@@ -154,7 +154,7 @@
       <?php if (count($reviews) > 0): ?>
         <?php foreach ($reviews as $review): ?>
           <tr>
-            <th><?=$this->escapeHtml($review['Username'])?>'s Thoughts:</th>
+            <th scope="row"><?=$this->escapeHtml($review['Username'])?>'s Thoughts:</th>
             <td>
               <?=$review['Review']?>
               <p>
@@ -168,18 +168,18 @@
       <?php endif; ?>
 
       <?php if (!empty($item['Item_Errata'])): ?>
-        <tr><th>Errata:</th><td><?=$item['Item_Errata']?></td></tr>
+        <tr><th scope="row">Errata:</th><td><?=$item['Item_Errata']?></td></tr>
       <?php endif; ?>
 
       <?php if (!empty($item['Item_Thanks'])): ?>
-        <tr><th>Special Thanks:</th><td><?=$item['Item_Thanks']?></td></tr>
+        <tr><th scope="row">Special Thanks:</th><td><?=$item['Item_Thanks']?></td></tr>
       <?php endif; ?>
 
       <?php $userHasItem = $userWantsItem = $userHasExtraItem = false; ?>
 
       <?php if (count($owners) > 0): ?>
         <tr>
-          <th>Users Who Own This Item:</th>
+          <th scope="row">Users Who Own This Item:</th>
           <td>
             <?php $prevUser = false; foreach ($owners as $owner): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><?php if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $owner['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
           </td>
@@ -188,7 +188,7 @@
 
       <?php if (count($buyers) > 0): ?>
         <tr>
-          <th>Users Who Want This Item:</th>
+          <th scope="row">Users Who Want This Item:</th>
           <td>
             <?php $prevUser = false; foreach ($buyers as $buyer): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><?php if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $buyer['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
           </td>
@@ -197,7 +197,7 @@
 
       <?php if (count($sellers) > 0): ?>
         <tr>
-          <th>Users with Extra Copies:</th>
+          <th scope="row">Users with Extra Copies:</th>
           <td>
             <?php $prevUser = false; foreach ($sellers as $seller): $separator = $prevUser; ?>
               <?php if ($this->auth()->hasIdentity() && $seller['User_ID'] == $this->auth()->getIdentity()): $userHasExtraItem = true; endif; ?>

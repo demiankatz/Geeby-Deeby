@@ -2,19 +2,19 @@
   <input type="hidden" id="Series_Attribute_ID" value="<?=$attribute['Series_Attribute_ID']?>" />
   <table class="edit">
     <tr>
-      <th>Attribute Name:</th>
+      <th scope="row">Attribute Name:</th>
       <td><input type="text" id="Series_Attribute_Name" value="<?=isset($attribute['Series_Attribute_Name']) ? $this->escapeHtml($attribute['Series_Attribute_Name']) : ''?>" /></td>
     </tr>
     <tr>
-      <th>RDF Property (optional URI):</th>
+      <th scope="row">RDF Property (optional URI):</th>
       <td><input type="text" id="Series_Attribute_RDF_Property" value="<?=isset($attribute['Series_Attribute_RDF_Property']) ? $this->escapeHtml($attribute['Series_Attribute_RDF_Property']) : ''?>" /></td>
     </tr>
     <tr>
-      <th>Display Priority (lower numbers displayed first):</th>
+      <th scope="row">Display Priority (lower numbers displayed first):</th>
       <td><input type="text" id="Display_Priority" value="<?=isset($attribute['Display_Priority']) ? $this->escapeHtml($attribute['Display_Priority']) : '0'?>" /></td>
     </tr>
     <tr>
-      <th>Allow HTML in Value (checked = yes, unchecked = no):</th>
+      <th scope="row">Allow HTML in Value (checked = yes, unchecked = no):</th>
       <td><input type="checkbox" id="Allow_HTML" value="1" <?=isset($attribute['Allow_HTML']) && $attribute['Allow_HTML'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>

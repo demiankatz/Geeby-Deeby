@@ -2,11 +2,11 @@
   <input type="hidden" id="Predicate_ID" value="<?=$this->escapeHtml($predicate['Predicate_ID'])?>" />
   <table class="edit">
     <tr>
-      <th>Predicate (URI):</th>
+      <th scope="row">Predicate (URI):</th>
       <td><input type="text" id="Predicate" value="<?=isset($predicate['Predicate']) ? $this->escapeHtml($predicate['Predicate']) : ''?>" /></td>
     </tr>
     <tr>
-      <th>Abbreviation (e.g. owl:sameAs):</th>
+      <th scope="row">Abbreviation (e.g. owl:sameAs):</th>
       <td><input type="text" id="Predicate_Abbrev" value="<?=isset($predicate['Predicate_Abbrev']) ? $this->escapeHtml($predicate['Predicate_Abbrev']) : ''?>" /></td>
     </tr>
   </table>
