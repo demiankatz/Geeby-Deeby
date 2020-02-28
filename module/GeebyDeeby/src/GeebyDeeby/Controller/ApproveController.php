@@ -67,7 +67,7 @@ class ApproveController extends AbstractBase
     {
         $ok = $this->checkPermission('Approver');
         if ($ok !== true) {
-            return $ok;
+            return $this->jsonDie('Access denied.');
         }
         $id = $this->params()->fromPost('id');
         if (null === $id) {
