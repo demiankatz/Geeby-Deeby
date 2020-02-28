@@ -9,13 +9,13 @@ leave the password fields blank.</p>
   <div class="error"><?=$this->escapeHtml($error)?></div>
 <?php endif; ?>
 <table class="signup"><tr>
-<th>Full Name:</th><td>
+<th scope="row">Full Name:</th><td>
 <input type="text" name="Fullname" value="<?=$this->escapeHtml($fullname ?? '')?>" size="25" maxlength="50" /></td></tr>
-<th>E-Mail Address (optional):</th><td>
+<th scope="row">E-Mail Address (optional):</th><td>
 <input type="text" name="Address" value="<?=$this->escapeHtml($address ?? '')?>" size="25" maxlength="50" /></td></tr>
-<tr><th>Password:</th><td>
+<tr><th scope="row">Password:</th><td>
 <input type="password" name="Password1" size="25" maxlength="25" /></td></tr>
-<tr><th>Retype Password:</th><td>
+<tr><th scope="row">Retype Password:</th><td>
 <input type="password" name="Password2" size="25" maxlength="25" /></td></tr>
 <tr><td></td><td><input type="submit" name="submit" value="Update Account" /></td></tr>
 </table>

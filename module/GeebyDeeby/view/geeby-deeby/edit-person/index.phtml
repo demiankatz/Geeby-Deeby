@@ -2,27 +2,27 @@
   <input type="hidden" id="Person_ID" value="<?=$this->escapeHtml($person['Person_ID'])?>" />
   <table class="edit">
     <tr>
-      <th>First Name:</th>
+      <th scope="row">First Name:</th>
       <td><input type="text" id="First_Name" value="<?=$this->escapeHtml($person['First_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Middle Name:</th>
+      <th scope="row">Middle Name:</th>
       <td><input type="text" id="Middle_Name" value="<?=$this->escapeHtml($person['Middle_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Last Name:</th>
+      <th scope="row">Last Name:</th>
       <td><input type="text" id="Last_Name" value="<?=$this->escapeHtml($person['Last_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Extra Details (birth/death dates, etc.):</th>
+      <th scope="row">Extra Details (birth/death dates, etc.):</th>
       <td><input type="text" id="Extra_Details" value="<?=$this->escapeHtml($person['Extra_Details'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Authority Source:</th>
+      <th scope="row">Authority Source:</th>
       <td><?=$this->render('geeby-deeby/edit-person/authority-select.phtml', ['authorities' => $authorities, 'selected' => $person['Authority_ID'] ?? null])?></td>
     </tr>
     <tr>
-      <th>Biography:</th>
+      <th scope="row">Biography:</th>
       <td><textarea id="Biography"><?=$this->escapeHtml($person['Biography'] ?? '')?></textarea></td>
     </tr>
     <tr>

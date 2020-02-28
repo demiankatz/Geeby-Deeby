@@ -6,7 +6,7 @@
 <table class="item">
   <?php foreach ($tagAttributes as $current): ?>
     <tr>
-      <th><?=$this->escapeHtml($current->Tags_Attribute_Name)?>:</th>
+      <th scope="row"><?=$this->escapeHtml($current->Tags_Attribute_Name)?>:</th>
       <td>
         <?php $displayedSomething = true; ?>
         <?php if ($current->Allow_HTML == 1): ?>
@@ -19,7 +19,7 @@
   <?php endforeach; ?>
   <?php foreach ($this->relationshipsValues as $current): ?>
     <tr>
-      <th><?=$this->escapeHtml($current['label'])?>:</th>
+      <th scope="row"><?=$this->escapeHtml($current['label'])?>:</th>
       <td>
         <?php foreach ($current['values'] as $value): ?>
           <a href="<?=$this->url('tag', ['id' => $value['Tag_ID']])?>">

@@ -2,19 +2,19 @@
   <input type="hidden" id="File_ID" value="<?=$file['File_ID']?>" />
   <table class="edit">
     <tr>
-      <th>File Name:</th>
+      <th scope="row">File Name:</th>
       <td><input type="text" id="File_Name" value="<?=isset($file['File_Name']) ? $this->escapeHtml($file['File_Name']) : '' ?>" /></td>
     </tr>
     <tr>
-      <th>File Path:</th>
+      <th scope="row">File Path:</th>
       <td><input type="text" id="File_Path" value="<?=isset($file['File_Path']) ? $this->escapeHtml($file['File_Path']) : '' ?>" /></td>
     </tr>
     <tr>
-      <th>File Type:</th>
+      <th scope="row">File Type:</th>
       <td><?=$this->render('geeby-deeby/edit-file/type-select.phtml', ['fileTypes' => $fileTypes, 'selected' => $file['File_Type_ID'] ?? null])?></td>
     </tr>
     <tr>
-      <th>Description:</th>
+      <th scope="row">Description:</th>
       <td><textarea id="Description"><?=isset($file['Description']) ? $this->escapeHtml($file['Description']) : '' ?></textarea></td>
     </tr>
   </table>

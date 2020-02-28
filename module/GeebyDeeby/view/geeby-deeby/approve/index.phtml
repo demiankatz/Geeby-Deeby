@@ -5,11 +5,11 @@
   <h2>New Users</h2>
   <table>
     <tr>
-      <th>Username</th>
-      <th>Full Name</th>
-      <th>Email</th>
-      <th>Person Record</th>
-      <th>Options</th>
+      <th scope="col">Username</th>
+      <th scope="col">Full Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Person Record</th>
+      <th scope="col">Options</th>
     </tr>
     <?php foreach ($newUsers as $current): ?>
       <tr id="NewUser_<?=$current['User_ID']?>">
@@ -29,9 +29,9 @@
   <h2>New Item Reviews</h2>
   <table class="approve">
     <tr>
-      <th>Item / User</th>
-      <th>Review</th>
-      <th>Options</th>
+      <th scope="col">Item / User</th>
+      <th scope="col">Review</th>
+      <th scope="col">Options</th>
     </tr>
     <?php foreach ($pendingReviews as $current): ?>
       <tr id="PendingReview_<?=$current['User_ID']?>_<?=$current['Item_ID']?>">
@@ -51,9 +51,9 @@
   <h2>New Series Comments</h2>
   <table class="approve">
     <tr>
-      <th>Series / User</th>
-      <th>Comment</th>
-      <th>Options</th>
+      <th scope="col">Series / User</th>
+      <th scope="col">Comment</th>
+      <th scope="col">Options</th>
     </tr>
     <?php foreach ($pendingComments as $current): ?>
       <tr id="PendingComment_<?=$current['User_ID']?>_<?=$current['Series_ID']?>">

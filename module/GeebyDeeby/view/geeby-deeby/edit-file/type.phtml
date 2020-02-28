@@ -2,7 +2,7 @@
   <input type="hidden" id="File_Type_ID" value="<?=$fileType['File_Type_ID']?>" />
   <table class="edit">
     <tr>
-      <th>File Type:</th>
+      <th scope="row">File Type:</th>
       <td><input type="text" id="File_Type" value="<?=isset($fileType['File_Type']) ? $this->escapeHtml($fileType['File_Type']) : ''?>" /></td>
     </tr>
   </table>

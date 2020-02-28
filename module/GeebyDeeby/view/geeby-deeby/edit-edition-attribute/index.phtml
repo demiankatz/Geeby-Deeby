@@ -2,23 +2,23 @@
   <input type="hidden" id="Editions_Attribute_ID" value="<?=$attribute['Editions_Attribute_ID']?>" />
   <table class="edit">
     <tr>
-      <th>Attribute Name:</th>
+      <th scope="row">Attribute Name:</th>
       <td><input type="text" id="Editions_Attribute_Name" value="<?=isset($attribute['Editions_Attribute_Name']) ? $this->escapeHtml($attribute['Editions_Attribute_Name']) : ''?>" /></td>
     </tr>
     <tr>
-      <th>RDF Property (optional URI):</th>
+      <th scope="row">RDF Property (optional URI):</th>
       <td><input type="text" id="Editions_Attribute_RDF_Property" value="<?=isset($attribute['Editions_Attribute_RDF_Property']) ? $this->escapeHtml($attribute['Editions_Attribute_RDF_Property']) : ''?>" /></td>
     </tr>
     <tr>
-      <th>Display Priority (lower numbers displayed first):</th>
+      <th scope="row">Display Priority (lower numbers displayed first):</th>
       <td><input type="text" id="Display_Priority" value="<?=isset($attribute['Display_Priority']) ? $this->escapeHtml($attribute['Display_Priority']) : '0'?>" /></td>
     </tr>
     <tr>
-      <th>Copy Value When Cloning Editions (checked = yes, unchecked = no):</th>
+      <th scope="row">Copy Value When Cloning Editions (checked = yes, unchecked = no):</th>
       <td><input type="checkbox" id="Copy_To_Clone" value="1" <?=isset($attribute['Copy_To_Clone']) && $attribute['Copy_To_Clone'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
     <tr>
-      <th>Allow HTML in Value (checked = yes, unchecked = no):</th>
+      <th scope="row">Allow HTML in Value (checked = yes, unchecked = no):</th>
       <td><input type="checkbox" id="Allow_HTML" value="1" <?=isset($attribute['Allow_HTML']) && $attribute['Allow_HTML'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>

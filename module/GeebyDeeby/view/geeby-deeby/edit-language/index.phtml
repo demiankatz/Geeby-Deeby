@@ -2,7 +2,7 @@
   <input type="hidden" id="Language_ID" value="<?=$language['Language_ID']?>" />
   <table class="edit">
     <tr>
-      <th>Language:</th>
+      <th scope="row">Language:</th>
       <td><input type="text" id="Language_Name" value="<?=isset($language['Language_Name']) ? $this->escapeHtml($language['Language_Name']) : ''?>" /></td>
     </tr>
   </table>

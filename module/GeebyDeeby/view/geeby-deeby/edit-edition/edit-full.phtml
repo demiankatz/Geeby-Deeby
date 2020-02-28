@@ -23,23 +23,23 @@
     <div class="edit_container">
       <table class="edit">
         <tr>
-          <th>Position:</th>
+          <th scope="row">Position:</th>
           <td><input type="text" id="credit_position" /></td>
         </tr>
         <tr>
-          <th>Person:</th>
+          <th scope="row">Person:</th>
           <td><input id="credit_person" class="Person_ID" /></td>
         </tr>
         <tr>
-          <th>Role:</th>
+          <th scope="row">Role:</th>
           <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml')?></td>
         </tr>
         <tr>
-          <th>Note:</th>
+          <th scope="row">Note:</th>
           <td><input id="credit_note" class="Note_ID" /></td>
         </tr>
         <tr>
-          <th></th>
+          <td></td>
           <td><button onclick="Edition.link('Credit');">Add</button></td>
         </tr>
       </table>
@@ -54,9 +54,9 @@
       <tr>
         <td style="width: 33%;">
           <table class="edit">
-            <tr><th>New ISBN</th><td><input type="text" id="isbn" /></td></tr>
-            <tr><th>Note:</th><td><input id="isbn_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="Edition.link('ISBN');">Add</button></td></tr>
+            <tr><th scope="row">New ISBN</th><td><input type="text" id="isbn" /></td></tr>
+            <tr><th scope="row">Note:</th><td><input id="isbn_note" class="Note_ID" /></td></tr>
+            <tr><td></td><td><button onclick="Edition.link('ISBN');">Add</button></td></tr>
           </table>
           <b>ISBNs:</b>
           <div id="isbn_list">
@@ -65,9 +65,9 @@
         </td>
         <td style="width: 33%;">
           <table class="edit">
-            <tr><th>New OCLC Number:</th><td><input type="text" id="oclc_number" /></td></tr>
-            <tr><th>Note:</th><td><input id="oclc_number_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="Edition.link('OCLCNumber');">Add</button></td></tr>
+            <tr><th scope="row">New OCLC Number:</th><td><input type="text" id="oclc_number" /></td></tr>
+            <tr><th scope="row">Note:</th><td><input id="oclc_number_note" class="Note_ID" /></td></tr>
+            <tr><td></td><td><button onclick="Edition.link('OCLCNumber');">Add</button></td></tr>
           </table>
           <b>OCLC Numbers:</b>
           <div id="oclcnumber_list">
@@ -76,9 +76,9 @@
         </td>
         <td>
           <table class="edit">
-            <tr><th>New Code</th><td><input type="text" id="product_code" /></td></tr>
-            <tr><th>Note:</th><td><input id="product_code_note" class="Note_ID" /></td></tr>
-            <tr><th></th><td><button onclick="Edition.link('ProductCode');">Add</button></td></tr>
+            <tr><th scope="row">New Code</th><td><input type="text" id="product_code" /></td></tr>
+            <tr><th scope="row">Note:</th><td><input id="product_code_note" class="Note_ID" /></td></tr>
+            <tr><td></td><td><button onclick="Edition.link('ProductCode');">Add</button></td></tr>
           </table>
           <b>Product Codes:</b>
           <div id="productcode_list">
@@ -102,23 +102,23 @@
     <div class="edit_container">
       <table class="edit">
         <tr>
-          <th>Month:<br /><span class="note">(1-12, 0 for unknown)</span></th>
+          <th scope="row">Month:<br /><span class="note">(1-12, 0 for unknown)</span></th>
           <td><input type="text" id="releaseMonth" /></td>
         </tr>
         <tr>
-          <th>Day:<br /><span class="note">(1-31, 0 for unknown)</span></th>
+          <th scope="row">Day:<br /><span class="note">(1-31, 0 for unknown)</span></th>
           <td><input type="text" id="releaseDay" /></td>
         </tr>
         <tr>
-          <th>Year:<br /><span class="note">(-1 for unreleased)</span></th>
+          <th scope="row">Year:<br /><span class="note">(-1 for unreleased)</span></th>
           <td><input type="text" id="releaseYear" /></td>
         </tr>
         <tr>
-          <th>Note:</th>
+          <th scope="row">Note:</th>
           <td><input id="releaseNote" class="Note_ID" /></td>
         </tr>
         <tr>
-          <th></th>
+          <td></td>
           <td>
             <button onclick="Edition.link('Date');">Add</button>
           </td>
@@ -150,27 +150,27 @@
     <div class="edit_container">
       <table class="edit">
         <tr>
-          <th>Image Path:</th>
+          <th scope="row">Image Path:</th>
           <td><input type="text" id="image_path" /></td>
         </tr>
         <tr>
-          <th>Thumb Path:<br /><span class="note">(leave blank to add &quot;thumb&quot; to image filename)</span></th>
+          <th scope="row">Thumb Path:<br /><span class="note">(leave blank to add &quot;thumb&quot; to image filename)</span></th>
           <td><input type="text" id="thumb_path" /></td>
         </tr>
         <tr>
-          <th>IIIF Base URI:<br /><span class="note">(optional; may be used instead of Image/Thumb)</span></th>
+          <th scope="row">IIIF Base URI:<br /><span class="note">(optional; may be used instead of Image/Thumb)</span></th>
           <td><input type="text" id="iiif_uri" /></td>
         </tr>
         <tr>
-          <th>Position:</th>
+          <th scope="row">Position:</th>
           <td><input type="text" id="image_position" /></td>
         </tr>
         <tr>
-          <th>Note:</th>
+          <th scope="row">Note:</th>
           <td><input id="image_note" class="Note_ID" /></td>
         </tr>
         <tr>
-          <th></th>
+          <td></td>
           <td><button onclick="Edition.link('Image');">Add</button></td>
         </tr>
       </table>

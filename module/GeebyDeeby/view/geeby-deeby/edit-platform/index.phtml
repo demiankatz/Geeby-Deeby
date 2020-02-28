@@ -2,7 +2,7 @@
   <input type="hidden" id="Platform_ID" value="<?=$platform['Platform_ID']?>" />
   <table class="edit">
     <tr>
-      <th>Platform:</th>
+      <th scope="row">Platform:</th>
       <td><input type="text" id="Platform" value="<?=isset($platform['Platform']) ? $this->escapeHtml($platform['Platform']) : ''?>" /></td>
     </tr>
   </table>

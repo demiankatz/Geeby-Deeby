@@ -2,7 +2,7 @@
   <input type="hidden" id="City_ID" value="<?=$this->escapeHtml($city['City_ID'])?>" />
   <table class="edit">
     <tr>
-      <th>City:</th>
+      <th scope="row">City:</th>
       <td><input type="text" id="City_Name" value="<?=isset($city['City_Name']) ? $this->escapeHtml($city['City_Name']) : ''?>" /></td>
     </tr>
   </table>
