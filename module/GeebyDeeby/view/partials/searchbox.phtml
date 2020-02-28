@@ -1,8 +1,9 @@
 <div class="searchbox">
   <form action=<?=$this->url('search')?> method="get">
-    Search:
-    <input type="text" name="SearchQuery" value="<?=isset($this->layout()->query) ? $this->escapeHtml($this->layout()->query) : ''?>" size="35" maxlength="50" />
-    <select name="SearchType">
+    <label for="SearchQuery" class="normal">Search:</label>
+    <input type="text" id="SearchQuery" name="SearchQuery" value="<?=isset($this->layout()->query) ? $this->escapeHtml($this->layout()->query) : ''?>" size="35" maxlength="50" />
+    <label class="sr-only" for="SearchType">Search Type:</label>
+    <select name="SearchType" id="SearchType">
       <?php foreach (['Title', 'Person', 'Keyword', 'ISBN'] as $current): ?>
         <option value="<?=$this->escapeHtml($current)?>"<?=isset($this->layout()->type) && strtolower($this->layout()->type) == strtolower($current) ? ' selected="selected"' : ''?>><?=$this->escapeHtml($current)?></option>
       <?php endforeach; ?>
