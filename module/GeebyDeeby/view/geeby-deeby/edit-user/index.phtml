@@ -1,35 +1,35 @@
-<div id="editForm">
+<form id="editForm" onsubmit="User.save(); return false;">
   <input type="hidden" id="User_ID" value="<?=$user['User_ID']?>" />
   <table class="edit">
     <tr>
-      <th scope="row">Username:</th>
+      <th scope="row"><label for="Username">Username:</label></th>
       <td><input type="text" id="Username" value="<?=isset($user['Username']) ? $this->escapeHtml($user['Username']) : '' ?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Name:</th>
+      <th scope="row"><label for="Name">Name:</label></th>
       <td><input type="text" id="Name" value="<?=isset($user['Name']) ? $this->escapeHtml($user['Name']) : '' ?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Address:</th>
+      <th scope="row"><label for="Address">Address:</label></th>
       <td><input type="email" id="Address" value="<?=isset($user['Address']) ? $this->escapeHtml($user['Address']) : '' ?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Status (-1 = normal, 0 = not approved yet, >0 = ID of Person in DB):</th>
+      <th scope="row"><label for="Person_ID">Status (-1 = normal, 0 = not approved yet, >0 = ID of Person in DB):</label></th>
       <td><input type="text" id="Person_ID" value="<?=isset($user['Person_ID']) ? $this->escapeHtml($user['Person_ID'] . (isset($person) ? ': ' . $this->showperson($person) : '')) : '' ?>" /></td>
     </tr>
     <tr>
-      <th scope="row">User Group:</th>
+      <th scope="row"><label for="User_Group_ID">User Group:</label></th>
       <td><?=$this->render('geeby-deeby/edit-user/usergroup-select.phtml', ['usergroups' => $usergroups, 'selected' => $user['User_Group_ID'] ?? null])?></td>
     </tr>
     <tr>
-      <th scope="row">New Password (empty to leave unchanged):</th>
+      <th scope="row"><label for="Password">New Password (empty to leave unchanged):</label></th>
       <td><input type="password" id="Password" value="" /></td>
     </tr>
     <tr>
-      <th scope="row">Confirm New Password (empty to leave unchanged):</th>
+      <th scope="row"><label for="Password_Confirm">Confirm New Password (empty to leave unchanged):</label></th>
       <td><input type="password" id="Password_Confirm" value="" /></td>
     </tr>
   </table>
-  <button id="save_user" onclick="User.save();">Save</button>
+  <input type="submit" id="save_user" value="Save" />
   <div id="save_user_status"></div>
-</div>
+</form>
