@@ -18,6 +18,7 @@
         "easyrdf/easyrdf": "dev-master",
         "vufind-org/vufindcode": "1.2",
         "zendframework/zend-authentication": "2.7.0",
+        "zendframework/zend-cache": "2.9.0",
         "zendframework/zend-crypt": "3.3.1",
         "zendframework/zend-db": "2.11.0",
         "zendframework/zend-eventmanager": "3.2.1",
