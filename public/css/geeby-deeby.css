@@ -58,6 +58,8 @@ textarea {
   padding:2px 4px 0 4px;
 }
 
+label.normal {font-weight: normal;}
+
 .alert {background:#774E03;border-color:#4D3301;color:#FFF}
 .alert a {color:#FFF}.alert a:hover {color:#F3D69C}
 .error {color:red}
