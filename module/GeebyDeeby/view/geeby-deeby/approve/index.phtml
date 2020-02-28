@@ -15,7 +15,7 @@
       <tr id="NewUser_<?=$current['User_ID']?>">
         <td><input type="text" id="Username_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Username'])?>"/></td>
         <td><input type="text" id="Name_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Name'])?>"/></td>
-        <td><input type="text" id="Address_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Address'])?>"/></td>
+        <td><input type="email" id="Address_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Address'])?>"/></td>
         <td><input class="Person_ID" id="Person_ID_<?=$current['User_ID']?>" value="-1 (normal user)"/></td>
         <td id="UserButtons_<?=$current['User_ID']?>">
           <button onclick="approveUser(<?=$current['User_ID']?>);">Approve</button>

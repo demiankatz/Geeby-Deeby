@@ -11,7 +11,7 @@
     </tr>
     <tr>
       <th scope="row">Address:</th>
-      <td><input type="text" id="Address" value="<?=isset($user['Address']) ? $this->escapeHtml($user['Address']) : '' ?>" /></td>
+      <td><input type="email" id="Address" value="<?=isset($user['Address']) ? $this->escapeHtml($user['Address']) : '' ?>" /></td>
     </tr>
     <tr>
       <th scope="row">Status (-1 = normal, 0 = not approved yet, >0 = ID of Person in DB):</th>
