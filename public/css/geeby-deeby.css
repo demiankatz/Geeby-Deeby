@@ -49,6 +49,7 @@ button:hover,.btn:hover,.btn-default:hover {
   border-color:#774E03;
 }
 .btn-primary:hover {background:#774E03;border-color:#552C01}
+input[type="email"],
 input[type="text"],
 input[type="number"],
 input[type="password"],
