@@ -1,23 +1,23 @@
-<div id="editForm">
+<form id="editForm" onsubmit="TagsAttribute.save(); return false;">
   <input type="hidden" id="Tags_Attribute_ID" value="<?=$attribute['Tags_Attribute_ID']?>" />
   <table class="edit">
     <tr>
-      <th scope="row">Attribute Name:</th>
+      <th scope="row"><label for="Tags_Attribute_Name">Attribute Name:</label></th>
       <td><input type="text" id="Tags_Attribute_Name" value="<?=isset($attribute['Tags_Attribute_Name']) ? $this->escapeHtml($attribute['Tags_Attribute_Name']) : ''?>" /></td>
     </tr>
     <tr>
-      <th scope="row">RDF Property (optional URI):</th>
+      <th scope="row"><label for="Tags_Attribute_RDF_Property">RDF Property (optional URI):</label></th>
       <td><input type="text" id="Tags_Attribute_RDF_Property" value="<?=isset($attribute['Tags_Attribute_RDF_Property']) ? $this->escapeHtml($attribute['Tags_Attribute_RDF_Property']) : ''?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Display Priority (lower numbers displayed first):</th>
+      <th scope="row"><label for="Display_Priority">Display Priority (lower numbers displayed first):</label></th>
       <td><input type="text" id="Display_Priority" value="<?=isset($attribute['Display_Priority']) ? $this->escapeHtml($attribute['Display_Priority']) : '0'?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Allow HTML in Value (checked = yes, unchecked = no):</th>
+      <th scope="row"><label for="Allow_HTML">Allow HTML in Value (checked = yes, unchecked = no):</label></th>
       <td><input type="checkbox" id="Allow_HTML" value="1" <?=isset($attribute['Allow_HTML']) && $attribute['Allow_HTML'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>
-  <button id="save_tag_attribute" onclick="TagsAttribute.save();">Save</button>
+  <input id="save_tag_attribute" type="submit" value="Save" />
   <div id="save_tag_attribute_status"></div>
-</div>
+</form>

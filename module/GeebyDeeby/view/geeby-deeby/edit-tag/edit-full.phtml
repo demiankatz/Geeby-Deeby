@@ -11,24 +11,34 @@
 
 <div class="tab-content">
   <div id="uris-tab" class="tab-pane active">
-    <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
-    <input type="text" id="uri" />
-    <button onclick="Tag.link('URI');">Add URI</button>
+    <form onsubmit="Tag.link('URI'); return false;">
+      <label>
+        Predicate:
+        <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
+      </label>
+      <label>
+        URI:
+        <input type="text" id="uri" />
+      </label>
+      <input type="submit" value="Add URI" />
+    </form>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-tag/uri-list.phtml')?>
     </div>
   </div>
 
   <div id="relationships-tab" class="tab-pane">
-    <div>
+    <form onsubmit="Tag.link('Relationship'); return false;">
+      <label class="sr-only" for="relationship_type">Relationship Type:</label>
       <select id="relationship_type">
         <?php foreach ($this->relationships as $value => $label): ?>
           <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
         <?php endforeach; ?>
       </select>
-      <input id="target_tag" />
-      <button onclick="Tag.link('Relationship');">Add Relationship</button>
-    </div>
+      <label class="sr-only" for="target_tag">Target Tag:</label>
+      <input type="text" id="target_tag" />
+      <input type="submit" value="Add Relationship" />
+    </form>
     <hr/>
     <div id="relationship_list">
       <?=$this->render('geeby-deeby/edit-tag/relationship-list.phtml')?>
