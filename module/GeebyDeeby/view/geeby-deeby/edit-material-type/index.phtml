@@ -1,23 +1,23 @@
-<div id="editForm">
+<form id="editForm" onsubmit="MaterialType.save(); return false;">
   <input type="hidden" id="Material_Type_ID" value="<?=$material['Material_Type_ID']?>" />
   <table class="edit">
     <tr>
-      <th scope="row">Name (singular):</th>
+      <th scope="row"><label for="Material_Type_Name">Name (singular):</label></th>
       <td><input type="text" id="Material_Type_Name" value="<?=isset($material['Material_Type_Name']) ? $this->escapeHtml($material['Material_Type_Name']) : ''?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Name (plural):</th>
+      <th scope="row"><label for="Material_Type_Plural_Name">Name (plural):</label></th>
       <td><input type="text" id="Material_Type_Plural_Name" value="<?=isset($material['Material_Type_Plural_Name']) ? $this->escapeHtml($material['Material_Type_Plural_Name']) : ''?>" /></td>
     </tr>
     <tr>
-      <th scope="row">RDF Class (optional URI):</th>
+      <th scope="row"><label for="Material_Type_RDF_Class">RDF Class (optional URI):</label></th>
       <td><input type="text" id="Material_Type_RDF_Class" value="<?=isset($material['Material_Type_RDF_Class']) ? $this->escapeHtml($material['Material_Type_RDF_Class']) : ''?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Set as default:</th>
+      <th scope="row"><label for="Default">Set as default:</label></th>
       <td><input type="checkbox" id="Default" value="1" <?=isset($material['Default']) && $material['Default'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>
-  <button id="save_material_type" onclick="MaterialType.save();">Save</button>
+  <input type="submit" value="Save" />
   <div id="save_material_type_status"></div>
-</div>
+</form>
