@@ -1,11 +1,11 @@
-<div id="editForm">
+<form id="editForm" onsubmit="FullTextSource.save(); return false;">
   <input type="hidden" id="Full_Text_Source_ID" value="<?=$this->escapeHtml($fulltextsource['Full_Text_Source_ID'])?>" />
   <table class="edit">
     <tr>
-      <th scope="row">Full Text Source:</th>
+      <th scope="row"><label for="Full_Text_Source_Name">Full Text Source:</label></th>
       <td><input type="text" id="Full_Text_Source_Name" value="<?=isset($fulltextsource['Full_Text_Source_Name']) ? $this->escapeHtml($fulltextsource['Full_Text_Source_Name']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_source" onclick="FullTextSource.save();">Save</button>
+  <input type="submit" id="save_source" value="Save" />
   <div id="save_source_status"></div>
-</div>
+</form>

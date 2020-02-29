@@ -16,48 +16,55 @@
 
 <div class="tab-content">
   <div id="items-tab" class="tab-pane active">
-    <input id="item_name" />
-    <button onclick="Series.link('Item');">Add Existing Item</button>
-    <button onclick="Item.edit('NEW');">Add New Item</button>
-    <div id="item_list">
+    <form style="float: left;" onsubmit="Series.link('Item'); return false;">
+      <label>Item: <input type="text" id="item_name" /></label>
+      <input type="submit" value="Add Existing Item" />
+    </form>
+    <button style="margin-left: 5px; float: left;" onclick="Item.edit('NEW');">Add New Item</button>
+    <div style="clear: left;" id="item_list">
       <?=$this->render('geeby-deeby/edit-series/item-list.phtml')?>
     </div>
   </div>
 
   <div id="material-tab" class="tab-pane">
-    <?=$this->render('geeby-deeby/edit-material-type/select.phtml', ['materials' => $materials, 'idPrefix' => 'Series_'])?>
-    <button onclick="Series.link('Material');">Add</button>
+    <form onsubmit="Series.link('Material'); return false;">
+      <label>Material Type:
+      <?=$this->render('geeby-deeby/edit-material-type/select.phtml', ['materials' => $materials, 'idPrefix' => 'Series_'])?></label>
+      <input type="submit" value="Add" />
+    </form>
     <div id="material_list">
       <?=$this->render('geeby-deeby/edit-series/material-type-list.phtml')?>
     </div>
   </div>
 
   <div id="publishers-tab" class="tab-pane">
-    <div class="edit_container">
+    <form class="edit_container" onsubmit="Series.link('Publisher'); return false;">
       <table class="edit">
         <tr>
-          <th scope="row">Publisher:</th>
+          <th scope="row"><label for="Publisher_ID">Publisher:</label></th>
           <td><input id="Publisher_ID" /></td>
         </tr>
         <tr>
-          <th scope="row">Note:</th>
+          <th scope="row"><label for="Publisher_Note_ID">Note:</label></th>
           <td><input id="Publisher_Note_ID" class="Note_ID" /></td>
         </tr>
         <tr>
           <td></td>
-          <td><button onclick="Series.link('Publisher');">Add</button></td>
+          <td><input type="submit" value="Add" /></td>
         </tr>
       </table>
-    </div>
+    </form>
     <div id="publisher_list">
       <?=$this->render('geeby-deeby/edit-series/publisher-list.phtml')?>
     </div>
   </div>
 
   <div id="alt-titles-tab" class="tab-pane">
-    <b>Title:</b> <input type="text" id="Alt_Title" />
-    <b>Note: </b> <input id="Alt_Title_Note" class="Note_ID" />
-    <button onclick="Series.link('AltTitle');">Add</button>
+    <form onsubmit="Series.link('AltTitle'); return false;">
+      <label>Title: <input type="text" id="Alt_Title" /></label>
+      <label>Note: <input id="Alt_Title_Note" class="Note_ID" /></label>
+      <input type="submit" value="Add" />
+    </form>
     <div id="alttitle_list">
       <?=$this->render('geeby-deeby/edit-series/alt-title-list.phtml')?>
     </div>
@@ -66,11 +73,13 @@
   <div id="categories-tab" class="tab-pane">
     <?php if (!empty($categories)): ?>
       <?php $selected_categories = $seriesObj->getCategoryIDs(); ?>
-      <?php foreach ($categories as $current): ?>
-        <input type="checkbox" id="Category_ID_<?=$current['Category_ID']?>" class="Category_ID" value="<?=$current['Category_ID']?>"<?=in_array($current['Category_ID'], $selected_categories) ? ' checked="checked"' : '' ?> />
-        <label for="Category_ID_<?=$current['Category_ID']?>"><?=$this->escapeHtml($current['Category'])?></label><br />
-      <?php endforeach; ?>
-      <button id="save_categories" onclick="Series.saveCategories();">Save</button>
+      <form onsubmit="Series.saveCategories(); return false;">
+        <?php foreach ($categories as $current): ?>
+          <input type="checkbox" id="Category_ID_<?=$current['Category_ID']?>" class="Category_ID" value="<?=$current['Category_ID']?>"<?=in_array($current['Category_ID'], $selected_categories) ? ' checked="checked"' : '' ?> />
+          <label for="Category_ID_<?=$current['Category_ID']?>"><?=$this->escapeHtml($current['Category'])?></label><br />
+        <?php endforeach; ?>
+        <input type="submit" value="Save" />
+      </form>
       <div id="save_categories_status"></div>
     <?php else: ?>
       No categories defined.
@@ -78,15 +87,17 @@
   </div>
 
   <div id="relationships-tab" class="tab-pane">
-    <div>
+    <form onsubmit="Series.link('Relationship'); return false;">
+      <label class="sr-only" for="relationship_type">Relationship Type:</label>
       <select id="relationship_type">
         <?php foreach ($this->relationships as $value => $label): ?>
           <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
         <?php endforeach; ?>
       </select>
-      <input id="target_series" />
-      <button onclick="Series.link('Relationship');">Add Relationship</button>
-    </div>
+      <label class="sr-only" for="target_series">Target Series:</label>
+      <input type="text" id="target_series" />
+      <input type="submit" value="Add Relationship" />
+    </form>
     <hr/>
     <div id="relationship_list">
       <?=$this->render('geeby-deeby/edit-series/relationship-list.phtml')?>
@@ -94,12 +105,16 @@
   </div>
 
   <div id="translations-tab" class="tab-pane">
-    <select id="trans_type">
-      <option value='from'>Translated From</option>
-      <option value='into'>Translated Into</option>
-    </select>
-    <input id="trans_name" />
-    <button onclick="Series.link('Translation');">Add Translation</button>
+    <form onsubmit="Series.link('Translation'); return false;">
+      <label class="sr-only" for="trans_type">Translation Direction:</label>
+      <select id="trans_type">
+        <option value='from'>Translated From</option>
+        <option value='into'>Translated Into</option>
+      </select>
+      <label class="sr-only" for="trans_name">Translation Target:</label>
+      <input type="text" id="trans_name" />
+      <input type="submit" value="Add Translation" />
+    </form>
     <table>
       <tr>
         <td>

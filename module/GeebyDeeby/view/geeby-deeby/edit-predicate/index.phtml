@@ -1,15 +1,15 @@
-<div id="editForm">
+<form id="editForm" onsubmit="Predicate.save(); return false;">
   <input type="hidden" id="Predicate_ID" value="<?=$this->escapeHtml($predicate['Predicate_ID'])?>" />
   <table class="edit">
     <tr>
-      <th scope="row">Predicate (URI):</th>
-      <td><input type="text" id="Predicate" value="<?=isset($predicate['Predicate']) ? $this->escapeHtml($predicate['Predicate']) : ''?>" /></td>
+      <th scope="row"><label for="Predicate_URI">Predicate (URI):</label></th>
+      <td><input type="text" id="Predicate_URI" value="<?=isset($predicate['Predicate']) ? $this->escapeHtml($predicate['Predicate']) : ''?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Abbreviation (e.g. owl:sameAs):</th>
+      <th scope="row"><label for="Predicate_Abbrev">Abbreviation (e.g. owl:sameAs):</label></th>
       <td><input type="text" id="Predicate_Abbrev" value="<?=isset($predicate['Predicate_Abbrev']) ? $this->escapeHtml($predicate['Predicate_Abbrev']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_predicate" onclick="Predicate.save();">Save</button>
+  <input type="submit" value="Save" />
   <div id="save_predicate_status"></div>
-</div>
+</form>

@@ -1,4 +1,4 @@
-<div id="editForm" class="form-horizontal" role="form">
+<form id="editForm" class="form-horizontal" onsubmit="Series.save(); return false;">
   <input type="hidden" id="Series_ID" value="<?=$series['Series_ID']?>" />
   <div class="form-group">
     <label for="Series_Name" class="col-sm-2 control-label">Series Name:</label>
@@ -13,7 +13,7 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">Language:</label>
+    <label class="col-sm-2 control-label" for="Language_ID">Language:</label>
     <div class="col-sm-10">
       <?=$this->render('geeby-deeby/edit-language/select.phtml', ['languages' => $languages, 'selected' => $series['Language_ID'] ?? null])?>
     </div>
@@ -36,11 +36,11 @@
   <?php endif; ?>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <?php if (count($attributes) > 0): ?>
-        <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
-      <?php endif; ?>
-      <button id="save_series" onclick="Series.save();">Save</button>
+      <input id="save_series" type="submit" value="Save" />
     </div>
   </div>
-  <div id="save_series_status"></div>
-</div>
+</form>
+<?php if (count($attributes) > 0): ?>
+  <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
+<?php endif; ?>
+<div id="save_series_status"></div>

@@ -1,7 +1,7 @@
-<div id="editItemForm" class="form-horizontal" role="form">
+<form id="editItemForm" class="form-horizontal" onsubmit="Item.save(); return false;">
   <input type="hidden" id="Item_ID" value="<?=$item['Item_ID']?>" />
   <div class="form-group">
-    <label class="col-sm-2 control-label">Material Type:</label>
+    <label for="Material_Type_ID" class="col-sm-2 control-label">Material Type:</label>
     <div class="col-sm-10">
       <?=$this->render('geeby-deeby/edit-material-type/select.phtml', ['materials' => $materials, 'selected' => $item['Material_Type_ID'] ?? null])?>
     </div>
@@ -56,11 +56,11 @@
   <?php endif; ?>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <?php if (count($attributes) > 0): ?>
-        <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
-      <?php endif; ?>
-      <button id="save_item" onclick="Item.save();">Save</button>
+      <input type="submit" value="Save" />
     </div>
   </div>
-  <div id="save_item_status"></div>
-</div>
+</form>
+<?php if (count($attributes) > 0): ?>
+  <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
+<?php endif; ?>
+<div id="save_item_status"></div>

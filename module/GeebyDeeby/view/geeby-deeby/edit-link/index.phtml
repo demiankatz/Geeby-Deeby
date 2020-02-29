@@ -1,27 +1,27 @@
-<div id="editForm">
+<form id="editForm" onsubmit="Link.save(); return false;">
   <input type="hidden" id="Link_ID" value="<?=$link['Link_ID']?>" />
   <table class="edit">
     <tr>
-      <th scope="row">Link Name:</th>
+      <th scope="row"><label for="Link_Name">Link Name:</label></th>
       <td><input type="text" id="Link_Name" value="<?=isset($link['Link_Name']) ? $this->escapeHtml($link['Link_Name']) : ''?>" /></td>
     </tr>
     <tr>
-      <th scope="row">URL:</th>
+      <th scope="row"><label for="URL">URL:</label></th>
       <td><input type="text" id="URL" value="<?=isset($link['URL']) ? $this->escapeHtml($link['URL']) : ''?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Link Type:</th>
+      <th scope="row"><label for="Link_Type_ID">Link Type:</label></th>
       <td><?=$this->render('geeby-deeby/edit-link/type-select.phtml', ['linkTypes' => $linkTypes, 'selected' => $link['Link_Type_ID'] ?? null])?></td>
     </tr>
     <tr>
-      <th scope="row">Date Checked<br/>(YYYY-MM-DD):</th>
+      <th scope="row"><label for="Date_Checked">Date Checked<br/>(YYYY-MM-DD):</label></th>
       <td><input type="text" id="Date_Checked" value="<?=isset($link['Date_Checked']) ? $this->escapeHtml($link['Date_Checked']) : date('Y-m-d')?>" /></td>
     </tr>
     <tr>
-      <th scope="row">Description:</th>
+      <th scope="row"><label for="Description">Description:</label></th>
       <td><textarea id="Description"><?=isset($link['Description']) ? $this->escapeHtml($link['Description']) : ''?></textarea></td>
     </tr>
   </table>
-  <button id="save_link" onclick="Link.save();">Save</button>
+  <input type="submit" value="Save" />
   <div id="save_link_status"></div>
-</div>
+</form>
