@@ -18,6 +18,8 @@ return [
         'dbPass' => 'gbdb', // database password
         // Should we group series entries by material type (true), or display them as one continuous list (false)?
         'groupSeriesByMaterialType' => true,
+        // Set to a directory path to create log files of editor activity:
+        'activity_log_dir' => false,
         'file_groups' => [
             // Fill this array with 'Group Name' => array(id1, id2, id3, ...)
             // if you wish to create custom file groupings on the "List Files"

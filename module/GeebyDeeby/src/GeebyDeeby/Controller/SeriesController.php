@@ -261,10 +261,14 @@ class SeriesController extends AbstractBase
                 $view->noChange = true;
             } else {
                 if ($existing) {
-                    $table->update($params);
-                } else {
-                    $table->insert($params);
+                    $table->delete(
+                        [
+                            'Series_ID' => $params['Series_ID'],
+                            'User_ID' => $params['User_ID']
+                        ]
+                    );
                 }
+                $table->insert($params);
             }
             $view->setTemplate('geeby-deeby/series/comment-submitted');
             return $view;

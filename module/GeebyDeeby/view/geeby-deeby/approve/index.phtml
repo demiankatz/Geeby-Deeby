@@ -5,20 +5,25 @@
   <h2>New Users</h2>
   <table>
     <tr>
-      <th scope="col">Username</th>
-      <th scope="col">Full Name</th>
-      <th scope="col">Email</th>
-      <th scope="col">Person Record</th>
-      <th scope="col">Options</th>
+      <th id="approvalUsername" scope="col">Username</th>
+      <th id="approvalFullname" scope="col">Full Name</th>
+      <th id="approvalEmail" scope="col">Email</th>
+      <th id="approvalPerson" scope="col">Person Record</th>
+      <th id="approvalOptions" scope="col">Options</th>
     </tr>
-    <?php foreach ($newUsers as $current): ?>
+    <?php foreach ($newUsers as $i => $current): ?>
       <tr id="NewUser_<?=$current['User_ID']?>">
-        <td><input type="text" id="Username_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Username'])?>"/></td>
-        <td><input type="text" id="Name_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Name'])?>"/></td>
-        <td><input type="email" id="Address_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Address'])?>"/></td>
-        <td><input class="Person_ID" id="Person_ID_<?=$current['User_ID']?>" value="-1 (normal user)"/></td>
+        <td>
+          <span id="usernameLabel<?=$i?>" class="sr-only"><?=$this->escapeHtml($current['Username'])?></span>
+          <input aria-labelledby="usernameLabel<?=$i?> approvalUsername" form="approveForm<?=$i?>" type="text" id="Username_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Username'])?>"/>
+        </td>
+        <td><input aria-labelledby="usernameLabel<?=$i?> approvalFullname" form="approveForm<?=$i?>" type="text" id="Name_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Name'])?>"/></td>
+        <td><input aria-labelledby="usernameLabel<?=$i?> approvalEmail" form="approveForm<?=$i?>" type="email" id="Address_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Address'])?>"/></td>
+        <td><input aria-labelledby="usernameLabel<?=$i?> approvalPerson" form="approveForm<?=$i?>" class="Person_ID" id="Person_ID_<?=$current['User_ID']?>" value="-1 (normal user)"/></td>
         <td id="UserButtons_<?=$current['User_ID']?>">
-          <button onclick="approveUser(<?=$current['User_ID']?>);">Approve</button>
+          <form id="approveForm<?=$i?>" onsubmit="approveUser(<?=$current['User_ID']?>); return false;">
+            <input type="submit" value="Approve" />
+          </form>
           <button onclick="rejectUser(<?=$current['User_ID']?>);">Reject</button>
         </td>
       </tr>
@@ -30,14 +35,14 @@
   <table class="approve">
     <tr>
       <th scope="col">Item / User</th>
-      <th scope="col">Review</th>
+      <th id="reviewLabel" scope="col">Review</th>
       <th scope="col">Options</th>
     </tr>
-    <?php foreach ($pendingReviews as $current): ?>
+    <?php foreach ($pendingReviews as $i => $current): ?>
       <tr id="PendingReview_<?=$current['User_ID']?>_<?=$current['Item_ID']?>">
-        <td><?=$this->escapeHtml($current['Item_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
+        <td id="reviewItem<?=$i?>"><?=$this->escapeHtml($current['Item_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
         <td>
-          <textarea id="ReviewText_<?=$current['User_ID']?>_<?=$current['Item_ID']?>" rows="8" cols="60"><?=$this->escapeHtml($current['Review'])?></textarea>
+          <textarea aria-labelledby="reviewItem<?=$i?> reviewLabel" id="ReviewText_<?=$current['User_ID']?>_<?=$current['Item_ID']?>" rows="8" cols="60"><?=$this->escapeHtml($current['Review'])?></textarea>
         </td>
         <td id="ReviewButtons_<?=$current['User_ID']?>_<?=$current['Item_ID']?>" style="text-align: center">
           <button onclick="approveReview(<?=$current['User_ID']?>, <?=$current['Item_ID']?>);">Approve</button>
@@ -52,14 +57,14 @@
   <table class="approve">
     <tr>
       <th scope="col">Series / User</th>
-      <th scope="col">Comment</th>
+      <th id="commentLabel" scope="col">Comment</th>
       <th scope="col">Options</th>
     </tr>
-    <?php foreach ($pendingComments as $current): ?>
+    <?php foreach ($pendingComments as $i => $current): ?>
       <tr id="PendingComment_<?=$current['User_ID']?>_<?=$current['Series_ID']?>">
-        <td><?=$this->escapeHtml($current['Series_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
+        <td id="commentSeries<?=$i?>"><?=$this->escapeHtml($current['Series_Name'])?><br /><?=$this->escapeHtml($current['Username'])?></td>
         <td>
-          <textarea id="CommentText_<?=$current['User_ID']?>_<?=$current['Series_ID']?>" rows="8" cols="60"><?=$this->escapeHtml($current['Review'])?></textarea>
+          <textarea aria-labelledby="commentSeries<?=$i?> commentLabel" id="CommentText_<?=$current['User_ID']?>_<?=$current['Series_ID']?>" rows="8" cols="60"><?=$this->escapeHtml($current['Review'])?></textarea>
         </td>
         <td id="CommentButtons_<?=$current['User_ID']?>_<?=$current['Series_ID']?>" style="text-align: center">
           <button onclick="approveComment(<?=$current['User_ID']?>, <?=$current['Series_ID']?>);">Approve</button>
