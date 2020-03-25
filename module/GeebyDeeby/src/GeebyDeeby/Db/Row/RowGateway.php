@@ -38,6 +38,8 @@ namespace GeebyDeeby\Db\Row;
  */
 class RowGateway extends \Zend\Db\RowGateway\RowGateway
 {
+    use \GeebyDeeby\Db\ActivityLoggerTrait;
+
     /**
      * Validate the fields in the current object.  Return error message if problem
      * found, boolean false if no errors were found.
@@ -72,5 +74,16 @@ class RowGateway extends \Zend\Db\RowGateway\RowGateway
         }
         $key = $this->primaryKeyColumn[0];
         return $this->$key;
+    }
+
+    /**
+     * Save
+     *
+     * @return void
+     */
+    public function save()
+    {
+        $this->logActivity();
+        parent::save();
     }
 }
