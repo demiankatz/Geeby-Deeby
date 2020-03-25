@@ -47,7 +47,7 @@ class User extends Gateway
      *
      * @var bool
      */
-    protected static $doNotLog = false;
+    protected static $doNotLog = true;
 
     /**
      * Constructor
