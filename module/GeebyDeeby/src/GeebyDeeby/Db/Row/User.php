@@ -43,7 +43,7 @@ class User extends TableAwareGateway
      *
      * @var bool
      */
-    protected static $doNotLog = false;
+    protected static $doNotLog = true;
 
     /**
      * Permissions

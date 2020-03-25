@@ -46,7 +46,7 @@ class SeriesReviews extends Gateway
      *
      * @var bool
      */
-    protected static $doNotLog = false;
+    protected static $doNotLog = true;
 
     /**
      * Constructor
