@@ -169,7 +169,7 @@ class Gateway extends AbstractTableGateway
     public function delete($where)
     {
         if (!$this->hasRowGateway) {
-            $this->logActivity('DELETE ' . (string)$where);
+            $this->logActivity('DELETE');
         }
         return parent::delete($where);
     }
@@ -201,7 +201,7 @@ class Gateway extends AbstractTableGateway
     public function update($set, $where = null, array $joins = null)
     {
         if (!$this->hasRowGateway) {
-            $this->logActivity('UPDATE ' . (string)$where);
+            $this->logActivity('UPDATE');
         }
         return parent::update($set, $where, $joins);
     }
