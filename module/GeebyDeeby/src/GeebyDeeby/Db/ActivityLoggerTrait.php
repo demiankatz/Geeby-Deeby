@@ -89,7 +89,8 @@ trait ActivityLoggerTrait
                 try {
                     $keys[] = $key . ':' . $this->$key;
                 } catch (\Throwable $e) {
-                    // Ignore errors during log message generation...
+                    // Exception means we're making a new row:
+                    $keys[] = "$key:NEW";
                 }
             }
         }
