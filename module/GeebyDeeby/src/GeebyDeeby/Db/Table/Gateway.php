@@ -180,9 +180,9 @@ class Gateway extends AbstractTableGateway
     /**
      * Update
      *
-     * @param array $set                   Data to set
+     * @param array                 $set   Data to set
      * @param string|array|\Closure $where Where clause
-     * @param null|array $joins            Joins
+     * @param null|array            $joins Joins
      *
      * @return int
      */
