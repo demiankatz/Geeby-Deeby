@@ -39,6 +39,13 @@ namespace GeebyDeeby\Db\Row;
 class User extends TableAwareGateway
 {
     /**
+     * Should we disable logging for this class?
+     *
+     * @var bool
+     */
+    protected static $doNotLog = false;
+
+    /**
      * Permissions
      *
      * @var \GeebyDeeby\Db\Row\UserGroup

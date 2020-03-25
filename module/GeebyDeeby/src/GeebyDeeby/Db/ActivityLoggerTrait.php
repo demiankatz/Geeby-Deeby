@@ -53,6 +53,13 @@ trait ActivityLoggerTrait
     protected static $logDir = null;
 
     /**
+     * Should we disable logging for this class?
+     *
+     * @var bool
+     */
+    protected static $doNotLog = false;
+
+    /**
      * Set directory for storing log files.
      *
      * @param string $user Active user ID
@@ -101,7 +108,7 @@ trait ActivityLoggerTrait
      */
     protected function logActivity($extras = '')
     {
-        if (static::$activeUserId && static::$logDir) {
+        if (static::$activeUserId && static::$logDir && !static::$doNotLog) {
             $filename = 'user-' . static::$activeUserId . '.log';
             $log = rtrim(static::$logDir, '/') . "/{$filename}";
             $handle = fopen($log, 'a');

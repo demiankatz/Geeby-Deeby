@@ -43,6 +43,13 @@ use Zend\Db\Sql\Select;
 class ItemsReviews extends Gateway
 {
     /**
+     * Should we disable logging for this class?
+     *
+     * @var bool
+     */
+    protected static $doNotLog = false;
+
+    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
