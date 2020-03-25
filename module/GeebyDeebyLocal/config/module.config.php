@@ -13,6 +13,7 @@ return [
         'siteEmail' => 'demian.katz@villanova.edu',
         'siteOwner' => 'Demian Katz',
         'groupSeriesByMaterialType' => false,
+        'activity_log_dir' => '/opt/gbdb/data/logs/',
     ],
     'controllers' => [
         'aliases' => [
