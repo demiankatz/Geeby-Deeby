@@ -1,10 +1,10 @@
 <?php
 /**
- * Generic row gateway
+ * Trait for adding activity logging to a row gateway.
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,7 +28,7 @@
 namespace GeebyDeeby\Db\Row;
 
 /**
- * Generic row gateway
+ * Trait for adding activity logging to a row gateway.
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -36,54 +36,66 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class RowGateway extends \Zend\Db\RowGateway\RowGateway
+trait ActivityLoggerTrait
 {
-    use ActivityLoggerTrait;
-
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Active user's ID
      *
-     * @return string|bool
+     * @var string
      */
-    public function validate()
-    {
-        // Assume valid row by default:
-        return false;
-    }
+    protected static $activeUserId = null;
 
     /**
-     * Get primary key for the table.
+     * Directory path for logging
      *
-     * @return array
+     * @var string
      */
-    public function getPrimaryKeyColumn()
-    {
-        return $this->primaryKeyColumn;
-    }
+    protected static $logDir = null;
 
     /**
-     * Get primary key value for the table
+     * Set directory for storing log files.
      *
-     * @return string
-     */
-    public function getPrimaryKeyValue()
-    {
-        if (count($this->primaryKeyColumn) != 1) {
-            throw new \Exception('Unsupported for multi-key tables');
-        }
-        $key = $this->primaryKeyColumn[0];
-        return $this->$key;
-    }
-
-    /**
-     * Save
+     * @param string $user Active user ID
+     * @param string $dir  Directory path
      *
      * @return void
      */
-    public function save()
+    public function activateLogging($user, $dir)
     {
-        $this->logActivity();
-        parent::save();
+        static::$activeUserId = $user;
+        static::$logDir = $dir;
+    }
+
+    /**
+     * Get log message.
+     *
+     * @return string
+     */
+    protected function getLogMessage()
+    {
+        $keys = [];
+        foreach ($this->primaryKeyColumn as $key) {
+            $keys[] = $key . ':' . $this->$key;
+        }
+        return date('Y-m-d H:i:s') . ' ' . (string)$this->table . ' '
+            . implode('; ', $keys) . "\n";
+    }
+
+    /**
+     * Log user activity if configured to do so.
+     *
+     * @return void
+     */
+    protected function logActivity()
+    {
+        if (static::$activeUserId && static::$logDir) {
+            $filename = 'user-' . static::$activeUserId . '.log';
+            $log = rtrim(static::$logDir, '/') . "/{$filename}";
+            $handle = fopen($log, 'a');
+            if ($handle) {
+                fputs($handle, $this->getLogMessage());
+                fclose($handle);
+            }
+        }
     }
 }
