@@ -79,7 +79,11 @@ trait ActivityLoggerTrait
         // Add key details if applicable:
         if ($this instanceof \Zend\Db\RowGateway\RowGateway) {
             foreach ($this->primaryKeyColumn as $key) {
-                $keys[] = $key . ':' . $this->$key;
+                try {
+                    $keys[] = $key . ':' . $this->$key;
+                } catch (\Throwable $e) {
+                    // Ignore errors during log message generation...
+                }
             }
         }
         return trim(

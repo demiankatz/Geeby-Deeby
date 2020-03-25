@@ -52,13 +52,6 @@ class Gateway extends AbstractTableGateway
     protected $tableManager;
 
     /**
-     * Are we using a custom row gateway?
-     *
-     * @var bool
-     */
-    protected $hasRowGateway = false;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
@@ -74,7 +67,6 @@ class Gateway extends AbstractTableGateway
         $this->table = $table;
         $this->initialize();
         if (null !== $rowObj) {
-            $this->hasRowGateway = true;
             $resultSetPrototype = $this->getResultSetPrototype();
             $resultSetPrototype->setArrayObjectPrototype($rowObj);
         }
@@ -168,9 +160,7 @@ class Gateway extends AbstractTableGateway
      */
     public function delete($where)
     {
-        if (!$this->hasRowGateway) {
-            $this->logActivity('DELETE');
-        }
+        $this->logActivity('DELETE');
         return parent::delete($where);
     }
 
@@ -183,9 +173,7 @@ class Gateway extends AbstractTableGateway
      */
     public function insert($set)
     {
-        if (!$this->hasRowGateway) {
-            $this->logActivity('INSERT');
-        }
+        $this->logActivity('INSERT');
         return parent::insert($set);
     }
 
@@ -200,9 +188,7 @@ class Gateway extends AbstractTableGateway
      */
     public function update($set, $where = null, array $joins = null)
     {
-        if (!$this->hasRowGateway) {
-            $this->logActivity('UPDATE');
-        }
+        $this->logActivity('UPDATE');
         return parent::update($set, $where, $joins);
     }
 }
