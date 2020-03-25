@@ -87,6 +87,14 @@ class AbstractFactory
         $adapter = $container->get('Zend\Db\Adapter\Adapter');
         $tm = $container->get('GeebyDeeby\Db\Table\PluginManager');
         $rowPrototype = $this->getRowPrototype($container, $requestedName);
-        return new $requestedName($adapter, $tm, $rowPrototype);
+        $table = new $requestedName($adapter, $tm, $rowPrototype);
+        $config = $container->get('Config');
+        if (!empty($config['geeby-deeby']['activity_log_dir'])) {
+            $table->activateLogging(
+                $container->get('GeebyDeeby\Authentication')->getIdentity(),
+                $config['geeby-deeby']['activity_log_dir']
+            );
+        }
+        return $table;
     }
 }

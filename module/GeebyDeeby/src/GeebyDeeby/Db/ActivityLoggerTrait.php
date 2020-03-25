@@ -1,6 +1,6 @@
 <?php
 /**
- * Trait for adding activity logging to a row gateway.
+ * Trait for adding activity logging to a row or table gateway.
  *
  * PHP version 5
  *
@@ -25,10 +25,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db\Row;
+namespace GeebyDeeby\Db;
 
 /**
- * Trait for adding activity logging to a row gateway.
+ * Trait for adding activity logging to a row or table gateway.
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -69,31 +69,40 @@ trait ActivityLoggerTrait
     /**
      * Get log message.
      *
+     * @param string $extra Extra details to add to log message.
+     *
      * @return string
      */
-    protected function getLogMessage()
+    protected function getLogMessage($extras = '')
     {
         $keys = [];
-        foreach ($this->primaryKeyColumn as $key) {
-            $keys[] = $key . ':' . $this->$key;
+        // Add key details if applicable:
+        if ($this instanceof \Zend\Db\RowGateway\RowGateway) {
+            foreach ($this->primaryKeyColumn as $key) {
+                $keys[] = $key . ':' . $this->$key;
+            }
         }
-        return date('Y-m-d H:i:s') . ' ' . (string)$this->table . ' '
-            . implode('; ', $keys) . "\n";
+        return trim(
+            date('Y-m-d H:i:s') . ' ' . (string)$this->table . ' '
+            . implode('; ', $keys) . $extras
+        ) . "\n";
     }
 
     /**
      * Log user activity if configured to do so.
      *
+     * @param string $extra Extra details to add to log message.
+     *
      * @return void
      */
-    protected function logActivity()
+    protected function logActivity($extras = '')
     {
         if (static::$activeUserId && static::$logDir) {
             $filename = 'user-' . static::$activeUserId . '.log';
             $log = rtrim(static::$logDir, '/') . "/{$filename}";
             $handle = fopen($log, 'a');
             if ($handle) {
-                fputs($handle, $this->getLogMessage());
+                fputs($handle, $this->getLogMessage($extras));
                 fclose($handle);
             }
         }

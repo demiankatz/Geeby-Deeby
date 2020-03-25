@@ -42,12 +42,21 @@ use Zend\Db\TableGateway\AbstractTableGateway;
  */
 class Gateway extends AbstractTableGateway
 {
+    use \GeebyDeeby\Db\ActivityLoggerTrait;
+
     /**
      * Table manager
      *
      * @var PluginManager
      */
     protected $tableManager;
+
+    /**
+     * Are we using a custom row gateway?
+     *
+     * @var bool
+     */
+    protected $hasRowGateway = false;
 
     /**
      * Constructor
@@ -65,6 +74,7 @@ class Gateway extends AbstractTableGateway
         $this->table = $table;
         $this->initialize();
         if (null !== $rowObj) {
+            $this->hasRowGateway = true;
             $resultSetPrototype = $this->getResultSetPrototype();
             $resultSetPrototype->setArrayObjectPrototype($rowObj);
         }
@@ -147,5 +157,52 @@ class Gateway extends AbstractTableGateway
         };
         usort($results, $sort);
         return $limit ? array_slice($results, 0, $limit) : $results;
+    }
+
+    /**
+     * Delete
+     *
+     * @param mixed $where Where clause
+     *
+     * @return int
+     */
+    public function delete($where)
+    {
+        if (!$this->hasRowGateway) {
+            $this->logActivity('DELETE ' . (string)$where);
+        }
+        return parent::delete($where);
+    }
+
+    /**
+     * Insert
+     *
+     * @param array $set Data to insert
+     *
+     * @return int
+     */
+    public function insert($set)
+    {
+        if (!$this->hasRowGateway) {
+            $this->logActivity('INSERT');
+        }
+        return parent::insert($set);
+    }
+
+    /**
+     * Update
+     *
+     * @param array $set                   Data to set
+     * @param string|array|\Closure $where Where clause
+     * @param null|array $joins            Joins
+     *
+     * @return int
+     */
+    public function update($set, $where = null, array $joins = null)
+    {
+        if (!$this->hasRowGateway) {
+            $this->logActivity('UPDATE ' . (string)$where);
+        }
+        return parent::update($set, $where, $joins);
     }
 }

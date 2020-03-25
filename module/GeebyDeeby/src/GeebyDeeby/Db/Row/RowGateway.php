@@ -38,7 +38,7 @@ namespace GeebyDeeby\Db\Row;
  */
 class RowGateway extends \Zend\Db\RowGateway\RowGateway
 {
-    use ActivityLoggerTrait;
+    use \GeebyDeeby\Db\ActivityLoggerTrait;
 
     /**
      * Validate the fields in the current object.  Return error message if problem
