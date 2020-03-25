@@ -76,7 +76,7 @@ trait ActivityLoggerTrait
     /**
      * Get log message.
      *
-     * @param string $extra Extra details to add to log message.
+     * @param string $extras Extra details to add to log message.
      *
      * @return string
      */
@@ -103,7 +103,7 @@ trait ActivityLoggerTrait
     /**
      * Log user activity if configured to do so.
      *
-     * @param string $extra Extra details to add to log message.
+     * @param string $extras Extra details to add to log message.
      *
      * @return void
      */
