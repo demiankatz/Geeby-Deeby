@@ -33,6 +33,7 @@ use GeebyDeebyLocal\Ingest\IssueMaker;
 use GeebyDeebyLocal\Ingest\ModsExtractor;
 use Zend\Console\Console;
 use Zend\Console\Prompt;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Ingest controller
@@ -61,12 +62,15 @@ class IngestController extends \GeebyDeeby\Controller\AbstractBase
 
     /**
      * Constructor
+     *
+     * @param ServiceLocatorInterface $sm Service Manager
      */
-    public function __construct()
+    public function __construct($sm)
     {
         $settings = json_decode(file_get_contents(__DIR__ . '/settings.json'));
         $this->solr = new \GeebyDeebyLocal\Ingest\SolrHarvester($settings);
         $this->fedora = new \GeebyDeebyLocal\Ingest\FedoraHarvester($settings->modsUrl, $this->solr);
+        parent::__construct($sm);
     }
 
     /**
