@@ -76,10 +76,10 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
             'plugins' => ['serializer']
         ];
         $cache = StorageFactory::factory($settings);
-        if (!($stats = $cache->getItem('progressStats'))) {
+        //if (!($stats = $cache->getItem('progressStats'))) {
             $stats = $this->getProgressStatistics();
-            $cache->setItem('progressStats', $stats);
-        }
+        //    $cache->setItem('progressStats', $stats);
+        //}
         return $this->createViewModel(['progress' => $stats]);
     }
 
@@ -108,6 +108,18 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
             $select->join(
                 ['e' => 'Editions'],
                 'Series.Series_ID = e.Series_ID', [], Select::JOIN_LEFT
+            );
+            $select->join(
+                ['source' => 'Series_Attributes_Values'],
+                new \Zend\Db\Sql\Expression('Series.Series_ID = source.Series_ID AND source.Series_Attribute_ID=16'),
+                ['source' => 'Series_Attribute_Value'],
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                ['status' => 'Series_Attributes_Values'],
+                new \Zend\Db\Sql\Expression('Series.Series_ID = status.Series_ID AND status.Series_Attribute_ID=17'),
+                ['status' => 'Series_Attribute_Value'],
+                Select::JOIN_LEFT
             );
             $select->group(['Series.Series_ID']);
             $select->order(['Series.Series_Name']);
