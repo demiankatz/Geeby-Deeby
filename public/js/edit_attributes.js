@@ -4,6 +4,7 @@ var SeriesAttributeEditor = function() {
         'attribute_name': { 'id': '#Series_Attribute_Name', emptyError: 'Name cannot be blank.' },
         'rdf_property': { 'id': '#Series_Attribute_RDF_Property' },
         'priority': { 'id': '#Display_Priority' },
+        'value_link': { 'id': '#Value_Link' },
         'allow_html': { 'id': '#Allow_HTML' }
     };
 };
