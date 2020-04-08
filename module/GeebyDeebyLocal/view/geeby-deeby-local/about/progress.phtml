@@ -4,45 +4,151 @@
     switch (strtolower($status)) {
       case 'done, believed complete':
         return 'green';
+      case 'in progress, no listing available':
+        return 'red';
       default:
         return 'black';
     }
   };
-  $showProgress = function ($current) {
-    return ' - ' . $current['Item_Count'] . ' item'
-      . ($current['Item_Count'] > 1 ? 's' : '') . ' listed';
-  }
 ?>
 
-<p>Data entry from the LeBlanc Bibliographies is currently in progress. This page summarizes the status of the listings.
-Note that "Complete" is measured relative only to the original <a href="http://digital.library.villanova.edu/Collection/vudl:283769">LeBlanc Listings</a>;
-series that have gaps in the original listings or that were not included in LeBlanc's research will be listed here as complete even if there are
-unlisted titles within the database.</p>
+<p>Data entry is currently ongoing from multiple sources; this page summarizes the progress
+of all outstanding data entry projects.</p>
+
+<h2 id="sources">Key to Data Sources</h2>
+
+<p>Most of the listings on this site are compiled from a combination of sources, including
+previous scholarship, library and bookseller catalogs, and online full text scans. However,
+the majority of listings were initiated from a single source, and that source is noted in
+each listing. This table describes all of the sources used on the site.</p>
+
+<table class="table table-striped" style="width: auto;">
+  <tr>
+    <th style="text-align: left;" scope="col">Data Source</th>
+    <th style="text-align: left;" scope="col">Description</th>
+  </tr>
+  <tr>
+    <td>Johannsen</td>
+    <td>Albert Johannsen published the definitive history of bibliography of the first dime novel
+    publisher in his three-volume work, <i>The House of Beadle and Adams and its Nickel and Dime
+    Novels</i>. This original work can be read at <a
+    href="https://www.ulib.niu.edu/badndp/bibindex.html">House of Beadle &amp; Adams Online</a>.</td>
+  </tr>
+  <tr>
+    <td>Kirkpatrick</td>
+    <td>Robert Kirkpatrick's <i>From the Penny Dreadful to the Ha'penny Dreadfuller</i>
+    (New Castle, Delaware: Oak Knoll Press and The British Library, 2013) documents a large number
+    of British boys' periodicals that overlap in content and subject matter with American dime
+    novels; a few of these are listed in the database, and more may be added in the future.</td>
+  </tr>
+  <tr>
+    <td>LeBlanc</td>
+    <td>Edward T. LeBlanc documented nearly every American dime novel series outside of those
+    recorded by Johannsen. His <a href="http://digital.library.villanova.edu/Collection/vudl:283769">unpublished bibliographic listings</a> are the source of the majority
+    of the series listings in this database.</td>
+  </tr>
+  <tr>
+    <td>Online Sources</td>
+    <td>Some of the listings on the site were derived from assorted online sources: full-text scans,
+    eBay listings, etc. The "online sources" category is assigned to such entries.</td>
+  </tr>
+  <tr>
+    <td>Sterk</td>
+    <td>Rimmer Sterk is the author of <a href="http://www.lulu.com/us/en/shop/rimmer-sterk-and-jim-conkright/the-continental-dime-novel/paperback/product-1018433.html">The
+    Continental Dime Novel</a>, a bibliography of European dime novel reprints and look-alikes.</td>
+  <tr>
+    <td>Sternick</td>
+    <td>Cary Sternick is the author of <i>A Bibliography of 19th Century Children's Series Books
+    with Price Guide</i> (2003) as well as the maintainer of <a
+    href="http://www.19thcenturyjuvenileseries.com/">several related online
+    bibliographies</a>.</td>
+  </tr>
+  <tr>
+    <td>Villanova Collection</td>
+    <td>A few listings on the site are derived from issues physically held at Villanova University,
+    which have not yet been scanned (due to possible copyright restrictions).</td>
+  </tr>
+</table>
+
+<h2 id="statuses">Key to Statuses</h2>
+
+<p>Every listing is assigned one of the following statuses:</p>
+
+<table class="table table-striped" style="width: auto;">
+  <tr>
+    <th style="text-align: left;" scope="col">Data Source</th>
+    <th style="text-align: left;" scope="col">Description</th>
+  </tr>
+  <tr>
+    <td>
+      Done, Believed Complete
+    </td>
+    <td>
+      Data entry for the series is complete, and all titles are believed to be accounted for.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Done, With Gaps
+    </td>
+    <td>
+      Data entry for this series is complete based on available sources, but it is believed
+      that additional titles exist and still need to be identified.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      In Progress, Complete Listing Available
+    </td>
+    <td>
+      Data entry for this series has not been completed yet, but a complete source listing is
+      available.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      In Progress, No Listing Available
+    </td>
+    <td>
+      Data entry for this series has not been completed yet, and no scholarly source has been
+      identified for more information.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      In Progress, Partial Listing Available
+    </td>
+    <td>
+      Data entry for this series has not been completed yet, and the source listing has known gaps.
+    </td>
+  </tr>
+</table>
+
+<h2>Status by Series</h2>
 
 <table class="table table-striped" style="width: auto;">
   <tr>
     <th style="text-align: left;" scope="col">Series Title</th>
     <th style="text-align: left;" scope="col">Data Source</th>
+    <th style="text-align: left;" scope="col">Items Listed</th>
     <th style="text-align: left;" scope="col">Status</th>
   </tr>
 <?php foreach ($progress as $current): ?>
   <tr>
     <td><a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>"><?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?></a></td>
     <td><?=empty($current['source']) ? '<i>Undetermined</i>' : $this->escapeHtml($current['source'])?></td>
+    <td><?=$this->escapeHtml($current['Item_Count'])?></td>
     <td>
       <?php if (!empty($current['status'])): ?>
         <span style="color: <?=$getColor($current['status'])?>">
           <?=$this->escapeHtml($current['status'])?>
-          <?php if (stristr($current['status'], 'in progress')): ?>
-            <?=$showProgress($current)?>
-          <?php endif; ?>
         </span>
       <?php elseif ($current['Complete']): ?>
         <span style="color: green;">Complete</span>
       <?php elseif ($current['Item_Count'] == 0): ?>
         <span style="color: red;">Not Started</span>
       <?php else: ?>
-        <span style="color: black;">Partial<?=$showProgress($current)?></span>
+        <span style="color: black;">Partial</span>
       <?php endif; ?>
     </td>
   </tr>

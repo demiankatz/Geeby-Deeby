@@ -122,6 +122,7 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
                 Select::JOIN_LEFT
             );
             $select->group(['Series.Series_ID']);
+            $select->where(['e.Parent_Edition_ID' => null]);
             $select->order(['Series.Series_Name']);
         };
         return $s->select($callback)->toArray();
