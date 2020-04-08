@@ -107,10 +107,16 @@
     <tr>
         <th scope="row"><?=$this->escapeHtml($current->Series_Attribute_Name)?>:</th>
         <td>
+          <?php if (!empty($current->Value_Link)): ?>
+            <a href="<?=$this->escapeHtmlAttr($current->Value_Link)?>">
+          <?php endif; ?>
           <?php if ($current->Allow_HTML == 1): ?>
             <?=$current->Series_Attribute_Value?>
           <?php else: ?>
             <?=$this->escapeHtml($current->Series_Attribute_Value)?>
+          <?php endif; ?>
+          <?php if (!empty($current->Value_Link)): ?>
+            </a>
           <?php endif; ?>
         </td>
   <?php endforeach; ?>
