@@ -4,8 +4,12 @@
     switch (strtolower($status)) {
       case 'done, believed complete':
         return 'green';
+      case 'done, with gaps':
+        return '#9ACD32';
       case 'in progress, no listing available':
         return 'red';
+      case 'in progress, partial listing available':
+        return 'orange';
       default:
         return 'yellow';
     }
