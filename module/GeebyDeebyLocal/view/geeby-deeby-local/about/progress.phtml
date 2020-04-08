@@ -7,7 +7,7 @@
       case 'in progress, no listing available':
         return 'red';
       default:
-        return 'black';
+        return 'yellow';
     }
   };
 ?>
@@ -140,9 +140,10 @@ each listing. This table describes all of the sources used on the site.</p>
     <td><?=$this->escapeHtml($current['Item_Count'])?></td>
     <td>
       <?php if (!empty($current['status'])): ?>
-        <span style="color: <?=$getColor($current['status'])?>">
-          <?=$this->escapeHtml($current['status'])?>
+        <span aria-hidden="true" style="margin-right: .5em; border: 1px solid black; background-color: <?=$getColor($current['status'])?>">
+          &nbsp;&nbsp;&nbsp;
         </span>
+        <?=$this->escapeHtml($current['status'])?>
       <?php elseif ($current['Complete']): ?>
         <span style="color: green;">Complete</span>
       <?php elseif ($current['Item_Count'] == 0): ?>
