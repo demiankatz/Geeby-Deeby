@@ -131,7 +131,7 @@ each listing. This table describes all of the sources used on the site.</p>
     <th style="text-align: left;" scope="col">Series Title</th>
     <th style="text-align: left;" scope="col">Data Source</th>
     <th style="text-align: left;" scope="col">Items Listed</th>
-    <th style="text-align: left;" scope="col">Status</th>
+    <th style="text-align: left;" scope="col" colspan="2">Status</th>
   </tr>
 <?php foreach ($progress as $current): ?>
   <tr>
@@ -140,9 +140,13 @@ each listing. This table describes all of the sources used on the site.</p>
     <td><?=$this->escapeHtml($current['Item_Count'])?></td>
     <td>
       <?php if (!empty($current['status'])): ?>
-        <span aria-hidden="true" style="margin-right: .5em; border: 1px solid black; background-color: <?=$getColor($current['status'])?>">
+        <span aria-hidden="true" style="border: 1px solid black; background-color: <?=$getColor($current['status'])?>">
           &nbsp;&nbsp;&nbsp;
         </span>
+      <?php endif; ?>
+    </td>
+    <td>
+      <?php if (!empty($current['status'])): ?>
         <?=$this->escapeHtml($current['status'])?>
       <?php elseif ($current['Complete']): ?>
         <span style="color: green;">Complete</span>
