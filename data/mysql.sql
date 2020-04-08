@@ -1073,6 +1073,7 @@ CREATE TABLE `Series_Attributes` (
   `Series_Attribute_RDF_Property` varchar(255),
   `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
+  `Value_Link` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`Series_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
