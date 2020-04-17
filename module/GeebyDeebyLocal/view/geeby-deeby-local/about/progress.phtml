@@ -10,6 +10,8 @@
         return 'red';
       case 'in progress, partial listing available':
         return 'orange';
+      case '':
+        return 'white';
       default:
         return 'yellow';
     }
@@ -143,22 +145,12 @@ each listing. This table describes all of the sources used on the site.</p>
     <td><?=empty($current['source']) ? '<i>Undetermined</i>' : $this->escapeHtml($current['source'])?></td>
     <td><?=$this->escapeHtml($current['Item_Count'])?></td>
     <td>
-      <?php if (!empty($current['status'])): ?>
-        <span aria-hidden="true" style="border: 1px solid black; background-color: <?=$getColor($current['status'])?>">
-          &nbsp;&nbsp;&nbsp;
-        </span>
-      <?php endif; ?>
+      <span aria-hidden="true" style="border: 1px solid black; background-color: <?=$getColor($current['status'])?>">
+        &nbsp;&nbsp;&nbsp;
+      </span>
     </td>
     <td>
-      <?php if (!empty($current['status'])): ?>
-        <?=$this->escapeHtml($current['status'])?>
-      <?php elseif ($current['Complete']): ?>
-        <span style="color: green;">Complete</span>
-      <?php elseif ($current['Item_Count'] == 0): ?>
-        <span style="color: red;">Not Started</span>
-      <?php else: ?>
-        <span style="color: black;">Partial</span>
-      <?php endif; ?>
+      <?=!empty($current['status']) ? $this->escapeHtml($current['status']) : 'Unspecified' ?>
     </td>
   </tr>
 <?php endforeach; ?>
