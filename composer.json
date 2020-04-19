@@ -22,6 +22,7 @@
         "zendframework/zend-crypt": "3.3.1",
         "zendframework/zend-db": "2.11.0",
         "zendframework/zend-eventmanager": "3.2.1",
+        "zendframework/zend-feed": "2.12.0",
         "zendframework/zend-i18n": "2.10.1",
         "zendframework/zend-log": "2.12.0",
         "zendframework/zend-modulemanager": "2.8.4",
