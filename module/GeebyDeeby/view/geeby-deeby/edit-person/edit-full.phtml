@@ -5,12 +5,17 @@
 </div>
 <hr />
 <div>
-<select id="pseudo_type">
-  <option value='realname'>Pseudonym For</option>
-  <option value='pseudonym'>Pseudonym:</option>
-</select>
-<input id="pseudo_name" />
-<button onclick="Person.link('Alias');">Add Relationship</button>
+  <form onsubmit="Person.link('Alias'); return false;">
+    <label>
+      <span class="sr-only">Relationship Type:</span>
+      <select id="pseudo_type">
+        <option value='realname'>Pseudonym For</option>
+        <option value='pseudonym'>Pseudonym:</option>
+      </select>
+    </label>
+    <label><span class="sr-only">Target:</span><input id="pseudo_name" /></label>
+    <input type="submit" value="Add Relationship" />
+  </form>
 </div>
 <hr/>
 <div class="row">
@@ -30,10 +35,12 @@
 <hr />
 <div class="row">
   <div class="col-md-12">
-    <b>URIs (for linked data):</b><br />
-    <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
-    <input type="text" id="uri" />
-    <button onclick="Person.link('URI');">Add URI</button>
+    <b>URIs (for linked data):</b>
+    <form onsubmit="Person.link('URI'); return false;">
+      <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
+      <label>URI: <input type="text" id="uri" /></label>
+      <input type="submit" value="Add URI" />
+    </form>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-person/uri-list.phtml')?>
     </div>
