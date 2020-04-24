@@ -1348,8 +1348,6 @@ return [
             'GeebyDeeby\View\Helper\AnalyzeCredits' =>
                 'GeebyDeeby\View\Helper\AnalyzeCreditsFactory',
             'GeebyDeeby\View\Helper\Auth' => 'GeebyDeeby\View\Helper\AuthFactory',
-            'GeebyDeeby\View\Helper\Button' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\Config' =>
                 'GeebyDeeby\View\Helper\ConfigFactory',
             'GeebyDeeby\View\Helper\DescriptionSource' =>
@@ -1366,6 +1364,8 @@ return [
                 'Zend\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\GroupEditions' =>
                 'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\IconButton' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\ScriptManager' =>
                 'GeebyDeeby\View\Helper\ScriptManagerFactory',
             'GeebyDeeby\View\Helper\ShowEdition' =>
@@ -1377,7 +1377,6 @@ return [
             'analyzecredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
             'analyzeCredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
             'auth' => 'GeebyDeeby\View\Helper\Auth',
-            'button' => 'GeebyDeeby\View\Helper\Button',
             'config' => 'GeebyDeeby\View\Helper\Config',
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'descriptionSource' => 'GeebyDeeby\View\Helper\DescriptionSource',
@@ -1393,6 +1392,7 @@ return [
             'formatReleaseDate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
             'groupEditions' => 'GeebyDeeby\View\Helper\GroupEditions',
+            'iconButton' => 'GeebyDeeby\View\Helper\Button',
             'scriptmanager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'scriptManager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'showedition' => 'GeebyDeeby\View\Helper\ShowEdition',

@@ -11,7 +11,7 @@
           <button onclick="Series.reorderLink('Item', { 'edition_id': <?=$current['Edition_ID']?> });">Set</button>
         </td>
         <td>
-          <?=$this->button(
+          <?=$this->iconButton(
             'trash',
             "Series.unlink('Item', " . $current['Edition_ID'] . ")",
             'Unlink ' . $currentTitle

@@ -4,7 +4,7 @@
       <tr>
         <td><?=$this->escapeHtml($current['URI'])?> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
         <td>
-          <?=$this->button(
+          <?=$this->iconButton(
             'trash',
             "Country.unlink('URI', '" . addslashes($current['URI']) . "')",
             'Unlink ' . $current['URI']
