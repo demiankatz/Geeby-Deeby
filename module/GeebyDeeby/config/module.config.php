@@ -1392,7 +1392,7 @@ return [
             'formatReleaseDate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
             'groupEditions' => 'GeebyDeeby\View\Helper\GroupEditions',
-            'iconButton' => 'GeebyDeeby\View\Helper\Button',
+            'iconButton' => 'GeebyDeeby\View\Helper\IconButton',
             'scriptmanager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'scriptManager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'showedition' => 'GeebyDeeby\View\Helper\ShowEdition',
