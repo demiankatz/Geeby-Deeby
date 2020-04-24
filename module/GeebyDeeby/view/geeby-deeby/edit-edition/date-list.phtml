@@ -1,13 +1,17 @@
 <?php if (isset($releaseDates) && count($releaseDates) > 0): ?>
   <?php foreach ($releaseDates as $current): ?>
+    <?php $displayDate = $this->formatReleaseDate($current); ?>
     <table class="list_item">
       <tr>
         <td>
-          <?=$this->formatReleaseDate($current)?>
+          <?=$displayDate?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('Date', '<?=$this->escapeHtml(implode(',', [$current['Year'], $current['Month'], $current['Day']]))?>'); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Edition.unlink('Date', '" . addslashes(implode(',', [$current['Year'], $current['Month'], $current['Day']])) . "')",
+            'Delete date: ' . $displayDate
+          )?>
         </td>
       </tr>
     </table>

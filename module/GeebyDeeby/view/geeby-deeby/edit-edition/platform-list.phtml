@@ -6,8 +6,11 @@
           <?=$this->escapeHtml($current['Platform'])?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('Platform', <?=$current['Platform_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Edition.unlink('Platform', " . $this->escapeHtml($current['Platform_ID']) . ")",
+            'Unlink platform: ' . $current['Platform']
+          )?>
         </td>
       </tr>
     </table>
