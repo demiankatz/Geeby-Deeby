@@ -4,24 +4,33 @@
       <tr>
         <td>
           <a href="#" onclick="Series.editLink('Publisher', <?=$current['Series_Publisher_ID']?>); return false;"><?=$this->escapeHtml($current['Publisher_Name'])?></a>
+          <?php $extraDetails = ''; ?>
           <?php if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
             (<?php
               $city = (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']);
               $street = (empty($current['Street']) ? '' : ' -- ' . $current['Street']);
               $address = $current['Country_Name'] . $city . $street;
-              echo strlen($current['Imprint_Name']) > 0 ? $this->escapeHtml($current['Imprint_Name']) . ((strlen($address) > 0 || strlen($current['Note']) > 0) ? ': ' : '') : '';
-              echo strlen($address) > 0 ? $this->escapeHtml($address) : '';
-              echo strlen($current['Note']) > 0 ? ((strlen($address) > 0 || strlen($current['Imprint_Name']) > 0) ? ' - ' : '') . $this->escapeHtml($current['Note']) : '';
+              $extraDetails .= strlen($current['Imprint_Name']) > 0 ? $this->escapeHtml($current['Imprint_Name']) . ((strlen($address) > 0 || strlen($current['Note']) > 0) ? ': ' : '') : '';
+              $extraDetails .= strlen($address) > 0 ? $this->escapeHtml($address) : '';
+              $extraDetails .= strlen($current['Note']) > 0 ? ((strlen($address) > 0 || strlen($current['Imprint_Name']) > 0) ? ' - ' : '') . $this->escapeHtml($current['Note']) : '';
+              echo $extraDetails;
             ?>)
           <?php endif; ?>
+          <?php $currentLabel = $current['Publisher_Name'] . (empty($extraDetails) ? '' : (', ' . $extraDetails)); ?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-gear" href="#" onclick="Series.editLink('Publisher', <?=$current['Series_Publisher_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'gear',
+            "Series.editLink('Publisher', " . $current['Series_Publisher_ID'] . ")",
+            'Edit options for ' . $currentLabel
+          )?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Series.unlink('Publisher', <?=$current['Series_Publisher_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Series.unlink('Publisher', " . $current['Series_Publisher_ID'] . ")",
+            'Unlink ' . $currentLabel
+          )?>
         </td>
       </tr>
     </table>
