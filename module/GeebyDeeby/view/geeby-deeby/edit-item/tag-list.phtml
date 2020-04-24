@@ -6,8 +6,11 @@
         <?=$this->escapeHtml($current['Tag'])?>
       </td>
       <td>
-        <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Tag', <?=$this->escapeHtml($current['Tag_ID'])?>); return false;">
-        </a>
+        <?=$this->iconButton(
+            'trash',
+            "Item.unlink('Tag', " . $current['Tag_ID'] . ")",
+            'Unlink tag: ' . $current['Tag']
+          )?>
       </td>
     </tr>
   </table>
