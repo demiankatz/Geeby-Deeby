@@ -1377,6 +1377,7 @@ return [
             'analyzecredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
             'analyzeCredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
             'auth' => 'GeebyDeeby\View\Helper\Auth',
+            'button' => 'GeebyDeeby\View\Helper\Button',
             'config' => 'GeebyDeeby\View\Helper\Config',
             'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
             'descriptionSource' => 'GeebyDeeby\View\Helper\DescriptionSource',
