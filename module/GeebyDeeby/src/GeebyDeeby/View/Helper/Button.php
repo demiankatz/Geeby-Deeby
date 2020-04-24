@@ -43,7 +43,7 @@ class Button extends \Zend\View\Helper\AbstractHelper
      *
      * @param string $type   Type of button
      * @param string $action Javascript for button to execute
-     * @param string $label  Screen reader label (generated from type if omitted)
+     * @param string $label  Screen reader label
      *
      * @return string
      */

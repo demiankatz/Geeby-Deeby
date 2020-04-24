@@ -4,8 +4,11 @@
       <tr>
         <td><?=$this->escapeHtml($current['URI'])?> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Person.unlink('URI', '<?=$current['URI']?>'); return false;">
-          </a>
+          <?=$this->button(
+            'trash',
+            "Person.unlink('URI', '" . addslashes($current['URI']) . "')",
+            'Unlink ' . $current['URI']
+          )?>
         </td>
       </tr>
     </table>
