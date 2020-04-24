@@ -10,8 +10,11 @@
           <button onclick="Item.reorderLink('Attachment', { 'item_id': <?=$current['Item_ID']?> });">Set</button>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Attachment', <?=$current['Item_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Item.unlink('Attachment', " . $current['Item_ID'] . ")",
+            'Unlink attached item: ' . $current['Item_Name']
+          )?>
         </td>
         <td>
           <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>">

@@ -8,8 +8,11 @@
           </a>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Adaptation', <?=$current['Item_ID']?>, 'Into'); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Item.unlink('Adaptation', " . $current['Item_ID'] . ", 'Into')",
+            'Unlink adaptation into: ' . $current['Item_Name']
+          )?>
         </td>
       </tr>
     </table>

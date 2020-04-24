@@ -10,8 +10,13 @@
           <button onclick="Edition.reorderLink('Image', { 'sequence_id': <?=$this->escapeHtml($current['Sequence_ID'])?> });">Set</button>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('Image', <?=$this->escapeHtml($current['Sequence_ID'])?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Edition.unlink('Image', " . $current['Sequence_ID'] . ")",
+            !empty($current['IIIF_URI'])
+              ? 'Delete image with IIIF URI: ' . $current['IIIF_URI']
+              : 'Delete image with path: ' . $current['Image_Path']
+          )?>
         </td>
         <td>
           <?php

@@ -1,15 +1,19 @@
 <?php if (isset($peopleBib) && count($peopleBib) > 0): ?>
   <?php foreach ($peopleBib as $current): ?>
+    <?php $currentName = $this->showperson($current); ?>
     <table class="list_item">
       <tr>
         <td>
           <a href="<?=$this->url('edit/person', ['id' => $current['Person_ID']])?>#bib-tab">
-            <?=$this->escapeHtml($this->showperson($current))?>
+            <?=$this->escapeHtml($currentName)?>
           </a>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('AboutPerson', <?=$current['Person_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Item.unlink('AboutPerson', " . $current['Person_ID'] . ")",
+            'Unlink reference to person: ' . $currentName
+          )?>
         </td>
       </tr>
     </table>

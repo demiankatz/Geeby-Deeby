@@ -4,19 +4,23 @@
   <table class="list_item">
     <tr><th scope="col">Order</th><th colspan="2" scope="col">Credit</th></tr>
     <?php foreach ($credits as $current): ?>
+      <?php $currentName = $this->showperson($current); ?>
       <tr>
         <td>
           <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="credit_order_<?=$this->escapeHtml($current['Person_ID'])?>_<?=$this->escapeHtml($current['Role_ID'])?>" />
           <button onclick="Edition.reorderLink('Credit', { 'person_id': <?=$this->escapeHtml($current['Person_ID'])?>, 'role_id': <?=$this->escapeHtml($current['Role_ID'])?> });">Set</button>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('Credit', '<?=$this->escapeHtml($current['Person_ID'])?>,<?=$this->escapeHtml($current['Role_ID'])?>'); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Edition.unlink('Credit', '" . $current['Person_ID'] . ',' . $current['Role_ID'] . "')",
+            'Unlink ' . $current['Role_Name'] . ': ' . $currentName
+          )?>
         </td>
         <td>
           <?=$this->escapeHtml($current['Role_Name'])?>:
           <a href="<?=$this->url('edit/person', ['id' => $current['Person_ID']])?>">
-            <?=$this->escapeHtml($this->showperson($current))?>
+            <?=$this->escapeHtml($currentName)?>
           </a>
           <?php if (!empty($current['Note'])): ?>
             (<?=$this->escapeHtml($current['Note'])?>)

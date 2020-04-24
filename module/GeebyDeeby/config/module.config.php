@@ -1364,6 +1364,8 @@ return [
                 'Zend\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\GroupEditions' =>
                 'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\IconButton' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\ScriptManager' =>
                 'GeebyDeeby\View\Helper\ScriptManagerFactory',
             'GeebyDeeby\View\Helper\ShowEdition' =>
@@ -1390,6 +1392,7 @@ return [
             'formatReleaseDate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
             'groupEditions' => 'GeebyDeeby\View\Helper\GroupEditions',
+            'iconButton' => 'GeebyDeeby\View\Helper\IconButton',
             'scriptmanager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'scriptManager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'showedition' => 'GeebyDeeby\View\Helper\ShowEdition',
