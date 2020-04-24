@@ -6,8 +6,11 @@
           <?=$this->escapeHtml($current['Series_AltName'])?><?=(strlen($current['Note']) > 0) ? ' (' . $this->escapeHtml($current['Note']) . ')' : ''?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Series.unlink('AltTitle', <?=$current['Sequence_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Series.unlink('AltTitle', " . $current['Sequence_ID'] . ")",
+            'Delete alternate title: ' . $current['Series_AltName']
+          )?>
         </td>
       </tr>
     </table>

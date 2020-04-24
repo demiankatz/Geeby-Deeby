@@ -1,13 +1,17 @@
 <?php if (isset($addresses) && count($addresses) > 0): ?>
   <?php foreach ($addresses as $current): ?>
+    <?php $currentAddress = $current['Country_Name'] . (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']) . (empty($current['Street']) ? '' : ' -- ' . $current['Street']); ?>
     <table class="list_item">
       <tr>
         <td>
-          <?=$this->escapeHtml($current['Country_Name'] . (empty($current['City_Name']) ? '' : ' -- ' . $current['City_Name']) . (empty($current['Street']) ? '' : ' -- ' . $current['Street']))?>
+          <?=$this->escapeHtml($currentAddress)?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Publisher.unlink('Address', <?=$current['Address_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Publisher.unlink('Address', " . $current['Address_ID'] . ")",
+            'Delete address: ' . $currentAddress
+          )?>
         </td>
       </tr>
     </table>
