@@ -6,8 +6,10 @@
     <?php foreach ($item_list as $current): ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="attachment_order_<?=$current['Item_ID']?>" />
-          <button onclick="Item.reorderLink('Attachment', { 'item_id': <?=$current['Item_ID']?> });">Set</button>
+          <form onsubmit="Item.reorderLink('Attachment', { 'item_id': <?=$current['Item_ID']?> }); return false;">
+            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="attachment_order_<?=$current['Item_ID']?>" /></label>
+            <input type="submit" value="Set" />
+          </form>
         </td>
         <td>
           <?=$this->iconButton(

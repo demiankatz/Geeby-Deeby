@@ -7,8 +7,10 @@
       <?php $currentName = $this->showperson($current); ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="credit_order_<?=$this->escapeHtml($current['Person_ID'])?>_<?=$this->escapeHtml($current['Role_ID'])?>" />
-          <button onclick="Item.reorderLink('Credit', { 'person_id': <?=$this->escapeHtml($current['Person_ID'])?>, 'role_id': <?=$this->escapeHtml($current['Role_ID'])?> });">Set</button>
+          <form onsubmit="Item.reorderLink('Credit', { 'person_id': <?=$this->escapeHtml($current['Person_ID'])?>, 'role_id': <?=$this->escapeHtml($current['Role_ID'])?> }); return false;">
+            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="credit_order_<?=$this->escapeHtml($current['Person_ID'])?>_<?=$this->escapeHtml($current['Role_ID'])?>" /></label>
+            <input type="submit" value="Set" />
+          </form>
         </td>
         <td>
           <?=$this->iconButton(

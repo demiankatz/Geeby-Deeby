@@ -7,8 +7,10 @@
       <?php $currentTitle = !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']; ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=($current['Volume'] > 0 ? $this->escapeHtml($current['Volume'] . ',') : '') . $this->escapeHtml($current['Position'])?>" id="order<?=$current['Edition_ID']?>" />
-          <button onclick="Series.reorderLink('Item', { 'edition_id': <?=$current['Edition_ID']?> });">Set</button>
+          <form onsubmit="Series.reorderLink('Item', { 'edition_id': <?=$current['Edition_ID']?> }); return false;">
+            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=($current['Volume'] > 0 ? $this->escapeHtml($current['Volume'] . ',') : '') . $this->escapeHtml($current['Position'])?>" id="order<?=$current['Edition_ID']?>" /></label>
+            <input type="submit" value="Set" />
+          </form>
         </td>
         <td>
           <?=$this->iconButton(
