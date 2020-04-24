@@ -8,7 +8,7 @@
         <td>
           <?=$this->iconButton(
             'trash',
-            "File.unlink('Series', " . $this->escapeHtml($current['Series_ID']) . ")",
+            "File.unlink('Series', " . $current['Series_ID'] . ")",
             'Unlink series: ' . $current['Series_Name']
           )?>
         </td>

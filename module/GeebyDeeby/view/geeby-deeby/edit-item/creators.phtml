@@ -15,14 +15,14 @@
         <td>
           <?=$this->iconButton(
             'gear',
-            "Item.editLink('Creator', '" . $this->escapeHtml($current['Person_ID']) . ',' . $this->escapeHtml($current['Role_ID']) . "')",
+            "Item.editLink('Creator', '" . $current['Person_ID'] . ',' . $current['Role_ID'] . "')",
             'Edit options for ' . $current['Role_Name'] . ': ' . $currentName
           )?>
         </td>
         <td>
           <?=$this->iconButton(
             'trash',
-            "Item.unlink('Creator', '" . $this->escapeHtml($current['Person_ID']) . ',' . $this->escapeHtml($current['Role_ID']) . "')",
+            "Item.unlink('Creator', '" . $current['Person_ID'] . ',' . $current['Role_ID'] . "')",
             'Unlink ' . $current['Role_Name'] . ': ' . $currentName
           )?>
         </td>

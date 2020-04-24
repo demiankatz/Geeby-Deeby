@@ -13,7 +13,7 @@
         <td>
           <?=$this->iconButton(
             'trash',
-            "Edition.unlink('Credit', '" . $this->escapeHtml($current['Person_ID']) . ',' . $this->escapeHtml($current['Role_ID']) . "')",
+            "Edition.unlink('Credit', '" . $current['Person_ID'] . ',' . $current['Role_ID'] . "')",
             'Unlink ' . $current['Role_Name'] . ': ' . $currentName
           )?>
         </td>

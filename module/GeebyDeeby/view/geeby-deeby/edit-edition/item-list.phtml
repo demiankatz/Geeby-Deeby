@@ -13,7 +13,7 @@
         <td>
           <?=$this->iconButton(
             'trash',
-            "Edition.unlink('Item', " . $this->escapeHtml($current['Edition_ID']) . ")",
+            "Edition.unlink('Item', " . $current['Edition_ID'] . ")",
             'Unlink ' . $currentTitle . (empty($current['Extent_In_Parent']) ? '' : ', ' . $current['Extent_In_Parent'])
           )?>
         </td>

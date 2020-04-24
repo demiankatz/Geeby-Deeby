@@ -8,7 +8,7 @@
         <td>
           <?=$this->iconButton(
             'trash',
-            "Edition.unlink('ISBN', " . $this->escapeHtml($current['Sequence_ID']) . ")",
+            "Edition.unlink('ISBN', " . $current['Sequence_ID'] . ")",
             'Delete ISBN: ' . (empty($current['ISBN']) ? $current['ISBN13'] : $current['ISBN'])
           )?>
         </td>

@@ -11,7 +11,7 @@
         <td>
           <?=$this->iconButton(
             'trash',
-            "File.unlink('Person', " . $this->escapeHtml($current['Person_ID']) . ")",
+            "File.unlink('Person', " . $current['Person_ID'] . ")",
             'Unlink person: ' . $currentName
           )?>
         </td>
