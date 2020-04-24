@@ -10,9 +10,11 @@
 
 <div class="tab-content">
   <div id="uris-tab" class="tab-pane active">
-    <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
-    <input type="text" id="uri" />
-    <button onclick="City.link('URI');">Add URI</button>
+    <form onsubmit="City.link('URI'); return false;">
+      <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
+      <label>URI: <input type="text" id="uri" /></label>
+      <input type="submit" value="Add URI" />
+    </form>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-city/uri-list.phtml')?>
     </div>
