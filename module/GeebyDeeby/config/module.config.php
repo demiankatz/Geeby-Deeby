@@ -1348,6 +1348,8 @@ return [
             'GeebyDeeby\View\Helper\AnalyzeCredits' =>
                 'GeebyDeeby\View\Helper\AnalyzeCreditsFactory',
             'GeebyDeeby\View\Helper\Auth' => 'GeebyDeeby\View\Helper\AuthFactory',
+            'GeebyDeeby\View\Helper\Button' =>
+                'Zend\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\Config' =>
                 'GeebyDeeby\View\Helper\ConfigFactory',
             'GeebyDeeby\View\Helper\DescriptionSource' =>
