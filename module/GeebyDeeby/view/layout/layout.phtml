@@ -7,15 +7,15 @@
     <?php
       echo $this->headTitle($this->layout()->title . ' - ' . $this->config('siteTitle'));
       echo $this->headLink()
-        ->prependStylesheet($this->basePath() . '/css/ui-lightness/jquery-ui-1.7.2.custom.css')
         ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
-        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+        ->prependStylesheet($this->basePath() . '/css/vendor/bootstrap.min.css')
+        ->prependStylesheet($this->basePath() . '/css/vendor/autocomplete.css')
         ->prependStylesheet($this->basePath() . '/css/fonts.css');
 
       // Set global path for Javascript code:
       $this->headScript()->prependScript("basePath = '" . rtrim($this->basePath(), '/') . "';");
-      $this->scriptManager()->add(['jquery', 'jquery-ui', 'bootstrap.min'], true);
-      echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', ['conditional' => 'lt IE 9'])
+      $this->scriptManager()->add(['vendor/jquery', 'vendor/bootstrap.min', 'vendor/autocomplete'], true);
+      echo $this->headScript()->prependFile($this->basePath() . '/js/vendor/html5.js', 'text/javascript', ['conditional' => 'lt IE 9'])
     ?>
   </head>
   <body>

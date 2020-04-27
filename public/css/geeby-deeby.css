@@ -224,4 +224,25 @@ footer {
 }
 
 /* --- MODAL --- */
-#modal .modal-title {font-family:'Josefin Slab'}
+.modal-content { overflow: hidden; }
+#modal .modal-title {
+  margin: 0;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+  font-family: 'Josefin Slab';
+}
+.modal-header { padding: 0; }
+.modal-close {
+  float: right;
+  height: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border: 0;
+  font-size: 4rem;
+  line-height: 0.9;
+  color: #774E03;
+  background: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

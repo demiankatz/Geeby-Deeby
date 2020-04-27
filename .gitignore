@@ -1,2 +1,4 @@
 vendor/
+!public/css/vendor
+!public/js/vendor
 .vscode
