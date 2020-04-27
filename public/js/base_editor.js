@@ -438,3 +438,8 @@ BaseEditor.prototype.unlink = function(type, which, subtype) {
     var url = this.getLinkUri(type, subtype) + "/" + encodeURIComponent(which);
     $.ajax({url: url, type: "delete", dataType: "json", success: this.getLinkCallback(type, subtype)});
 };
+
+// Set up sticky tabs used by editors:
+$(document).ready(function() {
+    $('.nav-tabs').stickyTabs();
+});
