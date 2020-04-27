@@ -4,17 +4,23 @@
   <table class="list_item">
     <tr><th scope="col">Order</th><th colspan="2" scope="col">Title</th></tr>
     <?php foreach ($item_list as $current): ?>
+      <?php $currentTitle = isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']; ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position_in_Parent'])?>" id="item_order_<?=$current['Edition_ID']?>" />
-          <button onclick="Edition.reorderLink('Item', { 'edition_id': <?=$current['Edition_ID']?> });">Set</button>
+          <form onsubmit="Edition.reorderLink('Item', { 'edition_id': <?=$current['Edition_ID']?> }); return false;">
+            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=$this->escapeHtml($current['Position_in_Parent'])?>" id="item_order_<?=$current['Edition_ID']?>" /></label>
+            <input type="submit" value="Set" />
+          </form>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('Item', <?=$current['Edition_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Edition.unlink('Item', " . $current['Edition_ID'] . ")",
+            'Unlink ' . $currentTitle . (empty($current['Extent_In_Parent']) ? '' : ', ' . $current['Extent_In_Parent'])
+          )?>
         </td>
         <td>
-          <?=$this->escapeHtml(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])?>
+          <?=$this->escapeHtml($currentTitle)?>
           <?php if (!empty($current['Extent_In_Parent'])): ?>(<?=$this->escapeHtml($current['Extent_In_Parent'])?>)<?php endif; ?>
           <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>">[edit item]</a>
           <a href="<?=$this->url('edit/edition', ['id' => $current['Edition_ID']])?>">[edit edition]</a>

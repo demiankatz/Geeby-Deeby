@@ -52,16 +52,14 @@ BaseEditor.prototype.getBaseUri = function() {
  * Open a lightbox.
  */
 BaseEditor.prototype.openLightbox = function(url, title) {
+    var $modalEl = $("#modal");
+    $modalEl.find(".modal-title").text(title);
     var editor = this;
-    this.editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: title,
-        modal: true,
-        autoOpen: true,
-        width: 600,
-        height: 400,
-        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { editor.editBox.empty(); }
-    });
+    this.editBox = $modalEl.find(".modal-body").load(url);
+    $modalEl.modal("show");
+    $modalEl.off("hidden.bs.modal").on("hidden.bs.modal", function() {
+        editor.editBox.empty();
+    })
 };
 
 /**
@@ -69,8 +67,7 @@ BaseEditor.prototype.openLightbox = function(url, title) {
  */
 BaseEditor.prototype.closeLightbox = function() {
     if (this.editBox) {
-        this.editBox.dialog('close');
-        this.editBox.dialog('destroy');
+        $("#modal").modal("hide");
         this.editBox = false;
     }
 };

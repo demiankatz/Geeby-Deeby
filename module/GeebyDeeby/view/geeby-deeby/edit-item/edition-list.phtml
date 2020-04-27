@@ -6,8 +6,10 @@
     <?php foreach ($editions as $current): ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=isset($current['Item_Display_Order']) ? $this->escapeHtml($current['Item_Display_Order']) : 0 ?>" id="order<?=$current['Edition_ID']?>" />
-          <button onclick="Item.reorderLink('Editions', { 'edition_id': <?=$current['Edition_ID']?> });">Set</button>
+          <form onsubmit="Item.reorderLink('Editions', { 'edition_id': <?=$current['Edition_ID']?> }); return false;">
+            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=isset($current['Item_Display_Order']) ? $this->escapeHtml($current['Item_Display_Order']) : 0 ?>" id="order<?=$current['Edition_ID']?>" /></label>
+            <input type="submit" value="Set" />
+          </form>
         </td>
         <td align="center">
           <input type="radio" class="selectedEdition" name="selectedEdition" value="<?=$current['Edition_ID']?>" />

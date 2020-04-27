@@ -5,4 +5,6 @@ public/mp3/*.html
 public/mp3/*.jpg
 public/mp3/*.mp3
 vendor/
+!public/css/vendor
+!public/js/vendor
 .vscode
