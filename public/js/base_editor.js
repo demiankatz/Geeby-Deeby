@@ -441,5 +441,5 @@ BaseEditor.prototype.unlink = function(type, which, subtype) {
 
 // Set up sticky tabs used by editors:
 $(document).ready(function() {
-    $('.nav-tabs').stickyTabs();
+    $('.nav-tabs').stickyTabs({ replaceState: true });
 });
