@@ -1,5 +1,5 @@
 <?php $this->layout()->title = 'Edit Person' ?>
-<?php $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_people']) ?>
+<?php $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_people']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-person/index.phtml')?>
 </div>
