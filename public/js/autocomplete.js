@@ -3,7 +3,7 @@
  * specified type of objects.
  */
 function registerAutocomplete(selector, type) {
-  var ac = new Autocomplete();
+  var ac = new Autocomplete({ limit: 10000 });
   document.querySelectorAll(selector).forEach(function bindAC(input) {
     ac(input, function achandler(query, callback) {
       $.ajax({
