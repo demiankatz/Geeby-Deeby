@@ -14,7 +14,7 @@
 
       // Set global path for Javascript code:
       $this->headScript()->prependScript("basePath = '" . rtrim($this->basePath(), '/') . "';");
-      $this->scriptManager()->add(['vendor/jquery', 'vendor/bootstrap.min', 'vendor/jquery.stickytabs.js'], true);
+      $this->scriptManager()->add(['vendor/jquery', 'vendor/bootstrap.min', 'vendor/jquery.stickytabs'], true);
       echo $this->headScript()->prependFile($this->basePath() . '/js/vendor/html5.js', 'text/javascript', ['conditional' => 'lt IE 9'])
     ?>
   </head>
