@@ -2,7 +2,7 @@
  * jQuery Plugin: Sticky Tabs
  *
  * @author Aidan Lister <aidan@php.net>
- * @version 1.2.0
+ * @version 1.2.0 [derived from pull request #21, unmerged as of this writing]
  */
 (function ( $ ) {
     $.fn.stickyTabs = function( options ) {
@@ -12,6 +12,7 @@
             getHashCallback: function(hash, btn) { return hash },
             selectorAttribute: "href",
             backToTop: false,
+            replaceState: false,
             initialTab: $('li.active > a', context)
         }, options );
 
@@ -27,7 +28,9 @@
 
         // We use pushState if it's available so the page won't jump, otherwise a shim.
         var changeHash = function(hash) {
-          if (history && history.pushState) {
+          if (history && settings.replaceState && history.replaceState) {
+            history.replaceState(null, null, window.location.pathname + window.location.search + '#' + hash);
+          } else if (history && history.pushState) {
             history.pushState(null, null, window.location.pathname + window.location.search + '#' + hash);
           } else {
             scrollV = document.body.scrollTop;
