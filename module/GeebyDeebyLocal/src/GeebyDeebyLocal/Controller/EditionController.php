@@ -128,6 +128,17 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         foreach ($view->publishers as $publisher) {
             $pubUri = $this->getServerUrl('publisher', ['id' => $publisher['Publisher_ID']]);
             $edition->add('rda:publisher', $graph->resource($pubUri));
+            if (!empty($publisher['City_ID'])) {
+                $cityUri = $this->getServerUrl('city', ['id' => $publisher['City_ID']]);
+                $edition->add('rda:placeOfPublication', $graph->resource($cityUri));
+            }
+            if (!empty($publisher['Country_ID'])) {
+                $cityUri = $this->getServerUrl('country', ['id' => $publisher['Country_ID']]);
+                $edition->add('rda:placeOfPublication', $graph->resource($cityUri));
+            }
+            if (!empty($publisher['Street'])) {
+                $edition->add('rda:placeOfPublication', $publisher['Street']);
+            }
         }
         foreach ($view->children as $child) {
             $childUri = $this->getServerUrl('edition', ['id' => $child['Edition_ID']]);
