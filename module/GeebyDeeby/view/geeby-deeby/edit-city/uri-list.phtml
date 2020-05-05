@@ -2,7 +2,7 @@
   <?php foreach ($uris as $current): ?>
     <table class="list_item">
       <tr>
-        <td><?=$this->escapeHtml($current['URI'])?> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
+        <td><a href="<?=$this->escapeHtmlAttr($current['URI'])?>"><?=$this->escapeHtml($current['URI'])?></a> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
         <td>
           <?=$this->iconButton(
             'trash',
