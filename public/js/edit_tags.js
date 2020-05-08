@@ -6,6 +6,9 @@ var TagEditor = function() {
         'type_id': { 'id': '#Tag_Type_ID' }
     };
     this.links = {
+        'Item': {
+            'uriField': { 'id': '#Item_ID', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }
+        },
         'Relationship': {
             'subtypeSelector': { 'id': '#relationship_type' },
             'targetSelector': '#relationship_list',
