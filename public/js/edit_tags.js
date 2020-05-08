@@ -37,5 +37,6 @@ var TagType = new TagTypeEditor();
 $(document).ready(function() {
     if (typeof registerAutocomplete === 'function') {
         registerAutocomplete('#target_tag', 'Tag');
+        registerAutocomplete('#Item_ID', 'Item');
     }
 });

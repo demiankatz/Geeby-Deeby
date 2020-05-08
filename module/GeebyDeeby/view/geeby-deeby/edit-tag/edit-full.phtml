@@ -29,9 +29,10 @@
   </div>
 
   <div id="items-tab" class="tab-pane">
-    <label>Tagged Item:
-    <input id="Item_ID" class="Item_ID" /></label>
-    <input type="submit" value="Add Item" />
+    <form onsubmit="Tag.link('Item'); return false;">
+      <label>Tagged Item:
+      <input id="Item_ID" class="Item_ID" /></label>
+      <input type="submit" value="Add Item" />
     </form>
     <div id="taggeditem_list">
       <?=$this->render('geeby-deeby/edit-tag/item-list.phtml')?>
