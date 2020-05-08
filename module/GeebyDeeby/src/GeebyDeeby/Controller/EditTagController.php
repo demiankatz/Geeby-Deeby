@@ -160,7 +160,6 @@ class EditTagController extends AbstractBase
         );
     }
 
-
     /**
      * Deal with arbitrary relationships.
      *
