@@ -6,6 +6,9 @@ var TagEditor = function() {
         'type_id': { 'id': '#Tag_Type_ID' }
     };
     this.links = {
+        'Item': {
+            'uriField': { 'id': '#Item_ID', 'nonNumericDefault': '', 'emptyError': 'Please specify a valid item.' }
+        },
         'Relationship': {
             'subtypeSelector': { 'id': '#relationship_type' },
             'targetSelector': '#relationship_list',
@@ -34,5 +37,6 @@ var TagType = new TagTypeEditor();
 $(document).ready(function() {
     if (typeof registerAutocomplete === 'function') {
         registerAutocomplete('#target_tag', 'Tag');
+        registerAutocomplete('#Item_ID', 'Item');
     }
 });
