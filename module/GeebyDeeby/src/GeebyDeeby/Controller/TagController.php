@@ -134,9 +134,10 @@ class TagController extends AbstractBase
             return false;
         }
         $view = $this->createViewModel(
-            ['tag' => $rowObj->toArray()]
+            $extras + ['tag' => $rowObj->toArray()]
         );
-        $view->items = $this->getDbTable('itemstags')->getItemsForTag($id);
+        $view->items = $this->getDbTable('itemstags')
+            ->getItemsForTag($id, $extras['sort'] ?? 'series');
         $view->tagAttributes = $this->getDbTable('tagsattributesvalues')
             ->getAttributesForTag($id);
         $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
@@ -152,7 +153,9 @@ class TagController extends AbstractBase
      */
     public function showAction()
     {
-        $view = $this->getViewModelWithTag();
+        $view = $this->getViewModelWithTag(
+            ['sort' => $this->params()->fromQuery('sort', 'series')]
+        );
         return $view ? $view : $this->forwardTo(__NAMESPACE__ . '\Tag', 'notfound');
     }
 

@@ -124,6 +124,8 @@ class EditTagController extends AbstractBase
             $view->uris = $this->getDbTable('tagsuris')
                 ->getURIsForTag($view->tagObj->Tag_ID);
             $view->setTemplate('geeby-deeby/edit-tag/edit-full');
+            $view->items = $this->getDbTable('itemstags')
+                ->getItemsForTag($view->tagObj->Tag_ID);
             $view->predicates = $this->getDbTable('predicate')->getList();
             $view->relationships = $this->getDbTable('tagsrelationship')
                 ->getOptionList();
@@ -142,6 +144,19 @@ class EditTagController extends AbstractBase
     {
         return $this->getGenericList(
             'tagType', 'tagTypes', 'geeby-deeby/edit-tag/render-types'
+        );
+    }
+
+    /**
+     * Deal with items
+     *
+     * @return mixed
+     */
+    public function itemAction()
+    {
+        return $this->handleGenericLink(
+            'itemstags', 'Tag_ID', 'Item_ID', 'items', 'getItemsForTag',
+            'geeby-deeby/edit-tag/item-list.phtml'
         );
     }
 

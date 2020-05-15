@@ -6,6 +6,7 @@
 <hr />
 <ul class="nav nav-tabs">
   <li class="active"><a href="#uris-tab" data-toggle="tab">URIs (for linked data)</a></li>
+  <li><a href="#items-tab" data-toggle="tab">Linked Items</a></li>
   <li><a href="#relationships-tab" data-toggle="tab">Relationships</a></li>
 </ul>
 
@@ -24,6 +25,17 @@
     </form>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-tag/uri-list.phtml')?>
+    </div>
+  </div>
+
+  <div id="items-tab" class="tab-pane">
+    <form onsubmit="Tag.link('Item'); return false;">
+      <label>Tagged Item:
+      <input id="Item_ID" class="Item_ID" /></label>
+      <input type="submit" value="Add Item" />
+    </form>
+    <div id="item_list">
+      <?=$this->render('geeby-deeby/edit-tag/item-list.phtml')?>
     </div>
   </div>
 

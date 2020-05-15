@@ -1,0 +1,19 @@
+<?php $currentHeading = false; foreach ($items as $item): ?>
+  <?php if ($sort === 'series' && $currentHeading !== $item['Series_ID']): $currentHeading = $item['Series_ID']; ?>
+    <h2 class="series"><a href="<?=$this->url('series', ['id' => $currentHeading])?>">
+      <?=$this->fixtitle($item['Series_Name']);?>
+    </a></h2>
+  <?php endif; ?>
+  <?php if ($sort !== 'series' && $currentHeading !== $this->firstLetter($item['Item_Name'])): $currentHeading = $this->firstLetter($item['Item_Name']); ?>
+    <h2><?=$this->escapeHtml($currentHeading)?></h2>
+  <?php endif; ?>
+  <span class="item">
+    <?php if ($sort === 'series'): ?><?=$this->escapeHtml($this->formatItemNumber($item))?><?php endif; ?>
+    <a href="<?=$this->url('item', ['id' => $item['Item_ID']])?>">
+      <?=$this->fixtitle(
+        empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']
+      )?>
+    </a>
+    <br />
+  </span>
+<?php endforeach; ?>
