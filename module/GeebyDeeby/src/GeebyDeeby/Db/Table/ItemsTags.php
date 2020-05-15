@@ -59,11 +59,12 @@ class ItemsTags extends Gateway
     /**
      * Get items for the specified tag.
      *
-     * @param int $tagID Tag ID
+     * @param int    $tagID Tag ID
+     * @param string $sort  Sort type (title or series; default = title)
      *
      * @return mixed
      */
-    public function getItemsForTag($tagID, $sort = 'series')
+    public function getItemsForTag($tagID, $sort = 'title')
     {
         $callback = function ($select) use ($tagID, $sort) {
             $select->join(
