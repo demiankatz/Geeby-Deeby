@@ -134,7 +134,7 @@ class TagController extends AbstractBase
             return false;
         }
         $view = $this->createViewModel(
-            ['tag' => $rowObj->toArray()]
+            $extras + ['tag' => $rowObj->toArray()]
         );
         $view->items = $this->getDbTable('itemstags')
             ->getItemsForTag($id, $extras['sort'] ?? 'series');
