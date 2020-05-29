@@ -91,7 +91,7 @@ class PeopleURIs extends Gateway
                 ['pr' => 'Predicates'],
                 'People_URIs.Predicate_ID = pr.Predicate_ID'
             );
-            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
+            $select->order(['Last_Name', 'First_Name']);
             $select->where->equalTo('URI', $uri);
         };
         return $this->select($callback);

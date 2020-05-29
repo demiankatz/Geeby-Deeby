@@ -194,7 +194,7 @@ class EditionsCredits extends Gateway
             );
             $fields = [
                 'Role_Name', 'Position', 'Last_Name',
-                'First_Name', 'Middle_Name'
+                'First_Name'
             ];
             $select->order($fields);
             $select->where->equalTo('Edition_ID', $editionID);
@@ -233,7 +233,7 @@ class EditionsCredits extends Gateway
             );
             $fields = [
                 'Role_Name', 'Editions_Credits.Position', 'Last_Name',
-                'First_Name', 'Middle_Name'
+                'First_Name'
             ];
             $select->order($fields);
             if ($group) {
@@ -290,7 +290,7 @@ class EditionsCredits extends Gateway
                 ]
             );
             $fields = [
-                'Last_Name', 'First_Name', 'Middle_Name', $bestTitle
+                'Last_Name', 'First_Name', $bestTitle
             ];
             $select->order($fields);
             $select->where->equalTo('Series_ID', $seriesID);

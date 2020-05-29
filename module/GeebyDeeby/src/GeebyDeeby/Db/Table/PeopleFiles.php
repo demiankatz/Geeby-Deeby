@@ -68,7 +68,7 @@ class PeopleFiles extends Gateway
                 ['p' => 'People'],
                 'People_Files.Person_ID = p.Person_ID'
             );
-            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
+            $select->order(['Last_Name', 'First_Name']);
             $select->where->equalTo('File_ID', $fileID);
         };
         return $this->select($callback);

@@ -3,7 +3,6 @@ var PersonEditor = function() {
     this.saveFields = {
         'last': { 'id': '#Last_Name', emptyError: 'Last name cannot be blank.' },
         'first': { 'id': '#First_Name' },
-        'middle': { 'id': '#Middle_Name' },
         'extra': { 'id': '#Extra_Details' },
         'bio': { 'id': '#Biography' },
         'authority': { 'id': '#Authority_ID' }
