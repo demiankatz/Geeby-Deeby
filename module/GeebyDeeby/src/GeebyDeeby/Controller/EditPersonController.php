@@ -65,9 +65,11 @@ class EditPersonController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'first' => 'First_Name', 'middle' => 'Middle_Name',
-            'last' => 'Last_Name', 'extra' => 'Extra_Details',
-            'bio' => 'Biography', 'authority' => 'Authority_ID'
+            'first' => 'First_Name',
+            'last' => 'Last_Name',
+            'extra' => 'Extra_Details',
+            'bio' => 'Biography',
+            'authority' => 'Authority_ID'
         ];
         $view = $this->handleGenericItem('person', $assignMap, 'person');
         $view->authorities = $this->authoritylistAction()->authorities;

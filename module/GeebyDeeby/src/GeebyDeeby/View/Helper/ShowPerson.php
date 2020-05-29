@@ -48,7 +48,7 @@ class ShowPerson extends \Zend\View\Helper\AbstractHelper
     public function __invoke($person)
     {
         $text = $person['Last_Name'];
-        $first = trim($person['First_Name'] . ' ' . $person['Middle_Name']);
+        $first = trim($person['First_Name']);
         if (!empty($first)) {
             $text .= ', ' . $first;
         }

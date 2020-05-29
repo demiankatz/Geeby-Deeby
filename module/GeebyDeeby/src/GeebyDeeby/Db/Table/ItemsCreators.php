@@ -184,7 +184,7 @@ class ItemsCreators extends Gateway
                 'Items_Creators.Role_ID = r.Role_ID'
             );
             $fields = [
-                'Role_Name', 'Last_Name', 'First_Name', 'Middle_Name'
+                'Role_Name', 'Last_Name', 'First_Name'
             ];
             $select->order($fields);
             $select->where->equalTo('Item_ID', $itemID);

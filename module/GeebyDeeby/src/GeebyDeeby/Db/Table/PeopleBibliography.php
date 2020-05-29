@@ -92,7 +92,7 @@ class PeopleBibliography extends Gateway
                 ['p' => 'People'],
                 'People_Bibliography.Person_ID = p.Person_ID'
             );
-            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
+            $select->order(['Last_Name', 'First_Name']);
             $select->where->equalTo('Item_ID', $itemID);
         };
         return $this->select($callback);
