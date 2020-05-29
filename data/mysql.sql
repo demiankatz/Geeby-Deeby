@@ -821,7 +821,6 @@ DROP TABLE IF EXISTS `People`;
 CREATE TABLE `People` (
   `Person_ID` int(11) NOT NULL AUTO_INCREMENT,
   `First_Name` tinytext,
-  `Middle_Name` tinytext,
   `Last_Name` tinytext,
   `Extra_Details` tinytext,
   `Biography` text,
