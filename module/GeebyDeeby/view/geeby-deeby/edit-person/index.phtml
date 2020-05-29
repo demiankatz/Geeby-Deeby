@@ -2,15 +2,11 @@
   <input type="hidden" id="Person_ID" value="<?=$this->escapeHtml($person['Person_ID'])?>" />
   <table class="edit">
     <tr>
-      <th scope="row"><label for="First_Name">First Name:</label></th>
+      <th scope="row"><label for="First_Name">First/Given Name(s):</label></th>
       <td><input type="text" id="First_Name" value="<?=$this->escapeHtml($person['First_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th scope="row"><label for="Middle_Name">Middle Name:</label></th>
-      <td><input type="text" id="Middle_Name" value="<?=$this->escapeHtml($person['Middle_Name'] ?? '')?>" /></td>
-    </tr>
-    <tr>
-      <th scope="row"><label for="Last_Name">Last Name:</label></th>
+      <th scope="row"><label for="Last_Name">Last/Family Name:</label></th>
       <td><input type="text" id="Last_Name" value="<?=$this->escapeHtml($person['Last_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
