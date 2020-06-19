@@ -250,7 +250,14 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             } elseif ($type === 'page') {
                 $extent = $xml->addChild('extent');
                 $extent['unit'] = 'page';
-                $extent->list = $value;
+                if (preg_match('/pages (\d+)-(\d+)$/i', $value, $rangeMatches)) {
+                    $extent->start = $rangeMatches[1];
+                    $extent->end = $rangeMatches[2];
+                } elseif (preg_match('/pages? (\d+)/i', $value, $startMatch)) {
+                    $extent->start = $startMatch[1];
+                } else {
+                    $extent->list = $value;
+                }
             } else {
                 $detail = $xml->addChild('detail');
                 $detail['type'] = 'part';
