@@ -342,7 +342,7 @@ return [
                     'editionfulltextattribute' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/EditionsFullTextAttribute[/:id]',
+                            'route'    => '/EditionFullTextAttribute[/:id]',
                             'defaults' => [
                                 'controller'    => 'EditEditionFullTextAttribute',
                                 'action'        => 'index',
@@ -353,7 +353,7 @@ return [
                     'editionfulltextattribute_list' => [
                         'type'    => 'Literal',
                         'options' => [
-                            'route'    => '/EditionsFullTextAttributeList',
+                            'route'    => '/EditionFullTextAttributeList',
                             'defaults' => [
                                 'controller'    => 'EditEditionFullTextAttribute',
                                 'action'        => 'list',

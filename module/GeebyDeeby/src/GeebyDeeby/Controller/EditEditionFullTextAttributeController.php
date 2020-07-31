@@ -47,7 +47,8 @@ class EditEditionFullTextAttributeController extends AbstractBase
     {
         return $this->getGenericList(
             'editionsfulltextattribute', 'attributes',
-            'geeby-deeby/edit-full-text-attribute/render-full-text-attributes'
+            'geeby-deeby/edit-edition-full-text-attribute/'
+            . 'render-edition-full-text-attributes'
         );
     }
 
