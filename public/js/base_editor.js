@@ -188,7 +188,7 @@ BaseEditor.prototype.getSaveData = function(values, saveFields, attributeSelecto
                 current = rules.nonNumericDefault;
             }
         }
-        if (typeof rules.emptyError !== 'undefined' && rules.emptyError && current.length == 0) {
+        if (typeof rules.emptyError !== 'undefined' && rules.emptyError && (!current || current.length == 0)) {
             alert(rules.emptyError);
             return false;
         }
