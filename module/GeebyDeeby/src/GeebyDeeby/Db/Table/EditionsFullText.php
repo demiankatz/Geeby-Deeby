@@ -89,7 +89,7 @@ class EditionsFullText extends Gateway
     {
         $callback = function ($select) use ($edition) {
             $select->quantifier('DISTINCT');
-            $select->columns(['Full_Text_URL']);
+            $select->columns(['Sequence_ID', 'Full_Text_URL']);
             $select->join(
                 ['fts' => 'Full_Text_Sources'],
                 'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
