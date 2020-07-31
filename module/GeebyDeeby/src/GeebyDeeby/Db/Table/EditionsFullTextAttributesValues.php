@@ -65,15 +65,15 @@ class EditionsFullTextAttributesValues extends Gateway
      */
     public function getAttributesForFullTextID($fullTextID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($fullTextID) {
             $select->join(
-                ['ea' => 'Editions_Full_Text_Attributes'],
-                'ea.Editions_Full_Text_Attribute_ID = '
+                ['efta' => 'Editions_Full_Text_Attributes'],
+                'efta.Editions_Full_Text_Attribute_ID = '
                 . 'Editions_Full_Text_Attributes_Values.'
                 . 'Editions_Full_Text_Attribute_ID'
             );
             $select->order(
-                ['ea.Display_Priority', 'ea.Editions_Full_Text_Attribute_Name']
+                ['efta.Display_Priority', 'efta.Editions_Full_Text_Attribute_Name']
             );
             $select->where->equalTo('Editions_Full_Text_ID', $fullTextID);
         };

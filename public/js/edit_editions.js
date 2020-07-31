@@ -84,7 +84,8 @@ var EditionEditor = function() {
             'saveFields': {
                 'source_id': { 'id': '#Full_Text_Source_ID' },
                 'url': { 'id': '#Full_Text_URL', 'emptyError': 'URL cannot be blank.' }
-            }
+            },
+            'attributeSelector': '.edition-full-text-attribute'
         },
         'Image': {
             'saveFields': {

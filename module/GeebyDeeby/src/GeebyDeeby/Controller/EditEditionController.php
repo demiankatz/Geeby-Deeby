@@ -78,6 +78,33 @@ class EditEditionController extends AbstractBase
     }
 
     /**
+     * Save attributes for the current full text item.
+     *
+     * @param int   $rowId   Full text sequence ID
+     * @param array $attribs Attribute values
+     *
+     * @return void
+     */
+    protected function saveFullTextAttributes($rowId, $attribs)
+    {
+        $table = $this->getDbTable('editionsfulltextattributesvalues');
+        // Delete old values:
+        $table->delete(['Editions_Full_Text_ID' => $rowId]);
+        // Save new values:
+        foreach ($attribs as $id => $val) {
+            if (!empty($val)) {
+                $table->insert(
+                    [
+                        'Editions_Full_Text_ID' => $rowId,
+                        'Editions_Full_Text_Attribute_ID' => $id,
+                        'Editions_Full_Text_Attribute_Value' => $val
+                    ]
+                );
+            }
+        }
+    }
+
+    /**
      * Operate on a single edition
      *
      * @return mixed
@@ -595,6 +622,9 @@ class EditEditionController extends AbstractBase
                 'Full_Text_URL' => trim($this->params()->fromPost('url'))
             ];
             $table->update($fields, ['Sequence_ID' => $rowId]);
+            if ($attribs = $this->params()->fromPost('attribs')) {
+                $this->saveFullTextAttributes($rowId, $attribs);
+            }
             return $this->jsonReportSuccess();
         }
         $view = $this->createViewModel();
@@ -603,6 +633,16 @@ class EditEditionController extends AbstractBase
         foreach ($table->select(['Sequence_ID' => $rowId]) as $current) {
             $view->row = $current;
         }
+        $view->attributes = $this->getDbTable('editionsfulltextattribute')
+            ->getList();
+        $attributeValues = [];
+        $values = $this->getDbTable('editionsfulltextattributesvalues')
+            ->getAttributesForFullTextID($rowId);
+        foreach ($values as $current) {
+            $attributeValues[$current->Editions_Full_Text_Attribute_ID]
+                = $current->Editions_Full_Text_Attribute_Value;
+        }
+        $view->attributeValues = $attributeValues;
         $view->setTemplate('geeby-deeby/edit-edition/modify-full-text');
 
         // If this is an AJAX request, render the core list only, not the
