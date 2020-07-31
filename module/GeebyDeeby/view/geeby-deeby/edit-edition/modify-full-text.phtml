@@ -1,0 +1,22 @@
+<form id="modifyFullTextForm" onsubmit="Edition.saveLink('FullText', <?=$row['Sequence_ID']?>); return false">
+  <table class="edit">
+    <tr>
+      <th scope="row"><label for="Edit_Full_Text_Source_ID">Full Text Source:</label></th>
+      <td>
+        <select id="Edit_Full_Text_Source_ID">
+          <?php foreach ($this->fullTextSources as $current): ?>
+            <option <?=$current['Full_Text_Source_ID'] == $row['Full_Text_Source_ID'] ? ' selected="selected"' : ''?>value="<?=$current['Full_Text_Source_ID']?>"><?=$this->escapeHtml($current['Full_Text_Source_Name'])?></option>
+          <?php endforeach; ?>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><label for="Edit_Full_Text_URL">URL:</label></th>
+      <td>
+        <input type="text" id="Edit_Full_Text_URL" size="50" value="<?=$this->escapeHtml($row['Full_Text_URL'])?>" />
+      </td>
+    </tr>
+  </table>
+  <input id="save_edition_full_text" type="submit" value="Save" />
+  <div id="save_edition_full_text_status"></div>
+</form>

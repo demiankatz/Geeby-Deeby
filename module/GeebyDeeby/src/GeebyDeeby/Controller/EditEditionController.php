@@ -581,6 +581,40 @@ class EditEditionController extends AbstractBase
     }
 
     /**
+     * Support method for fulltextAction()
+     *
+     * @return mixed
+     */
+    protected function modifyFullText()
+    {
+        $rowId = $this->params()->fromRoute('extra');
+        $table = $this->getDbTable('editionsfulltext');
+        if ($this->getRequest()->isPost()) {
+            $fields = [
+                'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
+                'Full_Text_URL' => trim($this->params()->fromPost('url'))
+            ];
+            $table->update($fields, ['Sequence_ID' => $rowId]);
+            return $this->jsonReportSuccess();
+        }
+        $view = $this->createViewModel();
+        $view->fullTextSources = $this->getDbTable('fulltextsource')
+            ->getList();
+        foreach ($table->select(['Sequence_ID' => $rowId]) as $current) {
+            $view->row = $current;
+        }
+        $view->setTemplate('geeby-deeby/edit-edition/modify-full-text');
+
+        // If this is an AJAX request, render the core list only, not the
+        // framing layout and buttons.
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $view->setTerminal(true);
+        }
+
+        return $view;
+    }
+
+    /**
      * Deal with full text
      *
      * @return mixed
@@ -591,6 +625,14 @@ class EditEditionController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
+        // Modify the full text if it's a GET/POST and has an extra set.
+        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+            && null !== $this->params()->fromRoute('extra')
+            && 'NEW' !== $this->params()->fromRoute('extra')
+        ) {
+            return $this->modifyFullText();
+        }
+
         $table = $this->getDbTable('editionsfulltext');
         if ($this->getRequest()->isPost()) {
             $insert = [
