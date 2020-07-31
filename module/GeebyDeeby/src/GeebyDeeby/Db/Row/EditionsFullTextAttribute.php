@@ -46,7 +46,9 @@ class EditionsFullTextAttribute extends RowGateway
     public function __construct($adapter)
     {
         parent::__construct(
-            'Editions_Full_Text_Attribute_ID', 'Editions_Full_Text_Attributes', $adapter
+            'Editions_Full_Text_Attribute_ID',
+            'Editions_Full_Text_Attributes',
+            $adapter
         );
     }
 
