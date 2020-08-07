@@ -1,15 +1,19 @@
 [![Build Status](https://travis-ci.org/demiankatz/Geeby-Deeby.svg?branch=master)](https://travis-ci.org/demiankatz/Geeby-Deeby)
 
-Geeby-Deeby
-===========
+# Geeby-Deeby
+
 
 A bibliography and collection management system developed as the foundation for gamebooks.org and dimenovels.org.
 
-Installation
-============
-1. First, after cloning this repository to a directory, use "composer install" to load dependencies (see http://getcomposer.org for details).
+# Installation
 
-2. The easiest way to get Geeby-Deeby running is to create a symbolic link to /public in your system's web root (often something like `/var/www` or `/var/www/html`). So, for example, if you had installed Geeby-Deeby into `/opt/gbdb`, you could run a command like: `sudo ln -s /opt/gbdb/public /var/www/html/gbdb`.
+## Install Dependencies
+
+First, after cloning this repository to a directory, use "composer install" to load dependencies (see http://getcomposer.org for details).
+
+## Publish Web Content
+
+The easiest way to get Geeby-Deeby running is to create a symbolic link to /public in your system's web root (often something like `/var/www` or `/var/www/html`). So, for example, if you had installed Geeby-Deeby into `/opt/gbdb`, you could run a command like: `sudo ln -s /opt/gbdb/public /var/www/html/gbdb`.
 
 You may also need to adjust your Apache configuration to allow .htaccess override files within this new symlinked directory; for example, you could edit your default VirtualHost and add:
 
@@ -19,7 +23,9 @@ You may also need to adjust your Apache configuration to allow .htaccess overrid
 </Directory>
 </pre>
 
-3. After that, you'll have to set up a database....
+## Database Configuration
+
+After that, you'll have to set up a database....
 
 First, you need to decide on some details:
 
@@ -71,9 +77,13 @@ return array(
 );
 </pre>
 
-4. You can now make some additional configurations as needed; refer to the 'geeby-deeby' array in `module/GeebyDeeby/config/module.config.php` to see all of the settings that may be overridden in your `local.php` file. To start with, you should at least customize the 'siteTitle', 'siteEmail' and 'siteOwner' settings, which will control the name of your site, and the name/email used in site-related contact information.
+## Additional Configuration Options
 
-5. Finally, you need to establish a superuser account so you can edit the content of the site.
+You can now make some additional configurations as needed; refer to the 'geeby-deeby' array in `module/GeebyDeeby/config/module.config.php` to see all of the settings that may be overridden in your `local.php` file. To start with, you should at least customize the 'siteTitle', 'siteEmail' and 'siteOwner' settings, which will control the name of your site, and the name/email used in site-related contact information.
+
+## Establishing a Superuser
+
+Finally, you need to establish a superuser account so you can edit the content of the site.
 
 First, sign up for an account through the regular web interface (using the "Sign Up" link in the header).
 
@@ -97,4 +107,6 @@ update User set User_Group_ID=1, Person_ID=-1 where User_ID=1
 
 (Of course, this assumes that both the Superuser group and the new user you created have IDs of '1' -- if this is a fresh database, that should always be the case, but if you made any mistakes and had to create new rows, please substitute appropriate ID values as needed).
 
-6. Now, you can add "/edit" to the base URL of your installation (for example, `http://localhost/gbdb/edit`), and log in -- you are ready to populate the database through the web interface.
+## Accessing the Data Entry Backend
+
+Now, you can add "/edit" to the base URL of your installation (for example, `http://localhost/gbdb/edit`), and log in -- you are ready to populate the database through the web interface.
