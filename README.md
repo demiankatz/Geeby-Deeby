@@ -7,6 +7,8 @@ A bibliography and collection management system developed as the foundation for 
 
 # Installation
 
+The following sections run through the installation process; you should follow all of them in the order listed here.
+
 ## Install Dependencies
 
 First, after cloning this repository to a directory, use "composer install" to load dependencies (see http://getcomposer.org for details).
@@ -110,3 +112,10 @@ update User set User_Group_ID=1, Person_ID=-1 where User_ID=1
 ## Accessing the Data Entry Backend
 
 Now, you can add "/edit" to the base URL of your installation (for example, `http://localhost/gbdb/edit`), and log in -- you are ready to populate the database through the web interface.
+
+# Upgrading
+
+Whenever you pull down changes from the upstream repository, you should be sure to do two things:
+
+1. Run `composer install` to load the latest dependencies.
+2. Check the `data/migrations` directory for new SQL scripts added since your last upgrade. These should be run in chronological order to bring your database structure up to date (e.g. `mysql -ugbdb_user -pgbdb_pass gbdb < data/migrations/YYYYMMDD-nnn-name-of-migration.sql`>)
