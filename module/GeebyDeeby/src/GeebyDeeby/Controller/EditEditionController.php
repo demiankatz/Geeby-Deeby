@@ -637,7 +637,7 @@ class EditEditionController extends AbstractBase
             ->getList();
         $attributeValues = [];
         $values = $this->getDbTable('editionsfulltextattributesvalues')
-            ->getAttributesForFullTextID($rowId);
+            ->getAttributesForFullTextIDs([$rowId]);
         foreach ($values as $current) {
             $attributeValues[$current->Editions_Full_Text_Attribute_ID]
                 = $current->Editions_Full_Text_Attribute_Value;

@@ -286,9 +286,13 @@ class EditionController extends AbstractBase
         $fullTextAttributes = [];
         if (count($view->fullText) > 0) {
             $attrTable = $this->getDbTable('editionsfulltextattributesvalues');
-            foreach ($view->fullText as $current) {
-                $fullTextAttributes[$current->Sequence_ID]
-                    = $attrTable->getAttributesForFullTextID($current->Sequence_ID);
+            $sequenceIds = array_map(
+                function ($current) {
+                    return $current['Sequence_ID'];
+                }, $view->fullText->toArray()
+            );
+            foreach ($attrTable->getAttributesForFullTextIDs($sequenceIds) as $attr) {
+                $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;
             }
         }
         $view->fullTextAttributes = $fullTextAttributes;

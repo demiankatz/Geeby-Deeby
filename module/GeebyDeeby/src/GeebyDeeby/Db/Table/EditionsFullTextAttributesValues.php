@@ -57,13 +57,13 @@ class EditionsFullTextAttributesValues extends Gateway
     }
 
     /**
-     * Get a list of attributes for the specified full text ID.
+     * Get a list of attributes for the specified full text ID(s).
      *
-     * @param int $fullTextID Full text ID
+     * @param int[] $fullTextID Full text ID
      *
      * @return mixed
      */
-    public function getAttributesForFullTextID($fullTextID)
+    public function getAttributesForFullTextIDs($fullTextID)
     {
         $callback = function ($select) use ($fullTextID) {
             $select->join(
@@ -75,7 +75,7 @@ class EditionsFullTextAttributesValues extends Gateway
             $select->order(
                 ['efta.Display_Priority', 'efta.Editions_Full_Text_Attribute_Name']
             );
-            $select->where->equalTo('Editions_Full_Text_ID', $fullTextID);
+            $select->where->in('Editions_Full_Text_ID', (array)$fullTextID);
         };
         return $this->select($callback);
     }
