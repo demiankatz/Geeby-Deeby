@@ -1088,7 +1088,7 @@ CREATE TABLE `Series_AltTitles` (
   `Note_ID` int(11) DEFAULT NULL,
   `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`Sequence_ID`),
-  FOREIGN KEY (`Series_ID`) REFERENCES `Series` (`Series_ID`)
+  FOREIGN KEY (`Series_ID`) REFERENCES `Series` (`Series_ID`),
   FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

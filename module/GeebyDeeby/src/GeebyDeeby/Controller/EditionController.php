@@ -81,8 +81,9 @@ class EditionController extends AbstractBase
         foreach ($view->credits as $credit) {
             $personUri = $this
                 ->getServerUrl('person', ['id' => $credit['Person_ID']]);
-            $predicate = $credit['Edition_Credit_Predicate']
-                ?? $this->defaultCreditPredicate;
+            $predicate = empty($credit['Edition_Credit_Predicate'])
+                ? $this->defaultCreditPredicate
+                : $credit['Edition_Credit_Predicate'];
             if (!empty($predicate)) {
                 $edition->add($predicate, $graph->resource($personUri . '#name'));
             }

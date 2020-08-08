@@ -60,8 +60,9 @@ class ItemController extends AbstractBase
         foreach ($view->creators as $creator) {
             $personUri = $this
                 ->getServerUrl('person', ['id' => $creator['Person_ID']]);
-            $predicate = $creator['Item_Creator_Predicate']
-                ?? $this->defaultCreatorPredicate;
+            $predicate = empty($creator['Item_Creator_Predicate'])
+                ? $this->defaultCreatorPredicate
+                : $creator['Item_Creator_Predicate'];
             if (!empty($predicate)) {
                 $item->add($predicate, $graph->resource($personUri));
             }
