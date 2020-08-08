@@ -38,6 +38,8 @@ namespace GeebyDeeby\Controller;
  */
 class EditionController extends AbstractBase
 {
+    use FullTextAttributesTrait;
+
     /**
      * RDF class for representing copies of editions (null to omit).
      *
@@ -283,19 +285,7 @@ class EditionController extends AbstractBase
             ->getOCLCNumbersForEdition($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForEditionOrParentEdition($id);
-        $fullTextAttributes = [];
-        if (count($view->fullText) > 0) {
-            $attrTable = $this->getDbTable('editionsfulltextattributesvalues');
-            $sequenceIds = array_map(
-                function ($current) {
-                    return $current['Sequence_ID'];
-                }, $view->fullText->toArray()
-            );
-            foreach ($attrTable->getAttributesForFullTextIDs($sequenceIds) as $attr) {
-                $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;
-            }
-        }
-        $view->fullTextAttributes = $fullTextAttributes;
+        $this->addFullTextAttributesToView($view);
         $edTable = $this->getDbTable('edition');
         $view->publishers = $edTable->getPublishersForEdition($id);
         $view->parent = $edTable->getParentItemForEdition($id);
