@@ -302,6 +302,19 @@ class ItemController extends AbstractBase
             ->getOCLCNumbersForItem($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForItem($id);
+        $fullTextAttributes = [];
+        if (count($view->fullText) > 0) {
+            $attrTable = $this->getDbTable('editionsfulltextattributesvalues');
+            $sequenceIds = array_map(
+                function ($current) {
+                    return $current['Sequence_ID'];
+                }, $view->fullText->toArray()
+            );
+            foreach ($attrTable->getAttributesForFullTextIDs($sequenceIds) as $attr) {
+                $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;
+            }
+        }
+        $view->fullTextAttributes = $fullTextAttributes;
     }
 
     /**
