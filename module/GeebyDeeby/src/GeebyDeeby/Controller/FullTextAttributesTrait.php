@@ -50,12 +50,12 @@ trait FullTextAttributesTrait
         $fullTextAttributes = [];
         if (count($view->fullText ?? []) > 0) {
             $attrTable = $this->getDbTable('editionsfulltextattributesvalues');
-            $sequenceIds = array_map(
+            $ids = array_map(
                 function ($current) {
                     return $current['Sequence_ID'];
                 }, $view->fullText->toArray()
             );
-            foreach ($attrTable->getAttributesForFullTextIDs($sequenceIds) as $attr) {
+            foreach ($attrTable->getAttributesForFullTextIDs($ids) as $attr) {
                 $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;
             }
         }
