@@ -1,0 +1,23 @@
+<form id="editForm" onsubmit="EditionsFullTextAttribute.save(); return false;">
+  <input type="hidden" id="Edition_Full_Text_Attribute_ID" value="<?=$attribute['Editions_Full_Text_Attribute_ID']?>" />
+  <table class="edit">
+    <tr>
+      <th scope="row"><label for="Editions_Full_Text_Attribute_Name">Attribute Name:</label></th>
+      <td><input type="text" id="Editions_Full_Text_Attribute_Name" value="<?=$this->escapeHtml($attribute['Editions_Full_Text_Attribute_Name'] ?? '')?>" /></td>
+    </tr>
+    <tr>
+      <th scope="row"><label for="Editions_Full_Text_Attribute_RDF_Property">RDF Property (optional URI):</label></th>
+      <td><input type="text" id="Editions_Full_Text_Attribute_RDF_Property" value="<?=$this->escapeHtml($attribute['Editions_Full_Text_Attribute_RDF_Property'] ?? '')?>" /></td>
+    </tr>
+    <tr>
+      <th scope="row"><label for="Display_Priority">Display Priority (lower numbers displayed first):</label></th>
+      <td><input type="text" id="Display_Priority" value="<?=$this->escapeHtml($attribute['Display_Priority'] ?? '0')?>" /></td>
+    </tr>
+    <tr>
+      <th scope="row"><label for="Allow_HTML">Allow HTML in Value (checked = yes, unchecked = no):</label></th>
+      <td><input type="checkbox" id="Allow_HTML" value="1" <?=($attribute['Allow_HTML'] ?? 0) == 1 ? 'checked="checked" ' : ''?>/></td>
+    </tr>
+  </table>
+  <input type="submit" id="save_edition_full_text_attribute" value="Save" />
+  <div id="save_edition_full_text_attribute_status"></div>
+</form>

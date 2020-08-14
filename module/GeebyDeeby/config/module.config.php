@@ -339,6 +339,27 @@ return [
                             ],
                         ],
                     ],
+                    'editionfulltextattribute' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/EditionFullTextAttribute[/:id]',
+                            'defaults' => [
+                                'controller'    => 'EditEditionFullTextAttribute',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ],
+                        ],
+                    ],
+                    'editionfulltextattribute_list' => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/EditionFullTextAttributeList',
+                            'defaults' => [
+                                'controller'    => 'EditEditionFullTextAttribute',
+                                'action'        => 'list',
+                            ],
+                        ],
+                    ],
                     'file' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -1301,6 +1322,7 @@ return [
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
             'GeebyDeeby\Controller\EditEditionAttribute' => 'GeebyDeeby\Controller\EditEditionAttributeController',
+            'GeebyDeeby\Controller\EditEditionFullTextAttribute' => 'GeebyDeeby\Controller\EditEditionFullTextAttributeController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
             'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',

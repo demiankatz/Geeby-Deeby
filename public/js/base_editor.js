@@ -396,7 +396,13 @@ BaseEditor.prototype.editLink = function(type, which, subtype) {
  * Save an active link instance.
  */
 BaseEditor.prototype.saveLink = function(type, which, subtype) {
-    var values = this.getSaveData({}, this.links[type].editFields, null, null);
+    var values = this.getSaveData(
+        {},
+        this.links[type].editFields,
+        typeof this.links[type].attributeSelector === 'undefined'
+            ? null : this.links[type].attributeSelector,
+        type + "_Attribute_"
+    );
     if (!values) {
         return;
     }

@@ -77,10 +77,15 @@ var EditionEditor = function() {
             }
         },
         'FullText': {
+            'editFields': {
+                'source_id': { 'id': '#Edit_Full_Text_Source_ID' },
+                'url': { 'id': '#Edit_Full_Text_URL', 'emptyError': 'URL cannot be blank.' }
+            },
             'saveFields': {
                 'source_id': { 'id': '#Full_Text_Source_ID' },
                 'url': { 'id': '#Full_Text_URL', 'emptyError': 'URL cannot be blank.' }
-            }
+            },
+            'attributeSelector': '.edition-full-text-attribute'
         },
         'Image': {
             'saveFields': {
@@ -142,7 +147,11 @@ EditionEditor.prototype.redrawNextAndPrev = function() {
 /**
  * Override the standard "redraw after save" behavior.
  */
-EditionEditor.prototype.redrawAfterSave = function() {
+EditionEditor.prototype.redrawAfterSave = function(type) {
+    if (type === 'FullText') {
+        parentFunction = BaseEditor.prototype.redrawAfterSave.bind(this);
+        parentFunction(type);
+    }
     this.redrawLinks('PreferredItemTitle');
     this.redrawLinks('PreferredPublisher');
     this.redrawLinks('PreferredSeriesTitle');

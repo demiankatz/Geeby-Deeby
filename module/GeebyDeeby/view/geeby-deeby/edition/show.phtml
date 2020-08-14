@@ -19,7 +19,23 @@
             <?php foreach ($fullText as $current): ?>
               <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
                 <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
-              </a><br />
+              </a>
+              <?php
+                $attrHtml = [];
+                if (count($fullTextAttributes[$current['Sequence_ID']] ?? []) > 0) {
+                  foreach ($fullTextAttributes[$current['Sequence_ID']] as $attr) {
+                    $attrValue = $attr['Allow_HTML']
+                      ? $attr['Editions_Full_Text_Attribute_Value']
+                      : $this->escapeHtml($attr['Editions_Full_Text_Attribute_Value']);
+                    $attrHtml[] = '<b>'
+                      . $this->escapeHtml($attr['Editions_Full_Text_Attribute_Name'])
+                      . ':</b> '
+                      . $attrValue;
+                  }
+                  echo '(' . implode('; ', $attrHtml) . ')';
+                }
+              ?>
+              <br />
             <?php endforeach; ?>
           </td>
         </tr>
