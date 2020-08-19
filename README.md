@@ -104,7 +104,7 @@ insert into User_Groups(Group_Name, Content_Editor, User_Editor, Approver, Data_
 Now you should promote your user to an administrator like this:
 
 <pre>
-update User set User_Group_ID=1, Person_ID=-1 where User_ID=1
+update Users set User_Group_ID=1, Person_ID=-1 where User_ID=1;
 </pre>
 
 (Of course, this assumes that both the Superuser group and the new user you created have IDs of '1' -- if this is a fresh database, that should always be the case, but if you made any mistakes and had to create new rows, please substitute appropriate ID values as needed).
