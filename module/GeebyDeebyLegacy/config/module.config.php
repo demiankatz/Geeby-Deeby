@@ -7,35 +7,35 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-return array(
-    'router' => array(
-        'routes' => array(
-            'legacy' => array(
+return [
+    'router' => [
+        'routes' => [
+            'legacy' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/:filename',
-                    'constraints' => array(
+                    'constraints' => [
                         'filename' => '.*(.cgi|.html?|.php)',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         '__NAMESPACE__' => 'GeebyDeebyLegacy\Controller',
                         'controller'    => 'Legacy',
                         'action'        => 'index',
                         'id'            => null,
                         'extra'         => null,
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'controllers' => array(
-        'invokables' => array(
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'controllers' => [
+        'invokables' => [
             'GeebyDeebyLegacy\Controller\Legacy' => 'GeebyDeebyLegacy\Controller\LegacyController',
-        ),
-    ),
-    'view_manager' => array(
-        'template_map' => array(
+        ],
+    ],
+    'view_manager' => [
+        'template_map' => [
             'geeby-deeby-legacy/legacy/notfound' => __DIR__ . '/../view/geeby-deeby-legacy/legacy/notfound.phtml',
-        ),
-    ),
-);
+        ],
+    ],
+];

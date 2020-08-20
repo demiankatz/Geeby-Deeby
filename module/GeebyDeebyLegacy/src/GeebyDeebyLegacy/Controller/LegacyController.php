@@ -64,7 +64,7 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
         case 'list_people.php':
             return $this->redirect()->toRoute('people');
         case 'list_people_bios.php':
-            return $this->redirect()->toRoute('people', array('extra' => 'Bios'));
+            return $this->redirect()->toRoute('people', ['extra' => 'Bios']);
         case 'list_publishers.php':
             return $this->redirect()->toRoute('publishers');
         case 'list_series.php':
@@ -74,50 +74,50 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
         case 'list_users.php':
             return $this->redirect()->toRoute('users');
         case 'list_years.php':
-            return $this->redirect()->toRoute('items', array('extra' => 'ByYear'));
+            return $this->redirect()->toRoute('items', ['extra' => 'ByYear']);
         case 'new_reviews.php':
             return $this->redirect()->toRoute('reviews');
         case 'show_category.php':
             return $this->redirect()->toRoute(
-                'category', array('id' => $this->params()->fromQuery('id'))
+                'category', ['id' => $this->params()->fromQuery('id')]
             );
         case 'show_checklist.php':
             // TODO
             break;
         case 'show_country.php':
             return $this->redirect()->toRoute(
-                'country', array('id' => $this->params()->fromQuery('id'))
+                'country', ['id' => $this->params()->fromQuery('id')]
             );
         case 'show_faqs.php':
             return $this->redirect()->toRoute('faqs');
         case 'show_isbn_links.php':
             return $this->redirect()->toRoute(
-                'item', array(
+                'item', [
                     'id' => 'Unknown',
                     'action' => 'ISBNDetails',
                     'extra' => $this->params()->fromQuery('isbn')
-                )
+                ]
             );
         case 'show_item.php':
             return $this->redirect()
-                ->toRoute('item', array('id' => $this->params()->fromQuery('id')));
+                ->toRoute('item', ['id' => $this->params()->fromQuery('id')]);
         case 'show_language.php':
             return $this->redirect()->toRoute(
-                'language', array('id' => $this->params()->fromQuery('id'))
+                'language', ['id' => $this->params()->fromQuery('id')]
             );
         case 'show_links.php':
             return $this->redirect()->toRoute('links');
         case 'show_person.php':
             return $this->redirect()->toRoute(
-                'person', array('id' => $this->params()->fromQuery('id'))
+                'person', ['id' => $this->params()->fromQuery('id')]
             );
         case 'show_platform.php':
             return $this->redirect()->toRoute(
-                'platform', array('id' => $this->params()->fromQuery('id'))
+                'platform', ['id' => $this->params()->fromQuery('id')]
             );
         case 'show_publisher.php':
             return $this->redirect()->toRoute(
-                'publisher', array('id' => $this->params()->fromQuery('id'))
+                'publisher', ['id' => $this->params()->fromQuery('id')]
             );
         case 'show_series.php':
             $id = $this->params()->fromQuery('id');
@@ -132,64 +132,64 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
                 }
             }
             return $this->redirect()
-                ->toRoute('series', array('id' => $id));
+                ->toRoute('series', ['id' => $id]);
         case 'show_series_images.php':
             return $this->redirect()->toRoute(
-                'series', array(
+                'series', [
                     'id' => $this->params()->fromQuery('id'),
                     'extra' => 'Images'
-                )
+                ]
             );
         case 'show_type.php':
             return $this->redirect()->toRoute(
-                'material', array('id' => $this->params()->fromQuery('id'))
+                'material', ['id' => $this->params()->fromQuery('id')]
             );
         case 'show_user.php':
             return $this->redirect()->toRoute(
-                'user', array('id' => $this->params()->fromQuery('id'))
+                'user', ['id' => $this->params()->fromQuery('id')]
             );
         case 'show_user_buyers.php':
             return $this->redirect()->toRoute(
-                'user', array(
+                'user', [
                     'id' => $this->params()->fromQuery('id'),
                     'extra' => 'Buyers'
-                )
+                ]
             );
         case 'show_user_collection.php':
             return $this->redirect()->toRoute(
-                'user', array(
+                'user', [
                     'id' => $this->params()->fromQuery('id'),
                     'extra' => 'Collection'
-                )
+                ]
             );
         case 'show_user_comments.php':
             return $this->redirect()->toRoute(
-                'user', array(
+                'user', [
                     'id' => $this->params()->fromQuery('id'),
                     'extra' => 'Comments'
-                )
+                ]
             );
         case 'show_user_reviews.php':
             $id = $this->params()->fromQuery('id', 'all');
             if ($id === 'all') {
                 return $this->redirect()
-                    ->toRoute('items', array('extra' => 'Reviews'));
+                    ->toRoute('items', ['extra' => 'Reviews']);
             }
             return $this->redirect()
-                ->toRoute('user', array('id' => $id, 'extra' => 'Reviews'));
+                ->toRoute('user', ['id' => $id, 'extra' => 'Reviews']);
         case 'show_user_sales.php':
             return $this->redirect()->toRoute(
-                'user', array(
+                'user', [
                     'id' => $this->params()->fromQuery('id'),
                     'extra' => 'Extras'
-                )
+                ]
             );
         case 'show_user_sellers.php':
             return $this->redirect()->toRoute(
-                'user', array(
+                'user', [
                     'id' => $this->params()->fromQuery('id'),
                     'extra' => 'Sellers'
-                )
+                ]
             );
         case 'thanks.php':
             return $this->redirect()->toRoute(

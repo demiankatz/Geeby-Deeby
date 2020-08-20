@@ -7,35 +7,35 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-return array(
-    'geeby-deeby' => array(
+return [
+    'geeby-deeby' => [
         'siteTitle' => 'Demian\'s Gamebook Web Page',
         'siteEmail' => 'demiankatz@gmail.com',
         'siteOwner' => 'Demian Katz',
-    ),
-    'controllers' => array(
-        'invokables' => array(
+    ],
+    'controllers' => [
+        'invokables' => [
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
-        ),
-    ),
-    'router' => array(
-        'routes' => array(
-            'thanks' => array(
+        ],
+    ],
+    'router' => [
+        'routes' => [
+            'thanks' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/Thanks',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'GeebyDeeby\Controller\About',
                         'action'     => 'thanks',
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'view_manager' => array(
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'view_manager' => [
         'display_exceptions' => false,
-        'template_path_stack' => array(
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
-    ),
-);
+        ],
+    ],
+];
