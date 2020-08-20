@@ -58,7 +58,7 @@ class SeriesPublishers extends Gateway
     /**
      * Get a list of series for the specified city.
      *
-     * @var int $cityID City ID
+     * @param int $cityID City ID
      *
      * @return mixed
      */
@@ -66,11 +66,11 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($cityID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->join(
-                array('pa' => 'Publishers_Addresses'),
+                ['pa' => 'Publishers_Addresses'],
                 'Series_Publishers.Address_ID = pa.Address_ID'
             );
             $select->order('s.Series_Name');
@@ -83,7 +83,7 @@ class SeriesPublishers extends Gateway
     /**
      * Get a list of series for the specified country.
      *
-     * @var int $countryID Country ID
+     * @param int $countryID Country ID
      *
      * @return mixed
      */
@@ -91,11 +91,11 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($countryID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->join(
-                array('pa' => 'Publishers_Addresses'),
+                ['pa' => 'Publishers_Addresses'],
                 'Series_Publishers.Address_ID = pa.Address_ID'
             );
             $select->order('s.Series_Name');
@@ -108,7 +108,7 @@ class SeriesPublishers extends Gateway
     /**
      * Get a list of series for the specified publisher.
      *
-     * @var int $publisherID Publisher ID
+     * @param int $publisherID Publisher ID
      *
      * @return mixed
      */
@@ -116,7 +116,7 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($publisherID) {
             $select->join(
-                array('s' => 'Series'),
+                ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
             );
             $select->order('s.Series_Name');
@@ -129,7 +129,7 @@ class SeriesPublishers extends Gateway
     /**
      * Get a list of publishers for the specified series.
      *
-     * @var int $seriesID Series ID
+     * @param int $seriesID Series ID
      *
      * @return mixed
      */
@@ -137,29 +137,29 @@ class SeriesPublishers extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                array('p' => 'Publishers'),
+                ['p' => 'Publishers'],
                 'Series_Publishers.Publisher_ID = p.Publisher_ID'
             );
             $select->join(
-                array('pa' => 'Publishers_Addresses'),
+                ['pa' => 'Publishers_Addresses'],
                 'Series_Publishers.Address_ID = pa.Address_ID',
-                array('Street'), Select::JOIN_LEFT
+                ['Street'], Select::JOIN_LEFT
             );
             $select->join(
-                array('pi' => 'Publishers_Imprints'),
+                ['pi' => 'Publishers_Imprints'],
                 'Series_Publishers.Imprint_ID = pi.Imprint_ID',
-                array('Imprint_Name'), Select::JOIN_LEFT
+                ['Imprint_Name'], Select::JOIN_LEFT
             );
             $select->join(
-                array('c' => 'Countries'), 'pa.Country_ID = c.Country_ID',
+                ['c' => 'Countries'], 'pa.Country_ID = c.Country_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('ci' => 'Cities'), 'pa.City_ID = ci.City_ID',
+                ['ci' => 'Cities'], 'pa.City_ID = ci.City_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Series_Publishers.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );

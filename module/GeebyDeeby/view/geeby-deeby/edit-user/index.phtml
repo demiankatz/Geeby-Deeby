@@ -19,7 +19,7 @@
     </tr>
     <tr>
       <th>User Group:</th>
-      <td><?=$this->render('geeby-deeby/edit-user/usergroup-select.phtml', array('usergroups' => $usergroups, 'selected' => isset($user['User_Group_ID']) ? $user['User_Group_ID'] : null))?></td>
+      <td><?=$this->render('geeby-deeby/edit-user/usergroup-select.phtml', ['usergroups' => $usergroups, 'selected' => $user['User_Group_ID'] ?? null])?></td>
     </tr>
     <tr>
       <th>New Password (empty to leave unchanged):</th>

@@ -57,7 +57,7 @@ class EditPublisherController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array('publisher' => 'Publisher_Name');
+        $assignMap = ['publisher' => 'Publisher_Name'];
         $view = $this->handleGenericItem('publisher', $assignMap, 'publisher');
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -100,7 +100,7 @@ class EditPublisherController extends AbstractBase
             if ($this->getRequest()->isDelete()) {
                 $extra = $this->params()->fromRoute('extra');
                 $result = $this->getDbTable('seriespublishers')->select(
-                    array('Address_ID' => $extra)
+                    ['Address_ID' => $extra]
                 );
                 if (count($result) > 0) {
                     $row = $result->current();
@@ -141,7 +141,7 @@ class EditPublisherController extends AbstractBase
             if ($this->getRequest()->isDelete()) {
                 $extra = $this->params()->fromRoute('extra');
                 $result = $this->getDbTable('seriespublishers')->select(
-                    array('Imprint_ID' => $extra)
+                    ['Imprint_ID' => $extra]
                 );
                 if (count($result) > 0) {
                     $row = $result->current();

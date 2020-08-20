@@ -58,14 +58,14 @@ class EditEditionAttributeController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'attribute_name' => 'Editions_Attribute_Name',
             'rdf_property' => 'Editions_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
             'copy_to_clone' => 'Copy_To_Clone',
             'priority' => 'Display_Priority'
-            
-        );
+
+        ];
         $response = $this
             ->handleGenericItem('editionsattribute', $assignMap, 'attribute');
 

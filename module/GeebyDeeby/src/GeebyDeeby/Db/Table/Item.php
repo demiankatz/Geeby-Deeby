@@ -80,7 +80,7 @@ class Item extends Gateway
     public function getSuggestions($query, $limit = false)
     {
         $callback = function ($select) use ($query) {
-            $select2 = clone($select);
+            $select2 = clone $select;
             $select2->columns(
                 [
                     'Item_ID',
@@ -90,7 +90,7 @@ class Item extends Gateway
                 ]
             );
             $select2->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'Items.Item_ID = iat.Item_ID',
                 [], Select::JOIN_LEFT
             );
@@ -128,9 +128,9 @@ class Item extends Gateway
     /**
      * Get a list of items for the specified series.
      *
-     * @var int  $seriesID        Series ID
-     * @var bool $topOnly         Retrieve only top-level items?
-     * @var bool $groupByMaterial Should we group results by material type?
+     * @param int  $seriesID        Series ID
+     * @param bool $topOnly         Retrieve only top-level items?
+     * @param bool $groupByMaterial Should we group results by material type?
      *
      * @return mixed
      */
@@ -139,71 +139,76 @@ class Item extends Gateway
     ) {
         $callback = function ($select) use ($seriesID, $topOnly, $groupByMaterial) {
             $select->join(
-                array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
-                array(
+                ['eds' => 'Editions'], 'eds.Item_ID = Items.Item_ID',
+                [
                     'Volume', 'Position', 'Replacement_Number',
                     'Edition_ID' => new Expression(
-                        'min(?)', array('eds.Edition_ID'),
-                        array(Expression::TYPE_IDENTIFIER)
+                        'min(?)', ['eds.Edition_ID'],
+                        [Expression::TYPE_IDENTIFIER]
                     )
-                )
+                ]
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'Items.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $itemName = new Expression(
                 'COALESCE(?, ?)',
-                array('iat.Item_AltName', 'Items.Item_Name'),
-                array(
+                ['iat.Item_AltName', 'Items.Item_Name'],
+                [
                     Expression::TYPE_IDENTIFIER,
                     Expression::TYPE_IDENTIFIER
-                )
+                ]
             );
             $select->order(
                 $groupByMaterial
-                    ? array('mt.Material_Type_Name', 'Volume', 'Position', 'Replacement_Number', $itemName)
-                    : array('Volume', 'Position', 'Replacement_Number', $itemName)
+                    ? [
+                        'mt.Material_Type_Name', 'Volume', 'Position',
+                        'Replacement_Number', $itemName
+                    ] : ['Volume', 'Position', 'Replacement_Number', $itemName]
             );
             $select->group(
-                array('Items.Item_ID', 'Volume', 'Position', 'Replacement_Number', 'Items.Material_Type_ID')
+                [
+                    'Items.Item_ID', 'Volume', 'Position', 'Replacement_Number',
+                    'Items.Material_Type_ID'
+                ]
             );
             $select->where->equalTo('eds.Series_ID', $seriesID);
             if ($topOnly) {
                 $select->join(
-                    array('childEds' => 'Editions'),
+                    ['childEds' => 'Editions'],
                     'eds.Edition_ID = childEds.Parent_Edition_ID',
-                    array(),
+                    [],
                     Select::JOIN_LEFT
                 );
                 $select->join(
-                    array('childItems' => 'Items'),
+                    ['childItems' => 'Items'],
                     'childEds.Item_ID = childItems.Item_ID',
-                    array(
+                    [
                         'Child_Items' => new Expression(
                             'GROUP_CONCAT('
                                 . 'COALESCE(?, ?) ORDER BY ? SEPARATOR \'||\')',
-                            array(
+                            [
                                 'childIat.Item_AltName', 'childItems.Item_Name',
-                                'childEds.Position_In_Parent'),
-                            array(
+                                'childEds.Position_In_Parent'],
+                            [
                                 Expression::TYPE_IDENTIFIER,
                                 Expression::TYPE_IDENTIFIER,
                                 Expression::TYPE_IDENTIFIER
-                            )
+                            ]
                         )
-                    ),
+                    ],
                     Select::JOIN_LEFT
                 );
                 $select->join(
-                    array('childIat' => 'Items_AltTitles'),
+                    ['childIat' => 'Items_AltTitles'],
                     'childEds.Preferred_Item_AltName_ID = childIat.Sequence_ID',
-                    array(), Select::JOIN_LEFT
+                    [], Select::JOIN_LEFT
                 );
                 $select->where->isNull('eds.Parent_Edition_ID');
             }
@@ -214,45 +219,45 @@ class Item extends Gateway
     /**
      * Get a list of children for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
     public function getItemChildren($itemID)
     {
         $callback = function ($select) use ($itemID) {
-            $select->columns(array()); // no columns needed from non-parent Items table
+            $select->columns([]); // no columns needed from non-parent Items table
             $select->join(
-                array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
-                array('Edition_ID', 'Edition_Name')
+                ['eds' => 'Editions'], 'eds.Item_ID = Items.Item_ID',
+                ['Edition_ID', 'Edition_Name']
             );
             $select->join(
-                array('child_eds' => 'Editions'),
+                ['child_eds' => 'Editions'],
                 'eds.Edition_ID = child_eds.Parent_Edition_ID',
-                array(
+                [
                     'Extent_In_Parent', 'Position_In_Parent'
-                )
+                ]
             );
             $select->join(
-                array('child_items' => 'Items'),
+                ['child_items' => 'Items'],
                 'child_eds.Item_ID = child_items.Item_ID',
-                array('Item_ID', 'Item_Name')
+                ['Item_ID', 'Item_Name']
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'child_items.Material_Type_ID = mt.Material_Type_ID',
-                array('Material_Type_Name')
+                ['Material_Type_Name']
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'child_eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->order(
-                array(
+                [
                     'eds.Edition_Name', 'eds.Edition_ID',
                     'child_eds.Position_In_Parent', 'child_items.Item_Name'
-                )
+                ]
             );
             $select->where->equalTo('Items.Item_ID', $itemID);
         };
@@ -262,43 +267,43 @@ class Item extends Gateway
     /**
      * Get a list of parents for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
     public function getItemParents($itemID)
     {
         $callback = function ($select) use ($itemID) {
-            $select->columns(array()); // no columns needed from non-parent Items table
+            $select->columns([]); // no columns needed from non-parent Items table
             $select->join(
-                array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
-                array()
+                ['eds' => 'Editions'], 'eds.Item_ID = Items.Item_ID',
+                []
             );
             $select->join(
-                array('parent_eds' => 'Editions'),
+                ['parent_eds' => 'Editions'],
                 'eds.Parent_Edition_ID = parent_eds.Edition_ID',
-                array()
+                []
             );
             $select->join(
-                array('parent_items' => 'Items'),
+                ['parent_items' => 'Items'],
                 'parent_eds.Item_ID = parent_items.Item_ID',
-                array('Item_ID', 'Item_Name')
+                ['Item_ID', 'Item_Name']
             );
             $select->join(
-                array('mt' => 'Material_Types'),
+                ['mt' => 'Material_Types'],
                 'parent_items.Material_Type_ID = mt.Material_Type_ID',
-                array('Material_Type_Name')
+                ['Material_Type_Name']
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'parent_eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->order(
-                array('parent_items.Item_Name', 'Material_Type_Name')
+                ['parent_items.Item_Name', 'Material_Type_Name']
             );
             $select->group(
-                array('parent_items.Item_ID', 'Material_Type_Name')
+                ['parent_items.Item_ID', 'Material_Type_Name']
             );
             $select->where->equalTo('Items.Item_ID', $itemID);
         };
@@ -308,7 +313,7 @@ class Item extends Gateway
     /**
      * Get a list of items for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -316,16 +321,16 @@ class Item extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('eds' => 'Editions'), 'eds.Item_ID = Items.Item_ID',
-                array('Extent_In_Parent', 'Position_in_Parent', 'Edition_ID')
+                ['eds' => 'Editions'], 'eds.Item_ID = Items.Item_ID',
+                ['Extent_In_Parent', 'Position_in_Parent', 'Edition_ID']
             );
             $select->join(
-                array('iat' => 'Items_AltTitles'),
+                ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                array('Item_AltName'), Select::JOIN_LEFT
+                ['Item_AltName'], Select::JOIN_LEFT
             );
             $select->order(
-                array('Position_in_Parent', 'Item_Name')
+                ['Position_in_Parent', 'Item_Name']
             );
             $select->where->equalTo('Parent_Edition_ID', $editionID);
         };

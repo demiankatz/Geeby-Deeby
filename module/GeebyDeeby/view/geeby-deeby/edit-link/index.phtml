@@ -11,7 +11,7 @@
     </tr>
     <tr>
       <th>Link Type:</th>
-      <td><?=$this->render('geeby-deeby/edit-link/type-select.phtml', array('linkTypes' => $linkTypes, 'selected' => isset($link['Link_Type_ID']) ? $link['Link_Type_ID'] : null))?></td>
+      <td><?=$this->render('geeby-deeby/edit-link/type-select.phtml', ['linkTypes' => $linkTypes, 'selected' => $link['Link_Type_ID'] ?? null])?></td>
     </tr>
     <tr>
       <th>Date Checked<br/>(YYYY-MM-DD):</th>

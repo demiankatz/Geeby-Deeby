@@ -1,9 +1,9 @@
-<? if (isset($pseudonyms) && count($pseudonyms) > 0): ?>
-  <? foreach ($pseudonyms as $current): ?>
+<?php if (isset($pseudonyms) && count($pseudonyms) > 0): ?>
+  <?php foreach ($pseudonyms as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
+          <a href="<?=$this->url('edit/person', ['id' => $current['Person_ID']])?>">
             <?=$this->showPerson($current)?>
           </a>
         </td>
@@ -13,7 +13,7 @@
         </td>
       </tr>
     </table>
-  <? endforeach; ?>
-<? else: ?>
+  <?php endforeach; ?>
+<?php else: ?>
   No relevant names.
-<? endif; ?>
+<?php endif; ?>

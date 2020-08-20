@@ -58,14 +58,14 @@ class EditTagRelationshipController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'relationship_name' => 'Tags_Relationship_Name',
             'rdf_property' => 'Tags_Relationship_RDF_Property',
             'priority' => 'Display_Priority',
             'inverse_relationship_name' => 'Tags_Inverse_Relationship_Name',
             'inverse_rdf_property' => 'Tags_Inverse_Relationship_RDF_Property',
             'inverse_priority' => 'Inverse_Display_Priority',
-        );
+        ];
         $response = $this
             ->handleGenericItem('tagsrelationship', $assignMap, 'relationship');
 

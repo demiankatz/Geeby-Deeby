@@ -58,13 +58,13 @@ class EditItemAttributeController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'attribute_name' => 'Items_Attribute_Name',
             'rdf_property' => 'Items_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
             'priority' => 'Display_Priority'
-            
-        );
+
+        ];
         $response = $this
             ->handleGenericItem('itemsattribute', $assignMap, 'attribute');
 

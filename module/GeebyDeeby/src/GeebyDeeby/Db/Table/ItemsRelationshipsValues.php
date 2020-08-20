@@ -57,7 +57,7 @@ class ItemsRelationshipsValues extends Gateway
     /**
      * Get a list of items related to the provided subject item ID.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -65,7 +65,7 @@ class ItemsRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('t' => 'Items'),
+                ['t' => 'Items'],
                 'Items_Relationships_Values.Subject_Item_ID = t.Item_ID'
             );
             $select->where(['Object_Item_ID' => $itemID]);
@@ -77,7 +77,7 @@ class ItemsRelationshipsValues extends Gateway
     /**
      * Get a list of items related to the provided subject item ID.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -85,7 +85,7 @@ class ItemsRelationshipsValues extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('t' => 'Items'),
+                ['t' => 'Items'],
                 'Items_Relationships_Values.Object_Item_ID = t.Item_ID'
             );
             $select->where(['Subject_Item_ID' => $itemID]);
@@ -97,7 +97,7 @@ class ItemsRelationshipsValues extends Gateway
     /**
      * Get a list of relationships for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

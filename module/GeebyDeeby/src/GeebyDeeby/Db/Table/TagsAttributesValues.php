@@ -57,7 +57,7 @@ class TagsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified tag.
      *
-     * @var int $tagID Tag ID
+     * @param int $tagID Tag ID
      *
      * @return mixed
      */
@@ -65,11 +65,11 @@ class TagsAttributesValues extends Gateway
     {
         $callback = function ($select) use ($tagID) {
             $select->join(
-                array('ta' => 'Tags_Attributes'),
+                ['ta' => 'Tags_Attributes'],
                 'ta.Tags_Attribute_ID = '
                 . 'Tags_Attributes_Values.Tags_Attribute_ID'
             );
-            $select->order(array('ta.Display_Priority', 'ta.Tags_Attribute_Name'));
+            $select->order(['ta.Display_Priority', 'ta.Tags_Attribute_Name']);
             $select->where->equalTo('Tag_ID', $tagID);
         };
         return $this->select($callback);

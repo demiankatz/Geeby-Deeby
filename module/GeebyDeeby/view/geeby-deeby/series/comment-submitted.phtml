@@ -1,10 +1,10 @@
-<?
+<?php
     $this->layout()->title = 'Comment Submitted';
 ?>
-<? if ($noChange): ?>
+<?php if ($noChange): ?>
   <p>You did not make any changes; nothing has been saved.</p>
-<? else: ?>
+<?php else: ?>
   <p>Your comment has been saved. It will appear on the site once it has been approved by an administrator.</p>
-<? endif; ?>
+<?php endif; ?>
 
-<p><a href="<?=$this->url('series', array('id' => $series))?>">Back to Series</a></p>
+<p><a href="<?=$this->url('series', ['id' => $series])?>">Back to Series</a></p>

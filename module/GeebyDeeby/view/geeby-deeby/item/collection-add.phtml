@@ -1,17 +1,17 @@
-<?
+<?php
     $this->layout()->title = 'Edit ' . ucwords($list) . ' List';
 ?>
-<? if ($existing): ?>
+<?php if ($existing): ?>
   <p class="disclaimer">This item is already on your <?=$list?> list.  If you wish, you may add or edit the
   comment and click Submit to save the changes.  Alternatively, you can click Delete to remove the item
   from the list.</p>
-<? endif; ?>
+<?php endif; ?>
 
 <form action="" method="post">
   <input type="hidden" name="series" value="<?=$series?>" />
   Comment (optional): <input type="text" name="comment" size="50" value="<?=$existing ? $this->escapeHtml($existing['Collection_Note']) : ''?>" maxlength="255" />
   <input type="submit" name="submit" value="Submit" />
-  <? if ($existing): ?><input type="submit" name="delete" value="Delete" /><? endif; ?>
+  <?php if ($existing): ?><input type="submit" name="delete" value="Delete" /><?php endif; ?>
 </form>
 
 <br />

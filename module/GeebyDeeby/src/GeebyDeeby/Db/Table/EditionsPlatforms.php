@@ -29,7 +29,6 @@ namespace GeebyDeeby\Db\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\RowGateway\RowGateway;
-use Zend\Db\Sql\Select;
 
 /**
  * Table Definition for Editions_Platforms
@@ -58,25 +57,35 @@ class EditionsPlatforms extends Gateway
     /**
      * Get editions for the specified platform.
      *
-     * @var int $platformID Platform ID
+     * @param int $platformID Platform ID
+     *
+     * @return mixed
      */
     public function getItemsForPlatform($platformID)
     {
         $callback = function ($select) use ($platformID) {
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Platforms.Edition_ID = eds.Edition_ID',
-                array('Volume', 'Position', 'Replacement_Number')
+                ['Volume', 'Position', 'Replacement_Number']
             );
             $select->join(
-                array('i' => 'Items'), 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
             );
             $select->join(
-                array('s' => 'Series'), 'eds.Series_ID = s.Series_ID'
+                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
             );
-            $select->group(array('i.Item_ID', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number'));
+            $select->group(
+                [
+                    'i.Item_ID', 's.Series_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number'
+                ]
+            );
             $select->order(
-                array('Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position', 'eds.Replacement_Number', 'Item_Name')
+                [
+                    'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number', 'Item_Name'
+                ]
             );
             $select->where->equalTo('Platform_ID', $platformID);
         };
@@ -86,7 +95,7 @@ class EditionsPlatforms extends Gateway
     /**
      * Get a list of platforms for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -94,14 +103,14 @@ class EditionsPlatforms extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('p' => 'Platforms'),
+                ['p' => 'Platforms'],
                 'Editions_Platforms.Platform_ID = p.Platform_ID'
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Platforms.Edition_ID = eds.Edition_ID'
             );
-            $select->order(array('Platform'));
+            $select->order(['Platform']);
             $select->where->equalTo('Item_ID', $itemID);
         };
         return $this->select($callback);
@@ -110,7 +119,7 @@ class EditionsPlatforms extends Gateway
     /**
      * Get a list of platforms for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -118,10 +127,10 @@ class EditionsPlatforms extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('p' => 'Platforms'),
+                ['p' => 'Platforms'],
                 'Editions_Platforms.Platform_ID = p.Platform_ID'
             );
-            $select->order(array('Platform'));
+            $select->order(['Platform']);
             $select->where->equalTo('Edition_ID', $editionID);
         };
         return $this->select($callback);

@@ -1,8 +1,8 @@
-<? $this->layout()->title = 'Editions' ?>
-<? if (!isset($editions) || count($editions) < 1): ?>
+<?php $this->layout()->title = 'Editions' ?>
+<?php if (!isset($editions) || count($editions) < 1): ?>
   No editions.
-<? else: ?>
+<?php else: ?>
   <p>
     <?=$this->render('geeby-deeby/edit-edition/render-editions.phtml')?>
   </p>
-<? endif; ?>
+<?php endif; ?>

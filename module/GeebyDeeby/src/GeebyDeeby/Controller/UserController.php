@@ -26,6 +26,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Controller;
+
 use Zend\Crypt\Password\Bcrypt;
 
 /**
@@ -53,7 +54,7 @@ class UserController extends AbstractBase
             return false;
         }
         return $this->createViewModel(
-            array('user' => $rowObj->toArray())
+            ['user' => $rowObj->toArray()]
         );
     }
 
@@ -69,10 +70,10 @@ class UserController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
         $collection = $this->getDbTable('collections')
-            ->getForUser($view->user['User_ID'], array('have', 'want'), true);
+            ->getForUser($view->user['User_ID'], ['have', 'want'], true);
         // Format the data for more convenient display:
-        $formatted = array();
-        $seriesNames = array();
+        $formatted = [];
+        $seriesNames = [];
         foreach ($collection as $current) {
             $lang = $current['Language_Name'];
             $series = $current['Series_ID'];
@@ -142,24 +143,24 @@ class UserController extends AbstractBase
             $password2 = $this->params()->fromPost('Password2');
             if ($view->fullname == '') {
                 $view->error = 'Please fill out all required fields.';
-            } else if ($password1 != $password2
+            } elseif ($password1 != $password2
                 || strpos($view->address, '://') !== false // block spam addresses
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
             } else {
                 $table = $this->getDbTable('user');
-                $update = array(
+                $update = [
                     'Name' => $view->fullname, 'Address' => $view->address
-                );
+                ];
                 if (!empty($password1)) {
                     $bcrypt = new Bcrypt();
                     $update['Password_Hash'] = $bcrypt->create($password1);
                 }
                 $table->update(
-                    $update, array('User_ID' => $view->user['User_ID'])
+                    $update, ['User_ID' => $view->user['User_ID']]
                 );
                 return $this->redirect()->toRoute(
-                    'user', array('id' => $view->user['User_ID'])
+                    'user', ['id' => $view->user['User_ID']]
                 );
             }
         } else {
@@ -213,7 +214,7 @@ class UserController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            array('users' => $this->getDbTable('user')->getList())
+            ['users' => $this->getDbTable('user')->getList()]
         );
     }
 

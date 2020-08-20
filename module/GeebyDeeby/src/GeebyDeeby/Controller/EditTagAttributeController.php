@@ -52,7 +52,8 @@ class EditTagAttributeController extends AbstractBase
         // If this is not an AJAX request, we also want to display relationships:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->relationships
-                = $this->forwardTo(__NAMESPACE__ . '\EditTagRelationship', 'list')->relationships;
+                = $this->forwardTo(__NAMESPACE__ . '\EditTagRelationship', 'list')
+                ->relationships;
         }
         return $view;
     }
@@ -64,13 +65,13 @@ class EditTagAttributeController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array(
+        $assignMap = [
             'attribute_name' => 'Tags_Attribute_Name',
             'rdf_property' => 'Tags_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
             'priority' => 'Display_Priority'
 
-        );
+        ];
         $response = $this
             ->handleGenericItem('tagsattribute', $assignMap, 'attribute');
 

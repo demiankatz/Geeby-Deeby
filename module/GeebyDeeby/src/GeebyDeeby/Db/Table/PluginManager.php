@@ -43,12 +43,14 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      *
      * @var array
      */
-    protected $aliases = array(
+    protected $aliases = [
         'authority' => 'GeebyDeeby\Db\Table\Authority',
         'category' => 'GeebyDeeby\Db\Table\Category',
         'citation' => 'GeebyDeeby\Db\Table\Citation',
+        'citiesuris' => 'GeebyDeeby\Db\Table\CitiesURIs',
         'city' => 'GeebyDeeby\Db\Table\City',
         'collections' => 'GeebyDeeby\Db\Table\Collections',
+        'countriesuris' => 'GeebyDeeby\Db\Table\CountriesURIs',
         'country' => 'GeebyDeeby\Db\Table\Country',
         'edition' => 'GeebyDeeby\Db\Table\Edition',
         'editionsattribute' => 'GeebyDeeby\Db\Table\EditionsAttribute',
@@ -119,7 +121,8 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'seriesmaterialtypes' => 'GeebyDeeby\Db\Table\SeriesMaterialTypes',
         'seriespublishers' => 'GeebyDeeby\Db\Table\SeriesPublishers',
         'seriesrelationship' => 'GeebyDeeby\Db\Table\SeriesRelationship',
-        'seriesrelationshipsvalues' => 'GeebyDeeby\Db\Table\SeriesRelationshipsValues',
+        'seriesrelationshipsvalues' =>
+            'GeebyDeeby\Db\Table\SeriesRelationshipsValues',
         'seriestranslations' => 'GeebyDeeby\Db\Table\SeriesTranslations',
         'tag' => 'GeebyDeeby\Db\Table\Tag',
         'tagsattribute' => 'GeebyDeeby\Db\Table\TagsAttribute',
@@ -130,18 +133,21 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'tagtype' => 'GeebyDeeby\Db\Table\TagType',
         'user' => 'GeebyDeeby\Db\Table\User',
         'usergroup' => 'GeebyDeeby\Db\Table\UserGroup',
-    );
+    ];
 
     /**
      * Constructor
      *
      * Make sure table gateways are properly initialized.
      *
-     * @param mixed                configOrContainerInstance Config or container (for backward compatibility)
-     * @param null|ConfigInterface $v3config                 Configuration settings (optional)
+     * @param mixed                $configOrContainerInstance Config or container
+     * (for backward compatibility)
+     * @param null|ConfigInterface $v3config                  Configuration settings
+     * (optional)
      */
-    public function __construct($configOrContainerInstance = null, array $v3config = [])
-    {
+    public function __construct($configOrContainerInstance = null,
+        array $v3config = []
+    ) {
         $this->addAbstractFactory('GeebyDeeby\Db\Table\AbstractFactory');
         parent::__construct($configOrContainerInstance, $v3config);
     }

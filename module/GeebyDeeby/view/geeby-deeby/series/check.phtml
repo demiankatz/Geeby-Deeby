@@ -1,4 +1,4 @@
-<?
+<?php
     $this->layout()->title = 'Check for Missing Data';
 
     $formatRanges = function ($values) {
@@ -7,7 +7,7 @@
         foreach ($values as $current) {
             if ($currentStart === null) {
                 $currentStart = $currentEnd = $current;
-            } else if ($current == $currentEnd + 1) {
+            } elseif ($current == $currentEnd + 1) {
                 $currentEnd = $current;
             } else {
                 $parts[] = $currentStart === $currentEnd ? $currentStart : "$currentStart-$currentEnd";
@@ -22,80 +22,80 @@
 ?>
 
 <h2>Missing Credits</h2>
-<? if (empty($missingCredits)): ?>
+<?php if (empty($missingCredits)): ?>
   <p>None.</p>
-<? else: ?>
-  <? $parts = []; foreach ($missingCredits as $current): ?>
-    <? $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
+<?php else: ?>
+  <?php $parts = []; foreach ($missingCredits as $current): ?>
+    <?php $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
            . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
            . '</a>';
     ?>
-  <? endforeach; ?>
+  <?php endforeach; ?>
   <?=implode(', ', $parts)?>
-<? endif; ?>
+<?php endif; ?>
 
 <h2>Missing Dates</h2>
-<? if (empty($missingDates)): ?>
+<?php if (empty($missingDates)): ?>
   <p>None.</p>
-<? else: ?>
-  <? $parts = []; foreach ($missingDates as $current): ?>
-    <? $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
+<?php else: ?>
+  <?php $parts = []; foreach ($missingDates as $current): ?>
+    <?php $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
            . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
            . '</a>';
     ?>
-  <? endforeach; ?>
+  <?php endforeach; ?>
   <?=implode(', ', $parts)?>
-<? endif; ?>
+<?php endif; ?>
 
 <h2>Statistics</h2>
 
-<? if (empty($dateStats['Start'])): ?>
+<?php if (empty($dateStats['Start'])): ?>
   <p>No date information.</p>
-<? elseif ($dateStats['Start'] == $dateStats['End']): ?>
+<?php elseif ($dateStats['Start'] == $dateStats['End']): ?>
   <p>Series contains dates from <?=$this->escapeHtml($dateStats['End'])?>.</p>
-<? else: ?>
+<?php else: ?>
   <p>Series contains dates ranging from <?=$this->escapeHtml($dateStats['Start'])?>
   to <?=$this->escapeHtml($dateStats['End'])?>.</p>
-<? endif; ?>
+<?php endif; ?>
 
-<? if (!empty($itemStats)): ?>
+<?php if (!empty($itemStats)): ?>
   <p>Series contains <?=$this->escapeHtml($itemStats['Total'])?>
   total items representing <?=$this->escapeHtml($itemStats['Different'])?>
   different positions.</p>
 
-  <? if ($itemStats['EndVol'] == 0): ?>
+  <?php if ($itemStats['EndVol'] == 0): ?>
     <p>Series does not use volume numbering.</p>
-  <? else: ?>
+  <?php else: ?>
     <p>Series contains volume numbers from <?=$this->escapeHtml($itemStats['StartVol'])?> to <?=$this->escapeHtml($itemStats['EndVol'])?>.</p>
-    <? if (!empty($itemStats['MissingVol'])): ?>
+    <?php if (!empty($itemStats['MissingVol'])): ?>
       <p>Missing volumes: <?=$formatRanges($itemStats['MissingVol'])?></p>
-    <? endif; ?>
-  <? endif; ?>
+    <?php endif; ?>
+  <?php endif; ?>
 
-  <? for ($v = 0; $v <= $itemStats['EndVol']; $v++): ?>
-    <? if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol'])) { continue; } ?>
-    <? if ($v > 0): ?><h3>Volume <?=$this->escapeHtml($v)?></h3><? endif; ?>
-    <? if ($v == 0 && $itemStats['EndVol'] > $v): ?><h3>No Volume Specified</h3><? endif; ?>
+  <?php for ($v = 0; $v <= $itemStats['EndVol']; $v++): ?>
+    <?php if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol'])) { continue; } ?>
+    <?php if ($v > 0): ?><h3>Volume <?=$this->escapeHtml($v)?></h3><?php endif; ?>
+    <?php if ($v == 0 && $itemStats['EndVol'] > $v): ?><h3>No Volume Specified</h3><?php endif; ?>
     <?=$this->escapeHtml($itemStats['TotalByVol'][$v])?> item(s) numbered from <?=$this->escapeHtml($itemStats['Start'][$v])?> to <?=$this->escapeHtml($itemStats['End'][$v])?>.</p>
-      <? if (!empty($itemStats['Dupes'][$v])): ?>
+      <?php if (!empty($itemStats['Dupes'][$v])): ?>
         <p>
           Duplicate numbers:
-          <? $dupeList = []; foreach ($itemStats['Dupes'][$v] as $no => $repArr): ?>
-            <? $currentDupe = $this->escapeHtml($no); ?>
-            <? foreach ($repArr as $rep): ?>
-              <? if ($rep > 0): ?>
-                <? $currentDupe .= ' (replacement no. ' . $this->escapeHtml($rep) . ')'; ?>
-              <? endif; ?>
-            <? endforeach; ?>
-            <? $dupeList[] = $currentDupe; ?>
-          <? endforeach; ?>
+          <?php $dupeList = []; foreach ($itemStats['Dupes'][$v] as $no => $repArr): ?>
+            <?php $currentDupe = $this->escapeHtml($no); ?>
+            <?php foreach ($repArr as $rep): ?>
+              <?php if ($rep > 0): ?>
+                <?php $currentDupe .= ' (replacement no. ' . $this->escapeHtml($rep) . ')'; ?>
+              <?php endif; ?>
+            <?php endforeach; ?>
+            <?php $dupeList[] = $currentDupe; ?>
+          <?php endforeach; ?>
           <?=implode(', ', $dupeList)?>
         </p>
-      <? endif; ?>
-      <? if (!empty($itemStats['Missing'][$v])): ?>
+      <?php endif; ?>
+      <?php if (!empty($itemStats['Missing'][$v])): ?>
         <p>Missing numbers: <?=$formatRanges($itemStats['Missing'][$v])?></p>
-      <? endif; ?>
-  <? endfor; ?>
-<? else: ?>
+      <?php endif; ?>
+  <?php endfor; ?>
+<?php else: ?>
   <p>No item information.</p>
-<? endif; ?>
+<?php endif; ?>

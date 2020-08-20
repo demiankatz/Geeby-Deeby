@@ -63,7 +63,32 @@ class EditCountryController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = array('country' => 'Country_Name');
-        return $this->handleGenericItem('country', $assignMap, 'country');
+        $assignMap = ['country' => 'Country_Name'];
+        $view = $this->handleGenericItem('country', $assignMap, 'country');
+        // Add extra fields/controls if outside of a lightbox:
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            $view->uris = $this->getDbTable('countriesuris')
+                ->getURIsForCountry($view->countryObj->Country_ID);
+            $view->setTemplate('geeby-deeby/edit-country/edit-full');
+            $view->predicates = $this->getDbTable('predicate')->getList();
+        }
+        return $view;
+    }
+
+    /**
+     * Deal with URIs
+     *
+     * @return mixed
+     */
+    public function uriAction()
+    {
+        $extras = ($pid = $this->params()->fromPost('predicate_id'))
+            ? ['Predicate_ID' => $pid] : [];
+        return $this->handleGenericLink(
+            'countriesuris', 'Country_ID', 'URI',
+            'uris', 'getURIsForCountry',
+            'geeby-deeby/edit-country/uri-list.phtml',
+            $extras
+        );
     }
 }

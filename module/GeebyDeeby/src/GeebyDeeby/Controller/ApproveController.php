@@ -74,7 +74,7 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Missing ID value.');
         }
         $table = $this->getDbTable('user');
-        $where = array('User_ID' => $id);
+        $where = ['User_ID' => $id];
         $user = $table->select($where);
         if (count($user) < 1) {
             return $this->jsonDie('Problem loading user data.');
@@ -154,7 +154,7 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Missing ID value.');
         }
         $table = $this->getDbTable('user');
-        $where = array('User_ID' => $id);
+        $where = ['User_ID' => $id];
         $user = $table->select($where);
         if (count($user) < 1) {
             return $this->jsonDie('Problem loading user data.');
@@ -193,13 +193,13 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Text must not be blank.');
         }
 
-        $userWhere = array('User_ID' => $userId);
+        $userWhere = ['User_ID' => $userId];
         $user = $this->getDbTable('user')->select($userWhere);
         if (count($user) < 1) {
             return $this->jsonDie('Problem loading user data.');
         }
 
-        $itemWhere = array(ucwords($type) . '_ID' => $itemId);
+        $itemWhere = [ucwords($type) . '_ID' => $itemId];
         $item = $this->getDbTable($type)->select($itemWhere);
         if (count($item) < 1) {
             return $this->jsonDie('Problem loading item data.');
@@ -208,8 +208,8 @@ class ApproveController extends AbstractBase
         $table = $this->getDbTable(
             $type == 'item' ? 'itemsreviews' : 'seriesreviews'
         );
-        $value = array('Review' => $text, 'Approved' => 'y');
-        $table->update($value, $itemWhere + $userWhere + array('Approved' => 'n'));
+        $value = ['Review' => $text, 'Approved' => 'y'];
+        $table->update($value, $itemWhere + $userWhere + ['Approved' => 'n']);
         $recentTable = $this->getDbTable('recentreviews');
         try {
             $recentTable->insert(
@@ -251,13 +251,13 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Missing ' . ucwords($type) . ' ID value.');
         }
 
-        $userWhere = array('User_ID' => $userId);
+        $userWhere = ['User_ID' => $userId];
         $user = $this->getDbTable('user')->select($userWhere);
         if (count($user) < 1) {
             return $this->jsonDie('Problem loading user data.');
         }
 
-        $itemWhere = array(ucwords($type) . '_ID' => $itemId);
+        $itemWhere = [ucwords($type) . '_ID' => $itemId];
         $item = $this->getDbTable($type)->select($itemWhere);
         if (count($item) < 1) {
             return $this->jsonDie('Problem loading item data.');
@@ -266,7 +266,7 @@ class ApproveController extends AbstractBase
         $table = $this->getDbTable(
             $type == 'item' ? 'itemsreviews' : 'seriesreviews'
         );
-        $table->delete($itemWhere + $userWhere + array('Approved' => 'n'));
+        $table->delete($itemWhere + $userWhere + ['Approved' => 'n']);
         return $this->jsonReportSuccess();
     }
 

@@ -1,11 +1,11 @@
-<? if (isset($tagTypes) && count($tagTypes) > 0): ?>
+<?php if (isset($tagTypes) && count($tagTypes) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Tag_Type_ID">
-    <? foreach ($tagTypes as $current): ?>
+    <?php foreach ($tagTypes as $current): ?>
       <option value="<?=$current['Tag_Type_ID']?>"<?=($current['Tag_Type_ID'] == $selected) ? ' selected="selected"' : ''?>>
         <?=$this->escapeHtml($current['Tag_Type'])?>
       </option>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </select>
-<? else: ?>
+<?php else: ?>
   Please define subject/tag types.
-<? endif; ?>
+<?php endif; ?>

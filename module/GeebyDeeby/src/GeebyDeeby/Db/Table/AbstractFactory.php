@@ -59,26 +59,30 @@ class AbstractFactory implements \Zend\ServiceManager\AbstractFactoryInterface
     /**
      * Determine if we can create a service with name
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
+     * @param ServiceLocatorInterface $serviceLocator Service manager
+     * @param string                  $name           Service name
+     * @param string                  $requestedName  Requested service name
+     *
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
+    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator,
+        $name, $requestedName
+    ) {
         return class_exists($requestedName);
     }
 
     /**
      * Create service with name
      *
-     * @param ServiceLocatorInterface $tm
-     * @param $name
-     * @param $requestedName
+     * @param ServiceLocatorInterface $tm            Table manager
+     * @param string                  $name          Service name
+     * @param string                  $requestedName Requested service name
+     *
      * @return mixed
      */
-    public function createServiceWithName(ServiceLocatorInterface $tm, $name, $requestedName)
-    {
+    public function createServiceWithName(ServiceLocatorInterface $tm, $name,
+        $requestedName
+    ) {
         $container = $tm->getServiceLocator();
         $adapter = $container->get('Zend\Db\Adapter\Adapter');
         $rowPrototype = $this->getRowPrototype($container, $requestedName);

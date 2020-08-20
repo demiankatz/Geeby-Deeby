@@ -1,9 +1,9 @@
-<? if (!isset($credits) || count($credits) < 1): ?>
+<?php if (!isset($credits) || count($credits) < 1): ?>
   No credits.
-<? else: ?>
+<?php else: ?>
   <table class="list_item">
     <tr><th>Order</th><th colspan="2">Credit</th></tr>
-    <? foreach ($credits as $current): ?>
+    <?php foreach ($credits as $current): ?>
       <tr>
         <td>
           <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="credit_order_<?=$this->escapeHtml($current['Person_ID'])?>_<?=$this->escapeHtml($current['Role_ID'])?>" />
@@ -15,14 +15,14 @@
         </td>
         <td>
           <?=$this->escapeHtml($current['Role_Name'])?>:
-          <a href="<?=$this->url('edit/person', array('id' => $current['Person_ID']))?>">
+          <a href="<?=$this->url('edit/person', ['id' => $current['Person_ID']])?>">
             <?=$this->escapeHtml($this->showperson($current))?>
           </a>
-          <? if (!empty($current['Note'])): ?>
+          <?php if (!empty($current['Note'])): ?>
             (<?=$this->escapeHtml($current['Note'])?>)
-          <? endif; ?>
+          <?php endif; ?>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

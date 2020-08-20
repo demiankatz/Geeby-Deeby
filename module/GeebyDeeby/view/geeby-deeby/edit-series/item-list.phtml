@@ -1,9 +1,9 @@
-<? if (!isset($item_list) || count($item_list) == 0): ?>
+<?php if (!isset($item_list) || count($item_list) == 0): ?>
   No items.
-<? else: ?>
+<?php else: ?>
   <table class="list_item">
     <tr><th>Order</th><th colspan="2">Title / Material Type</th></tr>
-    <? foreach ($item_list as $current): ?>
+    <?php foreach ($item_list as $current): ?>
       <tr>
         <td>
           <input class="number" type="text" value="<?=($current['Volume'] > 0 ? $this->escapeHtml($current['Volume'] . ',') : '') . $this->escapeHtml($current['Position'])?>" id="order<?=$current['Edition_ID']?>" />
@@ -16,10 +16,10 @@
         <td>
           <?=$this->escapeHtml(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])?>
           (<?=$this->escapeHtml($current['Material_Type_Name'])?>)
-          <a href="<?=$this->url('edit/item', array('id' => $current['Item_ID']))?>">[edit item]</a>
-          <a href="<?=$this->url('edit/edition', array('id' => $current['Edition_ID']))?>">[edit edition]</a>
+          <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>">[edit item]</a>
+          <a href="<?=$this->url('edit/edition', ['id' => $current['Edition_ID']])?>">[edit edition]</a>
         </td>
       </tr>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </table>
-<? endif; ?>
+<?php endif; ?>

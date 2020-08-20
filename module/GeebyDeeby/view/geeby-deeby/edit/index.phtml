@@ -1,5 +1,5 @@
-<? $this->layout()->title = 'Administration' ?>
-<? if ($contentEditor): ?>
+<?php $this->layout()->title = 'Administration' ?>
+<?php if ($contentEditor): ?>
   <h2>Edit Data</h2>
   <ul>
     <li><a target='_categories' href='<?=$this->url('edit/category_list')?>'>Categories</a></li>
@@ -23,26 +23,26 @@
     <li><a target='_tags' href='<?=$this->url('edit/tag_list')?>'>Subjects/Tags</a></li>
     <li><a target='_tagsattributes' href='<?=$this->url('edit/tagattribute_list')?>'>Subjects/Tags Attributes and Relationships</a></li>
   </ul>
-<? endif; ?>
+<?php endif; ?>
 
-<? if ($approver || $userEditor || $dataManager): ?>
+<?php if ($approver || $userEditor || $dataManager): ?>
   <h2>Extra Tools</h2>
   <ul>
-    <? if ($approver): ?>
+    <?php if ($approver): ?>
       <li><a target='_approve' href='<?=$this->url('edit/approve')?>'>Approve Users / Content Submissions</a></li>
-    <? endif; ?>
-    <? if ($dataManager): ?>
+    <?php endif; ?>
+    <?php if ($dataManager): ?>
       <li><a target='_cleanup' href='<?=$this->url('edit/cleanup')?>'>Data Cleanup</a></li>
-    <? endif; ?>
-    <? if ($userEditor): ?>
+    <?php endif; ?>
+    <?php if ($userEditor): ?>
       <li><a target='_users' href='<?=$this->url('edit/user_list')?>'>Edit Users</a></li>
-    <? endif; ?>
-    <? if ($dataManager): ?>
+    <?php endif; ?>
+    <?php if ($dataManager): ?>
       <li><a target='_migrate' href='<?=$this->url('edit/migrate')?>'>Migrate Old Data</a></li>
-    <? endif; ?>
+    <?php endif; ?>
   </ul>
-<? endif; ?>
+<?php endif; ?>
 
-<? if (!$contentEditor && !$approver && !$userEditor): ?>
+<?php if (!$contentEditor && !$approver && !$userEditor): ?>
   <p>You do not have permission to access this page.</p>
-<? endif; ?>
+<?php endif; ?>

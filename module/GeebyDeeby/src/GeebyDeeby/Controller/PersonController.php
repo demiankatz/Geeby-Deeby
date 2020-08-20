@@ -133,10 +133,10 @@ class PersonController extends AbstractBase
         $extra = $this->params()->fromRoute('extra');
         $bios = (strtolower($extra) == 'bios');
         return $this->createViewModel(
-            array(
+            [
                 'bioMode' => $bios,
                 'people' => $this->getDbTable('person')->getList($bios)
-            )
+            ]
         );
     }
 
@@ -154,7 +154,8 @@ class PersonController extends AbstractBase
      * Get the view model representing the specified person (or false if
      * invalid ID)
      *
-     * @param int $id ID of person to load
+     * @param int    $id   ID of person to load
+     * @param string $sort Sort type
      *
      * @return \Zend\View\Model\ViewModel|bool
      */
@@ -166,7 +167,7 @@ class PersonController extends AbstractBase
             return false;
         }
         $view = $this->createViewModel(
-            array('person' => $rowObj->toArray())
+            ['person' => $rowObj->toArray()]
         );
         $view->sort = $sort;
         $view->citations = $this->getDbTable('itemscreators')

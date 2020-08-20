@@ -73,6 +73,24 @@ CREATE TABLE `Cities` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Cities_URIs`
+--
+
+DROP TABLE IF EXISTS `Cities_URIs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Cities_URIs` (
+  `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `City_ID` int(11) NOT NULL,
+  `Predicate_ID` int(11) NOT NULL,
+  `URI` varchar(2048) NOT NULL,
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`City_ID`) REFERENCES `Cities` (`City_ID`),
+  FOREIGN KEY (`Predicate_ID`) REFERENCES `Predicates` (`Predicate_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Collections`
 --
 
@@ -103,6 +121,24 @@ CREATE TABLE `Countries` (
   `Country_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Country_Name` tinytext NOT NULL,
   PRIMARY KEY (`Country_ID`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Countries_URIs`
+--
+
+DROP TABLE IF EXISTS `Countries_URIs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Countries_URIs` (
+  `Sequence_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `Country_ID` int(11) NOT NULL,
+  `Predicate_ID` int(11) NOT NULL,
+  `URI` varchar(2048) NOT NULL,
+  PRIMARY KEY (`Sequence_ID`),
+  FOREIGN KEY (`Country_ID`) REFERENCES `Countries` (`Country_ID`),
+  FOREIGN KEY (`Predicate_ID`) REFERENCES `Predicates` (`Predicate_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -983,6 +1019,8 @@ DROP TABLE IF EXISTS `Roles`;
 CREATE TABLE `Roles` (
   `Role_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Role_Name` tinytext NOT NULL,
+  `Item_Creator_Predicate` varchar(2048) DEFAULT NULL,
+  `Edition_Credit_Predicate` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`Role_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

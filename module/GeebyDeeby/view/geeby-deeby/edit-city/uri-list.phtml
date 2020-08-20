@@ -1,0 +1,15 @@
+<?php if (isset($uris) && count($uris) > 0): ?>
+  <?php foreach ($uris as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td><?=$this->escapeHtml($current['URI'])?> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
+        <td>
+          <a class="ui-icon ui-icon-trash" href="#" onclick="City.unlink('URI', '<?=$current['URI']?>'); return false;">
+          </a>
+        </td>
+      </tr>
+    </table>
+  <?php endforeach; ?>
+<?php else: ?>
+  No URIs defined.
+<?php endif; ?>

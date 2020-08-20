@@ -1,18 +1,18 @@
-<?
+<?php
     $this->layout()->title = 'Series with Comments';
 ?>
-<? if (count($comments) > 0): ?>
-  <? $currentLetter = $currentSeries = false; foreach ($comments as $current): ?>
-    <? $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
+<?php if (count($comments) > 0): ?>
+  <?php $currentLetter = $currentSeries = false; foreach ($comments as $current): ?>
+    <?php $first = $this->firstletter($current['Series_Name']); if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
-    <? endif; ?>
-    <? if ($currentSeries !== $current['Series_ID']): ?>
-      <? $currentSeries = $current['Series_ID']; ?>
-      <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+    <?php endif; ?>
+    <?php if ($currentSeries !== $current['Series_ID']): ?>
+      <?php $currentSeries = $current['Series_ID']; ?>
+      <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
         <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
       </a><br />
-    <? endif; ?>
-  <? endforeach; ?>
-<? else: ?>
+    <?php endif; ?>
+  <?php endforeach; ?>
+<?php else: ?>
   <p>No comments listed.</p>
-<? endif; ?>
+<?php endif; ?>

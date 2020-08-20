@@ -39,6 +39,57 @@ namespace GeebyDeeby\Controller;
 class EditionController extends AbstractBase
 {
     /**
+     * RDF class for representing copies of editions (null to omit).
+     *
+     * @var string
+     */
+    protected $copyRdfClass = null;
+
+    /*
+     * Default predicate to use for credits, if no specific predicate is included
+     * in the role data. (Null to omit predicate-free credits in RDF output).
+     *
+     * @var string
+     */
+    protected $defaultCreditPredicate = null;
+
+    /**
+     * RDF predicate for linking editions to copies (null to omit).
+     *
+     * @var string
+     */
+    protected $hasCopyPredicate = null;
+
+    /**
+     * RDF predicate for linking full text URIs to copies (null to omit).
+     *
+     * @var string
+     */
+    protected $fullTextPredicate = null;
+
+    /**
+     * Add credits to an edition graph.
+     *
+     * @param \EasyRdf\Graph $graph   Graph to populate
+     * @param object         $edition Edition graph to populate
+     * @param object         $view    View model populated with information.
+     *
+     * @return void
+     */
+    protected function addCreditsToGraph($graph, $edition, $view)
+    {
+        foreach ($view->credits as $credit) {
+            $personUri = $this
+                ->getServerUrl('person', ['id' => $credit['Person_ID']]);
+            $predicate = $credit['Edition_Credit_Predicate']
+                ?? $this->defaultCreditPredicate;
+            if (!empty($predicate)) {
+                $edition->add($predicate, $graph->resource($personUri . '#name'));
+            }
+        }
+    }
+
+    /**
      * Get a view model containing an edition object (or return false if missing)
      *
      * @param array $extras     Extra parameters to send to view model
@@ -62,12 +113,12 @@ class EditionController extends AbstractBase
             if (!empty($rowObj->Preferred_Item_AltName_ID)) {
                 $ian = $this->getDbTable('itemsalttitles');
                 $tmpRow = $ian->select(
-                    array('Sequence_ID' => $rowObj->Preferred_Item_AltName_ID)
+                    ['Sequence_ID' => $rowObj->Preferred_Item_AltName_ID]
                 )->current();
                 $item['Item_AltName'] = $tmpRow['Item_AltName'];
             }
         } else {
-            $item = array();
+            $item = [];
         }
         if (!empty($rowObj->Series_ID)) {
             $seriesTable = $this->getDbTable('series');
@@ -76,17 +127,17 @@ class EditionController extends AbstractBase
             if (!empty($rowObj->Preferred_Series_AltName_ID)) {
                 $ian = $this->getDbTable('seriesalttitles');
                 $tmpSeriesRow = $ian->select(
-                    array('Sequence_ID' => $rowObj->Preferred_Series_AltName_ID)
+                    ['Sequence_ID' => $rowObj->Preferred_Series_AltName_ID]
                 )->current();
                 $series['Series_AltName'] = $tmpSeriesRow['Series_AltName'];
             }
         } else {
-            $series = array();
+            $series = [];
         }
         $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
             ->getAttributesForEdition($id);
         return $this->createViewModel(
-            array('edition' => $rowObj->toArray(), 'item' => $item, 'series' => $series)
+            ['edition' => $rowObj->toArray(), 'item' => $item, 'series' => $series]
             + $extras
         );
     }
@@ -110,7 +161,7 @@ class EditionController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view, $class = array())
+    protected function addPrimaryResourceToGraph($graph, $view, $class = [])
     {
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $view->edition['Edition_ID'];
@@ -131,13 +182,23 @@ class EditionController extends AbstractBase
                 'owl:sameAs', 'http://www.worldcat.org/oclc/' . $oclc['OCLC_Number']
             );
         }
+        if (!empty($this->copyRdfClass) && !empty($this->hasCopyPredicate)) {
+            if (!empty($this->fullTextPredicate)) {
+                foreach ($view->fullText as $i => $fullText) {
+                    $copyUri = $uri . '#copy' . $i;
+                    $copy = $graph->resource($copyUri, $this->copyRdfClass);
+                    $edition->add($this->hasCopyPredicate, $copy);
+                    $copy->set($this->fullTextPredicate, $fullText['Full_Text_URL']);
+                }
+            }
+        }
+        $this->addCreditsToGraph($graph, $edition, $view);
         return $edition;
     }
 
     /**
      * Build an RDF graph from the available data.
      *
-     * @param string $id   ID of primary resource in graph.
      * @param object $view View model populated with information.
      *
      * @return \EasyRdf\Graph

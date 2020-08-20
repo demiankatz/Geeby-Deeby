@@ -109,6 +109,7 @@ abstract class AbstractRelationship extends Gateway
      * Get a list of relationships.
      *
      * @param mixed $where Where clause for list.
+     *
      * @return mixed
      */
     public function getList($where = null)

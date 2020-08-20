@@ -23,6 +23,7 @@
  * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 namespace GeebyDeeby\Db\Row;
 
@@ -35,6 +36,7 @@ use GeebyDeeby\Db\Table\PluginManager as TableManager;
  * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class TableAwareGateway extends RowGateway
 {

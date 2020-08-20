@@ -68,9 +68,9 @@ class FullTextSource extends Gateway
             $fulltext = $this->getDbTable('editionsfulltext');
             $filterCallback = function ($select) use ($seriesID) {
                 $select->join(
-                    array('e' => 'Editions'),
+                    ['e' => 'Editions'],
                     'Editions_Full_Text.Edition_ID = e.Edition_ID',
-                    array(), \Zend\Db\Sql\Select::JOIN_INNER
+                    [], \Zend\Db\Sql\Select::JOIN_INNER
                 );
                 $select->columns(['Full_Text_Source_ID']);
                 $select->quantifier(\Zend\Db\Sql\Select::QUANTIFIER_DISTINCT);

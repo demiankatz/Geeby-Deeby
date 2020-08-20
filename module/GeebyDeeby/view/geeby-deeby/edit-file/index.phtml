@@ -11,7 +11,7 @@
     </tr>
     <tr>
       <th>File Type:</th>
-      <td><?=$this->render('geeby-deeby/edit-file/type-select.phtml', array('fileTypes' => $fileTypes, 'selected' => isset($file['File_Type_ID']) ? $file['File_Type_ID'] : null))?></td>
+      <td><?=$this->render('geeby-deeby/edit-file/type-select.phtml', ['fileTypes' => $fileTypes, 'selected' => $file['File_Type_ID'] ?? null])?></td>
     </tr>
     <tr>
       <th>Description:</th>

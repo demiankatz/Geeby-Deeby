@@ -1,7 +1,7 @@
-<?
+<?php
     $title = $this->fixtitle($item['Item_Name']);
     $this->layout()->title = 'Item - ' . $title;
-    $editionViewLink = $this->url('item', array('id' => $item['Item_ID'], 'extra' => 'Editions'));
+    $editionViewLink = $this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Editions']);
 
     // If there are too many images to display comfortably, pick a smaller number
     // and set a flag to display a link to edition view, where everything is visible.
@@ -35,12 +35,12 @@
 ?>
 <div class="row">
   <?=$this->render('partials/images.phtml', compact('images', 'editions'))?>
-  <? if ($truncatedImages): ?>
+  <?php if ($truncatedImages): ?>
     <div class="col-md-12">
       To see more images, switch to
       <a href="<?=$editionViewLink?>">Edition View</a>.
     </div>
-  <? endif; ?>
+  <?php endif; ?>
   <div class="col-md-<?=count($images) > 0 ? 10 : 12?>">
     <div class="pull-right" style="padding:6px 0;">
       View:
@@ -49,165 +49,165 @@
         <a href="<?=$editionViewLink?>" class="btn btn-default">By Edition</a>
       </div>
     </div>
-    <? if (count($editions) > 1): ?><h2>Combined Summary</h2><? endif; ?>
+    <?php if (count($editions) > 1): ?><h2>Combined Summary</h2><?php endif; ?>
     <table class="item">
-      <? if (count($fullText) > 0): ?>
+      <?php if (count($fullText) > 0): ?>
         <tr>
           <th>Online Full Text:</th>
           <td>
-            <? $fullTextCount = count($fullText); ?>
-            <? $previousFullTextName = $skippedFullText = false; ?>
-            <? foreach ($fullText as $current): ?>
-              <? if ($fullTextCount > 6 && $current['Edition_Name'] == $previousFullTextName): ?>
-                <? $skippedFullText = true; ?>
-              <? else: ?>
+            <?php $fullTextCount = count($fullText); ?>
+            <?php $previousFullTextName = $skippedFullText = false; ?>
+            <?php foreach ($fullText as $current): ?>
+              <?php if ($fullTextCount > 6 && $current['Edition_Name'] == $previousFullTextName): ?>
+                <?php $skippedFullText = true; ?>
+              <?php else: ?>
                 <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
                   <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
-                  <? if (count($editions) > 1): ?>
+                  <?php if (count($editions) > 1): ?>
                     (<?=$this->escapeHtml($this->fixtitle($current['Edition_Name']))?>)
-                  <? endif; ?>
+                  <?php endif; ?>
                 </a><br />
-              <? endif; ?>
-              <? $previousFullTextName = $current['Edition_Name'] ?>
-            <? endforeach; ?>
-            <? if ($skippedFullText): ?>
+              <?php endif; ?>
+              <?php $previousFullTextName = $current['Edition_Name'] ?>
+            <?php endforeach; ?>
+            <?php if ($skippedFullText): ?>
               <i>To see all <?=$fullTextCount?> full text links, switch to
               <a href="<?=$editionViewLink?>">Edition View</a>.</i>
-            <? endif; ?>
+            <?php endif; ?>
           </td>
         </tr>
-      <? endif; ?>
-      <? if (count($series) > 0): ?>
+      <?php endif; ?>
+      <?php if (count($series) > 0): ?>
         <tr>
           <th>Series:</th>
           <td>
-            <? foreach ($series as $current): ?>
-              <a href="<?=$this->url('series', array('id' => $current['Series_ID']))?>">
+            <?php foreach ($series as $current): ?>
+              <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle(empty($current['Series_AltName']) ? $current['Series_Name'] : $current['Series_AltName']))?>
               </a>
-              <? if ($current['Parent_Volume'] > 0 || $current['Parent_Position'] > 0 || $current['Parent_Replacement_Number'] > 0): ?>
-                &mdash; <a href="<?=$this->url('item', array('id' => $current['Parent_Item_ID']))?>">
-                  <? if ($current['Parent_Volume'] > 0): ?>
+              <?php if ($current['Parent_Volume'] > 0 || $current['Parent_Position'] > 0 || $current['Parent_Replacement_Number'] > 0): ?>
+                &mdash; <a href="<?=$this->url('item', ['id' => $current['Parent_Item_ID']])?>">
+                  <?php if ($current['Parent_Volume'] > 0): ?>
                     v. <?=$this->escapeHtml($current['Parent_Volume'])?>
-                  <? endif; ?>
-                  <? if ($current['Parent_Position'] > 0): ?>
+                  <?php endif; ?>
+                  <?php if ($current['Parent_Position'] > 0): ?>
                     no. <?=$this->escapeHtml($current['Parent_Position'])?>
-                  <? endif; ?>
-                  <? if ($current['Parent_Replacement_Number'] > 0): ?>
+                  <?php endif; ?>
+                  <?php if ($current['Parent_Replacement_Number'] > 0): ?>
                     (replacement title no. <?=$this->escapeHtml($current['Parent_Replacement_Number'])?>)
-                  <? endif; ?>
+                  <?php endif; ?>
                 </a>
-                <? if (!empty($current['Extent_In_Parent'])): ?>
+                <?php if (!empty($current['Extent_In_Parent'])): ?>
                   &mdash; <?=$this->escapeHtml($current['Extent_In_Parent'])?>
-                <? endif; ?>
-              <? else: ?>
-                <? if ($current['Volume'] > 0 || $current['Position'] > 0 || $current['Replacement_Number'] > 0): ?>
+                <?php endif; ?>
+              <?php else: ?>
+                <?php if ($current['Volume'] > 0 || $current['Position'] > 0 || $current['Replacement_Number'] > 0): ?>
                   &mdash;
-                <? endif; ?>
-                <? if ($current['Volume'] > 0): ?>
+                <?php endif; ?>
+                <?php if ($current['Volume'] > 0): ?>
                   v. <?=$this->escapeHtml($current['Volume'])?>
-                <? endif; ?>
-                <? if ($current['Position'] > 0): ?>
+                <?php endif; ?>
+                <?php if ($current['Position'] > 0): ?>
                   no. <?=$this->escapeHtml($current['Position'])?>
-                <? endif; ?>
-                <? if ($current['Replacement_Number'] > 0): ?>
+                <?php endif; ?>
+                <?php if ($current['Replacement_Number'] > 0): ?>
                   (replacement title no. <?=$this->escapeHtml($current['Replacement_Number'])?>)
-                <? endif; ?>
-              <? endif; ?>
+                <?php endif; ?>
+              <?php endif; ?>
               <br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
-      <? $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
+      <?php endif; ?>
+      <?php $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
         <tr>
           <th>Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
           <td>
-            <? foreach ($altTitles as $altTitle): ?>
+            <?php foreach ($altTitles as $altTitle): ?>
               <?=$this->escapeHtml($this->fixtitle($altTitle['Item_AltName']))?>
-              <? if (!empty($altTitle['Note'])): ?>(<?=$this->escapeHtml($altTitle['Note'])?>)<? endif; ?>
+              <?php if (!empty($altTitle['Note'])): ?>(<?=$this->escapeHtml($altTitle['Note'])?>)<?php endif; ?>
               <br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID'); $platformCount = count($platforms); if ($platformCount > 0): ?>
+      <?php $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID'); $platformCount = count($platforms); if ($platformCount > 0): ?>
         <tr>
           <th>Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
-            <? foreach ($platforms as $platform => $note): ?>
-              <? list($platId, $platName) = explode('|', $platform, 2); ?>
-              <a href="<?=$this->url('platform', array('id' => $platId))?>"><?=$this->escapeHtml($platName)?></a>
+            <?php foreach ($platforms as $platform => $note): ?>
+              <?php list($platId, $platName) = explode('|', $platform, 2); ?>
+              <a href="<?=$this->url('platform', ['id' => $platId])?>"><?=$this->escapeHtml($platName)?></a>
               <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? $tagCount = count($tags); if ($tagCount > 0): ?>
+      <?php $tagCount = count($tags); if ($tagCount > 0): ?>
         <tr>
           <th>Subject<?=$tagCount > 1 ? 's' : ''?> / Tag<?=$tagCount > 1 ? 's' : ''?>:</th>
           <td>
-            <? foreach ($tags as $tag): ?>
-              <a href="<?=$this->url('tag', array('id' => $tag['Tag_ID']))?>"><?=$this->escapeHtml($tag['Tag'])?></a><br />
-            <? endforeach; ?>
+            <?php foreach ($tags as $tag): ?>
+              <a href="<?=$this->url('tag', ['id' => $tag['Tag_ID']])?>"><?=$this->escapeHtml($tag['Tag'])?></a><br />
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($containedIn) > 0): ?>
+      <?php if (count($containedIn) > 0): ?>
         <tr>
           <th>Contained In:</th>
           <td>
-            <? foreach ($containedIn as $current): ?>
-              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?php foreach ($containedIn as $current): ?>
+              <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
-              </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?><? if (!empty($current['Note'])): ?>, <?=$this->escapeHtml($current['Note'])?><? endif; ?>)<br />
-            <? endforeach; ?>
+              </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?><?php if (!empty($current['Note'])): ?>, <?=$this->escapeHtml($current['Note'])?><?php endif; ?>)<br />
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($contains) > 0): ?>
+      <?php if (count($contains) > 0): ?>
         <tr>
           <th>Contains:</th>
           <td>
-            <? foreach ($contains as $current): ?>
-              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?php foreach ($contains as $current): ?>
+              <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
-              </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?><? if (!empty($current['Note'])): ?>, <?=$this->escapeHtml($current['Note'])?><? endif; ?>)<br />
-            <? endforeach; ?>
+              </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?><?php if (!empty($current['Note'])): ?>, <?=$this->escapeHtml($current['Note'])?><?php endif; ?>)<br />
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($editions) < 2 && count($parents) > 0): // only display if edition info is hidden; otherwise, redundant. ?>
+      <?php if (count($editions) < 2 && count($parents) > 0): // only display if edition info is hidden; otherwise, redundant. ?>
         <tr>
           <th>Part of:</th>
           <td>
-            <? foreach ($parents as $current): ?>
-              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?php foreach ($parents as $current): ?>
+              <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle(empty($current['Item_AltName']) ? $current['Item_Name'] : $current['Item_AltName']))?>
               </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?>)<br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($children) > 0): ?>
+      <?php if (count($children) > 0): ?>
         <tr>
           <th>Contents:</th>
           <td>
-            <? $childEditionNames = []; $contentsByEdition = []; ?>
-            <? foreach ($children as $current) {
+            <?php $childEditionNames = []; $contentsByEdition = []; ?>
+            <?php foreach ($children as $current) {
                 $childEditionNames[$current['Edition_ID']] = $current['Edition_Name'];
                 if (!isset($contentsByEdition[$current['Edition_ID']])) {
                   $contentsByEdition[$current['Edition_ID']] = '';
                 }
                 $contentsByEdition[$current['Edition_ID']] .=
-                  '<a href="' . $this->url('item', array('id' => $current['Item_ID'])) . '">'
+                  '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
                   . $this->escapeHtml($this->fixtitle(empty($current['Item_AltName']) ? $current['Item_Name'] : $current['Item_AltName']))
                   . '</a> (' . $this->escapeHtml($current['Material_Type_Name'])
                   . (!empty($current['Extent_In_Parent']) ? ', ' . $this->escapeHtml($current['Extent_In_Parent']) : '')
@@ -229,75 +229,75 @@
             <?=$diffs ? $full : $contents?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($translatedFrom) > 0): ?>
+      <?php if (count($translatedFrom) > 0): ?>
         <tr>
           <th>Translated From:</th>
           <td>
-            <? foreach ($translatedFrom as $current): ?>
-              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?php foreach ($translatedFrom as $current): ?>
+              <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
               </a> (<?=$this->escapeHtml($current['Language_Name'])?>)<br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($translatedInto) > 0): ?>
+      <?php if (count($translatedInto) > 0): ?>
         <tr>
           <th>Translated Into:</th>
           <td>
-            <? foreach ($translatedInto as $current): ?>
-              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?php foreach ($translatedInto as $current): ?>
+              <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
               </a> (<?=$this->escapeHtml($current['Language_Name'])?>)<br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($adaptedFrom) > 0): ?>
+      <?php if (count($adaptedFrom) > 0): ?>
         <tr>
           <th>Adapted From:</th>
           <td>
-            <? foreach ($adaptedFrom as $current): ?>
-              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?php foreach ($adaptedFrom as $current): ?>
+              <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
               </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?>)<br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($adaptedInto) > 0): ?>
+      <?php if (count($adaptedInto) > 0): ?>
         <tr>
           <th>Adapted Into:</th>
           <td>
-            <? foreach ($adaptedInto as $current): ?>
-              <a href="<?=$this->url('item', array('id' => $current['Item_ID']))?>">
+            <?php foreach ($adaptedInto as $current): ?>
+              <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
               </a> (<?=$this->escapeHtml($current['Material_Type_Name'])?>)<br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? foreach ($this->relationshipsValues as $current): ?>
+      <?php foreach ($this->relationshipsValues as $current): ?>
         <tr>
           <th><?=$this->escapeHtml($current['label'])?>:</th>
           <td>
-            <? foreach ($current['values'] as $value): ?>
+            <?php foreach ($current['values'] as $value): ?>
               <a href="<?=$this->url('item', ['id' => $value['Item_ID']])?>">
                 <?=$this->fixTitle($value['Item_Name'])?>
               </a><br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endforeach; ?>
+      <?php endforeach; ?>
 
-      <? foreach ($this->analyzeCredits($creators, $credits, $editions) as $current): ?>
-        <? $role = $current['role']; $citation = $current['citation']; $group = $current['data']; ?>
+      <?php foreach ($this->analyzeCredits($creators, $credits, $editions) as $current): ?>
+        <?php $role = $current['role']; $citation = $current['citation']; $group = $current['data']; ?>
         <tr>
           <th>
             <?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's')
@@ -305,61 +305,61 @@
             ?>:
           </th>
           <td>
-            <? foreach ($group as $person => $details): ?>
-              <a href="<?=$this->url('person', array('id' => $person))?>">
+            <?php foreach ($group as $person => $details): ?>
+              <a href="<?=$this->url('person', ['id' => $person])?>">
                 <?=$this->showperson($details['person'])?>
               </a>
-              <? $realNameCount = count($details['realPerson']); if ($realNameCount > 0): ?>
-                (pseudonym used by <?=$realNameCount == 1 ? '<a href="' . $this->url('person', array('id' => $details['realPerson'][0]['Person_ID'])) . '">' . $this->showperson($details['realPerson'][0]) . '</a>' : 'multiple people' ?>)
-              <? endif; ?>
-              <? if (!empty($details['notes'])): ?>(<?=$this->escapeHtml($details['notes'])?>)<? endif; ?><br />
-            <? endforeach; ?>
+              <?php $realNameCount = count($details['realPerson']); if ($realNameCount > 0): ?>
+                (pseudonym used by <?=$realNameCount == 1 ? '<a href="' . $this->url('person', ['id' => $details['realPerson'][0]['Person_ID']]) . '">' . $this->showperson($details['realPerson'][0]) . '</a>' : 'multiple people' ?>)
+              <?php endif; ?>
+              <?php if (!empty($details['notes'])): ?>(<?=$this->escapeHtml($details['notes'])?>)<?php endif; ?><br />
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endforeach; ?>
+      <?php endforeach; ?>
 
-      <? $dateCount = count($dates); if ($dateCount > 0): ?>
+      <?php $dateCount = count($dates); if ($dateCount > 0): ?>
         <tr>
           <th>Date<?=$dateCount > 1 ? 's' : ''?>:</th>
           <td>
-            <? foreach ($dates as $date): ?>
+            <?php foreach ($dates as $date): ?>
               <?=$this->escapeHtml($this->formatReleaseDate($date, count($editions) > 1))?><br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? $isbns = $this->groupeditions($isbns, 'ISBN13', $editions); $isbnCount = count($isbns); if ($isbnCount > 0): ?>
+      <?php $isbns = $this->groupeditions($isbns, 'ISBN13', $editions); $isbnCount = count($isbns); if ($isbnCount > 0): ?>
         <tr>
           <th>ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
           <td>
-            <? foreach ($isbns as $isbn => $note): ?>
-              <a href="<?=$this->url('item', array('id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn))?>">
-                <? $isbnConverter = new \VuFindCode\ISBN($isbn); $isbn10 = $isbnConverter->get10(); ?>
+            <?php foreach ($isbns as $isbn => $note): ?>
+              <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn])?>">
+                <?php $isbnConverter = new \VuFindCode\ISBN($isbn); $isbn10 = $isbnConverter->get10(); ?>
                 <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn : $isbn)?>
               </a>
               <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? $pubCount = count($publishers); if ($pubCount > 0): ?>
+      <?php $pubCount = count($publishers); if ($pubCount > 0): ?>
         <tr>
           <th>Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
           <td>
-            <? $pubLines = array(); foreach ($publishers as $publisher): ob_start(); ?>
-              <? if (count($editions) > 1): ?>
+            <?php $pubLines = []; foreach ($publishers as $publisher): ob_start(); ?>
+              <?php if (count($editions) > 1): ?>
                 <?=$this->escapeHtml($this->fixTitle($publisher['Edition_Name']))?>:
-              <? endif; ?>
-              <a href="<?=$this->url('publisher', array('id' => $publisher['Publisher_ID']))?>">
+              <?php endif; ?>
+              <a href="<?=$this->url('publisher', ['id' => $publisher['Publisher_ID']])?>">
                 <?=$this->escapeHtml($publisher['Publisher_Name'])?>
               </a>
-              <? if (!empty($publisher['City_Name']) || !empty($publisher['Street'])): ?>
-                (<?
+              <?php if (!empty($publisher['City_Name']) || !empty($publisher['Street'])): ?>
+                (<?php
                   if (!empty($publisher['City_Name'])) {
-                    echo '<a href="' . $this->url('city', array('id' => $publisher['City_ID'])) . '">'
+                    echo '<a href="' . $this->url('city', ['id' => $publisher['City_ID']]) . '">'
                       . $this->escapeHtml($publisher['City_Name']) . '</a>';
                     if (!empty($publisher['Street'])) {
                       echo ': ';
@@ -367,67 +367,67 @@
                   }
                   echo $this->escapeHtml($publisher['Street']);
                 ?>)
-              <? endif; ?>
-              <? if (!empty($publisher['Imprint_Name'])): ?>
+              <?php endif; ?>
+              <?php if (!empty($publisher['Imprint_Name'])): ?>
                 (<?=$this->escapeHtml($publisher['Imprint_Name'])?> imprint)
-              <? endif; ?>
-              <? if (!empty($publisher['Country_Name'])): ?>
+              <?php endif; ?>
+              <?php if (!empty($publisher['Country_Name'])): ?>
                 --
-                <a href="<?=$this->url('country', array('id' => $publisher['Country_ID']))?>">
+                <a href="<?=$this->url('country', ['id' => $publisher['Country_ID']])?>">
                   <?=$this->escapeHtml($publisher['Country_Name'])?>
                 </a>
-              <? endif; ?>
-              <? if (!empty($publisher['Note'])): ?>
+              <?php endif; ?>
+              <?php if (!empty($publisher['Note'])): ?>
                 (<?=$this->escapeHtml($publisher['Note'])?>)
-              <? endif; ?>
+              <?php endif; ?>
               <br />
-              <? $pubLines[] = ob_get_clean(); ?>
-            <? endforeach; ?>
+              <?php $pubLines[] = ob_get_clean(); ?>
+            <?php endforeach; ?>
             <?=implode('', array_unique($pubLines))?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions); $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
+      <?php $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions); $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
         <tr>
           <th>OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
           <td>
-            <? foreach ($oclcNumbers as $number => $note): ?>
+            <?php foreach ($oclcNumbers as $number => $note): ?>
               <?=$this->escapeHtml($number)?>
               <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? $codes = $this->groupeditions($codes, 'Product_Code', $editions); $codeCount = count($codes); if ($codeCount > 0): ?>
+      <?php $codes = $this->groupeditions($codes, 'Product_Code', $editions); $codeCount = count($codes); if ($codeCount > 0): ?>
         <tr>
           <th>Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
           <td>
-            <? foreach ($codes as $code => $note): ?>
+            <?php foreach ($codes as $code => $note): ?>
               <?=$this->escapeHtml($code)?>
               <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <?
-        $lengths = $endings = array();
+      <?php
+        $lengths = $endings = [];
         $descCount = 0;
         foreach ($editions as $ed) {
             $name = $this->fixtitle($ed['Edition_Name']);
             if (!empty($ed['Edition_Length'])) {
                 if (!isset($lengths[$ed['Edition_Length']])) {
-                    $lengths[$ed['Edition_Length']] = array();
+                    $lengths[$ed['Edition_Length']] = [];
                 }
                 $lengths[$ed['Edition_Length']][] = $name;
             }
             if (!empty($ed['Edition_Endings'])) {
                 if (!isset($endings[$ed['Edition_Endings']])) {
-                    $endings[$ed['Edition_Endings']] = array();
+                    $endings[$ed['Edition_Endings']] = [];
                 }
                 $endings[$ed['Edition_Endings']][] = $name;
             }
@@ -437,62 +437,62 @@
         }
       ?>
 
-      <? if ($descCount > 0): ?>
-        <tr><th>Edition Description<?=$descCount>1 ? 's' : ''?>:</th><td>
-          <? $displayedCount = 0; foreach ($editions as $ed): ?>
-            <? if (!empty($ed['Edition_Description'])): $displayedCount++; ?>
-              <? if ($displayedCount > 1): ?><br /><? endif; ?>
-              <? if (count($editions) > 1): ?>
-                <i><?=$this->escapeHtml($this->fixtitle($ed['Edition_Name']))?><? if (empty($ed['Item_Name'])): ?>:<? endif; ?></i>
-                <? if (!empty($ed['Item_Name'])): ?>
-                  (<?=!empty($ed['Extent_In_Parent']) ? $this->escapeHtml($ed['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', array('id' => $ed['Item_ID']))?>"><?=$this->escapeHtml($this->fixtitle(empty($ed['Item_AltName']) ? $ed['Item_Name'] : $ed['Item_AltName']))?></a>):
-                <? endif; ?>
+      <?php if ($descCount > 0): ?>
+        <tr><th>Edition Description<?=$descCount > 1 ? 's' : ''?>:</th><td>
+          <?php $displayedCount = 0; foreach ($editions as $ed): ?>
+            <?php if (!empty($ed['Edition_Description'])): $displayedCount++; ?>
+              <?php if ($displayedCount > 1): ?><br /><?php endif; ?>
+              <?php if (count($editions) > 1): ?>
+                <i><?=$this->escapeHtml($this->fixtitle($ed['Edition_Name']))?><?php if (empty($ed['Item_Name'])): ?>:<?php endif; ?></i>
+                <?php if (!empty($ed['Item_Name'])): ?>
+                  (<?=!empty($ed['Extent_In_Parent']) ? $this->escapeHtml($ed['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', ['id' => $ed['Item_ID']])?>"><?=$this->escapeHtml($this->fixtitle(empty($ed['Item_AltName']) ? $ed['Item_Name'] : $ed['Item_AltName']))?></a>):
+                <?php endif; ?>
                 <br />
-              <? endif; ?>
+              <?php endif; ?>
               <?=$ed['Edition_Description']?><br />
-            <? endif; ?>
-          <? endforeach; ?>
+            <?php endif; ?>
+          <?php endforeach; ?>
         </td></tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (!empty($lengths)): ?>
+      <?php if (!empty($lengths)): ?>
         <tr><th>Length:</th><td>
-          <? foreach ($lengths as $length => $editionNames): ?>
+          <?php foreach ($lengths as $length => $editionNames): ?>
             <?=$this->escapeHtml($length)?>
-            <? if (count($editionNames) != count($editions) && count($editions) > 1): ?>
+            <?php if (count($editionNames) != count($editions) && count($editions) > 1): ?>
               (<?=$this->escapeHtml(implode(', ', $editionNames))?>)
-            <? endif; ?>
+            <?php endif; ?>
             <br />
-          <? endforeach; ?>
+          <?php endforeach; ?>
         </td></tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (!empty($endings)): ?>
+      <?php if (!empty($endings)): ?>
         <tr><th>Number of Endings:</th><td>
-          <? foreach ($endings as $ending => $editionNames): ?>
+          <?php foreach ($endings as $ending => $editionNames): ?>
             <?=$this->escapeHtml($ending)?>
-            <? if (count($editionNames) != count($editions) && count($editions) > 1): ?>
+            <?php if (count($editionNames) != count($editions) && count($editions) > 1): ?>
               (<?=$this->escapeHtml(implode(', ', $editionNames))?>)
-            <? endif; ?>
+            <?php endif; ?>
             <br />
-          <? endforeach; ?>
+          <?php endforeach; ?>
         </td></tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? foreach ($itemAttributes as $current): ?>
+      <?php foreach ($itemAttributes as $current): ?>
         <tr>
           <th><?=$this->escapeHtml($current['Items_Attribute_Name'])?>:</th>
           <td>
-            <? if ($current->Allow_HTML == 1): ?>
+            <?php if ($current->Allow_HTML == 1): ?>
               <?=$current->Items_Attribute_Value?><br />
-            <? else: ?>
+            <?php else: ?>
               <?=$this->escapeHtml($current->Items_Attribute_Value)?><br />
-            <? endif; ?>
+            <?php endif; ?>
           </td>
         </tr>
-      <? endforeach; ?>
+      <?php endforeach; ?>
 
-      <?
+      <?php
         $groupedAttribs = [];
         foreach ($editionAttributes as $current) {
             $groupedAttribs[$current['Editions_Attribute_Name']][] = $current;
@@ -504,163 +504,163 @@
             ];
         }
       ?>
-      <? foreach ($groupedAttribs as $label => $current): ?>
+      <?php foreach ($groupedAttribs as $label => $current): ?>
         <tr>
           <th><?=$this->escapeHtml($label)?>:</th>
           <td>
-            <? foreach ($current['values'] as $value => $note): ?>
-              <? if ($current['details']->Allow_HTML == 1): ?>
-                <? if (!empty($note)): ?><i><?=$this->escapeHtml($note)?>:</i><br /><? endif; ?>
+            <?php foreach ($current['values'] as $value => $note): ?>
+              <?php if ($current['details']->Allow_HTML == 1): ?>
+                <?php if (!empty($note)): ?><i><?=$this->escapeHtml($note)?>:</i><br /><?php endif; ?>
                 <?=$value?><br />
-              <? else: ?>
-                <?=$this->escapeHtml($value)?> <? if (!empty($note)):?>(<?=$this->escapeHtml($note)?>)<? endif; ?><br />
-              <? endif; ?>
-            <? endforeach; ?>
+              <?php else: ?>
+                <?=$this->escapeHtml($value)?> <?php if (!empty($note)):?>(<?=$this->escapeHtml($note)?>)<?php endif; ?><br />
+              <?php endif; ?>
+            <?php endforeach; ?>
           </td>
-      <? endforeach; ?>
+      <?php endforeach; ?>
 
-      <? if (count($descriptions) > 0): ?>
-        <? foreach ($descriptions as $desc): ?>
+      <?php if (count($descriptions) > 0): ?>
+        <?php foreach ($descriptions as $desc): ?>
           <tr>
             <th><?=$this->escapeHtml($this->descriptionsource()->getName($desc['Source']))?>:</th>
             <td><?=$desc['Description']?></td>
           </tr>
-        <? endforeach; ?>
-      <? endif; ?>
+        <?php endforeach; ?>
+      <?php endif; ?>
 
-      <? if (count($reviews) > 0): ?>
-        <? foreach ($reviews as $review): ?>
+      <?php if (count($reviews) > 0): ?>
+        <?php foreach ($reviews as $review): ?>
           <tr>
             <th><?=$this->escapeHtml($review['Username'])?>'s Thoughts:</th>
             <td>
               <?=substr(trim($review['Review']), 0, 3) === '<p>' ? '' : '<p>'?>
               <?=$review['Review']?>
               <p>
-                <a href="<?=$this->url('user', array('id' => $review['User_ID'], 'action' => 'Reviews'))?>">
+                <a href="<?=$this->url('user', ['id' => $review['User_ID'], 'action' => 'Reviews'])?>">
                   More reviews by <?=$this->escapeHtml($review['Username'])?>
                 </a>
               </p>
             </td>
           </tr>
-        <? endforeach; ?>
-      <? endif; ?>
+        <?php endforeach; ?>
+      <?php endif; ?>
 
-      <? if (!empty($item['Item_Errata'])): ?>
+      <?php if (!empty($item['Item_Errata'])): ?>
         <tr><th>Errata:</th><td><?=$item['Item_Errata']?></td></tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (!empty($item['Item_Thanks'])): ?>
+      <?php if (!empty($item['Item_Thanks'])): ?>
         <tr><th>Special Thanks:</th><td><?=$item['Item_Thanks']?></td></tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? $userHasItem = $userWantsItem = $userHasExtraItem = false; ?>
+      <?php $userHasItem = $userWantsItem = $userHasExtraItem = false; ?>
 
-      <? if (count($owners) > 0): ?>
+      <?php if (count($owners) > 0): ?>
         <tr>
           <th>Users Who Own This Item:</th>
           <td>
-            <? $prevUser = false; foreach ($owners as $owner): $separator = $prevUser; ?><? if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><? if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><? if ($separator): ?>, <? endif; ?><a href="<?=$this->url('user', array('id' => $owner['User_ID'], 'action' => 'Collection'))?>"><?=$this->escapeHtml($prevUser)?></a><? endif; ?><? if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<? endif; ?><? endforeach; ?>
+            <?php $prevUser = false; foreach ($owners as $owner): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><?php if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $owner['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($buyers) > 0): ?>
+      <?php if (count($buyers) > 0): ?>
         <tr>
           <th>Users Who Want This Item:</th>
           <td>
-            <? $prevUser = false; foreach ($buyers as $buyer): $separator = $prevUser; ?><? if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><? if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><? if ($separator): ?>, <? endif; ?><a href="<?=$this->url('user', array('id' => $buyer['User_ID'], 'action' => 'Collection'))?>"><?=$this->escapeHtml($prevUser)?></a><? endif; ?><? if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<? endif; ?><? endforeach; ?>
+            <?php $prevUser = false; foreach ($buyers as $buyer): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><?php if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $buyer['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
 
-      <? if (count($sellers) > 0): ?>
+      <?php if (count($sellers) > 0): ?>
         <tr>
           <th>Users with Extra Copies:</th>
           <td>
-            <? $prevUser = false; foreach ($sellers as $seller): $separator = $prevUser; ?>
-              <? if ($this->auth()->hasIdentity() && $seller['User_ID'] == $this->auth()->getIdentity()): $userHasExtraItem = true; endif; ?>
-              <? if ($prevUser !== $seller['Username']): $prevUser = $seller['Username'];?>
-                <? if ($separator): ?><br /><? endif; ?>
-                <a href="<?=$this->url('user', array('id' => $seller['User_ID'], 'action' => 'Extras'))?>">
+            <?php $prevUser = false; foreach ($sellers as $seller): $separator = $prevUser; ?>
+              <?php if ($this->auth()->hasIdentity() && $seller['User_ID'] == $this->auth()->getIdentity()): $userHasExtraItem = true; endif; ?>
+              <?php if ($prevUser !== $seller['Username']): $prevUser = $seller['Username'];?>
+                <?php if ($separator): ?><br /><?php endif; ?>
+                <a href="<?=$this->url('user', ['id' => $seller['User_ID'], 'action' => 'Extras'])?>">
                   <?=$this->escapeHtml($prevUser)?>
                 </a>
-              <? endif; ?>
-              <? if (!empty($seller['Collection_Note'])): ?> - <?=$this->escapeHtml($seller['Collection_Note'])?><? endif; ?>
-            <? endforeach; ?>
+              <?php endif; ?>
+              <?php if (!empty($seller['Collection_Note'])): ?> - <?=$this->escapeHtml($seller['Collection_Note'])?><?php endif; ?>
+            <?php endforeach; ?>
           </td>
         </tr>
-      <? endif; ?>
+      <?php endif; ?>
     </table>
   </div>
 </div>
 
-<? if (count($editions) > 1): ?>
+<?php if (count($editions) > 1): ?>
   <h2>Known Editions</h2>
-  <? foreach ($editions as $edition): ?>
-    <a href="<?=$this->url('edition', array('id' => $edition['Edition_ID']))?>">
+  <?php foreach ($editions as $edition): ?>
+    <a href="<?=$this->url('edition', ['id' => $edition['Edition_ID']])?>">
         <?=$this->escapeHtml($this->fixtitle($edition['Edition_Name']))?>
     </a>
-  <? if (!empty($edition['Item_Name'])): ?>(<?=!empty($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', array('id' => $edition['Item_ID']))?>"><?=$this->escapeHtml($this->fixtitle(empty($edition['Item_AltName']) ? $edition['Item_Name'] : $edition['Item_AltName']))?></a>)<? endif; ?>
+  <?php if (!empty($edition['Item_Name'])): ?>(<?=!empty($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', ['id' => $edition['Item_ID']])?>"><?=$this->escapeHtml($this->fixtitle(empty($edition['Item_AltName']) ? $edition['Item_Name'] : $edition['Item_AltName']))?></a>)<?php endif; ?>
     <br />
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>
 
 <div class="controls">
-  <? if ($this->auth()->hasIdentity()): ?>
+  <?php if ($this->auth()->hasIdentity()): ?>
     <p>
-      <a class="button" href="<?=$this->url('item', array('id' => $item['Item_ID'], 'extra' => 'Review'))?>">
+      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Review'])?>">
         <?=$userHasReview ? 'Edit Review' : 'Submit Review'?>
       </a>
-      <a class="button" href="<?=$this->url('item', array('id' => $item['Item_ID'], 'extra' => 'EditHave'))?>">
+      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditHave'])?>">
         <?=$userHasItem ? 'Modify Have List' : 'Add to Have List'?>
       </a>
-      <a class="button" href="<?=$this->url('item', array('id' => $item['Item_ID'], 'extra' => 'EditWant'))?>">
+      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditWant'])?>">
         <?=$userWantsItem ? 'Modify Want List' : 'Add to Want List'?>
       </a>
-      <a class="button" href="<?=$this->url('item', array('id' => $item['Item_ID'], 'extra' => 'EditExtra'))?>">
+      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditExtra'])?>">
         <?=$userHasExtraItem ? 'Modify Sale/Trade List' : 'Add to Sale/Trade List'?>
       </a>
     </p>
-  <? else: ?>
+  <?php else: ?>
     <p>Please <a href="<?=$this->url('login')?>">log in</a> to manage your collection or post a review.</p>
-  <? endif; ?>
+  <?php endif; ?>
 </div>
 
-<? if (count($files) > 0): ?>
+<?php if (count($files) > 0): ?>
   <h2>Related Documents</h2>
-  <? $type = false; foreach ($files as $file): ?>
-    <? if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
+  <?php $type = false; foreach ($files as $file): ?>
+    <?php if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
       <h3 class="filetype"><?=$this->escapeHtml($type)?></h3>
-    <? endif; ?>
+    <?php endif; ?>
     <p class="file">
       <a target="_new" href="<?=$this->escapeHtml($file['File_Path'])?>">
         <?=$this->escapeHtml($this->fixtitle($file['File_Name']))?>
       </a>
-      <? if (!empty($file['Description'])): ?>
+      <?php if (!empty($file['Description'])): ?>
         <br /><?=$file['Description']?>
-      <? endif; ?>
+      <?php endif; ?>
     </p>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>
 
-<? if (count($bibliography) > 0): ?>
+<?php if (count($bibliography) > 0): ?>
   <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
-  <? $type = false; foreach ($bibliography as $bib): ?>
-    <? if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
+  <?php $type = false; foreach ($bibliography as $bib): ?>
+    <?php if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
       <h3 class="materialType"><?=$this->escapeHtml($type)?></h3>
-    <? endif; ?>
-    <span class="item"><a href="<?=$this->url('item', array('id' => $bib['Item_ID']))?>"><?=$this->fixtitle($bib['Item_Name'])?></a></span><br />
-  <? endforeach; ?>
-<? endif; ?>
+    <?php endif; ?>
+    <span class="item"><a href="<?=$this->url('item', ['id' => $bib['Item_ID']])?>"><?=$this->fixtitle($bib['Item_Name'])?></a></span><br />
+  <?php endforeach; ?>
+<?php endif; ?>
 
-<? if (count($links) > 0): ?>
+<?php if (count($links) > 0): ?>
   <h2>Related Links</h2>
-  <? foreach ($links as $link): ?>
+  <?php foreach ($links as $link): ?>
     <p class="link">
       <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />
-      <? if (!empty($link['Description'])): ?><?=$link['Description']?><br /><? endif; ?>
+      <?php if (!empty($link['Description'])): ?><?=$link['Description']?><br /><?php endif; ?>
       <span class="url"><?=$this->escapeHtml($link['URL'])?></span>
       (last verified: <?=$this->escapeHtml($link['Date_Checked'])?>)
     </p>
-  <? endforeach; ?>
-<? endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

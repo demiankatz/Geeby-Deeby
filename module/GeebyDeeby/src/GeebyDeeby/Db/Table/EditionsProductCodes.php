@@ -58,7 +58,7 @@ class EditionsProductCodes extends Gateway
     /**
      * Get a list of product codes for the specified edition.
      *
-     * @var int $editionID Edition ID
+     * @param int $editionID Edition ID
      *
      * @return mixed
      */
@@ -66,7 +66,7 @@ class EditionsProductCodes extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Product_Codes.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
@@ -79,7 +79,7 @@ class EditionsProductCodes extends Gateway
     /**
      * Get a list of product codes for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */
@@ -87,12 +87,12 @@ class EditionsProductCodes extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                array('n' => 'Notes'),
+                ['n' => 'Notes'],
                 'Editions_Product_Codes.Note_ID = n.Note_ID',
                 Select::SQL_STAR, Select::JOIN_LEFT
             );
             $select->join(
-                array('eds' => 'Editions'),
+                ['eds' => 'Editions'],
                 'Editions_Product_Codes.Edition_ID = eds.Edition_ID'
             );
             $select->order('Product_Code');

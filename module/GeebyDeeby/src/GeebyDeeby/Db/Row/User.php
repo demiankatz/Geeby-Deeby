@@ -75,14 +75,14 @@ class User extends TableAwareGateway
     /**
      * Load permission data if not already available.
      *
-     * @access  private
+     * @return void
      */
     public function loadPermissions()
     {
         // If permissions are already loaded, we're done here:
         if ($this->permissions !== null) {
             return;
-        } else if (isset($this->User_Group_ID) && !empty($this->User_Group_ID)) {
+        } elseif (isset($this->User_Group_ID) && !empty($this->User_Group_ID)) {
             $table = $this->getDbTable('usergroup');
             $this->permissions = $table->getByPrimaryKey($this->User_Group_ID);
             // Unset non-permission related fields:

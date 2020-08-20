@@ -55,7 +55,7 @@ class ScriptManager extends \Zend\View\Helper\AbstractHelper
     /**
      * Constructor
      *
-     * @param string $basePath  Base path
+     * @param string $basePath   Base path
      * @param object $headScript HeadScript helper
      */
     public function __construct($basePath, $headScript)

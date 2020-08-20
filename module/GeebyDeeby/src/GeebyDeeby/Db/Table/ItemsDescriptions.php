@@ -57,7 +57,7 @@ class ItemsDescriptions extends Gateway
     /**
      * Get a list of descriptions for the specified item.
      *
-     * @var int $itemID Item ID
+     * @param int $itemID Item ID
      *
      * @return mixed
      */

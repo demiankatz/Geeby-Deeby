@@ -1,17 +1,17 @@
-<? if (count($images) > 0): ?>
-    <? foreach ($images as $index=>$image): ?>
-      <? if ($index > 0 && $index % 6 == 0): ?>
+<?php if (count($images) > 0): ?>
+    <?php foreach ($images as $index => $image): ?>
+      <?php if ($index > 0 && $index % 6 == 0): ?>
         </div><div class="row">
-      <? endif; ?>
-      <?
+      <?php endif; ?>
+      <?php
         if (!isset($linkType) || $linkType == 'image') {
           $path = $image['Image_Path'];
           if (empty($path)) {
             $path = $image['IIIF_URI'] . '/full/full/0/default.jpg';
           }
           $openAnchor = '<a target="_new" href="' . $this->escapeHtml($path) . '">';
-        } else if ($linkType == 'item') {
-          $openAnchor = '<a href="' . $this->url('item', array('id' => $image['Item_ID'])) . '">';
+        } elseif ($linkType == 'item') {
+          $openAnchor = '<a href="' . $this->url('item', ['id' => $image['Item_ID']]) . '">';
         } else {
           // unsupported option:
           $openAnchor = '<a>';
@@ -23,7 +23,7 @@
       ?>
       <div class="col-md-2" style="text-align:center">
         <?=$openAnchor?><img class="item-image" src="<?=$this->escapeHtml($thumb)?>" style="display:block;margin:auto"/></a>
-        <?
+        <?php
           $note = '';
           if (isset($editions) && count($editions) > 1) {
               $note = $this->fixtitle($image['Edition_Name']);
@@ -37,8 +37,8 @@
         ?>
         <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : '<br />'?>
       </div>
-    <? endforeach; ?>
-    <? if (count($images) > 1): // close the last row, unless we have a single floating image ?>
+    <?php endforeach; ?>
+    <?php if (count($images) > 1): // close the last row, unless we have a single floating image ?>
       </div><div class="row">
-    <? endif; ?>
-<? endif; ?>
+    <?php endif; ?>
+<?php endif; ?>
