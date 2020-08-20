@@ -44,6 +44,7 @@ return [
                     'Amazon.it' => 'http://www.amazon.it/exec/obidos/ASIN/%isbn10%',
                     'Barnes & Noble' => 'http://search.barnesandnoble.com/booksearch/isbninquiry.asp?ISBN=%isbn10%',
                     'BookFinder.com' => 'http://www.bookfinder.com/search/?author=&title=&submit=Begin+Search&new_used=*&binding=*&isbn=%isbn10%&keywords=&minprice=&maxprice=&currency=USD&mode=advanced&st=sr&ac=qr',
+                    'WorldCat [find in a library]' => 'https://www.worldcat.org/search?q=bn%3A%isbn10%&qt=advanced',
                 ],
             ],
         ],
