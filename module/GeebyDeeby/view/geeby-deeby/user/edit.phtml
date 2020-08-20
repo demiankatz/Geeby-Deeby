@@ -9,14 +9,14 @@ leave the password fields blank.</p>
   <div class="error"><?=$this->escapeHtml($error)?></div>
 <?php endif; ?>
 <table class="signup"><tr>
-<th>Full Name:</th><td>
-<input type="text" name="Fullname" value="<?=$this->escapeHtml($fullname ?? '')?>" size="25" maxlength="50" /></td></tr>
-<th>E-Mail Address (optional):</th><td>
-<input type="text" name="Address" value="<?=$this->escapeHtml($address ?? '')?>" size="25" maxlength="50" /></td></tr>
-<tr><th>Password:</th><td>
-<input type="password" name="Password1" size="25" maxlength="25" /></td></tr>
-<tr><th>Retype Password:</th><td>
-<input type="password" name="Password2" size="25" maxlength="25" /></td></tr>
+<th scope="row"><label for="edit_fullname">Full Name:</label></th><td>
+<input id="edit_fullname" type="text" name="Fullname" value="<?=$this->escapeHtml($fullname ?? '')?>" size="25" maxlength="50" /></td></tr>
+<th scope="row"><label for="edit_email">E-Mail Address (optional):</label></th><td>
+<input id="edit_email" type="email" name="Address" value="<?=$this->escapeHtml($address ?? '')?>" size="25" maxlength="50" /></td></tr>
+<tr><th scope="row"><label for="edit_password1">Password:</label></th><td>
+<input id="edit_password1" type="password" name="Password1" size="25" maxlength="25" /></td></tr>
+<tr><th scope="row"><label for="edit_password2">Retype Password:</label></th><td>
+<input id="edit_password2" type="password" name="Password2" size="25" maxlength="25" /></td></tr>
 <tr><td></td><td><input type="submit" name="submit" value="Update Account" /></td></tr>
 </table>
 </form>

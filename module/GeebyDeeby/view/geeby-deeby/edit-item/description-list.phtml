@@ -1,14 +1,18 @@
 <?php if (isset($descriptions) && count($descriptions) > 0): ?>
   <?php foreach ($descriptions as $current): ?>
+  <?php $sourceName = $this->descriptionSource()->getName($current['Source']); ?>
   <table class="list_item">
     <tr>
       <td>
         <?php /* Note: Description is not escaped since it may contain HTML! */ ?>
-        <?=$current['Description']?> (Source: <?=$this->descriptionSource()->getName($current['Source'])?>)
+        <?=$current['Description']?> (Source: <?=$sourceName?>)
       </td>
       <td>
-        <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Description', &quot;<?=$this->escapeHtml($current['Source'])?>&quot;); return false;">
-        </a>
+        <?=$this->iconButton(
+            'trash',
+            "Item.unlink('Description', '" . addslashes($current['Source']) . "')",
+            'Delete description from ' . $sourceName
+          )?>
       </td>
     </tr>
   </table>

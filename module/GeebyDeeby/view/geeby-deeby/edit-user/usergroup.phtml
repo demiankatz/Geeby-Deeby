@@ -1,27 +1,27 @@
-<div id="editForm">
+<form id="editForm" onsubmit="UserGroup.save(); return false;">
   <input type="hidden" id="User_Group_ID" value="<?=$this->escapeHtml($usergroup['User_Group_ID'])?>" />
   <table class="edit">
     <tr>
-      <th>Group:</th>
+      <th scope="row"><label for="Group_Name">Group:</label></th>
       <td><input type="text" id="Group_Name" value="<?=$this->escapeHtml($usergroup['Group_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Content Editor:</th>
+      <th scope="row"><label for="Content_Editor">Content Editor:</label></th>
       <td><input type="checkbox" id="Content_Editor" value="1" <?=isset($usergroup['Content_Editor']) && $usergroup['Content_Editor'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
     <tr>
-      <th>User Editor:</th>
+      <th scope="row"><label for="User_Editor">User Editor:</label></th>
       <td><input type="checkbox" id="User_Editor" value="1" <?=isset($usergroup['User_Editor']) && $usergroup['User_Editor'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
     <tr>
-      <th>Approver:</th>
+      <th scope="row"><label for="Approver">Approver:</label></th>
       <td><input type="checkbox" id="Approver" value="1" <?=isset($usergroup['Approver']) && $usergroup['Approver'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
     <tr>
-      <th>Data Manager:</th>
+      <th scope="row"><label for="Data_Manager">Data Manager:</label></th>
       <td><input type="checkbox" id="Data_Manager" value="1" <?=isset($usergroup['Data_Manager']) && $usergroup['Data_Manager'] == 1 ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>
-  <button id="save_user_group" onclick="UserGroup.save();">Save</button>
+  <input id="save_user_group" type="submit" value="Save" />
   <div id="save_user_group_status"></div>
-</div>
+</form>

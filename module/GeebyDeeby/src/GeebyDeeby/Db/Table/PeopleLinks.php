@@ -87,7 +87,7 @@ class PeopleLinks extends Gateway
                 ['p' => 'People'],
                 'People_Links.Person_ID = p.Person_ID'
             );
-            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
+            $select->order(['Last_Name', 'First_Name']);
             $select->where->equalTo('Link_ID', $linkID);
         };
         return $this->select($callback);

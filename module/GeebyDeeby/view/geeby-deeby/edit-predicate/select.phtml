@@ -1,12 +1,15 @@
 <?php if (isset($predicates) && count($predicates) > 0): ?>
-  <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Predicate_ID">
-    <?php foreach ($predicates as $current): ?>
-      <?php $isSelected = (isset($selected) && !empty($selected)) ? ($current['Predicate_ID'] == $selected) : false ?>
-      <option value="<?=$current['Predicate_ID']?>"<?=$isSelected ? ' selected="selected"' : ''?>>
-        <?=$this->escapeHtml($current['Predicate_Abbrev'])?>
-      </option>
-    <?php endforeach; ?>
-  </select>
+  <label>
+    Predicate:
+    <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Predicate_ID">
+      <?php foreach ($predicates as $current): ?>
+        <?php $isSelected = (isset($selected) && !empty($selected)) ? ($current['Predicate_ID'] == $selected) : false ?>
+        <option value="<?=$current['Predicate_ID']?>"<?=$isSelected ? ' selected="selected"' : ''?>>
+          <?=$this->escapeHtml($current['Predicate_Abbrev'])?>
+        </option>
+      <?php endforeach; ?>
+    </select>
+  </label>
 <?php else: ?>
   Please define predicates.
 <?php endif; ?>

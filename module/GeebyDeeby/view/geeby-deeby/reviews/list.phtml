@@ -2,14 +2,14 @@
     $this->layout()->title = 'Recent Reviews';
 ?>
 <table class="reviews">
-  <tr><th>New Item Reviews</th><th>New Series Comments</th></tr>
+  <tr><th scope="col">New Item Reviews</th><th scope="col">New Series Comments</th></tr>
   <tr style="vertical-align: top;">
     <td style="width: 50%;">
       <?php if (count($reviews) < 1): ?>
         <p>No reviews available.</p>
       <?php else: ?>
         <table class="innerReviews">
-          <tr><th>Date</th><th>Title</th><th>User</th></tr>
+          <tr><th scope="col">Date</th><th scope="col">Title</th><th scope="col">User</th></tr>
           <?php foreach ($reviews as $current): ?>
             <tr>
               <td><?=$this->escapeHtml($current['Added'])?></td>
@@ -33,7 +33,7 @@
         <p>No comments available.</p>
       <?php else: ?>
         <table class="innerReviews">
-          <tr><th>Date</th><th>Title</th><th>User</th></tr>
+          <tr><th scope="col">Date</th><th scope="col">Title</th><th scope="col">User</th></tr>
           <?php foreach ($comments as $current): ?>
             <tr>
               <td><?=$this->escapeHtml($current['Added'])?></td>

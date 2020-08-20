@@ -1,11 +1,11 @@
-<div id="editForm">
+<form id="editForm" onsubmit="Language.save(); return false;">
   <input type="hidden" id="Language_ID" value="<?=$language['Language_ID']?>" />
   <table class="edit">
     <tr>
-      <th>Language:</th>
+      <th scope="row"><label for="Language_Name">Language:</label></th>
       <td><input type="text" id="Language_Name" value="<?=isset($language['Language_Name']) ? $this->escapeHtml($language['Language_Name']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_language" onclick="Language.save();">Save</button>
+  <input type="submit" value="Save" />
   <div id="save_language_status"></div>
-</div>
+</form>

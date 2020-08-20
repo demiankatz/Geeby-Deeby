@@ -52,16 +52,14 @@ BaseEditor.prototype.getBaseUri = function() {
  * Open a lightbox.
  */
 BaseEditor.prototype.openLightbox = function(url, title) {
+    var $modalEl = $("#modal");
+    $modalEl.find(".modal-title").text(title);
     var editor = this;
-    this.editBox = $('<div>Loading...</div>').load(url).dialog({
-        title: title,
-        modal: true,
-        autoOpen: true,
-        width: 600,
-        height: 400,
-        // Remove dialog box contents from the DOM to prevent duplicate identifier problems.
-        close: function() { editor.editBox.empty(); }
-    });
+    this.editBox = $modalEl.find(".modal-body").load(url);
+    $modalEl.modal("show");
+    $modalEl.off("hidden.bs.modal").on("hidden.bs.modal", function() {
+        editor.editBox.empty();
+    })
 };
 
 /**
@@ -69,8 +67,7 @@ BaseEditor.prototype.openLightbox = function(url, title) {
  */
 BaseEditor.prototype.closeLightbox = function() {
     if (this.editBox) {
-        this.editBox.dialog('close');
-        this.editBox.dialog('destroy');
+        $("#modal").modal("hide");
         this.editBox = false;
     }
 };
@@ -191,7 +188,7 @@ BaseEditor.prototype.getSaveData = function(values, saveFields, attributeSelecto
                 current = rules.nonNumericDefault;
             }
         }
-        if (typeof rules.emptyError !== 'undefined' && rules.emptyError && current.length == 0) {
+        if (typeof rules.emptyError !== 'undefined' && rules.emptyError && (!current || current.length == 0)) {
             alert(rules.emptyError);
             return false;
         }
@@ -399,7 +396,13 @@ BaseEditor.prototype.editLink = function(type, which, subtype) {
  * Save an active link instance.
  */
 BaseEditor.prototype.saveLink = function(type, which, subtype) {
-    var values = this.getSaveData({}, this.links[type].editFields, null, null);
+    var values = this.getSaveData(
+        {},
+        this.links[type].editFields,
+        typeof this.links[type].attributeSelector === 'undefined'
+            ? null : this.links[type].attributeSelector,
+        type + "_Attribute_"
+    );
     if (!values) {
         return;
     }
@@ -441,3 +444,8 @@ BaseEditor.prototype.unlink = function(type, which, subtype) {
     var url = this.getLinkUri(type, subtype) + "/" + encodeURIComponent(which);
     $.ajax({url: url, type: "delete", dataType: "json", success: this.getLinkCallback(type, subtype)});
 };
+
+// Set up sticky tabs used by editors:
+$(document).ready(function() {
+    $('.nav-tabs').stickyTabs({ replaceState: true });
+});

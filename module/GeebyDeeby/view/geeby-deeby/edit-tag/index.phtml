@@ -1,12 +1,12 @@
-<div id="editForm">
+<form id="editForm" onsubmit="Tag.save(); return false;">
   <input type="hidden" id="Tag_ID" value="<?=$tag['Tag_ID']?>" />
   <table class="edit">
     <tr>
-      <th>Subject/Tag:</th>
-      <td><input type="text" id="Tag" value="<?=isset($tag['Tag']) ? $this->escapeHtml($tag['Tag']) : ''?>" /></td>
+      <th scope="row"><label for="Tag_Name">Subject/Tag:</label></th>
+      <td><input type="text" id="Tag_Name" value="<?=isset($tag['Tag']) ? $this->escapeHtml($tag['Tag']) : ''?>" /></td>
     </tr>
     <tr>
-      <th>Subject/Tag Type:</th>
+      <th scope="row"><label for="Tag_Type_ID">Subject/Tag Type:</label></th>
       <td><?=$this->render('geeby-deeby/edit-tag/type-select.phtml', ['tagTypes' => $tagTypes, 'selected' => $tag['Tag_Type_ID'] ?? null])?></td>
     </tr>
   </table>
@@ -26,9 +26,9 @@
       <?php endforeach; ?>
     </div>
   <?php endif; ?>
-  <?php if (count($attributes) > 0): ?>
-    <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
-  <?php endif; ?>
-  <button id="save_tag" onclick="Tag.save();">Save</button>
-  <div id="save_tag_status"></div>
-</div>
+  <input type="submit" value="Save" />
+</form>
+<?php if (count($attributes) > 0): ?>
+  <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
+<?php endif; ?>
+<div id="save_tag_status"></div>

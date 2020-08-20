@@ -1,11 +1,11 @@
-<div id="editForm">
+<form id="editForm" onsubmit="City.save(); return false;">
   <input type="hidden" id="City_ID" value="<?=$this->escapeHtml($city['City_ID'])?>" />
   <table class="edit">
     <tr>
-      <th>City:</th>
+      <th scope="row"><label for="City_Name">City:</label></th>
       <td><input type="text" id="City_Name" value="<?=isset($city['City_Name']) ? $this->escapeHtml($city['City_Name']) : ''?>" /></td>
     </tr>
   </table>
-  <button id="save_city" onclick="City.save();">Save</button>
+  <input type="submit" id="save_city" value="Save" />
   <div id="save_city_status"></div>
-</div>
+</form>

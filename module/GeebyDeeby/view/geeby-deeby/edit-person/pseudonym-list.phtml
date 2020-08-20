@@ -1,15 +1,19 @@
 <?php if (isset($pseudonyms) && count($pseudonyms) > 0): ?>
   <?php foreach ($pseudonyms as $current): ?>
+    <?php $currentName = $this->showPerson($current); ?>
     <table class="list_item">
       <tr>
         <td>
           <a href="<?=$this->url('edit/person', ['id' => $current['Person_ID']])?>">
-            <?=$this->showPerson($current)?>
+            <?=$this->escapeHtml($currentName)?>
           </a>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Person.unlink('Alias', <?=$current['Person_ID']?>, 'pseudonym'); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Person.unlink('Alias', " . $current['Person_ID'] . ", 'pseudonym')",
+            'Unlink pseudonym: ' . $currentName
+          )?>
         </td>
       </tr>
     </table>

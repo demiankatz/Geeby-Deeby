@@ -38,6 +38,8 @@ namespace GeebyDeeby\Controller;
  */
 class EditionController extends AbstractBase
 {
+    use FullTextAttributesTrait;
+
     /**
      * RDF class for representing copies of editions (null to omit).
      *
@@ -81,8 +83,9 @@ class EditionController extends AbstractBase
         foreach ($view->credits as $credit) {
             $personUri = $this
                 ->getServerUrl('person', ['id' => $credit['Person_ID']]);
-            $predicate = $credit['Edition_Credit_Predicate']
-                ?? $this->defaultCreditPredicate;
+            $predicate = empty($credit['Edition_Credit_Predicate'])
+                ? $this->defaultCreditPredicate
+                : $credit['Edition_Credit_Predicate'];
             if (!empty($predicate)) {
                 $edition->add($predicate, $graph->resource($personUri . '#name'));
             }
@@ -189,6 +192,16 @@ class EditionController extends AbstractBase
                     $copy = $graph->resource($copyUri, $this->copyRdfClass);
                     $edition->add($this->hasCopyPredicate, $copy);
                     $copy->set($this->fullTextPredicate, $fullText['Full_Text_URL']);
+                    $currentAttribs
+                        = $view->fullTextAttributes[$fullText->Sequence_ID] ?? [];
+                    foreach ($currentAttribs as $attr) {
+                        $prop = $attr['Editions_Full_Text_Attribute_RDF_Property'];
+                        if (!empty($prop)) {
+                            $copy->set(
+                                $prop, $attr['Editions_Full_Text_Attribute_Value']
+                            );
+                        }
+                    }
                 }
             }
         }
@@ -272,6 +285,7 @@ class EditionController extends AbstractBase
             ->getOCLCNumbersForEdition($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForEditionOrParentEdition($id);
+        $this->addFullTextAttributesToView($view);
         $edTable = $this->getDbTable('edition');
         $view->publishers = $edTable->getPublishersForEdition($id);
         $view->parent = $edTable->getParentItemForEdition($id);

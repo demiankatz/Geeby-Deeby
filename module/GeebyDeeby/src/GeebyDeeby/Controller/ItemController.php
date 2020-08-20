@@ -38,6 +38,8 @@ namespace GeebyDeeby\Controller;
  */
 class ItemController extends AbstractBase
 {
+    use FullTextAttributesTrait;
+
     /**
      * Default predicate to use for creators, if no specific predicate is included
      * in the role data. (Null to omit predicate-free creators in RDF output).
@@ -60,8 +62,9 @@ class ItemController extends AbstractBase
         foreach ($view->creators as $creator) {
             $personUri = $this
                 ->getServerUrl('person', ['id' => $creator['Person_ID']]);
-            $predicate = $creator['Item_Creator_Predicate']
-                ?? $this->defaultCreatorPredicate;
+            $predicate = empty($creator['Item_Creator_Predicate'])
+                ? $this->defaultCreatorPredicate
+                : $creator['Item_Creator_Predicate'];
             if (!empty($predicate)) {
                 $item->add($predicate, $graph->resource($personUri));
             }
@@ -301,6 +304,7 @@ class ItemController extends AbstractBase
             ->getOCLCNumbersForItem($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForItem($id);
+        $this->addFullTextAttributesToView($view);
     }
 
     /**

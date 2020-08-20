@@ -80,7 +80,7 @@ class AbstractBase extends AbstractActionController
     protected function getDbTable($table)
     {
         return $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager')
-            ->get($table);
+            ->get(strtolower($table));
     }
 
     /**
@@ -402,7 +402,7 @@ class AbstractBase extends AbstractActionController
     {
         if ($this->getAuth()->hasIdentity()) {
             $id = $this->getAuth()->getIdentity();
-            $user = $this->getDbTable('User')->getByPrimaryKey($id);
+            $user = $this->getDbTable('user')->getByPrimaryKey($id);
             if (is_object($user)) {
                 return $user;
             }

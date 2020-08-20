@@ -6,7 +6,7 @@
 <table class="item">
   <?php foreach ($tagAttributes as $current): ?>
     <tr>
-      <th><?=$this->escapeHtml($current->Tags_Attribute_Name)?>:</th>
+      <th scope="row"><?=$this->escapeHtml($current->Tags_Attribute_Name)?>:</th>
       <td>
         <?php $displayedSomething = true; ?>
         <?php if ($current->Allow_HTML == 1): ?>
@@ -19,7 +19,7 @@
   <?php endforeach; ?>
   <?php foreach ($this->relationshipsValues as $current): ?>
     <tr>
-      <th><?=$this->escapeHtml($current['label'])?>:</th>
+      <th scope="row"><?=$this->escapeHtml($current['label'])?>:</th>
       <td>
         <?php foreach ($current['values'] as $value): ?>
           <a href="<?=$this->url('tag', ['id' => $value['Tag_ID']])?>">
@@ -31,22 +31,16 @@
   <?php endforeach; ?>
 </table>
 <?php if (count($items) > 0): $displayedSomething = true; ?>
-  <?php $series = false; foreach ($items as $item): ?>
-    <?php if ($series !== $item['Series_ID']): $series = $item['Series_ID']; ?>
-      <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
-        <?=$this->fixtitle($item['Series_Name']);?>
-      </a></h2>
-    <?php endif; ?>
-    <span class="item">
-      <?=$this->escapeHtml($this->formatItemNumber($item))?>
-      <a href="<?=$this->url('item', ['id' => $item['Item_ID']])?>">
-        <?=$this->fixtitle(
-          empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']
-        )?>
-      </a>
-      <br />
-    </span>
-  <?php endforeach; ?>
+  <?php $sorts = [ 'series', 'title' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
+  <div class="pull-right" style="padding:12px 0;">
+    Sort by:
+    <div class="btn-group" style="margin-top:-4px;">
+      <?php foreach ($sorts as $current): ?>
+        <a href="?sort=<?=urlencode($current)?>" class="btn btn-<?=$sort == $current ? 'primary' : 'default'?>"><?=ucwords($current)?></a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+  <?=$this->render('geeby-deeby/tag/innerList.phtml', compact('title', 'sort', 'items'))?>
 <?php endif; ?>
 
 <?php if (!$displayedSomething): ?>

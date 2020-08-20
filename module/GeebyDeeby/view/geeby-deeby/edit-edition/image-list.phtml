@@ -2,16 +2,23 @@
   No images.
 <?php else: ?>
   <table class="list_item">
-    <tr><th>Order</th><th colspan="2">Image</th><th>Details</th></tr>
+    <tr><th scope="col">Order</th><th colspan="2" scope="col">Image</th><th scope="col">Details</th></tr>
     <?php foreach ($images as $current): ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="image_order_<?=$this->escapeHtml($current['Sequence_ID'])?>" />
-          <button onclick="Edition.reorderLink('Image', { 'sequence_id': <?=$this->escapeHtml($current['Sequence_ID'])?> });">Set</button>
+          <form onsubmit="Edition.reorderLink('Image', { 'sequence_id': <?=$this->escapeHtml($current['Sequence_ID'])?> }); return false;">
+            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="image_order_<?=$this->escapeHtml($current['Sequence_ID'])?>" /></label>
+            <input type="submit" value="Set" />
+          </form>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('Image', <?=$this->escapeHtml($current['Sequence_ID'])?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Edition.unlink('Image', " . $current['Sequence_ID'] . ")",
+            !empty($current['IIIF_URI'])
+              ? 'Delete image with IIIF URI: ' . $current['IIIF_URI']
+              : 'Delete image with path: ' . $current['Image_Path']
+          )?>
         </td>
         <td>
           <?php
@@ -25,7 +32,8 @@
             }
           ?>
           <a target="_imagePopup" href="<?=$this->escapeHtml($image)?>">
-            <img src="<?=$this->escapeHtml($thumb)?>" />
+            <span class="sr-only">Open large image</a>
+            <img alt="" src="<?=$this->escapeHtml($thumb)?>" />
           </a>
         </td>
         <td>

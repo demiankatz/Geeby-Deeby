@@ -1,19 +1,19 @@
-<div id="editForm">
+<form id="editForm" onsubmit="PersonRole.save(); return false;">
   <input type="hidden" id="Person_Role_ID" value="<?=$this->escapeHtml($role['Role_ID'])?>" />
   <table class="edit">
   <tr>
-      <th>Role:</th>
+      <th scope="row"><label for="Role_Name">Role:</label></th>
       <td><input type="text" id="Role_Name" value="<?=$this->escapeHtml($role['Role_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Item Creator Predicate:</th>
+      <th scope="row"><label for="Item_Creator_Predicate">Item Creator Predicate:</label></th>
       <td><input type="text" id="Item_Creator_Predicate" value="<?=$this->escapeHtml($role['Item_Creator_Predicate'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Edition Credit Predicate:</th>
+      <th scope="row"><label for="Edition_Credit_Predicate">Edition Credit Predicate:</label></th>
       <td><input type="text" id="Edition_Credit_Predicate" value="<?=$this->escapeHtml($role['Edition_Credit_Predicate'] ?? '')?>" /></td>
     </tr>
   </table>
-  <button id="save_person_role" onclick="PersonRole.save();">Save</button>
+  <input type="submit" value="Save" />
   <div id="save_person_role_status"></div>
-</div>
+</form>

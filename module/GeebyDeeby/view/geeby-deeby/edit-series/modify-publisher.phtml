@@ -1,14 +1,14 @@
-<div id="modifyPublisherForm">
+<form id="modifyPublisherForm" onsubmit="Series.saveLink('Publisher', <?=$row['Series_Publisher_ID']?>); return false">
   <table class="edit">
     <tr>
-      <th>Address:</th>
+      <th scope="row"><label for="Address_ID">Address:</label></th>
       <td><?=$this->render('geeby-deeby/edit-publisher/address-select.phtml', ['addresses' => $addresses, 'selected' => $row['Address_ID']])?></td>
     </tr>
     <tr>
-      <th>Imprint:</th>
+      <th scope="row"><label for="Imprint_ID">Imprint:</label></th>
       <td><?=$this->render('geeby-deeby/edit-publisher/imprint-select.phtml', ['imprints' => $imprints, 'selected' => $row['Imprint_ID']])?></td>
     </tr>
   </table>
-  <button id="save_series_publisher" onclick="Series.saveLink('Publisher', <?=$row['Series_Publisher_ID']?>);">Save</button>
+  <input id="save_series_publisher" type="submit" value="Save" />
   <div id="save_series_publisher_status"></div>
-</div>
+</form>

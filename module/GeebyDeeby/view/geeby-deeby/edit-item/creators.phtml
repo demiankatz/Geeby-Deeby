@@ -2,22 +2,29 @@
   No creators.
 <?php else: ?>
   <table class="list_item">
-    <tr><th colspan="3">Creator</th></tr>
+    <tr><th colspan="3" scope="col">Creator</th></tr>
     <?php foreach ($creators as $current): ?>
+      <?php $currentName = $this->showperson($current); ?>
       <tr>
         <td>
           <?=$this->escapeHtml($current['Role_Name'])?>:
           <a href="<?=$this->url('edit/person', ['id' => $current['Person_ID']])?>">
-            <?=$this->escapeHtml($this->showperson($current))?>
+            <?=$this->escapeHtml($currentName)?>
           </a>
         </td>
         <td>
-          <a class="ui-icon ui-icon-gear" href="#" onclick="Item.editLink('Creator', <?=$current['Item_Creator_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'gear',
+            "Item.editLink('Creator', '" . $current['Item_Creator_ID'] . "')",
+            'Edit options for ' . $current['Role_Name'] . ': ' . $currentName
+          )?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Creator', '<?=$this->escapeHtml($current['Person_ID'])?>,<?=$this->escapeHtml($current['Role_ID'])?>'); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Item.unlink('Creator', '" . $current['Person_ID'] . ',' . $current['Role_ID'] . "')",
+            'Unlink ' . $current['Role_Name'] . ': ' . $currentName
+          )?>
         </td>
       </tr>
     <?php endforeach; ?>

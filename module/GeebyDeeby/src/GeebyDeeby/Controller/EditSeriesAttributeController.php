@@ -69,8 +69,8 @@ class EditSeriesAttributeController extends AbstractBase
             'attribute_name' => 'Series_Attribute_Name',
             'rdf_property' => 'Series_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority'
-
+            'value_link' => 'Value_Link',
+            'priority' => 'Display_Priority',
         ];
         $response = $this
             ->handleGenericItem('seriesattribute', $assignMap, 'attribute');

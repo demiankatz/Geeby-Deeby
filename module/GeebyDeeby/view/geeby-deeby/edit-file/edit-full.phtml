@@ -1,29 +1,32 @@
 <?php $this->layout()->title = 'Edit File' ?>
-<?php $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_files']) ?>
+<?php $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_files']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-file/index.phtml')?>
 </div>
 <hr />
 <b>Related Items:</b>
-<br />
-<input id="file_item_id" class="Item_ID" />
-<button onclick="File.link('Item');">Link</button>
+<form onsubmit="File.link('Item'); return false;">
+  <label>Item: <input id="file_item_id" class="Item_ID" /></label>
+  <input type="submit" value="Link" />
+</form>
 <div id="item_list">
   <?=$this->render('geeby-deeby/edit-file/item-list.phtml')?>
 </div>
 <hr />
 <b>Related Series:</b>
-<br />
-<input id="file_series_id" class="Series_ID" />
-<button onclick="File.link('Series');">Link</button>
+<form onsubmit="File.link('Series'); return false;">
+  <label>Series: <input id="file_series_id" class="Series_ID" /></label>
+  <input type="submit" value="Link" />
+</form>
 <div id="series_list">
   <?=$this->render('geeby-deeby/edit-file/series-list.phtml')?>
 </div>
 <hr />
 <b>Related People:</b>
-<br />
-<input id="file_person_id" class="Person_ID" />
-<button onclick="File.link('Person');">Link</button>
+<form onsubmit="File.link('Person'); return false;">
+  <label>Person: <input id="file_person_id" class="Person_ID" /></label>
+  <input type="submit" value="Link" />
+</form>
 <div id="person_list">
   <?=$this->render('geeby-deeby/edit-file/person-list.phtml')?>
 </div>

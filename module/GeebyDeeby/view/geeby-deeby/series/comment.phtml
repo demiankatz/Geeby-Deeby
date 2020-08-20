@@ -9,8 +9,8 @@
 <?php endif; ?>
 
 <form action="" method="post">
-  <h2>Comment on <?=$this->escapeHtml($this->fixtitle($series['Series_Name']))?>:</h2>
-  <textarea name="Review" rows="15" cols="80"><?=$this->escapeHtml($review)?></textarea><br />
+  <h2><label for="review">Comment on <?=$this->escapeHtml($this->fixtitle($series['Series_Name']))?>:</label></h2>
+  <textarea id="review" name="Review" rows="15" cols="80"><?=$this->escapeHtml($review)?></textarea><br />
   <input type="submit" value="Submit Comment" />
 </form>
 
@@ -20,13 +20,13 @@
   <li>
     By submitting this comment, you are giving permission to
     post it on this site.  You retain copyright, however, and may use
-    it elsewhere however you see fit.  You may not post 
+    it elsewhere however you see fit.  You may not post
     comments to which you do not hold the copyright.
   </li>
   <li>
     Your comment will be edited for spelling and grammar and may be rejected if it
-    does not provide enough depth.  Please do not be insulted by a 
-    rejection, and feel free to use the contact link below if you would like 
+    does not provide enough depth.  Please do not be insulted by a
+    rejection, and feel free to use the contact link below if you would like
     to discuss the situation.
   </li>
 </ul>

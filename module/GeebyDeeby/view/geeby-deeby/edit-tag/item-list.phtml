@@ -1,0 +1,22 @@
+<?php if (isset($items) && count($items) > 0): ?>
+  <?php foreach ($items as $current): ?>
+    <table class="list_item">
+      <tr>
+        <td>
+          <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>">
+            <?=$this->escapeHtml($current['Item_Name'])?>
+          </a>
+        </td>
+        <td>
+          <?=$this->iconButton(
+            'trash',
+            "Tag.unlink('Item', " . $current['Item_ID'] . ")",
+            'Unlink tagged item: ' . $current['Item_Name']
+          )?>
+        </td>
+      </tr>
+    </table>
+  <?php endforeach; ?>
+<?php else: ?>
+  No relevant items.
+<?php endif; ?>

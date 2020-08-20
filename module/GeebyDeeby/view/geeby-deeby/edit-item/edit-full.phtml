@@ -1,5 +1,5 @@
 <?php $this->layout()->title = 'Edit Item' ?>
-<?php $this->scriptManager()->add(['autocomplete', 'base_editor', 'edit_items']) ?>
+<?php $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_items']) ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-item/index.phtml')?>
 </div>
@@ -25,12 +25,16 @@
   </div>
 
   <div id="adaptations-tab" class="tab-pane">
-    <select id="adapt_type">
-      <option value='From'>Adapted From</option>
-      <option value='Into'>Adapted Into</option>
-    </select>
-    <input id="adapt_name" class="Item_ID" />
-    <button onclick="Item.link('Adaptation');">Add Adaptation</button>
+    <form onsubmit="Item.link('Adaptation'); return false;">
+      <label class="sr-only" for="adapt_type">Relationship Direction:</label>
+      <select id="adapt_type">
+        <option value='From'>Adapted From</option>
+        <option value='Into'>Adapted Into</option>
+      </select>
+      <label class="sr-only" for="adapt_name">Related Item:</label>
+      <input id="adapt_name" class="Item_ID" />
+      <input type="submit" value="Add Adaptation" />
+    </form>
     <table>
       <tr>
         <td>
@@ -50,9 +54,11 @@
   </div>
 
   <div id="alt-titles-tab" class="tab-pane">
-    <b>Title:</b> <input type="text" id="Alt_Title" />
-    <b>Note: </b> <input id="Alt_Title_Note" class="Note_ID" />
-    <button onclick="Item.link('AltTitle');">Add</button>
+    <form onsubmit="Item.link('AltTitle'); return false;">
+      <label>Title: <input type="text" id="Alt_Title" /></label>
+      <label>Note: <input id="Alt_Title_Note" class="Note_ID" /></label>
+      <input type="submit" value="Add" />
+    </form>
     <div id="alttitle_list">
       <?=$this->render('geeby-deeby/edit-item/alt-title-list.phtml')?>
     </div>
@@ -60,20 +66,22 @@
 
   <div id="attached-tab" class="tab-pane">
     <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th>Title:</th>
-          <td><input id="attachment_name" class="Item_ID" /></td>
-        </tr>
-        <tr>
-          <th>Note:</th>
-          <td><input id="Attachment_Note" class="Note_ID" /></td>
-        </tr>
-        <tr>
-          <th></th>
-          <td><button onclick="Item.link('Attachment');">Add Item</button></td>
-        </tr>
-      </table>
+      <form onsubmit="Item.link('Attachment'); return false;">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="attachment_name">Title:</label></th>
+            <td><input id="attachment_name" class="Item_ID" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="Attachment_Note">Note:</label></th>
+            <td><input id="Attachment_Note" class="Note_ID" /></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" value="Add Item" /></td>
+          </tr>
+        </table>
+      </form>
     </div>
     <div id="attachment_list">
       <p class="error">IMPORTANT: In the vast majority of cases, items should be attached at
@@ -84,21 +92,27 @@
 
   <div id="bib-tab" class="tab-pane">
     <p>The current item is about the following items, series and people...</p>
-    <b>Item References:</b>
-    <input id="item_bib_id" class="Item_ID" />
-    <button onclick="Item.link('AboutItem');">Add Reference</button>
+    <form onsubmit="Item.link('AboutItem'); return false;">
+    <label>Item References:
+    <input id="item_bib_id" class="Item_ID" /></label>
+    <input type="submit" value="Add Reference" />
+    </form>
     <div id="aboutitem_list">
       <?=$this->render('geeby-deeby/edit-item/item-ref-list.phtml')?>
     </div>
-    <b>Series References:</b>
-    <input id="series_bib_id" class="Series_ID" />
-    <button onclick="Item.link('AboutSeries');">Add Reference</button>
+    <form onsubmit="Item.link('AboutSeries'); return false;">
+      <label>Series References:
+      <input id="series_bib_id" class="Series_ID" /></label>
+      <input type="submit" value="Add Reference" />
+    </form>
     <div id="aboutseries_list">
       <?=$this->render('geeby-deeby/edit-item/series-ref-list.phtml')?>
     </div>
-    <b>Person References:</b>
-    <input id="person_bib_id" class="Person_ID" />
-    <button onclick="Item.link('AboutPerson');">Add Reference</button>
+    <form onsubmit="Item.link('AboutPerson'); return false;">
+      <label>Person References:
+      <input id="person_bib_id" class="Person_ID" /></label>
+      <input type="submit" value="Add Reference" />
+    </form>
     <div id="aboutperson_list">
       <?=$this->render('geeby-deeby/edit-item/person-ref-list.phtml')?>
     </div>
@@ -110,20 +124,22 @@
     authors.
     </p>
     <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th>Person:</th>
-          <td><input id="creator_person" class="Person_ID" /></td>
-        </tr>
-        <tr>
-          <th>Role:</th>
-          <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml', ['idPrefix' => 'Creator_', 'roles' => $this->roles])?></td>
-        </tr>
-        <tr>
-          <th></th>
-          <td><button onclick="Item.link('Creator');">Add</button></td>
-        </tr>
-      </table>
+      <form onsubmit="Item.link('Creator'); return false">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="creator_person">Person:</label></th>
+            <td><input id="creator_person" class="Person_ID" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="Creator_Role_ID">Role:</label></th>
+            <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml', ['idPrefix' => 'Creator_', 'roles' => $this->roles])?></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" value="Add" /></td>
+          </tr>
+        </table>
+      </form>
     </div>
     <div id="creator_list">
       <?=$this->render('geeby-deeby/edit-item/creators.phtml')?>
@@ -134,28 +150,30 @@
     <p class="disclaimer">Credits added/removed here will affect ALL editions of this item;
     to affect a single edition, select it from the Editions tab first.</p>
     <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th>Position:</th>
-          <td><input type="text" id="credit_position" /></td>
-        </tr>
-        <tr>
-          <th>Person:</th>
-          <td><input id="credit_person" class="Person_ID" /></td>
-        </tr>
-        <tr>
-          <th>Role:</th>
-          <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml')?></td>
-        </tr>
-        <tr>
-          <th>Note:</th>
-          <td><input id="credit_note" class="Note_ID" /></td>
-        </tr>
-        <tr>
-          <th></th>
-          <td><button onclick="Item.link('Credit');">Add</button></td>
-        </tr>
-      </table>
+      <form onsubmit="Item.link('Credit'); return false;">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="credit_position">Position:</label></th>
+            <td><input type="text" id="credit_position" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="credit_person">Person:</label></th>
+            <td><input id="credit_person" class="Person_ID" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="Role_ID">Role:</label></th>
+            <td><?=$this->render('geeby-deeby/edit-person/role-select.phtml')?></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="credit_note">Note:</label></th>
+            <td><input id="credit_note" class="Note_ID" /></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" value="Add" /></td>
+          </tr>
+        </table>
+      </form>
     </div>
     <div id="credit_list">
       <?=$this->render('geeby-deeby/edit-item/credits.phtml')?>
@@ -164,28 +182,30 @@
 
   <div id="desc-tab" class="tab-pane">
     <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th>Description Type:</th>
-          <td>
-            <select id='DescriptionType'>
-              <?php foreach ($this->descriptionSource()->getList() as $currentVal => $currentDesc): ?>
-                <option value="<?=$this->escapeHtml($currentVal)?>"><?=$this->escapeHtml($currentDesc)?></option>
-              <?php endforeach; ?>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Description:</th>
-          <td>
-            <textarea id='Description'></textarea>
-          </td>
-        </tr>
-        <tr>
-          <th></th>
-          <td><button onclick="Item.link('Description');">Add</button></td>
-        </tr>
-      </table>
+      <form onsubmit="Item.link('Description'); return false;">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="DescriptionType">Description Type:</label></th>
+            <td>
+              <select id='DescriptionType'>
+                <?php foreach ($this->descriptionSource()->getList() as $currentVal => $currentDesc): ?>
+                  <option value="<?=$this->escapeHtml($currentVal)?>"><?=$this->escapeHtml($currentDesc)?></option>
+                <?php endforeach; ?>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="Description">Description:</label></th>
+            <td>
+              <textarea id='Description'></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" value="Add" /></td>
+          </tr>
+        </table>
+      </form>
     </div>
     <div id="description_list">
       <?=$this->render('geeby-deeby/edit-item/description-list.phtml')?>
@@ -193,15 +213,17 @@
   </div>
 
   <div id="relationships-tab" class="tab-pane">
-    <div>
+    <form onsubmit="Item.link('Relationship'); return false;">
+      <label class="sr-only" for="relationship_type">Relationship Type:</label>
       <select id="relationship_type">
         <?php foreach ($this->relationships as $value => $label): ?>
           <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
         <?php endforeach; ?>
       </select>
-      <input id="target_item" />
-      <button onclick="Item.link('Relationship');">Add Relationship</button>
-    </div>
+      <label class="sr-only" for="target_item">Target Item:</label>
+      <input type="text" id="target_item" />
+      <input type="submit" value="Add Relationship" />
+    </form>
     <hr/>
     <div id="relationship_list">
       <?=$this->render('geeby-deeby/edit-item/relationship-list.phtml')?>
@@ -210,16 +232,18 @@
 
   <div id="tags-tab" class="tab-pane">
     <div class="edit_container">
-      <table class="edit">
-        <tr>
-          <th>Subject/Tag:</th>
-          <td><input id="Tag_ID" class="Tag_ID" /></td>
-        </tr>
-        <tr>
-          <th></th>
-          <td><button onclick="Item.link('Tag');">Add</button></td>
-        </tr>
-      </table>
+      <form onsubmit="Item.link('Tag'); return false;">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="Tag_ID">Subject/Tag:</label></th>
+            <td><input id="Tag_ID" class="Tag_ID" /></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" value="Add" /></td>
+          </tr>
+        </table>
+      </form>
     </div>
     <div id="tag_list">
       <?=$this->render('geeby-deeby/edit-item/tag-list.phtml')?>
@@ -227,12 +251,16 @@
   </div>
 
   <div id="translations-tab" class="tab-pane">
-    <select id="trans_type">
-      <option value='from'>Translated From</option>
-      <option value='into'>Translated Into</option>
-    </select>
-    <input id="trans_name" class="Item_ID" />
-    <button onclick="Item.link('Translation');">Add Translation</button>
+    <form onsubmit="Item.link('Translation'); return false;">
+      <label class="sr-only" for="trans_type">Translation Direction:</label>
+      <select id="trans_type">
+        <option value='from'>Translated From</option>
+        <option value='into'>Translated Into</option>
+      </select>
+      <label class="sr-only" for="trans_name">Translation Target:</label>
+      <input type="text" id="trans_name" class="Item_ID" />
+      <input type="submit" value="Add Translation" />
+    </form>
     <table>
       <tr>
         <td>

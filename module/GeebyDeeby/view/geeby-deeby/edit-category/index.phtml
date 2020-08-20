@@ -1,15 +1,15 @@
-<div id="editForm">
+<form id="editForm" onsubmit="Category.save(); return false;">
   <input type="hidden" id="Category_ID" value="<?=$this->escapeHtml($category['Category_ID'])?>" />
   <table class="edit">
     <tr>
-      <th>Category:</th>
-      <td><input type="text" id="Category" value="<?=$this->escapeHtml($category['Category'] ?? '')?>" /></td>
+      <th scope="row"><label for="Category_Name">Category:</label></th>
+      <td><input type="text" id="Category_Name" value="<?=$this->escapeHtml($category['Category'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Description:</th>
+      <th scope="row"><label for="Description">Description:</label></th>
       <td><textarea id="Description"><?=$this->escapeHtml($category['Description'] ?? '')?></textarea></td>
     </tr>
   </table>
-  <button id="save_category" onclick="Category.save();">Save</button>
+  <input type="submit" value="Save" />
   <div id="save_category_status"></div>
-</div>
+</form>

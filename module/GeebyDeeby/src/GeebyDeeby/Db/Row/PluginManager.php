@@ -52,7 +52,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'country' => 'GeebyDeeby\Db\Row\Country',
         'edition' => 'GeebyDeeby\Db\Row\Edition',
         'editionsattribute' => 'GeebyDeeby\Db\Row\EditionsAttribute',
-        'editionsattributesvalues' => 'GeebyDeeby\Db\Row\EditionsAttributesValues',
+        'editionsfulltextattribute' => 'GeebyDeeby\Db\Row\EditionsFullTextAttribute',
         'editionscredits' => 'GeebyDeeby\Db\Row\EditionsCredits',
         'editionsfulltext' => 'GeebyDeeby\Db\Row\EditionsFullText',
         'editionsimages' => 'GeebyDeeby\Db\Row\EditionsImages',

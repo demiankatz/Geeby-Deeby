@@ -11,12 +11,14 @@
 <div class="tab-content">
   <div id="addr-tab" class="tab-pane active">
     <div class="edit_container">
-      <table class="edit">
-        <tr><th>Country:</th><td><?=$this->render('geeby-deeby/edit-country/select.phtml')?></td></tr>
-        <tr><th>City:</th><td><?=$this->render('geeby-deeby/edit-city/select.phtml')?></td></tr>
-        <tr><th>Street:</th><td><input type="text" id="Street" /></td></tr>
-        <tr><th></th><td><button onclick="Publisher.link('Address');">Add</button></td></tr>
-      </table>
+      <form onsubmit="Publisher.link('Address'); return false;">
+        <table class="edit">
+          <tr><th scope="row"><label for="Country_ID">Country:</label></th><td><?=$this->render('geeby-deeby/edit-country/select.phtml')?></td></tr>
+          <tr><th scope="row"><label for="City_ID">City:</label></th><td><?=$this->render('geeby-deeby/edit-city/select.phtml')?></td></tr>
+          <tr><th scope="row"><label for="Street">Street:</label></th><td><input type="text" id="Street" /></td></tr>
+          <tr><td></td><td><input type="submit" value="Add" /></td></tr>
+        </table>
+      </form>
     </div>
     <div id="address_list">
       <?=$this->render('geeby-deeby/edit-publisher/address-list.phtml')?>
@@ -24,8 +26,10 @@
   </div>
 
   <div id="imprints-tab" class="tab-pane">
-    <b>Imprint:</b> <input type="text" id="Imprint" />
-    <button onclick="Publisher.link('Imprint');">Add</button>
+    <form onsubmit="Publisher.link('Imprint'); return false;">
+      <label>Imprint: <input type="text" id="Imprint" /></label>
+      <input type="submit" value="Add" />
+    </form>
     <div id="imprint_list">
       <?=$this->render('geeby-deeby/edit-publisher/imprint-list.phtml')?>
     </div>

@@ -2,10 +2,13 @@
   <?php foreach ($uris as $current): ?>
     <table class="list_item">
       <tr>
-        <td><?=$this->escapeHtml($current['URI'])?> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
+        <td><a href="<?=$this->escapeHtmlAttr($current['URI'])?>"><?=$this->escapeHtml($current['URI'])?></a> (<?=$this->escapeHtml($current['Predicate_Abbrev'])?>)</td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Person.unlink('URI', '<?=$current['URI']?>'); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Person.unlink('URI', '" . addslashes($current['URI']) . "')",
+            'Unlink ' . $current['URI']
+          )?>
         </td>
       </tr>
     </table>

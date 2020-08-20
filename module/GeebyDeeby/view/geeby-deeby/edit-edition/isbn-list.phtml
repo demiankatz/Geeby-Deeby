@@ -6,8 +6,11 @@
           <?php if (!empty($current['ISBN'])): ?><?=$this->escapeHtml($current['ISBN'])?> / <?php endif; ?><?=$this->escapeHtml($current['ISBN13'])?><?php if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Edition.unlink('ISBN', <?=$current['Sequence_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Edition.unlink('ISBN', " . $current['Sequence_ID'] . ")",
+            'Delete ISBN: ' . (empty($current['ISBN']) ? $current['ISBN13'] : $current['ISBN'])
+          )?>
         </td>
       </tr>
     </table>

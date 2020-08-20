@@ -1,36 +1,32 @@
-<div id="editForm">
+<form id="editForm" onsubmit="Person.save(); return false;">
   <input type="hidden" id="Person_ID" value="<?=$this->escapeHtml($person['Person_ID'])?>" />
   <table class="edit">
     <tr>
-      <th>First Name:</th>
+      <th scope="row"><label for="First_Name">First/Given Name(s):</label></th>
       <td><input type="text" id="First_Name" value="<?=$this->escapeHtml($person['First_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Middle Name:</th>
-      <td><input type="text" id="Middle_Name" value="<?=$this->escapeHtml($person['Middle_Name'] ?? '')?>" /></td>
-    </tr>
-    <tr>
-      <th>Last Name:</th>
+      <th scope="row"><label for="Last_Name">Last/Family Name:</label></th>
       <td><input type="text" id="Last_Name" value="<?=$this->escapeHtml($person['Last_Name'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Extra Details (birth/death dates, etc.):</th>
+      <th scope="row"><label for="Extra_Details">Extra Details (birth/death dates, etc.):</label></th>
       <td><input type="text" id="Extra_Details" value="<?=$this->escapeHtml($person['Extra_Details'] ?? '')?>" /></td>
     </tr>
     <tr>
-      <th>Authority Source:</th>
+      <th scope="row"><label for="Authority_ID">Authority Source:</label></th>
       <td><?=$this->render('geeby-deeby/edit-person/authority-select.phtml', ['authorities' => $authorities, 'selected' => $person['Authority_ID'] ?? null])?></td>
     </tr>
     <tr>
-      <th>Biography:</th>
+      <th scope="row"><label for="Biography">Biography:</label></th>
       <td><textarea id="Biography"><?=$this->escapeHtml($person['Biography'] ?? '')?></textarea></td>
     </tr>
     <tr>
       <td></td>
       <td>
-        <button id="save_person" class="btn btn-primary" onclick="Person.save();">Save</button>
+        <input type="submit" value="Save" />
         <div id="save_person_status"></div>
       </td>
     </tr>
   </table>
-</div>
+</form>

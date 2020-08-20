@@ -3,14 +3,15 @@
  * specified type of objects.
  */
 function registerAutocomplete(selector, type) {
-  $(selector).autocomplete({
-    source: function(request, response) {
+  var ac = new Autocomplete({ limit: 10000 });
+  document.querySelectorAll(selector).forEach(function bindAC(input) {
+    ac(input, function achandler(query, callback) {
       $.ajax({
-        url: basePath + "/Suggest/" + type + "?q=" + request.term, 
+        url: basePath + "/Suggest/" + type + "?q=" + query,
         success: function(data) {
-          response(data.split('\n').slice(0, -1));
+          callback(data.split('\n').slice(0, -1));
         }
       });
-    }
+    });
   });
 }

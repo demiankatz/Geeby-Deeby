@@ -14,19 +14,35 @@
     <table class="item">
       <?php if (count($fullText) > 0): ?>
         <tr>
-          <th>Online Full Text:</th>
+          <th scope="row">Online Full Text:</th>
           <td>
             <?php foreach ($fullText as $current): ?>
               <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
                 <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
-              </a><br />
+              </a>
+              <?php
+                $attrHtml = [];
+                if (count($fullTextAttributes[$current['Sequence_ID']] ?? []) > 0) {
+                  foreach ($fullTextAttributes[$current['Sequence_ID']] as $attr) {
+                    $attrValue = $attr['Allow_HTML']
+                      ? $attr['Editions_Full_Text_Attribute_Value']
+                      : $this->escapeHtml($attr['Editions_Full_Text_Attribute_Value']);
+                    $attrHtml[] = '<b>'
+                      . $this->escapeHtml($attr['Editions_Full_Text_Attribute_Name'])
+                      . ':</b> '
+                      . $attrValue;
+                  }
+                  echo '(' . implode('; ', $attrHtml) . ')';
+                }
+              ?>
+              <br />
             <?php endforeach; ?>
           </td>
         </tr>
       <?php endif; ?>
       <?php if (isset($series)): ?>
         <tr>
-          <th>Series:</th>
+          <th scope="row">Series:</th>
           <td>
             <a href="<?=$this->url('series', ['id' => $series['Series_ID']])?>">
               <?=$this->escapeHtml($this->fixtitle(empty($series['Series_AltName']) ? $series['Series_Name'] : $series['Series_AltName']))?>
@@ -61,7 +77,7 @@
 
       <?php if (!empty($item)): ?>
         <tr>
-          <th>Item:</th>
+          <th scope="row">Item:</th>
           <td>
             <a href="<?=$this->url('item', ['id' => $item['Item_ID']])?>"><?=$this->escapeHtml($this->fixtitle(empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']))?></a>
           </td>
@@ -70,7 +86,7 @@
 
       <?php $platformCount = count($platforms); if ($platformCount > 0): ?>
         <tr>
-          <th>Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
+          <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($platforms as $platform): ?>
               <a href="<?=$this->url('platform', ['id' => $platform['Platform_ID']])?>"><?=$this->escapeHtml($platform['Platform'])?></a>
@@ -82,7 +98,7 @@
 
       <?php if (!isset($series) && $parent): // only display if series info is absent; otherwise, redundant. ?>
         <tr>
-          <th>Part of:</th>
+          <th scope="row">Part of:</th>
           <td>
             <a href="<?=$this->url('edition', ['id' => $parent['Edition_ID']])?>">
               <?=$this->escapeHtml($this->fixtitle(isset($parent['Item_AltName']) && !empty($parent['Item_AltName']) ? $parent['Item_AltName'] : $parent['Item_Name']))?>
@@ -95,7 +111,7 @@
 
       <?php if (count($children) > 0): ?>
         <tr>
-          <th>Contents:</th>
+          <th scope="row">Contents:</th>
           <td>
             <?php foreach ($children as $item): ?>
               <a href="<?=$this->url('edition', ['id' => $item['Edition_ID']])?>">
@@ -111,7 +127,7 @@
       <?php foreach ($this->analyzeCredits($creators, $credits, [$edition]) as $current): ?>
         <?php $role = $current['role']; $citation = $current['citation']; $group = $current['data']; ?>
         <tr>
-          <th>
+          <th scope="row">
             <?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's')
                 . (empty($citation) ? '' : ' (according to ' . $citation . ')')
             ?>:
@@ -132,7 +148,7 @@
 
       <?php $dateCount = count($dates); if ($dateCount > 0): ?>
         <tr>
-          <th>Date<?=$dateCount > 1 ? 's' : ''?>:</th>
+          <th scope="row">Date<?=$dateCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($dates as $date): ?>
               <?=$this->escapeHtml($this->formatReleaseDate($date))?><br />
@@ -143,7 +159,7 @@
 
       <?php $pubCount = count($publishers); if ($pubCount > 0): ?>
         <tr>
-          <th>Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
+          <th scope="row">Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($publishers as $publisher): ?>
               <a href="<?=$this->url('publisher', ['id' => $publisher['Publisher_ID']])?>">
@@ -181,7 +197,7 @@
 
       <?php $isbnCount = count($isbns); if ($isbnCount > 0): ?>
         <tr>
-          <th>ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
+          <th scope="row">ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($isbns as $isbn): ?>
               <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn['ISBN13']])?>">
@@ -197,7 +213,7 @@
 
       <?php $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
         <tr>
-          <th>OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
+          <th scope="row">OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($oclcNumbers as $number): ?>
               <?=$this->escapeHtml($number['OCLC_Number'])?>
@@ -210,7 +226,7 @@
 
       <?php $codeCount = count($codes); if ($codeCount > 0): ?>
         <tr>
-          <th>Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
+          <th scope="row">Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($codes as $code): ?>
               <?=$this->escapeHtml($code['Product_Code'])?>
@@ -222,26 +238,26 @@
       <?php endif; ?>
 
       <?php if (!empty($edition['Edition_Description'])): ?>
-        <tr><th>Description:</th><td>
+        <tr><th scope="row">Description:</th><td>
           <?=$edition['Edition_Description'] /* not escaped: may contain HTML */ ?>
         </td></tr>
       <?php endif; ?>
 
       <?php if (!empty($edition['Edition_Length'])): ?>
-        <tr><th>Length:</th><td>
+        <tr><th scope="row">Length:</th><td>
           <?=$this->escapeHtml($edition['Edition_Length'])?>
         </td></tr>
       <?php endif; ?>
 
       <?php if (!empty($edition['Edition_Endings'])): ?>
-        <tr><th>Number of Endings:</th><td>
+        <tr><th scope="row">Number of Endings:</th><td>
           <?=$this->escapeHtml($edition['Edition_Endings'])?>
         </td></tr>
       <?php endif; ?>
 
       <?php foreach ($editionAttributes as $current): ?>
         <tr>
-          <th><?=$this->escapeHtml($current->Editions_Attribute_Name)?>:</th>
+          <th scope="row"><?=$this->escapeHtml($current->Editions_Attribute_Name)?>:</th>
           <td>
             <?php if ($current->Allow_HTML == 1): ?>
               <?=$current->Editions_Attribute_Value?>

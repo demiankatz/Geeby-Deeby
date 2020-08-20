@@ -2,16 +2,21 @@
   No items.
 <?php else: ?>
   <table class="list_item">
-    <tr><th>Order</th><th colspan="2">Title / Material Type</th></tr>
+    <tr><th scope="col">Order</th><th colspan="2" scope="col">Title / Material Type</th></tr>
     <?php foreach ($item_list as $current): ?>
       <tr>
         <td>
-          <input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="attachment_order_<?=$current['Item_ID']?>" />
-          <button onclick="Item.reorderLink('Attachment', { 'item_id': <?=$current['Item_ID']?> });">Set</button>
+          <form onsubmit="Item.reorderLink('Attachment', { 'item_id': <?=$current['Item_ID']?> }); return false;">
+            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=$this->escapeHtml($current['Position'])?>" id="attachment_order_<?=$current['Item_ID']?>" /></label>
+            <input type="submit" value="Set" />
+          </form>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Item.unlink('Attachment', <?=$current['Item_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Item.unlink('Attachment', " . $current['Item_ID'] . ")",
+            'Unlink attached item: ' . $current['Item_Name']
+          )?>
         </td>
         <td>
           <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>">

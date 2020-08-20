@@ -1,0 +1,3 @@
+<?php foreach ($attributes as $current): ?>
+  <a href="#" onclick="EditionsFullTextAttribute.edit(<?=$current['Editions_Full_Text_Attribute_ID']?>); return false;"><?=$this->escapeHtml($current['Editions_Full_Text_Attribute_Name'])?></a><br />
+<?php endforeach; ?>

@@ -11,11 +11,11 @@
 </p>
 
 <table class="series">
-  <tr><th>Language:</th><td><?=$this->escapeHtml($language['Language_Name'])?></td></tr>
+  <tr><th scope="row">Language:</th><td><?=$this->escapeHtml($language['Language_Name'])?></td></tr>
 
   <?php $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
     <tr>
-      <th>Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
+      <th scope="row">Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
       <td>
         <?php foreach ($altTitles as $altTitle): ?>
           <?=$this->escapeHtml($this->fixtitle($altTitle['Series_AltName']))?>
@@ -28,7 +28,7 @@
 
   <?php $pubCount = count($publishers); if ($pubCount > 0): ?>
     <tr>
-      <th>Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
+      <th scope="row">Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
       <td>
         <?php foreach ($publishers as $publisher): ?>
           <a href="<?=$this->url('publisher', ['id' => $publisher['Publisher_ID']])?>">
@@ -66,7 +66,7 @@
 
   <?php $catCount = count($categories); if ($catCount > 0): ?>
     <tr>
-      <th><?=$catCount > 1 ? 'Categories' : 'Category'?>:</th>
+      <th scope="row"><?=$catCount > 1 ? 'Categories' : 'Category'?>:</th>
       <td>
         <?php foreach ($categories as $category): ?>
           <a href="<?=$this->url('category', ['id' => $category['Category_ID']])?>">
@@ -79,7 +79,7 @@
 
   <?php if (count($translatedFrom) > 0): ?>
     <tr>
-      <th>Translated From:</th>
+      <th scope="row">Translated From:</th>
       <td>
         <?php foreach ($translatedFrom as $current): ?>
           <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
@@ -92,7 +92,7 @@
 
   <?php if (count($translatedInto) > 0): ?>
     <tr>
-      <th>Translated Into:</th>
+      <th scope="row">Translated Into:</th>
       <td>
         <?php foreach ($translatedInto as $current): ?>
           <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
@@ -105,19 +105,25 @@
 
   <?php foreach ($seriesAttributes as $current): ?>
     <tr>
-        <th><?=$this->escapeHtml($current->Series_Attribute_Name)?>:</th>
+        <th scope="row"><?=$this->escapeHtml($current->Series_Attribute_Name)?>:</th>
         <td>
+          <?php if (!empty($current->Value_Link)): ?>
+            <a href="<?=$this->escapeHtmlAttr($current->Value_Link)?>">
+          <?php endif; ?>
           <?php if ($current->Allow_HTML == 1): ?>
             <?=$current->Series_Attribute_Value?>
           <?php else: ?>
             <?=$this->escapeHtml($current->Series_Attribute_Value)?>
+          <?php endif; ?>
+          <?php if (!empty($current->Value_Link)): ?>
+            </a>
           <?php endif; ?>
         </td>
   <?php endforeach; ?>
 
   <?php foreach ($this->relationshipsValues as $current): ?>
     <tr>
-      <th><?=$this->escapeHtml($current['label'])?>:</th>
+      <th scope="row"><?=$this->escapeHtml($current['label'])?>:</th>
       <td>
         <?php foreach ($current['values'] as $value): ?>
           <a href="<?=$this->url('series', ['id' => $value['Series_ID']])?>">

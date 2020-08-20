@@ -1,15 +1,19 @@
 <?php if (isset($peopleFiles) && count($peopleFiles) > 0): ?>
   <?php foreach ($peopleFiles as $current): ?>
+    <?php $currentName = $this->showperson($current); ?>
     <table class="list_item">
       <tr>
         <td>
           <a href="<?=$this->url('edit/person', ['id' => $current['Person_ID']])?>">
-            <?=$this->escapeHtml($this->showperson($current))?>
+            <?=$this->escapeHtml($currentName)?>
           </a><br />
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="File.unlink('Person', <?=$current['Person_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "File.unlink('Person', " . $current['Person_ID'] . ")",
+            'Unlink person: ' . $currentName
+          )?>
         </td>
       </tr>
     </table>

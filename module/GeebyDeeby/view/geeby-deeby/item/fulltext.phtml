@@ -2,22 +2,23 @@
     $this->layout()->title = 'Items with Full Text'
 ?>
 <?php if ($fuzzy): ?>
-  <p>Showing fuzzy matches; switch to <a href="?fuzzy=0">exact matches</a> to only show links where the online text exactly matches the listed edition.</p>
+  <p>Showing fuzzy matches; switch to <a href="?fuzzy=0&source=<?=(int)$source?>">exact matches</a> to only show links where the online text exactly matches the listed edition.</p>
 <?php else: ?>
-  <p>Showing exact matches; switch to <a href="?fuzzy=1">fuzzy matches</a> to add links to listings where online text comes from a different edition.</p>
+  <p>Showing exact matches; switch to <a href="?fuzzy=1&source=<?=(int)$source?>">fuzzy matches</a> to add links to listings where online text comes from a different edition.</p>
 <?php endif; ?>
 
 <form action="<?=$this->url(isset($series) ? 'series' : 'items', ['extra' => 'FullText'] + (isset($series) ? ['id' => $series['Series_ID']] : []))?>" method="GET">
-  Showing <?=count($fulltext)?> result<?php if (count($fulltext) > 1): ?>s<?php endif; ?> from:
   <input type="hidden" name="fuzzy" value="<?=$fuzzy ? 1 : 0?>" />
-  <select name="source">
-    <option value="">All Sources</option>
-    <?php foreach ($sources as $current): ?>
-      <option value="<?=$current['Full_Text_Source_ID']?>"<?php if ((int)$source === (int)$current['Full_Text_Source_ID']): ?> selected="selected"<?php endif; ?>>
-        <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
-      </option>
-    <?php endforeach; ?>
-  </select>
+  <label class="normal">Showing <?=count($fulltext)?> result<?php if (count($fulltext) > 1): ?>s<?php endif; ?> from:
+    <select name="source">
+      <option value="">All Sources</option>
+      <?php foreach ($sources as $current): ?>
+        <option value="<?=$current['Full_Text_Source_ID']?>"<?php if ((int)$source === (int)$current['Full_Text_Source_ID']): ?> selected="selected"<?php endif; ?>>
+          <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
+        </option>
+      <?php endforeach; ?>
+    </select>
+  </label>
   <input type="submit" value="Change" />
 </form>
 

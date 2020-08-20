@@ -4,8 +4,11 @@
       <tr>
         <td><?=$this->escapeHtml($current['Material_Type_Name'])?></td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="Series.unlink('Material', <?=$current['Material_Type_ID']?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "Series.unlink('Material', " . $current['Material_Type_ID'] . ")",
+            'Unlink material type: ' . $current['Material_Type_Name']
+          )?>
         </td>
       </tr>
     </table>

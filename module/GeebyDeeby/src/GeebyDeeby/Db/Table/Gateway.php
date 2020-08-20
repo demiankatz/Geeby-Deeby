@@ -42,6 +42,8 @@ use Zend\Db\TableGateway\AbstractTableGateway;
  */
 class Gateway extends AbstractTableGateway
 {
+    use \GeebyDeeby\Db\ActivityLoggerTrait;
+
     /**
      * Table manager
      *
@@ -147,5 +149,46 @@ class Gateway extends AbstractTableGateway
         };
         usort($results, $sort);
         return $limit ? array_slice($results, 0, $limit) : $results;
+    }
+
+    /**
+     * Delete
+     *
+     * @param mixed $where Where clause
+     *
+     * @return int
+     */
+    public function delete($where)
+    {
+        $this->logActivity('DELETE');
+        return parent::delete($where);
+    }
+
+    /**
+     * Insert
+     *
+     * @param array $set Data to insert
+     *
+     * @return int
+     */
+    public function insert($set)
+    {
+        $this->logActivity('INSERT');
+        return parent::insert($set);
+    }
+
+    /**
+     * Update
+     *
+     * @param array                 $set   Data to set
+     * @param string|array|\Closure $where Where clause
+     * @param null|array            $joins Joins
+     *
+     * @return int
+     */
+    public function update($set, $where = null, array $joins = null)
+    {
+        $this->logActivity('UPDATE');
+        return parent::update($set, $where, $joins);
     }
 }

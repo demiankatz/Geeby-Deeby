@@ -10,4 +10,6 @@ public/*.gif
 public/*.txt
 public/*.xls
 vendor/
+!public/css/vendor
+!public/js/vendor
 .vscode

@@ -4,7 +4,8 @@
 <p class="disclaimer">This item is contained within multiple series; please select one.</p>
 
 <form action="" method="post">
-  <select name="series">
+  <label class="sr-only" for="series-picker">Series:</label>
+  <select id="series-picker" name="series">
     <?php foreach ($series as $current): ?>
       <option value="<?=$current['Series_ID']?>">
         <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>

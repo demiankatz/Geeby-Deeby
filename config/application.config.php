@@ -1,7 +1,10 @@
 <?php
 return [
     'modules' => [
-        'GeebyDeeby', 'GeebyDeebyLegacy', 'GeebyDeebyLocal',
+        'Zend\Router',
+        'GeebyDeeby',
+        'GeebyDeebyLegacy',
+        'GeebyDeebyLocal',
     ],
     'module_listener_options' => [
         'config_glob_paths'    => [

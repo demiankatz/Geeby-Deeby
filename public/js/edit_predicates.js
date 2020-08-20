@@ -1,7 +1,7 @@
 var PredicateEditor = function() {
     this.type = "Predicate";
     this.saveFields = {
-        'predicate': { 'id': '#Predicate', emptyError: 'Predicate cannot be blank.' },
+        'predicate': { 'id': '#Predicate_URI', emptyError: 'Predicate cannot be blank.' },
         'abbrev': { 'id': '#Predicate_Abbrev', emptyError: 'Abbreviation cannot be blank.' }
     };
 };

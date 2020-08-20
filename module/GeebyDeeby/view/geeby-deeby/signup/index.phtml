@@ -10,16 +10,16 @@
   <div class="error"><?=$this->escapeHtml($error)?></div>
 <?php endif; ?>
 <table class="signup"><tr>
-<th>Username (not case sensitive):</th><td>
-<input type="text" name="Username" value="<?=$this->escapeHtml($user ?? '')?>" size="25" maxlength="25" /></td></tr>
-<th>Full Name:</th><td>
-<input type="text" name="Fullname" value="<?=$this->escapeHtml($fullname ?? '')?>" size="25" maxlength="50" /></td></tr>
-<th>E-Mail Address (optional):</th><td>
-<input type="text" name="Address" value="<?=$this->escapeHtml($address ?? '')?>" size="25" maxlength="50" /></td></tr>
-<tr><th>Password:</th><td>
-<input type="password" name="Password1" size="25" maxlength="25" /></td></tr>
-<tr><th>Retype Password:</th><td>
-<input type="password" name="Password2" size="25" maxlength="25" /></td></tr>
+<th scope="row"><label for="signup_username">Username (not case sensitive):</label></th><td>
+<input id="signup_username" type="text" name="Username" value="<?=$this->escapeHtml($user ?? '')?>" size="25" maxlength="25" /></td></tr>
+<th scope="row"><label for="signup_fullname">Full Name:</label></th><td>
+<input id="signup_fullname" type="text" name="Fullname" value="<?=$this->escapeHtml($fullname ?? '')?>" size="25" maxlength="50" /></td></tr>
+<th scope="row"><label for="signup_email">E-Mail Address (optional):</label></th><td>
+<input id="signup_email" type="email" name="Address" value="<?=$this->escapeHtml($address ?? '')?>" size="25" maxlength="50" /></td></tr>
+<tr><th scope="row"><label for="signup_password1">Password:</label></th><td>
+<input id="signup_password1" type="password" name="Password1" size="25" maxlength="25" /></td></tr>
+<tr><th scope="row"><label for="signup_password2">Retype Password:</label></th><td>
+<input id="signup_password2" type="password" name="Password2" size="25" maxlength="25" /></td></tr>
 <tr><td><input type="submit" name="submit" value="Sign Me Up" /></td></tr>
 </table>
 </form>

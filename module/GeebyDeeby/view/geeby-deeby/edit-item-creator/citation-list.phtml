@@ -8,8 +8,11 @@
           <?=$this->escapeHtml($current['Citation'])?>
         </td>
         <td>
-          <a class="ui-icon ui-icon-trash" href="#" onclick="ItemCreator.unlink('Citation', <?=$this->escapeHtml($current['Citation_ID'])?>); return false;">
-          </a>
+          <?=$this->iconButton(
+            'trash',
+            "ItemCreator.unlink('Citation', " . $current['Citation_ID'] . ")",
+            'Unlink citation: ' . $current['Citation']
+          )?>
         </td>
       </tr>
     <?php endforeach; ?>

@@ -59,49 +59,54 @@ class ItemsTags extends Gateway
     /**
      * Get items for the specified tag.
      *
-     * @param int $tagID Tag ID
+     * @param int    $tagID Tag ID
+     * @param string $sort  Sort type (title or series; default = title)
      *
      * @return mixed
      */
-    public function getItemsForTag($tagID)
+    public function getItemsForTag($tagID, $sort = 'title')
     {
-        $callback = function ($select) use ($tagID) {
+        $callback = function ($select) use ($tagID, $sort) {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Tags.Item_ID = i.Item_ID'
             );
-            $select->join(
-                ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID',
-                ['Volume', 'Position', 'Replacement_Number']
-            );
-            $select->join(
-                ['iat' => 'Items_AltTitles'],
-                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
-            );
-            $select->join(
-                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
-            );
-            $select->group(
-                [
-                    'i.Item_ID', 'eds.Volume', 'eds.Position',
-                    'eds.Replacement_Number'
-                ]
-            );
-            $select->order(
-                [
-                    'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
-                    'eds.Replacement_Number',
-                    new Expression(
-                        'COALESCE(?, ?)',
-                        ['Item_AltName', 'Item_Name'],
-                        [
-                            Expression::TYPE_IDENTIFIER,
-                            Expression::TYPE_IDENTIFIER
-                        ]
-                    )
-                ]
-            );
+            if ($sort === 'series') {
+                $select->join(
+                    ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID',
+                    ['Volume', 'Position', 'Replacement_Number']
+                );
+                $select->join(
+                    ['iat' => 'Items_AltTitles'],
+                    'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+                    ['Item_AltName'], Select::JOIN_LEFT
+                );
+                $select->join(
+                    ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
+                );
+                $select->group(
+                    [
+                        'i.Item_ID', 'eds.Volume', 'eds.Position',
+                        'eds.Replacement_Number'
+                    ]
+                );
+                $select->order(
+                    [
+                        'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
+                        'eds.Replacement_Number',
+                        new Expression(
+                            'COALESCE(?, ?)',
+                            ['Item_AltName', 'Item_Name'],
+                            [
+                                Expression::TYPE_IDENTIFIER,
+                                Expression::TYPE_IDENTIFIER
+                            ]
+                        )
+                    ]
+                );
+            } else {
+                $select->order('i.Item_Name');
+            }
             $select->where->equalTo('Tag_ID', $tagID);
         };
         return $this->select($callback);

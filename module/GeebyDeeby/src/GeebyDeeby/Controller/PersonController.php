@@ -63,7 +63,7 @@ class PersonController extends AbstractBase
         $id = $view->person['Person_ID'];
         $uri = $this->getServerUrl('person', ['id' => $id]);
         $person = $graph->resource($uri, $class);
-        $name = $view->person['First_Name'] . ' ' . $view->person['Middle_Name']
+        $name = $view->person['First_Name']
             . ' ' . $view->person['Last_Name'];
         $person->set('foaf:name', trim(preg_replace('/\s+/', ' ', $name)));
         foreach ($view->uris as $uri) {

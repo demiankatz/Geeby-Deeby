@@ -1,34 +1,56 @@
 <?php $this->layout()->title = 'Edit Tag' ?>
-<?php $this->scriptManager()->add(['base_editor', 'autocomplete', 'edit_tags']) ?>
+<?php $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_tags']) ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-tag/index.phtml')?>
 </div>
 <hr />
 <ul class="nav nav-tabs">
   <li class="active"><a href="#uris-tab" data-toggle="tab">URIs (for linked data)</a></li>
+  <li><a href="#items-tab" data-toggle="tab">Linked Items</a></li>
   <li><a href="#relationships-tab" data-toggle="tab">Relationships</a></li>
 </ul>
 
 <div class="tab-content">
   <div id="uris-tab" class="tab-pane active">
-    <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
-    <input type="text" id="uri" />
-    <button onclick="Tag.link('URI');">Add URI</button>
+    <form onsubmit="Tag.link('URI'); return false;">
+      <label>
+        Predicate:
+        <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
+      </label>
+      <label>
+        URI:
+        <input type="text" id="uri" />
+      </label>
+      <input type="submit" value="Add URI" />
+    </form>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-tag/uri-list.phtml')?>
     </div>
   </div>
 
+  <div id="items-tab" class="tab-pane">
+    <form onsubmit="Tag.link('Item'); return false;">
+      <label>Tagged Item:
+      <input id="Item_ID" class="Item_ID" /></label>
+      <input type="submit" value="Add Item" />
+    </form>
+    <div id="item_list">
+      <?=$this->render('geeby-deeby/edit-tag/item-list.phtml')?>
+    </div>
+  </div>
+
   <div id="relationships-tab" class="tab-pane">
-    <div>
+    <form onsubmit="Tag.link('Relationship'); return false;">
+      <label class="sr-only" for="relationship_type">Relationship Type:</label>
       <select id="relationship_type">
         <?php foreach ($this->relationships as $value => $label): ?>
           <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
         <?php endforeach; ?>
       </select>
-      <input id="target_tag" />
-      <button onclick="Tag.link('Relationship');">Add Relationship</button>
-    </div>
+      <label class="sr-only" for="target_tag">Target Tag:</label>
+      <input type="text" id="target_tag" />
+      <input type="submit" value="Add Relationship" />
+    </form>
     <hr/>
     <div id="relationship_list">
       <?=$this->render('geeby-deeby/edit-tag/relationship-list.phtml')?>

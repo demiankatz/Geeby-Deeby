@@ -1,7 +1,7 @@
-<div id="editForm">
+<form id="editForm" onsubmit="Publisher.save(); return false;">
   <input type="hidden" id="Publisher_ID" value="<?=$publisher['Publisher_ID']?>" />
   <label for="Publisher_Name">Publisher:</label>
   <input type="text" id="Publisher_Name" value="<?=isset($publisher['Publisher_Name']) ? $this->escapeHtml($publisher['Publisher_Name']) : ''?>" />
-  <button id="save_publisher" onclick="Publisher.save();">Save</button>
+  <input type="submit" value="Save" />
   <div id="save_publisher_status"></div>
-</div>
+</form>

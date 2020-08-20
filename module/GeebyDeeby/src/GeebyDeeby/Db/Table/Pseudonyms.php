@@ -68,7 +68,7 @@ class Pseudonyms extends Gateway
                 ['p' => 'People'],
                 'Pseudonyms.Pseudo_Person_ID = p.Person_ID'
             );
-            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
+            $select->order(['Last_Name', 'First_Name']);
             $select->where->equalTo('Real_Person_ID', $personID);
         };
         return $this->select($callback);
@@ -88,7 +88,7 @@ class Pseudonyms extends Gateway
                 ['p' => 'People'],
                 'Pseudonyms.Real_Person_ID = p.Person_ID'
             );
-            $select->order(['Last_Name', 'First_Name', 'Middle_Name']);
+            $select->order(['Last_Name', 'First_Name']);
             $select->where->equalTo('Pseudo_Person_ID', $personID);
         };
         return $this->select($callback);
