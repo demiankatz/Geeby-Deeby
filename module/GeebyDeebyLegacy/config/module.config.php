@@ -11,7 +11,7 @@ return [
     'router' => [
         'routes' => [
             'legacy' => [
-                'type'    => 'Segment',
+                'type'    => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/:filename',
                     'constraints' => [

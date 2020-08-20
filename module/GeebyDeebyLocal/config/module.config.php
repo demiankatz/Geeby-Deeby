@@ -21,7 +21,7 @@ return [
     'router' => [
         'routes' => [
             'thanks' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/Thanks',
                     'defaults' => [
