@@ -29,7 +29,7 @@ return [
         ],
     ],
     'controllers' => [
-        'invokables' => [
+        'aliases' => [
             'GeebyDeebyLegacy\Controller\Legacy' => 'GeebyDeebyLegacy\Controller\LegacyController',
         ],
     ],

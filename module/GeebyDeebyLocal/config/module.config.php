@@ -14,7 +14,7 @@ return [
         'siteOwner' => 'Demian Katz',
     ],
     'controllers' => [
-        'invokables' => [
+        'aliases' => [
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
         ],
     ],
