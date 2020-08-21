@@ -38,6 +38,8 @@ namespace GeebyDeeby\Controller;
  */
 class ItemController extends AbstractBase
 {
+    use FullTextAttributesTrait;
+
     /**
      * Default predicate to use for creators, if no specific predicate is included
      * in the role data. (Null to omit predicate-free creators in RDF output).
@@ -302,6 +304,7 @@ class ItemController extends AbstractBase
             ->getOCLCNumbersForItem($id);
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForItem($id);
+        $this->addFullTextAttributesToView($view);
     }
 
     /**

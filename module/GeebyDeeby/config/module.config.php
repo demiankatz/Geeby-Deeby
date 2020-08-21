@@ -44,6 +44,7 @@ return [
                     'Amazon.it' => 'http://www.amazon.it/exec/obidos/ASIN/%isbn10%',
                     'Barnes & Noble' => 'http://search.barnesandnoble.com/booksearch/isbninquiry.asp?ISBN=%isbn10%',
                     'BookFinder.com' => 'http://www.bookfinder.com/search/?author=&title=&submit=Begin+Search&new_used=*&binding=*&isbn=%isbn10%&keywords=&minprice=&maxprice=&currency=USD&mode=advanced&st=sr&ac=qr',
+                    'WorldCat [find in a library]' => 'https://www.worldcat.org/search?q=bn%3A%isbn10%&qt=advanced',
                 ],
             ],
         ],
@@ -335,6 +336,27 @@ return [
                             'route'    => '/EditionsAttributeList',
                             'defaults' => [
                                 'controller'    => 'EditEditionAttribute',
+                                'action'        => 'list',
+                            ],
+                        ],
+                    ],
+                    'editionfulltextattribute' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/EditionFullTextAttribute[/:id]',
+                            'defaults' => [
+                                'controller'    => 'EditEditionFullTextAttribute',
+                                'action'        => 'index',
+                                'id'            => 'NEW',
+                            ],
+                        ],
+                    ],
+                    'editionfulltextattribute_list' => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/EditionFullTextAttributeList',
+                            'defaults' => [
+                                'controller'    => 'EditEditionFullTextAttribute',
                                 'action'        => 'list',
                             ],
                         ],
@@ -1301,6 +1323,7 @@ return [
             'GeebyDeeby\Controller\EditCountry' => 'GeebyDeeby\Controller\EditCountryController',
             'GeebyDeeby\Controller\EditEdition' => 'GeebyDeeby\Controller\EditEditionController',
             'GeebyDeeby\Controller\EditEditionAttribute' => 'GeebyDeeby\Controller\EditEditionAttributeController',
+            'GeebyDeeby\Controller\EditEditionFullTextAttribute' => 'GeebyDeeby\Controller\EditEditionFullTextAttributeController',
             'GeebyDeeby\Controller\EditFile' => 'GeebyDeeby\Controller\EditFileController',
             'GeebyDeeby\Controller\EditFullTextSource' => 'GeebyDeeby\Controller\EditFullTextSourceController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeeby\Controller\EditionController',

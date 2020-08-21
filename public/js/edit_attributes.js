@@ -38,6 +38,18 @@ var EditionsAttributeEditor = function() {
 BaseEditor.prototype.registerSubclass(EditionsAttributeEditor);
 var EditionsAttribute = new EditionsAttributeEditor();
 
+var EditionsFullTextAttributeEditor = function() {
+    this.type = "Edition Full Text Attribute";
+    this.saveFields = {
+        'attribute_name': { 'id': '#Editions_Full_Text_Attribute_Name', emptyError: 'Name cannot be blank.' },
+        'rdf_property': { 'id': '#Editions_Full_Text_Attribute_RDF_Property' },
+        'priority': { 'id': '#Display_Priority' },
+        'allow_html': { 'id': '#Allow_HTML' }
+    };
+};
+BaseEditor.prototype.registerSubclass(EditionsFullTextAttributeEditor);
+var EditionsFullTextAttribute = new EditionsFullTextAttributeEditor();
+
 var ItemsAttributeEditor = function() {
     this.type = "Items Attribute";
     this.saveFields = {

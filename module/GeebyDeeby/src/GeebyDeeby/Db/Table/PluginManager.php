@@ -57,6 +57,10 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'editionsattributesvalues' => 'GeebyDeeby\Db\Table\EditionsAttributesValues',
         'editionscredits' => 'GeebyDeeby\Db\Table\EditionsCredits',
         'editionsfulltext' => 'GeebyDeeby\Db\Table\EditionsFullText',
+        'editionsfulltextattribute' =>
+            'GeebyDeeby\Db\Table\EditionsFullTextAttribute',
+        'editionsfulltextattributesvalues' =>
+            'GeebyDeeby\Db\Table\EditionsFullTextAttributesValues',
         'editionsimages' => 'GeebyDeeby\Db\Table\EditionsImages',
         'editionsisbns' => 'GeebyDeeby\Db\Table\EditionsISBNs',
         'editionsoclcnumbers' => 'GeebyDeeby\Db\Table\EditionsOCLCNumbers',

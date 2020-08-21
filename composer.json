@@ -15,7 +15,7 @@
     },
     "require": {
         "php": ">=7.1",
-        "easyrdf/easyrdf": "dev-master",
+        "easyrdf/easyrdf": "1.0.0",
         "vufind-org/vufindcode": "1.2",
         "zendframework/zend-authentication": "2.7.0",
         "zendframework/zend-cache": "2.9.0",

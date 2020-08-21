@@ -66,7 +66,23 @@
                   <?php if (count($editions) > 1): ?>
                     (<?=$this->escapeHtml($this->fixtitle($current['Edition_Name']))?>)
                   <?php endif; ?>
-                </a><br />
+                </a>
+                <?php
+                  $attrHtml = [];
+                  if (count($fullTextAttributes[$current['Sequence_ID']] ?? []) > 0) {
+                    foreach ($fullTextAttributes[$current['Sequence_ID']] as $attr) {
+                      $attrValue = $attr['Allow_HTML']
+                        ? $attr['Editions_Full_Text_Attribute_Value']
+                        : $this->escapeHtml($attr['Editions_Full_Text_Attribute_Value']);
+                      $attrHtml[] = '<b>'
+                        . $this->escapeHtml($attr['Editions_Full_Text_Attribute_Name'])
+                        . ':</b> '
+                        . $attrValue;
+                    }
+                    echo '(' . implode('; ', $attrHtml) . ')';
+                  }
+                ?>
+                <br />
               <?php endif; ?>
               <?php $previousFullTextName = $current['Edition_Name'] ?>
             <?php endforeach; ?>
