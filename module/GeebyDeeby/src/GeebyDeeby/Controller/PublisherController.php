@@ -133,6 +133,7 @@ class PublisherController extends AbstractBase
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForPublisher($id);
+        $view->uris = $this->getDbTable('publishersuris')->getURIsForPublisher($id);
         return $view;
     }
 
