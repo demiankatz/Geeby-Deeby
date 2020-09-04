@@ -67,8 +67,9 @@ class EditPublisherController extends AbstractBase
                 ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
             $view->imprints = $this->getDbTable('publishersimprints')
                 ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
+            $view->predicates = $this->getDbTable('predicate')->getList();
             $view->uris = $this->getDbTable('publishersuris')
-                ->getURIsForCity($view->publisherObj->Publisher_ID);
+                ->getURIsForPublisher($view->publisherObj->Publisher_ID);
             $view->setTemplate('geeby-deeby/edit-publisher/edit-full');
         }
         return $view;
