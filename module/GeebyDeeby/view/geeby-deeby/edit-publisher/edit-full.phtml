@@ -34,4 +34,14 @@
       <?=$this->render('geeby-deeby/edit-publisher/imprint-list.phtml')?>
     </div>
   </div>
-</div>
+
+  <div class="tab-content">
+    <div id="uris-tab" class="tab-pane active">
+      <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
+      <input type="text" id="uri" />
+      <button onclick="Publisher.link('URI');">Add URI</button>
+      <div id="uri_list">
+        <?=$this->render('geeby-deeby/edit-publisher/uri-list.phtml')?>
+      </div>
+    </div>
+  </div>

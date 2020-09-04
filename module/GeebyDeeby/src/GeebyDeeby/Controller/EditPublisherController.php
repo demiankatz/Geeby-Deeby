@@ -67,6 +67,8 @@ class EditPublisherController extends AbstractBase
                 ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
             $view->imprints = $this->getDbTable('publishersimprints')
                 ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
+            $view->uris = $this->getDbTable('publishersuris')
+                ->getURIsForCity($view->publisherObj->Publisher_ID);
             $view->setTemplate('geeby-deeby/edit-publisher/edit-full');
         }
         return $view;
@@ -157,5 +159,22 @@ class EditPublisherController extends AbstractBase
                 'geeby-deeby/edit-publisher/imprint-list.phtml'
             );
         }
+    }
+
+    /**
+     * Deal with URIs
+     *
+     * @return mixed
+     */
+    public function uriAction()
+    {
+        $extras = ($pid = $this->params()->fromPost('predicate_id'))
+            ? ['Predicate_ID' => $pid] : [];
+        return $this->handleGenericLink(
+            'publishersuris', 'Publisher_ID', 'URI',
+            'uris', 'getURIsForPublisher',
+            'geeby-deeby/edit-publisher/uri-list.phtml',
+            $extras
+        );
     }
 }

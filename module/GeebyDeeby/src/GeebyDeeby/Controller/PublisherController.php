@@ -64,6 +64,9 @@ class PublisherController extends AbstractBase
             'publisher', ['id' => $view->publisher['Publisher_ID']]
         );
         $pub = $graph->resource($uri, $class);
+        foreach ($view->uris as $uri) {
+            $pub->add($uri->Predicate, $graph->resource($uri->URI));
+        }
         return $pub;
     }
 
