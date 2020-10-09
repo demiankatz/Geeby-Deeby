@@ -43,14 +43,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class LinksCommand extends Command
+class FullTextCommand extends Command
 {
     /**
      * The name of the command (the part after "public/index.php")
      *
      * @var string
      */
-    protected static $defaultName = 'check/links';
+    protected static $defaultName = 'check/fulltext';
 
     /**
      * Database table for retrieving full text from editions.

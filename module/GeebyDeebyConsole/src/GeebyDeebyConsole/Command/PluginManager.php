@@ -46,7 +46,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $aliases = [
-        'check/links' => Check\LinksCommand::class
+        'check/fulltext' => Check\FullTextCommand::class
     ];
 
     /**
@@ -55,7 +55,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $factories = [
-        Check\LinksCommand::class => Check\LinksCommandFactory::class,
+        Check\FullTextCommand::class => Check\FullTextCommandFactory::class,
     ];
 
     /**

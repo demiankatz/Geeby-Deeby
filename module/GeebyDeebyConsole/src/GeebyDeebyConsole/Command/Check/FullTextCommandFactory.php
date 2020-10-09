@@ -1,6 +1,6 @@
 <?php
 /**
- * Factory for check/links command.
+ * Factory for check/fulltext command.
  *
  * PHP version 7
  *
@@ -31,7 +31,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Factory for check/links command.
+ * Factory for check/fulltext command.
  *
  * @category GeebyDeeby
  * @package  Console
@@ -39,7 +39,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class LinksCommandFactory implements FactoryInterface
+class FullTextCommandFactory implements FactoryInterface
 {
     /**
      * Create an object
