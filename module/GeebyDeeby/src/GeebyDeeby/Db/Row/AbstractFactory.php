@@ -39,7 +39,7 @@ use Interop\Container\ContainerInterface;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class AbstractFactory
-    implements \Zend\ServiceManager\Factory\AbstractFactoryInterface
+    implements \Laminas\ServiceManager\Factory\AbstractFactoryInterface
 {
     /**
      * Does the factory have a way to create an instance for the service?
@@ -68,7 +68,7 @@ class AbstractFactory
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
     ) {
-        $adapter = $container->get('Zend\Db\Adapter\Adapter');
+        $adapter = $container->get('Laminas\Db\Adapter\Adapter');
         $row = new $requestedName($adapter);
         $config = $container->get('Config');
         if (!empty($config['geeby-deeby']['activity_log_dir'])) {

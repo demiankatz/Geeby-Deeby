@@ -27,8 +27,8 @@
  */
 namespace GeebyDeeby\Db\Table;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\RowGateway\RowGateway;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\RowGateway\RowGateway;
 
 /**
  * Table Definition for Series_Material_Types
@@ -89,7 +89,7 @@ class SeriesMaterialTypes extends Gateway
                 'Series_Material_Types.Material_Type_ID = mt.Material_Type_ID'
             );
             $select->columns([]);
-            $select->quantifier(\Zend\Db\Sql\Select::QUANTIFIER_DISTINCT);
+            $select->quantifier(\Laminas\Db\Sql\Select::QUANTIFIER_DISTINCT);
             $select->order('mt.Material_Type_Name');
             if (null !== $seriesID) {
                 $select->where->equalTo('Series_ID', $seriesID);

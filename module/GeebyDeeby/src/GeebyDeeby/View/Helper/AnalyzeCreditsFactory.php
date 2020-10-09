@@ -38,7 +38,8 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AnalyzeCreditsFactory implements \Zend\ServiceManager\Factory\FactoryInterface
+class AnalyzeCreditsFactory
+    implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create service

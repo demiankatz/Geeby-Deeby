@@ -27,8 +27,8 @@
  */
 namespace GeebyDeeby\Controller\Plugin;
 
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Session\Container;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Session\Container;
 
 /**
  * Zend action helper to deal with login followup; responsible for remembering URLs
@@ -60,7 +60,7 @@ class Followup extends AbstractPlugin
     /**
      * Retrieve the stored followup information.
      *
-     * @return \Zend\Session\Container
+     * @return \Laminas\Session\Container
      */
     public function retrieve()
     {

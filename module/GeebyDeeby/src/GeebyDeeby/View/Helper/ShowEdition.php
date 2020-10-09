@@ -38,7 +38,7 @@ use GeebyDeeby\Controller\EditionController;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ShowEdition extends \Zend\View\Helper\AbstractHelper
+class ShowEdition extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Edition controller

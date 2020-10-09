@@ -1,14 +1,12 @@
 <?php
-
 $modules = [
-    'Zend\Router',
+    'Laminas\Router',
     'GeebyDeeby',
-    'GeebyDeebyLocal',
 ];
 if (PHP_SAPI == 'cli') {
-    $modules[] = 'Zend\Mvc\Console';
+    $modules[] = 'GeebyDeebyConsole';
 }
-
+$modules[] = 'GeebyDeebyLocal';
 return [
     'modules' => $modules,
     'module_listener_options' => [

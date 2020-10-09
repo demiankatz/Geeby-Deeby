@@ -9,4 +9,4 @@ chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
 // Run the application!
-Zend\Mvc\Application::init(require 'config/application.config.php')->run();
+Laminas\Mvc\Application::init(require 'config/application.config.php')->run();

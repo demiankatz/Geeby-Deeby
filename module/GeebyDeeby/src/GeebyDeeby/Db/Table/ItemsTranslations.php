@@ -27,9 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\RowGateway\RowGateway;
-use Zend\Db\Sql\Expression;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\RowGateway\RowGateway;
+use Laminas\Db\Sql\Expression;
 
 /**
  * Table Definition for Items_Translations
@@ -58,7 +58,7 @@ class ItemsTranslations extends Gateway
     /**
      * Support method to add language information to a query.
      *
-     * @param \Zend\Db\Sql\Select $select Query to modify
+     * @param \Laminas\Db\Sql\Select $select Query to modify
      *
      * @return void
      */
