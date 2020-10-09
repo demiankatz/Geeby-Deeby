@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Changed
 
 - Migrated dependencies from Zend Framework to Laminas.
+- Minimum PHP version is now 7.1.3.
 - Renamed GeebyDeeby\Db\PluginManagerFactory to GeebyDeeby\ServiceManager\AbstractPluginManagerFactory for greater reusability.
 
 ### Removed
