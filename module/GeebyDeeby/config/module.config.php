@@ -67,13 +67,13 @@ return [
             'followup' => 'GeebyDeeby\Controller\Plugin\Followup',
         ],
         'factories' => [
-            'GeebyDeeby\Controller\Plugin\Followup' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\Controller\Plugin\Followup' => 'Laminas\ServiceManager\Factory\InvokableFactory',
         ]
     ],
     'router' => [
         'routes' => [
             'home' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -1293,17 +1293,17 @@ return [
     'service_manager' => [
         'factories' => [
             'GeebyDeeby\Articles' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\Db\Row\PluginManager' =>
                 'GeebyDeeby\Db\PluginManagerFactory',
             'GeebyDeeby\Db\Table\PluginManager' =>
                 'GeebyDeeby\Db\PluginManagerFactory',
-            'Zend\Authentication\AuthenticationService' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
-            'Zend\Db\Adapter\Adapter' => 'GeebyDeeby\Db\AdapterFactory',
+            'Laminas\Authentication\AuthenticationService' =>
+                'Laminas\ServiceManager\Factory\InvokableFactory',
+            'Laminas\Db\Adapter\Adapter' => 'GeebyDeeby\Db\AdapterFactory',
         ],
         'aliases' => [
-            'GeebyDeeby\Authentication' => 'Zend\Authentication\AuthenticationService',
+            'GeebyDeeby\Authentication' => 'Laminas\Authentication\AuthenticationService',
         ],
     ],
     'controllers' => [
@@ -1374,27 +1374,27 @@ return [
             'GeebyDeeby\View\Helper\Config' =>
                 'GeebyDeeby\View\Helper\ConfigFactory',
             'GeebyDeeby\View\Helper\DescriptionSource' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\FirstLetter' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\FirstLetterMenu' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\FixTitle' =>
                 'GeebyDeeby\View\Helper\FixTitleFactory',
             'GeebyDeeby\View\Helper\FormatItemNumber' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\FormatReleaseDate' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\GroupEditions' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\IconButton' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\ScriptManager' =>
                 'GeebyDeeby\View\Helper\ScriptManagerFactory',
             'GeebyDeeby\View\Helper\ShowEdition' =>
                 'GeebyDeeby\View\Helper\ShowEditionFactory',
             'GeebyDeeby\View\Helper\ShowPerson' =>
-                'Zend\ServiceManager\Factory\InvokableFactory',
+                'Laminas\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => [
             'analyzecredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',

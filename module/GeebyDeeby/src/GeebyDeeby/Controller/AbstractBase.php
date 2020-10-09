@@ -27,9 +27,9 @@
  */
 namespace GeebyDeeby\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Abstract base controller
@@ -75,7 +75,7 @@ class AbstractBase extends AbstractActionController
      *
      * @param string $table Name of table service to pull
      *
-     * @return \Zend\Db\TableGateway\AbstractTableGateway
+     * @return \Laminas\Db\TableGateway\AbstractTableGateway
      */
     protected function getDbTable($table)
     {
@@ -339,7 +339,7 @@ class AbstractBase extends AbstractActionController
     /**
      * Get access to the authentication service.
      *
-     * @return \Zend\Authentication\AuthenticationService
+     * @return \Laminas\Authentication\AuthenticationService
      */
     protected function getAuth()
     {
@@ -369,7 +369,7 @@ class AbstractBase extends AbstractActionController
     /**
      * Get the view renderer
      *
-     * @return \Zend\View\Renderer\RendererInterface
+     * @return \Laminas\View\Renderer\RendererInterface
      */
     protected function getViewRenderer()
     {

@@ -220,7 +220,7 @@ class ApproveController extends AbstractBase
                     'Added' => date('Y-m-d'),
                 ]
             );
-        } catch (\Zend\Db\Adapter\Exception\RuntimeException $e) {
+        } catch (\Laminas\Db\Adapter\Exception\RuntimeException $e) {
             // Ignore duplicate insert errors, but rethrow others....
             if (strpos($e->getMessage(), 'Duplicate entry') !== 0) {
                 throw $e;

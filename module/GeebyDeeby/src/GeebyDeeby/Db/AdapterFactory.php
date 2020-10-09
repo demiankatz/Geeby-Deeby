@@ -38,7 +38,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AdapterFactory implements \Zend\ServiceManager\Factory\FactoryInterface
+class AdapterFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create service
@@ -55,7 +55,7 @@ class AdapterFactory implements \Zend\ServiceManager\Factory\FactoryInterface
         array $options = null
     ) {
         $config = $container->get('Config');
-        return new \Zend\Db\Adapter\Adapter(
+        return new \Laminas\Db\Adapter\Adapter(
             [
                 'driver' => 'mysqli',
                 'charset' => 'utf8',

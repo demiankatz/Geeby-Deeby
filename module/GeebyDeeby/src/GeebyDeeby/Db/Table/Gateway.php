@@ -27,9 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\RowGateway\RowGateway;
-use Zend\Db\TableGateway\AbstractTableGateway;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\RowGateway\RowGateway;
+use Laminas\Db\TableGateway\AbstractTableGateway;
 
 /**
  * Generic table gateway.
@@ -75,11 +75,11 @@ class Gateway extends AbstractTableGateway
     /**
      * Set database adapter
      *
-     * @param \Zend\Db\Adapter\Adapter $adapter Database adapter
+     * @param \Laminas\Db\Adapter\Adapter $adapter Database adapter
      *
      * @return void
      */
-    public function setAdapter(\Zend\Db\Adapter\Adapter $adapter)
+    public function setAdapter(\Laminas\Db\Adapter\Adapter $adapter)
     {
         $this->adapter = $adapter;
     }

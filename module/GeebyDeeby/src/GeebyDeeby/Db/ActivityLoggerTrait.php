@@ -84,7 +84,7 @@ trait ActivityLoggerTrait
     {
         $keys = [];
         // Add key details if applicable:
-        if ($this instanceof \Zend\Db\RowGateway\RowGateway) {
+        if ($this instanceof \Laminas\Db\RowGateway\RowGateway) {
             foreach ($this->primaryKeyColumn as $key) {
                 try {
                     $keys[] = $key . ':' . $this->$key;
