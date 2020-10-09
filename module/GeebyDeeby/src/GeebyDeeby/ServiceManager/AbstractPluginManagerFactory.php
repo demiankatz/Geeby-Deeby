@@ -42,6 +42,22 @@ class AbstractPluginManagerFactory
     implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
+     * Determine the configuration key for the specified class name.
+     *
+     * @param string $requestedName Service being created
+     *
+     * @return string
+     */
+    public function getConfigKey($requestedName)
+    {
+        // Extract namespace of plugin manager (chop off leading top-level
+        // namespace -- e.g. GeebyDeeby -- and trailing PluginManager class).
+        $regex = '/^[^\\\\]+\\\\(.*)\\\\PluginManager$/';
+        preg_match($regex, $requestedName, $matches);
+        return strtolower(str_replace('\\', '_', $matches[1]));
+    }
+
+    /**
      * Create service
      *
      * @param ContainerInterface $container Service manager
@@ -55,6 +71,18 @@ class AbstractPluginManagerFactory
     public function __invoke(ContainerInterface $container, $name,
         array $options = null
     ) {
-        return new $name($container);
+        if (!empty($options)) {
+            throw new \Exception('Unexpected options sent to factory.');
+        }
+        $configKey = $this->getConfigKey($name);
+        if (empty($configKey)) {
+            $error = 'Problem determining config key for ' . $name;
+            throw new \Exception($error);
+        }
+        $config = $container->get('Config');
+        return new $name(
+            $container,
+            $config['geeby-deeby']['plugin_managers'][$configKey] ?? []
+        );
     }
 }
