@@ -27,8 +27,6 @@
  */
 namespace GeebyDeebyConsole\Command;
 
-use Laminas\ServiceManager\Factory\InvokableFactory;
-
 /**
  * Console command plugin manager
  *
