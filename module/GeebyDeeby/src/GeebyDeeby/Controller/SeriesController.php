@@ -27,8 +27,8 @@
  */
 namespace GeebyDeeby\Controller;
 
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Select;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Select;
 
 /**
  * Series controller
@@ -533,7 +533,7 @@ class SeriesController extends AbstractBase
     /**
      * Get the view model representing the series and all relevant related details.
      *
-     * @return \Zend\View\Model\ViewModel|bool
+     * @return \Laminas\View\Model\ViewModel|bool
      */
     public function getViewModelWithSeriesAndDetails()
     {

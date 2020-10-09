@@ -27,8 +27,8 @@
  */
 namespace GeebyDeeby\Controller;
 
-use Zend\Crypt\Password\Bcrypt;
-use Zend\Db\Adapter\Exception\InvalidQueryException;
+use Laminas\Crypt\Password\Bcrypt;
+use Laminas\Db\Adapter\Exception\InvalidQueryException;
 
 /**
  * Migration controller

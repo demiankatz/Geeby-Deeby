@@ -27,7 +27,7 @@
  */
 namespace GeebyDeeby\Authentication;
 
-use Zend\Authentication\Result;
+use Laminas\Authentication\Result;
 
 /**
  * GeebyDeeby Authentication Adapter
@@ -38,7 +38,7 @@ use Zend\Authentication\Result;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Adapter implements \Zend\Authentication\Adapter\AdapterInterface
+class Adapter implements \Laminas\Authentication\Adapter\AdapterInterface
 {
     /**
      * Database table gateway
@@ -79,7 +79,7 @@ class Adapter implements \Zend\Authentication\Adapter\AdapterInterface
      * Performs an authentication attempt
      *
      * @return Result
-     * @throws \Zend\Authentication\Adapter\Exception\ExceptionInterface
+     * @throws \Laminas\Authentication\Adapter\Exception\ExceptionInterface
      */
     public function authenticate()
     {

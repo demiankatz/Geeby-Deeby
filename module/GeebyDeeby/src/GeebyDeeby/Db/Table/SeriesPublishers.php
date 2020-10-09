@@ -27,9 +27,9 @@
  */
 namespace GeebyDeeby\Db\Table;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\RowGateway\RowGateway;
-use Zend\Db\Sql\Select;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\RowGateway\RowGateway;
+use Laminas\Db\Sql\Select;
 
 /**
  * Table Definition for Series_Publishers

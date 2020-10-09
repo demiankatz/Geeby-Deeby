@@ -27,7 +27,7 @@
  */
 namespace GeebyDeeby\View\Helper;
 
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 
 /**
  * Authentication view helper
@@ -38,7 +38,7 @@ use Zend\Authentication\AuthenticationService;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Auth extends \Zend\View\Helper\AbstractHelper
+class Auth extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Auth object.

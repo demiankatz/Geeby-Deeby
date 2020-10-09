@@ -27,8 +27,8 @@
  */
 namespace GeebyDeeby\Db\Table;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\RowGateway\RowGateway;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\RowGateway\RowGateway;
 
 /**
  * Table Definition for Full_Text_Sources
@@ -70,10 +70,10 @@ class FullTextSource extends Gateway
                 $select->join(
                     ['e' => 'Editions'],
                     'Editions_Full_Text.Edition_ID = e.Edition_ID',
-                    [], \Zend\Db\Sql\Select::JOIN_INNER
+                    [], \Laminas\Db\Sql\Select::JOIN_INNER
                 );
                 $select->columns(['Full_Text_Source_ID']);
-                $select->quantifier(\Zend\Db\Sql\Select::QUANTIFIER_DISTINCT);
+                $select->quantifier(\Laminas\Db\Sql\Select::QUANTIFIER_DISTINCT);
                 $select->where(['Series_ID' => $seriesID]);
             };
             foreach ($fulltext->select($filterCallback) as $current) {

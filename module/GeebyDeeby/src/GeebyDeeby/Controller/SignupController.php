@@ -27,7 +27,7 @@
  */
 namespace GeebyDeeby\Controller;
 
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Crypt\Password\Bcrypt;
 
 /**
  * Signup controller
