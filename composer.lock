@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1441d38e8117ee97a1bc1a1d838dc369",
+    "content-hash": "3b38a2aea4f6df9b4d72526552fe71c9",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -2465,16 +2465,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v2.16.1",
+            "version": "v2.16.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfPHP/PHP-CS-Fixer.git",
-                "reference": "c8afb599858876e95e8ebfcd97812d383fa23f02"
+                "reference": "1023c3458137ab052f6ff1e09621a721bfdeca13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/c8afb599858876e95e8ebfcd97812d383fa23f02",
-                "reference": "c8afb599858876e95e8ebfcd97812d383fa23f02",
+                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/1023c3458137ab052f6ff1e09621a721bfdeca13",
+                "reference": "1023c3458137ab052f6ff1e09621a721bfdeca13",
                 "shasum": ""
             },
             "require": {
@@ -2506,11 +2506,12 @@
                 "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.1",
                 "phpunit/phpunit": "^5.7.27 || ^6.5.14 || ^7.1",
                 "phpunitgoodpractices/traits": "^1.8",
-                "symfony/phpunit-bridge": "^4.3 || ^5.0",
+                "symfony/phpunit-bridge": "^5.1",
                 "symfony/yaml": "^3.0 || ^4.0 || ^5.0"
             },
             "suggest": {
-                "ext-mbstring": "For handling non-UTF8 characters in cache signature.",
+                "ext-dom": "For handling output formats in XML",
+                "ext-mbstring": "For handling non-UTF8 characters.",
                 "php-cs-fixer/phpunit-constraint-isidenticalstring": "For IsIdenticalString constraint.",
                 "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "For XmlMatchesXsd constraint.",
                 "symfony/polyfill-mbstring": "When enabling `ext-mbstring` is not possible."
@@ -2532,6 +2533,7 @@
                     "tests/Test/IntegrationCaseFactory.php",
                     "tests/Test/IntegrationCaseFactoryInterface.php",
                     "tests/Test/InternalIntegrationCaseFactory.php",
+                    "tests/Test/IsIdenticalConstraint.php",
                     "tests/TestCase.php"
                 ]
             },
@@ -2550,20 +2552,26 @@
                 }
             ],
             "description": "A tool to automatically fix PHP code style",
-            "time": "2019-11-25T22:10:32+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/keradus",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-06-27T23:57:46+00:00"
         },
         {
             "name": "phing/phing",
-            "version": "2.16.2",
+            "version": "2.16.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phingofficial/phing.git",
-                "reference": "d11c6328c450cb3cda4ffa6548aa9cd60f30dd17"
+                "reference": "b34c2bf9cd6abd39b4287dee31e68673784c8567"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phingofficial/phing/zipball/d11c6328c450cb3cda4ffa6548aa9cd60f30dd17",
-                "reference": "d11c6328c450cb3cda4ffa6548aa9cd60f30dd17",
+                "url": "https://api.github.com/repos/phingofficial/phing/zipball/b34c2bf9cd6abd39b4287dee31e68673784c8567",
+                "reference": "b34c2bf9cd6abd39b4287dee31e68673784c8567",
                 "shasum": ""
             },
             "require": {
@@ -2643,7 +2651,7 @@
                 "task",
                 "tool"
             ],
-            "time": "2020-01-03T10:18:48+00:00"
+            "time": "2020-02-03T18:50:54+00:00"
         },
         {
             "name": "php-cs-fixer/diff",
@@ -2698,16 +2706,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.3",
+            "version": "3.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "557a1fc7ac702c66b0bbfe16ab3d55839ef724cb"
+                "reference": "e97627871a7eab2f70e59166072a6b767d5834e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/557a1fc7ac702c66b0bbfe16ab3d55839ef724cb",
-                "reference": "557a1fc7ac702c66b0bbfe16ab3d55839ef724cb",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/e97627871a7eab2f70e59166072a6b767d5834e0",
+                "reference": "e97627871a7eab2f70e59166072a6b767d5834e0",
                 "shasum": ""
             },
             "require": {
@@ -2745,7 +2753,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2019-12-04T04:46:47+00:00"
+            "time": "2020-08-10T04:50:15+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
