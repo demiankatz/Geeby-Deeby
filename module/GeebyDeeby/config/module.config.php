@@ -1295,9 +1295,9 @@ return [
             'GeebyDeeby\Articles' =>
                 'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\Db\Row\PluginManager' =>
-                'GeebyDeeby\Db\PluginManagerFactory',
+                'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
             'GeebyDeeby\Db\Table\PluginManager' =>
-                'GeebyDeeby\Db\PluginManagerFactory',
+                'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
             'Laminas\Authentication\AuthenticationService' =>
                 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Laminas\Db\Adapter\Adapter' => 'GeebyDeeby\Db\AdapterFactory',

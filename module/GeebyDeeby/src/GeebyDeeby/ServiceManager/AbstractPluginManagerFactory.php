@@ -1,6 +1,6 @@
 <?php
 /**
- * Database plugin manager factory.
+ * Abstract plugin manager factory.
  *
  * PHP version 5
  *
@@ -20,25 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  ServiceManager
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db;
+namespace GeebyDeeby\ServiceManager;
 
 use Interop\Container\ContainerInterface;
 
 /**
- * Database plugin manager factory.
+ * Abstract plugin manager factory.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  ServiceManager
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class PluginManagerFactory
+class AbstractPluginManagerFactory
     implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**

@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Changed
 
 - Migrated dependencies from Zend Framework to Laminas.
+- Renamed GeebyDeeby\Db\PluginManagerFactory to GeebyDeeby\ServiceManager\AbstractPluginManagerFactory for greater reusability.
 
 ### Removed
 
