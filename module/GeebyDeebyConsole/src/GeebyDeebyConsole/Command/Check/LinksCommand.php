@@ -128,6 +128,6 @@ class LinksCommand extends Command
             $response = $this->client->send($request->setUri($url));
             $output->writeln($url . ',' . $response->getStatusCode());
         }
-       return 0;
+        return 0;
     }
 }
