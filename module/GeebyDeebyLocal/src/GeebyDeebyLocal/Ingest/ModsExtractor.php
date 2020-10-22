@@ -63,7 +63,8 @@ class ModsExtractor
                 $contents[] = $currentDetails;
             }
         }
-        foreach ($mods->xpath('/mods:mods/mods:relatedItem[@type="constituent"]') as $current) {
+        $constituentPath = '/mods:mods/mods:relatedItem[@type="constituent"]';
+        foreach ($mods->xpath($constituentPath) as $current) {
             $currentDetails = $this->extractDetails($current);
             if (!empty($currentDetails)) {
                 $contents[] = $currentDetails;
@@ -80,17 +81,23 @@ class ModsExtractor
         if ($pub) {
             $retVal['publisher'] = $pub;
         }
-        $date = $mods->xpath('/mods:mods/mods:originInfo[@eventType="publication"]/mods:dateIssued');
+        $date = $mods->xpath(
+            '/mods:mods/mods:originInfo[@eventType="publication"]/mods:dateIssued'
+        );
         if (isset($date[0])) {
             $retVal['date'] = (string)$date[0];
         }
-        if ($seriesInfo = $this->extractSeries($mods->xpath('/mods:mods/mods:relatedItem[@type="series"]/mods:titleInfo[@type="uniform"]'))) {
+        $seriesPath = '/mods:mods/mods:relatedItem[@type="series"]'
+            . '/mods:titleInfo[@type="uniform"]';
+        if ($seriesInfo = $this->extractSeries($mods->xpath($seriesPath))) {
             $retVal['series'] = $seriesInfo;
         }
-        if ($oclc = $this->extractAll($mods->xpath('/mods:mods/mods:identifier[@type="oclc"]'))) {
+        $oclcPath = '/mods:mods/mods:identifier[@type="oclc"]';
+        if ($oclc = $this->extractAll($mods->xpath($oclcPath))) {
             $retVal['oclc'] = $oclc;
         }
-        if ($url = $this->extractAll($mods->xpath('/mods:mods/mods:location/mods:url'))) {
+        $urlPath = '/mods:mods/mods:location/mods:url';
+        if ($url = $this->extractAll($mods->xpath($urlPath))) {
             $retVal['url'] = $url;
         }
         return $retVal;
@@ -115,6 +122,13 @@ class ModsExtractor
         return empty($all) ? false : $all;
     }
 
+    /**
+     * Extract series information from the provided XML object.
+     *
+     * @param object $series Simple XML object representing part of a MODS record.
+     *
+     * @return array
+     */
     protected function extractSeries($series)
     {
         $seriesInfo = [];
@@ -123,17 +137,27 @@ class ModsExtractor
             $number = $current->xpath('mods:partNumber');
             $firstName = isset($name[0]) ? (string)$name[0] : null;
             if (!empty($firstName)) {
-                // If the same series name has multiple numbers, favor the lowest non-zero value:
+                // If the same series name has multiple numbers, favor the lowest
+                // non-zero value:
+                $numStr = (string)($number[0] ?? '');
                 if (!isset($seriesInfo[$firstName])
-                    || ((string)$number[0] > 0 && intval($seriesInfo[$firstName]) < (string)$number[0])
+                    || ($numStr > 0 && intval($seriesInfo[$firstName]) < $numStr)
                 ) {
-                    $seriesInfo[$firstName] = isset($number[0]) ? (string)$number[0] : '';
+                    $seriesInfo[$firstName] = $numStr;
                 }
             }
         }
         return empty($seriesInfo) ? false : $seriesInfo;
     }
 
+    /**
+     * Extract publisher information.
+     *
+     * @param object $mods     Simple XML object representing part of a MODS record.
+     * @param object $authMods Simple XML object representing part of a MODS record.
+     *
+     * @return array
+     */
     protected function extractPublisher($mods, $authMods = [])
     {
         if (!isset($mods[0]) && !isset($authMods[0])) {
@@ -151,13 +175,14 @@ class ModsExtractor
                 }
             }
         }
-        // If we have an authorized name with a date in it, or if the authorized name is
-        // longer than the imprint name, override the one extracted above:
+        // If we have an authorized name with a date in it, or if the authorized name
+        // is longer than the imprint name, override the one extracted above:
         $parts = explode(',', $pub['name'] ?? '');
-        if (isset($authMods[0])
-            && (preg_match('/\(\d{4}/', (string)$authMods[0]) || strlen($authMods[0]) > strlen($parts[0]))
+        $authModsStr = (string)($authMods[0] ?? '');
+        if (preg_match('/\(\d{4}/', $authModsStr
+            || strlen($authModsStr) > strlen($parts[0]))
         ) {
-            $newParts = explode(',', (string)$authMods[0]);
+            $newParts = explode(',', $authModsStr);
             foreach ($newParts as $i => $part) {
                 $parts[$i] = $part;
             }
@@ -274,7 +299,8 @@ class ModsExtractor
      */
     protected function extractExtent($mods)
     {
-        $chapter = $mods->xpath('mods:part/mods:detail[@type="chapter"]/mods:number');
+        $chapter = $mods
+            ->xpath('mods:part/mods:detail[@type="chapter"]/mods:number');
         $chapter = isset($chapter[0]) ? (string)$chapter[0] : '';
         $pageStart = $mods->xpath('mods:part/mods:extent[@unit="pages"]/mods:start');
         $pageStart = isset($pageStart[0]) ? (string)$pageStart[0] : '';
@@ -321,7 +347,9 @@ class ModsExtractor
                         $current->xpath('mods:namePart'), $nameType
                     );
                 }
-                if (isset($uri[0]) && !in_array($uri[0], $this->subjectUrisToIgnore)) {
+                if (isset($uri[0])
+                    && !in_array($uri[0], $this->subjectUrisToIgnore)
+                ) {
                     $results[(string)$uri[0]] = trim($value);
                 }
             }
@@ -361,7 +389,9 @@ class ModsExtractor
     /**
      * Extract title information from the MODS.
      *
-     * @param object $mods Simple XML object representing part of a MODS record.
+     * @param object $mods            Simple XML object representing part of a MODS
+     * record.
+     * @param bool   $includeSubtitle Should we include the subtitle?
      *
      * @return string
      */

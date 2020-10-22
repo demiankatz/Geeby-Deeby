@@ -111,13 +111,19 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
             );
             $select->join(
                 ['source' => 'Series_Attributes_Values'],
-                new \Laminas\Db\Sql\Expression('Series.Series_ID = source.Series_ID AND source.Series_Attribute_ID=16'),
+                new \Laminas\Db\Sql\Expression(
+                    'Series.Series_ID = source.Series_ID '
+                    . 'AND source.Series_Attribute_ID=16'
+                ),
                 ['source' => 'Series_Attribute_Value'],
                 Select::JOIN_LEFT
             );
             $select->join(
                 ['status' => 'Series_Attributes_Values'],
-                new \Laminas\Db\Sql\Expression('Series.Series_ID = status.Series_ID AND status.Series_Attribute_ID=17'),
+                new \Laminas\Db\Sql\Expression(
+                    'Series.Series_ID = status.Series_ID '
+                    . 'AND status.Series_Attribute_ID=17'
+                ),
                 ['status' => 'Series_Attribute_Value'],
                 Select::JOIN_LEFT
             );

@@ -103,21 +103,30 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                 && !$view->parent
             ) {
                 $id = $view->edition['Edition_ID'];
-                $virtualIssueEditionUri = $this->getServerUrl('edition', ['id' => $id])
-                    . '#issue';
-                $virtualIssueEdition = $graph->resource($virtualIssueEditionUri, $class);
+                $virtualIssueEditionUri
+                    = $this->getServerUrl('edition', ['id' => $id]) . '#issue';
+                $virtualIssueEdition = $graph
+                    ->resource($virtualIssueEditionUri, $class);
                 $virtualIssueItemUri = $graph->resource($itemUri . '#issue');
                 $virtualIssueEdition->set('dime:IsEditionOf', $virtualIssueItemUri);
                 $edition->add('rda:containedIn', $virtualIssueEdition);
                 $virtualIssueEdition->add('rda:containerOf', $edition);
-                $virtualIssueEdition->set('rdf:label', $articleHelper->formatTrailingArticles($view->edition['Edition_Name']));
+                $virtualIssueEdition->set(
+                    'rdf:label',
+                    $articleHelper->formatTrailingArticles(
+                        $view->edition['Edition_Name']
+                    )
+                );
             }
         }
         if (isset($view->series)) {
-            $seriesUri = $this->getServerUrl('series', ['id' => $view->series['Series_ID']]);
+            $seriesUri = $this
+                ->getServerUrl('series', ['id' => $view->series['Series_ID']]);
             $edition->add('dime:HasSeries', $graph->resource($seriesUri));
             if ($view->edition['Position'] > 0) {
-                $edition->add('rda:numberingWithinSeries', (int)$view->edition['Position']);
+                $edition->add(
+                    'rda:numberingWithinSeries', (int)$view->edition['Position']
+                );
             }
             $seriesTitle = empty($view->series['Series_AltName'])
                 ? $view->series['Series_Name'] : $view->series['Series_AltName'];
@@ -126,14 +135,17 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             }
         }
         foreach ($view->publishers as $publisher) {
-            $pubUri = $this->getServerUrl('publisher', ['id' => $publisher['Publisher_ID']]);
+            $pubUri = $this
+                ->getServerUrl('publisher', ['id' => $publisher['Publisher_ID']]);
             $edition->add('rda:publisher', $graph->resource($pubUri));
             if (!empty($publisher['City_ID'])) {
-                $cityUri = $this->getServerUrl('city', ['id' => $publisher['City_ID']]);
+                $cityUri = $this
+                    ->getServerUrl('city', ['id' => $publisher['City_ID']]);
                 $edition->add('rda:placeOfPublication', $graph->resource($cityUri));
             }
             if (!empty($publisher['Country_ID'])) {
-                $cityUri = $this->getServerUrl('country', ['id' => $publisher['Country_ID']]);
+                $cityUri = $this
+                    ->getServerUrl('country', ['id' => $publisher['Country_ID']]);
                 $edition->add('rda:placeOfPublication', $graph->resource($cityUri));
             }
             if (!empty($publisher['Street'])) {
@@ -141,11 +153,13 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             }
         }
         foreach ($view->children as $child) {
-            $childUri = $this->getServerUrl('edition', ['id' => $child['Edition_ID']]);
+            $childUri = $this
+                ->getServerUrl('edition', ['id' => $child['Edition_ID']]);
             $edition->add('rda:containerOf', $graph->resource($childUri));
         }
         if ($view->parent) {
-            $parentUri = $this->getServerUrl('edition', ['id' => $view->parent['Edition_ID']]);
+            $parentUri = $this
+                ->getServerUrl('edition', ['id' => $view->parent['Edition_ID']]);
             $edition->add('rda:containedIn', $graph->resource($parentUri));
         }
         if (!empty($view->edition['Edition_Length'])) {
@@ -162,7 +176,14 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                         $dateStr .= '-' . substr('0' . $date[$field], -2);
                     }
                 }
-                $edition->add('rda:dateOfPublication', ['type' => 'literal', 'value' => $dateStr, 'datatype' => 'xsd:date']);
+                $edition->add(
+                    'rda:dateOfPublication',
+                    [
+                        'type' => 'literal',
+                        'value' => $dateStr,
+                        'datatype' => 'xsd:date'
+                    ]
+                );
             }
         }
         return $edition;
@@ -285,7 +306,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                 $name['authorityURI'] = 'http://id.loc.gov/authorities/names';
                 $URIs = $this->getDbTable('peopleuris')
                     ->getURIsForPerson($credit->Person_ID)->toArray();
-                $name['valueURI'] = isset($URIs[0]) ? $URIs[0]['URI'] : 'LC URI MISSING!!';
+                $name['valueURI'] = $URIs[0]['URI'] ?? 'LC URI MISSING!!';
             } else {
                 $name['authority'] = 'dime';
                 $name['authorityURI'] = 'https://dimenovels.org/Person';
@@ -381,7 +402,11 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     public function modsAction()
     {
         $view = $this->getViewModelWithEditionAndDetails();
-        $template = '<mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"></mods:mods>';
+        $template = '<mods:mods xmlns:mods="http://www.loc.gov/mods/v3" '
+            . 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+            . 'xmlns:xlink="http://www.w3.org/1999/xlink" '
+            . 'xsi:schemaLocation="http://www.loc.gov/mods/v3 '
+            . 'http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"></mods:mods>';
         $xml = simplexml_load_string($template);
         $this->addModsTitle($xml->addChild('titleInfo'), $view->item['Item_Name']);
         if (!empty($view->dates)) {
