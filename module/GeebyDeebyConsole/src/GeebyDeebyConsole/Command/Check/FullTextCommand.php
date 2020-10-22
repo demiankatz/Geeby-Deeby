@@ -46,7 +46,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FullTextCommand extends Command
 {
     /**
-     * The name of the command (the part after "public/index.php")
+     * The name of the command (the part after "cli.php")
      *
      * @var string
      */

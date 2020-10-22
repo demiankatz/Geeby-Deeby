@@ -130,7 +130,7 @@ class Gateway extends AbstractTableGateway
     }
 
     /**
-     * Zend_DB doesn't do a good job of sorting or limiting UNIONs, so we have to
+     * Laminas/DB doesn't do a good job of sorting or limiting UNIONs, so we have to
      * do it manually after the fact with this support method.
      *
      * @param mixed $rawResults Iterable result set.

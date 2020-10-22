@@ -8,7 +8,7 @@ $config = [
             'GeebyDeebyConsole\ConsoleRunner' => 'GeebyDeebyConsole\ConsoleRunnerFactory',
         ],
     ],
-    'GeebyDeeby' => [
+    'geeby-deeby' => [
         'plugin_managers' => [
             'command' => [ /* see GeebyDeebyConsole\Command\PluginManager for defaults */ ],
         ],
