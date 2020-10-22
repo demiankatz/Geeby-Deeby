@@ -121,12 +121,14 @@ class SolrHarvester
     public function getAllPagePIDs($pid)
     {
         $query = 'RELS_EXT_isPageOf_uri_ms:"info:fedora/' . $pid . '"';
-        $field = $this->settings->solrIdField . ',RELS_EXT_isSequenceNumber_literal_ms';
+        $field = $this->settings->solrIdField
+            . ',RELS_EXT_isSequenceNumber_literal_ms';
         $solr = $this->querySolr($query, $field);
         $results = [];
         if (isset($solr->response->docs)) {
             foreach ($solr->response->docs as $doc) {
-                $results[$doc->RELS_EXT_isSequenceNumber_literal_ms[0]] = $doc->{$this->settings->solrIdField};
+                $results[$doc->RELS_EXT_isSequenceNumber_literal_ms[0]]
+                    = $doc->{$this->settings->solrIdField};
             }
         }
         return $results;
@@ -158,7 +160,8 @@ class SolrHarvester
      */
     public function getSeriesEntries($series)
     {
-        $query = $this->settings->solrSeriesField . ':"' . addcslashes($series, '"') . '"';
+        $query = $this->settings->solrSeriesField
+            . ':"' . addcslashes($series, '"') . '"';
         $field = $this->settings->solrIdField;
         $sort = isset($this->settings->solrSeriesSortField)
             ? $this->settings->solrSeriesSortField : null;
@@ -182,7 +185,8 @@ class SolrHarvester
      */
     public function getCollectionEntries($collection)
     {
-        $query = $this->settings->solrCollectionField . ':"' . addcslashes($collection, '"') . '"';
+        $query = $this->settings->solrCollectionField
+            . ':"' . addcslashes($collection, '"') . '"';
         $field = $this->settings->solrIdField;
         $sort = isset($this->settings->solrCollectionSortField)
             ? $this->settings->solrCollectionSortField : null;
@@ -208,7 +212,8 @@ class SolrHarvester
      */
     protected function querySolr($query, $fl, $sort = null)
     {
-        $url = (string)$this->settings->solrUrl . '?q=' . urlencode($query) . '&wt=json'
+        $url = (string)$this->settings->solrUrl
+            . '?q=' . urlencode($query) . '&wt=json'
             . '&rows=10000&fl=' . urlencode($fl);
         if ($sort) {
             $url .= '&sort=' . urlencode($sort);

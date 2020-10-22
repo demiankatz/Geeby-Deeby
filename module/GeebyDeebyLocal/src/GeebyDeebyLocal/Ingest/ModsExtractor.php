@@ -38,10 +38,22 @@ namespace GeebyDeebyLocal\Ingest;
  */
 class ModsExtractor
 {
+    /**
+     * Subject URIs that should be ignored during extraction.
+     *
+     * @var string[]
+     */
     protected $subjectUrisToIgnore = [
         'http://vocab.getty.edu/aat/300028051', // 'books' -- not very meaningful
     ];
 
+    /**
+     * Given a simple XML object, extract details.
+     *
+     * @param object $mods Simple XML object representing a MODS record.
+     *
+     * @return array
+     */
     public function getDetails($mods)
     {
         $contents = [];
@@ -58,7 +70,14 @@ class ModsExtractor
             }
         }
         $retVal = compact('contents');
-        if ($pub = $this->extractPublisher($mods->xpath('/mods:mods/mods:originInfo[@eventType="publication"]'), $mods->xpath('/mods:mods/mods:name[mods:role/mods:roleTerm=\'publisher\']/mods:namePart'))) {
+        $pub = $this->extractPublisher(
+            $mods->xpath('/mods:mods/mods:originInfo[@eventType="publication"]'),
+            $mods->xpath(
+                '/mods:mods/mods:name[mods:role/mods:roleTerm=\'publisher\']'
+                . '/mods:namePart'
+            )
+        );
+        if ($pub) {
             $retVal['publisher'] = $pub;
         }
         $date = $mods->xpath('/mods:mods/mods:originInfo[@eventType="publication"]/mods:dateIssued');
@@ -77,6 +96,13 @@ class ModsExtractor
         return $retVal;
     }
 
+    /**
+     * Extract all strings from the provided XML object.
+     *
+     * @param object $mods Simple XML object representing part of a MODS record.
+     *
+     * @return array
+     */
     protected function extractAll($mods)
     {
         $all = [];
@@ -140,6 +166,13 @@ class ModsExtractor
         return empty($pub) ? false : $pub;
     }
 
+    /**
+     * Extract key details from the MODS.
+     *
+     * @param object $mods Simple XML object representing part of a MODS record.
+     *
+     * @return array
+     */
     protected function extractDetails($mods)
     {
         $details = [];
@@ -200,6 +233,13 @@ class ModsExtractor
         return trim($currentName);
     }
 
+    /**
+     * Extract author information from the MODS.
+     *
+     * @param object $mods Simple XML object representing part of a MODS record.
+     *
+     * @return array
+     */
     protected function extractAuthors($mods)
     {
         $authors = [];
@@ -225,6 +265,13 @@ class ModsExtractor
         return $authors;
     }
 
+    /**
+     * Extract extent information from the MODS.
+     *
+     * @param object $mods Simple XML object representing part of a MODS record.
+     *
+     * @return string
+     */
     protected function extractExtent($mods)
     {
         $chapter = $mods->xpath('mods:part/mods:detail[@type="chapter"]/mods:number');
@@ -246,6 +293,13 @@ class ModsExtractor
         return implode(', ', $parts);
     }
 
+    /**
+     * Extract subject information from the MODS.
+     *
+     * @param object $mods Simple XML object representing part of a MODS record.
+     *
+     * @return array
+     */
     protected function extractSubjects($mods)
     {
         $results = [];
@@ -275,6 +329,15 @@ class ModsExtractor
         return $results;
     }
 
+    /**
+     * Convert a title element from MODS into a string
+     *
+     * @param object $current         Simple XML object representing part of a MODS
+     * record.
+     * @param bool   $includeSubtitle Should we include the subtitle?
+     *
+     * @return string
+     */
     protected function assembleTitle($current, $includeSubtitle = true)
     {
         $title = trim((string)$current->xpath('mods:title')[0]);
@@ -295,6 +358,13 @@ class ModsExtractor
         return $title . (empty($article) ? '' : ', ' . trim((string)$article[0]));
     }
 
+    /**
+     * Extract title information from the MODS.
+     *
+     * @param object $mods Simple XML object representing part of a MODS record.
+     *
+     * @return string
+     */
     protected function extractTitleInfo($mods, $includeSubtitle = false)
     {
         $matches = $mods->xpath(
@@ -306,6 +376,13 @@ class ModsExtractor
         return $this->assembleTitle($matches[0], $includeSubtitle);
     }
 
+    /**
+     * Extract alt-title information from the MODS.
+     *
+     * @param object $mods Simple XML object representing part of a MODS record.
+     *
+     * @return array
+     */
     protected function extractAltTitleInfo($mods)
     {
         $matches = $mods->xpath('mods:titleInfo[@type="alternative"]');

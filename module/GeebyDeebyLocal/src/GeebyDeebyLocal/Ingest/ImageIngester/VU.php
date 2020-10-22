@@ -69,9 +69,13 @@ class VU extends AbstractThumbIngestor
     protected function getIIIFURI($uri)
     {
         $manifest = json_decode(file_get_contents("$uri/Manifest"));
-        if (!isset($manifest->sequences[0]->canvases[0]->images[0]->resource->service->{'@id'})) {
-            throw new \Exception("Problem finding IIIF source for " . $this->extractPID($uri));
+        $image = $manifest->sequences[0]->canvases[0]->images[0]
+            ->resource->service->{'@id'} ?? null;
+        if (null === $image) {
+            throw new \Exception(
+                "Problem finding IIIF source for " . $this->extractPID($uri)
+            );
         }
-        return $manifest->sequences[0]->canvases[0]->images[0]->resource->service->{'@id'};
+        return $image;
     }
 }
