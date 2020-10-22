@@ -70,6 +70,7 @@ class IssuesCommand extends Command
      * Constructor
      *
      * @param IssueMaker  $issueMaker Issue maker
+     * @param Series      $series     Series table
      * @param string|null $name       The name of the command; passing null means it
      * must be set in configure()
      */

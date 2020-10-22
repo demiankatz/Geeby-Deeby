@@ -118,8 +118,8 @@ abstract class AbstractThumbIngestor extends BaseIngester
             $select->where->like('Image_Path', '%' . $this->domain . '%');
         };
         $results = [];
-        foreach ($this->getDbTable('editionsimages')->select($callback) as $current) {
-            $results[] = $current->Edition_ID;
+        foreach ($this->getDbTable('editionsimages')->select($callback) as $edImg) {
+            $results[] = $edImg->Edition_ID;
         }
         return $results;
     }

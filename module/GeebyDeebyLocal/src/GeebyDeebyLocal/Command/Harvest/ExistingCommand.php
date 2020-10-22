@@ -122,16 +122,22 @@ class ExistingCommand extends Command
         $this->fedora->setOutputInterface($output);
         $this->solr->setOutputInterface($output);
         foreach ($this->solr->getExistingEditions() as $edition) {
-            $rawMods = $this->fedora->getModsForEdition('https://dimenovels.org/Edition/' . $edition);
+            $rawMods = $this->fedora
+                ->getModsForEdition('https://dimenovels.org/Edition/' . $edition);
             if (!$rawMods) {
                 $output->writeln("Could not retrieve MODS for $edition.");
                 return 1;
             }
             file_put_contents($dir . '/' . $count . '.mods', $rawMods);
-            file_put_contents($dir . '/' . $count . '.json', json_encode(['edition' => $edition]));
+            file_put_contents(
+                $dir . '/' . $count . '.json', json_encode(['edition' => $edition])
+            );
             $count++;
         }
-        file_put_contents($dir . '/job.json', json_encode(['type' => 'existing', 'count' => $count]));
+        file_put_contents(
+            $dir . '/job.json',
+            json_encode(['type' => 'existing', 'count' => $count])
+        );
         $output->writeln("Successfully harvested $count records.");
         return 0;
     }

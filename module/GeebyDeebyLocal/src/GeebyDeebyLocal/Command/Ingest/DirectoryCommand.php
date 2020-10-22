@@ -167,7 +167,8 @@ class DirectoryCommand extends Command
                 $extra = $this->edition->getByPrimaryKey($extras->edition);
             }
             if (!$this->ingester->ingest($details, $job->type, $extra)) {
-                if ($this->ingester->askQuestion('Continue with next item anyway?')) {
+                $prompt = 'Continue with next item anyway?';
+                if ($this->ingester->askQuestion($prompt)) {
                     continue;
                 }
                 break;
@@ -175,7 +176,8 @@ class DirectoryCommand extends Command
             $output->writeln('---');
             $success++;
         }
-        $output->writeln("Successfully processed $success of {$job->count} editions.");
+        $output
+            ->writeln("Successfully processed $success of {$job->count} editions.");
         return 0;
     }
 }

@@ -38,16 +38,26 @@ namespace GeebyDeebyLocal\Controller;
  */
 class IndexController extends \GeebyDeeby\Controller\IndexController
 {
+    /**
+     * Custom home page action.
+     *
+     * @return mixed
+     */
     public function indexAction()
     {
+        $mittie = $this->podcast()->getMetadata(4, 'Mittie\'s Storytime');
+        $professor = $this->podcast()
+            ->getMetadata(4, 'Professor M\'s Lecture Series');
         return $this->createViewModel(
-            ['episodes' => [
-                'mittie'    => $this->podcast()->getMetadata(4, 'Mittie\'s Storytime'),
-                'professor' => $this->podcast()->getMetadata(4, 'Professor M\'s Lecture Series'),
-            ]]
+            ['episodes' => compact('mittie', 'professor')]
         );
     }
 
+    /**
+     * Custom login action.
+     *
+     * @return mixed
+     */
     public function loginAction()
     {
         $result = parent::loginAction();
