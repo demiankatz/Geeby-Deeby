@@ -51,8 +51,10 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
         $class = 'foaf:Person'
     ) {
         $authName = $view->person['Last_Name'];
-        $first = trim($view->person['First_Name'] . ' '
-            . $view->person['Middle_Name']);
+        $first = trim(
+            $view->person['First_Name'] . ' '
+            . $view->person['Middle_Name']
+        );
         if (!empty($first)) {
             $authName .= ', ' . $first;
         }

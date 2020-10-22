@@ -105,8 +105,10 @@ class DatabaseIngester extends BaseIngester
      */
     protected function readchar($prompt)
     {
-        readline_callback_handler_install($prompt, function () {
-        });
+        readline_callback_handler_install(
+            $prompt, function () {
+            }
+        );
         $char = stream_get_contents(STDIN, 1);
         readline_callback_handler_remove();
         return $char;

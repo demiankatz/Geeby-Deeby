@@ -47,7 +47,7 @@ class InjectTemplateListener extends \Laminas\Mvc\View\Http\InjectTemplateListen
      * Template is derived from the controller found in the route match, and,
      * optionally, the action, if present.
      *
-     * @param  MvcEvent $e MVC event
+     * @param MvcEvent $e MVC event
      *
      * @return void
      */
