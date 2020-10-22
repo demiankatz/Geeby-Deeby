@@ -1206,6 +1206,14 @@ class DatabaseIngester extends BaseIngester
         return $count == 1 ? $perfect : null;
     }
 
+    /**
+     * Add an alt title to an item.
+     *
+     * @param string $item  Item ID
+     * @param string $title Alt title
+     *
+     * @return void
+     */
     protected function addAltTitle($title, $item)
     {
         $table = $this->getDbTable('itemsalttitles');
@@ -1270,6 +1278,15 @@ class DatabaseIngester extends BaseIngester
         return $id;
     }
 
+    /**
+     * Add a child work to an edition
+     *
+     * @param object $parentEdition Parent edition object
+     * @param array  $data          Data representing child edition
+     * @param int    $pos           Position of child within parent
+     *
+     * @return object|bool Edition object on success, false otherwise.
+     */
     protected function addChildWorkToEdition($parentEdition, $data, $pos = 0)
     {
         $item = $this->getItemForNewEdition($data);
@@ -1438,12 +1455,23 @@ class DatabaseIngester extends BaseIngester
         return false;
     }
 
+    /**
+     * Process a title.
+     *
+     * @param string $title Title to process.
+     * @param array  $db    Data to check against.
+     *
+     * @return bool
+     */
     protected function processTitle($title, $db)
     {
         if ($this->checkItemTitle($db['item'], $title)) {
             return true;
         }
-        if ($this->hasMatchingAltTitle($title, $db['item']['Item_ID'], $db['item']['Item_Name'], true)) {
+        $hasMatchingAlt = $this->hasMatchingAltTitle(
+            $title, $db['item']['Item_ID'], $db['item']['Item_Name'], true
+        );
+        if ($hasMatchingAlt) {
             return true;
         }
         $this->writeln('FATAL: Unexpected title mismatch.');
@@ -1454,6 +1482,14 @@ class DatabaseIngester extends BaseIngester
         return false;
     }
 
+    /**
+     * Process extent data
+     *
+     * @param string $extent Extent to process.
+     * @param array  $db     Data to check against.
+     *
+     * @return bool
+     */
     protected function processExtent($extent, $db)
     {
         $ed = $db['edition'];
@@ -1668,7 +1704,11 @@ class DatabaseIngester extends BaseIngester
                 foreach ($pseudonyms as $p) {
                     if (in_array($p['Pseudo_Person_ID'], $incomingList)) {
                         $matched = true;
-                        $this->writeln('WARNING: Database contains person ' . $current . ' but incoming data uses pseudonym ' . $p['Pseudo_Person_ID']);
+                        $this->writeln(
+                            'WARNING: Database contains person ' . $current
+                            . ' but incoming data uses pseudonym '
+                            . $p['Pseudo_Person_ID']
+                        );
                         break;
                     }
                 }
@@ -1676,13 +1716,21 @@ class DatabaseIngester extends BaseIngester
                 foreach ($real as $r) {
                     if (in_array($r['Real_Person_ID'], $incomingList)) {
                         $matched = true;
-                        $this->writeln('WARNING: Database contains person ' . $current . ' but incoming data uses real name ' . $r['Real_Person_ID']);
+                        $this->writeln(
+                            'WARNING: Database contains person ' . $current
+                            . ' but incoming data uses real name '
+                            . $r['Real_Person_ID']
+                        );
                         break;
                     }
                     foreach ($pseudo->getPseudonyms($r['Real_Person_ID']) as $realPseudo) {
                         if (in_array($realPseudo['Pseudo_Person_ID'], $incomingList)) {
                             $matched = true;
-                            $this->writeln('WARNING: Database contains person ' . $current . ' but incoming data uses alternate pseudonym ' . $realPseudo['Pseudo_Person_ID']);
+                            $this->writeln(
+                                'WARNING: Database contains person ' . $current
+                                . ' but incoming data uses alternate pseudonym '
+                                . $realPseudo['Pseudo_Person_ID']
+                            );
                             break 2;
                         }
                     }
@@ -1693,9 +1741,15 @@ class DatabaseIngester extends BaseIngester
             }
             if (count($stillUnexpected) > 0) {
                 if (count($incomingList) == 0) {
-                    $this->writeln("WARNING: no incoming authors, but authors found in database.");
+                    $this->writeln(
+                        "WARNING: no incoming authors, but authors found in "
+                        . "database."
+                    );
                 } else {
-                    $this->writeln("Found unexpected author ID(s) in database: " . implode(', ', $unexpected));
+                    $this->writeln(
+                        "Found unexpected author ID(s) in database: "
+                        . implode(', ', $unexpected)
+                    );
                     return true;
                 }
             }
@@ -1783,9 +1837,10 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
-     * Match up incoming contents against an existing series entry; return an array of
-     * arrays, each containing an array of incoming contents data as the first element
-     * and a matching array of edition/item data (or false) as the second element.
+     * Match up incoming contents against an existing series entry; return an array
+     * of arrays, each containing an array of incoming contents data as the first
+     * element and a matching array of edition/item data (or false) as the second
+     * element.
      *
      * @param object $seriesObj Series row for containing series.
      * @param int    $pos       Position of incoming contents within series.
@@ -1861,9 +1916,11 @@ class DatabaseIngester extends BaseIngester
             $match = false;
             // First try exact match:
             foreach ($children as & $currentChild) {
-                $titlesChecked[] = $currentChild['item']['Item_Name'] . ' vs. ' . $currentContent['title'];
-                if ($this->checkItemTitles($currentChild['item'], $currentContent, false)) {
-                    $match = true;
+                $titlesChecked[] = $currentChild['item']['Item_Name'] . ' vs. '
+                    . $currentContent['title'];
+                $match = $this
+                    ->checkItemTitles($currentChild['item'], $currentContent, false);
+                if ($match) {
                     $result[] = [$currentContent, $currentChild];
                     $currentChild['matched'] = true;
                     break;
@@ -1872,8 +1929,9 @@ class DatabaseIngester extends BaseIngester
             // Next try inexact match:
             if (!$match) {
                 foreach ($children as & $currentChild) {
-                    if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
-                        $match = true;
+                    $match = $this
+                        ->checkItemTitles($currentChild['item'], $currentContent);
+                    if ($match) {
                         $result[] = [$currentContent, $currentChild];
                         $currentChild['matched'] = true;
                         break;
@@ -1892,7 +1950,10 @@ class DatabaseIngester extends BaseIngester
                 foreach ($titlesChecked as $titleChecked) {
                     $this->writeln("Title checked: " . $titleChecked);
                 }
-                $this->writeln("FATAL: No series match found for edition {$child['edition']->Edition_ID}");
+                $this->writeln(
+                    "FATAL: No series match found for edition "
+                    . $child['edition']->Edition_ID
+                );
                 return false;
             }
         }
@@ -1901,8 +1962,9 @@ class DatabaseIngester extends BaseIngester
 
     /**
      * Match up incoming contents against an existing edition; return an array of
-     * arrays, each containing an array of incoming contents data as the first element
-     * and a matching array of edition/item data (or false) as the second element.
+     * arrays, each containing an array of incoming contents data as the first
+     * element and a matching array of edition/item data (or false) as the second
+     * element.
      *
      * @param object $editionObj Edition row for top-level edition.
      * @param array  $contents   The 'contents' section of the details from
@@ -1927,9 +1989,9 @@ class DatabaseIngester extends BaseIngester
             $match = false;
             // First try exact match:
             foreach ($children as & $currentChild) {
-                $titlesChecked[] = $currentChild['item']['Item_Name'] . ' vs. ' . $currentContent['title'];
-                if ($this->checkItemTitles($currentChild['item'], $currentContent, false)) {
-                    $match = true;
+                $match = $this
+                    ->checkItemTitles($currentChild['item'], $currentContent, false);
+                if ($match) {
                     $result[] = [$currentContent, $currentChild];
                     $currentChild['matched'] = true;
                     break;
@@ -1938,8 +2000,9 @@ class DatabaseIngester extends BaseIngester
             // Next try inexact match:
             if (!$match) {
                 foreach ($children as & $currentChild) {
-                    if ($this->checkItemTitles($currentChild['item'], $currentContent)) {
-                        $match = true;
+                    $match = $this
+                        ->checkItemTitles($currentChild['item'], $currentContent);
+                    if ($match) {
                         $result[] = [$currentContent, $currentChild];
                         $currentChild['matched'] = true;
                         break;
@@ -1960,7 +2023,10 @@ class DatabaseIngester extends BaseIngester
                 foreach ($contents as $current) {
                     $this->writeln("Possible match: " . $current['title']);
                 }
-                $this->writeln("WARNING: No child match found for edition {$child['edition']->Edition_ID}");
+                $this->writeln(
+                    "WARNING: No child match found for edition "
+                    . $child['edition']->Edition_ID
+                );
                 $result[] = [null, $child];
             } else {
                 $matches++;
@@ -1974,7 +2040,8 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
-     * Check the consistency of the incoming series data with existing database entries.
+     * Check the consistency of the incoming series data with existing database
+     * entries.
      *
      * @param array  $details    Details from ModsExtractor or equivalent
      * @param object $editionObj Edition row
@@ -1992,7 +2059,9 @@ class DatabaseIngester extends BaseIngester
         foreach ($details['series'] as $seriesName => $number) {
             $actualNumber = intval(preg_replace('/[^0-9]/', '', $number));
             //$this->writeln("Comparing {$expectedNumber} to {$actualNumber}...");
-            if ($actualNumber == $expectedNumber && $this->checkSeriesTitle($series, $seriesName)) {
+            if ($actualNumber == $expectedNumber
+                && $this->checkSeriesTitle($series, $seriesName)
+            ) {
                 return true;
             }
         }
@@ -2064,7 +2133,9 @@ class DatabaseIngester extends BaseIngester
                 $longer = $stripped2;
             }
             if ($inexact && $this->fuzzyContains($longer, $shorter)) {
-                $this->writeln("WARNING: inexact title match {$title} vs. {$itemTitle}");
+                $this->writeln(
+                    "WARNING: inexact title match {$title} vs. {$itemTitle}"
+                );
                 return true;
             }
         }
@@ -2094,10 +2165,9 @@ class DatabaseIngester extends BaseIngester
                 }
             }
         }
-        if ($this->hasMatchingAltTitle($currentContent['title'], $item['Item_ID'], $item['Item_Name'])) {
-            return true;
-        }
-        return false;
+        return $this->hasMatchingAltTitle(
+            $currentContent['title'], $item['Item_ID'], $item['Item_Name']
+        );
     }
 
     /**
@@ -2110,7 +2180,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function checkSeriesTitle($series, $title)
     {
-        $seriesTitle = (isset($series['Series_AltName']) && !empty($series['Series_AltName']))
+        $seriesTitle = !empty($series['Series_AltName'])
             ? $series['Series_AltName'] : $series['Series_Name'];
         return $this->fuzzyCompare($title, $seriesTitle);
     }
