@@ -27,8 +27,6 @@
  */
 namespace GeebyDeebyLocal\Ingest;
 
-use Zend\Console\Console;
-
 /**
  * Solr Harvester
  *
@@ -40,6 +38,8 @@ use Zend\Console\Console;
  */
 class SolrHarvester
 {
+    use \GeebyDeebyConsole\ConsoleOutputTrait;
+
     /**
      * Settings
      *
@@ -57,11 +57,21 @@ class SolrHarvester
     /**
      * Constructor
      *
-     * @param array $settings Settings
+     * @param object $settings Settings
      */
     public function __construct($settings = [])
     {
         $this->settings = $settings;
+    }
+
+    /**
+     * Get the settings
+     *
+     * @return object
+     */
+    public function getSettings()
+    {
+        return $this->settings;
     }
 
     /**
@@ -205,7 +215,7 @@ class SolrHarvester
         }
         $cache = $this->cache ? '/tmp/gbdb_' . md5("$query-$fl") : false;
         if (!$cache || !file_exists($cache)) {
-            Console::writeLine("Querying {$this->settings->solrUrl} for $query...");
+            $this->writeln("Querying {$this->settings->solrUrl} for $query...");
             $solrResponse = file_get_contents($url);
             if ($cache) {
                 file_put_contents($cache, $solrResponse);

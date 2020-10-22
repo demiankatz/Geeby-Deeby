@@ -28,7 +28,6 @@
 namespace GeebyDeebyLocal\Ingest\ImageIngester;
 
 use GeebyDeebyLocal\Ingest\BaseIngester;
-use Zend\Console\Console;
 
 /**
  * Abstract thumbnail loader.
@@ -41,6 +40,8 @@ use Zend\Console\Console;
  */
 abstract class AbstractThumbIngestor extends BaseIngester
 {
+    use \GeebyDeebyConsole\ConsoleOutputTrait;
+
     /**
      * Domain for full text links
      *
@@ -77,7 +78,9 @@ abstract class AbstractThumbIngestor extends BaseIngester
     }
 
     /**
-     * Load missing NIU images.
+     * Load missing images.
+     *
+     * @return void
      */
     public function ingestImages()
     {
@@ -85,12 +88,12 @@ abstract class AbstractThumbIngestor extends BaseIngester
         $table = $this->getDbTable('editionsimages');
         foreach ($this->getMissingImageLinks() as $link) {
             if (!in_array($link->Edition_ID, $existingImages)) {
-                Console::writeLine("Adding image to edition " . $link->Edition_ID);
+                $this->writeln("Adding image to edition " . $link->Edition_ID);
                 try {
                     $iiifUrl = $this->getIIIFURI($link->Full_Text_URL);
                 } catch (\Exception $e) {
                     // Skip bad images....
-                    Console::writeLine($e->getMessage());
+                    $this->writeln($e->getMessage());
                     continue;
                 }
                 $table->insert(

@@ -1,10 +1,10 @@
 <?php
 /**
- * Class to load information into the database.
+ * Factory for Database Ingester
  *
- * PHP version 5
+ * PHP version 7
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -27,8 +27,11 @@
  */
 namespace GeebyDeebyLocal\Ingest;
 
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+
 /**
- * Class to load information into the database.
+ * Factory for Database Ingester
  *
  * @category GeebyDeeby
  * @package  Ingest
@@ -36,45 +39,31 @@ namespace GeebyDeebyLocal\Ingest;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-abstract class BaseIngester
+class DatabaseIngesterFactory implements FactoryInterface
 {
-    // constant values drawn from dimenovels.org database:
-    const FULLTEXT_SOURCE_VU = 1;
-    const FULLTEXT_SOURCE_IA = 3;
-    const FULLTEXT_SOURCE_NIU = 10;
-    const FULLTEXT_SOURCE_BGSU = 14;
-    const MATERIALTYPE_WORK = 1;
-    const MATERIALTYPE_ISSUE = 2;
-    const PREDICATE_OWL_SAMEAS = 2;
-    const ROLE_AUTHOR = 1;
-    const TAGTYPE_LC = 1;
-
     /**
-     * Table plugin manager
+     * Create an object
      *
-     * @var object
+     * @param ContainerInterface $container     Service manager
+     * @param string             $requestedName Service being created
+     * @param null|array         $options       Extra options (optional)
+     *
+     * @return object
+     *
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     * creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    protected $tables;
-
-    /**
-     * Constructor
-     *
-     * @param object $tables Table plugin manager
-     */
-    public function __construct($tables)
-    {
-        $this->tables = $tables;
-    }
-
-    /**
-     * Get a database table gateway.
-     *
-     * @param string $table Name of table service to pull
-     *
-     * @return \Laminas\Db\TableGateway\AbstractTableGateway
-     */
-    protected function getDbTable($table)
-    {
-        return $this->tables->get($table);
+    public function __invoke(ContainerInterface $container, $requestedName,
+        array $options = null
+    ) {
+        if (!empty($options)) {
+            throw new \Exception('Unexpected options sent to factory.');
+        }
+        return new $requestedName(
+            $container->get(\GeebyDeeby\Db\Table\PluginManager::class),
+            $container->get(\GeebyDeeby\Articles::class)
+        );
     }
 }

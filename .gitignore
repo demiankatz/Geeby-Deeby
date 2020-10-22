@@ -1,4 +1,4 @@
-module/GeebyDeebyLocal/src/GeebyDeebyLocal/Controller/settings.json
+module/GeebyDeebyLocal/src/GeebyDeebyLocal/Ingest/settings.json
 public/images/leblanc*
 public/m4b
 public/mp3/*.html

@@ -27,7 +27,8 @@
  */
 namespace GeebyDeebyLocal\Ingest;
 
-use Zend\Console\Console;
+use GeebyDeeby\Articles;
+use GeebyDeeby\Db\Table\PluginManager;
 
 /**
  * Class to move Works into Issues within a Series.
@@ -40,6 +41,8 @@ use Zend\Console\Console;
  */
 class IssueMaker
 {
+    use \GeebyDeebyConsole\ConsoleOutputTrait;
+
     // constant values drawn from dimenovels.org database:
     const MATERIALTYPE_WORK = 1;
     const MATERIALTYPE_ISSUE = 2;
@@ -47,23 +50,24 @@ class IssueMaker
     /**
      * Table plugin manager
      *
-     * @var object
+     * @var PluginManager
      */
     protected $tables;
 
     /**
      * Articles helper
      *
-     * @var object
+     * @var Articles
      */
     protected $articles;
 
     /**
      * Constructor
      *
-     * @param object $tables Table plugin manager
+     * @param PluginManager $tables   Table plugin manager
+     * @param Articles      $articles Articles helper
      */
-    public function __construct($tables, $articles)
+    public function __construct(PluginManager $tables, Articles $articles)
     {
         $this->tables = $tables;
         $this->articles = $articles;
@@ -81,7 +85,7 @@ class IssueMaker
     {
         $works = $this->getEligibleWorks($seriesObj);
         if (count($works) == 0) {
-            Console::writeLine("No eligible works.");
+            $this->writeln("No eligible works.");
             return false;
         }
         foreach ($works as $currentEdition) {
@@ -97,7 +101,7 @@ class IssueMaker
      *
      * @param string $table Name of table service to pull
      *
-     * @return \Zend\Db\TableGateway\AbstractTableGateway
+     * @return \Laminas\Db\TableGateway\AbstractTableGateway
      */
     protected function getDbTable($table)
     {
@@ -132,22 +136,26 @@ class IssueMaker
     protected function workIsEligibleForConversion($workEdition)
     {
         if ($this->issueAlreadyExists($workEdition)) {
-            Console::writeLine('Duplicate issue found for edition #' . $workEdition->Edition_ID);
+            $this->writeln(
+                'Duplicate issue found for edition #' . $workEdition->Edition_ID
+            );
             return false;
         }
         if ($workEdition->Volume > 0) {
-            Console::writeLine('TODO: add support for volumes > 0');
+            $this->writeln('TODO: add support for volumes > 0');
             return false;
         }
         if ($workEdition->Replacement_Number > 0) {
-            Console::writeLine('TODO: add support for replacement numbers > 0');
+            $this->writeln('TODO: add support for replacement numbers > 0');
             return false;
         }
         if (!empty($workEdition->Parent_Edition_ID)
             || !empty($workEdition->Position_In_Parent)
             || !empty($workEdition->Extent_In_Parent)
         ) {
-            Console::writeLine('Unexpected parent details in edition #' . $workEdition->Edition_ID);
+            $this->writeln(
+                'Unexpected parent details in edition #' . $workEdition->Edition_ID
+            );
             return false;
         }
         return true;
@@ -183,7 +191,7 @@ class IssueMaker
     protected function createIssueItem($workEdition, $prefix)
     {
         $name = $this->articles->articleAwareAppend($prefix, $workEdition->Position);
-        Console::writeLine('Creating issue: ' . $name);
+        $this->writeln('Creating issue: ' . $name);
         $items = $this->getDbTable('item');
         $items->insert(
             [
@@ -192,6 +200,18 @@ class IssueMaker
             ]
         );
         return $items->getByPrimaryKey($items->getLastInsertValue());
+    }
+
+    /**
+     * Format a table name for use by the plugin manager.
+     *
+     * @param string $name Table name
+     *
+     * @return string
+     */
+    protected function formatTableName($name)
+    {
+        return strtolower(str_replace('_', '', $name));
     }
 
     /**
@@ -218,14 +238,14 @@ class IssueMaker
             'Editions_Product_Codes', 'Editions_Release_Dates'
         ];
         foreach ($editionTables as $table) {
-            $this->getDbTable($table)->update(
+            $this->getDbTable($this->formatTableName($table))->update(
                 ['Edition_ID' => $issueEdition->Edition_ID],
                 ['Edition_ID' => $workEdition->Edition_ID]
             );
         }
         $itemTables = ['Collections'];
         foreach ($itemTables as $table) {
-            $this->getDbTable($table)->update(
+            $this->getDbTable($this->formatTableName($table))->update(
                 ['Item_ID' => $issueEdition->Item_ID],
                 ['Item_ID' => $workEdition->Item_ID]
             );
@@ -245,7 +265,12 @@ class IssueMaker
         $workId = self::MATERIALTYPE_WORK;
         $callback = function ($select) use ($workId, $seriesObj) {
             $select->join(['i' => 'Items'], 'i.Item_ID = Editions.Item_ID', []);
-            $select->where(['Series_ID' => $seriesObj->Series_ID, 'i.Material_Type_ID' => $workId]);
+            $select->where(
+                [
+                    'Series_ID' => $seriesObj->Series_ID,
+                    'i.Material_Type_ID' => $workId
+                ]
+            );
             $select->where->greaterThan('Position', 0);
             $select->order('Position');
         };

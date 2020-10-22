@@ -27,8 +27,6 @@
  */
 namespace GeebyDeebyLocal\Ingest;
 
-use Zend\Console\Console;
-
 /**
  * Fedora Harvester
  *
@@ -40,6 +38,8 @@ use Zend\Console\Console;
  */
 class FedoraHarvester
 {
+    use \GeebyDeebyConsole\ConsoleOutputTrait;
+
     /**
      * Base URL for retrieving MODS.
      *
@@ -64,12 +64,11 @@ class FedoraHarvester
     /**
      * Constructor
      *
-     * @param string        $modsUrl Base URL for retrieving MODS.
-     * @param SolrHarvester $solr    Solr Harvester
+     * @param SolrHarvester $solr Solr Harvester
      */
-    public function __construct($modsUrl, SolrHarvester $solr)
+    public function __construct(SolrHarvester $solr)
     {
-        $this->modsUrl = $modsUrl;
+        $this->modsUrl = $solr->getSettings()->modsUrl;
         $this->solr = $solr;
     }
 
@@ -93,7 +92,7 @@ class FedoraHarvester
             return file_get_contents($cache);
         }
         $modsUrl = sprintf($this->modsUrl, $pid);
-        Console::writeLine("Retrieving $modsUrl...");
+        $this->writeln("Retrieving $modsUrl...");
         $mods = file_get_contents($modsUrl);
         if ($cache && $mods) {
             file_put_contents($cache, $mods);

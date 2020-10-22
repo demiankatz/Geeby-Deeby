@@ -27,7 +27,7 @@
  */
 namespace GeebyDeebyLocal\Controller;
 
-use Zend\Feed\Writer\Feed;
+use Laminas\Feed\Writer\Feed;
 
 /**
  * Podcast controller

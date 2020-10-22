@@ -28,9 +28,9 @@
 namespace GeebyDeebyLocal;
 
 use GeebyDeebyLocal\View\InjectTemplateListener;
-use Zend\Mvc\MvcEvent;
-use Zend\Mvc\View\Http\InjectTemplateListener as ZendInjectTemplateListener;
-use Zend\ServiceManager\Factory\InvokableFactory;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Mvc\View\Http\InjectTemplateListener as LaminasInjectTemplateListener;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 
 /**
  * Geeby-Deeby local code module
@@ -75,7 +75,8 @@ class Module
     {
         return [
             'aliases' => [
-                ZendInjectTemplateListener::class => InjectTemplateListener::class,
+                LaminasInjectTemplateListener::class =>
+                    InjectTemplateListener::class,
             ],
             'factories' => [
                 InjectTemplateListener::class => InvokableFactory::class,
@@ -91,7 +92,7 @@ class Module
     public function getAutoloaderConfig()
     {
         return [
-            'Zend\Loader\StandardAutoloader' => [
+            'Laminas\Loader\StandardAutoloader' => [
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],

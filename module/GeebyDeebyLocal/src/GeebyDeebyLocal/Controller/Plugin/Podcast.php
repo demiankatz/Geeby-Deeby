@@ -27,11 +27,10 @@
  */
 namespace GeebyDeebyLocal\Controller\Plugin;
 
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 
 /**
- * Zend action helper to deal with login followup; responsible for remembering URLs
- * before login and then redirecting the user to the appropriate place afterwards.
+ * Action Helper - Podcast
  *
  * @category GeebyDeeby
  * @package  Controller_Plugins

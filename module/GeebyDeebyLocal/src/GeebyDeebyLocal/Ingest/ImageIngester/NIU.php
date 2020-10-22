@@ -79,6 +79,18 @@ class NIU extends AbstractThumbIngestor
     }
 
     /**
+     * Load missing images.
+     *
+     * @return void
+     */
+    public function ingestImages()
+    {
+        // Wire up output before proceeding...
+        $this->solr->setOutputInterface($this->outputInterface);
+        return parent::ingestImages();
+    }
+
+    /**
      * Convert a full-text link to an image URI.
      *
      * @param string $uri Full text link

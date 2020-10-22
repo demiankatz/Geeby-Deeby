@@ -1,12 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
-
 return [
     'geeby-deeby' => [
         'siteTitle' => 'The Edward T. LeBlanc Memorial Dime Novel Bibliography',
@@ -14,6 +6,30 @@ return [
         'siteOwner' => 'Demian Katz',
         'groupSeriesByMaterialType' => false,
         'activity_log_dir' => '/opt/gbdb/data/logs/',
+        'plugin_managers' => [
+            'command' => [
+                'aliases' => [
+                    'harvest/collection' => 'GeebyDeebyLocal\Command\Harvest\CollectionCommand',
+                    'harvest/existing' => 'GeebyDeebyLocal\Command\Harvest\ExistingCommand',
+                    'harvest/series' => 'GeebyDeebyLocal\Command\Harvest\SeriesCommand',
+                    'harvest/tiffs' => 'GeebyDeebyLocal\Command\Harvest\TIFFsCommand',
+                    'ingest/directory' => 'GeebyDeebyLocal\Command\Ingest\DirectoryCommand',
+                    'ingest/iiif' => 'GeebyDeebyLocal\Command\Ingest\IIIFCommand',
+                    'ingest/spreadsheet' => 'GeebyDeebyLocal\Command\Ingest\SpreadsheetCommand',
+                    'make/issues' => 'GeebyDeebyLocal\Command\Make\IssuesCommand',
+                ],
+                'factories' => [
+                    'GeebyDeebyLocal\Command\Harvest\CollectionCommand' => 'GeebyDeebyLocal\Command\Harvest\SeriesCommandFactory',
+                    'GeebyDeebyLocal\Command\Harvest\ExistingCommand' => 'GeebyDeebyLocal\Command\Harvest\ExistingCommandFactory',
+                    'GeebyDeebyLocal\Command\Harvest\SeriesCommand' => 'GeebyDeebyLocal\Command\Harvest\SeriesCommandFactory',
+                    'GeebyDeebyLocal\Command\Harvest\TIFFsCommand' => 'GeebyDeebyLocal\Command\Harvest\TIFFsCommandFactory',
+                    'GeebyDeebyLocal\Command\Ingest\DirectoryCommand' => 'GeebyDeebyLocal\Command\Ingest\DirectoryCommandFactory',
+                    'GeebyDeebyLocal\Command\Ingest\IIIFCommand' => 'GeebyDeebyLocal\Command\Ingest\IIIFCommandFactory',
+                    'GeebyDeebyLocal\Command\Ingest\SpreadsheetCommand' => 'GeebyDeebyLocal\Command\Ingest\SpreadsheetCommandFactory',
+                    'GeebyDeebyLocal\Command\Make\IssuesCommand' => 'GeebyDeebyLocal\Command\Make\IssuesCommandFactory',
+                ]
+            ],
+        ],
     ],
     'controllers' => [
         'aliases' => [
@@ -32,66 +48,6 @@ return [
     'console' => [
         'router' => [
             'routes' => [
-                'check-links' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'check links <series> <provider>',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'checklinks',
-                        ]
-                    ]
-                ],
-                'harvest-collection' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'harvest collection <collection> <series> <dir>',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'harvestcollection',
-                        ]
-                    ]
-                ],
-                'harvest-existing' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'harvest existing <dir>',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'harvestexisting',
-                        ]
-                    ]
-                ],
-                'harvest-series' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'harvest series <series> <dir>',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'harvestseries',
-                        ]
-                    ]
-                ],
-                'harvest-tiffs' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'harvest tiffs <pid> <dir>',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'harvesttiffs',
-                        ]
-                    ]
-                ],
-                'ingest-directory' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'ingest directory <dir>',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'directory',
-                        ]
-                    ]
-                ],
                 'ingest-spreadsheet' => [
                     'type' => 'simple',
                     'options' => [
@@ -99,46 +55,6 @@ return [
                         'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'spreadsheet',
-                        ]
-                    ]
-                ],
-                'ingest-existing' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'ingest [existing]',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'existing',
-                        ]
-                    ]
-                ],
-                'ingest-images' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'load iiif',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'loadiiif',
-                        ]
-                    ]
-                ],
-                'ingest-makeissues' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'makeissues <series> <prefix>',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'makeissues',
-                        ]
-                    ]
-                ],
-                'ingest-series' => [
-                    'type' => 'simple',
-                    'options' => [
-                        'route' => 'ingest series <series>',
-                        'defaults' => [
-                            'controller' => 'GeebyDeeby\Controller\Ingest',
-                            'action' => 'series',
                         ]
                     ]
                 ],
@@ -150,13 +66,13 @@ return [
             'podcast' => 'GeebyDeebyLocal\Controller\Plugin\Podcast',
         ],
         'factories' => [
-            'GeebyDeebyLocal\Controller\Plugin\Podcast' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeebyLocal\Controller\Plugin\Podcast' => 'Laminas\ServiceManager\Factory\InvokableFactory',
         ]
     ],
     'router' => [
         'routes' => [
             'about' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/About',
                     'defaults' => [
@@ -166,7 +82,7 @@ return [
                 ],
             ],
             'about-credits' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/About/Credits',
                     'defaults' => [
@@ -176,7 +92,7 @@ return [
                 ],
             ],
             'about-progress' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/About/Progress',
                     'defaults' => [
@@ -186,7 +102,7 @@ return [
                 ],
             ],
             'ontology' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/ontology[/]',
                     'defaults' => [
@@ -196,7 +112,7 @@ return [
                 ],
             ],
             'podcast' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast[/]',
                     'defaults' => [
@@ -206,7 +122,7 @@ return [
                 ],
             ],
             'podcast-about' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast/About[/]',
                     'defaults' => [
@@ -216,7 +132,7 @@ return [
                 ],
             ],
             'podcast-mitties' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast/Mittie[/]',
                     'defaults' => [
@@ -226,7 +142,7 @@ return [
                 ],
             ],
             'podcast-professor' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast/Professor[/]',
                     'defaults' => [
@@ -236,7 +152,7 @@ return [
                 ],
             ],
             'podcast-rss' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/Podcast/RSS[/]',
                     'defaults' => [
@@ -246,7 +162,7 @@ return [
                 ],
             ],
             'podcast-rss-lowercase-for-apple' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/podcast/rss[/]',
                     'defaults' => [
@@ -255,6 +171,13 @@ return [
                     ],
                 ],
             ],
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            'GeebyDeebyLocal\Ingest\DatabaseIngester' => 'GeebyDeebyLocal\Ingest\DatabaseIngesterFactory',
+            'GeebyDeebyLocal\Ingest\FedoraHarvester' => 'GeebyDeebyLocal\Ingest\FedoraHarvesterFactory',
+            'GeebyDeebyLocal\Ingest\SolrHarvester' => 'GeebyDeebyLocal\Ingest\SolrHarvesterFactory',
         ],
     ],
     'view_manager' => [

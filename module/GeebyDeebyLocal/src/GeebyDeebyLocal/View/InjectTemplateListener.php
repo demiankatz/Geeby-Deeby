@@ -27,8 +27,8 @@
  */
 namespace GeebyDeebyLocal\View;
 
-use Zend\Mvc\MvcEvent;
-use Zend\View\Model\ModelInterface as ViewModel;
+use Laminas\Mvc\MvcEvent;
+use Laminas\View\Model\ModelInterface as ViewModel;
 
 /**
  * Custom template listener for GeebyDeebyLocal.
@@ -39,7 +39,7 @@ use Zend\View\Model\ModelInterface as ViewModel;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class InjectTemplateListener extends \Zend\Mvc\View\Http\InjectTemplateListener
+class InjectTemplateListener extends \Laminas\Mvc\View\Http\InjectTemplateListener
 {
     /**
      * Inject a template into the view model, if none present

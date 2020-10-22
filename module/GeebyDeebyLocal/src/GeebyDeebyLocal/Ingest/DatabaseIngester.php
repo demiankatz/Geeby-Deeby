@@ -27,9 +27,6 @@
  */
 namespace GeebyDeebyLocal\Ingest;
 
-use Zend\Console\Console;
-use Zend\Console\Prompt;
-
 /**
  * Class to load information into the database.
  *
@@ -41,12 +38,28 @@ use Zend\Console\Prompt;
  */
 class DatabaseIngester extends BaseIngester
 {
+    use \GeebyDeebyConsole\ConsoleOutputTrait;
+
     /**
      * Articles helper
      *
      * @var object
      */
     protected $articles;
+
+    /**
+     * Input interface
+     *
+     * @var InputInterface
+     */
+    protected $input;
+
+    /**
+     * Question helper
+     *
+     * @var object
+     */
+    protected $questionHelper;
 
     /**
      * Cache for user-entered edition preferences.
@@ -81,6 +94,54 @@ class DatabaseIngester extends BaseIngester
             return $this->ingestExisting($details, $extra);
         }
         return $this->ingestSeries($details, $extra);
+    }
+
+    /**
+     * Display a prompt and read a single character.
+     *
+     * @param string $prompt Prompt to display
+     *
+     * @return string
+     */
+    protected function readchar($prompt)
+    {
+        readline_callback_handler_install($prompt, function () {
+        });
+        $char = stream_get_contents(STDIN, 1);
+        readline_callback_handler_remove();
+        return $char;
+    }
+
+    /**
+     * Display a prompt and filter input to legal characters.
+     *
+     * @param string $prompt  Prompt to display
+     * @param string $options Legal characters
+     *
+     * @return string
+     */
+    protected function getCharSelection($prompt, $options)
+    {
+        while (true) {
+            $char = $this->readchar($prompt);
+            if (in_array(strtoupper($char), str_split(strtoupper($options)))) {
+                return $char;
+            }
+        }
+    }
+
+    /**
+     * Prompt the user for a yes/no question, return true if YES selected.
+     *
+     * @param string $question Prompt to display.
+     *
+     * @return bool
+     */
+    public function askQuestion($question)
+    {
+        $char = $this->getCharSelection($question . ' (y/n) ', 'yn');
+        $this->writeln('');
+        return strtoupper($char) === 'Y';
     }
 
     /**
@@ -119,11 +180,11 @@ class DatabaseIngester extends BaseIngester
     protected function ingestExistingWork($details, $editionObj, $item, $series)
     {
         if (count($details['contents']) != 1) {
-            Console::writeLine("FATAL: too many contents for single-part item.");
+            $this->writeln("FATAL: too many contents for single-part item.");
             return false;
         }
         if (!$this->checkItemTitles($item, $details['contents'][0])) {
-            Console::writeLine("FATAL: Title mismatch '{$details['contents'][0]['title']}' vs. '{$item['Item_Name']}' for item {$item['Item_ID']}.");
+            $this->writeln("FATAL: Title mismatch '{$details['contents'][0]['title']}' vs. '{$item['Item_Name']}' for item {$item['Item_ID']}.");
             return false;
         }
         $db = ['item' => $item, 'edition' => $editionObj->toArray()];
@@ -151,7 +212,7 @@ class DatabaseIngester extends BaseIngester
         $item = $this->getItemForEdition($editionObj);
 
         if (!$this->validateSeries($details, $editionObj, $series)) {
-            Console::writeLine('Series validation failed.');
+            $this->writeln('Series validation failed.');
             return false;
         }
 
@@ -162,7 +223,7 @@ class DatabaseIngester extends BaseIngester
         }
 
         // If we got this far, we have bad data:
-        Console::writeLine("FATAL: unexpected material type ID {$item['Material_Type_ID']}.");
+        $this->writeln("FATAL: unexpected material type ID {$item['Material_Type_ID']}.");
         return false;
     }
 
@@ -205,12 +266,12 @@ class DatabaseIngester extends BaseIngester
             },
             $details['contents']
         );
-        Console::writeLine("Working on " . $seriesObj->Series_Name . " no. $pos...");
-        Console::writeLine(
+        $this->writeln("Working on " . $seriesObj->Series_Name . " no. $pos...");
+        $this->writeln(
             "Contents (" . count($contentSummary) . "): " . implode(" -- ", $contentSummary)
         );
         if (isset($details['publisher']['name'])) {
-            Console::writeLine("Publisher: " . $details['publisher']['name']);
+            $this->writeln("Publisher: " . $details['publisher']['name']);
         }
         $this->editionPreferences = [];
         $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details, $item);
@@ -233,7 +294,7 @@ class DatabaseIngester extends BaseIngester
             // case.
             foreach ($this->getAllSeriesTitles($seriesObj) as $seriesTitle) {
                 if ($this->fuzzyCompare($seriesTitle, $childDetails[0][0]['title'])) {
-                    Console::writeLine("WARNING: assuming first child is top-level item due to series title match.");
+                    $this->writeln("WARNING: assuming first child is top-level item due to series title match.");
                     $baseContainerTitle = trim($childDetails[0][0]['title']);
                     $newChildData = array_shift($childDetails)[0];
                     break;
@@ -382,16 +443,16 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if (!$foundMatch && count($known) > 0) {
-            Console::writeLine("FATAL: Unexpected date value in database; expected $date.");
+            $this->writeln("FATAL: Unexpected date value in database; expected $date.");
             return false;
         }
         if (($current && $current->Month > 0 && null === $month)
             || ($current && $current->Day > 0 && null === $day)
         ) {
-            Console::writeLine("WARNING: More specific date in database than in incoming data.");
+            $this->writeln("WARNING: More specific date in database than in incoming data.");
         }
         if (count($known) == 0) {
-            Console::writeLine("Adding date: {$date}");
+            $this->writeln("Adding date: {$date}");
             $fields = [
                 'Edition_ID' => $editionObj->Edition_ID,
                 'Year' => $year,
@@ -527,7 +588,7 @@ class DatabaseIngester extends BaseIngester
     {
         list($name, $street) = $this->separateNameAndStreet($publisher['name']);
         if (empty($street)) {
-            Console::writeLine("WARNING: No street address; skipping publisher.");
+            $this->writeln("WARNING: No street address; skipping publisher.");
             return true;
         }
         $place = $publisher['place'];
@@ -548,24 +609,24 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if (!$match) {
-            Console::writeLine("WARNING: No series/publisher match for $name, $street, $place; skipping publisher.");
+            $this->writeln("WARNING: No series/publisher match for $name, $street, $place; skipping publisher.");
             return true;
         }
         if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID != $match) {
             foreach ($this->getDbTable('edition')->getPublishersForEdition($editionObj->Edition_ID) as $ed) {
             }
-            Console::writeLine("Publisher mismatch in edition.");
-            Console::writeLine("Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}");
-            Console::writeLine("New: $name, $street, $place");
-            if (!Prompt\Confirm::prompt('Change? (y/n) ')) {
-                Console::writeLine("FATAL: Aborting ingest due to publisher mismatch.");
+            $this->writeln("Publisher mismatch in edition.");
+            $this->writeln("Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}");
+            $this->writeln("New: $name, $street, $place");
+            if (!$this->askQuestion('Change?')) {
+                $this->writeln("FATAL: Aborting ingest due to publisher mismatch.");
                 return false;
             }
         }
         if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID == $match) {
             return true;
         }
-        Console::writeLine("Updating address to $name, $street, $place");
+        $this->writeln("Updating address to $name, $street, $place");
         $editionObj->Preferred_Series_Publisher_ID = $match;
         $editionObj->save();
         return true;
@@ -592,7 +653,7 @@ class DatabaseIngester extends BaseIngester
             $knownArr[] = $current->OCLC_Number;
         }
         foreach (array_diff($oclc, $knownArr) as $current) {
-            Console::writeLine("Adding OCLC number: {$current}");
+            $this->writeln("Adding OCLC number: {$current}");
             $table->insert(
                 [
                     'Edition_ID' => $editionObj->Edition_ID,
@@ -643,10 +704,10 @@ class DatabaseIngester extends BaseIngester
         foreach (array_diff($urls, $knownArr) as $current) {
             $source = $this->getSourceForUrl($current);
             if (null === $source) {
-                Console::writeLine('FATAL: Unexpected URL: ' . $current);
+                $this->writeln('FATAL: Unexpected URL: ' . $current);
                 return false;
             }
-            Console::writeLine("Adding URL: {$current}");
+            $this->writeln("Adding URL: {$current}");
             $table->insert(
                 [
                     'Edition_ID' => $editionObj->Edition_ID,
@@ -665,7 +726,7 @@ class DatabaseIngester extends BaseIngester
         }
         $table = $this->getDbTable('editionscredits');
         foreach (array_diff($ids, $db['authorIds']) as $current) {
-            Console::writeLine("Attaching author ID $current");
+            $this->writeln("Attaching author ID $current");
             $table->insert(
                 [
                     'Edition_ID' => $db['edition']['Edition_ID'],
@@ -708,7 +769,7 @@ class DatabaseIngester extends BaseIngester
             if ($tagId = $this->extractIdFromDimeNovelsUri($uri, 'Tag')) {
                 $id = $tags->getByPrimaryKey($tagId);
                 if (!$this->fuzzyCompare($text, $id->Tag)) {
-                    Console::writeLine("FATAL: Tag mismatch: $uri, '$text'");
+                    $this->writeln("FATAL: Tag mismatch: $uri, '$text'");
                     return false;
                 }
             } else {
@@ -722,7 +783,7 @@ class DatabaseIngester extends BaseIngester
                 $ids[$uri] = $id->Tag_ID;
             } else {
                 if (!stristr($uri, 'loc.gov')) {
-                    Console::writeLine('FATAL: Unexpected subject URI: ' . $uri);
+                    $this->writeln('FATAL: Unexpected subject URI: ' . $uri);
                     return false;
                 }
                 $tagObj = false;
@@ -731,12 +792,12 @@ class DatabaseIngester extends BaseIngester
                     break;
                 }
                 if ($tagObj) {
-                    Console::writeLine("Upgrading subject: $text");
+                    $this->writeln("Upgrading subject: $text");
                     $tagObj->Tag_Type_ID = self::TAGTYPE_LC;
                     $tagObj->save();
                     $ids[$uri] = $tagObj->Tag_ID;
                 } else {
-                    Console::writeLine("Adding subject: $text");
+                    $this->writeln("Adding subject: $text");
                     $tags->insert(
                         [
                             'Tag' => $text,
@@ -803,7 +864,7 @@ class DatabaseIngester extends BaseIngester
                 }
                 if (!$skip) {
                     $table->insert(['Item_ID' => $item, 'Item_AltName' => $newTitle]);
-                    Console::writeLine('Added alternate title: ' . $newTitle);
+                    $this->writeln('Added alternate title: ' . $newTitle);
                 }
             }
         }
@@ -825,7 +886,7 @@ class DatabaseIngester extends BaseIngester
         }
         $missing = array_unique(array_diff($subjectIds, $existingIds));
         if (count($missing) > 0) {
-            Console::writeLine("Adding subject IDs: " . implode(', ', $missing));
+            $this->writeln("Adding subject IDs: " . implode(', ', $missing));
             foreach ($missing as $id) {
                 $itemsTags->insert(['Item_ID' => $item, 'Tag_ID' => $id]);
             }
@@ -842,7 +903,7 @@ class DatabaseIngester extends BaseIngester
                     return false;
                 }
             } else {
-                Console::writeLine("Processing edition ID {$db['edition']['Edition_ID']}");
+                $this->writeln("Processing edition ID {$db['edition']['Edition_ID']}");
                 if (!$this->updateWorkInDatabase($data, $db)) {
                     return false;
                 }
@@ -1171,24 +1232,23 @@ class DatabaseIngester extends BaseIngester
                 }
             }
             $authors = count($authors) > 0 ? 'by ' . implode(', ', $authors) : ' - no credits';
-            Console::writeLine("Found candidate(s) for match with {$data['title']} $authors\n");
+            $this->writeln("Found candidate(s) for match with {$data['title']} $authors\n");
             $options = '0';
             foreach ($candidates as $i => $current) {
                 if ($i > 25) {
-                    Console::writeLine('...and more options than can be shown!');
+                    $this->writeln('...and more options than can be shown!');
                     break;
                 }
                 $options .= chr(65 + $i);
-                Console::writeLine(
+                $this->writeln(
                     chr(65 + $i) . '. ' . $current['title']
                     . (!empty($current['authors']) ? ' by ' . $current['authors'] : ' - no credits')
                     . ' [ID = ' . $current['id'] . ']'
                     . ' (confidence: ' . $current['confidence'] . '%)'
                 );
             }
-            Console::writeLine("\n0. NONE OF THE ABOVE -- CREATE NEW ITEM.");
-            $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
-            $char = $prompt->show();
+            $this->writeln("\n0. NONE OF THE ABOVE -- CREATE NEW ITEM.");
+            $char = $this->getCharSelection("\nPlease select one: ", $options);
             if ($char !== '0') {
                 $response = ord(strtoupper($char)) - 65;
                 if (!$this->fuzzyCompare($data['title'], $candidates[$response]['title'])
@@ -1204,7 +1264,7 @@ class DatabaseIngester extends BaseIngester
         $table = $this->getDbTable('item');
         $table->insert(['Item_Name' => $data['title'], 'Material_Type_ID' => $type]);
         $id = $table->getLastInsertValue();
-        Console::writeLine("Added item ID {$id} ({$data['title']})");
+        $this->writeln("Added item ID {$id} ({$data['title']})");
         return $id;
     }
 
@@ -1226,7 +1286,7 @@ class DatabaseIngester extends BaseIngester
             ]
         );
         $newObj = $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
-        Console::writeLine("Added edition ID " . $newObj->Edition_ID);
+        $this->writeln("Added edition ID " . $newObj->Edition_ID);
         return $this->updateWorkInDatabase(
             $data,
             [
@@ -1277,7 +1337,7 @@ class DatabaseIngester extends BaseIngester
     {
         $item = $this->getItemForNewEdition($data);
         $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
-        Console::writeLine("Added edition ID " . $newObj->Edition_ID);
+        $this->writeln("Added edition ID " . $newObj->Edition_ID);
         return $this->updateWorkInDatabase(
             $data,
             [
@@ -1305,7 +1365,7 @@ class DatabaseIngester extends BaseIngester
         if (count($lookup) == 0) {
             $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
             $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
-            Console::writeLine("Added edition ID " . $newObj->Edition_ID);
+            $this->writeln("Added edition ID " . $newObj->Edition_ID);
             $edition = $newObj;
         } elseif (count($lookup) == 1) {
             foreach ($lookup as $current) {
@@ -1343,7 +1403,7 @@ class DatabaseIngester extends BaseIngester
             $currentAlt = $current->Item_AltName;
             if ($this->fuzzyCompare($title, $currentAlt)) {
                 if ($warn) {
-                    Console::writeLine(
+                    $this->writeln(
                         'WARNING: Found match in alt rather than primary title: '
                         . $currentAlt
                     );
@@ -1365,7 +1425,7 @@ class DatabaseIngester extends BaseIngester
             foreach ($titleParts as $part) {
                 if ($this->fuzzyCompare($title, $part)) {
                     if ($warn) {
-                        Console::writeLine(
+                        $this->writeln(
                             'WARNING: Partial title match only: ' . $part
                         );
                     }
@@ -1384,11 +1444,11 @@ class DatabaseIngester extends BaseIngester
         if ($this->hasMatchingAltTitle($title, $db['item']['Item_ID'], $db['item']['Item_Name'], true)) {
             return true;
         }
-        Console::writeLine('FATAL: Unexpected title mismatch.');
-        Console::writeLine('Incoming: ' . $title);
+        $this->writeln('FATAL: Unexpected title mismatch.');
+        $this->writeln('Incoming: ' . $title);
         $dbTitle = $db['item']['Item_AltName']
             ?? $db['item']['Item_Name'];
-        Console::writeLine('Database: ' . $dbTitle);
+        $this->writeln('Database: ' . $dbTitle);
         return false;
     }
 
@@ -1396,18 +1456,18 @@ class DatabaseIngester extends BaseIngester
     {
         $ed = $db['edition'];
         if (!empty($ed->Extent_In_Parent) && $ed->Extent_In_Parent !== $extent) {
-            Console::writeLine(
+            $this->writeln(
                 "WARNING: Unexpected extent: " . $extent
                 . "; Expected: " . $ed->Extent_In_Parent
             );
             return true;
         }
         if (empty($ed->Parent_Edition_ID)) {
-            Console::writeLine("FATAL ERROR: Missing parent ID.");
+            $this->writeln("FATAL ERROR: Missing parent ID.");
             return false;
         }
         if (empty($ed->Extent_In_Parent)) {
-            Console::writeLine('Adding extent: ' . $extent);
+            $this->writeln('Adding extent: ' . $extent);
             $ed->Extent_In_Parent = $extent;
             $ed->save();
         }
@@ -1487,7 +1547,7 @@ class DatabaseIngester extends BaseIngester
         }
         foreach ($result as $option) {
             if (in_array($option->Person_ID, $expected)) {
-                Console::writeLine(
+                $this->writeln(
                     "WARNING: Fuzzy person match between $raw and "
                     . $option->First_Name . ' ' . $option->Last_Name
                     . $option->Extra_Details
@@ -1495,18 +1555,19 @@ class DatabaseIngester extends BaseIngester
                 return $option->Person_ID;
             }
         }
-        Console::writeLine("Possible matches found for $raw...");
+        $this->writeln("Possible matches found for $raw...");
         foreach ($result as $option) {
             $people[] = $option->Person_ID;
             $letter = chr(64 + count($people));
             $options .= $letter;
-            Console::writeLine(
+            $this->writeln(
                 $letter . '. ' . $option->First_Name . ' ' . $option->Last_Name
                 . $option->Extra_Details
             );
         }
-        $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
-        $char = strtoupper($prompt->show());
+        $char = strtoupper(
+            $this->getCharSelection("\nPlease select one: ", $options)
+        );
         return $people[ord($char) - 65];
     }
 
@@ -1551,7 +1612,7 @@ class DatabaseIngester extends BaseIngester
                     return $current->Person_ID;
                 }
             }
-            Console::writeLine('Extra detail mismatch in person.');
+            $this->writeln('Extra detail mismatch in person.');
         }
         return $this->fuzzyPersonMatch($first, $last, $str, $expected);
     }
@@ -1575,7 +1636,7 @@ class DatabaseIngester extends BaseIngester
                     if (isset($current['uri'])) {
                         $id = $this->getPersonIdForUri($current['uri']);
                     } else {
-                        Console::writeLine("WARNING: Missing URI for {$current['name']}...");
+                        $this->writeln("WARNING: Missing URI for {$current['name']}...");
                         $expected = $match[1]['authorIds'] ?? [];
                         $id = $this->getPersonIdForString($current['name'], $expected);
                     }
@@ -1583,7 +1644,7 @@ class DatabaseIngester extends BaseIngester
                         $text = isset($current['uri'])
                             ? $current['uri'] . ' (' . $current['name'] . ')'
                             : $current['name'];
-                        Console::writeLine("FATAL: Missing Person ID for $text");
+                        $this->writeln("FATAL: Missing Person ID for $text");
                         return false;
                     }
                     $match[0]['authorIds'][] = $id;
@@ -1605,7 +1666,7 @@ class DatabaseIngester extends BaseIngester
                 foreach ($pseudonyms as $p) {
                     if (in_array($p['Pseudo_Person_ID'], $incomingList)) {
                         $matched = true;
-                        Console::writeLine('WARNING: Database contains person ' . $current . ' but incoming data uses pseudonym ' . $p['Pseudo_Person_ID']);
+                        $this->writeln('WARNING: Database contains person ' . $current . ' but incoming data uses pseudonym ' . $p['Pseudo_Person_ID']);
                         break;
                     }
                 }
@@ -1613,13 +1674,13 @@ class DatabaseIngester extends BaseIngester
                 foreach ($real as $r) {
                     if (in_array($r['Real_Person_ID'], $incomingList)) {
                         $matched = true;
-                        Console::writeLine('WARNING: Database contains person ' . $current . ' but incoming data uses real name ' . $r['Real_Person_ID']);
+                        $this->writeln('WARNING: Database contains person ' . $current . ' but incoming data uses real name ' . $r['Real_Person_ID']);
                         break;
                     }
                     foreach ($pseudo->getPseudonyms($r['Real_Person_ID']) as $realPseudo) {
                         if (in_array($realPseudo['Pseudo_Person_ID'], $incomingList)) {
                             $matched = true;
-                            Console::writeLine('WARNING: Database contains person ' . $current . ' but incoming data uses alternate pseudonym ' . $realPseudo['Pseudo_Person_ID']);
+                            $this->writeln('WARNING: Database contains person ' . $current . ' but incoming data uses alternate pseudonym ' . $realPseudo['Pseudo_Person_ID']);
                             break 2;
                         }
                     }
@@ -1630,9 +1691,9 @@ class DatabaseIngester extends BaseIngester
             }
             if (count($stillUnexpected) > 0) {
                 if (count($incomingList) == 0) {
-                    Console::writeLine("WARNING: no incoming authors, but authors found in database.");
+                    $this->writeln("WARNING: no incoming authors, but authors found in database.");
                 } else {
-                    Console::writeLine("Found unexpected author ID(s) in database: " . implode(', ', $unexpected));
+                    $this->writeln("Found unexpected author ID(s) in database: " . implode(', ', $unexpected));
                     return true;
                 }
             }
@@ -1708,11 +1769,12 @@ class DatabaseIngester extends BaseIngester
         if (isset($this->editionPreferences[$menuHash])) {
             $char = $this->editionPreferences[$menuHash];
         } else {
-            Console::writeLine("Multiple editions found at same position.");
-            Console::writeLine("Please pick one:");
-            Console::writeLine($menuString);
-            $prompt = new \Zend\Console\Prompt\Char("\nPlease select one: ", $options);
-            $char = strtoupper($prompt->show());
+            $this->writeln("Multiple editions found at same position.");
+            $this->writeln("Please pick one:");
+            $this->writeln($menuString);
+            $char = strtoupper(
+                $this->getCharSelection("\nPlease select one: ", $options)
+            );
             $this->editionPreferences[$menuHash] = $char;
         }
         return $choices[ord($char) - 65];
@@ -1752,7 +1814,7 @@ class DatabaseIngester extends BaseIngester
         // until we find one that works....
         foreach ($sorted as $replacementNo => $children) {
             if (count($sorted) > 1) {
-                Console::writeLine("Trying replacement no. $replacementNo");
+                $this->writeln("Trying replacement no. $replacementNo");
             }
             if (count($children) > 1) {
                 $children = [$this->pickEdition($children, $details['url'])];
@@ -1826,9 +1888,9 @@ class DatabaseIngester extends BaseIngester
         foreach ($children as $child) {
             if (!isset($child['matched'])) {
                 foreach ($titlesChecked as $titleChecked) {
-                    Console::writeLine("Title checked: " . $titleChecked);
+                    $this->writeln("Title checked: " . $titleChecked);
                 }
-                Console::writeLine("FATAL: No series match found for edition {$child['edition']->Edition_ID}");
+                $this->writeln("FATAL: No series match found for edition {$child['edition']->Edition_ID}");
                 return false;
             }
         }
@@ -1892,18 +1954,18 @@ class DatabaseIngester extends BaseIngester
         $matches = 0;
         foreach ($children as $child) {
             if (!isset($child['matched'])) {
-                Console::writeLine("Unmatched item: {$child['item']['Item_Name']}");
+                $this->writeln("Unmatched item: {$child['item']['Item_Name']}");
                 foreach ($contents as $current) {
-                    Console::writeLine("Possible match: " . $current['title']);
+                    $this->writeln("Possible match: " . $current['title']);
                 }
-                Console::writeLine("WARNING: No child match found for edition {$child['edition']->Edition_ID}");
+                $this->writeln("WARNING: No child match found for edition {$child['edition']->Edition_ID}");
                 $result[] = [null, $child];
             } else {
                 $matches++;
             }
         }
         if ($matches === 0) {
-            Console::writeLine("FATAL: No child matches found.");
+            $this->writeln("FATAL: No child matches found.");
             return false;
         }
         return $result;
@@ -1921,13 +1983,13 @@ class DatabaseIngester extends BaseIngester
     protected function validateSeries($details, $editionObj, $series)
     {
         if (!isset($details['series'])) {
-            Console::writeLine('No series found.');
+            $this->writeln('No series found.');
             return false;
         }
         $expectedNumber = intval($editionObj->Position);
         foreach ($details['series'] as $seriesName => $number) {
             $actualNumber = intval(preg_replace('/[^0-9]/', '', $number));
-            //Console::writeLine("Comparing {$expectedNumber} to {$actualNumber}...");
+            //$this->writeln("Comparing {$expectedNumber} to {$actualNumber}...");
             if ($actualNumber == $expectedNumber && $this->checkSeriesTitle($series, $seriesName)) {
                 return true;
             }
@@ -1958,7 +2020,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function fuzzyCompare($str1, $str2)
     {
-        //Console::writeLine("Comparing {$str1} to {$str2}...");
+        //$this->writeln("Comparing {$str1} to {$str2}...");
         return $this->fuzz($str1) == $this->fuzz($str2);
     }
 
@@ -2000,7 +2062,7 @@ class DatabaseIngester extends BaseIngester
                 $longer = $stripped2;
             }
             if ($inexact && $this->fuzzyContains($longer, $shorter)) {
-                Console::writeLine("WARNING: inexact title match {$title} vs. {$itemTitle}");
+                $this->writeln("WARNING: inexact title match {$title} vs. {$itemTitle}");
                 return true;
             }
         }
