@@ -179,8 +179,8 @@ class ModsExtractor
         // is longer than the imprint name, override the one extracted above:
         $parts = explode(',', $pub['name'] ?? '');
         $authModsStr = (string)($authMods[0] ?? '');
-        if (preg_match('/\(\d{4}/', $authModsStr
-            || strlen($authModsStr) > strlen($parts[0]))
+        if (preg_match('/\(\d{4}/', $authModsStr)
+            || strlen($authModsStr) > strlen($parts[0])
         ) {
             $newParts = explode(',', $authModsStr);
             foreach ($newParts as $i => $part) {
