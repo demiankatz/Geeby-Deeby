@@ -43,7 +43,7 @@ class DatabaseIngester extends BaseIngester
     /**
      * Articles helper
      *
-     * @var object
+     * @var \GeebyDeeby\Articles
      */
     protected $articles;
 
@@ -71,7 +71,8 @@ class DatabaseIngester extends BaseIngester
     /**
      * Constructor
      *
-     * @param object $tables Table plugin manager
+     * @param object               $tables   Table plugin manager
+     * @param \GeebyDeeby\Articles $articles Articles helper
      */
     public function __construct($tables, $articles)
     {
@@ -84,7 +85,8 @@ class DatabaseIngester extends BaseIngester
      *
      * @param array  $details Details from ModsExtractor or equivalent
      * @param string $type    Type of import (existing or series)
-     * @param object $extra   Support object (Edition row for existing, Series row for series)
+     * @param object $extra   Support object (Edition row for existing, Series
+     * row for series)
      *
      * @return bool True for success
      */
@@ -225,10 +227,19 @@ class DatabaseIngester extends BaseIngester
         }
 
         // If we got this far, we have bad data:
-        $this->writeln("FATAL: unexpected material type ID {$item['Material_Type_ID']}.");
+        $this->writeln(
+            "FATAL: unexpected material type ID {$item['Material_Type_ID']}."
+        );
         return false;
     }
 
+    /**
+     * Given a series string, extract a number.
+     *
+     * @param string $str Series string
+     *
+     * @return string
+     */
     protected function getPositionFromSeriesString($str)
     {
         // Find the last number in the string.
@@ -238,6 +249,13 @@ class DatabaseIngester extends BaseIngester
             ? preg_replace('/[^0-9]/', '', $matches[0][$index]) : '0';
     }
 
+    /**
+     * Given a series object, get all titles (primary + alternate).
+     *
+     * @param object $seriesObj Series object
+     *
+     * @return array
+     */
     protected function getAllSeriesTitles($seriesObj)
     {
         $titles = [$seriesObj->Series_Name];
@@ -261,7 +279,8 @@ class DatabaseIngester extends BaseIngester
         $pos = empty($details['series'])
             ? 0
             : $this->getPositionFromSeriesString(current($details['series']));
-        $item = ($pos === 0) ? $this->getItemForNewEdition($details['contents'][0]) : null;
+        $item = ($pos === 0)
+            ? $this->getItemForNewEdition($details['contents'][0]) : null;
         $contentSummary = array_map(
             function ($n) {
                 return $n['title'];
@@ -270,13 +289,15 @@ class DatabaseIngester extends BaseIngester
         );
         $this->writeln("Working on " . $seriesObj->Series_Name . " no. $pos...");
         $this->writeln(
-            "Contents (" . count($contentSummary) . "): " . implode(" -- ", $contentSummary)
+            "Contents (" . count($contentSummary) . "): "
+            . implode(" -- ", $contentSummary)
         );
         if (isset($details['publisher']['name'])) {
             $this->writeln("Publisher: " . $details['publisher']['name']);
         }
         $this->editionPreferences = [];
-        $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details, $item);
+        $childDetails
+            = $this->synchronizeSeriesEntries($seriesObj, $pos, $details, $item);
         if (!$childDetails) {
             return false;
         }
@@ -290,13 +311,16 @@ class DatabaseIngester extends BaseIngester
         if (count($childDetails) > 1) {
             $newChildData = [];
             $baseContainerTitle = trim(current(array_keys($details['series'])));
-            // Check if the first child is named the same as the series; this is probably a sign
-            // that it actually contains metadata about the container, rather than one of its
-            // contents. We'll issue a warning so this can be double-checked by hand, just in
-            // case.
+            // Check if the first child is named the same as the series; this is
+            // probably a sign that it actually contains metadata about the
+            // container, rather than one of its contents. We'll issue a warning so
+            // this can be double-checked by hand, just in case.
             foreach ($this->getAllSeriesTitles($seriesObj) as $seriesTitle) {
                 if ($this->fuzzyCompare($seriesTitle, $childDetails[0][0]['title'])) {
-                    $this->writeln("WARNING: assuming first child is top-level item due to series title match.");
+                    $this->writeln(
+                        "WARNING: assuming first child is top-level item due to "
+                        . "series title match."
+                    );
                     $baseContainerTitle = trim($childDetails[0][0]['title']);
                     $newChildData = array_shift($childDetails)[0];
                     break;
@@ -308,8 +332,11 @@ class DatabaseIngester extends BaseIngester
             if (isset($details['url'])) {
                 $newChildData['url'] = $details['url'];
             }
-            $newEdition = $this->getChildIssueForSeries($seriesObj, $newChildData, $pos);
-            if (!$newEdition || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)) {
+            $newEdition
+                = $this->getChildIssueForSeries($seriesObj, $newChildData, $pos);
+            if (!$newEdition
+                || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)
+            ) {
                 return false;
             }
             return $this->updateChildWorks($newEdition, $childDetails);
@@ -338,7 +365,10 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if (isset($details['publisher'])) {
-            if (!$this->processPublisher($details['publisher'], $editionObj, $series['Series_ID'])) {
+            $pubResult = $this->processPublisher(
+                $details['publisher'], $editionObj, $series['Series_ID']
+            );
+            if (!$pubResult) {
                 return false;
             }
         }
@@ -390,8 +420,9 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool True for success
      */
-    protected function updateDatabaseForHierarchicalEdition($editionObj, $series, $details)
-    {
+    protected function updateDatabaseForHierarchicalEdition($editionObj, $series,
+        $details
+    ) {
         if (!$this->setTopLevelDetails($editionObj, $series, $details)) {
             return false;
         }
@@ -445,13 +476,17 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if (!$foundMatch && count($known) > 0) {
-            $this->writeln("FATAL: Unexpected date value in database; expected $date.");
+            $this->writeln(
+                "FATAL: Unexpected date value in database; expected $date."
+            );
             return false;
         }
         if (($current && $current->Month > 0 && null === $month)
             || ($current && $current->Day > 0 && null === $day)
         ) {
-            $this->writeln("WARNING: More specific date in database than in incoming data.");
+            $this->writeln(
+                "WARNING: More specific date in database than in incoming data."
+            );
         }
         if (count($known) == 0) {
             $this->writeln("Adding date: {$date}");
@@ -511,7 +546,8 @@ class DatabaseIngester extends BaseIngester
     /**
      * Normalize a street string for comparison purposes.
      *
-     * @param string $pub String to normalize.
+     * @param string $street1 First street to compare
+     * @param string $street2 Second street to compare
      *
      * @return string
      */
@@ -600,8 +636,10 @@ class DatabaseIngester extends BaseIngester
         $result = $spTable->getPublishers($seriesId);
         $match = false;
         foreach ($result as $current) {
-            $city = $current['City_ID'] ? $cityTable->getByPrimaryKey($current['City_ID']) : false;
-            $pub = $current['Publisher_ID'] ? $pubTable->getByPrimaryKey($current['Publisher_ID']) : false;
+            $city = $current['City_ID']
+                ? $cityTable->getByPrimaryKey($current['City_ID']) : false;
+            $pub = $current['Publisher_ID']
+                ? $pubTable->getByPrimaryKey($current['Publisher_ID']) : false;
             if ($city && $this->citiesMatch($place, $city->City_Name)
                 && $pub && $this->publishersMatch($name, $pub->Publisher_Name)
                 && $this->streetsMatch($street, $current->Street)
@@ -611,21 +649,30 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if (!$match) {
-            $this->writeln("WARNING: No series/publisher match for $name, $street, $place; skipping publisher.");
+            $this->writeln(
+                "WARNING: No series/publisher match for $name, $street, $place; "
+                . "skipping publisher."
+            );
             return true;
         }
-        if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID != $match) {
+        if ($editionObj->Preferred_Series_Publisher_ID
+            && $editionObj->Preferred_Series_Publisher_ID != $match
+        ) {
             foreach ($this->getDbTable('edition')->getPublishersForEdition($editionObj->Edition_ID) as $ed) {
             }
             $this->writeln("Publisher mismatch in edition.");
-            $this->writeln("Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}");
+            $this->writeln(
+                "Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}"
+            );
             $this->writeln("New: $name, $street, $place");
             if (!$this->askQuestion('Change?')) {
                 $this->writeln("FATAL: Aborting ingest due to publisher mismatch.");
                 return false;
             }
         }
-        if ($editionObj->Preferred_Series_Publisher_ID && $editionObj->Preferred_Series_Publisher_ID == $match) {
+        if ($editionObj->Preferred_Series_Publisher_ID
+            && $editionObj->Preferred_Series_Publisher_ID == $match
+        ) {
             return true;
         }
         $this->writeln("Updating address to $name, $street, $place");
@@ -721,6 +768,14 @@ class DatabaseIngester extends BaseIngester
         return true;
     }
 
+    /**
+     * Update the database with author details; return true on success.
+     *
+     * @param array $ids Array of author IDs.
+     * @param array $db  Data from the database.
+     *
+     * @return bool
+     */
     protected function processAuthors($ids, $db)
     {
         if ($this->hasAuthorProblem($ids, $db['authorIds'])) {
@@ -757,7 +812,7 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given an array of uri => text, produce an array of database tag IDs.
      *
-     * @param $subjects Associative array of subject data.
+     * @param array $subjects Associative array of subject data.
      *
      * @return array
      */
@@ -820,6 +875,15 @@ class DatabaseIngester extends BaseIngester
         return $ids;
     }
 
+    /**
+     * Update the database with alternate title data. Return true on success.
+     *
+     * @param string $title     Primary title
+     * @param array  $altTitles Alternate titles
+     * @param array  $db        Data from the database.
+     *
+     * @return bool
+     */
     protected function processAltTitles($title, $altTitles, $db)
     {
         $articleHelper = $this->articles;
@@ -835,8 +899,10 @@ class DatabaseIngester extends BaseIngester
                 if ($currentNeedle == $currentHaystack) {
                     continue;
                 }
+                $formattedNeedle
+                    = $articleHelper->formatTrailingArticles($currentNeedle);
                 if ($this->fuzzyContains($currentHaystack, $currentNeedle)
-                    || $this->fuzzyContains($currentHaystack, $articleHelper->formatTrailingArticles($currentNeedle))
+                    || $this->fuzzyContains($currentHaystack, $formattedNeedle)
                 ) {
                     $matched = true;
                     break;
@@ -865,7 +931,9 @@ class DatabaseIngester extends BaseIngester
                     }
                 }
                 if (!$skip) {
-                    $table->insert(['Item_ID' => $item, 'Item_AltName' => $newTitle]);
+                    $table->insert(
+                        ['Item_ID' => $item, 'Item_AltName' => $newTitle]
+                    );
                     $this->writeln('Added alternate title: ' . $newTitle);
                 }
             }
@@ -873,6 +941,14 @@ class DatabaseIngester extends BaseIngester
         return true;
     }
 
+    /**
+     * Write subject data to the database. Return true on success.
+     *
+     * @param array $subjects Associative array of subject data.
+     * @param array $db       Data from the database.
+     *
+     * @return bool
+     */
     protected function processSubjects($subjects, $db)
     {
         $item = $db['item']['Item_ID'];
@@ -896,6 +972,15 @@ class DatabaseIngester extends BaseIngester
         return true;
     }
 
+    /**
+     * Given an edition object, update its child works with the provided details.
+     * Return true on success, false on error.
+     *
+     * @param object $editionObj Edition object
+     * @param array  $details    Incoming details
+     *
+     * @return bool
+     */
     protected function updateChildWorks($editionObj, $details)
     {
         foreach ($details as $i => $current) {
@@ -905,7 +990,9 @@ class DatabaseIngester extends BaseIngester
                     return false;
                 }
             } else {
-                $this->writeln("Processing edition ID {$db['edition']['Edition_ID']}");
+                $this->writeln(
+                    "Processing edition ID {$db['edition']['Edition_ID']}"
+                );
                 if (!$this->updateWorkInDatabase($data, $db)) {
                     return false;
                 }
@@ -927,23 +1014,26 @@ class DatabaseIngester extends BaseIngester
         $ids = [];
         foreach ($table->getCreditsForItem($item) as $credit) {
             if ($credit->Role_ID == self::ROLE_AUTHOR) {
-                $ids[$credit->Person_ID] = trim($credit->First_Name . ' ' . $credit->Last_Name);
+                $ids[$credit->Person_ID]
+                    = trim($credit->First_Name . ' ' . $credit->Last_Name);
             }
         }
         return $ids;
     }
 
     /**
-     * Support method for getItemMatchCandidatesUsingTitle() -- given raw data and query results,
-     * score the results.
+     * Support method for getItemMatchCandidatesUsingTitle() -- given raw data and
+     * query results, score the results.
      *
-     * @param array     $data    Raw data
-     * @param \Iterable $options Query results
+     * @param array     $data       Raw data
+     * @param \Iterable $options    Query results
+     * @param string    $titleFIeld Name of field to examine for title
      *
      * @return array
      */
-    protected function evaluateItemMatchTitleCandidates($data, $options, $titleField = 'Item_Name')
-    {
+    protected function evaluateItemMatchTitleCandidates($data, $options,
+        $titleField = 'Item_Name'
+    ) {
         $candidates = [];
         foreach ($options as $current) {
             $confidence = 100;
@@ -951,14 +1041,24 @@ class DatabaseIngester extends BaseIngester
             if (!isset($data['authorIds'])) {
                 $data['authorIds'] = [];
             }
-            if (count(array_diff($data['authorIds'], array_keys($currentCredits))) != 0) {
+            $diffCount = count(
+                array_diff($data['authorIds'], array_keys($currentCredits))
+            );
+            if ($diffCount != 0) {
                 $confidence -= 20;
             }
-            if (count(array_intersect($data['authorIds'], array_keys($currentCredits))) != count($data['authorIds'])) {
+            $intersectCount = count(
+                array_intersect($data['authorIds'], array_keys($currentCredits))
+            );
+            if ($intersectCount != count($data['authorIds'])) {
                 $confidence -= 20;
             }
             if (!$this->fuzzyCompare($data['title'], $current->$titleField)) {
-                $confidence -= $this->hasMatchingAltTitle($data['title'], $current->Item_ID, isset($current->Item_Name) ? $current->Item_Name : '') ? 10 : 25;
+                $confidence -= $this->hasMatchingAltTitle(
+                    $data['title'],
+                    $current->Item_ID,
+                    $current->Item_Name ?? ''
+                ) ? 10 : 25;
             }
             $candidates[] = [
                 'id' => $current->Item_ID,
@@ -1016,7 +1116,9 @@ class DatabaseIngester extends BaseIngester
                 $select->where->like('Item_AltName', $strippedTitle . '%');
             };
             $options = $table->select($callback);
-            $candidates = $this->evaluateItemMatchTitleCandidates($data, $options, 'Item_AltName');
+            $candidates = $this->evaluateItemMatchTitleCandidates(
+                $data, $options, 'Item_AltName'
+            );
             $commaPos = strrpos($strippedTitle, ',');
             $semiPos = strrpos($strippedTitle, ';');
             $pos = $commaPos > $semiPos ? $commaPos : $semiPos;
@@ -1026,6 +1128,8 @@ class DatabaseIngester extends BaseIngester
 
     /**
      * Reduce a string to alphanumeric chunks
+     *
+     * @param string $str String to process
      *
      * @return array
      */
@@ -1071,7 +1175,9 @@ class DatabaseIngester extends BaseIngester
         $ec = $this->getDbTable('editionscredits');
         $candidates = [];
         foreach ($ec->getItemCreditsForPerson($author) as $current) {
-            $score = $this->measureStringSimilarity($current['Item_Name'], $data['title']);
+            $score = $this->measureStringSimilarity(
+                $current['Item_Name'], $data['title']
+            );
             if ($score > 0) {
                 $currentCredits = $this->getPeopleForItem($current['Item_ID']);
                 $candidates[] = [
@@ -1083,12 +1189,16 @@ class DatabaseIngester extends BaseIngester
             } else {
                 $table = $this->getDbTable('itemsalttitles');
                 foreach ($table->getAltTitles($current['Item_ID']) as $currentAlt) {
-                    $score = $this->measureStringSimilarity($currentAlt['Item_AltName'], $data['title']);
+                    $score = $this->measureStringSimilarity(
+                        $currentAlt['Item_AltName'], $data['title']
+                    );
                     if ($score > 0) {
-                        $currentCredits = $this->getPeopleForItem($current['Item_ID']);
+                        $currentCredits
+                            = $this->getPeopleForItem($current['Item_ID']);
                         $candidates[] = [
                             'id' => $current['Item_ID'],
-                            'title' => $currentAlt['Item_AltName'] . ' (alt. title for ' . $current['Item_Name'] . ')',
+                            'title' => $currentAlt['Item_AltName']
+                                . ' (alt. title for ' . $current['Item_Name'] . ')',
                             'authors' => implode(', ', $currentCredits),
                             'confidence' => $score,
                         ];
@@ -1125,7 +1235,9 @@ class DatabaseIngester extends BaseIngester
             }
         }
         foreach (array_unique($allAuthors) as $author) {
-            $candidates = array_merge($candidates, $this->getItemMatchCandidatesUsingAuthor($author, $data));
+            $candidates = array_merge(
+                $candidates, $this->getItemMatchCandidatesUsingAuthor($author, $data)
+            );
         }
         return $candidates;
     }
@@ -1145,7 +1257,9 @@ class DatabaseIngester extends BaseIngester
             if ($current['confidence'] <= 20) {
                 continue;
             }
-            if (!isset($new[$current['id']]) || $new[$current['id']]['confidence'] < $current['confidence']) {
+            if (!isset($new[$current['id']])
+                || $new[$current['id']]['confidence'] < $current['confidence']
+            ) {
                 $new[$current['id']] = $current;
             }
         }
@@ -1209,8 +1323,8 @@ class DatabaseIngester extends BaseIngester
     /**
      * Add an alt title to an item.
      *
-     * @param string $item  Item ID
      * @param string $title Alt title
+     * @param string $item  Item ID
      *
      * @return void
      */
@@ -1241,8 +1355,11 @@ class DatabaseIngester extends BaseIngester
                     $authors[] = $current['name'];
                 }
             }
-            $authors = count($authors) > 0 ? 'by ' . implode(', ', $authors) : ' - no credits';
-            $this->writeln("Found candidate(s) for match with {$data['title']} $authors\n");
+            $authors = count($authors) > 0
+                ? 'by ' . implode(', ', $authors) : ' - no credits';
+            $this->writeln(
+                "Found candidate(s) for match with {$data['title']} $authors\n"
+            );
             $options = '0';
             foreach ($candidates as $i => $current) {
                 if ($i > 25) {
@@ -1250,10 +1367,11 @@ class DatabaseIngester extends BaseIngester
                     break;
                 }
                 $options .= chr(65 + $i);
+                $authorList = !empty($current['authors'])
+                    ? ' by ' . $current['authors'] : ' - no credits';
                 $this->writeln(
                     chr(65 + $i) . '. ' . $current['title']
-                    . (!empty($current['authors']) ? ' by ' . $current['authors'] : ' - no credits')
-                    . ' [ID = ' . $current['id'] . ']'
+                    . $authorList . ' [ID = ' . $current['id'] . ']'
                     . ' (confidence: ' . $current['confidence'] . '%)'
                 );
             }
@@ -1293,7 +1411,8 @@ class DatabaseIngester extends BaseIngester
         $edName = $parentEdition->Edition_Name;
         $seriesID = $parentEdition->Series_ID;
         $edsTable = $this->getDbTable('edition');
-        $altName = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
+        $altName
+            = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
         $edsTable->insert(
             [
                 'Edition_Name' => $edName,
@@ -1322,15 +1441,18 @@ class DatabaseIngester extends BaseIngester
      * @param object $series Series row object
      * @param int    $item   Item ID number
      * @param int    $pos    Position of edition in series
+     * @param array  $data   Incoming data
      *
      * @return object Edition row object
      */
     protected function createEditionInSeries($series, $item, $pos, $data)
     {
-        $edName = $this->articles->articleAwareAppend($series->Series_Name, ' edition');
+        $edName = $this->articles
+            ->articleAwareAppend($series->Series_Name, ' edition');
         $seriesID = $series->Series_ID;
         $edsTable = $this->getDbTable('edition');
-        $altName = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
+        $altName
+            = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
         $edsTable->insert(
             [
                 'Edition_Name' => $edName,
@@ -1371,7 +1493,8 @@ class DatabaseIngester extends BaseIngester
      * Create or load an issue in the specified series position.
      *
      * @param object $series Series row object.
-     * @param array  $data   Incoming data, with 'title' and (optional) 'authorIds' keys.
+     * @param array  $data   Incoming data, with 'title' and (optional) 'authorIds'
+     * keys.
      * @param int    $pos    Position of issue in series.
      *
      * @return object|bool New edition object (false on error)
@@ -1408,14 +1531,17 @@ class DatabaseIngester extends BaseIngester
      *
      * @param string $title     Incoming title to check
      * @param int    $itemID    Item to check against
-     * @param string $itemTitle Title of item to check against (for additional fuzzy matching)
+     * @param string $itemTitle Title of item to check against (for additional fuzzy
+     * matching)
      * @param bool   $warn      Should we display a warning if we find a match?
-     * @param bool   $returnId  Should we return the alt title sequence ID instead of boolean true?
+     * @param bool   $returnId  Should we return the alt title sequence ID instead of
+     * boolean true?
      *
      * @return bool|int
      */
-    protected function hasMatchingAltTitle($title, $itemID, $itemTitle, $warn = false, $returnId = false)
-    {
+    protected function hasMatchingAltTitle($title, $itemID, $itemTitle, $warn = false,
+        $returnId = false
+    ) {
         // Check the alt titles table:
         $table = $this->getDbTable('itemsalttitles');
         foreach ($table->getAltTitles($itemID) as $current) {
@@ -1435,7 +1561,8 @@ class DatabaseIngester extends BaseIngester
         // can't do this in "return ID" mode because these kinds of alt. title
         // match do not exist in the database table and thus have no sequence ID
         // to return.
-        list($itemArticle, $itemMainTitle) = $this->articles->separateArticle($itemTitle);
+        list($itemArticle, $itemMainTitle)
+            = $this->articles->separateArticle($itemTitle);
         $titleParts = preg_split('/[;:, ]\s*or[;:, ]/', $itemMainTitle);
         if (!$returnId && count($titleParts) > 1) {
             if ($itemArticle) {
@@ -1655,6 +1782,13 @@ class DatabaseIngester extends BaseIngester
         return $this->fuzzyPersonMatch($first, $last, $str, $expected);
     }
 
+    /**
+     * Update data with author details from the database.
+     *
+     * @param array $details Collected details (will be returned in updated form)
+     *
+     * @return array
+     */
     protected function addAuthorDetails($details)
     {
         foreach ($details as & $match) {
@@ -1674,9 +1808,12 @@ class DatabaseIngester extends BaseIngester
                     if (isset($current['uri'])) {
                         $id = $this->getPersonIdForUri($current['uri']);
                     } else {
-                        $this->writeln("WARNING: Missing URI for {$current['name']}...");
+                        $this->writeln(
+                            "WARNING: Missing URI for {$current['name']}..."
+                        );
                         $expected = $match[1]['authorIds'] ?? [];
-                        $id = $this->getPersonIdForString($current['name'], $expected);
+                        $id = $this
+                            ->getPersonIdForString($current['name'], $expected);
                     }
                     if (!$id) {
                         $text = isset($current['uri'])
@@ -1692,6 +1829,14 @@ class DatabaseIngester extends BaseIngester
         return $details;
     }
 
+    /**
+     * Check whether there is an author inconsistency.
+     *
+     * @param array $incomingList Author list from incoming data
+     * @param array $storedList   Author list from existing record
+     *
+     * @return bool
+     */
     protected function hasAuthorProblem($incomingList, $storedList)
     {
         $unexpected = array_diff($storedList, $incomingList);
@@ -1723,9 +1868,12 @@ class DatabaseIngester extends BaseIngester
                         );
                         break;
                     }
-                    foreach ($pseudo->getPseudonyms($r['Real_Person_ID']) as $realPseudo) {
-                        if (in_array($realPseudo['Pseudo_Person_ID'], $incomingList)) {
-                            $matched = true;
+                    $realPseudos = $pseudo->getPseudonyms($r['Real_Person_ID']);
+                    foreach ($realPseudos as $realPseudo) {
+                        $matched = in_array(
+                            $realPseudo['Pseudo_Person_ID'], $incomingList
+                        );
+                        if ($matched) {
                             $this->writeln(
                                 'WARNING: Database contains person ' . $current
                                 . ' but incoming data uses alternate pseudonym '
