@@ -159,7 +159,8 @@ class DatabaseIngester extends BaseIngester
      */
     protected function ingestExistingIssue($details, $editionObj, $series)
     {
-        $childDetails = $this->synchronizeChildren($editionObj, $details['contents']);
+        $childDetails = $this
+            ->synchronizeChildren($editionObj, $details['contents']);
         if (!$childDetails) {
             return false;
         }
@@ -168,7 +169,8 @@ class DatabaseIngester extends BaseIngester
             return false;
         }
         $details['contents'] = $childDetails;
-        return $this->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
+        return $this
+            ->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
     }
 
     /**
@@ -188,7 +190,10 @@ class DatabaseIngester extends BaseIngester
             return false;
         }
         if (!$this->checkItemTitles($item, $details['contents'][0])) {
-            $this->writeln("FATAL: Title mismatch '{$details['contents'][0]['title']}' vs. '{$item['Item_Name']}' for item {$item['Item_ID']}.");
+            $this->writeln(
+                "FATAL: Title mismatch '{$details['contents'][0]['title']}' vs. "
+                . "'{$item['Item_Name']}' for item {$item['Item_ID']}."
+            );
             return false;
         }
         $db = ['item' => $item, 'edition' => $editionObj->toArray()];
@@ -316,7 +321,9 @@ class DatabaseIngester extends BaseIngester
             // container, rather than one of its contents. We'll issue a warning so
             // this can be double-checked by hand, just in case.
             foreach ($this->getAllSeriesTitles($seriesObj) as $seriesTitle) {
-                if ($this->fuzzyCompare($seriesTitle, $childDetails[0][0]['title'])) {
+                $foundMatch = $this
+                    ->fuzzyCompare($seriesTitle, $childDetails[0][0]['title']);
+                if ($foundMatch) {
                     $this->writeln(
                         "WARNING: assuming first child is top-level item due to "
                         . "series title match."
@@ -658,7 +665,10 @@ class DatabaseIngester extends BaseIngester
         if ($editionObj->Preferred_Series_Publisher_ID
             && $editionObj->Preferred_Series_Publisher_ID != $match
         ) {
-            foreach ($this->getDbTable('edition')->getPublishersForEdition($editionObj->Edition_ID) as $ed) {
+            $edPublishers = $this->getDbTable('edition')
+                ->getPublishersForEdition($editionObj->Edition_ID);
+            foreach ($edPublishers as $ed) {
+                // fast-forward to end of results...
             }
             $this->writeln("Publisher mismatch in edition.");
             $this->writeln(
@@ -1027,7 +1037,7 @@ class DatabaseIngester extends BaseIngester
      *
      * @param array     $data       Raw data
      * @param \Iterable $options    Query results
-     * @param string    $titleFIeld Name of field to examine for title
+     * @param string    $titleField Name of field to examine for title
      *
      * @return array
      */
@@ -1080,7 +1090,8 @@ class DatabaseIngester extends BaseIngester
     protected function getItemMatchCandidatesUsingTitle($data)
     {
         $table = $this->getDbTable('item');
-        // Start by searching for full title; we'll break it down into chunks as we go.
+        // Start by searching for full title; we'll break it down into chunks as we
+        // go...
         $pos = strlen($data['title']);
         do {
             $strippedTitle = substr($data['title'], 0, $pos);
@@ -1107,7 +1118,8 @@ class DatabaseIngester extends BaseIngester
     protected function getItemMatchCandidatesUsingAltTitle($data)
     {
         $table = $this->getDbTable('itemsalttitles');
-        // Start by searching for full title; we'll break it down into chunks as we go.
+        // Start by searching for full title; we'll break it down into chunks as we
+        // go...
         $pos = strlen($data['title']);
         do {
             $strippedTitle = substr($data['title'], 0, $pos);
@@ -1337,7 +1349,8 @@ class DatabaseIngester extends BaseIngester
     /**
      * Create an Item record for the provided data array.
      *
-     * @param array $data Incoming data, with 'title' and (optional) 'authorIds' keys.
+     * @param array $data Incoming data, with 'title' and (optional) 'authorIds'
+     * keys.
      * @param int   $type Material type ID to use for item.
      *
      * @return int ID of newly-created Item.
@@ -1379,9 +1392,15 @@ class DatabaseIngester extends BaseIngester
             $char = $this->getCharSelection("\nPlease select one: ", $options);
             if ($char !== '0') {
                 $response = ord(strtoupper($char)) - 65;
-                if (!$this->fuzzyCompare($data['title'], $candidates[$response]['title'])
-                    && !$this->hasMatchingAltTitle($data['title'], $candidates[$response]['id'], $candidates[$response]['title'])
-                ) {
+                $fuzzyTitleCompare = $this->fuzzyCompare(
+                    $data['title'], $candidates[$response]['title']
+                );
+                $altTitleCompare = $this->hasMatchingAltTitle(
+                    $data['title'],
+                    $candidates[$response]['id'],
+                    $candidates[$response]['title']
+                );
+                if (!$fuzzyTitleCompare && !$altTitleCompare) {
                     $this->addAltTitle($data['title'], $candidates[$response]['id']);
                 }
                 return $candidates[$response]['id'];
@@ -1539,8 +1558,8 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool|int
      */
-    protected function hasMatchingAltTitle($title, $itemID, $itemTitle, $warn = false,
-        $returnId = false
+    protected function hasMatchingAltTitle($title, $itemID, $itemTitle,
+        $warn = false, $returnId = false
     ) {
         // Check the alt titles table:
         $table = $this->getDbTable('itemsalttitles');
