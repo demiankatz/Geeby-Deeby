@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/demiankatz/Geeby-Deeby.svg?branch=dev)](https://travis-ci.org/demiankatz/Geeby-Deeby)
+[![Build Status](https://travis-ci.com/demiankatz/Geeby-Deeby.svg?branch=dev)](https://travis-ci.com/demiankatz/Geeby-Deeby)
 
 # Geeby-Deeby
 
