@@ -6,6 +6,24 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.0.0 - 2020-11-03
+
+### Added
+
 - Command line interface for running tools (accessible through cli.php)
 - Command line utility for checking status of full text links.
 
