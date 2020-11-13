@@ -598,13 +598,14 @@ class DatabaseIngester extends BaseIngester
     /**
      * Normalize a city string for comparison purposes.
      *
-     * @param string $city String to normalize.
+     * @param string $rawCity String to normalize.
      *
      * @return string
      */
-    protected function normalizeCity($city)
+    protected function normalizeCity($rawCity)
     {
-        return str_replace(', n.y', '', strtolower($city));
+        list($city) = explode('(', $rawCity);
+        return str_replace(', n.y', '', strtolower(trim($city)));
     }
 
     /**
