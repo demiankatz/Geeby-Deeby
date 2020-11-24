@@ -32,6 +32,7 @@ use Laminas\Http\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -98,7 +99,29 @@ class FullTextCommand extends Command
                 InputArgument::OPTIONAL,
                 'Full text provider ID to check (* for all)',
                 '*'
+            )->addOption(
+                'updateRedirects',
+                null,
+                InputOption::VALUE_NONE,
+                'If a redirect is encountered, update the database to match; '
+                . 'also adds a new column to CSV output set to 1 for updated URLs.'
             );
+    }
+
+    /**
+     * Update a full text URL.
+     *
+     * @param int    $id  Sequence ID of full text URL
+     * @param string $url New URL
+     *
+     * @return void
+     */
+    protected function updateUrl(int $id, string $url): void
+    {
+        $this->table->update(
+            ['Full_Text_URL' => $url],
+            ['Sequence_ID' => $id]
+        );
     }
 
     /**
@@ -121,12 +144,23 @@ class FullTextCommand extends Command
         if ($provider == '*') {
             $provider = null;
         }
+        $updateRedirects = $input->getOption('updateRedirects');
         $items = $this->table->getItemsWithFullText($series, false, $provider);
         foreach ($items as $current) {
             $url = $current->Full_Text_URL;
             $request = new \Laminas\Http\Request();
             $response = $this->client->send($request->setUri($url));
-            $output->writeln($url . ',' . $response->getStatusCode());
+            $rewritten = 0;
+            if ($updateRedirects && $this->client->getRedirectionsCount() > 1) {
+                $rewritten = 1;
+                $url = $this->client->getUri();
+                $this->updateUrl($current->Sequence_ID, $url);
+            }
+            $responseLine = [$url, $response->getStatusCode()];
+            if ($updateRedirects) {
+                $responseLine[] = $rewritten;
+            }
+            $output->writeln(implode(',', $responseLine));
         }
         return 0;
     }
