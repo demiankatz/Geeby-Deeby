@@ -2,11 +2,13 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next Release - Currently in Development
+## 2.1.0 - Currently in Development
 
 ### Added
 
-- Nothing.
+- The check/fulltext command line tool now has an --updateRedirects option which
+can be used to automatically update the database for URLs that respond with a
+redirect status.
 
 ### Changed
 
