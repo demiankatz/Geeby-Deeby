@@ -151,7 +151,7 @@ class FullTextCommand extends Command
             $request = new \Laminas\Http\Request();
             $response = $this->client->send($request->setUri($url));
             $rewritten = 0;
-            if ($updateRedirects && $this->client->getRedirectionsCount() > 1) {
+            if ($updateRedirects && $this->client->getRedirectionsCount() > 0) {
                 $rewritten = 1;
                 $url = $this->client->getUri();
                 $this->updateUrl($current->Sequence_ID, $url);
