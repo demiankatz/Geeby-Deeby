@@ -1,11 +1,15 @@
 <?php
+$modules = [
+    'Laminas\Router',
+    'GeebyDeeby',
+    'GeebyDeebyLegacy',
+    'GeebyDeebyLocal',
+];
+if (PHP_SAPI == 'cli') {
+    $modules[] = 'GeebyDeebyConsole';
+}
 return [
-    'modules' => [
-        'Zend\Router',
-        'GeebyDeeby',
-        'GeebyDeebyLegacy',
-        'GeebyDeebyLocal',
-    ],
+    'modules' => $modules,
     'module_listener_options' => [
         'config_glob_paths'    => [
             'config/autoload/{,*.}{global,local}.php',

@@ -15,6 +15,12 @@ var PublisherEditor = function() {
             'saveFields': {
                 'imprint': { 'id': '#Imprint', 'emptyError': 'Imprint must not be blank.' }
             }
+        },
+        'URI': {
+            'uriField': { 'id': '#uri', 'emptyError': 'Please specify a valid URL.' },
+            'saveFields': {
+                'predicate_id': { 'id': '#Predicate_ID' }
+            }
         }
     };
 };

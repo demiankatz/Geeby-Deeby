@@ -39,7 +39,7 @@ use Interop\Container\ContainerInterface;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class AbstractFactory
-    implements \Zend\ServiceManager\Factory\AbstractFactoryInterface
+    implements \Laminas\ServiceManager\Factory\AbstractFactoryInterface
 {
     /**
      * Does the factory have a way to create an instance for the service?

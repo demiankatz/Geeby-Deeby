@@ -27,8 +27,8 @@
  */
 namespace GeebyDeeby\Db\Table;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\RowGateway\RowGateway;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\RowGateway\RowGateway;
 
 /**
  * Table Definition for Items_Platforms

@@ -36,7 +36,7 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AnalyzeCredits extends \Zend\View\Helper\AbstractHelper
+class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Items_Creators_Citations table.

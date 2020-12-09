@@ -39,7 +39,7 @@ use Interop\Container\ContainerInterface;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class AbstractFactory
-    implements \Zend\ServiceManager\Factory\AbstractFactoryInterface
+    implements \Laminas\ServiceManager\Factory\AbstractFactoryInterface
 {
     /**
      * Return row prototype object (null if unavailable)
@@ -84,7 +84,7 @@ class AbstractFactory
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
     ) {
-        $adapter = $container->get('Zend\Db\Adapter\Adapter');
+        $adapter = $container->get('Laminas\Db\Adapter\Adapter');
         $tm = $container->get('GeebyDeeby\Db\Table\PluginManager');
         $rowPrototype = $this->getRowPrototype($container, $requestedName);
         $table = new $requestedName($adapter, $tm, $rowPrototype);

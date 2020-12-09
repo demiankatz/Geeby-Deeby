@@ -155,6 +155,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      */
     protected function getExpectedInterface()
     {
-        return 'Zend\Db\RowGateway\RowGateway';
+        return 'Laminas\Db\RowGateway\RowGateway';
     }
 }

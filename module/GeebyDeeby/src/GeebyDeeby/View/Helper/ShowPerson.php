@@ -36,7 +36,7 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ShowPerson extends \Zend\View\Helper\AbstractHelper
+class ShowPerson extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Format a person's name.

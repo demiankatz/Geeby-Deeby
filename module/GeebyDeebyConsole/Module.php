@@ -1,10 +1,10 @@
 <?php
 /**
- * Database plugin manager factory.
+ * Code module for Geeby-Deeby's console functionality
  *
- * PHP version 5
+ * PHP version 7
  *
- * Copyright (C) Demian Katz 2019.
+ * Copyright (C) Demian Katz 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,40 +20,47 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Module
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeeby\Db;
-
-use Interop\Container\ContainerInterface;
+namespace GeebyDeebyConsole;
 
 /**
- * Database plugin manager factory.
+ * Code module for GeebyDeeby's console functionality
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Module
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class PluginManagerFactory implements \Zend\ServiceManager\Factory\FactoryInterface
+class Module
 {
     /**
-     * Create service
+     * Get module configuration
      *
-     * @param ContainerInterface $container Service manager
-     * @param string             $name      Requested service name
-     * @param array              $options   Extra options
-     *
-     * @return mixed
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return array
      */
-    public function __invoke(ContainerInterface $container, $name,
-        array $options = null
-    ) {
-        return new $name($container);
+    public function getConfig()
+    {
+        return include __DIR__ . '/config/module.config.php';
+    }
+
+    /**
+     * Get autoloader configuration
+     *
+     * @return array
+     */
+    public function getAutoloaderConfig()
+    {
+        return [
+            'Laminas\Loader\StandardAutoloader' => [
+                'namespaces' => [
+                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                ],
+            ],
+        ];
     }
 }

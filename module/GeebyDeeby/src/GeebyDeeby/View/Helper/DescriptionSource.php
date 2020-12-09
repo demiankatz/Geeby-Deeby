@@ -36,7 +36,7 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class DescriptionSource extends \Zend\View\Helper\AbstractHelper
+class DescriptionSource extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Descriptions of source types

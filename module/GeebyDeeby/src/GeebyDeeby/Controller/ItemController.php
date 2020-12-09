@@ -363,7 +363,7 @@ class ItemController extends AbstractBase
      *
      * @param bool $includeEditionData Include edition data?
      *
-     * @return \Zend\View\Model\ViewModel|bool
+     * @return \Laminas\View\Model\ViewModel|bool
      */
     public function getViewModelWithItemAndDetails($includeEditionData = true)
     {

@@ -157,7 +157,7 @@ class PersonController extends AbstractBase
      * @param int    $id   ID of person to load
      * @param string $sort Sort type
      *
-     * @return \Zend\View\Model\ViewModel|bool
+     * @return \Laminas\View\Model\ViewModel|bool
      */
     protected function getPersonViewModel($id, $sort = 'title')
     {

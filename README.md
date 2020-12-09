@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/demiankatz/Geeby-Deeby.svg?branch=master)](https://travis-ci.org/demiankatz/Geeby-Deeby)
+[![Build Status](https://travis-ci.com/demiankatz/Geeby-Deeby.svg?branch=dev)](https://travis-ci.com/demiankatz/Geeby-Deeby)
 
 # Geeby-Deeby
 
@@ -112,6 +112,14 @@ update Users set User_Group_ID=1, Person_ID=-1 where User_ID=1;
 ## Accessing the Data Entry Backend
 
 Now, you can add "/edit" to the base URL of your installation (for example, `http://localhost/gbdb/edit`), and log in -- you are ready to populate the database through the web interface.
+
+# Command Line Utilities
+
+Geeby-Deeby includes some utilities that can be run from the command line for data integrity
+checking, etc. Simply run `php cli.php` from the Geeby-Deeby directory to get a summary of
+commands. You can add the `--help` switch to get more information about a particular command;
+for example, `php cli.php check/fulltext --help` will tell you more about the command to check
+the integrity of full text links.
 
 # Upgrading
 
