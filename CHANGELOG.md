@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file, in reverse 
 - The check/fulltext command line tool now has an --updateRedirects option which
 can be used to automatically update the database for URLs that respond with a
 redirect status.
+- "Recently added" screens have been added for items, people, and series.
 
 ### Changed
 

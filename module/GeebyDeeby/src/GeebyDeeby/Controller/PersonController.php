@@ -131,6 +131,9 @@ class PersonController extends AbstractBase
     public function listAction()
     {
         $extra = $this->params()->fromRoute('extra');
+        if ($extra === 'New') {
+            return $this->forwardTo(__NAMESPACE__ . '\Person', 'new');
+        }
         $bios = (strtolower($extra) == 'bios');
         return $this->createViewModel(
             [
@@ -138,6 +141,27 @@ class PersonController extends AbstractBase
                 'people' => $this->getDbTable('person')->getList($bios)
             ]
         );
+    }
+
+    /**
+     * New people action
+     *
+     * @return mixed
+     */
+    public function newAction()
+    {
+        $table = $this->getDbTable('person');
+        $adapter = $table->getAdapter();
+        $query = new \Laminas\Db\Sql\Select($table->getTable());
+        $query->order('Person_ID DESC');
+        $paginator = new \Laminas\Paginator\Paginator(
+            new \Laminas\Paginator\Adapter\DbSelect(
+                $query, $adapter
+            )
+        );
+        $paginator->setItemCountPerPage(50);
+        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
+        return $this->createViewModel(compact('paginator'));
     }
 
     /**

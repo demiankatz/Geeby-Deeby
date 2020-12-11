@@ -1,0 +1,15 @@
+<?php
+    $this->layout()->title = 'Most Recently Added Items';
+    $pageCount = count($paginator);
+?>
+<?php if ($pageCount < 1): ?>
+  <p>No items listed in this database yet.</p>
+<?php else: ?>
+  <p>Viewing page <?=$paginator->getCurrentPageNumber()?> of <?=$pageCount?></p>
+  <?php foreach ($paginator as $current): ?>
+    <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
+      <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+    </a><br />
+  <?php endforeach; ?>
+  <p><?=$this->paginationControl($paginator, null, 'partials/pagination.phtml')?></p>
+<?php endif; ?>
