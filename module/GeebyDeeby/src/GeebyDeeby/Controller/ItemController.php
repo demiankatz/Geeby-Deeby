@@ -413,6 +413,11 @@ class ItemController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'fulltext');
         }
 
+        // Special case: new items:
+        if ($this->params()->fromRoute('extra') == 'New') {
+            return $this->forwardTo(__NAMESPACE__ . '\Item', 'new');
+        }
+
         // Special case: with reviews:
         if ($this->params()->fromRoute('extra') == 'Reviews') {
             return $this->forwardTo(__NAMESPACE__ . '\Item', 'reviews');
@@ -432,6 +437,27 @@ class ItemController extends AbstractBase
     public function notfoundAction()
     {
         return $this->createViewModel();
+    }
+
+    /**
+     * New items action
+     *
+     * @return mixed
+     */
+    public function newAction()
+    {
+        $table = $this->getDbTable('item');
+        $adapter = $table->getAdapter();
+        $query = new \Laminas\Db\Sql\Select($table->getTable());
+        $query->order('Item_ID DESC');
+        $paginator = new \Laminas\Paginator\Paginator(
+            new \Laminas\Paginator\Adapter\DbSelect(
+                $query, $adapter
+            )
+        );
+        $paginator->setItemCountPerPage(50);
+        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
+        return $this->createViewModel(compact('paginator'));
     }
 
     /**

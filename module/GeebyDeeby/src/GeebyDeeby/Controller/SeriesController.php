@@ -364,6 +364,9 @@ class SeriesController extends AbstractBase
         if ($id == 'Comments') {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'comments');
         }
+        if ($id == 'New') {
+            return $this->forwardTo(__NAMESPACE__ . '\Series', 'new');
+        }
         return $this->performRdfRedirect('series');
     }
 
@@ -592,6 +595,27 @@ class SeriesController extends AbstractBase
                 'series' => $this->getDbTable('series')->getList()
             ]
         );
+    }
+
+    /**
+     * New series action
+     *
+     * @return mixed
+     */
+    public function newAction()
+    {
+        $table = $this->getDbTable('series');
+        $adapter = $table->getAdapter();
+        $query = new \Laminas\Db\Sql\Select($table->getTable());
+        $query->order('Series_ID DESC');
+        $paginator = new \Laminas\Paginator\Paginator(
+            new \Laminas\Paginator\Adapter\DbSelect(
+                $query, $adapter
+            )
+        );
+        $paginator->setItemCountPerPage(50);
+        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
+        return $this->createViewModel(compact('paginator'));
     }
 
     /**
