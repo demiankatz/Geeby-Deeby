@@ -6,11 +6,26 @@
  * security-sensitive configuration information. Copy this file without the
  * .dist extension at the end and populate values as needed.
  *
- * @NOTE: This file is ignored from Git by default with the .gitignore included
- * in ZendSkeletonApplication. This is a good practice, as it prevents sensitive
- * credentials from accidentally being committed into version control.
+ * @NOTE: This file is ignored from Git by default through .gitignore. This is a
+ * good practice, as it prevents sensitive credentials from accidentally being
+ * committed into version control.
  */
 
-return array(
-    // ...
-);
+return [
+    // You'll usually want to copy settings (particularly the 'geeby-deeby'
+    // section) from module/GeebyDeeby/config/module.config.php into this file to
+    // override them. As noted above, don't forget to remove the .dist extension
+    // from this file's name to allow the changes to actually take effect!
+
+    // This is a bare-minimum example of setting up SMTP email support;
+    // uncomment and fill in details as needed:
+    //'geeby-deeby' => [
+    //    'emailTransport' => [
+    //        'type' => 'smtp',
+    //        'options' => [
+    //            'host' => 'smtp.myemailservice.com',
+    //            'port' => 25,
+    //        ],
+    //    ],
+    //],
+];
