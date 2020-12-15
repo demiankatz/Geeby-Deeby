@@ -1394,6 +1394,8 @@ return [
                 'GeebyDeeby\View\Helper\ShowEditionFactory',
             'GeebyDeeby\View\Helper\ShowPerson' =>
                 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\ToggleLink' =>
+                'GeebyDeeby\View\Helper\ToggleLinkFactory',
         ],
         'aliases' => [
             'analyzecredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
@@ -1421,6 +1423,8 @@ return [
             'showEdition' => 'GeebyDeeby\View\Helper\ShowEdition',
             'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
             'showPerson' => 'GeebyDeeby\View\Helper\ShowPerson',
+            'togglelink' => 'GeebyDeeby\View\Helper\ToggleLink',
+            'toggleLink' => 'GeebyDeeby\View\Helper\ToggleLink',
         ],
     ],
     'view_manager' => [

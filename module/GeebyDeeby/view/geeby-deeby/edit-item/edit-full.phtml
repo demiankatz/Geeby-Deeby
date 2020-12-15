@@ -1,5 +1,8 @@
-<?php $this->layout()->title = 'Edit Item' ?>
-<?php $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_items']) ?>
+<?php
+  $this->layout()->title = 'Edit Item';
+  $this->layout()->toggleLink = $this->toggleLink('item', $item['Item_ID']);
+  $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_items']);
+?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-item/index.phtml')?>
 </div>

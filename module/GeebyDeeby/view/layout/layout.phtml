@@ -25,6 +25,7 @@
       </div>
     </header>
     <div class="container main">
+      <?=empty($this->layout()->toggleLink) ? '' : $this->layout()->toggleLink?>
       <h1><?=$this->layout()->title ?></h1>
       <div class="content">
         <?php echo $this->content; ?>

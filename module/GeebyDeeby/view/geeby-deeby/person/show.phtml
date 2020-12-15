@@ -1,6 +1,7 @@
 <?php
     $title = $this->showperson($person);
     $this->layout()->title = 'Person - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/person', $person['Person_ID']);
     $displayedSomething = false;
 ?>
 <?php $realNameCount = count($realNames); if ($realNameCount > 0): $displayedSomething = true; ?>
@@ -27,7 +28,7 @@
 <?php if (count($credits) > 0 || count($citations) > 0): $displayedSomething = true; ?>
   <?php $sorts = [ 'series', 'title', 'year' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
   <div class="pull-right" style="padding:12px 0;">
-    Sort by: 
+    Sort by:
     <div class="btn-group" style="margin-top:-4px;">
       <?php foreach ($sorts as $current): ?>
         <a href="?sort=<?=urlencode($current)?>" class="btn btn-<?=$sort == $current ? 'primary' : 'default'?>"><?=ucwords($current)?></a>
