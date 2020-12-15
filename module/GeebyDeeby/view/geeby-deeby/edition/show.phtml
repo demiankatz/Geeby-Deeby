@@ -6,6 +6,7 @@
             $title = $this->fixtitle(empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']) . ' - ' . $title;
         }
         $this->layout()->title = 'Edition - ' . $title;
+        $this->layout()->toggleLink = $this->toggleLink('edit/edition', $edition['Edition_ID']);
     }
 ?>
 <div class="row">

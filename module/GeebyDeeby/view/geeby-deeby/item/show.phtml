@@ -1,6 +1,7 @@
 <?php
     $title = $this->fixtitle($item['Item_Name']);
     $this->layout()->title = 'Item - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/item', $item['Item_ID']);
     $editionViewLink = $this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Editions']);
 
     // If there are too many images to display comfortably, pick a smaller number

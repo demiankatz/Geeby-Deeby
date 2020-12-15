@@ -1,6 +1,7 @@
 <?php
     $title = $this->fixtitle($series['Series_Name']);
     $this->layout()->title = 'Series - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/series', $series['Series_ID']);
 ?>
 <p>
   <a href="<?=$this->url('series')?>">[List All Series]</a>
