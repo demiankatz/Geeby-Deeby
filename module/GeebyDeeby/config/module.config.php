@@ -4,6 +4,12 @@ return [
         'siteTitle' => 'My Gamebook Web Page',
         'siteEmail' => 'me@emailhost.com',
         'siteOwner' => 'Webmaster',
+        // See https://docs.laminas.dev/laminas-mail/transport/intro/ for more
+        // documentation on email transport options:
+        'emailTransport' => [
+            'type' => 'sendmail',
+            'options' => [],
+        ],
         'dbHost' => 'localhost',
         'dbName' => 'gbdb', // database schema name
         'dbUser' => 'gbdb', // database username
@@ -1290,6 +1296,7 @@ return [
                 'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
             'GeebyDeeby\Db\Table\PluginManager' =>
                 'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
+            'GeebyDeeby\EmailService' => 'GeebyDeeby\EmailServiceFactory',
             'Laminas\Authentication\AuthenticationService' =>
                 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Laminas\Db\Adapter\Adapter' => 'GeebyDeeby\Db\AdapterFactory',
