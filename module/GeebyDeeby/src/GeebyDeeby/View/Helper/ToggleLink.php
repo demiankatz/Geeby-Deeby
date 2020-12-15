@@ -41,7 +41,7 @@ use GeebyDeeby\Db\Table\User;
 class ToggleLink extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * User database table
+     * User database table object
      *
      * @var User
      */
@@ -49,6 +49,8 @@ class ToggleLink extends \Laminas\View\Helper\AbstractHelper
 
     /**
      * Constructor.
+     *
+     * @param User $userTable User database table object
      */
     public function __construct(User $userTable)
     {
