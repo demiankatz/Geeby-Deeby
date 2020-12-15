@@ -9,11 +9,12 @@ All notable changes to this project will be documented in this file, in reverse 
 - The check/fulltext command line tool now has an --updateRedirects option which
 can be used to automatically update the database for URLs that respond with a
 redirect status.
+- Email is now more configurable than before (SMTP support, etc.).
 - "Recently added" screens have been added for items, people, and series.
 
 ### Changed
 
-- Nothing.
+- Email is now sent using the laminas-mail library.
 
 ### Removed
 

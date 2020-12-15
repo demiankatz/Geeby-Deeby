@@ -92,8 +92,13 @@ class ApproveController extends AbstractBase
         $row['Name'] = $this->params()->fromPost('fullname');
         $row['Address'] = $this->params()->fromPost('address');
         $table->update($row, $where);
-        if (!$this->sendApprovalEmail($row['Address'])) {
-            return $this->jsonDie('Problem sending email; user approved anyway.');
+        try {
+            $this->sendApprovalEmail($row['Address']);
+        } catch (\Exception $e) {
+            return $this->jsonDie(
+                'Problem sending email; user approved anyway. Details: '
+                . $e->getMessage()
+            );
         }
         return $this->jsonReportSuccess();
     }
@@ -287,7 +292,8 @@ class ApproveController extends AbstractBase
         $view = $this->getViewRenderer();
         $subject = $view->config('siteTitle') . " Membership";
         $message = $view->render('emails/account-approval.phtml');
-        $from = "From: " . $view->config('siteEmail');
-        return @mail($address, $subject, $message, $from);
+        $from = $view->config('siteEmail');
+        return $this->serviceLocator->get(\GeebyDeeby\EmailService::class)
+            ->send($address, $subject, $message, $from);
     }
 }

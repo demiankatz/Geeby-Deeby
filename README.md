@@ -81,7 +81,8 @@ return array(
 
 ## Additional Configuration Options
 
-You can now make some additional configurations as needed; refer to the 'geeby-deeby' array in `module/GeebyDeeby/config/module.config.php` to see all of the settings that may be overridden in your `local.php` file. To start with, you should at least customize the 'siteTitle', 'siteEmail' and 'siteOwner' settings, which will control the name of your site, and the name/email used in site-related contact information.
+You can now make some additional configurations as needed; refer to the 'geeby-deeby' array in `module/GeebyDeeby/config/module.config.php` to see all of the settings that may be overridden in your `local.php` file. To start with, you should at least customize the 'siteTitle', 'siteEmail' and 'siteOwner' settings, which will control the name of your site, and the name/email used in site-related contact information. You should adjust the 'emailTransport' setting if you need to
+use SMTP to send messages.
 
 ## Establishing a Superuser
 
