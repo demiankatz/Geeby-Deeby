@@ -11,6 +11,7 @@ can be used to automatically update the database for URLs that respond with a
 redirect status.
 - Email is now more configurable than before (SMTP support, etc.).
 - "Recently added" screens have been added for items, people, and series.
+- Users with edit privileges can now toggle to edit mode using convenient links.
 
 ### Changed
 

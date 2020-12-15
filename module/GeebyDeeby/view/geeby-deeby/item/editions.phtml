@@ -1,6 +1,7 @@
 <?php
     $title = $this->fixtitle($item['Item_Name']);
     $this->layout()->title = 'Item - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/item', $item['Item_ID']);
 ?>
 <div class="row">
   <div class="col-md-12">

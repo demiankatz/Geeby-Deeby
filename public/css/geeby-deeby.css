@@ -17,6 +17,7 @@ body {
 
 a {color:#774E03;text-decoration:none}
 a:hover {color:#BB8B32}
+a.toggleLink {color: white;display:block;float:right;margin-top:-13px;margin-right:5px}
 h1 {
   background:#774E03;
   color:#FFF;
