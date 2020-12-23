@@ -5,7 +5,7 @@
 <?php if (count($reviews) > 0): ?>
   <?php $series = false; foreach ($reviews as $review): ?>
     <?php if ($series !== $review['Series_ID']): $series = $review['Series_ID']; ?>
-      <?php $item = false; ?>
+      <?php $item = $pos = false; ?>
       <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($review['Series_Name']);?>
       </a></h2>
