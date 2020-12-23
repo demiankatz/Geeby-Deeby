@@ -10,10 +10,10 @@
         <?=$this->fixtitle($review['Series_Name']);?>
       </a></h2>
     <?php endif; ?>
-    <?php if ($item !== $review['Item_ID']): ?>
-      <?php $item = $review['Item_ID']; ?>
+    <?php if ($item !== $review['Item_ID'] || $pos !== $this->formatItemNumber($review)): ?>
+      <?php $item = $review['Item_ID']; $pos = $this->formatItemNumber($review); ?>
       <span class="item">
-        <?=$this->escapeHtml($this->formatItemNumber($review))?>
+        <?=$this->escapeHtml($pos)?>
         <a href="<?=$this->url('item', ['id' => $review['Item_ID']])?>">
           <?=$this->escapeHtml($this->fixtitle(isset($review['Item_AltName']) && !empty($review['Item_AltName']) ? $review['Item_AltName'] : $review['Item_Name']))?>
         </a>
