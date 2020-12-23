@@ -23,7 +23,7 @@ redirect status.
 
 ### Fixed
 
-- Nothing.
+- The "items with reviews" display has been improved to fix some bugs.
 
 ## 2.0.0 - 2020-11-04
 
