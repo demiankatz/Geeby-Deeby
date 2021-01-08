@@ -1,4 +1,7 @@
-<?php $this->layout()->title = 'Main Menu' ?>
+<?php
+  $this->layout()->title = 'Main Menu';
+  $this->layout()->toggleLink = $this->toggleLink('edit', null);
+?>
 <h2>Database</h2>
 <p>List Series
   [<a href="<?=$this->url('series')?>">by name</a>,

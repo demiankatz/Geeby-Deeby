@@ -1,4 +1,7 @@
-<?php $this->layout()->title = 'Administration' ?>
+<?php
+  $this->layout()->title = 'Administration';
+  $this->layout()->toggleLink = $this->toggleLink('home', null);
+?>
 <?php if ($contentEditor): ?>
   <h2>Edit Data</h2>
   <ul>
