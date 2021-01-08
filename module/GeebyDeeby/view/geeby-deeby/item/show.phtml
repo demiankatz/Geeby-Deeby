@@ -98,7 +98,29 @@
         <tr>
           <th scope="row">Series:</th>
           <td>
-            <?php foreach ($series as $current): ?>
+            <?php
+              // If a series has a numbered entry AND an unnumbered entry, we don't want to
+              // display the unnumbered version, since it adds no useful information and
+              // reduces readability. Let's index the data so we can identify rows to skip:
+              $seriesHasDetails = $rowHasDetails = [];
+              foreach ($series as $i => $current) {
+                $rowHasDetails[$i] = $current['Parent_Volume'] > 0
+                  || $current['Parent_Position'] > 0
+                  || $current['Parent_Replacement_Number'] > 0 || $current['Volume'] > 0
+                  || $current['Position'] > 0 || $current['Replacement_Number'] > 0;
+                if ($rowHasDetails[$i]) {
+                  $seriesHasDetails[$current['Series_ID']] = true;
+                }
+              }
+            ?>
+            <?php foreach ($series as $i => $current): ?>
+              <?php
+                // Skip unnumbered rows if a numbered row exists for the same series (using
+                // indexes created above):
+                if (($seriesHasDetails[$current['Series_ID']] ?? false) && !$rowHasDetails[$i]) {
+                  continue;
+                }
+              ?>
               <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle(empty($current['Series_AltName']) ? $current['Series_Name'] : $current['Series_AltName']))?>
               </a>
