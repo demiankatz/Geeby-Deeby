@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Typo in title of "recent people" page.
+- Typos in title of "recent people" and "recent series" pages.
 
 ## 2.1.0 - 2021-01-08
 
