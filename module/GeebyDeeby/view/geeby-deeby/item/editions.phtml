@@ -5,6 +5,29 @@
 ?>
 <div class="row">
   <div class="col-md-12">
+    <div class="controls top">
+      <?php ob_start(); ?>
+      <?php if ($this->auth()->hasIdentity()): ?>
+        <p>
+          <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Review'])?>">
+            <?=$userHasReview ? 'Edit Review' : 'Submit Review'?>
+          </a>
+          <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditHave'])?>">
+            <?=$userHasItem ? 'Modify Have List' : 'Add to Have List'?>
+          </a>
+          <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditWant'])?>">
+            <?=$userWantsItem ? 'Modify Want List' : 'Add to Want List'?>
+          </a>
+          <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditExtra'])?>">
+            <?=$userHasExtraItem ? 'Modify Sale/Trade List' : 'Add to Sale/Trade List'?>
+          </a>
+        </p>
+      <?php else: ?>
+        <p>Please <a href="<?=$this->url('login')?>">log in</a> to manage your collection or post a review.</p>
+      <?php endif; ?>
+      <?php $controls = ob_get_flush(); ?>
+    </div>
+
     <div class="pull-right" style="padding:6px 0;">
       View:
       <div class="btn-group" style="margin-top:-4px;">
@@ -12,6 +35,7 @@
         <a href="" class="btn btn-primary">By Edition</a>
       </div>
     </div>
+
     <h2>Item-Level Details</h2>
     <table class="item">
       <?php ob_start(); ?>
@@ -225,26 +249,7 @@
   <?=$this->showEdition($edition['Edition_ID'])?>
 <?php endforeach; ?>
 
-<div class="controls">
-  <?php if ($this->auth()->hasIdentity()): ?>
-    <p>
-      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Review'])?>">
-        <?=$userHasReview ? 'Edit Review' : 'Submit Review'?>
-      </a>
-      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditHave'])?>">
-        <?=$userHasItem ? 'Modify Have List' : 'Add to Have List'?>
-      </a>
-      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditWant'])?>">
-        <?=$userWantsItem ? 'Modify Want List' : 'Add to Want List'?>
-      </a>
-      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditExtra'])?>">
-        <?=$userHasExtraItem ? 'Modify Sale/Trade List' : 'Add to Sale/Trade List'?>
-      </a>
-    </p>
-  <?php else: ?>
-    <p>Please <a href="<?=$this->url('login')?>">log in</a> to manage your collection or post a review.</p>
-  <?php endif; ?>
-</div>
+<div class="controls bottom"><?=$controls?></div>
 
 <?php if (count($files) > 0): ?>
   <h2>Related Documents</h2>
