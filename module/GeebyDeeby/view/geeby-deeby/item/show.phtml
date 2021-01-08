@@ -616,7 +616,7 @@
     <a href="<?=$this->url('edition', ['id' => $edition['Edition_ID']])?>">
         <?=$this->escapeHtml($this->fixtitle($edition['Edition_Name']))?>
     </a>
-  <?php if (!empty($edition['Item_Name'])): ?>(<?=!empty($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', ['id' => $edition['Item_ID']])?>"><?=$this->escapeHtml($this->fixtitle(empty($edition['Item_AltName']) ? $edition['Item_Name'] : $edition['Item_AltName']))?></a>)<?php endif; ?>
+    <?php if (!empty($edition['Item_Name'])): ?>(<?=!empty($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', ['id' => $edition['Parent_Item_ID'] ?? $edition['Item_ID']])?>"><?=$this->escapeHtml($this->fixtitle(empty($edition['Item_AltName']) ? $edition['Item_Name'] : $edition['Item_AltName']))?></a>)<?php endif; ?>
     <br />
   <?php endforeach; ?>
 <?php endif; ?>
