@@ -1,4 +1,7 @@
-<?php $this->layout()->title = 'Main Menu' ?>
+<?php
+  $this->layout()->title = 'Main Menu';
+  $this->layout()->toggleLink = $this->toggleLink('edit', null);
+?>
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];

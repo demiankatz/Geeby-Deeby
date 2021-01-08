@@ -1,6 +1,7 @@
 <?php
     $title = $publisher['Publisher_Name'];
     $this->layout()->title = 'Publisher - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/publisher', $publisher['Publisher_ID']);
     $displayedSomething = false;
 ?>
 <?php if (count($series) < 1): ?>

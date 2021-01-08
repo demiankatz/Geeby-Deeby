@@ -3,6 +3,21 @@
     $this->layout()->title = 'Series - ' . $title;
     $this->layout()->toggleLink = $this->toggleLink('edit/series', $series['Series_ID']);
 ?>
+
+<div class="controls top">
+  <?php ob_start(); ?>
+  <?php if ($this->auth()->hasIdentity()): ?>
+    <p>
+      <a class="button" href="<?=$this->url('series', ['id' => $series['Series_ID'], 'extra' => 'Comment'])?>">
+        <?=$userHasComment ? 'Edit Comment' : 'Submit Comment'?>
+      </a>
+    </p>
+  <?php else: ?>
+    <p>Please <a href="<?=$this->url('login')?>">log in</a> to leave a comment.</p>
+  <?php endif; ?>
+  <?php $controls = ob_get_flush(); ?>
+</div>
+
 <p>
   <a href="<?=$this->url('series')?>">[List All Series]</a>
   <a href="<?=$this->url('series', ['id' => $series['Series_ID'], 'extra' => 'FullText'])?>">[List Series Full Text]</a>
@@ -213,14 +228,4 @@
   <p>No comments available.</p>
 <?php endif; ?>
 
-<div class="controls">
-  <?php if ($this->auth()->hasIdentity()): ?>
-    <p>
-      <a class="button" href="<?=$this->url('series', ['id' => $series['Series_ID'], 'extra' => 'Comment'])?>">
-        <?=$userHasComment ? 'Edit Comment' : 'Submit Comment'?>
-      </a>
-    </p>
-  <?php else: ?>
-    <p>Please <a href="<?=$this->url('login')?>">log in</a> to leave a comment.</p>
-  <?php endif; ?>
-</div>
+<div class="controls bottom"><?=$controls?></div>

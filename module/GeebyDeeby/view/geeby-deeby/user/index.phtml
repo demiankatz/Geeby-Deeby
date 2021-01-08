@@ -2,6 +2,19 @@
     $title = $user['Username'];
     $this->layout()->title = 'User - ' . $title;
 ?>
+
+<?php if ($this->auth()->hasIdentity() && $this->auth()->getIdentity() == $user['User_ID']): ?>
+  <div class="controls top">
+    <?php ob_start(); ?>
+    <p>
+      <a class="button" href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Edit'])?>">
+        Edit Account Details
+      </a>
+    </p>
+    <?php $controls = ob_get_flush(); ?>
+  </div>
+<?php endif; ?>
+
 <p><a href="<?=$this->url('users')?>">[List All Users]</a></p>
 
 <table class="user">
@@ -58,12 +71,6 @@
     </td>
   </tr>
 </table>
-<?php if ($this->auth()->hasIdentity() && $this->auth()->getIdentity() == $user['User_ID']): ?>
-  <div class="controls">
-    <p>
-      <a class="button" href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Edit'])?>">
-        Edit Account Details
-      </a>
-    </p>
-  </div>
+<?php if (isset($controls)): ?>
+  <div class="controls bottom"><?=$controls?></div>
 <?php endif; ?>
