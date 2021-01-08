@@ -3,7 +3,7 @@
     <table class="list_item">
       <tr>
         <td>
-          <a href="#" onclick="Series.editLink('Publisher', <?=$current['Series_Publisher_ID']?>); return false;"><?=$this->escapeHtml($current['Publisher_Name'])?></a>
+          <a href="<?=$this->url('edit/publisher', ['id' => $current['Publisher_ID']])?>"><?=$this->escapeHtml($current['Publisher_Name'])?></a>
           <?php $extraDetails = ''; ?>
           <?php if (!empty($current['Country_Name']) || !empty($current['Imprint_Name']) || !empty($current['Note'])): ?>
             (<?php
