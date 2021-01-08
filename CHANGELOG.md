@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.1.1 - currently in development
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Typo in title of "recent people" page.
+
 ## 2.1.0 - 2021-01-08
 
 ### Added
