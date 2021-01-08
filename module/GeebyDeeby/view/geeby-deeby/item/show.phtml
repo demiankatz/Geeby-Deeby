@@ -1,6 +1,7 @@
 <?php
     $title = $this->fixtitle($item['Item_Name']);
     $this->layout()->title = 'Item - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/item', $item['Item_ID']);
     $editionViewLink = $this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Editions']);
 
     // If there are too many images to display comfortably, pick a smaller number
@@ -34,6 +35,30 @@
     }
 ?>
 <div class="row">
+  <div class="col-md-12">
+    <div class="controls top">
+      <?php ob_start(); ?>
+      <?php if ($this->auth()->hasIdentity()): ?>
+        <p>
+          <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Review'])?>">
+            <?=$userHasReview ? 'Edit Review' : 'Submit Review'?>
+          </a>
+          <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditHave'])?>">
+            <?=$userHasItem ? 'Modify Have List' : 'Add to Have List'?>
+          </a>
+          <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditWant'])?>">
+            <?=$userWantsItem ? 'Modify Want List' : 'Add to Want List'?>
+          </a>
+          <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditExtra'])?>">
+            <?=$userHasExtraItem ? 'Modify Sale/Trade List' : 'Add to Sale/Trade List'?>
+          </a>
+        </p>
+      <?php else: ?>
+        <p>Please <a href="<?=$this->url('login')?>">log in</a> to manage your collection or post a review.</p>
+      <?php endif; ?>
+      <?php $controls = ob_get_flush(); ?>
+    </div>
+  </div>
   <?=$this->render('partials/images.phtml', compact('images', 'editions'))?>
   <?php if ($truncatedImages): ?>
     <div class="col-md-12">
@@ -97,7 +122,29 @@
         <tr>
           <th scope="row">Series:</th>
           <td>
-            <?php foreach ($series as $current): ?>
+            <?php
+              // If a series has a numbered entry AND an unnumbered entry, we don't want to
+              // display the unnumbered version, since it adds no useful information and
+              // reduces readability. Let's index the data so we can identify rows to skip:
+              $seriesHasDetails = $rowHasDetails = [];
+              foreach ($series as $i => $current) {
+                $rowHasDetails[$i] = $current['Parent_Volume'] > 0
+                  || $current['Parent_Position'] > 0
+                  || $current['Parent_Replacement_Number'] > 0 || $current['Volume'] > 0
+                  || $current['Position'] > 0 || $current['Replacement_Number'] > 0;
+                if ($rowHasDetails[$i]) {
+                  $seriesHasDetails[$current['Series_ID']] = true;
+                }
+              }
+            ?>
+            <?php foreach ($series as $i => $current): ?>
+              <?php
+                // Skip unnumbered rows if a numbered row exists for the same series (using
+                // indexes created above):
+                if (($seriesHasDetails[$current['Series_ID']] ?? false) && !$rowHasDetails[$i]) {
+                  continue;
+                }
+              ?>
               <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle(empty($current['Series_AltName']) ? $current['Series_Name'] : $current['Series_AltName']))?>
               </a>
@@ -615,31 +662,12 @@
     <a href="<?=$this->url('edition', ['id' => $edition['Edition_ID']])?>">
         <?=$this->escapeHtml($this->fixtitle($edition['Edition_Name']))?>
     </a>
-  <?php if (!empty($edition['Item_Name'])): ?>(<?=!empty($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', ['id' => $edition['Item_ID']])?>"><?=$this->escapeHtml($this->fixtitle(empty($edition['Item_AltName']) ? $edition['Item_Name'] : $edition['Item_AltName']))?></a>)<?php endif; ?>
+    <?php if (!empty($edition['Item_Name'])): ?>(<?=!empty($edition['Extent_In_Parent']) ? $this->escapeHtml($edition['Extent_In_Parent']) . ' ' : ''?>in <a href="<?=$this->url('item', ['id' => $edition['Parent_Item_ID'] ?? $edition['Item_ID']])?>"><?=$this->escapeHtml($this->fixtitle(empty($edition['Item_AltName']) ? $edition['Item_Name'] : $edition['Item_AltName']))?></a>)<?php endif; ?>
     <br />
   <?php endforeach; ?>
 <?php endif; ?>
 
-<div class="controls">
-  <?php if ($this->auth()->hasIdentity()): ?>
-    <p>
-      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Review'])?>">
-        <?=$userHasReview ? 'Edit Review' : 'Submit Review'?>
-      </a>
-      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditHave'])?>">
-        <?=$userHasItem ? 'Modify Have List' : 'Add to Have List'?>
-      </a>
-      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditWant'])?>">
-        <?=$userWantsItem ? 'Modify Want List' : 'Add to Want List'?>
-      </a>
-      <a class="button" href="<?=$this->url('item', ['id' => $item['Item_ID'], 'extra' => 'EditExtra'])?>">
-        <?=$userHasExtraItem ? 'Modify Sale/Trade List' : 'Add to Sale/Trade List'?>
-      </a>
-    </p>
-  <?php else: ?>
-    <p>Please <a href="<?=$this->url('login')?>">log in</a> to manage your collection or post a review.</p>
-  <?php endif; ?>
-</div>
+<div class="controls bottom"><?=$controls?></div>
 
 <?php if (count($files) > 0): ?>
   <h2>Related Documents</h2>

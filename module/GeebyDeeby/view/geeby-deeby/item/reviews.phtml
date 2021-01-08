@@ -1,26 +1,2 @@
-<?php
-    $this->layout()->title = 'Items with Reviews';
-?>
-
-<?php if (count($reviews) > 0): ?>
-  <?php $series = false; foreach ($reviews as $review): ?>
-    <?php if ($series !== $review['Series_ID']): $series = $review['Series_ID']; ?>
-      <?php $item = false; ?>
-      <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
-        <?=$this->fixtitle($review['Series_Name']);?>
-      </a></h2>
-    <?php endif; ?>
-    <?php if ($item !== $review['Item_ID']): ?>
-      <?php $item = $review['Item_ID']; ?>
-      <span class="item">
-        <?=$this->escapeHtml($this->formatItemNumber($review))?>
-        <a href="<?=$this->url('item', ['id' => $review['Item_ID']])?>">
-          <?=$this->escapeHtml($this->fixtitle(isset($review['Item_AltName']) && !empty($review['Item_AltName']) ? $review['Item_AltName'] : $review['Item_Name']))?>
-        </a>
-        <br />
-      </span>
-    <?php endif; ?>
-  <?php endforeach; ?>
-<?php else: ?>
-  <p>No reviews listed.</p>
-<?php endif; ?>
+<?php $this->layout()->title = 'Items with Reviews'; ?>
+<?=$this->render('geeby-deeby/item/reviews-list.phtml')?>

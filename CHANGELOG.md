@@ -2,17 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.0 - Currently in Development
+## 2.1.0 - 2021-01-08
 
 ### Added
 
 - The check/fulltext command line tool now has an --updateRedirects option which
 can be used to automatically update the database for URLs that respond with a
 redirect status.
+- Email is now more configurable than before (SMTP support, etc.).
+- "Recently added" screens have been added for items, people, and series.
+- Users with edit privileges can now toggle to edit mode using convenient links.
+- User menus in the front end are now duplicated at the top and bottom of the display for convenience.
 
 ### Changed
 
-- Nothing.
+- Clicking on a publisher name in the publisher tab of the series editor now links to the
+publisher instead of popping up the advanced options dialog.
+- Email is now sent using the laminas-mail library.
+- If an item has both numbered and unnumbered entries in the same series, the unnumbered versions will not be displayed in the series summary list.
 
 ### Removed
 
@@ -20,7 +27,8 @@ redirect status.
 
 ### Fixed
 
-- Nothing.
+- The "items with reviews" display has been improved to fix some bugs.
+- Links to parent items in the "known editions" list now link to the correct place.
 
 ## 2.0.0 - 2020-11-04
 

@@ -228,7 +228,7 @@ class Edition extends Gateway
                 $select->join(
                     ['pe' => 'Editions'],
                     'Editions.Parent_Edition_ID = pe.Edition_ID',
-                    [], Select::JOIN_LEFT
+                    ['Parent_Item_ID' => 'Item_ID'], Select::JOIN_LEFT
                 );
                 $select->join(
                     ['i' => 'Items'], 'pe.Item_ID = i.Item_ID',

@@ -18,6 +18,7 @@ body {
 
 a {color:#774E03;text-decoration:none}
 a:hover {color:#BB8B32}
+a.toggleLink {color: white;display:block;float:right;margin-top:-13px;margin-right:5px}
 h1 {
   background:#774E03;
   color:#FFF;
@@ -209,8 +210,13 @@ table td {padding-bottom:6px}
 .controls {
   background:#774E03;
   color:#F3D69C;
-  margin:6px -15px 0 -15px;
   padding:10px;
+}
+.controls.top {
+  margin:0 -15px 6px -15px;
+}
+.controls.bottom {
+  margin:6px -15px 0 -15px;
 }
 .controls a {color:#F9F0E0}
 .controls p {margin-bottom:0}
