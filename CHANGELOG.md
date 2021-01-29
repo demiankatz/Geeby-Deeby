@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.2.0 - currently in development
+
+### Added
+
+- \GeebyDeeby\Db\Table\PeopleURIs::getPeopleWithURIs() utility method.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.1.1 - 2021-01-29
 
 ### Added
