@@ -30,6 +30,7 @@ namespace GeebyDeebyLocal\Command\Check;
 use GeebyDeeby\Db\Table\PeopleURIs;
 use GeebyDeeby\View\Helper\ShowPerson;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -78,9 +79,14 @@ class PeopleCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setDescription('Check people headings against linked data URIs')
-            ->setHelp('Confirms that people headings are valid and links are good.');
+        $this->setDescription('Check people headings against linked data URIs')
+            ->setHelp('Confirms that people headings are valid and links are good.')
+            ->addArgument(
+                'startFrom',
+                InputArgument::OPTIONAL,
+                'Initial last name (or letter) to begin checking from',
+                ''
+            );
     }
 
     /**
@@ -108,7 +114,12 @@ class PeopleCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $list = $this->table->getPeopleWithURIs();
+        $startFrom = $input->getArgument('startFrom');
+        $callback = empty($startFrom) ? false
+            : function ($select) use ($startFrom) {
+                $select->where->greaterThan('Last_Name', $startFrom);
+            };
+        $list = $this->table->getPeopleWithURIs($callback);
         $nameFormatter = new ShowPerson();
         if (!$list) {
             $output->writeln('Cannot find data.');
@@ -120,7 +131,11 @@ class PeopleCommand extends Command
         foreach ($list as $current) {
             $actualHeading = $nameFormatter($current);
             $uri = $current->URI;
-            $expectedHeading = $this->getExpectedHeading($uri);
+            try {
+                $expectedHeading = $this->getExpectedHeading($uri);
+            } catch (\Exception $e) {
+                $expectedHeading = "ERROR: " . $e->getMessage();
+            }
             $match = $actualHeading === $expectedHeading ? 'yes' : 'no';
             $output->writeln(
                 implode("\t", [$actualHeading, $expectedHeading, $match, $uri])
