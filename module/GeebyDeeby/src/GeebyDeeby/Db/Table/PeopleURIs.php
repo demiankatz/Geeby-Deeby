@@ -100,16 +100,21 @@ class PeopleURIs extends Gateway
     /**
      * Get a list of people joined with URIs.
      *
+     * @param callable $extraCallback Extra filter function (optional)
+     *
      * @return mixed
      */
-    public function getPeopleWithURIs()
+    public function getPeopleWithURIs($extraCallback = false)
     {
-        $callback = function ($select) {
+        $callback = function ($select) use ($extraCallback) {
             $select->join(
                 ['p' => 'People'],
                 'People_URIs.Person_ID = p.Person_ID'
             );
             $select->order(['Last_Name', 'First_Name']);
+            if (is_callable($extraCallback)) {
+                $extraCallback($select);
+            }
         };
         return $this->select($callback);
     }
