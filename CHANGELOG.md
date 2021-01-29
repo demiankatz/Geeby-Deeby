@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.1 - currently in development
+## 2.1.1 - 2021-01-29
 
 ### Added
 
