@@ -9,6 +9,7 @@ return [
         'plugin_managers' => [
             'command' => [
                 'aliases' => [
+                    'check/people' => 'GeebyDeebyLocal\Command\Check\PeopleCommand',
                     'harvest/collection' => 'GeebyDeebyLocal\Command\Harvest\CollectionCommand',
                     'harvest/existing' => 'GeebyDeebyLocal\Command\Harvest\ExistingCommand',
                     'harvest/series' => 'GeebyDeebyLocal\Command\Harvest\SeriesCommand',
@@ -19,6 +20,7 @@ return [
                     'make/issues' => 'GeebyDeebyLocal\Command\Make\IssuesCommand',
                 ],
                 'factories' => [
+                    'GeebyDeebyLocal\Command\Check\PeopleCommand' => 'GeebyDeebyLocal\Command\Check\PeopleCommandFactory',
                     'GeebyDeebyLocal\Command\Harvest\CollectionCommand' => 'GeebyDeebyLocal\Command\Harvest\SeriesCommandFactory',
                     'GeebyDeebyLocal\Command\Harvest\ExistingCommand' => 'GeebyDeebyLocal\Command\Harvest\ExistingCommandFactory',
                     'GeebyDeebyLocal\Command\Harvest\SeriesCommand' => 'GeebyDeebyLocal\Command\Harvest\SeriesCommandFactory',
