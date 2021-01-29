@@ -96,4 +96,21 @@ class PeopleURIs extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get a list of people joined with URIs.
+     *
+     * @return mixed
+     */
+    public function getPeopleWithURIs()
+    {
+        $callback = function ($select) {
+            $select->join(
+                ['p' => 'People'],
+                'People_URIs.Person_ID = p.Person_ID'
+            );
+            $select->order(['Last_Name', 'First_Name']);
+        };
+        return $this->select($callback);
+    }
 }
