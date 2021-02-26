@@ -20,7 +20,10 @@
         if (empty($thumb)) {
           $thumb = $image['IIIF_URI'] . '/full/,120/0/default.jpg';
         }
-      ?>
+        if (strstr($thumb, 'stanford.edu')) {
+          $image['Note'] = 'Image courtesy of Collection of Dime Novels and Penny Dreadfuls, Department of Special Collections, Stanford Libraries, Stanford, California.';
+        }
+    ?>
       <div class="col-md-2" style="text-align:center">
         <?=$openAnchor?><img class="item-image" src="<?=$this->escapeHtml($thumb)?>" style="display:block;margin:auto"/></a>
         <?php
