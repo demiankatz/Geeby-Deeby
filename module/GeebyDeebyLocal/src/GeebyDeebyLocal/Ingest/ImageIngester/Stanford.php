@@ -1,10 +1,10 @@
 <?php
 /**
- * Class to load information into the database.
+ * Class to load Stanford thumbnails into the database.
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -25,10 +25,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-namespace GeebyDeebyLocal\Ingest;
+namespace GeebyDeebyLocal\Ingest\ImageIngester;
 
 /**
- * Class to load information into the database.
+ * Class to load Stanford thumbnails into the database.
  *
  * @category GeebyDeeby
  * @package  Ingest
@@ -36,47 +36,39 @@ namespace GeebyDeebyLocal\Ingest;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-abstract class BaseIngester
+class Stanford extends AbstractThumbIngestor
 {
-    // constant values drawn from dimenovels.org database:
-    const FULLTEXT_SOURCE_VU = 1;
-    const FULLTEXT_SOURCE_IA = 3;
-    const FULLTEXT_SOURCE_NIU = 10;
-    const FULLTEXT_SOURCE_USF = 11;
-    const FULLTEXT_SOURCE_STANFORD = 13;
-    const FULLTEXT_SOURCE_BGSU = 14;
-    const MATERIALTYPE_WORK = 1;
-    const MATERIALTYPE_ISSUE = 2;
-    const PREDICATE_OWL_SAMEAS = 2;
-    const ROLE_AUTHOR = 1;
-    const TAGTYPE_LC = 1;
+    /**
+     * Domain for full text links
+     *
+     * @var string
+     */
+    protected $domain = 'stanford.edu';
 
     /**
-     * Table plugin manager
+     * Full text source ID for this provider
      *
-     * @var object
+     * @var int
      */
-    protected $tables;
+    protected $fullTextSource = self::FULLTEXT_SOURCE_STANFORD;
 
     /**
-     * Constructor
+     * Convert a full-text link to an image URI.
      *
-     * @param object $tables Table plugin manager
+     * @param string $uri Full text link
+     *
+     * @return string
      */
-    public function __construct($tables)
+    protected function getIIIFURI($uri)
     {
-        $this->tables = $tables;
-    }
-
-    /**
-     * Get a database table gateway.
-     *
-     * @param string $table Name of table service to pull
-     *
-     * @return \Laminas\Db\TableGateway\AbstractTableGateway
-     */
-    protected function getDbTable($table)
-    {
-        return $this->tables->get($table);
+        $manifest = json_decode(file_get_contents("$uri/iiif/manifest"));
+        $image = $manifest->sequences[0]->canvases[0]->images[0]
+            ->resource->service->{'@id'} ?? null;
+        if (null === $image) {
+            throw new \Exception(
+                "Problem finding IIIF source for " . $uri
+            );
+        }
+        return $image;
     }
 }
