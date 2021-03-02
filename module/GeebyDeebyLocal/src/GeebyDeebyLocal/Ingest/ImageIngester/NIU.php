@@ -53,6 +53,13 @@ class NIU extends AbstractThumbIngestor
     protected $fullTextSource = self::FULLTEXT_SOURCE_NIU;
 
     /**
+     * Note ID to associate with images from this source.
+     *
+     * @var int
+     */
+    protected $noteID = 102;
+
+    /**
      * PID prefix
      *
      * @var string

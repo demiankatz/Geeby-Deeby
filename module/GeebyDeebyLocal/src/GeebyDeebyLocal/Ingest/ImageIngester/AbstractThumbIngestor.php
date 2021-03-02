@@ -57,6 +57,13 @@ abstract class AbstractThumbIngestor extends BaseIngester
     protected $fullTextSource;
 
     /**
+     * Note ID to associate with images from this source.
+     *
+     * @var int
+     */
+    protected $noteID = null;
+
+    /**
      * PID prefix
      *
      * @var string
@@ -101,6 +108,7 @@ abstract class AbstractThumbIngestor extends BaseIngester
                         'Edition_ID' => $link->Edition_ID,
                         'Image_Path' => $link->Full_Text_URL,
                         'IIIF_URI' => $iiifUrl,
+                        'Note_ID' => $this->noteID,
                     ]
                 );
             }

@@ -53,6 +53,13 @@ class Stanford extends AbstractThumbIngestor
     protected $fullTextSource = self::FULLTEXT_SOURCE_STANFORD;
 
     /**
+     * Note ID to associate with images from this source.
+     *
+     * @var int
+     */
+    protected $noteID = 104;
+
+    /**
      * Convert a full-text link to an image URI.
      *
      * @param string $uri Full text link

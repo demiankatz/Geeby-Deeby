@@ -53,6 +53,13 @@ class VU extends AbstractThumbIngestor
     protected $fullTextSource = self::FULLTEXT_SOURCE_VU;
 
     /**
+     * Note ID to associate with images from this source.
+     *
+     * @var int
+     */
+    protected $noteID = 103;
+
+    /**
      * PID prefix
      *
      * @var string
