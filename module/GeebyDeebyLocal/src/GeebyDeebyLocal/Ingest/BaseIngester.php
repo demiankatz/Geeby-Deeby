@@ -43,6 +43,7 @@ abstract class BaseIngester
     const FULLTEXT_SOURCE_IA = 3;
     const FULLTEXT_SOURCE_NIU = 10;
     const FULLTEXT_SOURCE_USF = 11;
+    const FULLTEXT_SOURCE_STANFORD = 13;
     const FULLTEXT_SOURCE_BGSU = 14;
     const MATERIALTYPE_WORK = 1;
     const MATERIALTYPE_ISSUE = 2;

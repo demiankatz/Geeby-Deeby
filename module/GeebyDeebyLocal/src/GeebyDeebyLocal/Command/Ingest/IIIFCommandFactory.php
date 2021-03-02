@@ -66,6 +66,7 @@ class IIIFCommandFactory implements FactoryInterface
         $solr = $container->get(\GeebyDeebyLocal\Ingest\SolrHarvester::class);
         $ingesters = [
             'NIU' => new ImageIngester\NIU($tables, $solr),
+            'Stanford' => new ImageIngester\Stanford($tables),
             'Villanova' => new ImageIngester\VU($tables),
         ];
         return new $requestedName($ingesters);

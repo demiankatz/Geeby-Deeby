@@ -1,10 +1,10 @@
 <?php
 /**
- * Class to load NIU thumbnails into the database.
+ * Class to load Stanford thumbnails into the database.
  *
  * PHP version 5
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,7 +28,7 @@
 namespace GeebyDeebyLocal\Ingest\ImageIngester;
 
 /**
- * Class to load NIU thumbnails into the database.
+ * Class to load Stanford thumbnails into the database.
  *
  * @category GeebyDeeby
  * @package  Ingest
@@ -36,66 +36,28 @@ namespace GeebyDeebyLocal\Ingest\ImageIngester;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class NIU extends AbstractThumbIngestor
+class Stanford extends AbstractThumbIngestor
 {
     /**
      * Domain for full text links
      *
      * @var string
      */
-    protected $domain = 'niu.edu';
+    protected $domain = 'stanford.edu';
 
     /**
      * Full text source ID for this provider
      *
      * @var int
      */
-    protected $fullTextSource = self::FULLTEXT_SOURCE_NIU;
+    protected $fullTextSource = self::FULLTEXT_SOURCE_STANFORD;
 
     /**
      * Note ID to associate with images from this source.
      *
      * @var int
      */
-    protected $noteID = 102;
-
-    /**
-     * PID prefix
-     *
-     * @var string
-     */
-    protected $pidPrefix = 'dimenovels';
-
-    /**
-     * Solr harvester
-     *
-     * @var SolrHarvester
-     */
-    protected $solr;
-
-    /**
-     * Constructor
-     *
-     * @param object        $tables Table plugin manager
-     * @param SolrHarvester $solr   Solr harvester
-     */
-    public function __construct($tables, $solr)
-    {
-        parent::__construct($tables);
-        $this->solr = $solr;
-    }
-
-    /**
-     * Load missing images.
-     *
-     * @return void
-     */
-    public function ingestImages()
-    {
-        // Wire up output before proceeding...
-        $this->solr->setOutputInterface($this->outputInterface);
-        return parent::ingestImages();
-    }
+    protected $noteID = 104;
 
     /**
      * Convert a full-text link to an image URI.
@@ -106,10 +68,14 @@ class NIU extends AbstractThumbIngestor
      */
     protected function getIIIFURI($uri)
     {
-        $pid = $this->solr->getFirstPagePID($this->extractPID($uri));
-        if (!$pid) {
-            throw new \Exception("Could not find first page PID for $uri");
+        $manifest = json_decode(file_get_contents("$uri/iiif/manifest"));
+        $image = $manifest->sequences[0]->canvases[0]->images[0]
+            ->resource->service->{'@id'} ?? null;
+        if (null === $image) {
+            throw new \Exception(
+                "Problem finding IIIF source for " . $uri
+            );
         }
-        return "https://dimenovels.lib.niu.edu/iiif/2/" . urlencode($pid);
+        return $image;
     }
 }
