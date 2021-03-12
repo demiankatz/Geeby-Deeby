@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- Fixed bug #93: alt titles from wrong items/series can be assigned to editions.
 
 ## 2.1.1 - 2021-01-29
 
