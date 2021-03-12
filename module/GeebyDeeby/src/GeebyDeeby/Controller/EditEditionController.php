@@ -287,7 +287,12 @@ class EditEditionController extends AbstractBase
                 return $this->jsonDie('Title cannot be empty.');
             } else {
                 $table = $this->getDbTable('itemsalttitles');
-                $results = $table->select(['Item_AltName' => $titleText]);
+                $results = $table->select(
+                    [
+                        'Item_AltName' => $titleText,
+                        'Item_ID' => $edition->Item_ID,
+                    ]
+                );
                 if (count($results) == 0) {
                     $row = $table->createRow();
                     $row->Item_ID = $edition->Item_ID;
@@ -373,7 +378,12 @@ class EditEditionController extends AbstractBase
                 return $this->jsonDie('Title cannot be empty.');
             } else {
                 $table = $this->getDbTable('seriesalttitles');
-                $results = $table->select(['Series_AltName' => $titleText]);
+                $results = $table->select(
+                    [
+                        'Series_AltName' => $titleText,
+                        'Series_ID' => $edition->Series_ID,
+                    ]
+                );
                 if (count($results) == 0) {
                     $row = $table->createRow();
                     $row->Series_ID = $edition->Series_ID;
