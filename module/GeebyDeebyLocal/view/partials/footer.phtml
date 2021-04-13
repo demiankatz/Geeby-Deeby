@@ -21,7 +21,7 @@ if(!(navigator.doNotTrack == "1" || window.doNotTrack == "1")) {
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-5012435-15', 'auto');
+  ga('create', 'UA-5012435-15', {cookieFlags: 'max-age=7200;secure;samesite=none'});
   ga('send', 'pageview');
 }
 </script>
