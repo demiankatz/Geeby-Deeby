@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Added
 
 - \GeebyDeeby\Db\Table\PeopleURIs::getPeopleWithURIs() utility method.
+- New tag_label route to redirect from a label to a tag ID.
 
 ### Changed
 
@@ -18,6 +19,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- Fixed bug #31: deal with session timeout more gracefully.
 - Fixed bug #93: alt titles from wrong items/series can be assigned to editions.
 
 ## 2.1.1 - 2021-01-29
