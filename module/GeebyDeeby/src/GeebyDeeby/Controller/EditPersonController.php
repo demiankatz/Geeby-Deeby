@@ -71,7 +71,10 @@ class EditPersonController extends AbstractBase
             'bio' => 'Biography',
             'authority' => 'Authority_ID'
         ];
-        $view = $this->handleGenericItem('person', $assignMap, 'person');
+        [$view, $ok] = $this->handleGenericItem('person', $assignMap, 'person');
+        if (!$ok) {
+            return $view;
+        }
         $view->authorities = $this->authoritylistAction()->authorities;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -152,7 +155,8 @@ class EditPersonController extends AbstractBase
     public function authorityAction()
     {
         $assignMap = ['authority' => 'Authority_Name'];
-        return $this->handleGenericItem('authority', $assignMap, 'authority');
+        [$response] = $this->handleGenericItem('authority', $assignMap, 'authority');
+        return $response;
     }
 
     /**
@@ -179,7 +183,8 @@ class EditPersonController extends AbstractBase
             'Item_Creator_Predicate' => 'Item_Creator_Predicate',
             'Edition_Credit_Predicate' => 'Edition_Credit_Predicate',
         ];
-        return $this->handleGenericItem('role', $assignMap, 'role');
+        [$response] = $this->handleGenericItem('role', $assignMap, 'role');
+        return $response;
     }
 
     /**

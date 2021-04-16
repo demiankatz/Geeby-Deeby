@@ -89,7 +89,10 @@ class EditSeriesController extends AbstractBase
             'desc' => 'Series_Description',
             'lang' => 'Language_ID'
         ];
-        $view = $this->handleGenericItem('series', $assignMap, 'series');
+        [$view, $ok] = $this->handleGenericItem('series', $assignMap, 'series');
+        if (!$ok) {
+            return $view;
+        }
         $seriesId = $view->seriesObj->Series_ID
             ?? $view->affectedRow->Series_ID
             ?? null;

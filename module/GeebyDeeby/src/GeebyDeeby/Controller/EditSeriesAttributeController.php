@@ -72,7 +72,7 @@ class EditSeriesAttributeController extends AbstractBase
             'value_link' => 'Value_Link',
             'priority' => 'Display_Priority',
         ];
-        $response = $this
+        [$response] = $this
             ->handleGenericItem('seriesattribute', $assignMap, 'attribute');
 
         return $response;

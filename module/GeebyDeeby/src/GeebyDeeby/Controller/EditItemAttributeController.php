@@ -65,7 +65,7 @@ class EditItemAttributeController extends AbstractBase
             'priority' => 'Display_Priority'
 
         ];
-        $response = $this
+        [$response] = $this
             ->handleGenericItem('itemsattribute', $assignMap, 'attribute');
 
         return $response;

@@ -66,7 +66,7 @@ class EditItemRelationshipController extends AbstractBase
             'inverse_rdf_property' => 'Items_Inverse_Relationship_RDF_Property',
             'inverse_priority' => 'Inverse_Display_Priority',
         ];
-        $response = $this
+        [$response] = $this
             ->handleGenericItem('itemsrelationship', $assignMap, 'relationship');
 
         return $response;

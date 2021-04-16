@@ -67,7 +67,10 @@ class EditLinkController extends AbstractBase
             'desc' => 'Description', 'date_checked' => 'Date_Checked',
             'type_id' => 'Link_Type_ID'
         ];
-        $view = $this->handleGenericItem('link', $assignMap, 'link');
+        [$view, $ok] = $this->handleGenericItem('link', $assignMap, 'link');
+        if (!$ok) {
+            return $view;
+        }
         $view->linkTypes = $this->typelistAction()->linkTypes;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -102,7 +105,8 @@ class EditLinkController extends AbstractBase
     public function typeAction()
     {
         $assignMap = ['linkType' => 'Link_Type'];
-        return $this->handleGenericItem('linkType', $assignMap, 'linkType');
+        [$response] = $this->handleGenericItem('linkType', $assignMap, 'linkType');
+        return $response;
     }
 
     /**

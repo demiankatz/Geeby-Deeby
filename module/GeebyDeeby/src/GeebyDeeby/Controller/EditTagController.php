@@ -93,7 +93,10 @@ class EditTagController extends AbstractBase
             'tag' => 'Tag',
             'type_id' => 'Tag_Type_ID'
         ];
-        $view = $this->handleGenericItem('tag', $assignMap, 'tag');
+        [$view, $ok] = $this->handleGenericItem('tag', $assignMap, 'tag');
+        if (!$ok) {
+            return $view;
+        }
         $view->tagTypes = $this->typelistAction()->tagTypes;
 
         // Get tag ID
@@ -196,7 +199,8 @@ class EditTagController extends AbstractBase
     public function typeAction()
     {
         $assignMap = ['tagType' => 'Tag_Type'];
-        return $this->handleGenericItem('tagType', $assignMap, 'tagType');
+        [$response] = $this->handleGenericItem('tagType', $assignMap, 'tagType');
+        return $response;
     }
 
     /**

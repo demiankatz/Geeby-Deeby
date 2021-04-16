@@ -58,6 +58,7 @@ class EditPlatformController extends AbstractBase
     public function indexAction()
     {
         $assignMap = ['platform' => 'Platform'];
-        return $this->handleGenericItem('platform', $assignMap, 'platform');
+        [$response] = $this->handleGenericItem('platform', $assignMap, 'platform');
+        return $response;
     }
 }

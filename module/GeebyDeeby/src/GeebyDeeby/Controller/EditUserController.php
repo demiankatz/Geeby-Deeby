@@ -78,7 +78,11 @@ class EditUserController extends AbstractBase
             'person_id' => 'Person_ID',
             'group_id' => 'User_Group_ID',
         ];
-        $view = $this->handleGenericItem('user', $assignMap, 'user', 'User_Editor');
+        [$view, $ok]
+            = $this->handleGenericItem('user', $assignMap, 'user', 'User_Editor');
+        if (!$ok) {
+            return $view;
+        }
 
         // Add associated person details, if necessary:
         if (isset($view->user) && $view->user['Person_ID'] > 0) {
@@ -130,7 +134,8 @@ class EditUserController extends AbstractBase
             'approver' => 'Approver',
             'data_manager' => 'Data_Manager',
         ];
-        return $this
+        [$response] = $this
             ->handleGenericItem('usergroup', $assignMap, 'usergroup', 'User_Editor');
+        return $response;
     }
 }
