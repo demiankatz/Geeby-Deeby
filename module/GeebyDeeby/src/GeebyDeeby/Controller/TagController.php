@@ -103,6 +103,28 @@ class TagController extends AbstractBase
     }
 
     /**
+     * Label redirect
+     *
+     * @return mixed
+     */
+    public function labelAction()
+    {
+        // Look up tags by label, and redirect to the first match:
+        $tags = $this->getDbTable('tag')->select(
+            ['Tag' => $this->params()->fromRoute('label')]
+        );
+        foreach ($tags as $tag) {
+            return $this->redirect()->toRoute(
+                'tag', ['id' => $tag['Tag_ID']]
+            );
+        }
+        // If we got this far, there was no match; time to 404!
+        $response = $this->getResponse();
+        $response->setStatusCode(404);
+        return $response;
+    }
+
+    /**
      * RDF representation page
      *
      * @return mixed
