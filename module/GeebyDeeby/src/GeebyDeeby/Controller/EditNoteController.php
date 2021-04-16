@@ -58,6 +58,7 @@ class EditNoteController extends AbstractBase
     public function indexAction()
     {
         $assignMap = ['note' => 'Note'];
-        return $this->handleGenericItem('note', $assignMap, 'note');
+        [$response] = $this->handleGenericItem('note', $assignMap, 'note');
+        return $response;
     }
 }

@@ -66,7 +66,7 @@ class EditTagRelationshipController extends AbstractBase
             'inverse_rdf_property' => 'Tags_Inverse_Relationship_RDF_Property',
             'inverse_priority' => 'Inverse_Display_Priority',
         ];
-        $response = $this
+        [$response] = $this
             ->handleGenericItem('tagsrelationship', $assignMap, 'relationship');
 
         return $response;

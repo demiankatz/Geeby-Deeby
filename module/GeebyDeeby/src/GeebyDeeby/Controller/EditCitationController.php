@@ -58,6 +58,7 @@ class EditCitationController extends AbstractBase
     public function indexAction()
     {
         $assignMap = ['citation' => 'Citation'];
-        return $this->handleGenericItem('citation', $assignMap, 'citation');
+        [$response] = $this->handleGenericItem('citation', $assignMap, 'citation');
+        return $response;
     }
 }

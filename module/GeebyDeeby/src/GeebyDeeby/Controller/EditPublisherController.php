@@ -58,9 +58,10 @@ class EditPublisherController extends AbstractBase
     public function indexAction()
     {
         $assignMap = ['publisher' => 'Publisher_Name'];
-        $view = $this->handleGenericItem('publisher', $assignMap, 'publisher');
+        [$view, $ok]
+            = $this->handleGenericItem('publisher', $assignMap, 'publisher');
         // Add extra fields/controls if outside of a lightbox:
-        if (!$this->getRequest()->isXmlHttpRequest()) {
+        if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
             $view->cities = $this->getDbTable('city')->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->addresses = $this->getDbTable('publishersaddresses')
