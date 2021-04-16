@@ -66,7 +66,10 @@ class EditFileController extends AbstractBase
             'file_name' => 'File_Name', 'path' => 'File_Path',
             'desc' => 'Description', 'type_id' => 'File_Type_ID'
         ];
-        $view = $this->handleGenericItem('file', $assignMap, 'file');
+        [$view, $ok] = $this->handleGenericItem('file', $assignMap, 'file');
+        if (!$ok) {
+            return $view;
+        }
         $view->fileTypes = $this->typelistAction()->fileTypes;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -101,7 +104,8 @@ class EditFileController extends AbstractBase
     public function typeAction()
     {
         $assignMap = ['fileType' => 'File_Type'];
-        return $this->handleGenericItem('fileType', $assignMap, 'fileType');
+        [$response] = $this->handleGenericItem('fileType', $assignMap, 'fileType');
+        return $response;
     }
 
     /**

@@ -22,6 +22,10 @@
       <td><?=$this->render('geeby-deeby/edit-user/usergroup-select.phtml', ['usergroups' => $usergroups, 'selected' => $user['User_Group_ID'] ?? null])?></td>
     </tr>
     <tr>
+      <th scope="row">Last Login (UTC):</th>
+      <td><?=$this->escapeHtml($user['Last_Login'] ?? "Not recorded.")?></td>
+    </tr>
+    <tr>
       <th scope="row"><label for="Password">New Password (empty to leave unchanged):</label></th>
       <td><input type="password" id="Password" value="" /></td>
     </tr>

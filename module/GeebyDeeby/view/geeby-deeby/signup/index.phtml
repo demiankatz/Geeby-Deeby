@@ -20,6 +20,14 @@
 <input id="signup_password1" type="password" name="Password1" size="25" maxlength="25" /></td></tr>
 <tr><th scope="row"><label for="signup_password2">Retype Password:</label></th><td>
 <input id="signup_password2" type="password" name="Password2" size="25" maxlength="25" /></td></tr>
+<tr>
+  <th scope="row"><label for="reason">Reason for Joining:</label></th>
+  <td>
+    <p>Please edit the text below to say a few words about why you wish to join the site.<br />
+    This helps us keep out spam and serve you better!</p>
+    <textarea id="reason" name="Reason" rows="3" cols="80"><?=$this->escapeHtml($reason)?></textarea>
+  </td>
+</tr>
 <tr><td><input type="submit" name="submit" value="Sign Me Up" /></td></tr>
 </table>
 </form>

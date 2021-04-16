@@ -90,7 +90,10 @@ class EditItemController extends AbstractBase
             'thanks' => 'Item_Thanks',
             'material' => 'Material_Type_ID'
         ];
-        $view = $this->handleGenericItem('item', $assignMap, 'item');
+        [$view, $ok] = $this->handleGenericItem('item', $assignMap, 'item');
+        if (!$ok) {
+            return $view;
+        }
         $itemId = $view->itemObj->Item_ID
             ?? $view->affectedRow->Item_ID
             ?? null;
