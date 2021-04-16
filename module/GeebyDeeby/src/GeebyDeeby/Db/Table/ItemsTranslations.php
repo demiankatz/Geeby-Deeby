@@ -31,6 +31,7 @@ use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
+
 /**
  * Table Definition for Items_Translations
  *
