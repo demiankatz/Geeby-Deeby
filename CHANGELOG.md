@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Fixed
 
 - Fixed bug #31: deal with session timeout more gracefully.
+- Fixed bug #90: Translation links do not display if the target item is not part of a series.
 - Fixed bug #93: alt titles from wrong items/series can be assigned to editions.
 
 ## 2.1.1 - 2021-01-29

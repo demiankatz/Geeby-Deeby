@@ -30,7 +30,7 @@ namespace GeebyDeeby\Db\Table;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\Sql\Expression;
-
+use Laminas\Db\Sql\Select;
 /**
  * Table Definition for Items_Translations
  *
@@ -65,10 +65,10 @@ class ItemsTranslations extends Gateway
     public static function addLanguageToSelect($select)
     {
         $select->join(
-            ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID', []
+            ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID', [], Select::JOIN_LEFT
         );
         $select->join(
-            ['s' => 'Series'], 's.Series_ID = eds.Series_ID', []
+            ['s' => 'Series'], 's.Series_ID = eds.Series_ID', [], Select::JOIN_LEFT
         );
         $select->join(
             ['l' => 'Languages'], 'l.Language_ID = s.Language_ID',
@@ -77,7 +77,7 @@ class ItemsTranslations extends Gateway
                     'min(?)', ['Language_Name'],
                     [Expression::TYPE_IDENTIFIER]
                 )
-            ]
+            ], Select::JOIN_LEFT
         );
         $select->group('i.Item_ID');
     }
