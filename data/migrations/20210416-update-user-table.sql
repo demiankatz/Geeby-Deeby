@@ -1,0 +1,2 @@
+ALTER TABLE `Users` ADD COLUMN `Join_Reason` text DEFAULT NULL;
+ALTER TABLE `Users` ADD COLUMN `Last_Login` datetime DEFAULT NULL;

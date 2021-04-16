@@ -1482,6 +1482,8 @@ CREATE TABLE `Users` (
   `Address` tinytext,
   `Person_ID` int(11) DEFAULT NULL,
   `User_Group_ID` int(11) DEFAULT NULL,
+  `Join_Reason` text DEFAULT NULL,
+  `Last_Login` datetime DEFAULT NULL,
   PRIMARY KEY (`User_ID`),
   FOREIGN KEY (`User_Group_ID`) REFERENCES `User_Groups` (`User_Group_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
