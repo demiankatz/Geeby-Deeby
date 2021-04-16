@@ -248,21 +248,23 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Generic method for handling item edit/save actions.
+     * Generic method for handling item edit/save actions. Returns an array with
+     * two elements: the view object or response, and a boolean indicating whether
+     * or not the user has permission to proceed.
      *
      * @param string $table      Table to load item from
      * @param array  $assignMap  Map of POST fields => object properties for saving
      * @param string $assignTo   Variable to assign form data to (for showing form)
      * @param string $permission Permission to check
      *
-     * @return mixed
+     * @return array
      */
     protected function handleGenericItem($table, $assignMap, $assignTo,
         $permission = 'Content_Editor'
     ) {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
-            return $ok;
+            return [$ok, false];
         }
         if ($this->getRequest()->isPost()) {
             $view = $this->saveGenericItem($table, $assignMap);
@@ -272,7 +274,7 @@ class AbstractBase extends AbstractActionController
             $view = $this->showGenericItem($table, $assignTo);
             $view->setTerminal($this->getRequest()->isXmlHttpRequest());
         }
-        return $view;
+        return [$view, true];
     }
 
     /**

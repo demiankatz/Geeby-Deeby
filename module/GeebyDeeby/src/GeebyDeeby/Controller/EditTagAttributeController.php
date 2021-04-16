@@ -72,7 +72,7 @@ class EditTagAttributeController extends AbstractBase
             'priority' => 'Display_Priority'
 
         ];
-        $response = $this
+        [$response] = $this
             ->handleGenericItem('tagsattribute', $assignMap, 'attribute');
 
         return $response;

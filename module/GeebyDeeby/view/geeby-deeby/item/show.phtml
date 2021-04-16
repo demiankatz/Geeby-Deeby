@@ -301,7 +301,10 @@
             <?php foreach ($translatedFrom as $current): ?>
               <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
-              </a> (<?=$this->escapeHtml($current['Language_Name'])?>)<br />
+              </a>
+              <?php if (!empty($current['Language_Name'])):?>
+                (<?=$this->escapeHtml($current['Language_Name'])?>)
+              <?php endif; ?><br />
             <?php endforeach; ?>
           </td>
         </tr>

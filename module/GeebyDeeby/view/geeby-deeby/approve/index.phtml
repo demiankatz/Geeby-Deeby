@@ -9,6 +9,7 @@
       <th id="approvalFullname" scope="col">Full Name</th>
       <th id="approvalEmail" scope="col">Email</th>
       <th id="approvalPerson" scope="col">Person Record</th>
+      <th id="approvalReason" scope="col">Join Reason</th>
       <th id="approvalOptions" scope="col">Options</th>
     </tr>
     <?php foreach ($newUsers as $i => $current): ?>
@@ -20,6 +21,7 @@
         <td><input aria-labelledby="usernameLabel<?=$i?> approvalFullname" form="approveForm<?=$i?>" type="text" id="Name_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Name'])?>"/></td>
         <td><input aria-labelledby="usernameLabel<?=$i?> approvalEmail" form="approveForm<?=$i?>" type="email" id="Address_<?=$current['User_ID']?>" value="<?=$this->escapeHtml($current['Address'])?>"/></td>
         <td><input aria-labelledby="usernameLabel<?=$i?> approvalPerson" form="approveForm<?=$i?>" class="Person_ID" id="Person_ID_<?=$current['User_ID']?>" value="-1 (normal user)"/></td>
+        <td><?=$this->escapeHtml($current['Join_Reason'])?></td>
         <td id="UserButtons_<?=$current['User_ID']?>">
           <form id="approveForm<?=$i?>" onsubmit="approveUser(<?=$current['User_ID']?>); return false;">
             <input type="submit" value="Approve" />

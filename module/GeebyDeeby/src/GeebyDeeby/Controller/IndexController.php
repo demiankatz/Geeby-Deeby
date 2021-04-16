@@ -69,6 +69,10 @@ class IndexController extends AbstractBase
                 return $view;
             }
             if ($result->isValid()) {
+                $user = $this->getDbTable('user')
+                    ->getByPrimaryKey($result->getIdentity());
+                $user->Last_Login = gmdate('Y-m-d h:i:s');
+                $user->save();
                 $followup = $this->followup()->retrieve();
                 if (isset($followup->url)) {
                     $url = $followup->url;

@@ -1251,6 +1251,17 @@ return [
                     ],
                 ],
             ],
+            'tag_by_label' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/Tag/label/[:label]',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Tag',
+                        'action'        => 'label',
+                    ],
+                ],
+            ],
             'tags' => [
                 'type'    => 'Segment',
                 'options' => [

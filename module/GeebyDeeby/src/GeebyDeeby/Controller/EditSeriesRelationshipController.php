@@ -66,7 +66,7 @@ class EditSeriesRelationshipController extends AbstractBase
             'inverse_rdf_property' => 'Series_Inverse_Relationship_RDF_Property',
             'inverse_priority' => 'Inverse_Display_Priority',
         ];
-        $response = $this
+        [$response] = $this
             ->handleGenericItem('seriesrelationship', $assignMap, 'relationship');
 
         return $response;

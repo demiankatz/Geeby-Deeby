@@ -59,8 +59,9 @@ class EditFullTextSourceController extends AbstractBase
     public function indexAction()
     {
         $assignMap = ['fulltextsource' => 'Full_Text_Source_Name'];
-        return $this->handleGenericItem(
+        [$response] = $this->handleGenericItem(
             'fulltextsource', $assignMap, 'fulltextsource'
         );
+        return $response;
     }
 }

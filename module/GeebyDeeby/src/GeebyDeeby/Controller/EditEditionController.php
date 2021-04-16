@@ -126,7 +126,10 @@ class EditEditionController extends AbstractBase
             'extent_in_parent' => 'Extent_In_Parent',
             'item_display_order' => 'Item_Display_Order',
         ];
-        $view = $this->handleGenericItem('edition', $assignMap, 'edition');
+        [$view, $ok] = $this->handleGenericItem('edition', $assignMap, 'edition');
+        if (!$ok) {
+            return $view;
+        }
         $editionId = $view->edition['Edition_ID']
             ?? $view->affectedRow->Edition_ID
             ?? null;

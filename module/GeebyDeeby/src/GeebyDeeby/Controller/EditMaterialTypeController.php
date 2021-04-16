@@ -86,10 +86,13 @@ class EditMaterialTypeController extends AbstractBase
             'material_plural' => 'Material_Type_Plural_Name',
             'material_rdf' => 'Material_Type_RDF_Class'
         ];
-        $response = $this->handleGenericItem('materialtype', $assignMap, 'material');
+        [$response, $ok]
+            = $this->handleGenericItem('materialtype', $assignMap, 'material');
 
         // Special handling for "set as default" checkbox:
-        if ($this->getRequest()->isPost() && $this->params()->fromPost('default')) {
+        if ($ok && $this->getRequest()->isPost()
+            && $this->params()->fromPost('default')
+        ) {
             $this->setDefaultMaterialType($response->affectedRow);
         }
 

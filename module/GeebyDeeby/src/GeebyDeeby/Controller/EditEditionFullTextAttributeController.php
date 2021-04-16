@@ -66,7 +66,7 @@ class EditEditionFullTextAttributeController extends AbstractBase
             'priority' => 'Display_Priority'
 
         ];
-        $response = $this->handleGenericItem(
+        [$response] = $this->handleGenericItem(
             'editionsfulltextattribute', $assignMap, 'attribute'
         );
 

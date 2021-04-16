@@ -47,7 +47,10 @@ class SignupController extends AbstractBase
      */
     public function indexAction()
     {
-        $view = $this->createViewModel();
+        $defaultReason = 'I want to submit spam to the site.';
+        $view = $this->createViewModel(
+            ['reason' => $this->params()->fromPost('Reason', $defaultReason)]
+        );
         if (null !== $this->params()->fromPost('submit')) {
             $view->user = $this->params()->fromPost('Username');
             $view->fullname = $this->params()->fromPost('Fullname');
@@ -76,6 +79,7 @@ class SignupController extends AbstractBase
                             'Password_Hash' => $bcrypt->create($password1),
                             'Name' => $view->fullname,
                             'Address' => $view->address,
+                            'Join_Reason' => $view->reason,
                             'Person_ID' => 0
                         ]
                     );

@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Added
 
 - \GeebyDeeby\Db\Table\PeopleURIs::getPeopleWithURIs() utility method.
+- Last login tracking to assist with eventual removal of stale accounts.
+- New tag_label route to redirect from a label to a tag ID.
+- Spam account prevention through new "Join Reason" field.
 
 ### Changed
 
@@ -18,6 +21,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- Fixed bug #31: deal with session timeout more gracefully.
+- Fixed bug #90: Translation links do not display if the target item is not part of a series.
 - Fixed bug #93: alt titles from wrong items/series can be assigned to editions.
 
 ## 2.1.1 - 2021-01-29
