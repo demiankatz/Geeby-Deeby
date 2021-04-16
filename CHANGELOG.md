@@ -7,7 +7,9 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Added
 
 - \GeebyDeeby\Db\Table\PeopleURIs::getPeopleWithURIs() utility method.
+- Last login tracking to assist with eventual removal of stale accounts.
 - New tag_label route to redirect from a label to a tag ID.
+- Spam account prevention through new "Join Reason" field.
 
 ### Changed
 
