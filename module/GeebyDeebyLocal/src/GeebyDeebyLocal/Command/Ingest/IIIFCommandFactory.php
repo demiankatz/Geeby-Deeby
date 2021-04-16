@@ -65,6 +65,9 @@ class IIIFCommandFactory implements FactoryInterface
         $tables = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
         $solr = $container->get(\GeebyDeebyLocal\Ingest\SolrHarvester::class);
         $ingesters = [
+            // IA currently disabled due to poor results (first image is often
+            // irrelevant/misleading):
+            //'InternetArchive' => new ImageIngester\InternetArchive($tables),
             'NIU' => new ImageIngester\NIU($tables, $solr),
             'Stanford' => new ImageIngester\Stanford($tables),
             'Villanova' => new ImageIngester\VU($tables),
