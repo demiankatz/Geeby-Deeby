@@ -72,7 +72,11 @@ class InternetArchive extends AbstractThumbIngestor
         $id = array_pop($parts);
         $url = "https://iiif.archivelab.org/iiif/$id/manifest.json";
         $manifest = json_decode(file_get_contents($url));
-        $image = $manifest->sequences[0]->canvases[0]->images[0]
+        // IA manifests include a non-standard "cover" element which may
+        // point at a IIIF-capable cover image. We'll fall back on the first
+        // image if the cover is missing.
+        $image = $manifest->cover
+            ?? $manifest->sequences[0]->canvases[0]->images[0]
             ->resource->service->{'@id'} ?? null;
         if (null === $image) {
             throw new \Exception(
