@@ -315,7 +315,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             }
             $name['type'] = 'personal';
             $mainName = $credit->Last_Name;
-            $firstName = trim($credit->First_Name . ' ' . $credit->Middle_Name);
+            $firstName = trim($credit->First_Name);
             if (!empty($firstName)) {
                 $mainName .= ', ' . $firstName;
             }
