@@ -1189,7 +1189,7 @@ class DatabaseIngester extends BaseIngester
     {
         $ec = $this->getDbTable('editionscredits');
         $candidates = [];
-        foreach ($ec->getItemCreditsForPerson($author) as $current) {
+        foreach ($ec->getItemCreditsForPerson($author, 'title', false) as $current) {
             $score = $this->measureStringSimilarity(
                 $current['Item_Name'], $data['title']
             );
