@@ -77,14 +77,16 @@ class EditionsCredits extends Gateway
      * Get a list of credits attached to the specified person, sorted by
      * item.
      *
-     * @param int    $personID Person ID
-     * @param string $sort     Type of sorting (title or year)
+     * @param int    $personID    Person ID
+     * @param string $sort        Type of sorting (title or year)
+     * @param bool   $includeYear Should we include the year in the response?
      *
      * @return mixed
      */
-    public function getItemCreditsForPerson($personID, $sort = 'title')
-    {
-        $callback = function ($select) use ($personID, $sort) {
+    public function getItemCreditsForPerson($personID, $sort = 'title',
+        $includeYear = true
+    ) {
+        $callback = function ($select) use ($personID, $sort, $includeYear) {
             $count = new Expression(
                 'count(?)', ['eds.Edition_ID'],
                 [Expression::TYPE_IDENTIFIER]
@@ -97,16 +99,19 @@ class EditionsCredits extends Gateway
             $select->join(
                 ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
             );
-            $year = new Expression(
-                'min(?)', ['erd.Year'],
-                [Expression::TYPE_IDENTIFIER]
-            );
-            $select->join(
-                ['erd' => 'Editions_Release_Dates'],
-                'eds.Edition_ID = erd.Edition_ID '
-                . 'OR eds.Parent_Edition_ID = erd.Edition_ID',
-                ['Earliest_Year' => $year], Select::JOIN_LEFT
-            );
+            $omitYear = ($sort !== 'year' && !$includeYear);
+            if (!$omitYear) {
+                $year = new Expression(
+                    'min(?)', ['erd.Year'],
+                    [Expression::TYPE_IDENTIFIER]
+                );
+                $select->join(
+                    ['erd' => 'Editions_Release_Dates'],
+                    'eds.Edition_ID = erd.Edition_ID '
+                    . 'OR eds.Parent_Edition_ID = erd.Edition_ID',
+                    ['Earliest_Year' => $year], Select::JOIN_LEFT
+                );
+            }
             $select->join(
                 ['r' => 'Roles'],
                 'Editions_Credits.Role_ID = r.Role_ID'
@@ -114,6 +119,9 @@ class EditionsCredits extends Gateway
             $sortFields = $sort === 'year'
                 ? ['Role_Name', 'Earliest_Year', 'Item_Name']
                 : ['Role_Name', 'Item_Name', 'Earliest_Year'];
+            if ($omitYear) {
+                $sortFields = array_diff($sortFields, ['Earliest_Year']);
+            }
             $select->order($sortFields);
             $select->group(['Role_Name', 'Item_Name']);
             $select->where->equalTo('Person_ID', $personID);
