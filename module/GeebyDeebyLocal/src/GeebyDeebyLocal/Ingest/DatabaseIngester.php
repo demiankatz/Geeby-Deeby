@@ -1928,6 +1928,22 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
+     * Given a URI, switch the protocol from HTTP to HTTPS (or vice versa).
+     *
+     * @param string $uri URI to switch
+     *
+     * @return string
+     */
+    protected function switchProtocol($uri)
+    {
+        return str_replace(
+            ['http://', 'https://'],
+            ['https://', 'http://'],
+            $uri
+        );
+    }
+
+    /**
      * Given a URI, look up a matching person ID.
      *
      * @param string $uri URI
@@ -1939,6 +1955,9 @@ class DatabaseIngester extends BaseIngester
         if (!($id = $this->extractIdFromDimeNovelsUri($uri, 'Person'))) {
             $table = $this->getDbTable('peopleuris');
             $result = $table->select(['URI' => $uri]);
+            if (count($result) === 0) {
+                $result = $table->select(['URI' => $this->switchProtocol($uri)]);
+            }
             foreach ($result as $curr) {
                 $id = $curr['Person_ID'];
             }
