@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.2.0 - currently in development
+## 2.2.0 - 2021-08-24
 
 ### Added
 
@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file, in reverse 
 - Fixed bug #31: deal with session timeout more gracefully.
 - Fixed bug #90: Translation links do not display if the target item is not part of a series.
 - Fixed bug #93: alt titles from wrong items/series can be assigned to editions.
+- Fixed bug accidentally introduced by #75: could not save new edition attributes
 
 ## 2.1.1 - 2021-01-29
 
