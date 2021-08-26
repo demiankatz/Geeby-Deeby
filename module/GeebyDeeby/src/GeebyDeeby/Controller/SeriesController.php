@@ -76,6 +76,27 @@ class SeriesController extends AbstractBase
         $view = $this->getViewModelWithSeries();
         $seriesId = $view->series['Series_ID'];
 
+        // Check for missing creators
+        $editions = $this->getDbTable('edition');
+        $callback = function ($select) use ($seriesId) {
+            $select->join(
+                ['ic' => 'Items_Creators'],
+                'Editions.Item_ID = ic.Item_ID',
+                [], Select::JOIN_LEFT
+            );
+            $select->join(
+                ['i' => 'Items'],
+                'Editions.Item_ID = i.Item_ID',
+                ['Item_Name'], Select::JOIN_LEFT
+            );
+            $select->where->isNull('ic.Person_ID');
+            $select->where(['Series_ID' => $seriesId]);
+            $select->order(
+                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
+            );
+        };
+        $view->missingCreators = $editions->select($callback)->toArray();
+
         // Check for missing credits
         $editions = $this->getDbTable('edition');
         $callback = function ($select) use ($seriesId) {

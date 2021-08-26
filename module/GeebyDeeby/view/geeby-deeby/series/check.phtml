@@ -34,6 +34,19 @@
   <?=implode(', ', $parts)?>
 <?php endif; ?>
 
+<h2>Unspecified Creators</h2>
+<?php if (empty($missingCreators)): ?>
+  <p>None.</p>
+<?php else: ?>
+  <?php $parts = []; foreach ($missingCreators as $current): ?>
+    <?php $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
+           . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
+           . '</a>';
+    ?>
+  <?php endforeach; ?>
+  <?=implode(', ', $parts)?>
+<?php endif; ?>
+
 <h2>Missing Dates</h2>
 <?php if (empty($missingDates)): ?>
   <p>None.</p>
