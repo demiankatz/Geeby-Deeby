@@ -2063,7 +2063,7 @@ class DatabaseIngester extends BaseIngester
                 $this->writeln("Trying replacement no. $replacementNo");
             }
             if (count($children) > 1) {
-                $children = [$this->pickEdition($children, $details['url'])];
+                $children = [$this->pickEdition($children, $details['url'] ?? [])];
             }
             $success = $this->synchronizeSeriesEntriesHelper($children, $contents);
             if ($success) {
