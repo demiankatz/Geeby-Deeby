@@ -17,6 +17,7 @@ return [
                     'ingest/directory' => 'GeebyDeebyLocal\Command\Ingest\DirectoryCommand',
                     'ingest/iiif' => 'GeebyDeebyLocal\Command\Ingest\IIIFCommand',
                     'ingest/spreadsheet' => 'GeebyDeebyLocal\Command\Ingest\SpreadsheetCommand',
+                    'make/issue' => 'GeebyDeebyLocal\Command\Make\IssueCommand',
                     'make/issues' => 'GeebyDeebyLocal\Command\Make\IssuesCommand',
                 ],
                 'factories' => [
@@ -28,6 +29,7 @@ return [
                     'GeebyDeebyLocal\Command\Ingest\DirectoryCommand' => 'GeebyDeebyLocal\Command\Ingest\DirectoryCommandFactory',
                     'GeebyDeebyLocal\Command\Ingest\IIIFCommand' => 'GeebyDeebyLocal\Command\Ingest\IIIFCommandFactory',
                     'GeebyDeebyLocal\Command\Ingest\SpreadsheetCommand' => 'GeebyDeebyLocal\Command\Ingest\SpreadsheetCommandFactory',
+                    'GeebyDeebyLocal\Command\Make\IssueCommand' => 'GeebyDeebyLocal\Command\Make\IssueCommandFactory',
                     'GeebyDeebyLocal\Command\Make\IssuesCommand' => 'GeebyDeebyLocal\Command\Make\IssuesCommandFactory',
                 ]
             ],

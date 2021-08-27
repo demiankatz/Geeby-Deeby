@@ -116,7 +116,7 @@ class IssueMaker
      *
      * @return bool
      */
-    protected function createIssueForWork($workEdition, $prefix)
+    public function createIssueForWork($workEdition, $prefix)
     {
         if (!$this->workIsEligibleForConversion($workEdition)) {
             return false;
