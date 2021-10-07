@@ -1025,12 +1025,12 @@ class DatabaseIngester extends BaseIngester
      *
      * @return array
      */
-    protected function getPeopleForItem($item, $role = self::ROLE_AUTHOR)
+    protected function getPeopleForItem($item, $roles = self::ROLE_AUTHOR)
     {
         $table = $this->getDbTable('editionscredits');
         $ids = [];
         foreach ($table->getCreditsForItem($item) as $credit) {
-            if (in_array($credit->Role_ID, (array)$role)) {
+            if (in_array($credit->Role_ID, (array)$roles)) {
                 $ids[$credit->Person_ID]
                     = trim($credit->First_Name . ' ' . $credit->Last_Name);
             }
