@@ -209,9 +209,13 @@ class ModsExtractor
         if (!empty($altTitles)) {
             $details['altTitles'] = $altTitles;
         }
-        $authors = $this->extractAuthors($mods);
+        $authors = $this->extractPeople($mods, 'author');
         if (!empty($authors)) {
             $details['authors'] = $authors;
+        }
+        $editors = $this->extractPeople($mods, 'editor');
+        if (!empty($editors)) {
+            $details['editors'] = $editors;
         }
         $extent = $this->extractExtent($mods);
         if (!empty($extent)) {
@@ -259,35 +263,37 @@ class ModsExtractor
     }
 
     /**
-     * Extract author information from the MODS.
+     * Extract person information from the MODS.
      *
-     * @param object $mods Simple XML object representing part of a MODS record.
+     * @param object $mods        Simple XML object representing part of a MODS
+     * record.
+     * @param string $desiredRole Role to extract
      *
      * @return array
      */
-    protected function extractAuthors($mods)
+    protected function extractPeople($mods, $desiredRole = 'author')
     {
-        $authors = [];
+        $people = [];
         $matches = $mods->xpath('mods:name');
         foreach ($matches as $current) {
             $nameType = $current->xpath('@type');
             $nameType = isset($nameType[0]) ? (string)$nameType[0] : 'default';
             $role = $current->xpath('mods:role/mods:roleTerm');
-            if (isset($role[0]) && (string)$role[0] == 'author') {
-                $currentAuthor = [];
+            if (isset($role[0]) && (string)$role[0] == $desiredRole) {
+                $currentPerson = [];
                 $uri = $current->xpath('@valueURI');
                 if (isset($uri[0])) {
-                    $currentAuthor['uri'] = (string)$uri[0];
+                    $currentPerson['uri'] = (string)$uri[0];
                 }
-                $currentAuthor['name'] = $this->getStringFromNameParts(
+                $currentPerson['name'] = $this->getStringFromNameParts(
                     $current->xpath('mods:namePart'), $nameType
                 );
-                if (!empty($currentAuthor['name'])) {
-                    $authors[] = $currentAuthor;
+                if (!empty($currentPerson['name'])) {
+                    $people[] = $currentPerson;
                 }
             }
         }
-        return $authors;
+        return $people;
     }
 
     /**
@@ -381,6 +387,11 @@ class ModsExtractor
         $part = isset($partParts[0]) ? trim((string)$partParts[0]) : '';
         if (!empty($part)) {
             $title .= ', ' . $part;
+        }
+        $partNameParts = $current->xpath('mods:partName');
+        $partName = isset($partNameParts[0]) ? trim((string)$partNameParts[0]) : '';
+        if (!empty($partName)) {
+            $title .= ' : ' . $partName;
         }
         $article = $current->xpath('mods:nonSort');
         return $title . (empty($article) ? '' : ', ' . trim((string)$article[0]));

@@ -49,6 +49,9 @@ abstract class BaseIngester
     const MATERIALTYPE_ISSUE = 2;
     const PREDICATE_OWL_SAMEAS = 2;
     const ROLE_AUTHOR = 1;
+    const ROLE_EDITOR = 4;
+    const ROLE_ILLUSTRATOR = 2;
+    const ROLE_TRANSLATOR = 3;
     const TAGTYPE_LC = 1;
 
     /**

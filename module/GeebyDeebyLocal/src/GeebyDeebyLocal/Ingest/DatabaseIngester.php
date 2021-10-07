@@ -164,7 +164,7 @@ class DatabaseIngester extends BaseIngester
         if (!$childDetails) {
             return false;
         }
-        $childDetails = $this->addAuthorDetails($childDetails);
+        $childDetails = $this->addPersonDetails($childDetails);
         if (!$childDetails) {
             return false;
         }
@@ -198,7 +198,7 @@ class DatabaseIngester extends BaseIngester
         }
         $db = ['item' => $item, 'edition' => $editionObj->toArray()];
         $childDetails = [[$details['contents'][0], $db]];
-        if (!($childDetails = $this->addAuthorDetails($childDetails))) {
+        if (!($childDetails = $this->addPersonDetails($childDetails))) {
             return false;
         }
         if (!$this->updateWorkInDatabase($childDetails[0][0], $childDetails[0][1])) {
@@ -306,7 +306,7 @@ class DatabaseIngester extends BaseIngester
         if (!$childDetails) {
             return false;
         }
-        $childDetails = $this->addAuthorDetails($childDetails);
+        $childDetails = $this->addPersonDetails($childDetails);
         if (!$childDetails) {
             return false;
         }
@@ -398,7 +398,7 @@ class DatabaseIngester extends BaseIngester
      * @param object $series  Series row
      * @param int    $pos     Position of new edition in series.
      * @param array  $details Details from ModsExtractor or equivalent, processed
-     * through synchronizeSeriesEntries() and addAuthorDetails().
+     * through synchronizeSeriesEntries() and addPersonDetails().
      *
      * @return bool True for success
      */
@@ -423,7 +423,7 @@ class DatabaseIngester extends BaseIngester
      * @param object $editionObj Edition row
      * @param array  $series     Series summary array (see getSeriesForEdition)
      * @param array  $details    Details from ModsExtractor or equivalent, processed
-     * through synchronizeChildren() and addAuthorDetails().
+     * through synchronizeChildren() and addPersonDetails().
      *
      * @return bool True for success
      */
@@ -782,26 +782,29 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
-     * Update the database with author details; return true on success.
+     * Update the database with person details; return true on success.
      *
-     * @param array $ids Array of author IDs.
-     * @param array $db  Data from the database.
+     * @param array  $ids      Array of person IDs.
+     * @param array  $db       Data from the database.
+     * @param string $idKey    Key in $db containing relevant person IDs
+     * @param string $roleName Descriptive name of role being processed
+     * @param int    $roleId   Identifier of role being processed
      *
      * @return bool
      */
-    protected function processAuthors($ids, $db)
+    protected function processPeople($ids, $db, $idKey, $roleName, $roleId)
     {
-        if ($this->hasAuthorProblem($ids, $db['authorIds'])) {
+        if ($this->hasPersonProblem($ids, $db[$idKey], $roleName)) {
             return false;
         }
         $table = $this->getDbTable('editionscredits');
-        foreach (array_diff($ids, $db['authorIds']) as $current) {
-            $this->writeln("Attaching author ID $current");
+        foreach (array_diff($ids, $db[$idKey]) as $current) {
+            $this->writeln("Attaching $roleName ID $current");
             $table->insert(
                 [
                     'Edition_ID' => $db['edition']['Edition_ID'],
                     'Person_ID' => $current,
-                    'Role_ID' => self::ROLE_AUTHOR,
+                    'Role_ID' => $roleId,
                 ]
             );
         }
@@ -1017,16 +1020,17 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given an item ID, return an associative array of id => display string.
      *
-     * @param string $item Item ID
+     * @param string    $item  Item ID
+     * @param int|int[] $roles Role ID(s) to accept
      *
      * @return array
      */
-    protected function getPeopleForItem($item)
+    protected function getPeopleForItem($item, $role = self::ROLE_AUTHOR)
     {
         $table = $this->getDbTable('editionscredits');
         $ids = [];
         foreach ($table->getCreditsForItem($item) as $credit) {
-            if ($credit->Role_ID == self::ROLE_AUTHOR) {
+            if (in_array($credit->Role_ID, (array)$role)) {
                 $ids[$credit->Person_ID]
                     = trim($credit->First_Name . ' ' . $credit->Last_Name);
             }
@@ -1050,20 +1054,22 @@ class DatabaseIngester extends BaseIngester
         $candidates = [];
         foreach ($options as $current) {
             $confidence = 100;
-            $currentCredits = $this->getPeopleForItem($current->Item_ID);
-            if (!isset($data['authorIds'])) {
-                $data['authorIds'] = [];
-            }
+            $currentCredits = $this->getPeopleForItem(
+                $current->Item_ID, [self::ROLE_AUTHOR, self::ROLE_EDITOR]
+            );
+            $authorsAndEditors = array_merge(
+                $data['authorIds'] ?? [], $data['editorIds'] ?? []
+            );
             $diffCount = count(
-                array_diff($data['authorIds'], array_keys($currentCredits))
+                array_diff($authorsAndEditors, array_keys($currentCredits))
             );
             if ($diffCount != 0) {
                 $confidence -= 20;
             }
             $intersectCount = count(
-                array_intersect($data['authorIds'], array_keys($currentCredits))
+                array_intersect($authorsAndEditors, array_keys($currentCredits))
             );
-            if ($intersectCount != count($data['authorIds'])) {
+            if ($intersectCount != count($authorsAndEditors)) {
                 $confidence -= 20;
             }
             if (!$this->fuzzyCompare($data['title'], $current->$titleField)) {
@@ -1452,6 +1458,7 @@ class DatabaseIngester extends BaseIngester
             [
                 'edition' => $newObj,
                 'authorIds' => [],
+                'editorIds' => [],
                 'item' => $this->getItemForEdition($newObj)
             ]
         );
@@ -1506,6 +1513,7 @@ class DatabaseIngester extends BaseIngester
             [
                 'edition' => $newObj,
                 'authorIds' => [],
+                'editorIds' => [],
                 'item' => $this->getItemForEdition($newObj)
             ]
         );
@@ -1543,6 +1551,7 @@ class DatabaseIngester extends BaseIngester
             [
                 'edition' => $edition,
                 'authorIds' => [],
+                'editorIds' => [],
                 'item' => $this->getItemForEdition($edition)
             ]
         );
@@ -1685,7 +1694,18 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if (isset($data['authorIds'])) {
-            if (!$this->processAuthors($data['authorIds'], $db)) {
+            $authorResult = $this->processPeople(
+                $data['authorIds'], $db, 'authorIds', 'author', self::ROLE_AUTHOR
+            );
+            if (!$authorResult) {
+                return false;
+            }
+        }
+        if (isset($data['editorIds'])) {
+            $editorResult = $this->processPeople(
+                $data['editorIds'], $db, 'editorIds', 'editor', self::ROLE_EDITOR
+            );
+            if (!$editorResult) {
                 return false;
             }
         }
@@ -1811,55 +1831,51 @@ class DatabaseIngester extends BaseIngester
      *
      * @return array
      */
-    protected function addAuthorDetails($details)
+    protected function addPersonDetails($details)
     {
         foreach ($details as & $match) {
             if ($match[1]) {
                 $credits = $this->getDbTable('editionscredits')
                     ->getCreditsForEdition($match[1]['edition']['Edition_ID']);
-                $match[1]['authorIds'] = [];
+                $match[1]['authorIds'] = $match[1]['editorIds'] = [];
                 foreach ($credits as $credit) {
                     if ($credit->Role_ID == self::ROLE_AUTHOR) {
                         $match[1]['authorIds'][] = $credit->Person_ID;
                     }
+                    if ($credit->Role_ID == self::ROLE_EDITOR) {
+                        $match[1]['editorIds'][] = $credit->Person_ID;
+                    }
                 }
             }
-            $match[0]['authorIds'] = [];
-            if (isset($match[0]['authors'])) {
-                foreach ($match[0]['authors'] as $current) {
-                    if (isset($current['uri'])) {
-                        $id = $this->getPersonIdForUri($current['uri']);
-                    } else {
-                        $this->writeln(
-                            "WARNING: Missing URI for {$current['name']}..."
-                        );
-                        $expected = $match[1]['authorIds'] ?? [];
-                        $id = $this
-                            ->getPersonIdForString($current['name'], $expected);
-                    }
-                    if (!$id) {
-                        $text = isset($current['uri'])
-                            ? $current['uri'] . ' (' . $current['name'] . ')'
-                            : $current['name'];
-                        $this->writeln("FATAL: Missing Person ID for $text");
-                        return false;
-                    }
-                    $match[0]['authorIds'][] = $id;
+            $match[0]['authorIds'] = $match[0]['editorIds'] = [];
+            foreach ($match[0]['authors'] ?? [] as $current) {
+                $id = $this->getPersonId($current, $match[1]['authorIds'] ?? []);
+                if ($id === false) {
+                    return false;
                 }
+                $match[0]['authorIds'][] = $id;
+            }
+            foreach ($match[0]['editors'] ?? [] as $current) {
+                $id = $this->getPersonId($current, $match[1]['editorIds'] ?? []);
+                if ($id === false) {
+                    return false;
+                }
+                $match[0]['editorIds'][] = $id;
             }
         }
         return $details;
     }
 
     /**
-     * Check whether there is an author inconsistency.
+     * Check whether there is a person inconsistency.
      *
-     * @param array $incomingList Author list from incoming data
-     * @param array $storedList   Author list from existing record
+     * @param array  $incomingList Author list from incoming data
+     * @param array  $storedList   Author list from existing record
+     * @param string $roleName     The role being checked
      *
      * @return bool
      */
-    protected function hasAuthorProblem($incomingList, $storedList)
+    protected function hasPersonProblem($incomingList, $storedList, $roleName)
     {
         $unexpected = array_diff($storedList, $incomingList);
         if (count($unexpected) > 0) {
@@ -1912,12 +1928,12 @@ class DatabaseIngester extends BaseIngester
             if (count($stillUnexpected) > 0) {
                 if (count($incomingList) == 0) {
                     $this->writeln(
-                        "WARNING: no incoming authors, but authors found in "
-                        . "database."
+                        "WARNING: no incoming {$roleName}s, but {$roleName}s "
+                        . "found in database."
                     );
                 } else {
                     $this->writeln(
-                        "Found unexpected author ID(s) in database: "
+                        "Found unexpected $roleName ID(s) in database: "
                         . implode(', ', $unexpected)
                     );
                     return true;
@@ -1961,6 +1977,35 @@ class DatabaseIngester extends BaseIngester
             foreach ($result as $curr) {
                 $id = $curr['Person_ID'];
             }
+        }
+        return $id;
+    }
+
+    /**
+     * Get a person ID for extracted person data.
+     *
+     * @param array $current  Person data
+     * @param array $expected Expected person IDs
+     *
+     * @return int
+     */
+    protected function getPersonId($current, $expected)
+    {
+        if (isset($current['uri'])) {
+            $id = $this->getPersonIdForUri($current['uri']);
+        } else {
+            $this->writeln(
+                "WARNING: Missing URI for {$current['name']}..."
+            );
+            $id = $this
+                ->getPersonIdForString($current['name'], $expected);
+        }
+        if (!$id) {
+            $text = isset($current['uri'])
+                ? $current['uri'] . ' (' . $current['name'] . ')'
+                : $current['name'];
+            $this->writeln("FATAL: Missing Person ID for $text");
+            return false;
         }
         return $id;
     }
