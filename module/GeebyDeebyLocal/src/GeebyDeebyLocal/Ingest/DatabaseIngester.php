@@ -2021,9 +2021,13 @@ class DatabaseIngester extends BaseIngester
     protected function checkEditionFullTextMatch($edition, $urls)
     {
         if (!empty($urls)) {
+            $urlNormalizer = function ($url) {
+                return str_replace('%3A', ':', $url);
+            };
+            $normalizedUrls = array_map($urlNormalizer, $urls);
             $fulltext = $this->getDbTable('editionsfulltext');
             foreach ($fulltext->getFullTextForEdition($edition->Edition_ID) as $ft) {
-                if (in_array($ft->Full_Text_URL, $urls)) {
+                if (in_array($urlNormalizer($ft->Full_Text_URL), $normalizedUrls)) {
                     return true;
                 }
             }
@@ -2060,6 +2064,9 @@ class DatabaseIngester extends BaseIngester
             $char = $this->editionPreferences[$menuHash];
         } else {
             $this->writeln("Multiple editions found at same position.");
+            if (!empty($urls)) {
+                $this->writeln("Incoming URL(s): " . implode(' | ', array_unique($urls)));
+            }
             $this->writeln("Please pick one:");
             $this->writeln($menuString);
             $char = strtoupper(
