@@ -2065,7 +2065,9 @@ class DatabaseIngester extends BaseIngester
         } else {
             $this->writeln("Multiple editions found at same position.");
             if (!empty($urls)) {
-                $this->writeln("Incoming URL(s): " . implode(' | ', array_unique($urls)));
+                $this->writeln(
+                    "Incoming URL(s): " . implode(' | ', array_unique($urls))
+                );
             }
             $this->writeln("Please pick one:");
             $this->writeln($menuString);
