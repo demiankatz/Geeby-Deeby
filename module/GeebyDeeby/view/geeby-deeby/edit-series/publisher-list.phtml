@@ -20,16 +20,16 @@
         </td>
         <td>
           <?=$this->iconButton(
-            'gear',
-            "Series.editLink('Publisher', " . $current['Series_Publisher_ID'] . ")",
-            'Edit options for ' . $currentLabel
-          )?>
+                'gear',
+                "Series.editLink('Publisher', " . $current['Series_Publisher_ID'] . ")",
+                'Edit options for ' . $currentLabel
+            )?>
         </td>
         <td>
           <?=$this->iconButton(
-            'trash',
-            "Series.unlink('Publisher', " . $current['Series_Publisher_ID'] . ")",
-            'Unlink ' . $currentLabel
+              'trash',
+              "Series.unlink('Publisher', " . $current['Series_Publisher_ID'] . ")",
+              'Unlink ' . $currentLabel
           )?>
         </td>
       </tr>

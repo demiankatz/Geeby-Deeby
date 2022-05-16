@@ -48,7 +48,9 @@ class ItemsLinks extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items_Links');
@@ -65,7 +67,8 @@ class ItemsLinks extends Gateway
     {
         $callback = function ($select) use ($itemID) {
             $select->join(
-                ['l' => 'Links'], 'Items_Links.Link_ID = l.Link_ID'
+                ['l' => 'Links'],
+                'Items_Links.Link_ID = l.Link_ID'
             );
             $select->order(['Link_Name']);
             $select->where->equalTo('Item_ID', $itemID);

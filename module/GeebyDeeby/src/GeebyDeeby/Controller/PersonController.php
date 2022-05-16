@@ -57,7 +57,9 @@ class PersonController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view,
+    protected function addPrimaryResourceToGraph(
+        $graph,
+        $view,
         $class = 'foaf:Person'
     ) {
         $id = $view->person['Person_ID'];
@@ -115,7 +117,8 @@ class PersonController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Person', 'list');
         }
         $view = $this->getPersonViewModel(
-            $id, $this->params()->fromQuery('sort', 'series')
+            $id,
+            $this->params()->fromQuery('sort', 'series')
         );
         if (!is_object($view)) {
             return $this->forwardTo(__NAMESPACE__ . '\Person', 'notfound');
@@ -156,7 +159,8 @@ class PersonController extends AbstractBase
         $query->order('Person_ID DESC');
         $paginator = new \Laminas\Paginator\Paginator(
             new \Laminas\Paginator\Adapter\DbSelect(
-                $query, $adapter
+                $query,
+                $adapter
             )
         );
         $paginator->setItemCountPerPage(50);

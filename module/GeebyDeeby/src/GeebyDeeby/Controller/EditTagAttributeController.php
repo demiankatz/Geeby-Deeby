@@ -46,7 +46,8 @@ class EditTagAttributeController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'tagsattribute', 'attributes',
+            'tagsattribute',
+            'attributes',
             'geeby-deeby/edit-tag-attribute/render-tag-attributes'
         );
         // If this is not an AJAX request, we also want to display relationships:

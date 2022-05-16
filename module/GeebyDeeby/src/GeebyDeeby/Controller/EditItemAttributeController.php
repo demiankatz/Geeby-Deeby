@@ -46,7 +46,8 @@ class EditItemAttributeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'itemsattribute', 'attributes',
+            'itemsattribute',
+            'attributes',
             'geeby-deeby/edit-item-attribute/render-item-attributes'
         );
     }

@@ -55,7 +55,8 @@ class SuggestController extends AbstractBase
         );
         $headers = $this->getResponse()->getHeaders();
         $headers->addHeaderLine(
-            'Content-type', 'text/plain'
+            'Content-type',
+            'text/plain'
         );
         $response = '';
         foreach ($suggestions as $current) {

@@ -52,12 +52,15 @@ class ScriptManagerFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         $base = $container->get('ViewHelperManager')->get('basePath')->__invoke();
         return new $name(
-            $base, $container->get('ViewHelperManager')->get('headScript')
+            $base,
+            $container->get('ViewHelperManager')->get('headScript')
         );
     }
 }

@@ -64,6 +64,6 @@ class Config extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($key)
     {
-        return isset($this->config[$key]) ? $this->config[$key] : null;
+        return $this->config[$key] ?? null;
     }
 }

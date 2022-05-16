@@ -77,7 +77,6 @@ class DescriptionSource extends \Laminas\View\Helper\AbstractHelper
      */
     public function getName($source)
     {
-        return isset($this->descriptionTypes[$source])
-            ? $this->descriptionTypes[$source] : 'Unknown';
+        return $this->descriptionTypes[$source] ?? 'Unknown';
     }
 }

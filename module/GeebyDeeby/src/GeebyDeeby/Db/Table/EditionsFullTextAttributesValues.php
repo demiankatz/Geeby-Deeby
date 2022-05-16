@@ -48,11 +48,16 @@ class EditionsFullTextAttributesValues extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct(
-            $adapter, $tm, $rowObj, 'Editions_Full_Text_Attributes_Values'
+            $adapter,
+            $tm,
+            $rowObj,
+            'Editions_Full_Text_Attributes_Values'
         );
     }
 

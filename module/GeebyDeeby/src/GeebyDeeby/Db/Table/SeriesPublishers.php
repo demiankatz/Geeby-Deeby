@@ -49,7 +49,9 @@ class SeriesPublishers extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Series_Publishers');
@@ -143,25 +145,32 @@ class SeriesPublishers extends Gateway
             $select->join(
                 ['pa' => 'Publishers_Addresses'],
                 'Series_Publishers.Address_ID = pa.Address_ID',
-                ['Street'], Select::JOIN_LEFT
+                ['Street'],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['pi' => 'Publishers_Imprints'],
                 'Series_Publishers.Imprint_ID = pi.Imprint_ID',
-                ['Imprint_Name'], Select::JOIN_LEFT
+                ['Imprint_Name'],
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['c' => 'Countries'], 'pa.Country_ID = c.Country_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['c' => 'Countries'],
+                'pa.Country_ID = c.Country_ID',
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['ci' => 'Cities'], 'pa.City_ID = ci.City_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['ci' => 'Cities'],
+                'pa.City_ID = ci.City_ID',
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['n' => 'Notes'],
                 'Series_Publishers.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order('p.Publisher_Name');
             $select->where->equalTo('Series_ID', $seriesID);

@@ -12,10 +12,10 @@
               </a>
             </td><td>
               <?=$this->iconButton(
-                'trash',
-                "Tag.unlink('Relationship', " . $value['Tag_ID'] . ", '/" . $current['relationship_id'] . "')",
-                'Delete relationship -- ' . $current['label'] . ': ' . $value['Tag']
-              )?>
+    'trash',
+    "Tag.unlink('Relationship', " . $value['Tag_ID'] . ", '/" . $current['relationship_id'] . "')",
+    'Delete relationship -- ' . $current['label'] . ': ' . $value['Tag']
+)?>
             </td>
           </tr>
         <?php endforeach; ?>

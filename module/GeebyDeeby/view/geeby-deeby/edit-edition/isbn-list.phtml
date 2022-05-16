@@ -7,10 +7,10 @@
         </td>
         <td>
           <?=$this->iconButton(
-            'trash',
-            "Edition.unlink('ISBN', " . $current['Sequence_ID'] . ")",
-            'Delete ISBN: ' . (empty($current['ISBN']) ? $current['ISBN13'] : $current['ISBN'])
-          )?>
+    'trash',
+    "Edition.unlink('ISBN', " . $current['Sequence_ID'] . ")",
+    'Delete ISBN: ' . (empty($current['ISBN']) ? $current['ISBN13'] : $current['ISBN'])
+)?>
         </td>
       </tr>
     </table>

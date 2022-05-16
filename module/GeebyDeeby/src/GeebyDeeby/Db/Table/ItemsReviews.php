@@ -57,7 +57,9 @@ class ItemsReviews extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items_Reviews');
@@ -166,12 +168,14 @@ class ItemsReviews extends Gateway
                 $select->join(
                     ['parent' => 'Editions'],
                     'eds.Parent_Edition_ID = parent.Edition_ID',
-                    [], Select::JOIN_LEFT
+                    [],
+                    Select::JOIN_LEFT
                 );
                 $select->join(
                     ['iat' => 'Items_AltTitles'],
                     'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                    ['Item_AltName'], Select::JOIN_LEFT
+                    ['Item_AltName'],
+                    Select::JOIN_LEFT
                 );
                 $select->join(
                     ['s' => 'Series'],
@@ -188,7 +192,8 @@ class ItemsReviews extends Gateway
             // user details in case we need them:
             if (null === $userID) {
                 $select->join(
-                    ['u' => 'Users'], 'Items_Reviews.User_ID = u.User_ID'
+                    ['u' => 'Users'],
+                    'Items_Reviews.User_ID = u.User_ID'
                 );
             }
             // Different sort settings based on whether or not series are included:

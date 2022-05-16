@@ -14,16 +14,16 @@
         </td>
         <td>
           <?=$this->iconButton(
-            'gear',
-            "Item.editLink('Creator', '" . $current['Item_Creator_ID'] . "')",
-            'Edit options for ' . $current['Role_Name'] . ': ' . $currentName
-          )?>
+    'gear',
+    "Item.editLink('Creator', '" . $current['Item_Creator_ID'] . "')",
+    'Edit options for ' . $current['Role_Name'] . ': ' . $currentName
+)?>
         </td>
         <td>
           <?=$this->iconButton(
-            'trash',
-            "Item.unlink('Creator', '" . $current['Person_ID'] . ',' . $current['Role_ID'] . "')",
-            'Unlink ' . $current['Role_Name'] . ': ' . $currentName
+              'trash',
+              "Item.unlink('Creator', '" . $current['Person_ID'] . ',' . $current['Role_ID'] . "')",
+              'Unlink ' . $current['Role_Name'] . ': ' . $currentName
           )?>
         </td>
       </tr>

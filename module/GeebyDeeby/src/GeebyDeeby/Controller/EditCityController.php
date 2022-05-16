@@ -46,7 +46,9 @@ class EditCityController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'city', 'cities', 'geeby-deeby/edit-city/render-cities'
+            'city',
+            'cities',
+            'geeby-deeby/edit-city/render-cities'
         );
     }
 
@@ -78,8 +80,11 @@ class EditCityController extends AbstractBase
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
             ? ['Predicate_ID' => $pid] : [];
         return $this->handleGenericLink(
-            'citiesuris', 'City_ID', 'URI',
-            'uris', 'getURIsForCity',
+            'citiesuris',
+            'City_ID',
+            'URI',
+            'uris',
+            'getURIsForCity',
             'geeby-deeby/edit-city/uri-list.phtml',
             $extras
         );

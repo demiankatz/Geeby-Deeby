@@ -48,7 +48,9 @@ class SeriesLinks extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Series_Links');
@@ -65,7 +67,8 @@ class SeriesLinks extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                ['l' => 'Links'], 'Series_Links.Link_ID = l.Link_ID'
+                ['l' => 'Links'],
+                'Series_Links.Link_ID = l.Link_ID'
             );
             $select->order(['Link_Name']);
             $select->where->equalTo('Series_ID', $seriesID);

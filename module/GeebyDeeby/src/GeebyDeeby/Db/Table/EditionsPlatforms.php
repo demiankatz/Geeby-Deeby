@@ -48,7 +48,9 @@ class EditionsPlatforms extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_Platforms');
@@ -70,10 +72,12 @@ class EditionsPlatforms extends Gateway
                 ['Volume', 'Position', 'Replacement_Number']
             );
             $select->join(
-                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'],
+                'eds.Item_ID = i.Item_ID'
             );
             $select->join(
-                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
+                ['s' => 'Series'],
+                'eds.Series_ID = s.Series_ID'
             );
             $select->group(
                 [

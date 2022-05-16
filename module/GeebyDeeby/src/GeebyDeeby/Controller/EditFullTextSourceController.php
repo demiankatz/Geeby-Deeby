@@ -46,7 +46,8 @@ class EditFullTextSourceController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'fulltextsource', 'fulltextsources',
+            'fulltextsource',
+            'fulltextsources',
             'geeby-deeby/edit-full-text-source/render-sources'
         );
     }
@@ -60,7 +61,9 @@ class EditFullTextSourceController extends AbstractBase
     {
         $assignMap = ['fulltextsource' => 'Full_Text_Source_Name'];
         [$response] = $this->handleGenericItem(
-            'fulltextsource', $assignMap, 'fulltextsource'
+            'fulltextsource',
+            $assignMap,
+            'fulltextsource'
         );
         return $response;
     }

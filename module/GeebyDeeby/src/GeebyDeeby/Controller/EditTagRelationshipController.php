@@ -46,7 +46,8 @@ class EditTagRelationshipController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'tagsrelationship', 'relationships',
+            'tagsrelationship',
+            'relationships',
             'geeby-deeby/edit-tag-relationship/render-tag-relationships'
         );
     }

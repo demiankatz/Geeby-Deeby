@@ -7,16 +7,16 @@
         </td>
         <td>
           <?=$this->iconButton(
-            'gear',
-            "Edition.editLink('FullText', " . $current['Sequence_ID'] . ")",
-            'Edit options for URL: ' . $current['Full_Text_URL']
-          )?>
+    'gear',
+    "Edition.editLink('FullText', " . $current['Sequence_ID'] . ")",
+    'Edit options for URL: ' . $current['Full_Text_URL']
+)?>
         </td>
         <td>
           <?=$this->iconButton(
-            'trash',
-            "Edition.unlink('FullText', " . $current['Sequence_ID'] . ")",
-            'Delete full text URL: ' . $current['Full_Text_URL']
+              'trash',
+              "Edition.unlink('FullText', " . $current['Sequence_ID'] . ")",
+              'Delete full text URL: ' . $current['Full_Text_URL']
           )?>
         </td>
       </tr>

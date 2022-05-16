@@ -11,8 +11,8 @@
     <?php if ($sort === 'series'): ?><?=$this->escapeHtml($this->formatItemNumber($item))?><?php endif; ?>
     <a href="<?=$this->url('item', ['id' => $item['Item_ID']])?>">
       <?=$this->fixtitle(
-        empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']
-      )?>
+    empty($item['Item_AltName']) ? $item['Item_Name'] : $item['Item_AltName']
+)?>
     </a>
     <br />
   </span>

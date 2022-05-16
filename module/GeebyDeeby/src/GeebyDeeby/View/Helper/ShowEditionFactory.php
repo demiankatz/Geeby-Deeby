@@ -51,7 +51,9 @@ class ShowEditionFactory implements \Laminas\ServiceManager\Factory\FactoryInter
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         $controller = $container->get('ControllerManager')

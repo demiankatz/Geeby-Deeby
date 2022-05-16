@@ -81,7 +81,9 @@ class AbstractFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         $adapter = $container->get('Laminas\Db\Adapter\Adapter');

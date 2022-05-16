@@ -221,8 +221,14 @@ class Edition extends TableAwareGateway
         $pos = $this->Position;
         $rep = $this->Replacement_Number;
         $name = $this->Edition_Name;
-        $callback = function ($select) use ($edition, $series, $name, $vol, $pos,
-            $rep, $next
+        $callback = function ($select) use (
+            $edition,
+            $series,
+            $name,
+            $vol,
+            $pos,
+            $rep,
+            $next
         ) {
             $select->where->equalTo('Series_ID', $series);
             $select->where->notEqualTo('Edition_ID', $edition);
@@ -252,7 +258,8 @@ class Edition extends TableAwareGateway
                 $next ? $fields : array_map(
                     function ($i) {
                         return "$i DESC";
-                    }, $fields
+                    },
+                    $fields
                 )
             );
             $select->limit(1);

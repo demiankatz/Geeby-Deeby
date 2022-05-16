@@ -8,10 +8,10 @@
         </td>
         <td>
           <?=$this->iconButton(
-            'trash',
-            "Edition.unlink('Date', '" . addslashes(implode(',', [$current['Year'], $current['Month'], $current['Day']])) . "')",
-            'Delete date: ' . $displayDate
-          )?>
+    'trash',
+    "Edition.unlink('Date', '" . addslashes(implode(',', [$current['Year'], $current['Month'], $current['Day']])) . "')",
+    'Delete date: ' . $displayDate
+)?>
         </td>
       </tr>
     </table>

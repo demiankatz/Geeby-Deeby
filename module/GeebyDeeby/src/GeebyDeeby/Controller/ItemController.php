@@ -452,7 +452,8 @@ class ItemController extends AbstractBase
         $query->order('Item_ID DESC');
         $paginator = new \Laminas\Paginator\Paginator(
             new \Laminas\Paginator\Adapter\DbSelect(
-                $query, $adapter
+                $query,
+                $adapter
             )
         );
         $paginator->setItemCountPerPage(50);

@@ -50,7 +50,9 @@ class EditionsFullText extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_Full_Text');
@@ -149,7 +151,9 @@ class EditionsFullText extends Gateway
      *
      * @return mixed
      */
-    public function getItemsWithFullText($series = null, $fuzzy = false,
+    public function getItemsWithFullText(
+        $series = null,
+        $fuzzy = false,
         $source = null
     ) {
         $callback = function ($select) use ($series, $fuzzy, $source) {
@@ -159,7 +163,8 @@ class EditionsFullText extends Gateway
                     'Editions_Full_Text.Edition_ID = eds2.Edition_ID'
                 );
                 $select->join(
-                    ['eds' => 'Editions'], 'eds2.Item_ID = eds.Item_ID'
+                    ['eds' => 'Editions'],
+                    'eds2.Item_ID = eds.Item_ID'
                 );
             } else {
                 $select->join(
@@ -168,15 +173,18 @@ class EditionsFullText extends Gateway
                 );
             }
             $select->join(
-                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'],
+                'eds.Item_ID = i.Item_ID'
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
+                ['s' => 'Series'],
+                'eds.Series_ID = s.Series_ID'
             );
             $select->join(
                 ['childEds' => 'Editions'],
@@ -206,7 +214,8 @@ class EditionsFullText extends Gateway
             $select->join(
                 ['childIat' => 'Items_AltTitles'],
                 'childEds.Preferred_Item_AltName_ID = childIat.Sequence_ID',
-                [], Select::JOIN_LEFT
+                [],
+                Select::JOIN_LEFT
             );
             if (null !== $series) {
                 $select->where->equalTo('eds.Series_ID', $series);

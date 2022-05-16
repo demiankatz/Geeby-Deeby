@@ -50,7 +50,9 @@ class Series extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Series');
@@ -109,7 +111,8 @@ class Series extends Gateway
             $select2->join(
                 ['sat' => 'Series_AltTitles'],
                 'Series.Series_ID = sat.Series_ID',
-                [], Select::JOIN_LEFT
+                [],
+                Select::JOIN_LEFT
             );
             $select2->where->like('Series_AltName', $query . '%');
             $select->columns(
@@ -152,14 +155,19 @@ class Series extends Gateway
      *
      * @return mixed
      */
-    public function getSeriesForItem($itemID, $includePosition = true,
+    public function getSeriesForItem(
+        $itemID,
+        $includePosition = true,
         $includeParentPosition = false
     ) {
-        $callback = function ($select) use ($itemID, $includePosition,
+        $callback = function ($select) use (
+            $itemID,
+            $includePosition,
             $includeParentPosition
         ) {
             $select->join(
-                ['eds' => 'Editions'], 'Series.Series_ID = eds.Series_ID',
+                ['eds' => 'Editions'],
+                'Series.Series_ID = eds.Series_ID',
                 $includePosition ? [
                     'Volume', 'Position', 'Replacement_Number', 'Extent_In_Parent'
                 ] : []
@@ -180,7 +188,8 @@ class Series extends Gateway
             $select->join(
                 ['sat' => 'Series_AltTitles'],
                 'eds.Preferred_Series_AltName_ID = sat.Sequence_ID',
-                ['Series_AltName'], Select::JOIN_LEFT
+                ['Series_AltName'],
+                Select::JOIN_LEFT
             );
             $fields = ['Series_Name', 'Series_ID'];
             if ($includePosition) {

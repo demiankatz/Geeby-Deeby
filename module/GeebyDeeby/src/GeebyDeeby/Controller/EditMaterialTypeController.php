@@ -46,7 +46,8 @@ class EditMaterialTypeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'materialtype', 'materials',
+            'materialtype',
+            'materials',
             'geeby-deeby/edit-material-type/render-material-types'
         );
     }

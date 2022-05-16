@@ -5,10 +5,10 @@
         <td><?=$this->escapeHtml($current['Material_Type_Name'])?></td>
         <td>
           <?=$this->iconButton(
-            'trash',
-            "Series.unlink('Material', " . $current['Material_Type_ID'] . ")",
-            'Unlink material type: ' . $current['Material_Type_Name']
-          )?>
+    'trash',
+    "Series.unlink('Material', " . $current['Material_Type_ID'] . ")",
+    'Unlink material type: ' . $current['Material_Type_Name']
+)?>
         </td>
       </tr>
     </table>
