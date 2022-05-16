@@ -108,7 +108,8 @@ class DatabaseIngester extends BaseIngester
     protected function readchar($prompt)
     {
         readline_callback_handler_install(
-            $prompt, function () {
+            $prompt,
+            function () {
             }
         );
         $char = stream_get_contents(STDIN, 1);
@@ -334,7 +335,8 @@ class DatabaseIngester extends BaseIngester
                 }
             }
             $newChildData['title'] = $this->articles->articleAwareAppend(
-                $baseContainerTitle, ' ' . trim(current($details['series']))
+                $baseContainerTitle,
+                ' ' . trim(current($details['series']))
             );
             if (isset($details['url'])) {
                 $newChildData['url'] = $details['url'];
@@ -373,7 +375,9 @@ class DatabaseIngester extends BaseIngester
         }
         if (isset($details['publisher'])) {
             $pubResult = $this->processPublisher(
-                $details['publisher'], $editionObj, $series['Series_ID']
+                $details['publisher'],
+                $editionObj,
+                $series['Series_ID']
             );
             if (!$pubResult) {
                 return false;
@@ -404,7 +408,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function updateDatabaseForFlatEdition($series, $pos, $details)
     {
-        list($data, $db) = $details['contents'][0];
+        [$data, $db] = $details['contents'][0];
         if (!$db) {
             if (!($editionObj = $this->addChildWorkToSeries($series, $data, $pos))) {
                 return false;
@@ -427,7 +431,9 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool True for success
      */
-    protected function updateDatabaseForHierarchicalEdition($editionObj, $series,
+    protected function updateDatabaseForHierarchicalEdition(
+        $editionObj,
+        $series,
         $details
     ) {
         if (!$this->setTopLevelDetails($editionObj, $series, $details)) {
@@ -468,7 +474,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function processDate($date, $editionObj)
     {
-        list($year, $month, $day) = $this->parseDate($date);
+        [$year, $month, $day] = $this->parseDate($date);
         $table = $this->getDbTable('editionsreleasedates');
         $known = $table->getDatesForEdition($editionObj->Edition_ID);
         $foundMatch = false;
@@ -546,7 +552,8 @@ class DatabaseIngester extends BaseIngester
                 [' st.', ' w.', '23rd', 'no. ', '&', 'ave.'],
                 [' street', ' west', '23d', '', 'and', 'avenue'],
                 strtolower($street)
-            ), '.'
+            ),
+            '.'
         );
     }
 
@@ -604,7 +611,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function normalizeCity($rawCity)
     {
-        list($city) = explode('(', $rawCity);
+        [$city] = explode('(', $rawCity);
         return str_replace(', n.y', '', strtolower(trim($city)));
     }
 
@@ -632,7 +639,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function processPublisher($publisher, $editionObj, $seriesId)
     {
-        list($name, $street) = $this->separateNameAndStreet($publisher['name']);
+        [$name, $street] = $this->separateNameAndStreet($publisher['name']);
         if (empty($street)) {
             $this->writeln("WARNING: No street address; skipping publisher.");
             return true;
@@ -1000,7 +1007,7 @@ class DatabaseIngester extends BaseIngester
     protected function updateChildWorks($editionObj, $details)
     {
         foreach ($details as $i => $current) {
-            list($data, $db) = $current;
+            [$data, $db] = $current;
             if (!$db) {
                 if (!$this->addChildWorkToEdition($editionObj, $data, $i)) {
                     return false;
@@ -1048,17 +1055,21 @@ class DatabaseIngester extends BaseIngester
      *
      * @return array
      */
-    protected function evaluateItemMatchTitleCandidates($data, $options,
+    protected function evaluateItemMatchTitleCandidates(
+        $data,
+        $options,
         $titleField = 'Item_Name'
     ) {
         $candidates = [];
         foreach ($options as $current) {
             $confidence = 100;
             $currentCredits = $this->getPeopleForItem(
-                $current->Item_ID, [self::ROLE_AUTHOR, self::ROLE_EDITOR]
+                $current->Item_ID,
+                [self::ROLE_AUTHOR, self::ROLE_EDITOR]
             );
             $authorsAndEditors = array_merge(
-                $data['authorIds'] ?? [], $data['editorIds'] ?? []
+                $data['authorIds'] ?? [],
+                $data['editorIds'] ?? []
             );
             $diffCount = count(
                 array_diff($authorsAndEditors, array_keys($currentCredits))
@@ -1138,7 +1149,9 @@ class DatabaseIngester extends BaseIngester
             };
             $options = $table->select($callback);
             $candidates = $this->evaluateItemMatchTitleCandidates(
-                $data, $options, 'Item_AltName'
+                $data,
+                $options,
+                'Item_AltName'
             );
             $commaPos = strrpos($strippedTitle, ',');
             $semiPos = strrpos($strippedTitle, ';');
@@ -1197,7 +1210,8 @@ class DatabaseIngester extends BaseIngester
         $candidates = [];
         foreach ($ec->getItemCreditsForPerson($author, 'title', false) as $current) {
             $score = $this->measureStringSimilarity(
-                $current['Item_Name'], $data['title']
+                $current['Item_Name'],
+                $data['title']
             );
             if ($score > 0) {
                 $currentCredits = $this->getPeopleForItem($current['Item_ID']);
@@ -1211,7 +1225,8 @@ class DatabaseIngester extends BaseIngester
                 $table = $this->getDbTable('itemsalttitles');
                 foreach ($table->getAltTitles($current['Item_ID']) as $currentAlt) {
                     $score = $this->measureStringSimilarity(
-                        $currentAlt['Item_AltName'], $data['title']
+                        $currentAlt['Item_AltName'],
+                        $data['title']
                     );
                     if ($score > 0) {
                         $currentCredits
@@ -1257,7 +1272,8 @@ class DatabaseIngester extends BaseIngester
         }
         foreach (array_unique($allAuthors) as $author) {
             $candidates = array_merge(
-                $candidates, $this->getItemMatchCandidatesUsingAuthor($author, $data)
+                $candidates,
+                $this->getItemMatchCandidatesUsingAuthor($author, $data)
             );
         }
         return $candidates;
@@ -1402,7 +1418,8 @@ class DatabaseIngester extends BaseIngester
             if ($char !== '0') {
                 $response = ord(strtoupper($char)) - 65;
                 $fuzzyTitleCompare = $this->fuzzyCompare(
-                    $data['title'], $candidates[$response]['title']
+                    $data['title'],
+                    $candidates[$response]['title']
                 );
                 $altTitleCompare = $this->hasMatchingAltTitle(
                     $data['title'],
@@ -1570,8 +1587,12 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool|int
      */
-    protected function hasMatchingAltTitle($title, $itemID, $itemTitle,
-        $warn = false, $returnId = false
+    protected function hasMatchingAltTitle(
+        $title,
+        $itemID,
+        $itemTitle,
+        $warn = false,
+        $returnId = false
     ) {
         // Check the alt titles table:
         $table = $this->getDbTable('itemsalttitles');
@@ -1592,7 +1613,7 @@ class DatabaseIngester extends BaseIngester
         // can't do this in "return ID" mode because these kinds of alt. title
         // match do not exist in the database table and thus have no sequence ID
         // to return.
-        list($itemArticle, $itemMainTitle)
+        [$itemArticle, $itemMainTitle]
             = $this->articles->separateArticle($itemTitle);
         $titleParts = preg_split('/[;:, ]\s*or[;:, ]/', $itemMainTitle);
         if (!$returnId && count($titleParts) > 1) {
@@ -1627,7 +1648,10 @@ class DatabaseIngester extends BaseIngester
             return true;
         }
         $hasMatchingAlt = $this->hasMatchingAltTitle(
-            $title, $db['item']['Item_ID'], $db['item']['Item_Name'], true
+            $title,
+            $db['item']['Item_ID'],
+            $db['item']['Item_Name'],
+            true
         );
         if ($hasMatchingAlt) {
             return true;
@@ -1695,7 +1719,11 @@ class DatabaseIngester extends BaseIngester
         }
         if (isset($data['authorIds'])) {
             $authorResult = $this->processPeople(
-                $data['authorIds'], $db, 'authorIds', 'author', self::ROLE_AUTHOR
+                $data['authorIds'],
+                $db,
+                'authorIds',
+                'author',
+                self::ROLE_AUTHOR
             );
             if (!$authorResult) {
                 return false;
@@ -1703,7 +1731,11 @@ class DatabaseIngester extends BaseIngester
         }
         if (isset($data['editorIds'])) {
             $editorResult = $this->processPeople(
-                $data['editorIds'], $db, 'editorIds', 'editor', self::ROLE_EDITOR
+                $data['editorIds'],
+                $db,
+                'editorIds',
+                'editor',
+                self::ROLE_EDITOR
             );
             if (!$editorResult) {
                 return false;
@@ -1909,7 +1941,8 @@ class DatabaseIngester extends BaseIngester
                     $realPseudos = $pseudo->getPseudonyms($r['Real_Person_ID']);
                     foreach ($realPseudos as $realPseudo) {
                         $matched = in_array(
-                            $realPseudo['Pseudo_Person_ID'], $incomingList
+                            $realPseudo['Pseudo_Person_ID'],
+                            $incomingList
                         );
                         if ($matched) {
                             $this->writeln(
@@ -2409,7 +2442,9 @@ class DatabaseIngester extends BaseIngester
             }
         }
         return $this->hasMatchingAltTitle(
-            $currentContent['title'], $item['Item_ID'], $item['Item_Name']
+            $currentContent['title'],
+            $item['Item_ID'],
+            $item['Item_Name']
         );
     }
 

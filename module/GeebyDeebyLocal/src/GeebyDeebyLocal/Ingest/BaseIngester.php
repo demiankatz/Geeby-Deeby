@@ -39,20 +39,20 @@ namespace GeebyDeebyLocal\Ingest;
 abstract class BaseIngester
 {
     // constant values drawn from dimenovels.org database:
-    const FULLTEXT_SOURCE_VU = 1;
-    const FULLTEXT_SOURCE_IA = 3;
-    const FULLTEXT_SOURCE_NIU = 10;
-    const FULLTEXT_SOURCE_USF = 11;
-    const FULLTEXT_SOURCE_STANFORD = 13;
-    const FULLTEXT_SOURCE_BGSU = 14;
-    const MATERIALTYPE_WORK = 1;
-    const MATERIALTYPE_ISSUE = 2;
-    const PREDICATE_OWL_SAMEAS = 2;
-    const ROLE_AUTHOR = 1;
-    const ROLE_EDITOR = 4;
-    const ROLE_ILLUSTRATOR = 2;
-    const ROLE_TRANSLATOR = 3;
-    const TAGTYPE_LC = 1;
+    public const FULLTEXT_SOURCE_VU = 1;
+    public const FULLTEXT_SOURCE_IA = 3;
+    public const FULLTEXT_SOURCE_NIU = 10;
+    public const FULLTEXT_SOURCE_USF = 11;
+    public const FULLTEXT_SOURCE_STANFORD = 13;
+    public const FULLTEXT_SOURCE_BGSU = 14;
+    public const MATERIALTYPE_WORK = 1;
+    public const MATERIALTYPE_ISSUE = 2;
+    public const PREDICATE_OWL_SAMEAS = 2;
+    public const ROLE_AUTHOR = 1;
+    public const ROLE_EDITOR = 4;
+    public const ROLE_ILLUSTRATOR = 2;
+    public const ROLE_TRANSLATOR = 3;
+    public const TAGTYPE_LC = 1;
 
     /**
      * Table plugin manager

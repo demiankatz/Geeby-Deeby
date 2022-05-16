@@ -52,7 +52,8 @@ class OntologyController extends \GeebyDeeby\Controller\AbstractBase
         $response->setContent($rdf);
         $headers = $response->getHeaders();
         $headers->addHeaderLine(
-            'Content-type', 'application/rdf+xml'
+            'Content-type',
+            'application/rdf+xml'
         );
         return $response;
     }

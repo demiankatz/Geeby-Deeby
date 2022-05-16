@@ -74,7 +74,9 @@ class ExistingCommand extends Command
      * @param string|null     $name   The name of the command; passing null means it
      * must be set in configure()
      */
-    public function __construct(FedoraHarvester $fedora, SolrHarvester $solr,
+    public function __construct(
+        FedoraHarvester $fedora,
+        SolrHarvester $solr,
         $name = null
     ) {
         $this->fedora = $fedora;
@@ -130,7 +132,8 @@ class ExistingCommand extends Command
             }
             file_put_contents($dir . '/' . $count . '.mods', $rawMods);
             file_put_contents(
-                $dir . '/' . $count . '.json', json_encode(['edition' => $edition])
+                $dir . '/' . $count . '.json',
+                json_encode(['edition' => $edition])
             );
             $count++;
         }

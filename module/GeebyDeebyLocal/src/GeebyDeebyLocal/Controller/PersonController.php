@@ -47,7 +47,9 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view,
+    protected function addPrimaryResourceToGraph(
+        $graph,
+        $view,
         $class = 'foaf:Person'
     ) {
         $authName = $view->person['Last_Name'];

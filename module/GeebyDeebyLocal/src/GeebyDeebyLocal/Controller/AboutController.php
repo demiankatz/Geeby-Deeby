@@ -97,7 +97,8 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
                     'Series_ID' => 'Series_ID',
                     'Series_Name' => 'Series_Name',
                     'Item_Count' => new Expression(
-                        'count(distinct(?))', ['Item_ID'],
+                        'count(distinct(?))',
+                        ['Item_ID'],
                         [Expression::TYPE_IDENTIFIER]
                     ),
                     'Complete' => new Expression(
@@ -107,7 +108,9 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
             );
             $select->join(
                 ['e' => 'Editions'],
-                'Series.Series_ID = e.Series_ID', [], Select::JOIN_LEFT
+                'Series.Series_ID = e.Series_ID',
+                [],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['source' => 'Series_Attributes_Values'],

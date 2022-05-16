@@ -80,8 +80,12 @@ class SpreadsheetCommand extends Command
      * @param string|null      $name       The name of the command; passing null
      * means it must be set in configure()
      */
-    public function __construct(Series $series, SeriesAltTitles $seriesAlts,
-        Edition $editions, DatabaseIngester $ingester, $name = null
+    public function __construct(
+        Series $series,
+        SeriesAltTitles $seriesAlts,
+        Edition $editions,
+        DatabaseIngester $ingester,
+        $name = null
     ) {
         $this->series = $series;
         $this->seriesAltTitles = $seriesAlts;
@@ -116,7 +120,7 @@ class SpreadsheetCommand extends Command
      */
     protected function spreadsheetLineToDetails($line)
     {
-        list($title, $author, $date, $place, $publisher, $series, $number, $url)
+        [$title, $author, $date, $place, $publisher, $series, $number, $url]
             = $line;
         $content = compact('title');
         if (!empty($author)) {

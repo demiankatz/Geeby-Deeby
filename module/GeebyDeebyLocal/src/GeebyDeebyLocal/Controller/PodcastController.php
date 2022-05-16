@@ -141,7 +141,8 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         $feed->setItunesSummary($desc);
         $feed->setLink($serverUrl($this->url()->fromRoute('podcast')));
         $feed->setFeedLink(
-            $serverUrl($this->url()->fromRoute('podcast-rss')), 'rss'
+            $serverUrl($this->url()->fromRoute('podcast-rss')),
+            'rss'
         );
         $feed->setItunesCategories(['Arts' => ['Literature']]);
         $feed->addItunesOwner(

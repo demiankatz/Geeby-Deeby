@@ -80,8 +80,12 @@ class SeriesCommand extends Command
      * @param string|null     $name       The name of the command; passing null means
      * it must be set in configure()
      */
-    public function __construct(FedoraHarvester $fedora, SolrHarvester $solr,
-        Series $series, SeriesAltTitles $seriesAlts, $name = null
+    public function __construct(
+        FedoraHarvester $fedora,
+        SolrHarvester $solr,
+        Series $series,
+        SeriesAltTitles $seriesAlts,
+        $name = null
     ) {
         $this->fedora = $fedora;
         $this->solr = $solr;

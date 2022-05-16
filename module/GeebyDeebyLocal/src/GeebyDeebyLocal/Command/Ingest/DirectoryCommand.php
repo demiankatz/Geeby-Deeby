@@ -92,8 +92,12 @@ class DirectoryCommand extends Command
      * @param string|null      $name      The name of the command; passing null means
      * it must be set in configure()
      */
-    public function __construct(Series $series, Edition $editions,
-        ModsExtractor $extractor, DatabaseIngester $ingester, $name = null
+    public function __construct(
+        Series $series,
+        Edition $editions,
+        ModsExtractor $extractor,
+        DatabaseIngester $ingester,
+        $name = null
     ) {
         $this->series = $series;
         $this->editions = $editions;

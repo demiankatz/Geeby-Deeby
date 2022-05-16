@@ -286,7 +286,8 @@ class ModsExtractor
                     $currentPerson['uri'] = (string)$uri[0];
                 }
                 $currentPerson['name'] = $this->getStringFromNameParts(
-                    $current->xpath('mods:namePart'), $nameType
+                    $current->xpath('mods:namePart'),
+                    $nameType
                 );
                 if (!empty($currentPerson['name'])) {
                     $people[] = $currentPerson;
@@ -350,7 +351,8 @@ class ModsExtractor
                     $nameType = isset($nameType[0])
                         ? (string)$nameType[0] : 'default';
                     $value = $this->getStringFromNameParts(
-                        $current->xpath('mods:namePart'), $nameType
+                        $current->xpath('mods:namePart'),
+                        $nameType
                     );
                 }
                 if (isset($uri[0])

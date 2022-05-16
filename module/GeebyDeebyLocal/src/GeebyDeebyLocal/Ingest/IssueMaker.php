@@ -44,8 +44,8 @@ class IssueMaker
     use \GeebyDeebyConsole\ConsoleOutputTrait;
 
     // constant values drawn from dimenovels.org database:
-    const MATERIALTYPE_WORK = 1;
-    const MATERIALTYPE_ISSUE = 2;
+    public const MATERIALTYPE_WORK = 1;
+    public const MATERIALTYPE_ISSUE = 2;
 
     /**
      * Table plugin manager

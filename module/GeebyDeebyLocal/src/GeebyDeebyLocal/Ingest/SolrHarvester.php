@@ -107,8 +107,7 @@ class SolrHarvester
             . '" AND RELS_EXT_isSequenceNumber_literal_ms:"1"';
         $field = $this->settings->solrIdField;
         $solr = $this->querySolr($query, $field);
-        return isset($solr->response->docs[0]->$field)
-            ? $solr->response->docs[0]->$field : false;
+        return $solr->response->docs[0]->$field ?? false;
     }
 
     /**
@@ -147,8 +146,7 @@ class SolrHarvester
         $query = $this->settings->solrQueryField . ':"' . $edition . '"';
         $field = $this->settings->solrIdField;
         $solr = $this->querySolr($query, $field);
-        return isset($solr->response->docs[0]->$field)
-            ? $solr->response->docs[0]->$field : false;
+        return $solr->response->docs[0]->$field ?? false;
     }
 
     /**
@@ -163,8 +161,7 @@ class SolrHarvester
         $query = $this->settings->solrSeriesField
             . ':"' . addcslashes($series, '"') . '"';
         $field = $this->settings->solrIdField;
-        $sort = isset($this->settings->solrSeriesSortField)
-            ? $this->settings->solrSeriesSortField : null;
+        $sort = $this->settings->solrSeriesSortField ?? null;
         $solr = $this->querySolr($query, $field, $sort);
         $retVal = [];
         foreach ($solr->response->docs as $doc) {
@@ -188,8 +185,7 @@ class SolrHarvester
         $query = $this->settings->solrCollectionField
             . ':"' . addcslashes($collection, '"') . '"';
         $field = $this->settings->solrIdField;
-        $sort = isset($this->settings->solrCollectionSortField)
-            ? $this->settings->solrCollectionSortField : null;
+        $sort = $this->settings->solrCollectionSortField ?? null;
         $solr = $this->querySolr($query, $field, $sort);
         $retVal = [];
         foreach ($solr->response->docs as $doc) {

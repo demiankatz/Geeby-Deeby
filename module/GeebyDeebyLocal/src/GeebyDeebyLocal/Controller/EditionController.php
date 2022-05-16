@@ -38,7 +38,7 @@ namespace GeebyDeebyLocal\Controller;
  */
 class EditionController extends \GeebyDeeby\Controller\EditionController
 {
-    const LC_NAME_AUTHORITY = 1;
+    public const LC_NAME_AUTHORITY = 1;
 
     /**
      * RDF class for representing copies of editions (null to omit).
@@ -125,7 +125,8 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             $edition->add('dime:HasSeries', $graph->resource($seriesUri));
             if ($view->edition['Position'] > 0) {
                 $edition->add(
-                    'rda:numberingWithinSeries', (int)$view->edition['Position']
+                    'rda:numberingWithinSeries',
+                    (int)$view->edition['Position']
                 );
             }
             $seriesTitle = empty($view->series['Series_AltName'])
@@ -199,7 +200,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      */
     protected function addModsTitle($xml, $title)
     {
-        list($article, $body) = $this->serviceLocator->get('GeebyDeeby\Articles')
+        [$article, $body] = $this->serviceLocator->get('GeebyDeeby\Articles')
             ->separateArticle($title, false);
         if (!empty($article)) {
             $xml->nonSort = $article;
