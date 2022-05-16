@@ -132,7 +132,9 @@ class MigrateController extends AbstractBase
      *
      * @return int Number of rows migrated
      */
-    protected function genericItemToEditionMigration($inTable, $outTable,
+    protected function genericItemToEditionMigration(
+        $inTable,
+        $outTable,
         $primaryKey = null
     ) {
         $in = $this->getDbTable($inTable);
@@ -165,7 +167,8 @@ class MigrateController extends AbstractBase
     protected function migrateItemCreditsToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemscredits', 'editionscredits'
+            'itemscredits',
+            'editionscredits'
         );
     }
 
@@ -177,7 +180,8 @@ class MigrateController extends AbstractBase
     protected function migrateItemDatesToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsreleasedates', 'editionsreleasedates'
+            'itemsreleasedates',
+            'editionsreleasedates'
         );
     }
 
@@ -216,7 +220,9 @@ class MigrateController extends AbstractBase
     protected function migrateItemISBNsToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsisbns', 'editionsisbns', 'Sequence_ID'
+            'itemsisbns',
+            'editionsisbns',
+            'Sequence_ID'
         );
     }
 
@@ -228,7 +234,9 @@ class MigrateController extends AbstractBase
     protected function migrateItemImagesToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsimages', 'editionsimages', 'Sequence_ID'
+            'itemsimages',
+            'editionsimages',
+            'Sequence_ID'
         );
     }
 
@@ -240,7 +248,9 @@ class MigrateController extends AbstractBase
     protected function migrateItemProductCodesToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsproductcodes', 'editionsproductcodes', 'Sequence_ID'
+            'itemsproductcodes',
+            'editionsproductcodes',
+            'Sequence_ID'
         );
     }
 
@@ -252,7 +262,8 @@ class MigrateController extends AbstractBase
     protected function migrateItemPlatformsToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsplatforms', 'editionsplatforms'
+            'itemsplatforms',
+            'editionsplatforms'
         );
     }
 

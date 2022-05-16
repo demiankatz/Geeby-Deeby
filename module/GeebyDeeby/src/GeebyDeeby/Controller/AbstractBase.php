@@ -96,13 +96,16 @@ class AbstractBase extends AbstractActionController
         $response = $this->getResponse();
         $headers = $response->getHeaders();
         $headers->addHeaderLine(
-            'Content-type', 'application/javascript'
+            'Content-type',
+            'application/javascript'
         );
         $headers->addHeaderLine(
-            'Cache-Control', 'no-cache, must-revalidate'
+            'Cache-Control',
+            'no-cache, must-revalidate'
         );
         $headers->addHeaderLine(
-            'Expires', 'Mon, 26 Jul 1997 05:00:00 GMT'
+            'Expires',
+            'Mon, 26 Jul 1997 05:00:00 GMT'
         );
         $output = ['success' => $success, 'msg' => $msg];
         $response->setContent(json_encode($output));
@@ -129,7 +132,10 @@ class AbstractBase extends AbstractActionController
      *
      * @return mixed
      */
-    protected function getGenericList($table, $assignTo, $tpl,
+    protected function getGenericList(
+        $table,
+        $assignTo,
+        $tpl,
         $permission = 'Content_Editor'
     ) {
         $ok = $this->checkPermission($permission);
@@ -162,7 +168,8 @@ class AbstractBase extends AbstractActionController
     {
         // Extract values from the POST fields:
         $id = $this->params()->fromRoute(
-            $idField, $this->params()->fromPost($idField, 'NEW')
+            $idField,
+            $this->params()->fromPost($idField, 'NEW')
         );
         $id = $id == 'NEW' ? false : intval($id);
 
@@ -259,7 +266,10 @@ class AbstractBase extends AbstractActionController
      *
      * @return array
      */
-    protected function handleGenericItem($table, $assignMap, $assignTo,
+    protected function handleGenericItem(
+        $table,
+        $assignMap,
+        $assignTo,
         $permission = 'Content_Editor'
     ) {
         $ok = $this->checkPermission($permission);
@@ -296,8 +306,14 @@ class AbstractBase extends AbstractActionController
      *
      * @return mixed
      */
-    public function handleGenericLink($tableName, $primaryColumn, $secondaryColumn,
-        $listVariable, $listMethod, $listTemplate, $extraFields = [],
+    public function handleGenericLink(
+        $tableName,
+        $primaryColumn,
+        $secondaryColumn,
+        $listVariable,
+        $listMethod,
+        $listTemplate,
+        $extraFields = [],
         $insertCallback = null
     ) {
         $ok = $this->checkPermission('Content_Editor');
@@ -315,7 +331,8 @@ class AbstractBase extends AbstractActionController
                     $table->insert($row);
                     if (is_callable($insertCallback)) {
                         $insertCallback(
-                            $table->getLastInsertValue(), $row,
+                            $table->getLastInsertValue(),
+                            $row,
                             $this->serviceLocator
                         );
                     }
@@ -529,7 +546,8 @@ class AbstractBase extends AbstractActionController
         $action = $this->rdfRequested() ? 'RDF' : 'Show';
         $id = $this->params()->fromRoute($idParam);
         $response = $this->redirect()->toRoute(
-            $route, ['action' => $action, $idParam => $id],
+            $route,
+            ['action' => $action, $idParam => $id],
             ['query' => $this->params()->fromQuery()]
         );
         $response->setStatusCode(303);

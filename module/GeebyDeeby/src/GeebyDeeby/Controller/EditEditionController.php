@@ -46,7 +46,9 @@ class EditEditionController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'edition', 'editions', 'geeby-deeby/edit-edition/render-editions'
+            'edition',
+            'editions',
+            'geeby-deeby/edit-edition/render-editions'
         );
     }
 
@@ -534,7 +536,7 @@ class EditEditionController extends AbstractBase
      */
     protected function deleteDate()
     {
-        list($year, $month, $day)
+        [$year, $month, $day]
             = explode(',', $this->params()->fromRoute('extra'));
         $this->getDbTable('editionsreleasedates')->delete(
             [
@@ -575,7 +577,7 @@ class EditEditionController extends AbstractBase
         }
         // DELETE action:
         if ($this->getRequest()->isDelete()) {
-            list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
+            [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
             $this->getDbTable('editionscredits')->delete(
                 [
                     'Edition_ID' => $this->params()->fromRoute('id'),
@@ -747,8 +749,12 @@ class EditEditionController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsisbns', 'Edition_ID', 'Sequence_ID', 'ISBNs',
-                'getISBNsForEdition', 'geeby-deeby/edit-edition/isbn-list.phtml'
+                'editionsisbns',
+                'Edition_ID',
+                'Sequence_ID',
+                'ISBNs',
+                'getISBNsForEdition',
+                'geeby-deeby/edit-edition/isbn-list.phtml'
             );
         }
     }
@@ -782,8 +788,11 @@ class EditEditionController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsoclcnumbers', 'Edition_ID', 'Sequence_ID',
-                'oclcNumbers', 'getOCLCNumbersForEdition',
+                'editionsoclcnumbers',
+                'Edition_ID',
+                'Sequence_ID',
+                'oclcNumbers',
+                'getOCLCNumbersForEdition',
                 'geeby-deeby/edit-edition/oclc-number-list.phtml'
             );
         }
@@ -818,8 +827,11 @@ class EditEditionController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsproductcodes', 'Edition_ID', 'Sequence_ID',
-                'productCodes', 'getProductCodesForEdition',
+                'editionsproductcodes',
+                'Edition_ID',
+                'Sequence_ID',
+                'productCodes',
+                'getProductCodesForEdition',
                 'geeby-deeby/edit-edition/product-code-list.phtml'
             );
         }
@@ -866,8 +878,11 @@ class EditEditionController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsimages', 'Edition_ID', 'Sequence_ID',
-                'images', 'getImagesForEdition',
+                'editionsimages',
+                'Edition_ID',
+                'Sequence_ID',
+                'images',
+                'getImagesForEdition',
                 'geeby-deeby/edit-edition/image-list.phtml'
             );
         }
@@ -888,7 +903,8 @@ class EditEditionController extends AbstractBase
             $image = $this->params()->fromPost('sequence_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('editionsimages')->update(
-                ['Position' => $pos], ['Sequence_ID' => $image]
+                ['Position' => $pos],
+                ['Sequence_ID' => $image]
             );
             return $this->jsonReportSuccess();
         }
@@ -903,8 +919,11 @@ class EditEditionController extends AbstractBase
     public function platformAction()
     {
         return $this->handleGenericLink(
-            'editionsplatforms', 'Edition_ID', 'Platform_ID',
-            'editionPlatforms', 'getPlatformsForEdition',
+            'editionsplatforms',
+            'Edition_ID',
+            'Platform_ID',
+            'editionPlatforms',
+            'getPlatformsForEdition',
             'geeby-deeby/edit-edition/platform-list.phtml'
         );
     }
@@ -956,8 +975,11 @@ class EditEditionController extends AbstractBase
             }
         };
         return $this->handleGenericLink(
-            'edition', 'Parent_Edition_ID', 'Item_ID',
-            'item_list', 'getItemsForEdition',
+            'edition',
+            'Parent_Edition_ID',
+            'Item_ID',
+            'item_list',
+            'getItemsForEdition',
             'geeby-deeby/edit-edition/item-list.phtml',
             ['Edition_Name' => $edName, 'Series_ID' => $seriesID],
             $insertCallback
@@ -979,7 +1001,8 @@ class EditEditionController extends AbstractBase
             $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('edition')->update(
-                ['Position_in_Parent' => $pos], ['Edition_ID' => $edition]
+                ['Position_in_Parent' => $pos],
+                ['Edition_ID' => $edition]
             );
             return $this->jsonReportSuccess();
         }

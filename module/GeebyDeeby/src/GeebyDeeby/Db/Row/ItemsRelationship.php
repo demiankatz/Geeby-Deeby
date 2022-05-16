@@ -46,7 +46,9 @@ class ItemsRelationship extends RowGateway
     public function __construct($adapter)
     {
         parent::__construct(
-            'Items_Relationship_ID', 'Items_Relationships', $adapter
+            'Items_Relationship_ID',
+            'Items_Relationships',
+            $adapter
         );
     }
 

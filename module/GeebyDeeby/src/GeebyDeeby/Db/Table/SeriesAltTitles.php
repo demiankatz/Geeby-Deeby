@@ -49,7 +49,9 @@ class SeriesAltTitles extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Series_AltTitles');
@@ -68,7 +70,8 @@ class SeriesAltTitles extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Series_AltTitles.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order('Series_AltName');
             $select->where->equalTo('Series_ID', $seriesID);

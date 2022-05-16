@@ -46,7 +46,9 @@ class SeriesPublishers extends RowGateway
     public function __construct($adapter)
     {
         parent::__construct(
-            'Series_Publisher_ID', 'Series_Publishers', $adapter
+            'Series_Publisher_ID',
+            'Series_Publishers',
+            $adapter
         );
     }
 }

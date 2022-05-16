@@ -46,7 +46,9 @@ class EditFileController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'file', 'files', 'geeby-deeby/edit-file/render-files'
+            'file',
+            'files',
+            'geeby-deeby/edit-file/render-files'
         );
         // If this is not an AJAX request, we also want to display roles:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -92,7 +94,9 @@ class EditFileController extends AbstractBase
     public function typelistAction()
     {
         return $this->getGenericList(
-            'fileType', 'fileTypes', 'geeby-deeby/edit-file/render-types'
+            'fileType',
+            'fileTypes',
+            'geeby-deeby/edit-file/render-types'
         );
     }
 
@@ -116,8 +120,11 @@ class EditFileController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemsfiles', 'File_ID', 'Item_ID',
-            'itemsFiles', 'getItemsForFile',
+            'itemsfiles',
+            'File_ID',
+            'Item_ID',
+            'itemsFiles',
+            'getItemsForFile',
             'geeby-deeby/edit-file/item-list.phtml'
         );
     }
@@ -130,8 +137,11 @@ class EditFileController extends AbstractBase
     public function personAction()
     {
         return $this->handleGenericLink(
-            'peoplefiles', 'File_ID', 'Person_ID',
-            'peopleFiles', 'getPeopleForFile',
+            'peoplefiles',
+            'File_ID',
+            'Person_ID',
+            'peopleFiles',
+            'getPeopleForFile',
             'geeby-deeby/edit-file/person-list.phtml'
         );
     }
@@ -144,8 +154,11 @@ class EditFileController extends AbstractBase
     public function seriesAction()
     {
         return $this->handleGenericLink(
-            'seriesfiles', 'File_ID', 'Series_ID',
-            'seriesFiles', 'getSeriesForFile',
+            'seriesfiles',
+            'File_ID',
+            'Series_ID',
+            'seriesFiles',
+            'getSeriesForFile',
             'geeby-deeby/edit-file/series-list.phtml'
         );
     }

@@ -49,7 +49,9 @@ class EditionsISBNs extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_ISBNs');
@@ -68,7 +70,8 @@ class EditionsISBNs extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_ISBNs.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order('ISBN13');
             $select->where->equalTo('Edition_ID', $editionID);
@@ -89,7 +92,8 @@ class EditionsISBNs extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_ISBNs.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['eds' => 'Editions'],
@@ -116,7 +120,8 @@ class EditionsISBNs extends Gateway
                 'Editions_ISBNs.Edition_ID = eds.Edition_ID'
             );
             $select->join(
-                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'],
+                'eds.Item_ID = i.Item_ID'
             );
             $select->order('Item_Name');
             $select->group('i.Item_ID');

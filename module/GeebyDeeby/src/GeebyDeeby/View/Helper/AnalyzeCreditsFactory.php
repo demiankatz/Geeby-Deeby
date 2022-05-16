@@ -52,12 +52,15 @@ class AnalyzeCreditsFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         $tables = $container->get('GeebyDeeby\Db\Table\PluginManager');
         return new $name(
-            $tables->get('pseudonyms'), $tables->get('itemscreatorscitations')
+            $tables->get('pseudonyms'),
+            $tables->get('itemscreatorscitations')
         );
     }
 }

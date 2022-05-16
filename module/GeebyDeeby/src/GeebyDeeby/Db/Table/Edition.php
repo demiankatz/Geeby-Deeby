@@ -50,7 +50,9 @@ class Edition extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions');
@@ -123,12 +125,14 @@ class Edition extends Gateway
         $parent = $ed->Parent_Edition_ID;
         $callback = function ($select) use ($parent) {
             $select->join(
-                ['items' => 'Items'], 'Editions.Item_ID = items.Item_ID'
+                ['items' => 'Items'],
+                'Editions.Item_ID = items.Item_ID'
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'Editions.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->where->equalTo('Edition_ID', $parent);
         };
@@ -193,14 +197,16 @@ class Edition extends Gateway
     {
         $callback = function ($select) use ($itemID, $includeParents) {
             $year = new Expression(
-                'min(?)', ['erd.Year'],
+                'min(?)',
+                ['erd.Year'],
                 [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
                 ['erd' => 'Editions_Release_Dates'],
                 'Editions.Edition_ID = erd.Edition_ID OR '
                 . 'Editions.Parent_Edition_ID = erd.Edition_ID',
-                ['Earliest_Year' => $year], Select::JOIN_LEFT
+                ['Earliest_Year' => $year],
+                Select::JOIN_LEFT
             );
             $order = ['Item_Display_Order', 'Earliest_Year', 'Edition_Name'];
             $fields = [
@@ -228,16 +234,20 @@ class Edition extends Gateway
                 $select->join(
                     ['pe' => 'Editions'],
                     'Editions.Parent_Edition_ID = pe.Edition_ID',
-                    ['Parent_Item_ID' => 'Item_ID'], Select::JOIN_LEFT
+                    ['Parent_Item_ID' => 'Item_ID'],
+                    Select::JOIN_LEFT
                 );
                 $select->join(
-                    ['i' => 'Items'], 'pe.Item_ID = i.Item_ID',
-                    ['Item_Name'], Select::JOIN_LEFT
+                    ['i' => 'Items'],
+                    'pe.Item_ID = i.Item_ID',
+                    ['Item_Name'],
+                    Select::JOIN_LEFT
                 );
                 $select->join(
                     ['iat' => 'Items_AltTitles'],
                     'pe.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                    ['Item_AltName'], Select::JOIN_LEFT
+                    ['Item_AltName'],
+                    Select::JOIN_LEFT
                 );
                 $fields[] = 'Item_Name';
                 $fields[] = 'Item_AltName';
@@ -277,19 +287,26 @@ class Edition extends Gateway
             $select->join(
                 ['pa' => 'Publishers_Addresses'],
                 'sp.Address_ID = pa.Address_ID',
-                ['Street'], Select::JOIN_LEFT
+                ['Street'],
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['c' => 'Countries'], 'pa.Country_ID = c.Country_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['c' => 'Countries'],
+                'pa.Country_ID = c.Country_ID',
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['ci' => 'Cities'], 'pa.City_ID = ci.City_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['ci' => 'Cities'],
+                'pa.City_ID = ci.City_ID',
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['n' => 'Notes'], 'sp.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['n' => 'Notes'],
+                'sp.Note_ID = n.Note_ID',
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->where->equalTo($field, $value);
             $select->order(

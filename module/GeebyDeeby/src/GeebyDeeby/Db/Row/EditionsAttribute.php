@@ -46,7 +46,9 @@ class EditionsAttribute extends RowGateway
     public function __construct($adapter)
     {
         parent::__construct(
-            'Editions_Attribute_ID', 'Editions_Attributes', $adapter
+            'Editions_Attribute_ID',
+            'Editions_Attributes',
+            $adapter
         );
     }
 

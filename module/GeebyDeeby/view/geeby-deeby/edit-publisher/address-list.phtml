@@ -7,11 +7,13 @@
           <?=$this->escapeHtml($currentAddress)?>
         </td>
         <td>
-          <?=$this->iconButton(
-            'trash',
-            "Publisher.unlink('Address', " . $current['Address_ID'] . ")",
-            'Delete address: ' . $currentAddress
-          )?>
+          <?=
+            $this->iconButton(
+                'trash',
+                "Publisher.unlink('Address', " . $current['Address_ID'] . ")",
+                'Delete address: ' . $currentAddress
+            )
+          ?>
         </td>
       </tr>
     </table>

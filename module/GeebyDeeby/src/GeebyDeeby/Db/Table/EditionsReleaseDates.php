@@ -49,7 +49,9 @@ class EditionsReleaseDates extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_Release_Dates');
@@ -70,7 +72,8 @@ class EditionsReleaseDates extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
-                ['Note'], Select::JOIN_LEFT
+                ['Note'],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['eds' => 'Editions'],
@@ -98,7 +101,8 @@ class EditionsReleaseDates extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order(['Year', 'Month', 'Day']);
             $select->where->equalTo('Edition_ID', $editionID);
@@ -121,7 +125,8 @@ class EditionsReleaseDates extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
-                ['Note'], Select::JOIN_LEFT
+                ['Note'],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['eds' => 'Editions'],
@@ -150,13 +155,15 @@ class EditionsReleaseDates extends Gateway
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->join(['i' => 'Items'], 'eds.Item_ID = i.Item_ID');
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order(['Year', 'Item_Name', 'Edition_Name']);
         };

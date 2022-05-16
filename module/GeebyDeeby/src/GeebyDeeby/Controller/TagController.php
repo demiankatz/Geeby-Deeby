@@ -115,7 +115,8 @@ class TagController extends AbstractBase
         );
         foreach ($tags as $tag) {
             return $this->redirect()->toRoute(
-                'tag', ['id' => $tag['Tag_ID']]
+                'tag',
+                ['id' => $tag['Tag_ID']]
             );
         }
         // If we got this far, there was no match; time to 404!

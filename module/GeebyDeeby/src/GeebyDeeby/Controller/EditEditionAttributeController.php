@@ -46,7 +46,8 @@ class EditEditionAttributeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'editionsattribute', 'attributes',
+            'editionsattribute',
+            'attributes',
             'geeby-deeby/edit-edition-attribute/render-edition-attributes'
         );
     }

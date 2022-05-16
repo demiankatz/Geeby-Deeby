@@ -46,7 +46,9 @@ class EditNoteController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'note', 'notes', 'geeby-deeby/edit-note/render-notes'
+            'note',
+            'notes',
+            'geeby-deeby/edit-note/render-notes'
         );
     }
 

@@ -49,7 +49,9 @@ class EditionsProductCodes extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_Product_Codes');
@@ -68,7 +70,8 @@ class EditionsProductCodes extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Product_Codes.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order('Product_Code');
             $select->where->equalTo('Edition_ID', $editionID);
@@ -89,7 +92,8 @@ class EditionsProductCodes extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Product_Codes.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['eds' => 'Editions'],

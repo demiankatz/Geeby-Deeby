@@ -46,7 +46,8 @@ class EditSeriesAttributeController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'seriesattribute', 'attributes',
+            'seriesattribute',
+            'attributes',
             'geeby-deeby/edit-series-attribute/render-series-attributes'
         );
         // If this is not an AJAX request, we also want to display relationships:

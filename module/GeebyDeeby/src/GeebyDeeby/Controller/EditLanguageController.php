@@ -46,7 +46,9 @@ class EditLanguageController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'language', 'languages', 'geeby-deeby/edit-language/render-languages'
+            'language',
+            'languages',
+            'geeby-deeby/edit-language/render-languages'
         );
     }
 

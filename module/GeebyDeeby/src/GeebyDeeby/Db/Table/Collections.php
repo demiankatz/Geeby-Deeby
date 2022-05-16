@@ -57,7 +57,9 @@ class Collections extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Collections');
@@ -105,12 +107,14 @@ class Collections extends Gateway
                 'Collections.Item_ID = i.Item_ID'
             );
             $select->join(
-                ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID'
+                ['eds' => 'Editions'],
+                'i.Item_ID = eds.Item_ID'
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['s' => 'Series'],
@@ -118,7 +122,8 @@ class Collections extends Gateway
             );
             if ($groupByLang) {
                 $select->join(
-                    ['l' => 'Languages'], 's.Language_ID = l.Language_ID'
+                    ['l' => 'Languages'],
+                    's.Language_ID = l.Language_ID'
                 );
                 $fields = [
                     'Language_Name', 'Series_Name', 's.Series_ID',
@@ -174,12 +179,14 @@ class Collections extends Gateway
                 ['Other_Note' => 'Collection_Note']
             );
             $select->join(
-                ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID'
+                ['eds' => 'Editions'],
+                'i.Item_ID = eds.Item_ID'
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['s' => 'Series'],
@@ -210,7 +217,9 @@ class Collections extends Gateway
     {
         $callback = function ($select) use ($userID) {
             $count = new Expression(
-                'count(?)', ['Item_ID'], [Expression::TYPE_IDENTIFIER]
+                'count(?)',
+                ['Item_ID'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->columns(['Collection_Status', 'Count' => $count]);
             $select->group('Collection_Status');

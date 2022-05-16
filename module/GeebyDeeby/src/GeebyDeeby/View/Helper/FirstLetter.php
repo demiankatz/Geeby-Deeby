@@ -50,7 +50,9 @@ class FirstLetter extends \Laminas\View\Helper\AbstractHelper
         setlocale(LC_ALL, 'en_US');
         $firstUtf = mb_strtoupper(mb_substr($text, 0, 1));
         $first = preg_replace(
-            '/[^0-9A-Z]/', '', iconv('utf-8', 'ascii//TRANSLIT', $firstUtf)
+            '/[^0-9A-Z]/',
+            '',
+            iconv('utf-8', 'ascii//TRANSLIT', $firstUtf)
         );
         return strlen($first) == 1 ? $first : $firstUtf;
     }

@@ -46,7 +46,9 @@ class EditTagController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'tag', 'tags', 'geeby-deeby/edit-tag/render-tags'
+            'tag',
+            'tags',
+            'geeby-deeby/edit-tag/render-tags'
         );
         // If this is not an AJAX request, we also want to display types:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -146,7 +148,9 @@ class EditTagController extends AbstractBase
     public function typelistAction()
     {
         return $this->getGenericList(
-            'tagType', 'tagTypes', 'geeby-deeby/edit-tag/render-types'
+            'tagType',
+            'tagTypes',
+            'geeby-deeby/edit-tag/render-types'
         );
     }
 
@@ -158,7 +162,11 @@ class EditTagController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemstags', 'Tag_ID', 'Item_ID', 'items', 'getItemsForTag',
+            'itemstags',
+            'Tag_ID',
+            'Item_ID',
+            'items',
+            'getItemsForTag',
             'geeby-deeby/edit-tag/item-list.phtml'
         );
     }
@@ -184,8 +192,11 @@ class EditTagController extends AbstractBase
         }
         $extras = ['Tags_Relationship_ID' => $rid];
         return $this->handleGenericLink(
-            'tagsrelationshipsvalues', $linkFrom, $linkTo,
-            'relationshipsValues', 'getRelationshipsForTag',
+            'tagsrelationshipsvalues',
+            $linkFrom,
+            $linkTo,
+            'relationshipsValues',
+            'getRelationshipsForTag',
             'geeby-deeby/edit-tag/relationship-list.phtml',
             $extras
         );
@@ -213,8 +224,11 @@ class EditTagController extends AbstractBase
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
             ? ['Predicate_ID' => $pid] : [];
         return $this->handleGenericLink(
-            'tagsuris', 'Tag_ID', 'URI',
-            'uris', 'getURIsForTag',
+            'tagsuris',
+            'Tag_ID',
+            'URI',
+            'uris',
+            'getURIsForTag',
             'geeby-deeby/edit-tag/uri-list.phtml',
             $extras
         );

@@ -4,7 +4,7 @@
     <div class="result row">
       <span class="number col-md-1"><?=$i + 1 ?></span>
       <a class="col-md-10" href="<?=$this->url(strtolower($this->prefix), ['id' => $current[$this->prefix . '_ID']])?>">
-        <?=$this->escapeHtml($this->fixtitle(isset($current[$this->prefix . '_Name']) ? $current[$this->prefix . '_Name'] : $current[$this->prefix . '_AltName']))?>
+        <?=$this->escapeHtml($this->fixtitle($current[$this->prefix . '_Name'] ?? $current[$this->prefix . '_AltName']))?>
       </a>
     </div>
   <?php endforeach; ?>

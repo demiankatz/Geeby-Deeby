@@ -1,21 +1,21 @@
 <?php
 
-$finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__ . '/../config')
-    ->in(__DIR__ . '/../module')
-    ->in(__DIR__ . '/../public');
+$finder = new PhpCsFixer\Finder();
+$finder->in(__DIR__ . '/../module/*/view')
+    ->name('*.phtml');
 
 $rules = [
     'align_multiline_comment' => true,
     'array_syntax' => ['syntax' => 'short'],
     'binary_operator_spaces' => [
         'default' => 'single_space',
-        'operators' => ['=' => null, '=>' => null],
     ],
     'blank_line_after_namespace' => true,
-    'braces' => true,
+    //'braces' => true, // disabled because we don't want to create inconsistent indentation, but useful to normalize control structure spacing
     'cast_spaces' => ['space' => 'none'],
+    'class_attributes_separation' => ['elements' => ['method' => 'one', 'property' => 'one']],
     'concat_space' => ['spacing' => 'one'],
+    'constant_case' => ['case' => 'lower'],
     'elseif' => true,
     'encoding' => true,
     'ereg_to_preg' => true,
@@ -25,22 +25,19 @@ $rules = [
     'indentation_type' => true,
     'is_null' => true,
     'line_ending' => true,
-    'linebreak_after_opening_tag' => true,
+    'list_syntax' => ['syntax' => 'short'],
     'lowercase_cast' => true,
-    'lowercase_constants' => true,
     'lowercase_keywords' => true,
     'magic_constant_casing' => true,
     'method_argument_space' => true,
-    'method_separation' => true,
     'native_function_casing' => true,
     'no_blank_lines_after_class_opening' => true,
     'no_blank_lines_after_phpdoc' => true,
     'no_blank_lines_before_namespace' => true,
-    'no_closing_tag' => true,
     'no_empty_comment' => true,
     'no_empty_phpdoc' => true,
     'no_empty_statement' => true,
-    'no_extra_consecutive_blank_lines' => true,
+    'no_extra_blank_lines' => true,
     'no_leading_import_slash' => true,
     'no_leading_namespace_whitespace' => true,
     'no_mixed_echo_print' => true,
@@ -49,7 +46,6 @@ $rules = [
     'no_spaces_around_offset' => true,
     'no_spaces_inside_parenthesis' => true,
     'no_trailing_whitespace' => true,
-    'no_trailing_whitespace_in_comment' => true,
     'no_unneeded_control_parentheses' => true,
     'no_unneeded_curly_braces' => true,
     'no_unused_imports' => true,
@@ -59,6 +55,7 @@ $rules = [
     'non_printable_character' => true,
     'ordered_imports' => true,
     'phpdoc_no_access' => true,
+    'pow_to_exponentiation' => true,
     'single_blank_line_at_eof' => true,
     'single_class_element_per_statement' => true,
     'single_import_per_statement' => true,
@@ -67,7 +64,7 @@ $rules = [
     'standardize_not_equals' => true,
     'switch_case_semicolon_to_colon' => true,
     'switch_case_space' => true,
-    'ternary_operator_spaces' => true,
+    //'ternary_operator_spaces' => true, // disabled due to bug in php-cs-fixer 2.7.1
     'ternary_to_null_coalescing' => true,
     'visibility_required' => true,
 ];
@@ -77,8 +74,8 @@ if (!is_dir($cacheDir)) {
     mkdir($cacheDir);
 }
 
-return PhpCsFixer\Config::create()
-    ->setCacheFile($cacheDir . '/.code.cache')
+$config = new PhpCsFixer\Config();
+return $config->setCacheFile($cacheDir . '/.template.cache')
     ->setRiskyAllowed(true)
     ->setRules($rules)
     ->setFinder($finder);

@@ -57,11 +57,14 @@ class CityController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view,
+    protected function addPrimaryResourceToGraph(
+        $graph,
+        $view,
         $class = 'skos:Concept'
     ) {
         $uri = $this->getServerUrl(
-            'city', ['id' => $view->city['City_ID']]
+            'city',
+            ['id' => $view->city['City_ID']]
         );
         $city = $graph->resource($uri, $class);
         $city->set('rdf:label', $view->city['City_Name']);

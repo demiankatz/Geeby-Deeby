@@ -182,7 +182,8 @@ class EditionController extends AbstractBase
         }
         foreach ($view->oclcNumbers as $oclc) {
             $edition->add(
-                'owl:sameAs', 'http://www.worldcat.org/oclc/' . $oclc['OCLC_Number']
+                'owl:sameAs',
+                'http://www.worldcat.org/oclc/' . $oclc['OCLC_Number']
             );
         }
         if (!empty($this->copyRdfClass) && !empty($this->hasCopyPredicate)) {
@@ -198,7 +199,8 @@ class EditionController extends AbstractBase
                         $prop = $attr['Editions_Full_Text_Attribute_RDF_Property'];
                         if (!empty($prop)) {
                             $copy->set(
-                                $prop, $attr['Editions_Full_Text_Attribute_Value']
+                                $prop,
+                                $attr['Editions_Full_Text_Attribute_Value']
                             );
                         }
                     }

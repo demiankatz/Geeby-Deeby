@@ -46,7 +46,9 @@ class EditPersonController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'person', 'people', 'geeby-deeby/edit-person/render-people'
+            'person',
+            'people',
+            'geeby-deeby/edit-person/render-people'
         );
         // If this is not an AJAX request, we also want to display roles
         // and authorities:
@@ -100,8 +102,11 @@ class EditPersonController extends AbstractBase
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
             ? ['Predicate_ID' => $pid] : [];
         return $this->handleGenericLink(
-            'peopleuris', 'Person_ID', 'URI',
-            'uris', 'getURIsForPerson',
+            'peopleuris',
+            'Person_ID',
+            'URI',
+            'uris',
+            'getURIsForPerson',
             'geeby-deeby/edit-person/uri-list.phtml',
             $extras
         );
@@ -115,8 +120,11 @@ class EditPersonController extends AbstractBase
     public function aliaspseudonymAction()
     {
         return $this->handleGenericLink(
-            'pseudonyms', 'Real_Person_ID', 'Pseudo_Person_ID',
-            'pseudonyms', 'getPseudonyms',
+            'pseudonyms',
+            'Real_Person_ID',
+            'Pseudo_Person_ID',
+            'pseudonyms',
+            'getPseudonyms',
             'geeby-deeby/edit-person/pseudonym-list.phtml'
         );
     }
@@ -129,8 +137,11 @@ class EditPersonController extends AbstractBase
     public function aliasrealnameAction()
     {
         return $this->handleGenericLink(
-            'pseudonyms', 'Pseudo_Person_ID', 'Real_Person_ID',
-            'realnames', 'getRealNames',
+            'pseudonyms',
+            'Pseudo_Person_ID',
+            'Real_Person_ID',
+            'realnames',
+            'getRealNames',
             'geeby-deeby/edit-person/realname-list.phtml'
         );
     }
@@ -143,7 +154,9 @@ class EditPersonController extends AbstractBase
     public function authoritylistAction()
     {
         return $this->getGenericList(
-            'authority', 'authorities', 'geeby-deeby/edit-person/render-authorities'
+            'authority',
+            'authorities',
+            'geeby-deeby/edit-person/render-authorities'
         );
     }
 
@@ -167,7 +180,9 @@ class EditPersonController extends AbstractBase
     public function rolelistAction()
     {
         return $this->getGenericList(
-            'role', 'roles', 'geeby-deeby/edit-person/render-roles'
+            'role',
+            'roles',
+            'geeby-deeby/edit-person/render-roles'
         );
     }
 

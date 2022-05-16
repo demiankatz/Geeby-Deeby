@@ -11,6 +11,9 @@
     "config": {
         "platform": {
             "php": "7.3"
+        },
+        "allow-plugins": {
+            "laminas/laminas-dependency-plugin": true
         }
     },
     "require": {
@@ -33,12 +36,12 @@
         "laminas/laminas-servicemanager": "3.4.0",
         "laminas/laminas-session": "2.9.1",
         "laminas/laminas-view": "2.11.4",
-        "laminas/laminas-dependency-plugin": "^1.0",
-        "symfony/console": "4.4.11"
+        "laminas/laminas-dependency-plugin": "^2.0",
+        "symfony/console": "5.4.8"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "2.16.4",
-        "phing/phing": "2.16.3",
-        "squizlabs/php_codesniffer": "3.5.6"
+        "friendsofphp/php-cs-fixer": "3.4.0",
+        "phing/phing": "2.17.3",
+        "squizlabs/php_codesniffer": "3.6.2"
     }
 }

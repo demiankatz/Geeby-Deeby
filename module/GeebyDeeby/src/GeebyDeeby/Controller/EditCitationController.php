@@ -46,7 +46,9 @@ class EditCitationController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'citation', 'citations', 'geeby-deeby/edit-citation/render-citations'
+            'citation',
+            'citations',
+            'geeby-deeby/edit-citation/render-citations'
         );
     }
 
