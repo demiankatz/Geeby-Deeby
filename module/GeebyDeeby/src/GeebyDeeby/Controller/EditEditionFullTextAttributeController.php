@@ -46,7 +46,8 @@ class EditEditionFullTextAttributeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'editionsfulltextattribute', 'attributes',
+            'editionsfulltextattribute',
+            'attributes',
             'geeby-deeby/edit-edition-full-text-attribute/'
             . 'render-edition-full-text-attributes'
         );
@@ -67,7 +68,9 @@ class EditEditionFullTextAttributeController extends AbstractBase
 
         ];
         [$response] = $this->handleGenericItem(
-            'editionsfulltextattribute', $assignMap, 'attribute'
+            'editionsfulltextattribute',
+            $assignMap,
+            'attribute'
         );
 
         return $response;

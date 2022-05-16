@@ -46,7 +46,9 @@ class EditPlatformController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'platform', 'platforms', 'geeby-deeby/edit-platform/render-platforms'
+            'platform',
+            'platforms',
+            'geeby-deeby/edit-platform/render-platforms'
         );
     }
 

@@ -150,7 +150,8 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      * @param null|ConfigInterface $v3config                  Configuration settings
      * (optional)
      */
-    public function __construct($configOrContainerInstance = null,
+    public function __construct(
+        $configOrContainerInstance = null,
         array $v3config = []
     ) {
         $this->addAbstractFactory('GeebyDeeby\Db\Table\AbstractFactory');

@@ -48,7 +48,10 @@ class EditUserController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'user', 'users', 'geeby-deeby/edit-user/render-users', 'User_Editor'
+            'user',
+            'users',
+            'geeby-deeby/edit-user/render-users',
+            'User_Editor'
         );
         // If this is not an AJAX request, we also want to display groups:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -115,7 +118,9 @@ class EditUserController extends AbstractBase
     public function usergrouplistAction()
     {
         return $this->getGenericList(
-            'usergroup', 'usergroups', 'geeby-deeby/edit-user/render-usergroups',
+            'usergroup',
+            'usergroups',
+            'geeby-deeby/edit-user/render-usergroups',
             'User_Editor'
         );
     }

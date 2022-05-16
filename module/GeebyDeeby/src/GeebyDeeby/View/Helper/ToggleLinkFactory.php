@@ -51,7 +51,9 @@ class ToggleLinkFactory implements \Laminas\ServiceManager\Factory\FactoryInterf
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         $table = $container->get(\GeebyDeeby\Db\Table\PluginManager::class)

@@ -48,7 +48,9 @@ class PublishersURIs extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Publishers_URIs');

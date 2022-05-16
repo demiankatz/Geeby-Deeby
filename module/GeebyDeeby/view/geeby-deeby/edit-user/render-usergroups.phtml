@@ -5,11 +5,13 @@
         <a href="#" onclick="UserGroup.edit(<?=$this->escapeHtml($current['User_Group_ID'])?>); return false;"><?=$this->escapeHtml($current['Group_Name'])?></a>
       </td>
       <td>
-        <?=$this->iconButton(
-          'trash',
-          "UserGroup.destroy(" . $current['User_Group_ID'] . ")",
-          'Delete group: ' . $current['Group_Name']
-        )?>
+        <?=
+          $this->iconButton(
+              'trash',
+              "UserGroup.destroy(" . $current['User_Group_ID'] . ")",
+              'Delete group: ' . $current['Group_Name']
+          )
+        ?>
       </td>
     </tr>
   </table>

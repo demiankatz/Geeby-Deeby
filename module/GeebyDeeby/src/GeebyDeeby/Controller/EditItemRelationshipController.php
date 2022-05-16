@@ -46,7 +46,8 @@ class EditItemRelationshipController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'itemsrelationship', 'relationships',
+            'itemsrelationship',
+            'relationships',
             'geeby-deeby/edit-item-relationship/render-item-relationships'
         );
     }

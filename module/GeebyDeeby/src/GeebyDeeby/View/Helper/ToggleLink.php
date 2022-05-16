@@ -67,7 +67,10 @@ class ToggleLink extends \Laminas\View\Helper\AbstractHelper
      *
      * @return string
      */
-    public function __invoke($route, $id, $label = null,
+    public function __invoke(
+        $route,
+        $id,
+        $label = null,
         $permission = 'Content_Editor'
     ) {
         // Not logged in? No link.

@@ -98,7 +98,9 @@ class UserController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
         $view->buyers = $this->getDbTable('collections')->compareCollections(
-            $view->user['User_ID'], 'extra', 'want'
+            $view->user['User_ID'],
+            'extra',
+            'want'
         );
         return $view;
     }
@@ -157,10 +159,12 @@ class UserController extends AbstractBase
                     $update['Password_Hash'] = $bcrypt->create($password1);
                 }
                 $table->update(
-                    $update, ['User_ID' => $view->user['User_ID']]
+                    $update,
+                    ['User_ID' => $view->user['User_ID']]
                 );
                 return $this->redirect()->toRoute(
-                    'user', ['id' => $view->user['User_ID']]
+                    'user',
+                    ['id' => $view->user['User_ID']]
                 );
             }
         } else {
@@ -256,7 +260,9 @@ class UserController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
         $view->sellers = $this->getDbTable('collections')->compareCollections(
-            $view->user['User_ID'], 'want', 'extra'
+            $view->user['User_ID'],
+            'want',
+            'extra'
         );
         return $view;
     }

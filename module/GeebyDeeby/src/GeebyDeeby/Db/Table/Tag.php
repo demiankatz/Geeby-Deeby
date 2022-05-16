@@ -50,7 +50,9 @@ class Tag extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Tags');
@@ -102,21 +104,25 @@ class Tag extends Gateway
             $select->quantifier('DISTINCT');
             $select->columns(['Tag_ID', 'Tag']);
             $select->join(
-                ['it' => 'Items_Tags'], 'it.Tag_ID = Tags.Tag_ID',
+                ['it' => 'Items_Tags'],
+                'it.Tag_ID = Tags.Tag_ID',
                 []
             );
             $select->join(
-                ['i' => 'Items'], 'it.Item_ID = i.Item_ID',
+                ['i' => 'Items'],
+                'it.Item_ID = i.Item_ID',
                 ['Item_ID', 'Item_Name']
             );
             $select->join(
-                ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID',
+                ['eds' => 'Editions'],
+                'eds.Item_ID = i.Item_ID',
                 []
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $bestTitle = new Expression(
                 'COALESCE(?, ?)',

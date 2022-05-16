@@ -46,7 +46,9 @@ class EditPredicateController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'predicate', 'predicates', 'geeby-deeby/edit-predicate/render-predicates'
+            'predicate',
+            'predicates',
+            'geeby-deeby/edit-predicate/render-predicates'
         );
     }
 

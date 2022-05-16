@@ -8,11 +8,13 @@
         <?=$current['Description']?> (Source: <?=$sourceName?>)
       </td>
       <td>
-        <?=$this->iconButton(
-            'trash',
-            "Item.unlink('Description', '" . addslashes($current['Source']) . "')",
-            'Delete description from ' . $sourceName
-          )?>
+        <?=
+          $this->iconButton(
+              'trash',
+              "Item.unlink('Description', '" . addslashes($current['Source']) . "')",
+              'Delete description from ' . $sourceName
+          )
+        ?>
       </td>
     </tr>
   </table>

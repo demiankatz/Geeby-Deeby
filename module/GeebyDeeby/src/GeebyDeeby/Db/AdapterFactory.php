@@ -51,7 +51,9 @@ class AdapterFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         $config = $container->get('Config');

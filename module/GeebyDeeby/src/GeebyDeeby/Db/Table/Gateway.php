@@ -59,8 +59,11 @@ class Gateway extends AbstractTableGateway
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      * @param string        $table   Table name
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
-        RowGateway $rowObj = null, $table = null
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
+        RowGateway $rowObj = null,
+        $table = null
     ) {
         $this->adapter = $adapter;
         $this->tableManager = $tm;

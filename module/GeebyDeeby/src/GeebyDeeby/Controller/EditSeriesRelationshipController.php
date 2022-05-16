@@ -46,7 +46,8 @@ class EditSeriesRelationshipController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'seriesrelationship', 'relationships',
+            'seriesrelationship',
+            'relationships',
             'geeby-deeby/edit-series-relationship/render-series-relationships'
         );
     }

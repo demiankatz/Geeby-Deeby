@@ -46,7 +46,9 @@ class EditCategoryController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'category', 'categories', 'geeby-deeby/edit-category/render-categories'
+            'category',
+            'categories',
+            'geeby-deeby/edit-category/render-categories'
         );
     }
 

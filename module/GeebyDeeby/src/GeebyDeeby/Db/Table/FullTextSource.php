@@ -48,7 +48,9 @@ class FullTextSource extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Full_Text_Sources');
@@ -70,7 +72,8 @@ class FullTextSource extends Gateway
                 $select->join(
                     ['e' => 'Editions'],
                     'Editions_Full_Text.Edition_ID = e.Edition_ID',
-                    [], \Laminas\Db\Sql\Select::JOIN_INNER
+                    [],
+                    \Laminas\Db\Sql\Select::JOIN_INNER
                 );
                 $select->columns(['Full_Text_Source_ID']);
                 $select->quantifier(\Laminas\Db\Sql\Select::QUANTIFIER_DISTINCT);
