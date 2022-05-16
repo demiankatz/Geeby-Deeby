@@ -8,11 +8,13 @@
           </a>
         </td>
         <td>
-          <?=$this->iconButton(
-    'trash',
-    "Tag.unlink('Item', " . $current['Item_ID'] . ")",
-    'Unlink tagged item: ' . $current['Item_Name']
-)?>
+          <?=
+            $this->iconButton(
+                'trash',
+                "Tag.unlink('Item', " . $current['Item_ID'] . ")",
+                'Unlink tagged item: ' . $current['Item_Name']
+            )
+          ?>
         </td>
       </tr>
     </table>

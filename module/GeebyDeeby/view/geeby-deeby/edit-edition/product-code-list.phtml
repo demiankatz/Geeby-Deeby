@@ -6,11 +6,13 @@
           <?=$this->escapeHtml($current['Product_Code'])?><?php if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
         </td>
         <td>
-          <?=$this->iconButton(
-    'trash',
-    "Edition.unlink('ProductCode', " . $current['Sequence_ID'] . ")",
-    'Delete product code: ' . $current['Product_Code']
-)?>
+          <?=
+            $this->iconButton(
+                'trash',
+                "Edition.unlink('ProductCode', " . $current['Sequence_ID'] . ")",
+                'Delete product code: ' . $current['Product_Code']
+            )
+          ?>
         </td>
       </tr>
     </table>

@@ -11,11 +11,13 @@
                 <?=$this->escapeHtml($value['Item_Name'])?>
               </a>
             </td><td>
-              <?=$this->iconButton(
-    'trash',
-    "Item.unlink('Relationship', " . $value['Item_ID'] . ", '/" . $current['relationship_id'] . "')",
-    'Delete relationship -- ' . $current['label'] . ': ' . $value['Item_Name']
-)?>
+              <?=
+                $this->iconButton(
+                    'trash',
+                    "Item.unlink('Relationship', " . $value['Item_ID'] . ", '/" . $current['relationship_id'] . "')",
+                    'Delete relationship -- ' . $current['label'] . ': ' . $value['Item_Name']
+                )
+              ?>
             </td>
           </tr>
         <?php endforeach; ?>

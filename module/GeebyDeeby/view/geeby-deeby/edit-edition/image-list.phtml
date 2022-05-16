@@ -12,13 +12,15 @@
           </form>
         </td>
         <td>
-          <?=$this->iconButton(
-    'trash',
-    "Edition.unlink('Image', " . $current['Sequence_ID'] . ")",
-    !empty($current['IIIF_URI'])
+          <?=
+            $this->iconButton(
+                'trash',
+                "Edition.unlink('Image', " . $current['Sequence_ID'] . ")",
+                !empty($current['IIIF_URI'])
               ? 'Delete image with IIIF URI: ' . $current['IIIF_URI']
               : 'Delete image with path: ' . $current['Image_Path']
-)?>
+            )
+          ?>
         </td>
         <td>
           <?php

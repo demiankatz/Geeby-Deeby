@@ -6,11 +6,13 @@
           <a href="<?=$this->url('edit/item', ['id' => $current['Item_ID']])?>"><?=$this->escapeHtml($current['Item_Name'])?></a><br />
         </td>
         <td>
-          <?=$this->iconButton(
-    'trash',
-    "File.unlink('Item', " . $current['Item_ID'] . ")",
-    'Unlink item: ' . $current['Item_Name']
-)?>
+          <?=
+            $this->iconButton(
+                'trash',
+                "File.unlink('Item', " . $current['Item_ID'] . ")",
+                'Unlink item: ' . $current['Item_Name']
+            )
+          ?>
         </td>
       </tr>
     </table>

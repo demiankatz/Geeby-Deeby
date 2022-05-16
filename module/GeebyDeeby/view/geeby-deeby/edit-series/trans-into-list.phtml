@@ -8,11 +8,13 @@
           </a>
         </td>
         <td>
-          <?=$this->iconButton(
-    'trash',
-    "Series.unlink('Translation', " . $current['Series_ID'] . ", 'Into')",
-    'Unlink translation into: ' . $current['Series_Name']
-)?>
+          <?=
+            $this->iconButton(
+                'trash',
+                "Series.unlink('Translation', " . $current['Series_ID'] . ", 'Into')",
+                'Unlink translation into: ' . $current['Series_Name']
+            )
+          ?>
         </td>
       </tr>
     </table>
