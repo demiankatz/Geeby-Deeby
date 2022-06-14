@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/demiankatz/Geeby-Deeby.svg?branch=dev)](https://travis-ci.com/demiankatz/Geeby-Deeby)
+[![CI Status](https://github.com/demiankatz/Geeby-Deeby/actions/workflows/ci.yaml/badge.svg?branch=dev)](https://github.com/demiankatz/Geeby-Deeby/actions/workflows/ci.yaml)
 
 # Geeby-Deeby
 
