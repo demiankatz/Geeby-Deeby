@@ -18,7 +18,7 @@
     },
     "require": {
         "php": ">=7.3",
-        "easyrdf/easyrdf": "1.0.0",
+        "easyrdf/easyrdf": "1.1.1",
         "vufind-org/vufindcode": "1.2",
         "laminas/laminas-authentication": "2.10.1",
         "laminas/laminas-crypt": "3.6.0",
@@ -35,11 +35,11 @@
         "laminas/laminas-session": "2.12.1",
         "laminas/laminas-view": "2.16.0",
         "laminas/laminas-dependency-plugin": "^2.0",
-        "symfony/console": "5.4.8"
+        "symfony/console": "5.4.9"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "3.4.0",
         "phing/phing": "2.17.3",
-        "squizlabs/php_codesniffer": "3.6.2"
+        "squizlabs/php_codesniffer": "3.7.0"
     }
 }
