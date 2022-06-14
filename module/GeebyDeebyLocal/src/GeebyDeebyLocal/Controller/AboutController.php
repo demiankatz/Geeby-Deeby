@@ -27,7 +27,6 @@
  */
 namespace GeebyDeebyLocal\Controller;
 
-use Laminas\Cache\StorageFactory;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 
@@ -69,17 +68,7 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function progressAction()
     {
-        $dir = __DIR__ . '/../../../../../data/cache';
-        $opts = ['cache_dir' => $dir, 'ttl' => 60 * 60 * 24];
-        $settings = [
-            'adapter' => ['name' => 'filesystem', 'options' => $opts],
-            'plugins' => ['serializer']
-        ];
-        $cache = StorageFactory::factory($settings);
-        //if (!($stats = $cache->getItem('progressStats'))) {
         $stats = $this->getProgressStatistics();
-        //    $cache->setItem('progressStats', $stats);
-        //}
         return $this->createViewModel(['progress' => $stats]);
     }
 

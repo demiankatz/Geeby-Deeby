@@ -21,7 +21,6 @@
         "easyrdf/easyrdf": "1.1.1",
         "vufind-org/vufindcode": "1.2",
         "laminas/laminas-authentication": "2.10.1",
-        "laminas/laminas-cache": "2.9.0",
         "laminas/laminas-crypt": "3.6.0",
         "laminas/laminas-db": "2.15.0",
         "laminas/laminas-eventmanager": "3.4.0",
