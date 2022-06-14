@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.3.0 - currently in development
+## 2.3.0 - 2022-06-14
 
 ### Added
 
