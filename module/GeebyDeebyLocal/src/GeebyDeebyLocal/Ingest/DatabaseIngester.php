@@ -367,6 +367,11 @@ class DatabaseIngester extends BaseIngester
      */
     protected function setTopLevelDetails($editionObj, $series, $details)
     {
+        // Make sure we're operating on the top-level object:
+        if ($editionObj->Parent_Edition_ID) {
+            $edsTable = $this->getDbTable('edition');
+            $editionObj = $edsTable->getByPrimaryKey($editionObj->Parent_Edition_ID);
+        }
         $item = $this->getItemForEdition($editionObj);
         if (isset($details['date'])) {
             if (!$this->processDate($details['date'], $editionObj)) {
