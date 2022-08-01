@@ -306,6 +306,9 @@ class ModsExtractor
      */
     protected function extractExtent($mods)
     {
+        $part = $mods
+            ->xpath('mods:part/mods:detail[@type="part"]/mods:number');
+        $part = isset($part[0]) ? (string)$part[0] : '';
         $chapter = $mods
             ->xpath('mods:part/mods:detail[@type="chapter"]/mods:number');
         $chapter = isset($chapter[0]) ? (string)$chapter[0] : '';
@@ -317,6 +320,9 @@ class ModsExtractor
             ? (empty($pageStart) ? '' : 'page ' . $pageStart)
             : (empty($pageEnd) ? '' : "pages $pageStart-$pageEnd");
         $parts = [];
+        if (!empty($part)) {
+            $parts[] = "part $part";
+        }
         if (!empty($chapter)) {
             $parts[] = (strstr($chapter, '-') ? 'chapters ' : 'chapter ') . $chapter;
         }
