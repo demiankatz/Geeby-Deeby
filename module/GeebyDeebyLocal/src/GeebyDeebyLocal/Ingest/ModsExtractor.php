@@ -92,6 +92,10 @@ class ModsExtractor
         if ($seriesInfo = $this->extractSeries($mods->xpath($seriesPath))) {
             $retVal['series'] = $seriesInfo;
         }
+        $notes = $this->extractNotes($mods);
+        if (!empty($notes)) {
+            $retVal['notes'] = $notes;
+        }
         $oclcPath = '/mods:mods/mods:identifier[@type="oclc"]';
         if ($oclc = $this->extractAll($mods->xpath($oclcPath))) {
             $retVal['oclc'] = $oclc;
@@ -365,6 +369,33 @@ class ModsExtractor
                     && !in_array($uri[0], $this->subjectUrisToIgnore)
                 ) {
                     $results[(string)$uri[0]] = trim($value);
+                }
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Extract note information from the MODS.
+     *
+     * @param object $mods Simple XML object representing part of a MODS record.
+     *
+     * @return array
+     */
+    protected function extractNotes($mods)
+    {
+        $results = [];
+        $paths = [
+            'mods:note'
+        ];
+        $regEx = '/^Includes (short|article|department)/';
+        $prefixedPaths = [];
+        foreach ($paths as $path) {
+            $matches = $mods->xpath($path . '|mods:subject/' . $path);
+            foreach ($matches as $current) {
+                $value = trim((string)$current);
+                if (preg_match($regEx, $value)) {
+                    $results[] = $value;
                 }
             }
         }

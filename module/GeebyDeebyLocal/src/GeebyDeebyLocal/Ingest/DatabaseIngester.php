@@ -388,6 +388,11 @@ class DatabaseIngester extends BaseIngester
                 return false;
             }
         }
+        if (isset($details['notes'])) {
+            if (!$this->processNotes($details['notes'], $editionObj)) {
+                return false;
+            }
+        }
         if (isset($details['oclc'])) {
             if (!$this->processOclcNum($details['oclc'], $editionObj)) {
                 return false;
@@ -701,6 +706,33 @@ class DatabaseIngester extends BaseIngester
         $this->writeln("Updating address to $name, $street, $place");
         $editionObj->Preferred_Series_Publisher_ID = $match;
         $editionObj->save();
+        return true;
+    }
+
+    /**
+     * Normalize and store edition notes.
+     *
+     * @param array  $notes      Notes
+     * @param object $editionObj Edition row
+     *
+     * @return bool True on success
+     */
+    protected function processNotes($notes, $editionObj)
+    {
+        $notes = trim(implode(' ', $notes));
+        if (empty($editionObj->Edition_Description)) {
+            $this->writeln("Adding edition description: $notes");
+            $editionObj->Edition_Description = $notes;
+            $editionObj->save();
+            return true;
+        }
+        if (false === strstr($editionObj->Edition_Description, $notes)) {
+            $this->writeln(
+                "FATAL: edition description mismatch: "
+                . "{$notes} vs. {$editionObj->Edition_Description}"
+            );
+            return false;
+        }
         return true;
     }
 
