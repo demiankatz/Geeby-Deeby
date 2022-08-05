@@ -859,6 +859,9 @@ class DatabaseIngester extends BaseIngester
                 }
             } else {
                 $uriLookup = $tagsUris->getTagsForURI($uri);
+                if (count($uriLookup) == 0) {
+                    $uriLookup = $tagsUris->getTagsForURI($this->switchProtocol($uri));
+                }
                 $id = false;
                 foreach ($uriLookup as $id) {
                     break;
