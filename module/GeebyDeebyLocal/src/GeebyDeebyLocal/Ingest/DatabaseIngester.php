@@ -1112,6 +1112,10 @@ class DatabaseIngester extends BaseIngester
                 $data['authorIds'] ?? [],
                 $data['editorIds'] ?? []
             );
+            // Distrust unattributed items by default:
+            if (count($authorsAndEditors) === 0) {
+                $confidence -= 10;
+            }
             $diffCount = count(
                 array_diff($authorsAndEditors, array_keys($currentCredits))
             );
