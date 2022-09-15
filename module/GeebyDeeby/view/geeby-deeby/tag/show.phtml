@@ -18,6 +18,7 @@
     </tr>
   <?php endforeach; ?>
   <?php foreach ($this->relationshipsValues as $current): ?>
+    <?php $displayedSomething = true; ?>
     <tr>
       <th scope="row"><?=$this->escapeHtml($current['label'])?>:</th>
       <td>
