@@ -203,6 +203,24 @@ class EditTagController extends AbstractBase
     }
 
     /**
+     * Show action -- allows tolerance of URLs where the user has inserted 'edit'
+     * into an existing front-end link.
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        return $this->redirect()->toRoute(
+            'edit/tag',
+            [
+                'action' => 'index',
+                'id' => $this->params()->fromRoute('id'),
+                'extra' => $this->params()->fromRoute('extra')
+            ]
+        );
+    }
+
+    /**
      * Operate on a single type
      *
      * @return mixed
