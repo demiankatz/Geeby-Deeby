@@ -1,6 +1,7 @@
 <?php
     $title = $tag['Tag'];
     $this->layout()->title = 'Subject/Tag - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/tag', $tag['Tag_ID']);
     $displayedSomething = false;
 ?>
 <table class="item">
