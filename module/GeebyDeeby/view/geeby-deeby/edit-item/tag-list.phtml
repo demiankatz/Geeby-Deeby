@@ -3,7 +3,7 @@
   <table class="list_item">
     <tr>
       <td>
-        <?=$this->escapeHtml($current['Tag'])?>
+        <a href="<?=$this->url('edit/tag', ['id' => $current['Tag_ID']])?>"><?=$this->escapeHtml($current['Tag'])?></a>
       </td>
       <td>
         <?=
