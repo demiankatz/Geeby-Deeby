@@ -20,6 +20,14 @@
   </p>
 <?php endif; ?>
 
+<?php $uriCount = count($uris); if ($uriCount > 0): $displayedSomething = true; ?>
+  <p><b>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</b>
+    <?php $i = 0; foreach ($uris as $uri): $i++ ?>
+      <a href="<?=$this->escapeHtmlAttr($uri['URI'])?>"><?=$this->escapeHtml($uri['URI'])?></a><?=$i < $uriCount ? ', ' : ''?>
+    <?php endforeach; ?>
+  </p>
+<?php endif; ?>
+
 <?php if (!empty($person['Biography'])): $displayedSomething = true; ?>
   <?php /* Don't escape biography -- contains HTML. */ ?>
   <p><?=$person['Biography']?></p>
