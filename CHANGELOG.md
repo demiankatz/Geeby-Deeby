@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Added
 
 - Improved navigation for tag editing.
+- Visible links to external identifiers for authors, publishers and subjects/tags.
 
 ### Changed
 
