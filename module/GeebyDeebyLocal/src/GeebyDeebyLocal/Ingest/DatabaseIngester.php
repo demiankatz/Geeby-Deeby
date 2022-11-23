@@ -866,7 +866,7 @@ class DatabaseIngester extends BaseIngester
     protected function extractIdFromDimeNovelsUri($uri, $type)
     {
         $parts = explode('://dimenovels.org/' . $type . '/', $uri);
-        return $parts[1] ?? false;
+        return isset($parts[1]) ? intval($parts[1]) : false;
     }
 
     /**
