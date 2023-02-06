@@ -1,57 +1,30 @@
 <?php $this->layout()->title = 'The Spare Change Library' ?>
 
-<p>The Spare Change Library is the dime novel and popular literature podcast, featuring audio editions of stories, as well as scholarship. The podcast is broken into "substreams" based on the content. We currently have two of these substreams: Mittie's Storytime (fiction) and Professor M's Lecture Series (scholarship). These are all available through a shared <a href="<?=$this->url('podcast-rss')?>">RSS feed</a>.</p>
+<p>The Spare Change Library is the dime novel and popular literature podcast, featuring audio editions of stories, as well as scholarship.
+All episodes are available through an <a href="<?=$this->url('podcast-rss')?>">RSS feed</a>.</p>
 
 <p>The Spare Change Library is produced by Lancelot Darling &amp; Friends (named after the hero of Mrs. Alex. McVeigh Miller's <i>The Bride of the Tomb</i>).</p>
 
 <!-- <div style="text-align: center;"><img alt="Spare Change Library logo" src="<?=$this->url('home')?>images/spl-logo.png" /></div> -->
 
-<div class="row" style="text-align:center">
-  <div class="col-sm-6">
-    <a href="<?=$this->url('podcast-mitties')?>"><img src="<?=$this->url('home')?>images/mittie-text.png" alt="Mittie's Storytime" /></a>
-    <p><a href="<?=$this->url('podcast-mitties')?>">Mittie's Storytime</a> is a collection of audio editions of dime novel fiction.</p>
-    <p>An audiobook edition of <i>The Bride of the Tomb</i>, the first complete novel featured on this podcast, may also be downloaded in its entirety (<a href="http://digital.library.villanova.edu/Item/vudl:384795">MP3/OGG/FLAC</a>, <a href="https://dimenovels.org/m4b/bott32kbps.m4b">32kbps M4B</a>, <a href="https://dimenovels.org/m4b/bott64kbps.m4b">64kbps M4B</a>).</p>
-  </div>
-  <div class="col-sm-6">
-    <a href="<?=$this->url('podcast-professor')?>"><img src="<?=$this->url('home')?>images/professor-text.png" alt="Professor M's Lecture Series" /></a>
-    <p><a href="<?=$this->url('podcast-professor')?>">Professor M's Lecture Series</a> is a collection of oral history about dime novels and popular literature.</p>
-  </div>
-</div>
-<h2 style="text-align:center">Latest Episodes</h2>
-<div class="row" style="text-align:center">
-  <div class="col-sm-6">
-    <?php $this->latest = current($episodes['mittie']) ?>
-    <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
-  </div>
-  <div class="col-sm-6">
-    <?php $this->latest = current($episodes['professor']) ?>
+<h2>Latest Episode</h2>
+<div class="row">
+  <div class="col-sm-12">
+    <?php $this->latest = current($episodes) ?>
     <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
   </div>
 </div>
-<h2 style="text-align:center">Previous Episodes</h2>
-<div class="row" style="text-align:center">
-  <div class="col-sm-6">
-    <?php if(count($episodes['mittie']) > 1): ?>
-      <?php next($episodes['mittie']) ?>
-      <?php while($this->latest = current($episodes['mittie'])): ?>
+<h2>Previous Episodes</h2>
+<div class="row">
+  <div class="col-sm-12">
+    <?php if(count($episodes) > 1): ?>
+      <?php next($episodes) ?>
+      <?php while($this->latest = current($episodes)): ?>
         <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
         <hr/>
-        <?php next($episodes['mittie']) ?>
+        <?php next($episodes) ?>
       <?php endwhile; ?>
-      <a href="<?=$this->url('podcast-mitties')?>">More...</a>
-    <?php endif; ?>
-  </div>
-  <div class="col-sm-6">
-    <?php if(count($episodes['professor']) > 1): ?>
-      <?php next($episodes['professor']) ?>
-      <?php while($this->latest = current($episodes['professor'])): ?>
-        <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
-        <hr/>
-        <?php next($episodes['professor']) ?>
-      <?php endwhile; ?>
-      <a href="<?=$this->url('podcast-professor')?>">More...</a>
+      <?php if (!$all): ?><a href="?all=1">More...</a><?php endif; ?>
     <?php endif; ?>
   </div>
 </div>
-
-<!-- ___ is a collection of audio editions of nonfiction popular literature. -->

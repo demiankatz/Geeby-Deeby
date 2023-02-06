@@ -47,14 +47,9 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function indexAction()
     {
-        return $this->createViewModel(
-            ['episodes' => [
-                'mittie'    => $this->podcast()
-                    ->getMetadata(4, 'Mittie\'s Storytime'),
-                'professor' => $this->podcast()
-                    ->getMetadata(4, 'Professor M\'s Lecture Series'),
-            ]]
-        );
+        $all = $this->params()->fromQuery('all', 0);
+        $episodes = $this->podcast()->getMetadata($all ? 0 : 4);
+        return $this->createViewModel(compact('episodes', 'all'));
     }
 
     /**

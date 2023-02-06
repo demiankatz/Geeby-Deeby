@@ -45,11 +45,8 @@ class IndexController extends \GeebyDeeby\Controller\IndexController
      */
     public function indexAction()
     {
-        $mittie = $this->podcast()->getMetadata(4, 'Mittie\'s Storytime');
-        $professor = $this->podcast()
-            ->getMetadata(4, 'Professor M\'s Lecture Series');
         return $this->createViewModel(
-            ['episodes' => compact('mittie', 'professor')]
+            ['episodes' => $this->podcast()->getMetadata(4)]
         );
     }
 
