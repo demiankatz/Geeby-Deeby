@@ -77,6 +77,9 @@ class Podcast extends AbstractPlugin
             $firstWord = current(explode(' ', $current['category']));
             $current['category_route'] = 'podcast-'
                 . strtolower(preg_replace('/[^a-zA-Z]/', '', $firstWord));
+            if (empty($firstWord)) {
+                $current['category_route'] = 'podcast';
+            }
             $credits = str_replace('.mp3', '.html', $filename);
             $current['credits'] = file_exists($credits)
                 ? file_get_contents($credits) : false;

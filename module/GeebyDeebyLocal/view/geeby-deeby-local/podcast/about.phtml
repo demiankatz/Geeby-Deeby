@@ -10,7 +10,7 @@
     </div>
     
     <div class="col-sm-7">
-      <h2><a href="<?=$this->url($details['category_route'])?>"><?=$this->escapeHtml($details['category'])?></a>: <?=$this->escapeHtml($details['title'])?></h2>
+      <h2><?php if (!empty($details['category'])): ?><a href="<?=$this->url($details['category_route'])?>"><?=$this->escapeHtml($details['category'])?></a>: <?php endif; ?><?=$this->escapeHtml($details['title'])?></h2>
 
       <p><?=$this->escapeHtml($details['description'])?></p>
 
