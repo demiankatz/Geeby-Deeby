@@ -142,15 +142,15 @@ class DirectoryCommand extends Command
             return 1;
         }
         switch ($job->type) {
-        case 'series':
-            // for series, extra is series object, loaded once...
-            $extra = $this->series->getByPrimaryKey($job->id);
-            break;
-        case 'existing':
-            break;
-        default:
-            $output->writeln("Invalid/missing job.json in $dir");
-            return;
+            case 'series':
+                // for series, extra is series object, loaded once...
+                $extra = $this->series->getByPrimaryKey($job->id);
+                break;
+            case 'existing':
+                break;
+            default:
+                $output->writeln("Invalid/missing job.json in $dir");
+                return;
         }
 
         $this->ingester->setOutputInterface($output);

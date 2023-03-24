@@ -249,16 +249,16 @@ class ModsExtractor
             if (strlen($currentName) > 0) {
                 $type = isset($type[0]) ? (string)$type[0] : 'default';
                 switch ($type) {
-                case 'date':
-                    $currentName .= ', ';
-                    break;
-                case 'termsOfAddress':
-                    $currentName .= (substr($namePartStr, 0, 1) == '(')
-                        ? ' ' : ', ';
-                    break;
-                default:
-                    $currentName .= $nameType == 'corporate' ? ' -- ' : ' ';
-                    break;
+                    case 'date':
+                        $currentName .= ', ';
+                        break;
+                    case 'termsOfAddress':
+                        $currentName .= (substr($namePartStr, 0, 1) == '(')
+                            ? ' ' : ', ';
+                        break;
+                    default:
+                        $currentName .= $nameType == 'corporate' ? ' -- ' : ' ';
+                        break;
                 }
             }
             $currentName .= $namePartStr;
