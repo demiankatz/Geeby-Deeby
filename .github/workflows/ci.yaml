@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['7.3', '7.4', '8.0']
+        php-version: ['7.4', '8.0', '8.1']
         include:
-          - php-version: 7.3
-            phing_tasks: "startup"
           - php-version: 7.4
             phing_tasks: "startup"
           - php-version: 8.0
+            phing_tasks: "startup"
+          - php-version: 8.1
             phing_tasks: "startup phpcs-console php-cs-fixer-dryrun"
 
     steps:

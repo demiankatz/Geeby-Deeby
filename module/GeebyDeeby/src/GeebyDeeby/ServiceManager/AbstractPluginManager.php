@@ -29,7 +29,7 @@ namespace GeebyDeeby\ServiceManager;
 
 use Laminas\ServiceManager\AbstractPluginManager as Base;
 use Laminas\ServiceManager\Exception\RuntimeException
-    as ServiceManagerRuntimeException;
+as ServiceManagerRuntimeException;
 
 /**
  * GeebyDeeby Plugin Manager
