@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- Raised minimum PHP version to 7.4.
 
 ### Removed
 

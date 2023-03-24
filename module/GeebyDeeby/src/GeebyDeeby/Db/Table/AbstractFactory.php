@@ -39,7 +39,7 @@ use Interop\Container\ContainerInterface;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class AbstractFactory
-    implements \Laminas\ServiceManager\Factory\AbstractFactoryInterface
+implements \Laminas\ServiceManager\Factory\AbstractFactoryInterface
 {
     /**
      * Return row prototype object (null if unavailable)
