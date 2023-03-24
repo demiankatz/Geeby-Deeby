@@ -480,16 +480,16 @@ class AbstractBase extends AbstractActionController
     {
         $requestedFormat = $this->rdfRequested(true);
         switch ($requestedFormat) {
-        case 'application/x-turtle':
-        case 'text/turtle':
-            $serialization = 'turtle';
-            break;
-        case 'application/rdf+xml':
-            $serialization = 'rdfxml';
-            break;
-        default:
-            $serialization = 'ntriples';
-            break;
+            case 'application/x-turtle':
+            case 'text/turtle':
+                $serialization = 'turtle';
+                break;
+            case 'application/rdf+xml':
+                $serialization = 'rdfxml';
+                break;
+            default:
+                $serialization = 'ntriples';
+                break;
         }
 
         $response = $this->getResponse();

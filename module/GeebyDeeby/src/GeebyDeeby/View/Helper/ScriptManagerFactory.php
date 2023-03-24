@@ -39,7 +39,7 @@ use Interop\Container\ContainerInterface;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 class ScriptManagerFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create service
