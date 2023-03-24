@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract plugin manager factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\ServiceManager;
 
 use Interop\Container\ContainerInterface;
@@ -38,8 +40,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AbstractPluginManagerFactory
-implements \Laminas\ServiceManager\Factory\FactoryInterface
+class AbstractPluginManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Determine the configuration key for the specified class name.

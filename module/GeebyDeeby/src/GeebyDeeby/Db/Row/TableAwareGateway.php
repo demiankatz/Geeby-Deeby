@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract base class for rows that need access to other tables.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Row;
 
 use GeebyDeeby\Db\Table\PluginManager as TableManager;

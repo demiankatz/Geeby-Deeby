@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit item attribute controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -63,7 +65,7 @@ class EditItemAttributeController extends AbstractBase
             'attribute_name' => 'Items_Attribute_Name',
             'rdf_property' => 'Items_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority'
+            'priority' => 'Display_Priority',
 
         ];
         [$response] = $this

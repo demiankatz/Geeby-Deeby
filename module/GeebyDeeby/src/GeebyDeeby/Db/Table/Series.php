@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Series
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -105,7 +107,7 @@ class Series extends Gateway
                     'Series_Name' => new Expression(
                         "Concat(Series_AltName, " .
                         "' [alt. title for ', Series_Name, ']')"
-                    )
+                    ),
                 ]
             );
             $select2->join(
@@ -169,7 +171,7 @@ class Series extends Gateway
                 ['eds' => 'Editions'],
                 'Series.Series_ID = eds.Series_ID',
                 $includePosition ? [
-                    'Volume', 'Position', 'Replacement_Number', 'Extent_In_Parent'
+                    'Volume', 'Position', 'Replacement_Number', 'Extent_In_Parent',
                 ] : []
             );
             if ($includePosition && $includeParentPosition) {
@@ -180,7 +182,7 @@ class Series extends Gateway
                         'Parent_Volume' => 'Volume',
                         'Parent_Position' => 'Position',
                         'Parent_Replacement_Number' => 'Replacement_Number',
-                        'Parent_Item_ID' => 'Item_ID'
+                        'Parent_Item_ID' => 'Item_ID',
                     ],
                     Select::JOIN_LEFT
                 );

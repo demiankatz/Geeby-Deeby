@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Release date view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 /**
@@ -52,7 +54,7 @@ class FormatReleaseDate extends \Laminas\View\Helper\AbstractHelper
     {
         $this->months = [
             'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
+            'July', 'August', 'September', 'October', 'November', 'December',
         ];
     }
 

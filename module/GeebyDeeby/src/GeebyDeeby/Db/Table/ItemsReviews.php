@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items_Reviews
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -133,7 +135,7 @@ class ItemsReviews extends Gateway
                     ['parent.Volume', 'eds.Volume'],
                     [
                         Expression::TYPE_IDENTIFIER,
-                        Expression::TYPE_IDENTIFIER
+                        Expression::TYPE_IDENTIFIER,
                     ]
                 );
                 $pos = new Expression(
@@ -141,7 +143,7 @@ class ItemsReviews extends Gateway
                     ['parent.Position', 'eds.Position'],
                     [
                         Expression::TYPE_IDENTIFIER,
-                        Expression::TYPE_IDENTIFIER
+                        Expression::TYPE_IDENTIFIER,
                     ]
                 );
                 $rep = new Expression(
@@ -149,7 +151,7 @@ class ItemsReviews extends Gateway
                     ['parent.Replacement_Number', 'eds.Replacement_Number'],
                     [
                         Expression::TYPE_IDENTIFIER,
-                        Expression::TYPE_IDENTIFIER
+                        Expression::TYPE_IDENTIFIER,
                     ]
                 );
                 $select->columns(
@@ -184,7 +186,7 @@ class ItemsReviews extends Gateway
                 $select->group(
                     [
                         'Items_Reviews.Item_ID', 'Items_Reviews.User_ID',
-                        's.Series_ID', 'Volume', 'Position', 'Replacement_Number'
+                        's.Series_ID', 'Volume', 'Position', 'Replacement_Number',
                     ]
                 );
             }
@@ -199,7 +201,7 @@ class ItemsReviews extends Gateway
             // Different sort settings based on whether or not series are included:
             $all = [
                 'Series_Name', 's.Series_ID', 'Volume', 'Position',
-                'Replacement_Number', 'Item_Name'
+                'Replacement_Number', 'Item_Name',
             ];
             $select->order($series ? $all : ['Item_Name']);
             if (null !== $approved) {

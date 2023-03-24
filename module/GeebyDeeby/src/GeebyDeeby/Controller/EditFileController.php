@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit file controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -66,7 +68,7 @@ class EditFileController extends AbstractBase
     {
         $assignMap = [
             'file_name' => 'File_Name', 'path' => 'File_Path',
-            'desc' => 'Description', 'type_id' => 'File_Type_ID'
+            'desc' => 'Description', 'type_id' => 'File_Type_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('file', $assignMap, 'file');
         if (!$ok) {

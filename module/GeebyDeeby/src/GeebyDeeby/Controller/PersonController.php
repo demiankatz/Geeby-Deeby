@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Person controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -141,7 +143,7 @@ class PersonController extends AbstractBase
         return $this->createViewModel(
             [
                 'bioMode' => $bios,
-                'people' => $this->getDbTable('person')->getList($bios)
+                'people' => $this->getDbTable('person')->getList($bios),
             ]
         );
     }

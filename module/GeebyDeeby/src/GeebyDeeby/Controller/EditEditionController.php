@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit edition controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -72,7 +74,7 @@ class EditEditionController extends AbstractBase
                     [
                         'Edition_ID' => $editionId,
                         'Editions_Attribute_ID' => $id,
-                        'Editions_Attribute_Value' => $val
+                        'Editions_Attribute_Value' => $val,
                     ]
                 );
             }
@@ -99,7 +101,7 @@ class EditEditionController extends AbstractBase
                     [
                         'Editions_Full_Text_ID' => $rowId,
                         'Editions_Full_Text_Attribute_ID' => $id,
-                        'Editions_Full_Text_Attribute_Value' => $val
+                        'Editions_Full_Text_Attribute_Value' => $val,
                     ]
                 );
             }
@@ -137,7 +139,8 @@ class EditEditionController extends AbstractBase
             ?? null;
 
         // Special handling for saving attributes:
-        if ($this->getRequest()->isPost()
+        if (
+            $this->getRequest()->isPost()
             && ($attribs = $this->params()->fromPost('attribs'))
         ) {
             $this->saveAttributes($editionId, $attribs);
@@ -164,7 +167,8 @@ class EditEditionController extends AbstractBase
             $view->itemAltTitles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->edition['Item_ID']);
         }
-        if (isset($view->edition['Series_ID'])
+        if (
+            isset($view->edition['Series_ID'])
             && !empty($view->edition['Series_ID'])
         ) {
             $view->series = $this->getDbTable('series')
@@ -177,7 +181,7 @@ class EditEditionController extends AbstractBase
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->roles = $this->getDbTable('role')->getList();
-            $view->credits= $this->getDbTable('editionscredits')
+            $view->credits = $this->getDbTable('editionscredits')
                 ->getCreditsForEdition($editionId);
             $view->images = $this->getDbTable('editionsimages')
                 ->getImagesForEdition($editionId);
@@ -543,7 +547,7 @@ class EditEditionController extends AbstractBase
                 'Edition_ID' => $this->params()->fromRoute('id'),
                 'Year' => $year,
                 'Month' => $month,
-                'Day' => $day
+                'Day' => $day,
             ]
         );
         return $this->jsonReportSuccess();
@@ -582,7 +586,7 @@ class EditEditionController extends AbstractBase
                 [
                     'Edition_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $person,
-                    'Role_ID' => $role
+                    'Role_ID' => $role,
                 ]
             );
             return $this->jsonReportSuccess();
@@ -614,7 +618,7 @@ class EditEditionController extends AbstractBase
                 [
                     'Edition_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id')
+                    'Role_ID' => $this->params()->fromPost('role_id'),
                 ]
             );
             return $this->jsonReportSuccess();
@@ -634,7 +638,7 @@ class EditEditionController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             $fields = [
                 'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
-                'Full_Text_URL' => trim($this->params()->fromPost('url'))
+                'Full_Text_URL' => trim($this->params()->fromPost('url')),
             ];
             $table->update($fields, ['Sequence_ID' => $rowId]);
             if ($attribs = $this->params()->fromPost('attribs')) {
@@ -681,7 +685,8 @@ class EditEditionController extends AbstractBase
             return $ok;
         }
         // Modify the full text if it's a GET/POST and has an extra set.
-        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+        if (
+            ($this->getRequest()->isPost() || $this->getRequest()->isGet())
             && null !== $this->params()->fromRoute('extra')
             && 'NEW' !== $this->params()->fromRoute('extra')
         ) {
@@ -693,7 +698,7 @@ class EditEditionController extends AbstractBase
             $insert = [
                 'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
                 'Edition_ID' => $this->params()->fromRoute('id'),
-                'Full_Text_URL' => trim($this->params()->fromPost('url'))
+                'Full_Text_URL' => trim($this->params()->fromPost('url')),
             ];
             if (empty($insert['Full_Text_URL'])) {
                 return $this->jsonDie('URL must not be empty.');
@@ -864,7 +869,8 @@ class EditEditionController extends AbstractBase
             }
             $row->Thumb_Path = $this->params()->fromPost('thumb');
             // Build thumb path if none was provided:
-            if (empty($row->Thumb_Path) && empty($row->IIIF_URI)
+            if (
+                empty($row->Thumb_Path) && empty($row->IIIF_URI)
                 && !empty($row->Image_Path)
             ) {
                 $parts = explode('.', $row->Image_Path);
@@ -1022,7 +1028,7 @@ class EditEditionController extends AbstractBase
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
-                'extra' => $this->params()->fromRoute('extra')
+                'extra' => $this->params()->fromRoute('extra'),
             ]
         );
     }

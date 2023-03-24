@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit edition attribute controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -64,7 +66,7 @@ class EditEditionAttributeController extends AbstractBase
             'rdf_property' => 'Editions_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
             'copy_to_clone' => 'Copy_To_Clone',
-            'priority' => 'Display_Priority'
+            'priority' => 'Display_Priority',
 
         ];
         [$response] = $this
