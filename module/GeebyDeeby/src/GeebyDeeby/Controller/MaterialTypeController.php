@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Material type controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -69,7 +71,7 @@ class MaterialTypeController extends AbstractBase
         return $this->createViewModel(
             [
                 'materialTypes' =>
-                    $this->getDbTable('seriesmaterialtypes')->getMaterials()
+                    $this->getDbTable('seriesmaterialtypes')->getMaterials(),
             ]
         );
     }

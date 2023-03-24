@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit person controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -71,7 +73,7 @@ class EditPersonController extends AbstractBase
             'last' => 'Last_Name',
             'extra' => 'Extra_Details',
             'bio' => 'Biography',
-            'authority' => 'Authority_ID'
+            'authority' => 'Authority_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('person', $assignMap, 'person');
         if (!$ok) {
@@ -215,7 +217,7 @@ class EditPersonController extends AbstractBase
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
-                'extra' => $this->params()->fromRoute('extra')
+                'extra' => $this->params()->fromRoute('extra'),
             ]
         );
     }

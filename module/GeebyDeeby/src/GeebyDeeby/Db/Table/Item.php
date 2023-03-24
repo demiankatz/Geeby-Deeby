@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -88,7 +90,7 @@ class Item extends Gateway
                     'Item_ID',
                     'Item_Name' => new Expression(
                         "Concat(Item_AltName, ' [alt. title for ', Item_Name, ']')"
-                    )
+                    ),
                 ]
             );
             $select2->join(
@@ -152,7 +154,7 @@ class Item extends Gateway
                         'min(?)',
                         ['eds.Edition_ID'],
                         [Expression::TYPE_IDENTIFIER]
-                    )
+                    ),
                 ]
             );
             $select->join(
@@ -170,20 +172,20 @@ class Item extends Gateway
                 ['iat.Item_AltName', 'Items.Item_Name'],
                 [
                     Expression::TYPE_IDENTIFIER,
-                    Expression::TYPE_IDENTIFIER
+                    Expression::TYPE_IDENTIFIER,
                 ]
             );
             $select->order(
                 $groupByMaterial
                     ? [
                         'mt.Material_Type_Name', 'Volume', 'Position',
-                        'Replacement_Number', $itemName
+                        'Replacement_Number', $itemName,
                     ] : ['Volume', 'Position', 'Replacement_Number', $itemName]
             );
             $select->group(
                 [
                     'Items.Item_ID', 'Volume', 'Position', 'Replacement_Number',
-                    'Items.Material_Type_ID'
+                    'Items.Material_Type_ID',
                 ]
             );
             $select->where->equalTo('eds.Series_ID', $seriesID);
@@ -207,9 +209,9 @@ class Item extends Gateway
                             [
                                 Expression::TYPE_IDENTIFIER,
                                 Expression::TYPE_IDENTIFIER,
-                                Expression::TYPE_IDENTIFIER
+                                Expression::TYPE_IDENTIFIER,
                             ]
-                        )
+                        ),
                     ],
                     Select::JOIN_LEFT
                 );
@@ -245,7 +247,7 @@ class Item extends Gateway
                 ['child_eds' => 'Editions'],
                 'eds.Edition_ID = child_eds.Parent_Edition_ID',
                 [
-                    'Extent_In_Parent', 'Position_In_Parent'
+                    'Extent_In_Parent', 'Position_In_Parent',
                 ]
             );
             $select->join(
@@ -267,7 +269,7 @@ class Item extends Gateway
             $select->order(
                 [
                     'eds.Edition_Name', 'eds.Edition_ID',
-                    'child_eds.Position_In_Parent', 'child_items.Item_Name'
+                    'child_eds.Position_In_Parent', 'child_items.Item_Name',
                 ]
             );
             $select->where->equalTo('Items.Item_ID', $itemID);

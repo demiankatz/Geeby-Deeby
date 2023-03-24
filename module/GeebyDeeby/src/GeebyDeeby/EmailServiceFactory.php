@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Email service factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby;
 
 use Interop\Container\ContainerInterface;
@@ -38,8 +40,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EmailServiceFactory
-implements \Laminas\ServiceManager\Factory\FactoryInterface
+class EmailServiceFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create service

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Database adapter factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db;
 
 use Interop\Container\ContainerInterface;
@@ -65,7 +67,7 @@ class AdapterFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
                 'username' => $config['geeby-deeby']['dbUser'],
                 'password' => $config['geeby-deeby']['dbPass'],
                 'database' => $config['geeby-deeby']['dbName'],
-                'options' => ['buffer_results' => true]
+                'options' => ['buffer_results' => true],
             ]
         );
     }

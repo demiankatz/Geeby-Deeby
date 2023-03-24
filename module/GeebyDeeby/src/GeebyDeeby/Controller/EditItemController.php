@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit item controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -72,7 +74,7 @@ class EditItemController extends AbstractBase
                     [
                          'Item_ID' => $itemId,
                          'Items_Attribute_ID' => $id,
-                         'Items_Attribute_Value' => $val
+                         'Items_Attribute_Value' => $val,
                      ]
                 );
             }
@@ -90,7 +92,7 @@ class EditItemController extends AbstractBase
             'name' => 'Item_Name',
             'errata' => 'Item_Errata',
             'thanks' => 'Item_Thanks',
-            'material' => 'Material_Type_ID'
+            'material' => 'Material_Type_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('item', $assignMap, 'item');
         if (!$ok) {
@@ -101,7 +103,8 @@ class EditItemController extends AbstractBase
             ?? null;
 
         // Special handling for saving attributes:
-        if ($this->getRequest()->isPost()
+        if (
+            $this->getRequest()->isPost()
             && ($attribs = $this->params()->fromPost('attribs'))
         ) {
             $this->saveAttributes($itemId, $attribs);
@@ -131,7 +134,7 @@ class EditItemController extends AbstractBase
             $view->roles = $this->getDbTable('role')->getList();
             $view->creators = $this->getDbTable('itemscreators')
                 ->getCreatorsForItem($itemId);
-            $view->credits= $this->getDbTable('editionscredits')
+            $view->credits = $this->getDbTable('editionscredits')
                 ->getCreditsForItem($itemId, true);
             $view->itemsBib = $this->getDbTable('itemsbibliography')
                 ->getItemsDescribedByItem($itemId);
@@ -173,7 +176,7 @@ class EditItemController extends AbstractBase
                         'Series_ID' => $parentEdition->Series_ID,
                         'Edition_Length' => $this->params()->fromPost('len'),
                         'Edition_Endings' => $this->params()->fromPost('endings'),
-                        'Parent_Edition_ID' => $editionID
+                        'Parent_Edition_ID' => $editionID,
                     ]
                 );
             } elseif ($seriesID = $this->params()->fromPost('series_id', false)) {
@@ -186,7 +189,7 @@ class EditItemController extends AbstractBase
                         'Item_ID' => $view->affectedRow->Item_ID,
                         'Series_ID' => $seriesID,
                         'Edition_Length' => $this->params()->fromPost('len'),
-                        'Edition_Endings' => $this->params()->fromPost('endings')
+                        'Edition_Endings' => $this->params()->fromPost('endings'),
                     ]
                 );
             }
@@ -397,7 +400,8 @@ class EditItemController extends AbstractBase
             return $ok;
         }
         // Modify the publisher if it's a GET/POST and has an extra set.
-        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+        if (
+            ($this->getRequest()->isPost() || $this->getRequest()->isGet())
             && null !== $this->params()->fromRoute('extra')
             && 'NEW' !== $this->params()->fromRoute('extra')
         ) {
@@ -474,7 +478,7 @@ class EditItemController extends AbstractBase
                 [
                     'Item_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $person,
-                    'Role_ID' => $role
+                    'Role_ID' => $role,
                 ]
             );
         } catch (\Exception $e) {
@@ -523,7 +527,7 @@ class EditItemController extends AbstractBase
             'Person_ID' => $this->params()->fromPost('person_id'),
             'Role_ID' => $this->params()->fromPost('role_id'),
             'Position' => $this->params()->fromPost('pos'),
-            'Note_ID' => $this->params()->fromPost('note_id')
+            'Note_ID' => $this->params()->fromPost('note_id'),
         ];
         if (empty($row['Note_ID'])) {
             $row['Note_ID'] = null;
@@ -560,7 +564,7 @@ class EditItemController extends AbstractBase
                 ['Position' => $this->params()->fromPost('pos')],
                 [
                     'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id')
+                    'Role_ID' => $this->params()->fromPost('role_id'),
                 ]
             );
             return $this->jsonReportSuccess();
@@ -637,7 +641,7 @@ class EditItemController extends AbstractBase
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
-                'extra' => $this->params()->fromRoute('extra')
+                'extra' => $this->params()->fromRoute('extra'),
             ]
         );
     }

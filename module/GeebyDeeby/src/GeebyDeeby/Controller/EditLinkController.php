@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit link controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -67,7 +69,7 @@ class EditLinkController extends AbstractBase
         $assignMap = [
             'link_name' => 'Link_Name', 'url' => 'URL',
             'desc' => 'Description', 'date_checked' => 'Date_Checked',
-            'type_id' => 'Link_Type_ID'
+            'type_id' => 'Link_Type_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('link', $assignMap, 'link');
         if (!$ok) {

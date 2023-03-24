@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Collections
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -128,12 +130,12 @@ class Collections extends Gateway
                 $fields = [
                     'Language_Name', 'Series_Name', 's.Series_ID',
                     'Collection_Status', 'Volume', 'Position', 'Replacement_Number',
-                    'Item_Name'
+                    'Item_Name',
                 ];
             } else {
                 $fields = [
                     'Series_Name', 's.Series_ID', 'Collection_Status', 'Volume',
-                    'Position', 'Replacement_Number', 'Item_Name'
+                    'Position', 'Replacement_Number', 'Item_Name',
                 ];
             }
             $select->order($fields);
@@ -194,7 +196,7 @@ class Collections extends Gateway
             );
             $fields = [
                 'Username', 'Series_Name', 's.Series_ID', 'Volume', 'Position',
-                'Replacement_Number', 'Item_Name'
+                'Replacement_Number', 'Item_Name',
             ];
             $select->order($fields);
             $select->group($fields + ['i.Item_ID']);

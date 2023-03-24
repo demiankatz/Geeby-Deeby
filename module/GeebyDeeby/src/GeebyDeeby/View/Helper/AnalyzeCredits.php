@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Credit analysis view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 /**
@@ -112,7 +114,8 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
             $creditedIds = array_keys(
                 $groupedCredits[$role] ?? []
             );
-            if (empty($creditedIds)
+            if (
+                empty($creditedIds)
                 || !$this->isMatchingPerson($personId, $creditedIds)
             ) {
                 $groupedCredits[$role][$personId][]
@@ -249,7 +252,7 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
                 'person' => $credit,
                 'realPerson' => $this
                     ->getRealPersonDetails($person, array_keys($creators)),
-                'notes' => implode('; ', array_unique($notes))
+                'notes' => implode('; ', array_unique($notes)),
             ];
         }
         return $final;

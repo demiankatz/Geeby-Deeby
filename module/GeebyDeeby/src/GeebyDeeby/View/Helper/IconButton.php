@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Button view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 /**
@@ -52,11 +54,11 @@ class IconButton extends \Laminas\View\Helper\AbstractHelper
         $safeAction = $this->view->plugin('escapeHtmlAttr')->__invoke($action);
         $safeLabel = $this->view->plugin('escapeHtml')->__invoke($label);
         return <<<HTML
-<button onclick="$safeAction">
-  <span class="ui-icon ui-icon-$type">
-  </span>
-  <span class="sr-only">$safeLabel</span>
-</button>
-HTML;
+            <button onclick="$safeAction">
+              <span class="ui-icon ui-icon-$type">
+              </span>
+              <span class="sr-only">$safeLabel</span>
+            </button>
+            HTML;
     }
 }

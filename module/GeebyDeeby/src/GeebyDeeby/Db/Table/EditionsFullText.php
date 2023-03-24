@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Editions_Full_Text
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -205,9 +207,9 @@ class EditionsFullText extends Gateway
                         [
                             Expression::TYPE_IDENTIFIER,
                             Expression::TYPE_IDENTIFIER,
-                            Expression::TYPE_IDENTIFIER
+                            Expression::TYPE_IDENTIFIER,
                         ]
-                    )
+                    ),
                 ],
                 Select::JOIN_LEFT
             );
@@ -227,12 +229,12 @@ class EditionsFullText extends Gateway
             $select->group(
                 [
                     'eds.Item_ID', 'eds.Series_ID', 'eds.Volume', 'eds.Position',
-                    'eds.Replacement_Number'
+                    'eds.Replacement_Number',
                 ]
             );
             $ord = [
                 'Series_Name', 's.Series_ID', 'eds.Volume', 'eds.Position',
-                'eds.Replacement_Number', 'Item_Name'
+                'eds.Replacement_Number', 'Item_Name',
             ];
             $select->order($ord);
         };

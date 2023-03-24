@@ -1,4 +1,5 @@
 <?php
+
 namespace GeebyDeebyConsole\Module\Configuration;
 
 $config = [

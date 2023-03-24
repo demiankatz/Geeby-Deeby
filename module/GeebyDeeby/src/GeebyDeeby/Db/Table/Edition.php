@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Editions
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -255,7 +257,7 @@ class Edition extends Gateway
                     $order,
                     [
                         'pe.Series_ID', 'pe.Volume', 'pe.Position',
-                        'pe.Replacement_Number'
+                        'pe.Replacement_Number',
                     ]
                 );
             }
@@ -389,7 +391,7 @@ class Edition extends Gateway
                 [
                     'Parent_Edition_ID' => $to->Edition_ID,
                     'Series_ID' => $to->Series_ID,
-                    'Edition_Name' => $to->Edition_Name
+                    'Edition_Name' => $to->Edition_Name,
                 ]
             );
         }
