@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit series controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -72,7 +74,7 @@ class EditSeriesController extends AbstractBase
                     [
                         'Series_ID' => $seriesId,
                         'Series_Attribute_ID' => $id,
-                        'Series_Attribute_Value' => $val
+                        'Series_Attribute_Value' => $val,
                     ]
                 );
             }
@@ -89,7 +91,7 @@ class EditSeriesController extends AbstractBase
         $assignMap = [
             'name' => 'Series_Name',
             'desc' => 'Series_Description',
-            'lang' => 'Language_ID'
+            'lang' => 'Language_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('series', $assignMap, 'series');
         if (!$ok) {
@@ -262,7 +264,7 @@ class EditSeriesController extends AbstractBase
                 $address = null;
             }
             $fields = [
-                'Imprint_ID' => $imprint, 'Address_ID' => $address
+                'Imprint_ID' => $imprint, 'Address_ID' => $address,
             ];
             $table->update($fields, ['Series_Publisher_ID' => $rowId]);
             return $this->jsonReportSuccess();
@@ -292,7 +294,8 @@ class EditSeriesController extends AbstractBase
     public function publisherAction()
     {
         // Modify the publisher if it's a GET/POST and has an extra set.
-        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+        if (
+            ($this->getRequest()->isPost() || $this->getRequest()->isGet())
             && null !== $this->params()->fromRoute('extra')
             && 'NEW' !== $this->params()->fromRoute('extra')
         ) {
@@ -473,7 +476,7 @@ class EditSeriesController extends AbstractBase
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
-                'extra' => $this->params()->fromRoute('extra')
+                'extra' => $this->params()->fromRoute('extra'),
             ]
         );
     }

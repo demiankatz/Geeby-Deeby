@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Migration controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 use Laminas\Crypt\Password\Bcrypt;
@@ -115,7 +117,7 @@ class MigrateController extends AbstractBase
                 [
                     'Item_ID' => $current->Item_ID,
                     'Series_ID' => $current->Series_ID,
-                    'Position' => $current->Position
+                    'Position' => $current->Position,
                 ]
             );
             $count++;
@@ -301,7 +303,7 @@ class MigrateController extends AbstractBase
         $pi = $this->getDbTable('publishersimprints');
         $imprint = [
             'Publisher_ID' => $current->Publisher_ID,
-            'Imprint_Name' => $current->Imprint
+            'Imprint_Name' => $current->Imprint,
         ];
         $row = $pi->select($imprint)->current();
         if (isset($row['Imprint_ID'])) {
@@ -347,7 +349,7 @@ class MigrateController extends AbstractBase
         $pi = $this->getDbTable('publishersaddresses');
         $address = [
             'Publisher_ID' => $current->Publisher_ID,
-            'Country_ID' => $current->Country_ID
+            'Country_ID' => $current->Country_ID,
         ];
         $row = $pi->select($address)->current();
         if (isset($row['Address_ID'])) {

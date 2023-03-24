@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Tags
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -129,7 +131,7 @@ class Tag extends Gateway
                 ['Item_AltName', 'Item_Name'],
                 [
                     Expression::TYPE_IDENTIFIER,
-                    Expression::TYPE_IDENTIFIER
+                    Expression::TYPE_IDENTIFIER,
                 ]
             );
             $select->order(['Tag', $bestTitle]);

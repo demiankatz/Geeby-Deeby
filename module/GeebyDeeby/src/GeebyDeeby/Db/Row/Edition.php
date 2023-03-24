@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Row Definition for Editions
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Row;
 
 /**
@@ -62,7 +64,8 @@ class Edition extends TableAwareGateway
         if (in_array($this->Edition_ID, $this->getEditionParentChain())) {
             return 'Edition can not be its own parent or grandparent.';
         }
-        if (!empty($this->Item_ID)
+        if (
+            !empty($this->Item_ID)
             && in_array($this->Item_ID, $this->getItemParentChain())
         ) {
             return 'Item can not be its own parent or grandparent.';
@@ -234,7 +237,7 @@ class Edition extends TableAwareGateway
             $select->where->notEqualTo('Edition_ID', $edition);
             $fields = [
                 'Volume', 'Position', 'Replacement_Number', 'Edition_Name',
-                'Edition_ID'
+                'Edition_ID',
             ];
             $vals = [$vol, $pos, $rep, $name, $edition];
             $nest = $select->where->NEST;

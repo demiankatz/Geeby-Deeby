@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Editions_Credits
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -180,7 +182,7 @@ class EditionsCredits extends Gateway
             $fields = [
                 'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Volume',
                 'eds.Position', 'eds.Replacement_Number',
-                'Item_Name', 'Note'
+                'Item_Name', 'Note',
             ];
             $select->order($fields);
             $select->group($fields);
@@ -215,7 +217,7 @@ class EditionsCredits extends Gateway
             );
             $fields = [
                 'Role_Name', 'Position', 'Last_Name',
-                'First_Name'
+                'First_Name',
             ];
             $select->order($fields);
             $select->where->equalTo('Edition_ID', $editionID);
@@ -255,7 +257,7 @@ class EditionsCredits extends Gateway
             );
             $fields = [
                 'Role_Name', 'Editions_Credits.Position', 'Last_Name',
-                'First_Name'
+                'First_Name',
             ];
             $select->order($fields);
             if ($group) {
@@ -312,11 +314,11 @@ class EditionsCredits extends Gateway
                 ['Item_AltName', 'Item_Name'],
                 [
                     Expression::TYPE_IDENTIFIER,
-                    Expression::TYPE_IDENTIFIER
+                    Expression::TYPE_IDENTIFIER,
                 ]
             );
             $fields = [
-                'Last_Name', 'First_Name', $bestTitle
+                'Last_Name', 'First_Name', $bestTitle,
             ];
             $select->order($fields);
             $select->where->equalTo('Series_ID', $seriesID);

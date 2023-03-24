@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class for managing articles
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby;
 
 /**
@@ -66,7 +68,7 @@ class Articles
             'Una', 'Gli', 'A "', 'The "', '¡La', '"The', 'Ta',
         ];
         $this->unspacedArticles = [
-            "¡", "¿", "L'", '"', '¡La "', 'The "', 'El "', 'A "'
+            "¡", "¿", "L'", '"', '¡La "', 'The "', 'El "', 'A "',
         ];
     }
 

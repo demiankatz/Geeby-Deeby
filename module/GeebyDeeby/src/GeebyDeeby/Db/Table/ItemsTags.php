@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items_Tags
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -92,7 +94,7 @@ class ItemsTags extends Gateway
                 $select->group(
                     [
                         'i.Item_ID', 'eds.Volume', 'eds.Position',
-                        'eds.Replacement_Number'
+                        'eds.Replacement_Number',
                     ]
                 );
                 $select->order(
@@ -104,9 +106,9 @@ class ItemsTags extends Gateway
                             ['Item_AltName', 'Item_Name'],
                             [
                                 Expression::TYPE_IDENTIFIER,
-                                Expression::TYPE_IDENTIFIER
+                                Expression::TYPE_IDENTIFIER,
                             ]
-                        )
+                        ),
                     ]
                 );
             } else {

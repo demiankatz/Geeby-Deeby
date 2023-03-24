@@ -1,4 +1,5 @@
 <?php
+
 $modules = [
     'Laminas\Router',
     'GeebyDeeby',

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 use Laminas\Crypt\Password\Bcrypt;
@@ -133,7 +135,8 @@ class UserController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
         // Make sure user is logged in.
-        if (!($user = $this->getCurrentUser())
+        if (
+            !($user = $this->getCurrentUser())
             || $view->user['User_ID'] != $user->User_ID
         ) {
             return $this->forceLogin();
@@ -145,14 +148,15 @@ class UserController extends AbstractBase
             $password2 = $this->params()->fromPost('Password2');
             if ($view->fullname == '') {
                 $view->error = 'Please fill out all required fields.';
-            } elseif ($password1 != $password2
+            } elseif (
+                $password1 != $password2
                 || strpos($view->address, '://') !== false // block spam addresses
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
             } else {
                 $table = $this->getDbTable('user');
                 $update = [
-                    'Name' => $view->fullname, 'Address' => $view->address
+                    'Name' => $view->fullname, 'Address' => $view->address,
                 ];
                 if (!empty($password1)) {
                     $bcrypt = new Bcrypt();

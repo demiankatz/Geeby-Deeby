@@ -1,4 +1,5 @@
 <?php
+
 return [
     'geeby-deeby' => [
         'siteTitle' => 'My Gamebook Web Page',
@@ -66,7 +67,7 @@ return [
         ],
         'factories' => [
             'GeebyDeeby\Controller\Plugin\Followup' => 'Laminas\ServiceManager\Factory\InvokableFactory',
-        ]
+        ],
     ],
     'router' => [
         'routes' => [
@@ -740,7 +741,7 @@ return [
                                 'controller'    => 'EditPublisher',
                                 'action'        => 'index',
                                 'id'            => 'NEW',
-                                'extra'         => null
+                                'extra'         => null,
                             ],
                         ],
                     ],

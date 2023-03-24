@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit tag controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -77,7 +79,7 @@ class EditTagController extends AbstractBase
                     [
                         'Tag_ID' => $tagId,
                         'Tags_Attribute_ID' => $id,
-                        'Tags_Attribute_Value' => $val
+                        'Tags_Attribute_Value' => $val,
                     ]
                 );
             }
@@ -93,7 +95,7 @@ class EditTagController extends AbstractBase
     {
         $assignMap = [
             'tag' => 'Tag',
-            'type_id' => 'Tag_Type_ID'
+            'type_id' => 'Tag_Type_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('tag', $assignMap, 'tag');
         if (!$ok) {
@@ -105,7 +107,8 @@ class EditTagController extends AbstractBase
         $tagId = $view->tag['Tag_ID'] ?? $view->affectedRow->Tag_ID ?? null;
 
         // Special handling for saving attributes:
-        if ($this->getRequest()->isPost()
+        if (
+            $this->getRequest()->isPost()
             && ($attribs = $this->params()->fromPost('attribs'))
         ) {
             $this->saveAttributes($tagId, $attribs);
@@ -215,7 +218,7 @@ class EditTagController extends AbstractBase
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
-                'extra' => $this->params()->fromRoute('extra')
+                'extra' => $this->params()->fromRoute('extra'),
             ]
         );
     }

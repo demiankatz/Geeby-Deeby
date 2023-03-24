@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Signup controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 use Laminas\Crypt\Password\Bcrypt;
@@ -62,7 +64,8 @@ class SignupController extends AbstractBase
             } elseif (!preg_match('/^[0-9a-zA-Z-_]+$/', $view->user)) {
                 $view->error = 'Username must consist of letters, '
                     . 'numbers, dashes and underscores.';
-            } elseif ($password1 != $password2
+            } elseif (
+                $password1 != $password2
                 || strpos($view->address, '://') !== false // block spam addresses
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
@@ -80,7 +83,7 @@ class SignupController extends AbstractBase
                             'Name' => $view->fullname,
                             'Address' => $view->address,
                             'Join_Reason' => $view->reason,
-                            'Person_ID' => 0
+                            'Person_ID' => 0,
                         ]
                     );
                     $view->setTemplate('geeby-deeby/signup/success');

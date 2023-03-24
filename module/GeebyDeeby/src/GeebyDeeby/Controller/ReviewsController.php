@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Reviews controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -49,7 +51,7 @@ class ReviewsController extends AbstractBase
         return $this->createViewModel(
             [
                 'reviews' => $table->getRecentItemReviews(),
-                'comments' => $table->getRecentSeriesComments()
+                'comments' => $table->getRecentSeriesComments(),
             ]
         );
     }

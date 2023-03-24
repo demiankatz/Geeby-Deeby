@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Series controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 use Laminas\Db\Sql\Expression;
@@ -286,7 +288,7 @@ class SeriesController extends AbstractBase
         $table = $this->getDbTable('seriesreviews');
         $params = [
             'Series_ID' => $this->params()->fromRoute('id'),
-            'User_ID' => $user->User_ID
+            'User_ID' => $user->User_ID,
         ];
 
         $existing = $table->select($params)->toArray();
@@ -306,7 +308,7 @@ class SeriesController extends AbstractBase
                     $table->delete(
                         [
                             'Series_ID' => $params['Series_ID'],
-                            'User_ID' => $params['User_ID']
+                            'User_ID' => $params['User_ID'],
                         ]
                     );
                 }
@@ -636,7 +638,7 @@ class SeriesController extends AbstractBase
     {
         return $this->createViewModel(
             [
-                'series' => $this->getDbTable('series')->getList()
+                'series' => $this->getDbTable('series')->getList(),
             ]
         );
     }

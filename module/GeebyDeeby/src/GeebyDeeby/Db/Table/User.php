@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Users
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Crypt\Password\Bcrypt;
@@ -76,7 +78,7 @@ class User extends Gateway
             $select->columns(
                 [
                     'User_ID', 'Username', 'Name', 'Address', 'Person_ID',
-                    'Join_Reason'
+                    'Join_Reason',
                 ]
             );
             $select->where->equalTo('Person_ID', 0);
