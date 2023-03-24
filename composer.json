@@ -10,14 +10,14 @@
     "license": "GPL-2.0",
     "config": {
         "platform": {
-            "php": "7.3"
+            "php": "7.4"
         },
         "allow-plugins": {
             "laminas/laminas-dependency-plugin": true
         }
     },
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "easyrdf/easyrdf": "^1.1.1",
         "vufind-org/vufindcode": "^1.2",
         "laminas/laminas-authentication": "^2.10.1",
