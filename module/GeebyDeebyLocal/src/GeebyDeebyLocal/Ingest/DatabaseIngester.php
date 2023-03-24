@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class to load information into the database.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyLocal\Ingest;
 
 /**
@@ -343,7 +345,8 @@ class DatabaseIngester extends BaseIngester
             }
             $newEdition
                 = $this->getChildIssueForSeries($seriesObj, $newChildData, $pos);
-            if (!$newEdition
+            if (
+                !$newEdition
                 || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)
             ) {
                 return false;
@@ -490,7 +493,8 @@ class DatabaseIngester extends BaseIngester
         $foundMatch = false;
         $current = false;
         foreach ($known as $current) {
-            if (($current->Month == $month || null === $month)
+            if (
+                ($current->Month == $month || null === $month)
                 && $current->Year == $year
                 && ($current->Day == $day || null === $day)
             ) {
@@ -504,7 +508,8 @@ class DatabaseIngester extends BaseIngester
             );
             return false;
         }
-        if (($current && $current->Month > 0 && null === $month)
+        if (
+            ($current && $current->Month > 0 && null === $month)
             || ($current && $current->Day > 0 && null === $day)
         ) {
             $this->writeln(
@@ -665,7 +670,8 @@ class DatabaseIngester extends BaseIngester
                 ? $cityTable->getByPrimaryKey($current['City_ID']) : false;
             $pub = $current['Publisher_ID']
                 ? $pubTable->getByPrimaryKey($current['Publisher_ID']) : false;
-            if ($city && $this->citiesMatch($place, $city->City_Name)
+            if (
+                $city && $this->citiesMatch($place, $city->City_Name)
                 && $pub && $this->publishersMatch($name, $pub->Publisher_Name)
                 && $this->streetsMatch($street, $current->Street)
             ) {
@@ -680,7 +686,8 @@ class DatabaseIngester extends BaseIngester
             );
             return true;
         }
-        if ($editionObj->Preferred_Series_Publisher_ID
+        if (
+            $editionObj->Preferred_Series_Publisher_ID
             && $editionObj->Preferred_Series_Publisher_ID != $match
         ) {
             $edPublishers = $this->getDbTable('edition')
@@ -698,7 +705,8 @@ class DatabaseIngester extends BaseIngester
                 return false;
             }
         }
-        if ($editionObj->Preferred_Series_Publisher_ID
+        if (
+            $editionObj->Preferred_Series_Publisher_ID
             && $editionObj->Preferred_Series_Publisher_ID == $match
         ) {
             return true;
@@ -965,7 +973,8 @@ class DatabaseIngester extends BaseIngester
                 }
                 $formattedNeedle
                     = $articleHelper->formatTrailingArticles($currentNeedle);
-                if ($this->fuzzyContains($currentHaystack, $currentNeedle)
+                if (
+                    $this->fuzzyContains($currentHaystack, $currentNeedle)
                     || $this->fuzzyContains($currentHaystack, $formattedNeedle)
                 ) {
                     $matched = true;
@@ -987,7 +996,8 @@ class DatabaseIngester extends BaseIngester
             foreach ($filteredTitles as $newTitle) {
                 $skip = false;
                 foreach ($existing as $current) {
-                    if ($this->fuzzyCompare($newTitle, $current)
+                    if (
+                        $this->fuzzyCompare($newTitle, $current)
                         || $this->fuzzyContains($current, $newTitle)
                     ) {
                         $skip = true;
@@ -1339,7 +1349,8 @@ class DatabaseIngester extends BaseIngester
             if ($current['confidence'] <= 20) {
                 continue;
             }
-            if (!isset($new[$current['id']])
+            if (
+                !isset($new[$current['id']])
                 || $new[$current['id']]['confidence'] < $current['confidence']
             ) {
                 $new[$current['id']] = $current;
@@ -2380,7 +2391,8 @@ class DatabaseIngester extends BaseIngester
         foreach ($details['series'] as $seriesName => $number) {
             $actualNumber = intval(preg_replace('/[^0-9]/', '', $number));
             //$this->writeln("Comparing {$expectedNumber} to {$actualNumber}...");
-            if ($actualNumber == $expectedNumber
+            if (
+                $actualNumber == $expectedNumber
                 && $this->checkSeriesTitle($series, $seriesName)
             ) {
                 return true;

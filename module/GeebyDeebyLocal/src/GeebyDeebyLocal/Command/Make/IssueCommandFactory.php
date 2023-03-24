@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for make/issue command.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyLocal\Command\Make;
 
 use GeebyDeebyLocal\Ingest\IssueMaker;

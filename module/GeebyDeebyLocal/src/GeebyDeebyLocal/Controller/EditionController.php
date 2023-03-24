@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edition controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyLocal\Controller;
 
 /**
@@ -99,7 +101,8 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
             // Special case: if it's a creative work not contained in an issue,
             // build a "virtual" issue to normalize the structure for easier
             // SPARQL querying.
-            if ($predicate === 'dime:IsRealizationOfCreativeWork'
+            if (
+                $predicate === 'dime:IsRealizationOfCreativeWork'
                 && !$view->parent
             ) {
                 $id = $view->edition['Edition_ID'];

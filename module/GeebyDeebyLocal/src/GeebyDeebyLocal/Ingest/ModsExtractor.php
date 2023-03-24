@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MODS Extractor
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyLocal\Ingest;
 
 /**
@@ -144,7 +146,8 @@ class ModsExtractor
                 // If the same series name has multiple numbers, favor the lowest
                 // non-zero value:
                 $numStr = (string)($number[0] ?? '');
-                if (!isset($seriesInfo[$firstName])
+                if (
+                    !isset($seriesInfo[$firstName])
                     || ($numStr > 0 && intval($seriesInfo[$firstName]) < $numStr)
                 ) {
                     $seriesInfo[$firstName] = $numStr;
@@ -183,7 +186,8 @@ class ModsExtractor
         // is longer than the imprint name, override the one extracted above:
         $parts = explode(',', $pub['name'] ?? '');
         $authModsStr = (string)($authMods[0] ?? '');
-        if (preg_match('/\(\d{4}/', $authModsStr)
+        if (
+            preg_match('/\(\d{4}/', $authModsStr)
             || strlen($authModsStr) > strlen($parts[0])
         ) {
             $newParts = explode(',', $authModsStr);
@@ -365,7 +369,8 @@ class ModsExtractor
                         $nameType
                     );
                 }
-                if (isset($uri[0])
+                if (
+                    isset($uri[0])
                     && !in_array($uri[0], $this->subjectUrisToIgnore)
                 ) {
                     $results[(string)$uri[0]] = trim($value);

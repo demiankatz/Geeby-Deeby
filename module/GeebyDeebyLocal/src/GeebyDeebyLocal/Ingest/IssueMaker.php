@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class to move Works into Issues within a Series.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyLocal\Ingest;
 
 use GeebyDeeby\Articles;
@@ -149,7 +151,8 @@ class IssueMaker
             $this->writeln('TODO: add support for replacement numbers > 0');
             return false;
         }
-        if (!empty($workEdition->Parent_Edition_ID)
+        if (
+            !empty($workEdition->Parent_Edition_ID)
             || !empty($workEdition->Position_In_Parent)
             || !empty($workEdition->Extent_In_Parent)
         ) {

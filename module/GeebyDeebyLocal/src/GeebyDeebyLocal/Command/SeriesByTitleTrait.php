@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Adds getSeriesByTitle method to Command classes; assumes the presence of
  * $this->series and $this->seriesAltTitles database table classes.
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyLocal\Command;
 
 use GeebyDeeby\Db\Table\Series;

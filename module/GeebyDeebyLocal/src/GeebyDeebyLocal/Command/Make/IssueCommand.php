@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Console command: make issue from edition
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyLocal\Command\Make;
 
 use GeebyDeeby\Db\Table\Edition;

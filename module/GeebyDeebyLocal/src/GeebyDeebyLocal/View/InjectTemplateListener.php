@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Custom template listener for GeebyDeebyLocal.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyLocal\View;
 
 use Laminas\Mvc\MvcEvent;
@@ -61,7 +63,8 @@ class InjectTemplateListener extends \Laminas\Mvc\View\Http\InjectTemplateListen
         $template = $model->getTemplate();
         // If the template falls in the geeby-deeby-local namespace but
         // doesn't exist, inherit from geeby-deeby instead.
-        if (substr($template, 0, 18) == 'geeby-deeby-local/'
+        if (
+            substr($template, 0, 18) == 'geeby-deeby-local/'
             && !file_exists(__DIR__ . '/../../../view/' . $template . '.phtml')
         ) {
             $parts = explode('/', $template);
