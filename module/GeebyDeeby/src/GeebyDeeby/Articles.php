@@ -61,7 +61,7 @@ class Articles
             'The','Los','Il','La','Le','L\'','El','De',
             'Het','Een','Os','O','Un','Une','As','Uma',
             'An','A','¡','Les','"', 'I', 'Ein', 'Lo',
-            'Un','Das','Die','Der','Den','Det','Et',
+            'Un','Das','Die','Der','Den','Det','Et', '"An',
             'Las','¿','¡La "', 'Els', 'The "', 'El "', '"A',
             'Una', 'Gli', 'A "', 'The "', '¡La', '"The', 'Ta',
         ];
