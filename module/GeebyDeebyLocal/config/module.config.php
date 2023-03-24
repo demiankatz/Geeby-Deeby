@@ -1,4 +1,5 @@
 <?php
+
 return [
     'geeby-deeby' => [
         'siteTitle' => 'The Edward T. LeBlanc Memorial Dime Novel Bibliography',
@@ -31,7 +32,7 @@ return [
                     'GeebyDeebyLocal\Command\Ingest\SpreadsheetCommand' => 'GeebyDeebyLocal\Command\Ingest\SpreadsheetCommandFactory',
                     'GeebyDeebyLocal\Command\Make\IssueCommand' => 'GeebyDeebyLocal\Command\Make\IssueCommandFactory',
                     'GeebyDeebyLocal\Command\Make\IssuesCommand' => 'GeebyDeebyLocal\Command\Make\IssuesCommandFactory',
-                ]
+                ],
             ],
         ],
     ],
@@ -59,11 +60,11 @@ return [
                         'defaults' => [
                             'controller' => 'GeebyDeeby\Controller\Ingest',
                             'action' => 'spreadsheet',
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
-            ]
-        ]
+            ],
+        ],
     ],
     'controller_plugins' => [
         'aliases' => [
@@ -71,7 +72,7 @@ return [
         ],
         'factories' => [
             'GeebyDeebyLocal\Controller\Plugin\Podcast' => 'Laminas\ServiceManager\Factory\InvokableFactory',
-        ]
+        ],
     ],
     'router' => [
         'routes' => [

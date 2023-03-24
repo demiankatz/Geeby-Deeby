@@ -162,7 +162,7 @@ class SeriesCommand extends Command
                 [
                     'type' => 'series',
                     'id' => $seriesObj->Series_ID,
-                    'count' => $count
+                    'count' => $count,
                 ]
             )
         );

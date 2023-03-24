@@ -185,7 +185,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                     [
                         'type' => 'literal',
                         'value' => $dateStr,
-                        'datatype' => 'xsd:date'
+                        'datatype' => 'xsd:date',
                     ]
                 );
             }

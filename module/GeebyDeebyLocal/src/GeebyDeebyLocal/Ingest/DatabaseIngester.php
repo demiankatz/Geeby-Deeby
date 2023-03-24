@@ -769,7 +769,7 @@ class DatabaseIngester extends BaseIngester
             $table->insert(
                 [
                     'Edition_ID' => $editionObj->Edition_ID,
-                    'OCLC_Number' => $current
+                    'OCLC_Number' => $current,
                 ]
             );
         }
@@ -939,7 +939,7 @@ class DatabaseIngester extends BaseIngester
                     [
                         'Tag_ID' => $ids[$uri],
                         'URI' => $uri,
-                        'Predicate_ID' => self::PREDICATE_OWL_SAMEAS
+                        'Predicate_ID' => self::PREDICATE_OWL_SAMEAS,
                     ]
                 );
             }
@@ -1532,7 +1532,7 @@ class DatabaseIngester extends BaseIngester
                 'edition' => $newObj,
                 'authorIds' => [],
                 'editorIds' => [],
-                'item' => $this->getItemForEdition($newObj)
+                'item' => $this->getItemForEdition($newObj),
             ]
         );
     }
@@ -1587,7 +1587,7 @@ class DatabaseIngester extends BaseIngester
                 'edition' => $newObj,
                 'authorIds' => [],
                 'editorIds' => [],
-                'item' => $this->getItemForEdition($newObj)
+                'item' => $this->getItemForEdition($newObj),
             ]
         );
     }
@@ -1625,7 +1625,7 @@ class DatabaseIngester extends BaseIngester
                 'edition' => $edition,
                 'authorIds' => [],
                 'editorIds' => [],
-                'item' => $this->getItemForEdition($edition)
+                'item' => $this->getItemForEdition($edition),
             ]
         );
     }
@@ -2312,7 +2312,7 @@ class DatabaseIngester extends BaseIngester
         foreach ($lookup as $child) {
             $children[] = [
                 'edition' => $child,
-                'item' => $this->getItemForEdition($child)
+                'item' => $this->getItemForEdition($child),
             ];
         }
 

@@ -352,7 +352,7 @@ class ModsExtractor
         $results = [];
         $paths = [
             'mods:genre', 'mods:topic', 'mods:geographic', 'mods:temporal',
-            'mods:subject/mods:name' // don't grab just any name
+            'mods:subject/mods:name', // don't grab just any name
         ];
         $prefixedPaths = [];
         foreach ($paths as $path) {
@@ -391,7 +391,7 @@ class ModsExtractor
     {
         $results = [];
         $paths = [
-            'mods:note'
+            'mods:note',
         ];
         $regEx = '/^Includes (short|article|department)/';
         $prefixedPaths = [];

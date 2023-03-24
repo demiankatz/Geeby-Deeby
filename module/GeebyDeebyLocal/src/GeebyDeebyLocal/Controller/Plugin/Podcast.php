@@ -62,7 +62,7 @@ class Podcast extends AbstractPlugin
                 'title' => trim(fgets($handle)),
                 'author' => trim(fgets($handle)),
                 'duration' => trim(fgets($handle)),
-                'description' => trim(fgets($handle))
+                'description' => trim(fgets($handle)),
             ];
             fgets($handle);
             if (empty($current['filename'])) {

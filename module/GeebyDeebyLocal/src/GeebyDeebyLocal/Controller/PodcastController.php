@@ -76,7 +76,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
     {
         return $this->createViewModel(
             [
-              'episodes' => $this->podcast()->getMetadata(0, 'Mittie\'s Storytime')
+              'episodes' => $this->podcast()->getMetadata(0, 'Mittie\'s Storytime'),
             ]
         );
     }
@@ -91,7 +91,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         return $this->createViewModel(
             [
                 'episodes' =>
-                    $this->podcast()->getMetadata(0, 'Professor M\'s Lecture Series')
+                    $this->podcast()->getMetadata(0, 'Professor M\'s Lecture Series'),
             ]
         );
     }
@@ -145,7 +145,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         $feed->addItunesOwner(
             [
                 'name' => 'Lancelot Darling & Friends',
-                'email' => 'lancelot.darling@gmail.com'
+                'email' => 'lancelot.darling@gmail.com',
             ]
         );
         $feed->setLanguage('en');

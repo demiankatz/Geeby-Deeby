@@ -238,7 +238,7 @@ class IssueMaker
         $editionTables = [
             'Editions_Full_Text', 'Editions_Images', 'Editions_ISBNs',
             'Editions_OCLC_Numbers', 'Editions_Platforms',
-            'Editions_Product_Codes', 'Editions_Release_Dates'
+            'Editions_Product_Codes', 'Editions_Release_Dates',
         ];
         foreach ($editionTables as $table) {
             $this->getDbTable($this->formatTableName($table))->update(
@@ -271,7 +271,7 @@ class IssueMaker
             $select->where(
                 [
                     'Series_ID' => $seriesObj->Series_ID,
-                    'i.Material_Type_ID' => $workId
+                    'i.Material_Type_ID' => $workId,
                 ]
             );
             $select->where->greaterThan('Position', 0);
