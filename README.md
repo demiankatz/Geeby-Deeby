@@ -57,7 +57,7 @@ select @@sql_mode;
 quit
 </pre>
 
-If the mode includes the `ONLY_FULL_GROUP_BY` setting, that will cause compatibility problems. You can disable this by defining a `sql_mode` line in your `my.conf` configuration file (or equivalent); simply copy and paste all of the remaining settings of the SQL mode; for example: `sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION`. You will need to restart MySQL after making this change for the setting to take effect.
+If the mode includes the `ONLY_FULL_GROUP_BY` setting, that will cause compatibility problems. You can disable this by defining a `sql_mode` line in your `my.cnf` configuration file (or equivalent); simply copy and paste all of the remaining settings of the SQL mode; for example: `sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION`. You will need to restart MySQL after making this change for the setting to take effect.
 
 Once back at the command line, run this to load the database structure you will need to use the software (again substituting appropriate credentials and database name where appropriate):
 
