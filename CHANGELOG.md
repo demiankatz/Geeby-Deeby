@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - IN DEVELOPMENT
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Improved PHP 8 compatibility in templates.
+
 ## 2.4.0 - 2023-03-24
 
 ### Added
