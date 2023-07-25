@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.4.1 - 2023-07-25
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Bootstrap was upgraded to release 3.4.1.
+- jQuery was upgraded to release 3.7.0.
+
+### Removed
+
+- HTML5Shiv library (no longer needed).
+
+### Fixed
+
+- Improved PHP 8 compatibility in templates.
+
 ## 2.4.0 - 2023-03-24
 
 ### Added
