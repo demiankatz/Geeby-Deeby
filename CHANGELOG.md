@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- Bootstrap was upgraded to release 3.4.1.
 
 ### Removed
 
