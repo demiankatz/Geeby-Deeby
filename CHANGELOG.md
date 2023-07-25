@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next Release - IN DEVELOPMENT
+## 2.4.1 - 2023-07-25
 
 ### Added
 
