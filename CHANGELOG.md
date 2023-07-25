@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Changed
 
 - Bootstrap was upgraded to release 3.4.1.
+- jQuery was upgraded to release 3.7.0.
 
 ### Removed
 
