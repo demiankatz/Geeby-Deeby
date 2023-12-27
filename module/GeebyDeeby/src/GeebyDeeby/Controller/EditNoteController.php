@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit note controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditNoteController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'note', 'notes', 'geeby-deeby/edit-note/render-notes'
+            'note',
+            'notes',
+            'geeby-deeby/edit-note/render-notes'
         );
     }
 

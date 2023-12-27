@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Series_Reviews
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -55,7 +57,9 @@ class SeriesReviews extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Series_Reviews');
@@ -106,7 +110,8 @@ class SeriesReviews extends Gateway
             // user details in case we need them:
             if (null === $userID) {
                 $select->join(
-                    ['u' => 'Users'], 'Series_Reviews.User_ID = u.User_ID'
+                    ['u' => 'Users'],
+                    'Series_Reviews.User_ID = u.User_ID'
                 );
             }
             $select->order(

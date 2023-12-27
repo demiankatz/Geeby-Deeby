@@ -13,11 +13,13 @@
           </form>
         </td>
         <td>
-          <?=$this->iconButton(
-            'trash',
-            "Series.unlink('Item', " . $current['Edition_ID'] . ")",
-            'Unlink ' . $currentTitle
-          )?>
+          <?=
+            $this->iconButton(
+                'trash',
+                "Series.unlink('Item', " . $current['Edition_ID'] . ")",
+                'Unlink ' . $currentTitle
+            )
+          ?>
         </td>
         <td>
           <?=$this->escapeHtml($currentTitle)?>

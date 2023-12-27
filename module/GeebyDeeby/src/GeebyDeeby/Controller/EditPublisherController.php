@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit publisher controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditPublisherController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'publisher', 'publishers', 'geeby-deeby/edit-publisher/render-publishers'
+            'publisher',
+            'publishers',
+            'geeby-deeby/edit-publisher/render-publishers'
         );
     }
 
@@ -115,8 +119,11 @@ class EditPublisherController extends AbstractBase
             }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'publishersaddresses', 'Publisher_ID', 'Address_ID',
-                'addresses', 'getAddressesForPublisher',
+                'publishersaddresses',
+                'Publisher_ID',
+                'Address_ID',
+                'addresses',
+                'getAddressesForPublisher',
                 'geeby-deeby/edit-publisher/address-list.phtml'
             );
         }
@@ -156,8 +163,11 @@ class EditPublisherController extends AbstractBase
             }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'publishersimprints', 'Publisher_ID', 'Imprint_ID',
-                'imprints', 'getImprintsForPublisher',
+                'publishersimprints',
+                'Publisher_ID',
+                'Imprint_ID',
+                'imprints',
+                'getImprintsForPublisher',
                 'geeby-deeby/edit-publisher/imprint-list.phtml'
             );
         }
@@ -173,8 +183,11 @@ class EditPublisherController extends AbstractBase
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
             ? ['Predicate_ID' => $pid] : [];
         return $this->handleGenericLink(
-            'publishersuris', 'Publisher_ID', 'URI',
-            'uris', 'getURIsForPublisher',
+            'publishersuris',
+            'Publisher_ID',
+            'URI',
+            'uris',
+            'getURIsForPublisher',
             'geeby-deeby/edit-publisher/uri-list.phtml',
             $extras
         );

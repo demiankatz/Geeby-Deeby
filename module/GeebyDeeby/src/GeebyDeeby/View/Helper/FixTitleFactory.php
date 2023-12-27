@@ -1,4 +1,5 @@
 <?php
+
 /**
  * FixTitle view helper factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 use Interop\Container\ContainerInterface;
@@ -51,7 +53,9 @@ class FixTitleFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         return new $name($container->get('GeebyDeeby\Articles'));

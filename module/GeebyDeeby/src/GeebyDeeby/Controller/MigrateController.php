@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Migration controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 use Laminas\Crypt\Password\Bcrypt;
@@ -115,7 +117,7 @@ class MigrateController extends AbstractBase
                 [
                     'Item_ID' => $current->Item_ID,
                     'Series_ID' => $current->Series_ID,
-                    'Position' => $current->Position
+                    'Position' => $current->Position,
                 ]
             );
             $count++;
@@ -132,7 +134,9 @@ class MigrateController extends AbstractBase
      *
      * @return int Number of rows migrated
      */
-    protected function genericItemToEditionMigration($inTable, $outTable,
+    protected function genericItemToEditionMigration(
+        $inTable,
+        $outTable,
         $primaryKey = null
     ) {
         $in = $this->getDbTable($inTable);
@@ -165,7 +169,8 @@ class MigrateController extends AbstractBase
     protected function migrateItemCreditsToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemscredits', 'editionscredits'
+            'itemscredits',
+            'editionscredits'
         );
     }
 
@@ -177,7 +182,8 @@ class MigrateController extends AbstractBase
     protected function migrateItemDatesToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsreleasedates', 'editionsreleasedates'
+            'itemsreleasedates',
+            'editionsreleasedates'
         );
     }
 
@@ -216,7 +222,9 @@ class MigrateController extends AbstractBase
     protected function migrateItemISBNsToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsisbns', 'editionsisbns', 'Sequence_ID'
+            'itemsisbns',
+            'editionsisbns',
+            'Sequence_ID'
         );
     }
 
@@ -228,7 +236,9 @@ class MigrateController extends AbstractBase
     protected function migrateItemImagesToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsimages', 'editionsimages', 'Sequence_ID'
+            'itemsimages',
+            'editionsimages',
+            'Sequence_ID'
         );
     }
 
@@ -240,7 +250,9 @@ class MigrateController extends AbstractBase
     protected function migrateItemProductCodesToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsproductcodes', 'editionsproductcodes', 'Sequence_ID'
+            'itemsproductcodes',
+            'editionsproductcodes',
+            'Sequence_ID'
         );
     }
 
@@ -252,7 +264,8 @@ class MigrateController extends AbstractBase
     protected function migrateItemPlatformsToEditions()
     {
         return $this->genericItemToEditionMigration(
-            'itemsplatforms', 'editionsplatforms'
+            'itemsplatforms',
+            'editionsplatforms'
         );
     }
 
@@ -290,7 +303,7 @@ class MigrateController extends AbstractBase
         $pi = $this->getDbTable('publishersimprints');
         $imprint = [
             'Publisher_ID' => $current->Publisher_ID,
-            'Imprint_Name' => $current->Imprint
+            'Imprint_Name' => $current->Imprint,
         ];
         $row = $pi->select($imprint)->current();
         if (isset($row['Imprint_ID'])) {
@@ -336,7 +349,7 @@ class MigrateController extends AbstractBase
         $pi = $this->getDbTable('publishersaddresses');
         $address = [
             'Publisher_ID' => $current->Publisher_ID,
-            'Country_ID' => $current->Country_ID
+            'Country_ID' => $current->Country_ID,
         ];
         $row = $pi->select($address)->current();
         if (isset($row['Address_ID'])) {

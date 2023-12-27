@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Publishers_Addresses
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -49,7 +51,9 @@ class PublishersAddresses extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Publishers_Addresses');
@@ -66,8 +70,10 @@ class PublishersAddresses extends Gateway
     {
         $callback = function ($select) use ($pubID) {
             $select->join(
-                ['ci' => 'Cities'], 'Publishers_Addresses.City_ID = ci.City_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['ci' => 'Cities'],
+                'Publishers_Addresses.City_ID = ci.City_ID',
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['c' => 'Countries'],

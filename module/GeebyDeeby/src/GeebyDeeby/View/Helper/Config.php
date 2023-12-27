@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Configuration view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 /**
@@ -64,6 +66,6 @@ class Config extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($key)
     {
-        return isset($this->config[$key]) ? $this->config[$key] : null;
+        return $this->config[$key] ?? null;
     }
 }

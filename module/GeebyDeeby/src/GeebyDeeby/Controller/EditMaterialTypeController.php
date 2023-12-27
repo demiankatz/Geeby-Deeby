@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit material type controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,8 @@ class EditMaterialTypeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'materialtype', 'materials',
+            'materialtype',
+            'materials',
             'geeby-deeby/edit-material-type/render-material-types'
         );
     }
@@ -84,13 +87,14 @@ class EditMaterialTypeController extends AbstractBase
         $assignMap = [
             'material' => 'Material_Type_Name',
             'material_plural' => 'Material_Type_Plural_Name',
-            'material_rdf' => 'Material_Type_RDF_Class'
+            'material_rdf' => 'Material_Type_RDF_Class',
         ];
         [$response, $ok]
             = $this->handleGenericItem('materialtype', $assignMap, 'material');
 
         // Special handling for "set as default" checkbox:
-        if ($ok && $this->getRequest()->isPost()
+        if (
+            $ok && $this->getRequest()->isPost()
             && $this->params()->fromPost('default')
         ) {
             $this->setDefaultMaterialType($response->affectedRow);

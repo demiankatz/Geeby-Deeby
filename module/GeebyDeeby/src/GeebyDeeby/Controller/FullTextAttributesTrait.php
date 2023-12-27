@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Trait for shared logic related to full text attribute display.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -53,7 +55,8 @@ trait FullTextAttributesTrait
             $ids = array_map(
                 function ($current) {
                     return $current['Sequence_ID'];
-                }, $view->fullText->toArray()
+                },
+                $view->fullText->toArray()
             );
             foreach ($attrTable->getAttributesForFullTextIDs($ids) as $attr) {
                 $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;

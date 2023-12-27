@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit full text attribute controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,8 @@ class EditEditionFullTextAttributeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'editionsfulltextattribute', 'attributes',
+            'editionsfulltextattribute',
+            'attributes',
             'geeby-deeby/edit-edition-full-text-attribute/'
             . 'render-edition-full-text-attributes'
         );
@@ -63,11 +66,13 @@ class EditEditionFullTextAttributeController extends AbstractBase
             'attribute_name' => 'Editions_Full_Text_Attribute_Name',
             'rdf_property' => 'Editions_Full_Text_Attribute_RDF_Property',
             'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority'
+            'priority' => 'Display_Priority',
 
         ];
         [$response] = $this->handleGenericItem(
-            'editionsfulltextattribute', $assignMap, 'attribute'
+            'editionsfulltextattribute',
+            $assignMap,
+            'attribute'
         );
 
         return $response;

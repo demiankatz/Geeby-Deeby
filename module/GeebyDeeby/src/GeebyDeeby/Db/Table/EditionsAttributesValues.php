@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Editions_Attributes_Values
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -48,7 +50,9 @@ class EditionsAttributesValues extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_Attributes_Values');
@@ -90,7 +94,8 @@ class EditionsAttributesValues extends Gateway
                 'e.Edition_ID = Editions_Attributes_Values.Edition_ID'
             );
             $select->join(
-                ['i' => 'Items'], 'e.Item_ID = i.Item_ID'
+                ['i' => 'Items'],
+                'e.Item_ID = i.Item_ID'
             );
             $select->join(
                 ['ea' => 'Editions_Attributes'],

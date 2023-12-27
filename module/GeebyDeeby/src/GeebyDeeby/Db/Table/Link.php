@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Links
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -48,7 +50,9 @@ class Link extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Links');
@@ -78,7 +82,8 @@ class Link extends Gateway
     {
         $callback = function ($select) use ($typeFilter) {
             $select->join(
-                ['lt' => 'Link_Types'], 'Links.Link_Type_ID = lt.Link_Type_ID'
+                ['lt' => 'Link_Types'],
+                'Links.Link_Type_ID = lt.Link_Type_ID'
             );
             if (null !== $typeFilter) {
                 $select->where->like('Link_Type', $typeFilter . '%');

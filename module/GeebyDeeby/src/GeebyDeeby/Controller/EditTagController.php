@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit tag controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditTagController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'tag', 'tags', 'geeby-deeby/edit-tag/render-tags'
+            'tag',
+            'tags',
+            'geeby-deeby/edit-tag/render-tags'
         );
         // If this is not an AJAX request, we also want to display types:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -75,7 +79,7 @@ class EditTagController extends AbstractBase
                     [
                         'Tag_ID' => $tagId,
                         'Tags_Attribute_ID' => $id,
-                        'Tags_Attribute_Value' => $val
+                        'Tags_Attribute_Value' => $val,
                     ]
                 );
             }
@@ -91,7 +95,7 @@ class EditTagController extends AbstractBase
     {
         $assignMap = [
             'tag' => 'Tag',
-            'type_id' => 'Tag_Type_ID'
+            'type_id' => 'Tag_Type_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('tag', $assignMap, 'tag');
         if (!$ok) {
@@ -103,7 +107,8 @@ class EditTagController extends AbstractBase
         $tagId = $view->tag['Tag_ID'] ?? $view->affectedRow->Tag_ID ?? null;
 
         // Special handling for saving attributes:
-        if ($this->getRequest()->isPost()
+        if (
+            $this->getRequest()->isPost()
             && ($attribs = $this->params()->fromPost('attribs'))
         ) {
             $this->saveAttributes($tagId, $attribs);
@@ -146,7 +151,9 @@ class EditTagController extends AbstractBase
     public function typelistAction()
     {
         return $this->getGenericList(
-            'tagType', 'tagTypes', 'geeby-deeby/edit-tag/render-types'
+            'tagType',
+            'tagTypes',
+            'geeby-deeby/edit-tag/render-types'
         );
     }
 
@@ -158,7 +165,11 @@ class EditTagController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemstags', 'Tag_ID', 'Item_ID', 'items', 'getItemsForTag',
+            'itemstags',
+            'Tag_ID',
+            'Item_ID',
+            'items',
+            'getItemsForTag',
             'geeby-deeby/edit-tag/item-list.phtml'
         );
     }
@@ -184,10 +195,31 @@ class EditTagController extends AbstractBase
         }
         $extras = ['Tags_Relationship_ID' => $rid];
         return $this->handleGenericLink(
-            'tagsrelationshipsvalues', $linkFrom, $linkTo,
-            'relationshipsValues', 'getRelationshipsForTag',
+            'tagsrelationshipsvalues',
+            $linkFrom,
+            $linkTo,
+            'relationshipsValues',
+            'getRelationshipsForTag',
             'geeby-deeby/edit-tag/relationship-list.phtml',
             $extras
+        );
+    }
+
+    /**
+     * Show action -- allows tolerance of URLs where the user has inserted 'edit'
+     * into an existing front-end link.
+     *
+     * @return mixed
+     */
+    public function showAction()
+    {
+        return $this->redirect()->toRoute(
+            'edit/tag',
+            [
+                'action' => 'index',
+                'id' => $this->params()->fromRoute('id'),
+                'extra' => $this->params()->fromRoute('extra'),
+            ]
         );
     }
 
@@ -213,8 +245,11 @@ class EditTagController extends AbstractBase
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
             ? ['Predicate_ID' => $pid] : [];
         return $this->handleGenericLink(
-            'tagsuris', 'Tag_ID', 'URI',
-            'uris', 'getURIsForTag',
+            'tagsuris',
+            'Tag_ID',
+            'URI',
+            'uris',
+            'getURIsForTag',
             'geeby-deeby/edit-tag/uri-list.phtml',
             $extras
         );

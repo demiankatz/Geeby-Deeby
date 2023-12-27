@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Series_Links
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -48,7 +50,9 @@ class SeriesLinks extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Series_Links');
@@ -65,7 +69,8 @@ class SeriesLinks extends Gateway
     {
         $callback = function ($select) use ($seriesID) {
             $select->join(
-                ['l' => 'Links'], 'Series_Links.Link_ID = l.Link_ID'
+                ['l' => 'Links'],
+                'Series_Links.Link_ID = l.Link_ID'
             );
             $select->order(['Link_Name']);
             $select->where->equalTo('Series_ID', $seriesID);

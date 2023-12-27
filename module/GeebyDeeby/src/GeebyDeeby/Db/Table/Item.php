@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -50,7 +52,9 @@ class Item extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items');
@@ -86,13 +90,14 @@ class Item extends Gateway
                     'Item_ID',
                     'Item_Name' => new Expression(
                         "Concat(Item_AltName, ' [alt. title for ', Item_Name, ']')"
-                    )
+                    ),
                 ]
             );
             $select2->join(
                 ['iat' => 'Items_AltTitles'],
                 'Items.Item_ID = iat.Item_ID',
-                [], Select::JOIN_LEFT
+                [],
+                Select::JOIN_LEFT
             );
             $select2->where->like('Item_AltName', $query . '%');
             $select->columns(
@@ -134,18 +139,22 @@ class Item extends Gateway
      *
      * @return mixed
      */
-    public function getItemsForSeries($seriesID, $topOnly = true,
+    public function getItemsForSeries(
+        $seriesID,
+        $topOnly = true,
         $groupByMaterial = true
     ) {
         $callback = function ($select) use ($seriesID, $topOnly, $groupByMaterial) {
             $select->join(
-                ['eds' => 'Editions'], 'eds.Item_ID = Items.Item_ID',
+                ['eds' => 'Editions'],
+                'eds.Item_ID = Items.Item_ID',
                 [
                     'Volume', 'Position', 'Replacement_Number',
                     'Edition_ID' => new Expression(
-                        'min(?)', ['eds.Edition_ID'],
+                        'min(?)',
+                        ['eds.Edition_ID'],
                         [Expression::TYPE_IDENTIFIER]
-                    )
+                    ),
                 ]
             );
             $select->join(
@@ -155,27 +164,28 @@ class Item extends Gateway
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $itemName = new Expression(
                 'COALESCE(?, ?)',
                 ['iat.Item_AltName', 'Items.Item_Name'],
                 [
                     Expression::TYPE_IDENTIFIER,
-                    Expression::TYPE_IDENTIFIER
+                    Expression::TYPE_IDENTIFIER,
                 ]
             );
             $select->order(
                 $groupByMaterial
                     ? [
                         'mt.Material_Type_Name', 'Volume', 'Position',
-                        'Replacement_Number', $itemName
+                        'Replacement_Number', $itemName,
                     ] : ['Volume', 'Position', 'Replacement_Number', $itemName]
             );
             $select->group(
                 [
                     'Items.Item_ID', 'Volume', 'Position', 'Replacement_Number',
-                    'Items.Material_Type_ID'
+                    'Items.Material_Type_ID',
                 ]
             );
             $select->where->equalTo('eds.Series_ID', $seriesID);
@@ -199,16 +209,17 @@ class Item extends Gateway
                             [
                                 Expression::TYPE_IDENTIFIER,
                                 Expression::TYPE_IDENTIFIER,
-                                Expression::TYPE_IDENTIFIER
+                                Expression::TYPE_IDENTIFIER,
                             ]
-                        )
+                        ),
                     ],
                     Select::JOIN_LEFT
                 );
                 $select->join(
                     ['childIat' => 'Items_AltTitles'],
                     'childEds.Preferred_Item_AltName_ID = childIat.Sequence_ID',
-                    [], Select::JOIN_LEFT
+                    [],
+                    Select::JOIN_LEFT
                 );
                 $select->where->isNull('eds.Parent_Edition_ID');
             }
@@ -228,14 +239,15 @@ class Item extends Gateway
         $callback = function ($select) use ($itemID) {
             $select->columns([]); // no columns needed from non-parent Items table
             $select->join(
-                ['eds' => 'Editions'], 'eds.Item_ID = Items.Item_ID',
+                ['eds' => 'Editions'],
+                'eds.Item_ID = Items.Item_ID',
                 ['Edition_ID', 'Edition_Name']
             );
             $select->join(
                 ['child_eds' => 'Editions'],
                 'eds.Edition_ID = child_eds.Parent_Edition_ID',
                 [
-                    'Extent_In_Parent', 'Position_In_Parent'
+                    'Extent_In_Parent', 'Position_In_Parent',
                 ]
             );
             $select->join(
@@ -251,12 +263,13 @@ class Item extends Gateway
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'child_eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->order(
                 [
                     'eds.Edition_Name', 'eds.Edition_ID',
-                    'child_eds.Position_In_Parent', 'child_items.Item_Name'
+                    'child_eds.Position_In_Parent', 'child_items.Item_Name',
                 ]
             );
             $select->where->equalTo('Items.Item_ID', $itemID);
@@ -276,7 +289,8 @@ class Item extends Gateway
         $callback = function ($select) use ($itemID) {
             $select->columns([]); // no columns needed from non-parent Items table
             $select->join(
-                ['eds' => 'Editions'], 'eds.Item_ID = Items.Item_ID',
+                ['eds' => 'Editions'],
+                'eds.Item_ID = Items.Item_ID',
                 []
             );
             $select->join(
@@ -297,7 +311,8 @@ class Item extends Gateway
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'parent_eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->order(
                 ['parent_items.Item_Name', 'Material_Type_Name']
@@ -321,13 +336,15 @@ class Item extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                ['eds' => 'Editions'], 'eds.Item_ID = Items.Item_ID',
+                ['eds' => 'Editions'],
+                'eds.Item_ID = Items.Item_ID',
                 ['Extent_In_Parent', 'Position_in_Parent', 'Edition_ID']
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->order(
                 ['Position_in_Parent', 'Item_Name']

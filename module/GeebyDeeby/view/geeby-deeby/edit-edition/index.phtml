@@ -80,7 +80,7 @@
       </div>
     </div>
   </div>
-  <?php if (count($attributes) > 0): ?>
+  <?php if (count($attributes ?? []) > 0): ?>
     <div class="collapse" id="extraAttributes">
       <?php foreach ($attributes as $attribute): $attrId = $attribute['Editions_Attribute_ID']; ?>
         <div class="form-group">
@@ -103,7 +103,7 @@
   </div>
 </form>
 <button data-toggle="collapse" data-target="#parentDetails">Toggle Parent Details</button>
-<?php if (count($attributes) > 0): ?>
+<?php if (count($attributes ?? []) > 0): ?>
   <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
 <?php endif; ?>
 

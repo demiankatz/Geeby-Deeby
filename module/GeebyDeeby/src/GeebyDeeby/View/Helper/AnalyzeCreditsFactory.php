@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AnalyzeCredits view helper factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 use Interop\Container\ContainerInterface;
@@ -38,8 +40,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AnalyzeCreditsFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+class AnalyzeCreditsFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create service
@@ -52,12 +53,15 @@ class AnalyzeCreditsFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         $tables = $container->get('GeebyDeeby\Db\Table\PluginManager');
         return new $name(
-            $tables->get('pseudonyms'), $tables->get('itemscreatorscitations')
+            $tables->get('pseudonyms'),
+            $tables->get('itemscreatorscitations')
         );
     }
 }

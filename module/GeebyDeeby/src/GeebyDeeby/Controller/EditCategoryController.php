@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit category controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditCategoryController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'category', 'categories', 'geeby-deeby/edit-category/render-categories'
+            'category',
+            'categories',
+            'geeby-deeby/edit-category/render-categories'
         );
     }
 

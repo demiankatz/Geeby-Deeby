@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items_Creators
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -50,7 +52,9 @@ class ItemsCreators extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items_Creators');
@@ -86,29 +90,35 @@ class ItemsCreators extends Gateway
     {
         $callback = function ($select) use ($personID, $sort) {
             $count = new Expression(
-                'count(distinct(?))', ['icc.Citation_ID'],
+                'count(distinct(?))',
+                ['icc.Citation_ID'],
                 [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
                 ['icc' => 'Items_Creators_Citations'],
                 'Items_Creators.Item_Creator_ID = icc.Item_Creator_ID',
-                ['Citation_Count' => $count], Select::JOIN_LEFT
+                ['Citation_Count' => $count],
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['i' => 'Items'], 'Items_Creators.Item_ID = i.Item_ID'
+                ['i' => 'Items'],
+                'Items_Creators.Item_ID = i.Item_ID'
             );
             $select->join(
-                ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID'
+                ['eds' => 'Editions'],
+                'eds.Item_ID = i.Item_ID'
             );
             $year = new Expression(
-                'min(?)', ['erd.Year'],
+                'min(?)',
+                ['erd.Year'],
                 [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
                 ['erd' => 'Editions_Release_Dates'],
                 'eds.Edition_ID = erd.Edition_ID OR '
                 . 'eds.Parent_Edition_ID = erd.Edition_ID',
-                ['Earliest_Year' => $year], Select::JOIN_LEFT
+                ['Earliest_Year' => $year],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['r' => 'Roles'],
@@ -136,19 +146,23 @@ class ItemsCreators extends Gateway
     {
         $callback = function ($select) use ($personID) {
             $select->join(
-                ['i' => 'Items'], 'Items_Creators.Item_ID = i.Item_ID'
+                ['i' => 'Items'],
+                'Items_Creators.Item_ID = i.Item_ID'
             );
             $select->join(
-                ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID',
+                ['eds' => 'Editions'],
+                'eds.Item_ID = i.Item_ID',
                 ['Edition_Name', 'Volume', 'Position', 'Replacement_Number']
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
+                ['s' => 'Series'],
+                'eds.Series_ID = s.Series_ID'
             );
             $select->join(
                 ['r' => 'Roles'],
@@ -156,7 +170,7 @@ class ItemsCreators extends Gateway
             );
             $fields = [
                 'Role_Name', 'Series_Name', 's.Series_ID', 'eds.Volume',
-                'eds.Position', 'eds.Replacement_Number', 'Item_Name'
+                'eds.Position', 'eds.Replacement_Number', 'Item_Name',
             ];
             $select->order($fields);
             $select->group($fields);
@@ -184,7 +198,7 @@ class ItemsCreators extends Gateway
                 'Items_Creators.Role_ID = r.Role_ID'
             );
             $fields = [
-                'Role_Name', 'Last_Name', 'First_Name'
+                'Role_Name', 'Last_Name', 'First_Name',
             ];
             $select->order($fields);
             $select->where->equalTo('Item_ID', $itemID);

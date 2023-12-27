@@ -3,14 +3,16 @@
   <table class="list_item">
     <tr>
       <td>
-        <?=$this->escapeHtml($current['Tag'])?>
+        <a href="<?=$this->url('edit/tag', ['id' => $current['Tag_ID']])?>"><?=$this->escapeHtml($current['Tag'])?></a>
       </td>
       <td>
-        <?=$this->iconButton(
-            'trash',
-            "Item.unlink('Tag', " . $current['Tag_ID'] . ")",
-            'Unlink tag: ' . $current['Tag']
-          )?>
+        <?=
+          $this->iconButton(
+              'trash',
+              "Item.unlink('Tag', " . $current['Tag_ID'] . ")",
+              'Unlink tag: ' . $current['Tag']
+          )
+        ?>
       </td>
     </tr>
   </table>

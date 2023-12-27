@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items_Translations
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -50,7 +52,9 @@ class ItemsTranslations extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items_Translations');
@@ -66,19 +70,28 @@ class ItemsTranslations extends Gateway
     public static function addLanguageToSelect($select)
     {
         $select->join(
-            ['eds' => 'Editions'], 'eds.Item_ID = i.Item_ID', [], Select::JOIN_LEFT
+            ['eds' => 'Editions'],
+            'eds.Item_ID = i.Item_ID',
+            [],
+            Select::JOIN_LEFT
         );
         $select->join(
-            ['s' => 'Series'], 's.Series_ID = eds.Series_ID', [], Select::JOIN_LEFT
+            ['s' => 'Series'],
+            's.Series_ID = eds.Series_ID',
+            [],
+            Select::JOIN_LEFT
         );
         $select->join(
-            ['l' => 'Languages'], 'l.Language_ID = s.Language_ID',
+            ['l' => 'Languages'],
+            'l.Language_ID = s.Language_ID',
             [
                 'Language_Name' => new Expression(
-                    'min(?)', ['Language_Name'],
+                    'min(?)',
+                    ['Language_Name'],
                     [Expression::TYPE_IDENTIFIER]
-                )
-            ], Select::JOIN_LEFT
+                ),
+            ],
+            Select::JOIN_LEFT
         );
         $select->group('i.Item_ID');
     }

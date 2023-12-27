@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Files
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -48,7 +50,9 @@ class File extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Files');
@@ -81,7 +85,8 @@ class File extends Gateway
     {
         $callback = function ($select) use ($include, $exclude) {
             $select->join(
-                ['ft' => 'File_Types'], 'Files.File_Type_ID = ft.File_Type_ID'
+                ['ft' => 'File_Types'],
+                'Files.File_Type_ID = ft.File_Type_ID'
             );
             if (null !== $include) {
                 $select->where->in('ft.File_Type_ID', $include);

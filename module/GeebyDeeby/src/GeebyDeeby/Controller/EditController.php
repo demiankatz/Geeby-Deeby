@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -54,7 +56,7 @@ class EditController extends AbstractBase
                 'contentEditor' => $user->hasPermission('Content_Editor'),
                 'approver' => $user->hasPermission('Approver'),
                 'userEditor' => $user->hasPermission('User_Editor'),
-                'dataManager' => $user->hasPermission('Data_Manager')
+                'dataManager' => $user->hasPermission('Data_Manager'),
             ]
         );
     }

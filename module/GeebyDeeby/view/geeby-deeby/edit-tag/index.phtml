@@ -10,7 +10,7 @@
       <td><?=$this->render('geeby-deeby/edit-tag/type-select.phtml', ['tagTypes' => $tagTypes, 'selected' => $tag['Tag_Type_ID'] ?? null])?></td>
     </tr>
   </table>
-  <?php if (count($attributes) > 0): ?>
+  <?php if (count($attributes ?? []) > 0): ?>
     <div class="collapse" id="extraAttributes">
       <?php foreach ($attributes as $attribute): $attrId = $attribute['Tags_Attribute_ID']; ?>
         <div class="form-group">
@@ -28,7 +28,7 @@
   <?php endif; ?>
   <input type="submit" value="Save" />
 </form>
-<?php if (count($attributes) > 0): ?>
+<?php if (count($attributes ?? []) > 0): ?>
   <button data-toggle="collapse" data-target="#extraAttributes">Toggle Additional Attributes</button>
 <?php endif; ?>
 <div id="save_tag_status"></div>

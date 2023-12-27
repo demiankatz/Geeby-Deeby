@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit link controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditLinkController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'link', 'links', 'geeby-deeby/edit-link/render-links'
+            'link',
+            'links',
+            'geeby-deeby/edit-link/render-links'
         );
         // If this is not an AJAX request, we also want to display types:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -65,7 +69,7 @@ class EditLinkController extends AbstractBase
         $assignMap = [
             'link_name' => 'Link_Name', 'url' => 'URL',
             'desc' => 'Description', 'date_checked' => 'Date_Checked',
-            'type_id' => 'Link_Type_ID'
+            'type_id' => 'Link_Type_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('link', $assignMap, 'link');
         if (!$ok) {
@@ -93,7 +97,9 @@ class EditLinkController extends AbstractBase
     public function typelistAction()
     {
         return $this->getGenericList(
-            'linkType', 'linkTypes', 'geeby-deeby/edit-link/render-types'
+            'linkType',
+            'linkTypes',
+            'geeby-deeby/edit-link/render-types'
         );
     }
 
@@ -117,8 +123,11 @@ class EditLinkController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemslinks', 'Link_ID', 'Item_ID',
-            'itemsLinks', 'getItemsForLink',
+            'itemslinks',
+            'Link_ID',
+            'Item_ID',
+            'itemsLinks',
+            'getItemsForLink',
             'geeby-deeby/edit-link/item-list.phtml'
         );
     }
@@ -131,8 +140,11 @@ class EditLinkController extends AbstractBase
     public function personAction()
     {
         return $this->handleGenericLink(
-            'peoplelinks', 'Link_ID', 'Person_ID',
-            'peopleLinks', 'getPeopleForLink',
+            'peoplelinks',
+            'Link_ID',
+            'Person_ID',
+            'peopleLinks',
+            'getPeopleForLink',
             'geeby-deeby/edit-link/person-list.phtml'
         );
     }
@@ -145,8 +157,11 @@ class EditLinkController extends AbstractBase
     public function seriesAction()
     {
         return $this->handleGenericLink(
-            'serieslinks', 'Link_ID', 'Series_ID',
-            'seriesLinks', 'getSeriesForLink',
+            'serieslinks',
+            'Link_ID',
+            'Series_ID',
+            'seriesLinks',
+            'getSeriesForLink',
             'geeby-deeby/edit-link/series-list.phtml'
         );
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit platform controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditPlatformController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'platform', 'platforms', 'geeby-deeby/edit-platform/render-platforms'
+            'platform',
+            'platforms',
+            'geeby-deeby/edit-platform/render-platforms'
         );
     }
 

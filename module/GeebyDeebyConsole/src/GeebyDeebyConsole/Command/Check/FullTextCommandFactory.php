@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for check/fulltext command.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyConsole\Command\Check;
 
 use Interop\Container\ContainerInterface;
@@ -55,7 +57,9 @@ class FullTextCommandFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {

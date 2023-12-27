@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Row Definition for Items_Relationships
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Row;
 
 /**
@@ -46,7 +48,9 @@ class ItemsRelationship extends RowGateway
     public function __construct($adapter)
     {
         parent::__construct(
-            'Items_Relationship_ID', 'Items_Relationships', $adapter
+            'Items_Relationship_ID',
+            'Items_Relationships',
+            $adapter
         );
     }
 

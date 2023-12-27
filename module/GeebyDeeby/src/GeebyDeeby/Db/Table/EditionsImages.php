@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Editions_Images
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -50,7 +52,9 @@ class EditionsImages extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_Images');
@@ -65,7 +69,9 @@ class EditionsImages extends Gateway
     {
         $callback = function ($select) {
             $count = new Expression(
-                'count(?)', ['Thumb_Path'], [Expression::TYPE_IDENTIFIER]
+                'count(?)',
+                ['Thumb_Path'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->columns(['Thumb_Path', 'c' => $count]);
             $select->group(['Thumb_Path']);
@@ -104,8 +110,10 @@ class EditionsImages extends Gateway
     {
         $callback = function ($select) use ($editionID) {
             $select->join(
-                ['n' => 'Notes'], 'Editions_Images.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                ['n' => 'Notes'],
+                'Editions_Images.Note_ID = n.Note_ID',
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order(['Editions_Images.Position']);
             $select->where->equalTo('Edition_ID', $editionID);
@@ -125,8 +133,10 @@ class EditionsImages extends Gateway
         $callback = function ($select) use ($editionID) {
             $select->quantifier('DISTINCT');
             $select->join(
-                ['n' => 'Notes'], 'Editions_Images.Note_ID = n.Note_ID',
-                ['Note'], Select::JOIN_LEFT
+                ['n' => 'Notes'],
+                'Editions_Images.Note_ID = n.Note_ID',
+                ['Note'],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['eds' => 'Editions'],
@@ -167,21 +177,27 @@ class EditionsImages extends Gateway
                 ['Edition_Name']
             );
             $select->join(
-                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID', ['Item_ID']
+                ['i' => 'Items'],
+                'eds.Item_ID = i.Item_ID',
+                ['Item_ID']
             );
             $year = new Expression(
-                'min(?)', ['erd.Year'],
+                'min(?)',
+                ['erd.Year'],
                 [Expression::TYPE_IDENTIFIER]
             );
             $select->join(
                 ['erd' => 'Editions_Release_Dates'],
                 'eds.Edition_ID = erd.Edition_ID '
                 . 'OR eds.Parent_Edition_ID = erd.Edition_ID',
-                ['Earliest_Year' => $year], Select::JOIN_LEFT
+                ['Earliest_Year' => $year],
+                Select::JOIN_LEFT
             );
             $select->join(
-                ['n' => 'Notes'], 'Editions_Images.Note_ID = n.Note_ID',
-                ['Note'], Select::JOIN_LEFT
+                ['n' => 'Notes'],
+                'Editions_Images.Note_ID = n.Note_ID',
+                ['Note'],
+                Select::JOIN_LEFT
             );
             $fields = array_merge($fields, ['Edition_Name', 'Item_ID', 'Note']);
             $select->group($fields);
@@ -208,7 +224,8 @@ class EditionsImages extends Gateway
                 'Editions_Images.Edition_ID = eds.Edition_ID'
             );
             $select->join(
-                ['i' => 'Items'], 'eds.Item_ID = i.Item_ID'
+                ['i' => 'Items'],
+                'eds.Item_ID = i.Item_ID'
             );
             $select->join(
                 ['mt' => 'Material_Types'],
@@ -216,26 +233,28 @@ class EditionsImages extends Gateway
                 []
             );
             $select->join(
-                ['n' => 'Notes'], 'Editions_Images.Note_ID = n.Note_ID',
-                ['Note'], Select::JOIN_LEFT
+                ['n' => 'Notes'],
+                'Editions_Images.Note_ID = n.Note_ID',
+                ['Note'],
+                Select::JOIN_LEFT
             );
             $select->order(
                 $groupByMaterial
                     ? [
                         'mt.Material_Type_Name', 'eds.Volume', 'eds.Position',
                         'eds.Replacement_Number', 'eds.Item_Display_Order',
-                        'i.Item_Name', 'Editions_Images.Position'
+                        'i.Item_Name', 'Editions_Images.Position',
                     ] : [
                         'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
                         'eds.Item_Display_Order', 'i.Item_Name',
-                        'Editions_Images.Position'
+                        'Editions_Images.Position',
                     ]
             );
             $select->group(
                 [
                     'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position',
                     'eds.Replacement_Number', 'Editions_Images.Position',
-                    'i.Item_ID', 'Note'
+                    'i.Item_ID', 'Note',
                 ]
             );
             $select->where->equalTo('Series_ID', $seriesID);

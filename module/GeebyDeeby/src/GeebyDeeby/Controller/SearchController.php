@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Search controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -93,11 +95,11 @@ class SearchController extends AbstractBase
         // Whitelist of valid type actions:
         $type = strtolower($this->layout()->type);
         switch ($type) {
-        case 'isbn':
-        case 'keyword':
-        case 'person':
-        case 'title':
-            return $this->forwardTo(__NAMESPACE__ . '\Search', $type);
+            case 'isbn':
+            case 'keyword':
+            case 'person':
+            case 'title':
+                return $this->forwardTo(__NAMESPACE__ . '\Search', $type);
         }
 
         // If we got this far, no valid type was found:

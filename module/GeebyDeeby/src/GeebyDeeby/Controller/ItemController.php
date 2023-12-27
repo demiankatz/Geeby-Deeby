@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Item controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -391,7 +393,7 @@ class ItemController extends AbstractBase
         return $this->createViewModel(
             [
                 'isbn' => new \VuFindCode\ISBN($isbn),
-                'config' => $config['geeby-deeby']['isbn_links'] ?? []
+                'config' => $config['geeby-deeby']['isbn_links'] ?? [],
             ]
         );
     }
@@ -452,7 +454,8 @@ class ItemController extends AbstractBase
         $query->order('Item_ID DESC');
         $paginator = new \Laminas\Paginator\Paginator(
             new \Laminas\Paginator\Adapter\DbSelect(
-                $query, $adapter
+                $query,
+                $adapter
             )
         );
         $paginator->setItemCountPerPage(50);
@@ -476,7 +479,7 @@ class ItemController extends AbstractBase
         $table = $this->getDbTable('itemsreviews');
         $params = [
             'Item_ID' => $this->params()->fromRoute('id'),
-            'User_ID' => $user->User_ID
+            'User_ID' => $user->User_ID,
         ];
 
         $existing = $table->select($params)->toArray();
@@ -496,7 +499,7 @@ class ItemController extends AbstractBase
                     $table->delete(
                         [
                             'Item_ID' => $params['Item_ID'],
-                            'User_ID' => $params['User_ID']
+                            'User_ID' => $params['User_ID'],
                         ]
                     );
                 }
@@ -609,7 +612,7 @@ class ItemController extends AbstractBase
         $table = $this->getDbTable('collections');
         $where = [
             'User_ID' => $user->User_ID, 'Item_ID' => $item,
-            'Series_ID' => $series, 'Collection_Status' => $list
+            'Series_ID' => $series, 'Collection_Status' => $list,
         ];
         $existing = $table->select($where)->toArray();
         $existing = count($existing) > 0 ? $existing[0] : false;

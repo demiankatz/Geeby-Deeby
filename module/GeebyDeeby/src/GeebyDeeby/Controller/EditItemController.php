@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit item controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditItemController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'item', 'items', 'geeby-deeby/edit-item/render-items'
+            'item',
+            'items',
+            'geeby-deeby/edit-item/render-items'
         );
     }
 
@@ -70,7 +74,7 @@ class EditItemController extends AbstractBase
                     [
                          'Item_ID' => $itemId,
                          'Items_Attribute_ID' => $id,
-                         'Items_Attribute_Value' => $val
+                         'Items_Attribute_Value' => $val,
                      ]
                 );
             }
@@ -88,7 +92,7 @@ class EditItemController extends AbstractBase
             'name' => 'Item_Name',
             'errata' => 'Item_Errata',
             'thanks' => 'Item_Thanks',
-            'material' => 'Material_Type_ID'
+            'material' => 'Material_Type_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('item', $assignMap, 'item');
         if (!$ok) {
@@ -99,7 +103,8 @@ class EditItemController extends AbstractBase
             ?? null;
 
         // Special handling for saving attributes:
-        if ($this->getRequest()->isPost()
+        if (
+            $this->getRequest()->isPost()
             && ($attribs = $this->params()->fromPost('attribs'))
         ) {
             $this->saveAttributes($itemId, $attribs);
@@ -129,7 +134,7 @@ class EditItemController extends AbstractBase
             $view->roles = $this->getDbTable('role')->getList();
             $view->creators = $this->getDbTable('itemscreators')
                 ->getCreatorsForItem($itemId);
-            $view->credits= $this->getDbTable('editionscredits')
+            $view->credits = $this->getDbTable('editionscredits')
                 ->getCreditsForItem($itemId, true);
             $view->itemsBib = $this->getDbTable('itemsbibliography')
                 ->getItemsDescribedByItem($itemId);
@@ -171,7 +176,7 @@ class EditItemController extends AbstractBase
                         'Series_ID' => $parentEdition->Series_ID,
                         'Edition_Length' => $this->params()->fromPost('len'),
                         'Edition_Endings' => $this->params()->fromPost('endings'),
-                        'Parent_Edition_ID' => $editionID
+                        'Parent_Edition_ID' => $editionID,
                     ]
                 );
             } elseif ($seriesID = $this->params()->fromPost('series_id', false)) {
@@ -184,7 +189,7 @@ class EditItemController extends AbstractBase
                         'Item_ID' => $view->affectedRow->Item_ID,
                         'Series_ID' => $seriesID,
                         'Edition_Length' => $this->params()->fromPost('len'),
-                        'Edition_Endings' => $this->params()->fromPost('endings')
+                        'Edition_Endings' => $this->params()->fromPost('endings'),
                     ]
                 );
             }
@@ -201,8 +206,11 @@ class EditItemController extends AbstractBase
     public function aboutitemAction()
     {
         return $this->handleGenericLink(
-            'itemsbibliography', 'Bib_Item_ID', 'Item_ID',
-            'itemsBib', 'getItemsDescribedByItem',
+            'itemsbibliography',
+            'Bib_Item_ID',
+            'Item_ID',
+            'itemsBib',
+            'getItemsDescribedByItem',
             'geeby-deeby/edit-item/item-ref-list.phtml'
         );
     }
@@ -215,8 +223,11 @@ class EditItemController extends AbstractBase
     public function aboutseriesAction()
     {
         return $this->handleGenericLink(
-            'seriesbibliography', 'Item_ID', 'Series_ID',
-            'seriesBib', 'getSeriesDescribedByItem',
+            'seriesbibliography',
+            'Item_ID',
+            'Series_ID',
+            'seriesBib',
+            'getSeriesDescribedByItem',
             'geeby-deeby/edit-item/series-ref-list.phtml'
         );
     }
@@ -229,8 +240,11 @@ class EditItemController extends AbstractBase
     public function aboutpersonAction()
     {
         return $this->handleGenericLink(
-            'peoplebibliography', 'Item_ID', 'Person_ID',
-            'peopleBib', 'getPeopleDescribedByItem',
+            'peoplebibliography',
+            'Item_ID',
+            'Person_ID',
+            'peopleBib',
+            'getPeopleDescribedByItem',
             'geeby-deeby/edit-item/person-ref-list.phtml'
         );
     }
@@ -243,8 +257,11 @@ class EditItemController extends AbstractBase
     public function adaptationintoAction()
     {
         return $this->handleGenericLink(
-            'itemsadaptations', 'Source_Item_ID', 'Adapted_Item_ID',
-            'adaptedInto', 'getAdaptedFrom',
+            'itemsadaptations',
+            'Source_Item_ID',
+            'Adapted_Item_ID',
+            'adaptedInto',
+            'getAdaptedFrom',
             'geeby-deeby/edit-item/adapted-into-list.phtml'
         );
     }
@@ -257,8 +274,11 @@ class EditItemController extends AbstractBase
     public function adaptationfromAction()
     {
         return $this->handleGenericLink(
-            'itemsadaptations', 'Adapted_Item_ID', 'Source_Item_ID',
-            'adaptedFrom', 'getAdaptedInto',
+            'itemsadaptations',
+            'Adapted_Item_ID',
+            'Source_Item_ID',
+            'adaptedFrom',
+            'getAdaptedInto',
             'geeby-deeby/edit-item/adapted-from-list.phtml'
         );
     }
@@ -301,8 +321,11 @@ class EditItemController extends AbstractBase
             }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'itemsalttitles', 'Item_ID', 'Sequence_ID',
-                'item_alt_titles', 'getAltTitles',
+                'itemsalttitles',
+                'Item_ID',
+                'Sequence_ID',
+                'item_alt_titles',
+                'getAltTitles',
                 'geeby-deeby/edit-item/alt-title-list.phtml'
             );
         }
@@ -318,9 +341,13 @@ class EditItemController extends AbstractBase
         $note = intval($this->params()->fromPost('note_id'));
         $extras = $note > 0 ? ['Note_ID' => $note] : [];
         return $this->handleGenericLink(
-            'itemsincollections', 'Collection_Item_ID', 'Item_ID',
-            'item_list', 'getItemsForCollection',
-            'geeby-deeby/edit-item/list.phtml', $extras
+            'itemsincollections',
+            'Collection_Item_ID',
+            'Item_ID',
+            'item_list',
+            'getItemsForCollection',
+            'geeby-deeby/edit-item/list.phtml',
+            $extras
         );
     }
 
@@ -332,8 +359,11 @@ class EditItemController extends AbstractBase
     public function editionsAction()
     {
         return $this->handleGenericLink(
-            'edition', 'Item_ID', 'Edition_ID',
-            'editions', 'getEditionsForItem',
+            'edition',
+            'Item_ID',
+            'Edition_ID',
+            'editions',
+            'getEditionsForItem',
             'geeby-deeby/edit-item/edition-list.phtml'
         );
     }
@@ -370,7 +400,8 @@ class EditItemController extends AbstractBase
             return $ok;
         }
         // Modify the publisher if it's a GET/POST and has an extra set.
-        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+        if (
+            ($this->getRequest()->isPost() || $this->getRequest()->isGet())
             && null !== $this->params()->fromRoute('extra')
             && 'NEW' !== $this->params()->fromRoute('extra')
         ) {
@@ -441,13 +472,13 @@ class EditItemController extends AbstractBase
      */
     protected function deleteCreator()
     {
-        list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
+        [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
         try {
             $this->getDbTable('itemscreators')->delete(
                 [
                     'Item_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $person,
-                    'Role_ID' => $role
+                    'Role_ID' => $role,
                 ]
             );
         } catch (\Exception $e) {
@@ -496,7 +527,7 @@ class EditItemController extends AbstractBase
             'Person_ID' => $this->params()->fromPost('person_id'),
             'Role_ID' => $this->params()->fromPost('role_id'),
             'Position' => $this->params()->fromPost('pos'),
-            'Note_ID' => $this->params()->fromPost('note_id')
+            'Note_ID' => $this->params()->fromPost('note_id'),
         ];
         if (empty($row['Note_ID'])) {
             $row['Note_ID'] = null;
@@ -512,7 +543,7 @@ class EditItemController extends AbstractBase
      */
     protected function deleteCredit()
     {
-        list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
+        [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
         $this->getDbTable('editionscredits')->deleteForItem(
             $this->params()->fromRoute('id'),
             ['Person_ID' => $person, 'Role_ID' => $role]
@@ -533,7 +564,7 @@ class EditItemController extends AbstractBase
                 ['Position' => $this->params()->fromPost('pos')],
                 [
                     'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id')
+                    'Role_ID' => $this->params()->fromPost('role_id'),
                 ]
             );
             return $this->jsonReportSuccess();
@@ -564,8 +595,12 @@ class EditItemController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'itemsdescriptions', 'Item_ID', 'Source', 'descriptions',
-                'getDescriptions', 'geeby-deeby/edit-item/description-list.phtml'
+                'itemsdescriptions',
+                'Item_ID',
+                'Source',
+                'descriptions',
+                'getDescriptions',
+                'geeby-deeby/edit-item/description-list.phtml'
             );
         }
     }
@@ -606,7 +641,7 @@ class EditItemController extends AbstractBase
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
-                'extra' => $this->params()->fromRoute('extra')
+                'extra' => $this->params()->fromRoute('extra'),
             ]
         );
     }
@@ -632,8 +667,11 @@ class EditItemController extends AbstractBase
         }
         $extras = ['Items_Relationship_ID' => $rid];
         return $this->handleGenericLink(
-            'itemsrelationshipsvalues', $linkFrom, $linkTo,
-            'relationshipsValues', 'getRelationshipsForItem',
+            'itemsrelationshipsvalues',
+            $linkFrom,
+            $linkTo,
+            'relationshipsValues',
+            'getRelationshipsForItem',
             'geeby-deeby/edit-item/relationship-list.phtml',
             $extras
         );
@@ -647,7 +685,11 @@ class EditItemController extends AbstractBase
     public function tagAction()
     {
         return $this->handleGenericLink(
-            'itemstags', 'Item_ID', 'Tag_ID', 'tags', 'getTags',
+            'itemstags',
+            'Item_ID',
+            'Tag_ID',
+            'tags',
+            'getTags',
             'geeby-deeby/edit-item/tag-list.phtml'
         );
     }
@@ -660,8 +702,11 @@ class EditItemController extends AbstractBase
     public function translationintoAction()
     {
         return $this->handleGenericLink(
-            'itemstranslations', 'Source_Item_ID', 'Trans_Item_ID',
-            'translatedInto', 'getTranslatedFrom',
+            'itemstranslations',
+            'Source_Item_ID',
+            'Trans_Item_ID',
+            'translatedInto',
+            'getTranslatedFrom',
             'geeby-deeby/edit-item/trans-into-list.phtml'
         );
     }
@@ -674,8 +719,11 @@ class EditItemController extends AbstractBase
     public function translationfromAction()
     {
         return $this->handleGenericLink(
-            'itemstranslations', 'Trans_Item_ID', 'Source_Item_ID',
-            'translatedFrom', 'getTranslatedInto',
+            'itemstranslations',
+            'Trans_Item_ID',
+            'Source_Item_ID',
+            'translatedFrom',
+            'getTranslatedInto',
             'geeby-deeby/edit-item/trans-from-list.phtml'
         );
     }

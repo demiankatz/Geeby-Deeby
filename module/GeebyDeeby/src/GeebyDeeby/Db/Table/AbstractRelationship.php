@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract Table Definition for Relationship Tables.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -56,8 +58,11 @@ abstract class AbstractRelationship extends Gateway
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      * @param string        $prefix  Prefix to use in table/class names.
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
-        RowGateway $rowObj = null, $prefix
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
+        RowGateway $rowObj = null,
+        $prefix
     ) {
         $this->prefix = $prefix;
         parent::__construct($adapter, $tm, $rowObj, $prefix . '_Relationships');
@@ -80,14 +85,14 @@ abstract class AbstractRelationship extends Gateway
                 $current['Display_Priority'],
                 $id,
                 $current[$this->prefix . '_Relationship_Name'],
-                $current[$this->prefix . '_Relationship_RDF_Property']
+                $current[$this->prefix . '_Relationship_RDF_Property'],
             ];
             if (!empty($current[$this->prefix . '_Inverse_Relationship_Name'])) {
                 $options[] = [
                     $current['Inverse_Display_Priority'],
                     'i' . $id,
                     $current[$this->prefix . '_Inverse_Relationship_Name'],
-                    $current[$this->prefix . '_Inverse_Relationship_RDF_Property']
+                    $current[$this->prefix . '_Inverse_Relationship_RDF_Property'],
                 ];
             }
         }

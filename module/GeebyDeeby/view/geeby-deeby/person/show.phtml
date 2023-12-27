@@ -20,13 +20,21 @@
   </p>
 <?php endif; ?>
 
+<?php $uriCount = count($uris); if ($uriCount > 0): $displayedSomething = true; ?>
+  <p><b>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</b>
+    <?php $i = 0; foreach ($uris as $uri): $i++ ?>
+      <a href="<?=$this->escapeHtmlAttr($uri['URI'])?>"><?=$this->escapeHtml($uri['URI'])?></a><?=$i < $uriCount ? ', ' : ''?>
+    <?php endforeach; ?>
+  </p>
+<?php endif; ?>
+
 <?php if (!empty($person['Biography'])): $displayedSomething = true; ?>
   <?php /* Don't escape biography -- contains HTML. */ ?>
   <p><?=$person['Biography']?></p>
 <?php endif; ?>
 
 <?php if (count($credits) > 0 || count($citations) > 0): $displayedSomething = true; ?>
-  <?php $sorts = [ 'series', 'title', 'year' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
+  <?php $sorts = [ 'series', 'title', 'year' ]; $sort = $this->sort ?? $sorts[0]; ?>
   <div class="pull-right" style="padding:12px 0;">
     Sort by:
     <div class="btn-group" style="margin-top:-4px;">

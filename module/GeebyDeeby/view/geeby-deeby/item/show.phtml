@@ -200,7 +200,7 @@
           <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($platforms as $platform => $note): ?>
-              <?php list($platId, $platName) = explode('|', $platform, 2); ?>
+              <?php [$platId, $platName] = explode('|', $platform, 2); ?>
               <a href="<?=$this->url('platform', ['id' => $platId])?>"><?=$this->escapeHtml($platName)?></a>
               <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
@@ -566,7 +566,7 @@
         foreach ($groupedAttribs as $key => $values) {
             $groupedAttribs[$key] = [
               'details' => $values[0],
-              'values' => $this->groupeditions($values, 'Editions_Attribute_Value', $editions)
+              'values' => $this->groupeditions($values, 'Editions_Attribute_Value', $editions),
             ];
         }
       ?>

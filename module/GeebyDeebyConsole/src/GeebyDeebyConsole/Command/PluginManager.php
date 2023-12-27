@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Console command plugin manager
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://GeebyDeeby.org/wiki/development:plugins:ils_drivers Wiki
  */
+
 namespace GeebyDeebyConsole\Command;
 
 /**
@@ -44,7 +46,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $aliases = [
-        'check/fulltext' => Check\FullTextCommand::class
+        'check/fulltext' => Check\FullTextCommand::class,
     ];
 
     /**
@@ -65,7 +67,8 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      * @param array $v3config                  If $configOrContainerInstance is a
      * container, this value will be passed to the parent constructor.
      */
-    public function __construct($configOrContainerInstance = null,
+    public function __construct(
+        $configOrContainerInstance = null,
         array $v3config = []
     ) {
         //$this->addAbstractFactory(PluginFactory::class);

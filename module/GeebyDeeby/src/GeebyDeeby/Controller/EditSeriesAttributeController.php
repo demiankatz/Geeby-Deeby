@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit series attribute controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,8 @@ class EditSeriesAttributeController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'seriesattribute', 'attributes',
+            'seriesattribute',
+            'attributes',
             'geeby-deeby/edit-series-attribute/render-series-attributes'
         );
         // If this is not an AJAX request, we also want to display relationships:

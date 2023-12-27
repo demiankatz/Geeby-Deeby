@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit full text source controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,8 @@ class EditFullTextSourceController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'fulltextsource', 'fulltextsources',
+            'fulltextsource',
+            'fulltextsources',
             'geeby-deeby/edit-full-text-source/render-sources'
         );
     }
@@ -60,7 +63,9 @@ class EditFullTextSourceController extends AbstractBase
     {
         $assignMap = ['fulltextsource' => 'Full_Text_Source_Name'];
         [$response] = $this->handleGenericItem(
-            'fulltextsource', $assignMap, 'fulltextsource'
+            'fulltextsource',
+            $assignMap,
+            'fulltextsource'
         );
         return $response;
     }

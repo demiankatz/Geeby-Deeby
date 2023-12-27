@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items_Reviews
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -57,7 +59,9 @@ class ItemsReviews extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items_Reviews');
@@ -131,7 +135,7 @@ class ItemsReviews extends Gateway
                     ['parent.Volume', 'eds.Volume'],
                     [
                         Expression::TYPE_IDENTIFIER,
-                        Expression::TYPE_IDENTIFIER
+                        Expression::TYPE_IDENTIFIER,
                     ]
                 );
                 $pos = new Expression(
@@ -139,7 +143,7 @@ class ItemsReviews extends Gateway
                     ['parent.Position', 'eds.Position'],
                     [
                         Expression::TYPE_IDENTIFIER,
-                        Expression::TYPE_IDENTIFIER
+                        Expression::TYPE_IDENTIFIER,
                     ]
                 );
                 $rep = new Expression(
@@ -147,7 +151,7 @@ class ItemsReviews extends Gateway
                     ['parent.Replacement_Number', 'eds.Replacement_Number'],
                     [
                         Expression::TYPE_IDENTIFIER,
-                        Expression::TYPE_IDENTIFIER
+                        Expression::TYPE_IDENTIFIER,
                     ]
                 );
                 $select->columns(
@@ -166,12 +170,14 @@ class ItemsReviews extends Gateway
                 $select->join(
                     ['parent' => 'Editions'],
                     'eds.Parent_Edition_ID = parent.Edition_ID',
-                    [], Select::JOIN_LEFT
+                    [],
+                    Select::JOIN_LEFT
                 );
                 $select->join(
                     ['iat' => 'Items_AltTitles'],
                     'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                    ['Item_AltName'], Select::JOIN_LEFT
+                    ['Item_AltName'],
+                    Select::JOIN_LEFT
                 );
                 $select->join(
                     ['s' => 'Series'],
@@ -180,7 +186,7 @@ class ItemsReviews extends Gateway
                 $select->group(
                     [
                         'Items_Reviews.Item_ID', 'Items_Reviews.User_ID',
-                        's.Series_ID', 'Volume', 'Position', 'Replacement_Number'
+                        's.Series_ID', 'Volume', 'Position', 'Replacement_Number',
                     ]
                 );
             }
@@ -188,13 +194,14 @@ class ItemsReviews extends Gateway
             // user details in case we need them:
             if (null === $userID) {
                 $select->join(
-                    ['u' => 'Users'], 'Items_Reviews.User_ID = u.User_ID'
+                    ['u' => 'Users'],
+                    'Items_Reviews.User_ID = u.User_ID'
                 );
             }
             // Different sort settings based on whether or not series are included:
             $all = [
                 'Series_Name', 's.Series_ID', 'Volume', 'Position',
-                'Replacement_Number', 'Item_Name'
+                'Replacement_Number', 'Item_Name',
             ];
             $select->order($series ? $all : ['Item_Name']);
             if (null !== $approved) {

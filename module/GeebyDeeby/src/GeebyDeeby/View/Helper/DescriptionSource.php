@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Description source name view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 /**
@@ -77,7 +79,6 @@ class DescriptionSource extends \Laminas\View\Helper\AbstractHelper
      */
     public function getName($source)
     {
-        return isset($this->descriptionTypes[$source])
-            ? $this->descriptionTypes[$source] : 'Unknown';
+        return $this->descriptionTypes[$source] ?? 'Unknown';
     }
 }

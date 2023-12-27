@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ToggleLink view helper factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 use Interop\Container\ContainerInterface;
@@ -51,7 +53,9 @@ class ToggleLinkFactory implements \Laminas\ServiceManager\Factory\FactoryInterf
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         $table = $container->get(\GeebyDeeby\Db\Table\PluginManager::class)

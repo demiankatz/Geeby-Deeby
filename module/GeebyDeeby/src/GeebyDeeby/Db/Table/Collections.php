@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Collections
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -57,7 +59,9 @@ class Collections extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Collections');
@@ -105,12 +109,14 @@ class Collections extends Gateway
                 'Collections.Item_ID = i.Item_ID'
             );
             $select->join(
-                ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID'
+                ['eds' => 'Editions'],
+                'i.Item_ID = eds.Item_ID'
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['s' => 'Series'],
@@ -118,17 +124,18 @@ class Collections extends Gateway
             );
             if ($groupByLang) {
                 $select->join(
-                    ['l' => 'Languages'], 's.Language_ID = l.Language_ID'
+                    ['l' => 'Languages'],
+                    's.Language_ID = l.Language_ID'
                 );
                 $fields = [
                     'Language_Name', 'Series_Name', 's.Series_ID',
                     'Collection_Status', 'Volume', 'Position', 'Replacement_Number',
-                    'Item_Name'
+                    'Item_Name',
                 ];
             } else {
                 $fields = [
                     'Series_Name', 's.Series_ID', 'Collection_Status', 'Volume',
-                    'Position', 'Replacement_Number', 'Item_Name'
+                    'Position', 'Replacement_Number', 'Item_Name',
                 ];
             }
             $select->order($fields);
@@ -174,12 +181,14 @@ class Collections extends Gateway
                 ['Other_Note' => 'Collection_Note']
             );
             $select->join(
-                ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID'
+                ['eds' => 'Editions'],
+                'i.Item_ID = eds.Item_ID'
             );
             $select->join(
                 ['iat' => 'Items_AltTitles'],
                 'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'], Select::JOIN_LEFT
+                ['Item_AltName'],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['s' => 'Series'],
@@ -187,7 +196,7 @@ class Collections extends Gateway
             );
             $fields = [
                 'Username', 'Series_Name', 's.Series_ID', 'Volume', 'Position',
-                'Replacement_Number', 'Item_Name'
+                'Replacement_Number', 'Item_Name',
             ];
             $select->order($fields);
             $select->group($fields + ['i.Item_ID']);
@@ -210,7 +219,9 @@ class Collections extends Gateway
     {
         $callback = function ($select) use ($userID) {
             $count = new Expression(
-                'count(?)', ['Item_ID'], [Expression::TYPE_IDENTIFIER]
+                'count(?)',
+                ['Item_ID'],
+                [Expression::TYPE_IDENTIFIER]
             );
             $select->columns(['Collection_Status', 'Count' => $count]);
             $select->group('Collection_Status');

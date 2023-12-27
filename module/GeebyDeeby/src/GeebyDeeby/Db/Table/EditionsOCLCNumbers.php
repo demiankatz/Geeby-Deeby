@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Editions_OCLC_Numbers
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -49,7 +51,9 @@ class EditionsOCLCNumbers extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_OCLC_Numbers');
@@ -68,7 +72,8 @@ class EditionsOCLCNumbers extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_OCLC_Numbers.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order('OCLC_Number');
             $select->where->equalTo('Edition_ID', $editionID);
@@ -89,7 +94,8 @@ class EditionsOCLCNumbers extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_OCLC_Numbers.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['eds' => 'Editions'],

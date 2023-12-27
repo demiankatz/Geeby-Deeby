@@ -1,6 +1,7 @@
 <?php
     $title = $tag['Tag'];
     $this->layout()->title = 'Subject/Tag - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/tag', $tag['Tag_ID']);
     $displayedSomething = false;
 ?>
 <table class="item">
@@ -18,6 +19,7 @@
     </tr>
   <?php endforeach; ?>
   <?php foreach ($this->relationshipsValues as $current): ?>
+    <?php $displayedSomething = true; ?>
     <tr>
       <th scope="row"><?=$this->escapeHtml($current['label'])?>:</th>
       <td>
@@ -29,9 +31,19 @@
       </td>
     </tr>
   <?php endforeach; ?>
+  <?php $uriCount = count($uris); if ($uriCount > 0): $displayedSomething = true; ?>
+    <tr>
+      <th>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</th>
+      <td>
+        <?php $i = 0; foreach ($uris as $uri): $i++ ?>
+          <a href="<?=$this->escapeHtmlAttr($uri['URI'])?>"><?=$this->escapeHtml($uri['URI'])?></a><?=$i < $uriCount ? ', ' : ''?>
+        <?php endforeach; ?>
+      </td>
+    </tr>
+  <?php endif; ?>
 </table>
 <?php if (count($items) > 0): $displayedSomething = true; ?>
-  <?php $sorts = [ 'series', 'title' ]; $sort = isset($this->sort) ? $this->sort : $sorts[0]; ?>
+  <?php $sorts = [ 'series', 'title' ]; $sort = $this->sort ?? $sorts[0]; ?>
   <div class="pull-right" style="padding:12px 0;">
     Sort by:
     <div class="btn-group" style="margin-top:-4px;">

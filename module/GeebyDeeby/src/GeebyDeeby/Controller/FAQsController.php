@@ -1,4 +1,5 @@
 <?php
+
 /**
  * FAQs controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -47,7 +49,7 @@ class FAQsController extends AbstractBase
     {
         return $this->createViewModel(
             [
-                'faqs' => $this->getDbTable('faqs')->getAll()
+                'faqs' => $this->getDbTable('faqs')->getAll(),
             ]
         );
     }

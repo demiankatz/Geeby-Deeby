@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GeebyDeeby Plugin Manager
  *
@@ -25,11 +26,12 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\ServiceManager;
 
 use Laminas\ServiceManager\AbstractPluginManager as Base;
 use Laminas\ServiceManager\Exception\RuntimeException
-    as ServiceManagerRuntimeException;
+as ServiceManagerRuntimeException;
 
 /**
  * GeebyDeeby Plugin Manager

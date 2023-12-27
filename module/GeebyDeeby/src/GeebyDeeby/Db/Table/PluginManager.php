@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Database table plugin manager
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 /**
@@ -150,7 +152,8 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
      * @param null|ConfigInterface $v3config                  Configuration settings
      * (optional)
      */
-    public function __construct($configOrContainerInstance = null,
+    public function __construct(
+        $configOrContainerInstance = null,
         array $v3config = []
     ) {
         $this->addAbstractFactory('GeebyDeeby\Db\Table\AbstractFactory');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * City controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -57,11 +59,14 @@ class CityController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view,
+    protected function addPrimaryResourceToGraph(
+        $graph,
+        $view,
         $class = 'skos:Concept'
     ) {
         $uri = $this->getServerUrl(
-            'city', ['id' => $view->city['City_ID']]
+            'city',
+            ['id' => $view->city['City_ID']]
         );
         $city = $graph->resource($uri, $class);
         $city->set('rdf:label', $view->city['City_Name']);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Generate "toggle link" view helper.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 use GeebyDeeby\Db\Table\User;
@@ -67,7 +69,10 @@ class ToggleLink extends \Laminas\View\Helper\AbstractHelper
      *
      * @return string
      */
-    public function __invoke($route, $id, $label = null,
+    public function __invoke(
+        $route,
+        $id,
+        $label = null,
         $permission = 'Content_Editor'
     ) {
         // Not logged in? No link.

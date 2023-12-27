@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items_In_Collections
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -49,7 +51,9 @@ class ItemsInCollections extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items_In_Collections');
@@ -95,7 +99,8 @@ class ItemsInCollections extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Items_In_Collections.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order(
                 ['mt.Material_Type_Name', 'i.Item_Name']
@@ -126,7 +131,8 @@ class ItemsInCollections extends Gateway
             $select->join(
                 ['n' => 'Notes'],
                 'Items_In_Collections.Note_ID = n.Note_ID',
-                Select::SQL_STAR, Select::JOIN_LEFT
+                Select::SQL_STAR,
+                Select::JOIN_LEFT
             );
             $select->order(
                 ['mt.Material_Type_Name', 'Position', 'i.Item_Name']

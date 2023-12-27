@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Series controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 use Laminas\Db\Sql\Expression;
@@ -76,18 +78,43 @@ class SeriesController extends AbstractBase
         $view = $this->getViewModelWithSeries();
         $seriesId = $view->series['Series_ID'];
 
+        // Check for missing creators
+        $editions = $this->getDbTable('edition');
+        $callback = function ($select) use ($seriesId) {
+            $select->join(
+                ['ic' => 'Items_Creators'],
+                'Editions.Item_ID = ic.Item_ID',
+                [],
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                ['i' => 'Items'],
+                'Editions.Item_ID = i.Item_ID',
+                ['Item_Name'],
+                Select::JOIN_LEFT
+            );
+            $select->where->isNull('ic.Person_ID');
+            $select->where(['Series_ID' => $seriesId]);
+            $select->order(
+                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
+            );
+        };
+        $view->missingCreators = $editions->select($callback)->toArray();
+
         // Check for missing credits
         $editions = $this->getDbTable('edition');
         $callback = function ($select) use ($seriesId) {
             $select->join(
                 ['ec' => 'Editions_Credits'],
                 'Editions.Edition_ID = ec.Edition_ID',
-                [], Select::JOIN_LEFT
+                [],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['i' => 'Items'],
                 'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'], Select::JOIN_LEFT
+                ['Item_Name'],
+                Select::JOIN_LEFT
             );
             $select->where->isNull('ec.Person_ID');
             $select->where(['Series_ID' => $seriesId]);
@@ -102,12 +129,14 @@ class SeriesController extends AbstractBase
             $select->join(
                 ['d' => 'Editions_Release_Dates'],
                 'Editions.Edition_ID = d.Edition_ID',
-                [], Select::JOIN_LEFT
+                [],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['i' => 'Items'],
                 'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'], Select::JOIN_LEFT
+                ['Item_Name'],
+                Select::JOIN_LEFT
             );
             $select->where->isNull('d.Year');
             $select->where->isNull('Editions.Parent_Edition_ID');
@@ -124,7 +153,8 @@ class SeriesController extends AbstractBase
             $select->columns(
                 [
                     'Edition_ID' => new Expression(
-                        'min(?)', ['Editions.Edition_ID'],
+                        'min(?)',
+                        ['Editions.Edition_ID'],
                         [Expression::TYPE_IDENTIFIER]
                     ),
                 ]
@@ -134,12 +164,17 @@ class SeriesController extends AbstractBase
                 'Editions.Edition_ID = d.Edition_ID',
                 [
                     'Start' => new Expression(
-                        'min(?)', ['Year'], [Expression::TYPE_IDENTIFIER]
+                        'min(?)',
+                        ['Year'],
+                        [Expression::TYPE_IDENTIFIER]
                     ),
                     'End' => new Expression(
-                        'max(?)', ['Year'], [Expression::TYPE_IDENTIFIER]
+                        'max(?)',
+                        ['Year'],
+                        [Expression::TYPE_IDENTIFIER]
                     ),
-                ], Select::JOIN_LEFT
+                ],
+                Select::JOIN_LEFT
             );
             $select->group('Series_ID');
         };
@@ -151,20 +186,29 @@ class SeriesController extends AbstractBase
             $select->columns(
                 [
                     'Edition_ID' => new Expression(
-                        'min(?)', ['Edition_ID'], [Expression::TYPE_IDENTIFIER]
+                        'min(?)',
+                        ['Edition_ID'],
+                        [Expression::TYPE_IDENTIFIER]
                     ),
                     'Vol' => new Expression(
-                        'min(?)', ['Volume'], [Expression::TYPE_IDENTIFIER]
+                        'min(?)',
+                        ['Volume'],
+                        [Expression::TYPE_IDENTIFIER]
                     ),
                     'Pos' => new Expression(
-                        'min(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
+                        'min(?)',
+                        ['Position'],
+                        [Expression::TYPE_IDENTIFIER]
                     ),
                     'Rep' => new Expression(
-                        'min(?)', ['Replacement_Number'],
+                        'min(?)',
+                        ['Replacement_Number'],
                         [Expression::TYPE_IDENTIFIER]
                     ),
                     'Total' => new Expression(
-                        'count(?)', ['Position'], [Expression::TYPE_IDENTIFIER]
+                        'count(?)',
+                        ['Position'],
+                        [Expression::TYPE_IDENTIFIER]
                     ),
                 ]
             );
@@ -244,7 +288,7 @@ class SeriesController extends AbstractBase
         $table = $this->getDbTable('seriesreviews');
         $params = [
             'Series_ID' => $this->params()->fromRoute('id'),
-            'User_ID' => $user->User_ID
+            'User_ID' => $user->User_ID,
         ];
 
         $existing = $table->select($params)->toArray();
@@ -264,7 +308,7 @@ class SeriesController extends AbstractBase
                     $table->delete(
                         [
                             'Series_ID' => $params['Series_ID'],
-                            'User_ID' => $params['User_ID']
+                            'User_ID' => $params['User_ID'],
                         ]
                     );
                 }
@@ -349,7 +393,8 @@ class SeriesController extends AbstractBase
         if (null === $id) {
             $action = $this->rdfRequested() ? 'RDF' : 'List';
             $response = $this->redirect()->toRoute(
-                'series', ['id' => $action],
+                'series',
+                ['id' => $action],
                 ['query' => $this->params()->fromQuery()]
             );
             $response->setStatusCode(303);
@@ -428,7 +473,8 @@ class SeriesController extends AbstractBase
         $seriesResource = $graph->resource($uri, $this->getSeriesRdfClass());
         $name = $series->Series_Name;
         $seriesResource->set(
-            'dcterms:title', $articleHelper->formatTrailingArticles($name)
+            'dcterms:title',
+            $articleHelper->formatTrailingArticles($name)
         );
         return $seriesResource;
     }
@@ -592,7 +638,7 @@ class SeriesController extends AbstractBase
     {
         return $this->createViewModel(
             [
-                'series' => $this->getDbTable('series')->getList()
+                'series' => $this->getDbTable('series')->getList(),
             ]
         );
     }
@@ -610,7 +656,8 @@ class SeriesController extends AbstractBase
         $query->order('Series_ID DESC');
         $paginator = new \Laminas\Paginator\Paginator(
             new \Laminas\Paginator\Adapter\DbSelect(
-                $query, $adapter
+                $query,
+                $adapter
             )
         );
         $paginator->setItemCountPerPage(50);

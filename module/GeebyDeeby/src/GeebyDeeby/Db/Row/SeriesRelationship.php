@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Row Definition for Series_Relationships
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Row;
 
 /**
@@ -46,7 +48,9 @@ class SeriesRelationship extends RowGateway
     public function __construct($adapter)
     {
         parent::__construct(
-            'Series_Relationship_ID', 'Series_Relationships', $adapter
+            'Series_Relationship_ID',
+            'Series_Relationships',
+            $adapter
         );
     }
 

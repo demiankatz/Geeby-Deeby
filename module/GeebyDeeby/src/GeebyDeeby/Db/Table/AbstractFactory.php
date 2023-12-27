@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract table factory
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Interop\Container\ContainerInterface;
@@ -38,8 +40,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AbstractFactory
-    implements \Laminas\ServiceManager\Factory\AbstractFactoryInterface
+class AbstractFactory implements \Laminas\ServiceManager\Factory\AbstractFactoryInterface
 {
     /**
      * Return row prototype object (null if unavailable)
@@ -81,7 +82,9 @@ class AbstractFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         $adapter = $container->get('Laminas\Db\Adapter\Adapter');

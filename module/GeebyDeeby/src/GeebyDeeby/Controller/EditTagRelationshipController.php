@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit tag relationship controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,8 @@ class EditTagRelationshipController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'tagsrelationship', 'relationships',
+            'tagsrelationship',
+            'relationships',
             'geeby-deeby/edit-tag-relationship/render-tag-relationships'
         );
     }

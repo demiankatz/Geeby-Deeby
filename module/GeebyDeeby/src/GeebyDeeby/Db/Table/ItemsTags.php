@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for Items_Tags
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -50,7 +52,9 @@ class ItemsTags extends Gateway
      * @param PluginManager $tm      Table manager
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      */
-    public function __construct(Adapter $adapter, PluginManager $tm,
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
         RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items_Tags');
@@ -73,21 +77,24 @@ class ItemsTags extends Gateway
             );
             if ($sort === 'series') {
                 $select->join(
-                    ['eds' => 'Editions'], 'i.Item_ID = eds.Item_ID',
+                    ['eds' => 'Editions'],
+                    'i.Item_ID = eds.Item_ID',
                     ['Volume', 'Position', 'Replacement_Number']
                 );
                 $select->join(
                     ['iat' => 'Items_AltTitles'],
                     'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                    ['Item_AltName'], Select::JOIN_LEFT
+                    ['Item_AltName'],
+                    Select::JOIN_LEFT
                 );
                 $select->join(
-                    ['s' => 'Series'], 'eds.Series_ID = s.Series_ID'
+                    ['s' => 'Series'],
+                    'eds.Series_ID = s.Series_ID'
                 );
                 $select->group(
                     [
                         'i.Item_ID', 'eds.Volume', 'eds.Position',
-                        'eds.Replacement_Number'
+                        'eds.Replacement_Number',
                     ]
                 );
                 $select->order(
@@ -99,9 +106,9 @@ class ItemsTags extends Gateway
                             ['Item_AltName', 'Item_Name'],
                             [
                                 Expression::TYPE_IDENTIFIER,
-                                Expression::TYPE_IDENTIFIER
+                                Expression::TYPE_IDENTIFIER,
                             ]
-                        )
+                        ),
                     ]
                 );
             } else {

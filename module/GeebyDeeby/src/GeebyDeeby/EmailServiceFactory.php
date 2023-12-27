@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Email service factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby;
 
 use Interop\Container\ContainerInterface;
@@ -38,8 +40,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EmailServiceFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+class EmailServiceFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create service
@@ -52,7 +53,9 @@ class EmailServiceFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         if (!empty($options)) {

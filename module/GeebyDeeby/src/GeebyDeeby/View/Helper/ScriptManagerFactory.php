@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ScriptManager view helper factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 use Interop\Container\ContainerInterface;
@@ -38,8 +40,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ScriptManagerFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+class ScriptManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create service
@@ -52,12 +53,15 @@ class ScriptManagerFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         $base = $container->get('ViewHelperManager')->get('basePath')->__invoke();
         return new $name(
-            $base, $container->get('ViewHelperManager')->get('headScript')
+            $base,
+            $container->get('ViewHelperManager')->get('headScript')
         );
     }
 }

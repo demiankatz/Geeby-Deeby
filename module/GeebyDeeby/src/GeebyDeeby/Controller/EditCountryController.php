@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit country controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditCountryController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'country', 'countries', 'geeby-deeby/edit-country/render-countries'
+            'country',
+            'countries',
+            'geeby-deeby/edit-country/render-countries'
         );
         // If this is not an AJAX request, we also want to display cities:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -85,8 +89,11 @@ class EditCountryController extends AbstractBase
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
             ? ['Predicate_ID' => $pid] : [];
         return $this->handleGenericLink(
-            'countriesuris', 'Country_ID', 'URI',
-            'uris', 'getURIsForCountry',
+            'countriesuris',
+            'Country_ID',
+            'URI',
+            'uris',
+            'getURIsForCountry',
             'geeby-deeby/edit-country/uri-list.phtml',
             $extras
         );

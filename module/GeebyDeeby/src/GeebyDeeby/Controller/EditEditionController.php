@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit edition controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditEditionController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'edition', 'editions', 'geeby-deeby/edit-edition/render-editions'
+            'edition',
+            'editions',
+            'geeby-deeby/edit-edition/render-editions'
         );
     }
 
@@ -70,7 +74,7 @@ class EditEditionController extends AbstractBase
                     [
                         'Edition_ID' => $editionId,
                         'Editions_Attribute_ID' => $id,
-                        'Editions_Attribute_Value' => $val
+                        'Editions_Attribute_Value' => $val,
                     ]
                 );
             }
@@ -97,7 +101,7 @@ class EditEditionController extends AbstractBase
                     [
                         'Editions_Full_Text_ID' => $rowId,
                         'Editions_Full_Text_Attribute_ID' => $id,
-                        'Editions_Full_Text_Attribute_Value' => $val
+                        'Editions_Full_Text_Attribute_Value' => $val,
                     ]
                 );
             }
@@ -135,7 +139,8 @@ class EditEditionController extends AbstractBase
             ?? null;
 
         // Special handling for saving attributes:
-        if ($this->getRequest()->isPost()
+        if (
+            $this->getRequest()->isPost()
             && ($attribs = $this->params()->fromPost('attribs'))
         ) {
             $this->saveAttributes($editionId, $attribs);
@@ -162,7 +167,8 @@ class EditEditionController extends AbstractBase
             $view->itemAltTitles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->edition['Item_ID']);
         }
-        if (isset($view->edition['Series_ID'])
+        if (
+            isset($view->edition['Series_ID'])
             && !empty($view->edition['Series_ID'])
         ) {
             $view->series = $this->getDbTable('series')
@@ -175,7 +181,7 @@ class EditEditionController extends AbstractBase
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->roles = $this->getDbTable('role')->getList();
-            $view->credits= $this->getDbTable('editionscredits')
+            $view->credits = $this->getDbTable('editionscredits')
                 ->getCreditsForEdition($editionId);
             $view->images = $this->getDbTable('editionsimages')
                 ->getImagesForEdition($editionId);
@@ -534,14 +540,14 @@ class EditEditionController extends AbstractBase
      */
     protected function deleteDate()
     {
-        list($year, $month, $day)
+        [$year, $month, $day]
             = explode(',', $this->params()->fromRoute('extra'));
         $this->getDbTable('editionsreleasedates')->delete(
             [
                 'Edition_ID' => $this->params()->fromRoute('id'),
                 'Year' => $year,
                 'Month' => $month,
-                'Day' => $day
+                'Day' => $day,
             ]
         );
         return $this->jsonReportSuccess();
@@ -575,12 +581,12 @@ class EditEditionController extends AbstractBase
         }
         // DELETE action:
         if ($this->getRequest()->isDelete()) {
-            list($person, $role) = explode(',', $this->params()->fromRoute('extra'));
+            [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
             $this->getDbTable('editionscredits')->delete(
                 [
                     'Edition_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $person,
-                    'Role_ID' => $role
+                    'Role_ID' => $role,
                 ]
             );
             return $this->jsonReportSuccess();
@@ -612,7 +618,7 @@ class EditEditionController extends AbstractBase
                 [
                     'Edition_ID' => $this->params()->fromRoute('id'),
                     'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id')
+                    'Role_ID' => $this->params()->fromPost('role_id'),
                 ]
             );
             return $this->jsonReportSuccess();
@@ -632,7 +638,7 @@ class EditEditionController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             $fields = [
                 'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
-                'Full_Text_URL' => trim($this->params()->fromPost('url'))
+                'Full_Text_URL' => trim($this->params()->fromPost('url')),
             ];
             $table->update($fields, ['Sequence_ID' => $rowId]);
             if ($attribs = $this->params()->fromPost('attribs')) {
@@ -679,7 +685,8 @@ class EditEditionController extends AbstractBase
             return $ok;
         }
         // Modify the full text if it's a GET/POST and has an extra set.
-        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+        if (
+            ($this->getRequest()->isPost() || $this->getRequest()->isGet())
             && null !== $this->params()->fromRoute('extra')
             && 'NEW' !== $this->params()->fromRoute('extra')
         ) {
@@ -691,7 +698,7 @@ class EditEditionController extends AbstractBase
             $insert = [
                 'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
                 'Edition_ID' => $this->params()->fromRoute('id'),
-                'Full_Text_URL' => trim($this->params()->fromPost('url'))
+                'Full_Text_URL' => trim($this->params()->fromPost('url')),
             ];
             if (empty($insert['Full_Text_URL'])) {
                 return $this->jsonDie('URL must not be empty.');
@@ -747,8 +754,12 @@ class EditEditionController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsisbns', 'Edition_ID', 'Sequence_ID', 'ISBNs',
-                'getISBNsForEdition', 'geeby-deeby/edit-edition/isbn-list.phtml'
+                'editionsisbns',
+                'Edition_ID',
+                'Sequence_ID',
+                'ISBNs',
+                'getISBNsForEdition',
+                'geeby-deeby/edit-edition/isbn-list.phtml'
             );
         }
     }
@@ -782,8 +793,11 @@ class EditEditionController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsoclcnumbers', 'Edition_ID', 'Sequence_ID',
-                'oclcNumbers', 'getOCLCNumbersForEdition',
+                'editionsoclcnumbers',
+                'Edition_ID',
+                'Sequence_ID',
+                'oclcNumbers',
+                'getOCLCNumbersForEdition',
                 'geeby-deeby/edit-edition/oclc-number-list.phtml'
             );
         }
@@ -818,8 +832,11 @@ class EditEditionController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsproductcodes', 'Edition_ID', 'Sequence_ID',
-                'productCodes', 'getProductCodesForEdition',
+                'editionsproductcodes',
+                'Edition_ID',
+                'Sequence_ID',
+                'productCodes',
+                'getProductCodesForEdition',
                 'geeby-deeby/edit-edition/product-code-list.phtml'
             );
         }
@@ -852,7 +869,8 @@ class EditEditionController extends AbstractBase
             }
             $row->Thumb_Path = $this->params()->fromPost('thumb');
             // Build thumb path if none was provided:
-            if (empty($row->Thumb_Path) && empty($row->IIIF_URI)
+            if (
+                empty($row->Thumb_Path) && empty($row->IIIF_URI)
                 && !empty($row->Image_Path)
             ) {
                 $parts = explode('.', $row->Image_Path);
@@ -866,8 +884,11 @@ class EditEditionController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsimages', 'Edition_ID', 'Sequence_ID',
-                'images', 'getImagesForEdition',
+                'editionsimages',
+                'Edition_ID',
+                'Sequence_ID',
+                'images',
+                'getImagesForEdition',
                 'geeby-deeby/edit-edition/image-list.phtml'
             );
         }
@@ -888,7 +909,8 @@ class EditEditionController extends AbstractBase
             $image = $this->params()->fromPost('sequence_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('editionsimages')->update(
-                ['Position' => $pos], ['Sequence_ID' => $image]
+                ['Position' => $pos],
+                ['Sequence_ID' => $image]
             );
             return $this->jsonReportSuccess();
         }
@@ -903,8 +925,11 @@ class EditEditionController extends AbstractBase
     public function platformAction()
     {
         return $this->handleGenericLink(
-            'editionsplatforms', 'Edition_ID', 'Platform_ID',
-            'editionPlatforms', 'getPlatformsForEdition',
+            'editionsplatforms',
+            'Edition_ID',
+            'Platform_ID',
+            'editionPlatforms',
+            'getPlatformsForEdition',
             'geeby-deeby/edit-edition/platform-list.phtml'
         );
     }
@@ -956,8 +981,11 @@ class EditEditionController extends AbstractBase
             }
         };
         return $this->handleGenericLink(
-            'edition', 'Parent_Edition_ID', 'Item_ID',
-            'item_list', 'getItemsForEdition',
+            'edition',
+            'Parent_Edition_ID',
+            'Item_ID',
+            'item_list',
+            'getItemsForEdition',
             'geeby-deeby/edit-edition/item-list.phtml',
             ['Edition_Name' => $edName, 'Series_ID' => $seriesID],
             $insertCallback
@@ -979,7 +1007,8 @@ class EditEditionController extends AbstractBase
             $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
             $this->getDbTable('edition')->update(
-                ['Position_in_Parent' => $pos], ['Edition_ID' => $edition]
+                ['Position_in_Parent' => $pos],
+                ['Edition_ID' => $edition]
             );
             return $this->jsonReportSuccess();
         }
@@ -999,7 +1028,7 @@ class EditEditionController extends AbstractBase
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
-                'extra' => $this->params()->fromRoute('extra')
+                'extra' => $this->params()->fromRoute('extra'),
             ]
         );
     }

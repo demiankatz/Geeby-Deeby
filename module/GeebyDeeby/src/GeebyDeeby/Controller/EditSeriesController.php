@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit series controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,9 @@ class EditSeriesController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'series', 'series', 'geeby-deeby/edit-series/render-series'
+            'series',
+            'series',
+            'geeby-deeby/edit-series/render-series'
         );
     }
 
@@ -70,7 +74,7 @@ class EditSeriesController extends AbstractBase
                     [
                         'Series_ID' => $seriesId,
                         'Series_Attribute_ID' => $id,
-                        'Series_Attribute_Value' => $val
+                        'Series_Attribute_Value' => $val,
                     ]
                 );
             }
@@ -87,7 +91,7 @@ class EditSeriesController extends AbstractBase
         $assignMap = [
             'name' => 'Series_Name',
             'desc' => 'Series_Description',
-            'lang' => 'Language_ID'
+            'lang' => 'Language_ID',
         ];
         [$view, $ok] = $this->handleGenericItem('series', $assignMap, 'series');
         if (!$ok) {
@@ -100,7 +104,8 @@ class EditSeriesController extends AbstractBase
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost() && $this->params()->fromPost('attribs')) {
             $this->saveAttributes(
-                $seriesId, $this->params()->fromPost('attribs')
+                $seriesId,
+                $this->params()->fromPost('attribs')
             );
         }
 
@@ -179,8 +184,11 @@ class EditSeriesController extends AbstractBase
     public function materialAction()
     {
         return $this->handleGenericLink(
-            'seriesmaterialtypes', 'Series_ID', 'Material_Type_ID',
-            'series_materials', 'getMaterials',
+            'seriesmaterialtypes',
+            'Series_ID',
+            'Material_Type_ID',
+            'series_materials',
+            'getMaterials',
             'geeby-deeby/edit-series/material-type-list'
         );
     }
@@ -227,8 +235,11 @@ class EditSeriesController extends AbstractBase
             }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'seriesalttitles', 'Series_ID', 'Sequence_ID',
-                'series_alt_titles', 'getAltTitles',
+                'seriesalttitles',
+                'Series_ID',
+                'Sequence_ID',
+                'series_alt_titles',
+                'getAltTitles',
                 'geeby-deeby/edit-series/alt-title-list.phtml'
             );
         }
@@ -253,7 +264,7 @@ class EditSeriesController extends AbstractBase
                 $address = null;
             }
             $fields = [
-                'Imprint_ID' => $imprint, 'Address_ID' => $address
+                'Imprint_ID' => $imprint, 'Address_ID' => $address,
             ];
             $table->update($fields, ['Series_Publisher_ID' => $rowId]);
             return $this->jsonReportSuccess();
@@ -283,7 +294,8 @@ class EditSeriesController extends AbstractBase
     public function publisherAction()
     {
         // Modify the publisher if it's a GET/POST and has an extra set.
-        if (($this->getRequest()->isPost() || $this->getRequest()->isGet())
+        if (
+            ($this->getRequest()->isPost() || $this->getRequest()->isGet())
             && null !== $this->params()->fromRoute('extra')
             && 'NEW' !== $this->params()->fromRoute('extra')
         ) {
@@ -322,8 +334,11 @@ class EditSeriesController extends AbstractBase
             }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'seriespublishers', 'Series_ID', 'Series_Publisher_ID',
-                'series_publishers', 'getPublishers',
+                'seriespublishers',
+                'Series_ID',
+                'Series_Publisher_ID',
+                'series_publishers',
+                'getPublishers',
                 'geeby-deeby/edit-series/publisher-list.phtml'
             );
         }
@@ -376,10 +391,14 @@ class EditSeriesController extends AbstractBase
         $listCallback = $groupByMaterial
             ? 'getItemsForSeriesGroupedByMaterial' : 'getItemsForSeries';
         return $this->handleGenericLink(
-            'edition', 'Series_ID', 'Item_ID',
-            'item_list', $listCallback,
+            'edition',
+            'Series_ID',
+            'Item_ID',
+            'item_list',
+            $listCallback,
             'geeby-deeby/edit-series/item-list.phtml',
-            ['Edition_Name' => $edName], $insertCallback
+            ['Edition_Name' => $edName],
+            $insertCallback
         );
     }
 
@@ -402,7 +421,7 @@ class EditSeriesController extends AbstractBase
                 $vol = '0';
                 $pos = $parts[0];
             } else {
-                list($vol, $pos) = $parts;
+                [$vol, $pos] = $parts;
             }
             $this->getDbTable('edition')->update(
                 ['Position' => intval($pos), 'Volume' => intval($vol)],
@@ -434,8 +453,11 @@ class EditSeriesController extends AbstractBase
         }
         $extras = ['Series_Relationship_ID' => $rid];
         return $this->handleGenericLink(
-            'seriesrelationshipsvalues', $linkFrom, $linkTo,
-            'relationshipsValues', 'getRelationshipsForSeries',
+            'seriesrelationshipsvalues',
+            $linkFrom,
+            $linkTo,
+            'relationshipsValues',
+            'getRelationshipsForSeries',
             'geeby-deeby/edit-series/relationship-list.phtml',
             $extras
         );
@@ -454,7 +476,7 @@ class EditSeriesController extends AbstractBase
             [
                 'action' => 'index',
                 'id' => $this->params()->fromRoute('id'),
-                'extra' => $this->params()->fromRoute('extra')
+                'extra' => $this->params()->fromRoute('extra'),
             ]
         );
     }
@@ -467,8 +489,11 @@ class EditSeriesController extends AbstractBase
     public function translationintoAction()
     {
         return $this->handleGenericLink(
-            'seriestranslations', 'Source_Series_ID', 'Trans_Series_ID',
-            'translatedInto', 'getTranslatedFrom',
+            'seriestranslations',
+            'Source_Series_ID',
+            'Trans_Series_ID',
+            'translatedInto',
+            'getTranslatedFrom',
             'geeby-deeby/edit-series/trans-into-list.phtml'
         );
     }
@@ -481,8 +506,11 @@ class EditSeriesController extends AbstractBase
     public function translationfromAction()
     {
         return $this->handleGenericLink(
-            'seriestranslations', 'Trans_Series_ID', 'Source_Series_ID',
-            'translatedFrom', 'getTranslatedInto',
+            'seriestranslations',
+            'Trans_Series_ID',
+            'Source_Series_ID',
+            'translatedFrom',
+            'getTranslatedInto',
             'geeby-deeby/edit-series/trans-from-list.phtml'
         );
     }

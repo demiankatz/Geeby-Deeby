@@ -1,4 +1,5 @@
 <?php
+
 /**
  * "First letter" view helper for displaying labels within alphabetical lists
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\View\Helper;
 
 /**
@@ -50,7 +52,9 @@ class FirstLetter extends \Laminas\View\Helper\AbstractHelper
         setlocale(LC_ALL, 'en_US');
         $firstUtf = mb_strtoupper(mb_substr($text, 0, 1));
         $first = preg_replace(
-            '/[^0-9A-Z]/', '', iconv('utf-8', 'ascii//TRANSLIT', $firstUtf)
+            '/[^0-9A-Z]/',
+            '',
+            iconv('utf-8', 'ascii//TRANSLIT', $firstUtf)
         );
         return strlen($first) == 1 ? $first : $firstUtf;
     }

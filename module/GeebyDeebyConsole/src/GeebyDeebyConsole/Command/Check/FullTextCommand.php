@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Console command: check full text links
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeebyConsole\Command\Check;
 
 use GeebyDeeby\Db\Table\EditionsFullText;
@@ -69,7 +71,9 @@ class FullTextCommand extends Command
      * @param string|null      $name   The name of the command; passing null means it
      * must be set in configure()
      */
-    public function __construct(EditionsFullText $table, Client $client = null,
+    public function __construct(
+        EditionsFullText $table,
+        Client $client = null,
         $name = null
     ) {
         $this->table = $table;

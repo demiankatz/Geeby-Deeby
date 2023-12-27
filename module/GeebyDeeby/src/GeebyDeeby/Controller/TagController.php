@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tag controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -115,7 +117,8 @@ class TagController extends AbstractBase
         );
         foreach ($tags as $tag) {
             return $this->redirect()->toRoute(
-                'tag', ['id' => $tag['Tag_ID']]
+                'tag',
+                ['id' => $tag['Tag_ID']]
             );
         }
         // If we got this far, there was no match; time to 404!

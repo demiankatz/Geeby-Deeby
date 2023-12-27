@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Country controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -57,11 +59,14 @@ class CountryController extends AbstractBase
      *
      * @return \EasyRdf\Resource
      */
-    protected function addPrimaryResourceToGraph($graph, $view,
+    protected function addPrimaryResourceToGraph(
+        $graph,
+        $view,
         $class = 'skos:Concept'
     ) {
         $uri = $this->getServerUrl(
-            'country', ['id' => $view->country['Country_ID']]
+            'country',
+            ['id' => $view->country['Country_ID']]
         );
         $country = $graph->resource($uri, $class);
         $country->set('rdf:label', $view->country['Country_Name']);

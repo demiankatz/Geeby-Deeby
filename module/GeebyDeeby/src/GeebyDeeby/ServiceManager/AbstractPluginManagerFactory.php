@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract plugin manager factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\ServiceManager;
 
 use Interop\Container\ContainerInterface;
@@ -38,8 +40,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AbstractPluginManagerFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+class AbstractPluginManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Determine the configuration key for the specified class name.
@@ -68,7 +69,9 @@ class AbstractPluginManagerFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $name,
+    public function __invoke(
+        ContainerInterface $container,
+        $name,
         array $options = null
     ) {
         if (!empty($options)) {

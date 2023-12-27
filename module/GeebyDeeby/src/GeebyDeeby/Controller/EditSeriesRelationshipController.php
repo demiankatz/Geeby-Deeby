@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Edit series relationship controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+
 namespace GeebyDeeby\Controller;
 
 /**
@@ -46,7 +48,8 @@ class EditSeriesRelationshipController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'seriesrelationship', 'relationships',
+            'seriesrelationship',
+            'relationships',
             'geeby-deeby/edit-series-relationship/render-series-relationships'
         );
     }

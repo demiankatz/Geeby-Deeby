@@ -9,11 +9,13 @@
           </a><br />
         </td>
         <td>
-          <?=$this->iconButton(
-            'trash',
-            "Link.unlink('Person', " . $current['Person_ID'] . ")",
-            'Unlink person: ' . $currentName
-          )?>
+          <?=
+            $this->iconButton(
+                'trash',
+                "Link.unlink('Person', " . $current['Person_ID'] . ")",
+                'Unlink person: ' . $currentName
+            )
+          ?>
         </td>
       </tr>
     </table>
