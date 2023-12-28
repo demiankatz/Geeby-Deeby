@@ -1,4 +1,5 @@
 <?php
+
 return [
     'geeby-deeby' => [
         'siteTitle' => 'Demian\'s Gamebook Web Page',
