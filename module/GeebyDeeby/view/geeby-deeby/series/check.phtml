@@ -89,9 +89,11 @@
   <?php endif; ?>
 
   <?php for ($v = 0; $v <= $itemStats['EndVol']; $v++): ?>
-    <?php if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol'])) {
-    continue;
-    } ?>
+    <?php
+      if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol'])) {
+        continue;
+      }
+    ?>
     <?php if ($v > 0): ?><h3>Volume <?=$this->escapeHtml($v)?></h3><?php endif; ?>
     <?php if ($v == 0 && $itemStats['EndVol'] > $v): ?><h3>No Volume Specified</h3><?php endif; ?>
     <?=$this->escapeHtml($itemStats['TotalByVol'][$v])?> item(s) numbered from <?=$this->escapeHtml($itemStats['Start'][$v])?> to <?=$this->escapeHtml($itemStats['End'][$v])?>.</p>
