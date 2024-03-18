@@ -196,8 +196,10 @@
         </tr>
       <?php endif; ?>
 
-      <?php $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID');
-      $platformCount = count($platforms); ?>
+      <?php
+        $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID');
+        $platformCount = count($platforms);
+      ?>
       <?php if ($platformCount > 0): ?>
         <tr>
           <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
@@ -267,8 +269,10 @@
         <tr>
           <th scope="row">Contents:</th>
           <td>
-            <?php $childEditionNames = [];
-            $contentsByEdition = []; ?>
+            <?php
+              $childEditionNames = [];
+              $contentsByEdition = [];
+            ?>
             <?php foreach ($children as $current) {
                 $childEditionNames[$current['Edition_ID']] = $current['Edition_Name'];
                 if (!isset($contentsByEdition[$current['Edition_ID']])) {
@@ -371,9 +375,11 @@
       <?php endforeach; ?>
 
       <?php foreach ($this->analyzeCredits($creators, $credits, $editions) as $current): ?>
-        <?php $role = $current['role'];
-        $citation = $current['citation'];
-        $group = $current['data']; ?>
+        <?php
+          $role = $current['role'];
+          $citation = $current['citation'];
+          $group = $current['data'];
+        ?>
         <tr>
           <th scope="row">
             <?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's')
@@ -385,8 +391,8 @@
               <a href="<?=$this->url('person', ['id' => $person])?>">
                 <?=$this->showperson($details['person'])?>
               </a>
-              <?php $realNameCount = count($details['realPerson']);
-              if ($realNameCount > 0): ?>
+              <?php $realNameCount = count($details['realPerson']); ?>
+              <?php if ($realNameCount > 0): ?>
                 (pseudonym used by <?=$realNameCount == 1 ? '<a href="' . $this->url('person', ['id' => $details['realPerson'][0]['Person_ID']]) . '">' . $this->showperson($details['realPerson'][0]) . '</a>' : 'multiple people' ?>)
               <?php endif; ?>
               <?php if (!empty($details['notes'])): ?>(<?=$this->escapeHtml($details['notes'])?>)<?php endif; ?><br />
@@ -417,8 +423,10 @@
           <td>
             <?php foreach ($isbns as $isbn => $note): ?>
               <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn])?>">
-                <?php $isbnConverter = new \VuFindCode\ISBN($isbn);
-                $isbn10 = $isbnConverter->get10(); ?>
+                <?php
+                  $isbnConverter = new \VuFindCode\ISBN($isbn);
+                  $isbn10 = $isbnConverter->get10();
+                ?>
                 <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn : $isbn)?>
               </a>
               <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
