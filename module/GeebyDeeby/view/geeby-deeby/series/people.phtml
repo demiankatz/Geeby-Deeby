@@ -1,7 +1,7 @@
 <?php
-    $title = $this->fixtitle($series['Series_Name']);
-    $this->layout()->title = 'Series People - ' . $title;
-    $lastPerson = null;
+$title = $this->fixtitle($series['Series_Name']);
+$this->layout()->title = 'Series People - ' . $title;
+$lastPerson = null;
 ?>
 <?php if (count($people) < 1): ?>
   <p>No people listed for this series.</p>

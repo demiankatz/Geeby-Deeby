@@ -1,7 +1,7 @@
 <?php
-    $title = $city['City_Name'];
-    $this->layout()->title = 'City - ' . $title;
-    $displayedSomething = false;
+$title = $city['City_Name'];
+$this->layout()->title = 'City - ' . $title;
+$displayedSomething = false;
 ?>
 <?php if (count($series) < 1): ?>
   <p>No information is available about this city.</p>
@@ -9,7 +9,8 @@
   <h2>
     <?=$this->firstLetterMenu($series, 'Series_Name'); ?>
   </h2>
-  <?php $currentLetter = false; foreach ($series as $i => $current): ?>
+  <?php $currentLetter = false;
+    foreach ($series as $i => $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

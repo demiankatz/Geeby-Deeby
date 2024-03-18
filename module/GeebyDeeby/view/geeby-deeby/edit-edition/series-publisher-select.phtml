@@ -12,7 +12,7 @@
               echo strlen($current['Imprint_Name']) > 0 ? $this->escapeHtml($current['Imprint_Name']) . ((strlen($address) > 0 || strlen($current['Note']) > 0) ? ': ' : '') : '';
               echo strlen($address) > 0 ? $this->escapeHtml($address) : '';
               echo strlen($current['Note']) > 0 ? ((strlen($address) > 0 || strlen($current['Imprint_Name']) > 0) ? ' - ' : '') . $this->escapeHtml($current['Note']) : '';
-            ?>)
+              ?>)
           <?php endif; ?>
        </option>
     <?php endforeach; ?>

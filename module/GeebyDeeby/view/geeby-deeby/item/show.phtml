@@ -1,38 +1,38 @@
 <?php
-    $title = $this->fixtitle($item['Item_Name']);
-    $this->layout()->title = 'Item - ' . $title;
-    $this->layout()->toggleLink = $this->toggleLink('edit/item', $item['Item_ID']);
-    $editionViewLink = $this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Editions']);
+$title = $this->fixtitle($item['Item_Name']);
+$this->layout()->title = 'Item - ' . $title;
+$this->layout()->toggleLink = $this->toggleLink('edit/item', $item['Item_ID']);
+$editionViewLink = $this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Editions']);
 
-    // If there are too many images to display comfortably, pick a smaller number
-    // and set a flag to display a link to edition view, where everything is visible.
-    // We'll try to pick at least one image for each distinct label, to the greatest
-    // extent possible.
-    $imageLimit = 12;
-    $maxPerGroup = 3;
-    $truncatedImages = false;
-    if (count($images) > $imageLimit) {
-      $sortedImages = [];
-      foreach ($images as $image) {
+// If there are too many images to display comfortably, pick a smaller number
+// and set a flag to display a link to edition view, where everything is visible.
+// We'll try to pick at least one image for each distinct label, to the greatest
+// extent possible.
+$imageLimit = 12;
+$maxPerGroup = 3;
+$truncatedImages = false;
+if (count($images) > $imageLimit) {
+    $sortedImages = [];
+    foreach ($images as $image) {
         $sortedImages[$image['Edition_Name']][] = $image;
-      }
-      $remainingGroups = count($sortedImages);
-      $newImages = [];
-      foreach ($sortedImages as $name => $contents) {
+    }
+    $remainingGroups = count($sortedImages);
+    $newImages = [];
+    foreach ($sortedImages as $name => $contents) {
         $remainingGroups--;
         foreach ($contents as $posInGroup => $current) {
-          if (count($newImages) + $remainingGroups < $imageLimit
-            && $posInGroup < $maxPerGroup
-          ) {
-            $newImages[] = $current;
-          } else {
-            break;
-          }
+            if (count($newImages) + $remainingGroups < $imageLimit
+              && $posInGroup < $maxPerGroup
+            ) {
+                $newImages[] = $current;
+            } else {
+                break;
+            }
         }
-      }
-      $images = $newImages;
-      $truncatedImages = true;
     }
+    $images = $newImages;
+    $truncatedImages = true;
+}
 ?>
 <div class="row">
   <div class="col-md-12">
@@ -94,18 +94,18 @@
                 </a>
                 <?php
                   $attrHtml = [];
-                  if (count($fullTextAttributes[$current['Sequence_ID']] ?? []) > 0) {
+                if (count($fullTextAttributes[$current['Sequence_ID']] ?? []) > 0) {
                     foreach ($fullTextAttributes[$current['Sequence_ID']] as $attr) {
-                      $attrValue = $attr['Allow_HTML']
-                        ? $attr['Editions_Full_Text_Attribute_Value']
-                        : $this->escapeHtml($attr['Editions_Full_Text_Attribute_Value']);
-                      $attrHtml[] = '<b>'
-                        . $this->escapeHtml($attr['Editions_Full_Text_Attribute_Name'])
-                        . ':</b> '
-                        . $attrValue;
+                        $attrValue = $attr['Allow_HTML']
+                          ? $attr['Editions_Full_Text_Attribute_Value']
+                          : $this->escapeHtml($attr['Editions_Full_Text_Attribute_Value']);
+                        $attrHtml[] = '<b>'
+                          . $this->escapeHtml($attr['Editions_Full_Text_Attribute_Name'])
+                          . ':</b> '
+                          . $attrValue;
                     }
                     echo '(' . implode('; ', $attrHtml) . ')';
-                  }
+                }
                 ?>
                 <br />
               <?php endif; ?>
@@ -127,24 +127,24 @@
               // display the unnumbered version, since it adds no useful information and
               // reduces readability. Let's index the data so we can identify rows to skip:
               $seriesHasDetails = $rowHasDetails = [];
-              foreach ($series as $i => $current) {
-                $rowHasDetails[$i] = $current['Parent_Volume'] > 0
-                  || $current['Parent_Position'] > 0
-                  || $current['Parent_Replacement_Number'] > 0 || $current['Volume'] > 0
-                  || $current['Position'] > 0 || $current['Replacement_Number'] > 0;
-                if ($rowHasDetails[$i]) {
+          foreach ($series as $i => $current) {
+              $rowHasDetails[$i] = $current['Parent_Volume'] > 0
+                || $current['Parent_Position'] > 0
+                || $current['Parent_Replacement_Number'] > 0 || $current['Volume'] > 0
+                || $current['Position'] > 0 || $current['Replacement_Number'] > 0;
+              if ($rowHasDetails[$i]) {
                   $seriesHasDetails[$current['Series_ID']] = true;
-                }
               }
-            ?>
+          }
+          ?>
             <?php foreach ($series as $i => $current): ?>
               <?php
-                // Skip unnumbered rows if a numbered row exists for the same series (using
-                // indexes created above):
-                if (($seriesHasDetails[$current['Series_ID']] ?? false) && !$rowHasDetails[$i]) {
+              // Skip unnumbered rows if a numbered row exists for the same series (using
+              // indexes created above):
+              if (($seriesHasDetails[$current['Series_ID']] ?? false) && !$rowHasDetails[$i]) {
                   continue;
-                }
-              ?>
+              }
+                ?>
               <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
                 <?=$this->escapeHtml($this->fixtitle(empty($current['Series_AltName']) ? $current['Series_Name'] : $current['Series_AltName']))?>
               </a>
@@ -182,7 +182,8 @@
           </td>
         </tr>
       <?php endif; ?>
-      <?php $altTitleCount = count($altTitles); if ($altTitleCount > 0): ?>
+      <?php $altTitleCount = count($altTitles);
+if ($altTitleCount > 0): ?>
         <tr>
           <th scope="row">Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -195,7 +196,9 @@
         </tr>
       <?php endif; ?>
 
-      <?php $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID'); $platformCount = count($platforms); if ($platformCount > 0): ?>
+      <?php $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID');
+$platformCount = count($platforms);
+if ($platformCount > 0): ?>
         <tr>
           <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -209,7 +212,8 @@
         </tr>
       <?php endif; ?>
 
-      <?php $tagCount = count($tags); if ($tagCount > 0): ?>
+      <?php $tagCount = count($tags);
+if ($tagCount > 0): ?>
         <tr>
           <th scope="row">Subject<?=$tagCount > 1 ? 's' : ''?> / Tag<?=$tagCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -263,11 +267,12 @@
         <tr>
           <th scope="row">Contents:</th>
           <td>
-            <?php $childEditionNames = []; $contentsByEdition = []; ?>
+            <?php $childEditionNames = [];
+          $contentsByEdition = []; ?>
             <?php foreach ($children as $current) {
                 $childEditionNames[$current['Edition_ID']] = $current['Edition_Name'];
                 if (!isset($contentsByEdition[$current['Edition_ID']])) {
-                  $contentsByEdition[$current['Edition_ID']] = '';
+                    $contentsByEdition[$current['Edition_ID']] = '';
                 }
                 $contentsByEdition[$current['Edition_ID']] .=
                   '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
@@ -275,20 +280,23 @@
                   . '</a> (' . $this->escapeHtml($current['Material_Type_Name'])
                   . (!empty($current['Extent_In_Parent']) ? ', ' . $this->escapeHtml($current['Extent_In_Parent']) : '')
                   . ')<br />';
-              }
-              $i = 0; $diffs = false; $old = ''; $full = '';
-              foreach ($contentsByEdition as $id => $contents) {
-                $i++;
-                if ($i > 1 && $contents != $old) {
+            }
+          $i = 0;
+          $diffs = false;
+          $old = '';
+          $full = '';
+          foreach ($contentsByEdition as $id => $contents) {
+              $i++;
+              if ($i > 1 && $contents != $old) {
                   $diffs = true;
-                }
-                $old = $contents;
-                if (!empty($full)) {
-                  $full .= '<br />';
-                }
-                $full .= '<i>' . $this->escapeHtml($childEditionNames[$id]) . ':</i><br />' . $contents;
               }
-            ?>
+              $old = $contents;
+              if (!empty($full)) {
+                  $full .= '<br />';
+              }
+              $full .= '<i>' . $this->escapeHtml($childEditionNames[$id]) . ':</i><br />' . $contents;
+          }
+          ?>
             <?=$diffs ? $full : $contents?>
           </td>
         </tr>
@@ -363,19 +371,22 @@
       <?php endforeach; ?>
 
       <?php foreach ($this->analyzeCredits($creators, $credits, $editions) as $current): ?>
-        <?php $role = $current['role']; $citation = $current['citation']; $group = $current['data']; ?>
+        <?php $role = $current['role'];
+          $citation = $current['citation'];
+          $group = $current['data']; ?>
         <tr>
           <th scope="row">
             <?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's')
-                . (empty($citation) ? '' : ' (according to ' . $citation . ')')
-            ?>:
+                  . (empty($citation) ? '' : ' (according to ' . $citation . ')')
+          ?>:
           </th>
           <td>
             <?php foreach ($group as $person => $details): ?>
               <a href="<?=$this->url('person', ['id' => $person])?>">
                 <?=$this->showperson($details['person'])?>
               </a>
-              <?php $realNameCount = count($details['realPerson']); if ($realNameCount > 0): ?>
+              <?php $realNameCount = count($details['realPerson']);
+                if ($realNameCount > 0): ?>
                 (pseudonym used by <?=$realNameCount == 1 ? '<a href="' . $this->url('person', ['id' => $details['realPerson'][0]['Person_ID']]) . '">' . $this->showperson($details['realPerson'][0]) . '</a>' : 'multiple people' ?>)
               <?php endif; ?>
               <?php if (!empty($details['notes'])): ?>(<?=$this->escapeHtml($details['notes'])?>)<?php endif; ?><br />
@@ -384,7 +395,8 @@
         </tr>
       <?php endforeach; ?>
 
-      <?php $dateCount = count($dates); if ($dateCount > 0): ?>
+      <?php $dateCount = count($dates);
+if ($dateCount > 0): ?>
         <tr>
           <th scope="row">Date<?=$dateCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -395,13 +407,16 @@
         </tr>
       <?php endif; ?>
 
-      <?php $isbns = $this->groupeditions($isbns, 'ISBN13', $editions); $isbnCount = count($isbns); if ($isbnCount > 0): ?>
+      <?php $isbns = $this->groupeditions($isbns, 'ISBN13', $editions);
+$isbnCount = count($isbns);
+if ($isbnCount > 0): ?>
         <tr>
           <th scope="row">ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($isbns as $isbn => $note): ?>
               <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn])?>">
-                <?php $isbnConverter = new \VuFindCode\ISBN($isbn); $isbn10 = $isbnConverter->get10(); ?>
+                <?php $isbnConverter = new \VuFindCode\ISBN($isbn);
+                $isbn10 = $isbnConverter->get10(); ?>
                 <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn : $isbn)?>
               </a>
               <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
@@ -411,11 +426,13 @@
         </tr>
       <?php endif; ?>
 
-      <?php $pubCount = count($publishers); if ($pubCount > 0): ?>
+      <?php $pubCount = count($publishers);
+if ($pubCount > 0): ?>
         <tr>
           <th scope="row">Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
           <td>
-            <?php $pubLines = []; foreach ($publishers as $publisher): ob_start(); ?>
+            <?php $pubLines = [];
+    foreach ($publishers as $publisher): ob_start(); ?>
               <?php if (count($editions) > 1): ?>
                 <?=$this->escapeHtml($this->fixTitle($publisher['Edition_Name']))?>:
               <?php endif; ?>
@@ -424,15 +441,15 @@
               </a>
               <?php if (!empty($publisher['City_Name']) || !empty($publisher['Street'])): ?>
                 (<?php
-                  if (!empty($publisher['City_Name'])) {
-                    echo '<a href="' . $this->url('city', ['id' => $publisher['City_ID']]) . '">'
-                      . $this->escapeHtml($publisher['City_Name']) . '</a>';
-                    if (!empty($publisher['Street'])) {
-                      echo ': ';
-                    }
-                  }
+          if (!empty($publisher['City_Name'])) {
+              echo '<a href="' . $this->url('city', ['id' => $publisher['City_ID']]) . '">'
+                . $this->escapeHtml($publisher['City_Name']) . '</a>';
+              if (!empty($publisher['Street'])) {
+                  echo ': ';
+              }
+          }
                   echo $this->escapeHtml($publisher['Street']);
-                ?>)
+                  ?>)
               <?php endif; ?>
               <?php if (!empty($publisher['Imprint_Name'])): ?>
                 (<?=$this->escapeHtml($publisher['Imprint_Name'])?> imprint)
@@ -454,7 +471,9 @@
         </tr>
       <?php endif; ?>
 
-      <?php $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions); $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
+      <?php $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions);
+$oclcCount = count($oclcNumbers);
+if ($oclcCount > 0): ?>
         <tr>
           <th scope="row">OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -467,7 +486,9 @@
         </tr>
       <?php endif; ?>
 
-      <?php $codes = $this->groupeditions($codes, 'Product_Code', $editions); $codeCount = count($codes); if ($codeCount > 0): ?>
+      <?php $codes = $this->groupeditions($codes, 'Product_Code', $editions);
+$codeCount = count($codes);
+if ($codeCount > 0): ?>
         <tr>
           <th scope="row">Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -481,31 +502,32 @@
       <?php endif; ?>
 
       <?php
-        $lengths = $endings = [];
-        $descCount = 0;
-        foreach ($editions as $ed) {
-            $name = $this->fixtitle($ed['Edition_Name']);
-            if (!empty($ed['Edition_Length'])) {
-                if (!isset($lengths[$ed['Edition_Length']])) {
-                    $lengths[$ed['Edition_Length']] = [];
-                }
-                $lengths[$ed['Edition_Length']][] = $name;
-            }
-            if (!empty($ed['Edition_Endings'])) {
-                if (!isset($endings[$ed['Edition_Endings']])) {
-                    $endings[$ed['Edition_Endings']] = [];
-                }
-                $endings[$ed['Edition_Endings']][] = $name;
-            }
-            if (!empty($ed['Edition_Description'])) {
-                $descCount++;
-            }
+  $lengths = $endings = [];
+$descCount = 0;
+foreach ($editions as $ed) {
+    $name = $this->fixtitle($ed['Edition_Name']);
+    if (!empty($ed['Edition_Length'])) {
+        if (!isset($lengths[$ed['Edition_Length']])) {
+            $lengths[$ed['Edition_Length']] = [];
         }
-      ?>
+        $lengths[$ed['Edition_Length']][] = $name;
+    }
+    if (!empty($ed['Edition_Endings'])) {
+        if (!isset($endings[$ed['Edition_Endings']])) {
+            $endings[$ed['Edition_Endings']] = [];
+        }
+        $endings[$ed['Edition_Endings']][] = $name;
+    }
+    if (!empty($ed['Edition_Description'])) {
+        $descCount++;
+    }
+}
+?>
 
       <?php if ($descCount > 0): ?>
         <tr><th scope="row">Edition Description<?=$descCount > 1 ? 's' : ''?>:</th><td>
-          <?php $displayedCount = 0; foreach ($editions as $ed): ?>
+          <?php $displayedCount = 0;
+          foreach ($editions as $ed): ?>
             <?php if (!empty($ed['Edition_Description'])): $displayedCount++; ?>
               <?php if ($displayedCount > 1): ?><br /><?php endif; ?>
               <?php if (count($editions) > 1): ?>
@@ -560,16 +582,16 @@
 
       <?php
         $groupedAttribs = [];
-        foreach ($editionAttributes as $current) {
-            $groupedAttribs[$current['Editions_Attribute_Name']][] = $current;
-        }
-        foreach ($groupedAttribs as $key => $values) {
-            $groupedAttribs[$key] = [
-              'details' => $values[0],
-              'values' => $this->groupeditions($values, 'Editions_Attribute_Value', $editions),
-            ];
-        }
-      ?>
+foreach ($editionAttributes as $current) {
+    $groupedAttribs[$current['Editions_Attribute_Name']][] = $current;
+}
+foreach ($groupedAttribs as $key => $values) {
+    $groupedAttribs[$key] = [
+      'details' => $values[0],
+      'values' => $this->groupeditions($values, 'Editions_Attribute_Value', $editions),
+    ];
+}
+?>
       <?php foreach ($groupedAttribs as $label => $current): ?>
         <tr>
           <th scope="row"><?=$this->escapeHtml($label)?>:</th>
@@ -624,7 +646,8 @@
         <tr>
           <th scope="row">Users Who Own This Item:</th>
           <td>
-            <?php $prevUser = false; foreach ($owners as $owner): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><?php if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $owner['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
+            <?php $prevUser = false;
+          foreach ($owners as $owner): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><?php if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $owner['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
           </td>
         </tr>
       <?php endif; ?>
@@ -633,7 +656,8 @@
         <tr>
           <th scope="row">Users Who Want This Item:</th>
           <td>
-            <?php $prevUser = false; foreach ($buyers as $buyer): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><?php if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $buyer['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
+            <?php $prevUser = false;
+          foreach ($buyers as $buyer): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><?php if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $buyer['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
           </td>
         </tr>
       <?php endif; ?>
@@ -642,7 +666,8 @@
         <tr>
           <th scope="row">Users with Extra Copies:</th>
           <td>
-            <?php $prevUser = false; foreach ($sellers as $seller): $separator = $prevUser; ?>
+            <?php $prevUser = false;
+          foreach ($sellers as $seller): $separator = $prevUser; ?>
               <?php if ($this->auth()->hasIdentity() && $seller['User_ID'] == $this->auth()->getIdentity()): $userHasExtraItem = true; endif; ?>
               <?php if ($prevUser !== $seller['Username']): $prevUser = $seller['Username'];?>
                 <?php if ($separator): ?><br /><?php endif; ?>
@@ -674,7 +699,8 @@
 
 <?php if (count($files) > 0): ?>
   <h2>Related Documents</h2>
-  <?php $type = false; foreach ($files as $file): ?>
+  <?php $type = false;
+    foreach ($files as $file): ?>
     <?php if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
       <h3 class="filetype"><?=$this->escapeHtml($type)?></h3>
     <?php endif; ?>
@@ -691,7 +717,8 @@
 
 <?php if (count($bibliography) > 0): ?>
   <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
-  <?php $type = false; foreach ($bibliography as $bib): ?>
+  <?php $type = false;
+    foreach ($bibliography as $bib): ?>
     <?php if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
       <h3 class="materialType"><?=$this->escapeHtml($type)?></h3>
     <?php endif; ?>

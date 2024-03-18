@@ -1,7 +1,7 @@
 <?php
-    $title = $category['Category'];
-    $this->layout()->title = 'Category - ' . $title;
-    $displayedSomething = false;
+$title = $category['Category'];
+$this->layout()->title = 'Category - ' . $title;
+$displayedSomething = false;
 ?>
 <?php if (!empty($category['Description'])): ?>
   <p><?=$category['Description']?></p>
@@ -13,7 +13,8 @@
   <h2>
     <?=$this->firstLetterMenu($series, 'Series_Name'); ?>
   </h2>
-  <?php $currentLetter = false; foreach ($series as $i => $current): ?>
+  <?php $currentLetter = false;
+    foreach ($series as $i => $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

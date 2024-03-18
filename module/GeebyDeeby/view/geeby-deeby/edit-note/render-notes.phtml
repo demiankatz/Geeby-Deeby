@@ -4,7 +4,8 @@
   <h2>
     <?=$this->firstLetterMenu($notes, 'Note'); ?>
   </h2>
-  <?php $currentLetter = false; foreach ($notes as $i => $current): ?>
+  <?php $currentLetter = false;
+    foreach ($notes as $i => $current): ?>
     <?php $first = $this->firstletter($current['Note']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

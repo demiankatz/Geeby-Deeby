@@ -1,12 +1,12 @@
 <?php
-    $this->layout()->title = 'Search Results - Title';
-    $empty = true;
-    $lists = [
-      'Series' => $series,
-      'Series Alternate Titles' => $seriesAltTitles,
-      'Item' => $items,
-      'Item Alternate Titles' => $itemsAltTitles,
-    ];
+$this->layout()->title = 'Search Results - Title';
+$empty = true;
+$lists = [
+  'Series' => $series,
+  'Series Alternate Titles' => $seriesAltTitles,
+  'Item' => $items,
+  'Item Alternate Titles' => $itemsAltTitles,
+];
 ?>
 <div class="results row">
   <?php foreach($lists as $title => $results): ?>

@@ -5,24 +5,24 @@
 
 <?php
 $reasonMessage = '';
-switch ($this->reason) {
-    case 'error-controller-cannot-dispatch':
-        $reasonMessage = 'The requested controller was unable to dispatch the request.';
-        break;
-    case 'error-controller-not-found':
-        $reasonMessage = 'The requested controller could not be mapped to an existing controller class.';
-        break;
-    case 'error-controller-invalid':
-        $reasonMessage = 'The requested controller was not dispatchable.';
-        break;
-    case 'error-router-no-match':
-        $reasonMessage = 'The requested URL could not be matched by routing.';
-        break;
-    default:
-        $reasonMessage = 'We cannot determine at this time why a 404 was generated.';
-        break;
-}
-?>
+    switch ($this->reason) {
+        case 'error-controller-cannot-dispatch':
+            $reasonMessage = 'The requested controller was unable to dispatch the request.';
+            break;
+        case 'error-controller-not-found':
+            $reasonMessage = 'The requested controller could not be mapped to an existing controller class.';
+            break;
+        case 'error-controller-invalid':
+            $reasonMessage = 'The requested controller was not dispatchable.';
+            break;
+        case 'error-router-no-match':
+            $reasonMessage = 'The requested URL could not be matched by routing.';
+            break;
+        default:
+            $reasonMessage = 'We cannot determine at this time why a 404 was generated.';
+            break;
+    }
+    ?>
 
 <p><?php echo $reasonMessage ?></p>
 
@@ -35,12 +35,12 @@ switch ($this->reason) {
     <dd><?php echo $this->escapeHtml($this->controller) ?>
 <?php
 if (isset($this->controller_class)
-    && $this->controller_class
-    && $this->controller_class != $this->controller
+        && $this->controller_class
+        && $this->controller_class != $this->controller
 ) {
     echo '(' . sprintf('resolves to %s'), $this->escapeHtml($this->controller_class) . ')';
 }
-?>
+    ?>
 </dd>
 </dl>
 
@@ -69,9 +69,9 @@ if (isset($this->controller_class)
     </dd>
 </dl>
 <?php
-    $e = $this->exception->getPrevious();
+        $e = $this->exception->getPrevious();
     if ($e) :
-?>
+        ?>
 <hr/>
 <h2><?php echo 'Previous exceptions' ?>:</h2>
 <ul class="unstyled">
@@ -94,9 +94,9 @@ if (isset($this->controller_class)
         </dl>
     </li>
     <?php
-        $e = $e->getPrevious();
-        endwhile;
-    ?>
+                $e = $e->getPrevious();
+    endwhile;
+        ?>
 </ul>
 <?php endif; ?>
 

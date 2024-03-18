@@ -1,6 +1,6 @@
 <?php
-    $title = $user['Username'];
-    $this->layout()->title = 'Have/Want Lists - ' . $title;
+$title = $user['Username'];
+$this->layout()->title = 'Have/Want Lists - ' . $title;
 ?>
 <p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
 
@@ -18,11 +18,12 @@
             <?php if (!isset($parts['want']) || count($parts['want']) < 1): ?>
               None.
             <?php else: ?>
-              <?php $output = []; foreach ($parts['want'] as $current): ?>
+              <?php $output = [];
+                foreach ($parts['want'] as $current): ?>
                 <?php $output[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
-                  . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
-                  . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
-                ?>
+                    . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
+                    . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
+                    ?>
               <?php endforeach; ?>
               <?=implode(', ', $output)?>
             <?php endif; ?>
@@ -32,11 +33,12 @@
             <?php if (!isset($parts['have']) || count($parts['have']) < 1): ?>
               None.
             <?php else: ?>
-              <?php $output = []; foreach ($parts['have'] as $current): ?>
+              <?php $output = [];
+                foreach ($parts['have'] as $current): ?>
                 <?php $output[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
-                  . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
-                  . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
-                ?>
+                    . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
+                    . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
+                    ?>
               <?php endforeach; ?>
               <?=implode(', ', $output)?>
             <?php endif; ?>

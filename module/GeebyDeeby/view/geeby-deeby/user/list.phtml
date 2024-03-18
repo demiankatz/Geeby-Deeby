@@ -1,5 +1,5 @@
 <?php
-    $this->layout()->title = 'User List';
+$this->layout()->title = 'User List';
 ?>
 <?php if (count($users) < 1): ?>
   <p>No users listed in this database yet.</p>
@@ -7,7 +7,8 @@
   <h2>
     <?=$this->firstLetterMenu($users, 'Username'); ?>
   </h2>
-  <?php $currentLetter = false; foreach ($users as $i => $current): ?>
+  <?php $currentLetter = false;
+    foreach ($users as $i => $current): ?>
     <?php $first = $this->firstletter($current['Username']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

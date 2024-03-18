@@ -1,35 +1,36 @@
 <?php
-    $this->layout()->title = 'Check for Missing Data';
+$this->layout()->title = 'Check for Missing Data';
 
-    $formatRanges = function ($values) {
-        $currentStart = $currentEnd = null;
-        $parts = [];
-        foreach ($values as $current) {
-            if ($currentStart === null) {
-                $currentStart = $currentEnd = $current;
-            } elseif ($current == $currentEnd + 1) {
-                $currentEnd = $current;
-            } else {
-                $parts[] = $currentStart === $currentEnd ? $currentStart : "$currentStart-$currentEnd";
-                $currentStart = $currentEnd = $current;
-            }
-        }
-        if (null !== $currentStart) {
+$formatRanges = function ($values) {
+    $currentStart = $currentEnd = null;
+    $parts = [];
+    foreach ($values as $current) {
+        if ($currentStart === null) {
+            $currentStart = $currentEnd = $current;
+        } elseif ($current == $currentEnd + 1) {
+            $currentEnd = $current;
+        } else {
             $parts[] = $currentStart === $currentEnd ? $currentStart : "$currentStart-$currentEnd";
+            $currentStart = $currentEnd = $current;
         }
-        return implode(', ', $parts);
-    };
+    }
+    if (null !== $currentStart) {
+        $parts[] = $currentStart === $currentEnd ? $currentStart : "$currentStart-$currentEnd";
+    }
+    return implode(', ', $parts);
+};
 ?>
 
 <h2>Missing Credits</h2>
 <?php if (empty($missingCredits)): ?>
   <p>None.</p>
 <?php else: ?>
-  <?php $parts = []; foreach ($missingCredits as $current): ?>
+  <?php $parts = [];
+    foreach ($missingCredits as $current): ?>
     <?php $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
-           . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
-           . '</a>';
-    ?>
+             . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
+             . '</a>';
+        ?>
   <?php endforeach; ?>
   <?=implode(', ', $parts)?>
 <?php endif; ?>
@@ -38,11 +39,12 @@
 <?php if (empty($missingCreators)): ?>
   <p>None.</p>
 <?php else: ?>
-  <?php $parts = []; foreach ($missingCreators as $current): ?>
+  <?php $parts = [];
+    foreach ($missingCreators as $current): ?>
     <?php $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
-           . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
-           . '</a>';
-    ?>
+             . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
+             . '</a>';
+        ?>
   <?php endforeach; ?>
   <?=implode(', ', $parts)?>
 <?php endif; ?>
@@ -51,11 +53,12 @@
 <?php if (empty($missingDates)): ?>
   <p>None.</p>
 <?php else: ?>
-  <?php $parts = []; foreach ($missingDates as $current): ?>
+  <?php $parts = [];
+    foreach ($missingDates as $current): ?>
     <?php $parts[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
-           . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
-           . '</a>';
-    ?>
+             . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle($current['Item_Name'])))
+             . '</a>';
+        ?>
   <?php endforeach; ?>
   <?=implode(', ', $parts)?>
 <?php endif; ?>
@@ -86,14 +89,17 @@
   <?php endif; ?>
 
   <?php for ($v = 0; $v <= $itemStats['EndVol']; $v++): ?>
-    <?php if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol'])) { continue; } ?>
+    <?php if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol'])) {
+        continue;
+    } ?>
     <?php if ($v > 0): ?><h3>Volume <?=$this->escapeHtml($v)?></h3><?php endif; ?>
     <?php if ($v == 0 && $itemStats['EndVol'] > $v): ?><h3>No Volume Specified</h3><?php endif; ?>
     <?=$this->escapeHtml($itemStats['TotalByVol'][$v])?> item(s) numbered from <?=$this->escapeHtml($itemStats['Start'][$v])?> to <?=$this->escapeHtml($itemStats['End'][$v])?>.</p>
       <?php if (!empty($itemStats['Dupes'][$v])): ?>
         <p>
           Duplicate numbers:
-          <?php $dupeList = []; foreach ($itemStats['Dupes'][$v] as $no => $repArr): ?>
+          <?php $dupeList = [];
+          foreach ($itemStats['Dupes'][$v] as $no => $repArr): ?>
             <?php $currentDupe = $this->escapeHtml($no); ?>
             <?php foreach ($repArr as $rep): ?>
               <?php if ($rep > 0): ?>

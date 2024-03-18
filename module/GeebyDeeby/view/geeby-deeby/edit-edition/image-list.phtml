@@ -20,19 +20,19 @@
               ? 'Delete image with IIIF URI: ' . $current['IIIF_URI']
               : 'Delete image with path: ' . $current['Image_Path']
             )
-          ?>
+        ?>
         </td>
         <td>
           <?php
-            $thumb = $current['Thumb_Path'];
-            if (empty($thumb)) {
-              $thumb = $current['IIIF_URI'] . '/full/,120/0/default.jpg';
-            }
-            $image = $current['Image_Path'];
-            if (empty($image)) {
-              $image = $current['IIIF_URI'] . '/full/full/0/default.jpg';
-            }
-          ?>
+          $thumb = $current['Thumb_Path'];
+        if (empty($thumb)) {
+            $thumb = $current['IIIF_URI'] . '/full/,120/0/default.jpg';
+        }
+        $image = $current['Image_Path'];
+        if (empty($image)) {
+            $image = $current['IIIF_URI'] . '/full/full/0/default.jpg';
+        }
+        ?>
           <a target="_imagePopup" href="<?=$this->escapeHtml($image)?>">
             <span class="sr-only">Open large image</span>
             <img alt="" src="<?=$this->escapeHtml($thumb)?>" />

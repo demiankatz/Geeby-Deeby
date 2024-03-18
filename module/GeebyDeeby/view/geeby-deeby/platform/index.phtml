@@ -1,10 +1,11 @@
 <?php
-    $title = $platform['Platform'];
-    $this->layout()->title = 'Platform - ' . $title;
-    $displayedSomething = false;
+$title = $platform['Platform'];
+$this->layout()->title = 'Platform - ' . $title;
+$displayedSomething = false;
 ?>
 <?php if (count($items) > 0): $displayedSomething = true; ?>
-  <?php $series = false; foreach ($items as $credit): ?>
+  <?php $series = false;
+    foreach ($items as $credit): ?>
     <?php if ($series !== $credit['Series_ID']): $series = $credit['Series_ID']; ?>
       <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($credit['Series_Name']);?>

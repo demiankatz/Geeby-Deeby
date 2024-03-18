@@ -24,7 +24,7 @@
 <?php
     $e = $this->exception->getPrevious();
     if ($e) :
-?>
+        ?>
 <hr/>
 <h2><?php echo 'Previous exceptions' ?>:</h2>
 <ul class="unstyled">
@@ -47,9 +47,9 @@
         </dl>
     </li>
     <?php
-        $e = $e->getPrevious();
-        endwhile;
-    ?>
+                $e = $e->getPrevious();
+    endwhile;
+        ?>
 </ul>
 <?php endif; ?>
 

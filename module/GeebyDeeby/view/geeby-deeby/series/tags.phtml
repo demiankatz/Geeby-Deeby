@@ -1,7 +1,7 @@
 <?php
-    $title = $this->fixtitle($series['Series_Name']);
-    $this->layout()->title = 'Series Subjects/Tags - ' . $title;
-    $lastTag = null;
+$title = $this->fixtitle($series['Series_Name']);
+$this->layout()->title = 'Series Subjects/Tags - ' . $title;
+$lastTag = null;
 ?>
 <?php if (count($tags) < 1): ?>
   <p>No subjects/tags listed for this series.</p>

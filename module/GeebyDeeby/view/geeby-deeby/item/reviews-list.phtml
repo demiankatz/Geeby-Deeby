@@ -3,35 +3,35 @@
     $data = [];
     $series = null;
     foreach ($reviews as $review) {
-      if (($series['id'] ?? '') !== $review['Series_ID']) {
-        if (!empty($series)) {
-          $data[] = $series;
+        if (($series['id'] ?? '') !== $review['Series_ID']) {
+            if (!empty($series)) {
+                $data[] = $series;
+            }
+            $item = null;
+            $series = [
+              'id' => $review['Series_ID'],
+              'title' => $this->fixtitle($review['Series_Name']),
+              'items' => [],
+              'posIndex' => [],
+            ];
         }
-        $item = null;
-        $series = [
-          'id' => $review['Series_ID'],
-          'title' => $this->fixtitle($review['Series_Name']),
-          'items' => [],
-          'posIndex' => [],
-        ];
-      }
-      if (($item['id'] ?? '') !== $review['Item_ID']
-        || ($item['pos'] ?? '') !== $this->formatItemNumber($review)
-      ) {
-        $item = [
-          'id' => $review['Item_ID'],
-          'pos' => $this->formatItemNumber($review),
-          'title' => $this->fixtitle(!empty($review['Item_AltName'])
-            ? $review['Item_AltName'] : $review['Item_Name']),
-        ];
-        $series['items'][] = $item;
-        $series['posIndex'][$item['id']][] = $item['pos'];
-      }
+        if (($item['id'] ?? '') !== $review['Item_ID']
+          || ($item['pos'] ?? '') !== $this->formatItemNumber($review)
+        ) {
+            $item = [
+              'id' => $review['Item_ID'],
+              'pos' => $this->formatItemNumber($review),
+              'title' => $this->fixtitle(!empty($review['Item_AltName'])
+                ? $review['Item_AltName'] : $review['Item_Name']),
+            ];
+            $series['items'][] = $item;
+            $series['posIndex'][$item['id']][] = $item['pos'];
+        }
     }
     if (!empty($series)) {
-      $data[] = $series;
+        $data[] = $series;
     }
-  ?>
+    ?>
   <?php foreach ($data as $series): ?>
     <h2 class="series">
       <a href="<?=$this->url('series', ['id' => $series['id']])?>">
@@ -40,12 +40,12 @@
     </h2>
     <?php foreach ($series['items'] as $item): ?>
       <?php
-        if (empty($item['pos'])
-          && count(array_unique($series['posIndex'][$item['id']])) > 1
-        ) {
-          continue;
-        }
-      ?>
+          if (empty($item['pos'])
+            && count(array_unique($series['posIndex'][$item['id']])) > 1
+          ) {
+              continue;
+          }
+        ?>
       <span class="item">
         <?=$this->escapeHtml($item['pos'])?>
         <a href="<?=$this->url('item', ['id' => $item['id']])?>">

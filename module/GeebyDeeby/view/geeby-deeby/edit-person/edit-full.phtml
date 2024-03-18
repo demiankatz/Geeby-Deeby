@@ -1,7 +1,7 @@
 <?php
-  $this->layout()->title = 'Edit Person';
-  $this->layout()->toggleLink = $this->toggleLink('person', $person['Person_ID']);
-  $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_people']);
+$this->layout()->title = 'Edit Person';
+$this->layout()->toggleLink = $this->toggleLink('person', $person['Person_ID']);
+$this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_people']);
 ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-person/index.phtml')?>
