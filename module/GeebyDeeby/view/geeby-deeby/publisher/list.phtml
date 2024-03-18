@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Publisher List';
+    $this->layout()->title = 'Publisher List';
 ?>
 <?php if (count($publishers) < 1): ?>
   <p>No publishers listed in this database yet.</p>
@@ -8,7 +8,7 @@ $this->layout()->title = 'Publisher List';
     <?=$this->firstLetterMenu($publishers, 'Publisher_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($publishers as $i => $current): ?>
+  foreach ($publishers as $i => $current): ?>
     <?php $first = $this->firstletter($current['Publisher_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

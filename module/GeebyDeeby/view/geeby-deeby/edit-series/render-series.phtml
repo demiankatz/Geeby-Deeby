@@ -5,7 +5,7 @@
     <?=$this->firstLetterMenu($series, 'Series_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($series as $i => $current): ?>
+  foreach ($series as $i => $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

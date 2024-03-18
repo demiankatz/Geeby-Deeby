@@ -5,40 +5,40 @@
       <?php endif; ?>
       <?php
         if (!isset($linkType) || $linkType == 'image') {
-            $path = $image['Image_Path'];
-            if (empty($path)) {
-                $path = $image['IIIF_URI'] . '/full/full/0/default.jpg';
-            }
-            $openAnchor = '<a target="_new" href="' . $this->escapeHtml($path) . '">';
+          $path = $image['Image_Path'];
+          if (empty($path)) {
+            $path = $image['IIIF_URI'] . '/full/full/0/default.jpg';
+          }
+          $openAnchor = '<a target="_new" href="' . $this->escapeHtml($path) . '">';
         } elseif ($linkType == 'item') {
-            $openAnchor = '<a href="' . $this->url('item', ['id' => $image['Item_ID']]) . '">';
+          $openAnchor = '<a href="' . $this->url('item', ['id' => $image['Item_ID']]) . '">';
         } else {
-            // unsupported option:
-            $openAnchor = '<a>';
+          // unsupported option:
+          $openAnchor = '<a>';
         }
         $thumb = $image['Thumb_Path'];
         if (empty($thumb)) {
-            $thumb = $image['IIIF_URI'] . '/full/,120/0/default.jpg';
+          $thumb = $image['IIIF_URI'] . '/full/,120/0/default.jpg';
         }
-        ?>
+      ?>
       <div class="col-md-2" style="text-align:center">
         <?=$openAnchor?><img class="item-image" src="<?=$this->escapeHtml($thumb)?>" style="display:block;margin:auto"/></a>
         <?php
-            $note = '';
-        if (isset($editions) && count($editions) > 1) {
-            $note = $this->fixtitle($image['Edition_Name']);
-        }
-        if (!empty($image['Note'])) {
-            if (!empty($note)) {
-                $note .= ' - ';
-            }
-            $note .= $image['Note'];
-        }
+          $note = '';
+          if (isset($editions) && count($editions) > 1) {
+              $note = $this->fixtitle($image['Edition_Name']);
+          }
+          if (!empty($image['Note'])) {
+              if (!empty($note)) {
+                  $note .= ' - ';
+              }
+              $note .= $image['Note'];
+          }
         ?>
         <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : '<br />'?>
       </div>
     <?php endforeach; ?>
-    <?php if (count($images) > 1): // close the last row, unless we have a single floating image?>
+    <?php if (count($images) > 1): // close the last row, unless we have a single floating image ?>
       </div><div class="row">
     <?php endif; ?>
 <?php endif; ?>

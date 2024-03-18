@@ -1,7 +1,7 @@
 <?php $role = $series = $year = false;
 foreach ($list as $current): ?>
   <?php if ($role !== $current['Role_Name']): $role = $current['Role_Name'];
-      $series = false; ?>
+  $series = false; ?>
     <h2>Items with "<?=$this->escapeHtml($title)?>" as <?=$labelPrefix . ' ' . $this->escapeHtml($role)?></h2>
       <?php if ($sort == 'year'): ?>
         <div class="alert alert-info">Note: This list is sorted by the earliest known

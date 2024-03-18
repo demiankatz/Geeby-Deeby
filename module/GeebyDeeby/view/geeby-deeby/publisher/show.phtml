@@ -1,8 +1,8 @@
 <?php
-$title = $publisher['Publisher_Name'];
-$this->layout()->title = 'Publisher - ' . $title;
-$this->layout()->toggleLink = $this->toggleLink('edit/publisher', $publisher['Publisher_ID']);
-$displayedSomething = false;
+    $title = $publisher['Publisher_Name'];
+    $this->layout()->title = 'Publisher - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/publisher', $publisher['Publisher_ID']);
+    $displayedSomething = false;
 ?>
 <?php $uriCount = count($uris);
 if ($uriCount > 0): $displayedSomething = true; ?>
@@ -17,9 +17,9 @@ if ($uriCount > 0): $displayedSomething = true; ?>
   <p>No information is available about this publisher.</p>
 <?php else: ?>
   <?php $currentLetter = false;
-    foreach ($series as $current): ?>
+  foreach ($series as $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']);
-        if ($currentLetter !== $first): $currentLetter = $first; ?>
+    if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <?php endif; ?>
     <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">

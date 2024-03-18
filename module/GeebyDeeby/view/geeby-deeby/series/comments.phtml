@@ -1,11 +1,11 @@
 <?php
-$this->layout()->title = 'Series with Comments';
+    $this->layout()->title = 'Series with Comments';
 ?>
 <?php if (count($comments) > 0): ?>
   <?php $currentLetter = $currentSeries = false;
-    foreach ($comments as $current): ?>
+  foreach ($comments as $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']);
-        if ($currentLetter !== $first): $currentLetter = $first; ?>
+    if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <?php endif; ?>
     <?php if ($currentSeries !== $current['Series_ID']): ?>

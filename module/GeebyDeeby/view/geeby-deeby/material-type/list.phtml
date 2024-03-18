@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Material Type List';
+    $this->layout()->title = 'Material Type List';
 ?>
 <?php if (count($materialTypes) < 1): ?>
   <p>No material types listed in this database yet.</p>
@@ -8,7 +8,7 @@ $this->layout()->title = 'Material Type List';
     <?=$this->firstLetterMenu($materialTypes, 'Material_Type_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($materialTypes as $i => $current): ?>
+  foreach ($materialTypes as $i => $current): ?>
     <?php $first = $this->firstletter($current['Material_Type_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

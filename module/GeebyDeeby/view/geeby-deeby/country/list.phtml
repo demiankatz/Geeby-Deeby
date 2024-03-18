@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Country List';
+    $this->layout()->title = 'Country List';
 ?>
 <?php if (count($countries) < 1): ?>
   <p>No countries listed in this database yet.</p>
@@ -8,7 +8,7 @@ $this->layout()->title = 'Country List';
     <?=$this->firstLetterMenu($countries, 'Country_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($countries as $i => $current): ?>
+  foreach ($countries as $i => $current): ?>
     <?php $first = $this->firstletter($current['Country_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

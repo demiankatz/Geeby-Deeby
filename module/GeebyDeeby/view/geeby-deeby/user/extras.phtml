@@ -1,6 +1,6 @@
 <?php
-$title = $user['Username'];
-$this->layout()->title = 'Books for Sale/Trade - ' . $title;
+    $title = $user['Username'];
+    $this->layout()->title = 'Books for Sale/Trade - ' . $title;
 ?>
 <p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
 
@@ -10,7 +10,7 @@ $this->layout()->title = 'Books for Sale/Trade - ' . $title;
   <?=$this->render('geeby-deeby/user/sale-disclaimer.phtml')?>
 
   <?php $series = false;
-    foreach ($extras as $extra): ?>
+  foreach ($extras as $extra): ?>
     <?php if ($series !== $extra['Series_ID']): $series = $extra['Series_ID']; ?>
       <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($extra['Series_Name']);?>

@@ -1,15 +1,15 @@
 <?php
-$title = $language['Language_Name'];
-$this->layout()->title = 'Language - ' . $title;
-$displayedSomething = false;
+    $title = $language['Language_Name'];
+    $this->layout()->title = 'Language - ' . $title;
+    $displayedSomething = false;
 ?>
 <?php if (count($series) < 1): ?>
   <p>No information is available about this language.</p>
 <?php else: ?>
   <?php $currentLetter = false;
-    foreach ($series as $current): ?>
+  foreach ($series as $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']);
-        if ($currentLetter !== $first): $currentLetter = $first; ?>
+    if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <?php endif; ?>
     <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">

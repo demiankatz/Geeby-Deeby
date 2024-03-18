@@ -1,8 +1,8 @@
 <?php
-$title = $this->showperson($person);
-$this->layout()->title = 'Person - ' . $title;
-$this->layout()->toggleLink = $this->toggleLink('edit/person', $person['Person_ID']);
-$displayedSomething = false;
+    $title = $this->showperson($person);
+    $this->layout()->title = 'Person - ' . $title;
+    $this->layout()->toggleLink = $this->toggleLink('edit/person', $person['Person_ID']);
+    $displayedSomething = false;
 ?>
 <?php $realNameCount = count($realNames);
 if ($realNameCount > 0): $displayedSomething = true; ?>
@@ -41,7 +41,7 @@ if ($uriCount > 0): $displayedSomething = true; ?>
 
 <?php if (count($credits) > 0 || count($citations) > 0): $displayedSomething = true; ?>
   <?php $sorts = [ 'series', 'title', 'year' ];
-    $sort = $this->sort ?? $sorts[0]; ?>
+  $sort = $this->sort ?? $sorts[0]; ?>
   <div class="pull-right" style="padding:12px 0;">
     Sort by:
     <div class="btn-group" style="margin-top:-4px;">
@@ -57,7 +57,7 @@ if ($uriCount > 0): $displayedSomething = true; ?>
 <?php if (count($files) > 0): $displayedSomething = true;?>
   <h2>Related Documents</h2>
   <?php $type = false;
-    foreach ($files as $file): ?>
+  foreach ($files as $file): ?>
     <?php if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
       <h3 class="filetype"><?=$this->escapeHtml($type)?></h3>
     <?php endif; ?>
@@ -75,7 +75,7 @@ if ($uriCount > 0): $displayedSomething = true; ?>
 <?php if (count($bibliography) > 0): $displayedSomething = true;?>
   <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
   <?php $type = false;
-    foreach ($bibliography as $bib): ?>
+  foreach ($bibliography as $bib): ?>
     <?php if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
       <h3 class="materialType"><?=$this->escapeHtml($type)?></h3>
     <?php endif; ?>

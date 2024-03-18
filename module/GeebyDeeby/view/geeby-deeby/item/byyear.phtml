@@ -1,11 +1,11 @@
 <?php
-$this->layout()->title = 'Item List By Year';
+    $this->layout()->title = 'Item List By Year';
 ?>
 <?php if (count($items) < 1): ?>
   <p>No items listed in this database yet.</p>
 <?php else: ?>
   <?php $currentYear = false;
-    foreach ($items as $current): ?>
+  foreach ($items as $current): ?>
     <?php if ($currentYear !== $current['Year']): $currentYear = $current['Year']; ?>
       <h2><?=$this->escapeHtml($current['Year'] == -1 ? 'Never Published' : $current['Year'])?></h2>
     <?php endif; ?>

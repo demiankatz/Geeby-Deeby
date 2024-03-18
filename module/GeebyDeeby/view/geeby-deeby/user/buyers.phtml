@@ -1,6 +1,6 @@
 <?php
-$title = $user['Username'];
-$this->layout()->title = 'Potential Buyers - ' . $title;
+    $title = $user['Username'];
+    $this->layout()->title = 'Potential Buyers - ' . $title;
 ?>
 <p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
 
@@ -8,9 +8,9 @@ $this->layout()->title = 'Potential Buyers - ' . $title;
   <p>No buyers available.</p>
 <?php else: ?>
   <?php $series = $seller = false;
-    foreach ($buyers as $extra): ?>
+  foreach ($buyers as $extra): ?>
     <?php if ($seller !== $extra['User_ID']): $series = false;
-        $seller = $extra['User_ID']; ?>
+    $seller = $extra['User_ID']; ?>
       <h2 class="user"><a href="<?=$this->url('user', ['id' => $seller])?>">
         <?=$this->fixtitle($extra['Username']);?>
       </a></h2>

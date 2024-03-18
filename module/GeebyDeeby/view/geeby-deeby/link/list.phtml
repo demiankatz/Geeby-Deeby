@@ -1,12 +1,12 @@
 <?php
-$this->layout()->title = $title;
+    $this->layout()->title = $title;
 ?>
 <?php if (!empty($desc)): ?><?=$desc?><?php endif; ?>
 <?php if (count($links) < 1): ?>
   <p>No links listed in this database yet.</p>
 <?php else: ?>
   <?php $type = false;
-    foreach ($links as $i => $link): ?>
+  foreach ($links as $i => $link): ?>
     <?php if ($type != $link['Link_Type']): $type = $link['Link_Type']; ?>
       <h2><?=$this->escapeHtml($type)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
     <?php endif; ?>

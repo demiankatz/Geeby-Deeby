@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php
       echo $this->headTitle($this->layout()->title . ' - ' . $this->config('siteTitle'));
-echo $this->headLink()
-  ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
-  ->prependStylesheet($this->basePath() . '/css/vendor/bootstrap.min.css')
-  ->prependStylesheet($this->basePath() . '/css/vendor/autocomplete.css')
-  ->prependStylesheet($this->basePath() . '/css/fonts.css');
+      echo $this->headLink()
+        ->prependStylesheet($this->basePath() . '/css/geeby-deeby.css')
+        ->prependStylesheet($this->basePath() . '/css/vendor/bootstrap.min.css')
+        ->prependStylesheet($this->basePath() . '/css/vendor/autocomplete.css')
+        ->prependStylesheet($this->basePath() . '/css/fonts.css');
 
-// Set global path for Javascript code:
-$this->headScript()->prependScript("basePath = '" . rtrim($this->basePath(), '/') . "';");
-$this->scriptManager()->add(['vendor/jquery', 'vendor/bootstrap.min', 'vendor/jquery.stickytabs'], true);
-echo $this->headScript();
-?>
+      // Set global path for Javascript code:
+      $this->headScript()->prependScript("basePath = '" . rtrim($this->basePath(), '/') . "';");
+      $this->scriptManager()->add(['vendor/jquery', 'vendor/bootstrap.min', 'vendor/jquery.stickytabs'], true);
+      echo $this->headScript();
+    ?>
   </head>
   <body>
     <header>

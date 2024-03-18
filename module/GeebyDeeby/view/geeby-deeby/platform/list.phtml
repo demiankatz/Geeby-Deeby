@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Platform List';
+    $this->layout()->title = 'Platform List';
 ?>
 <?php if (count($platforms) < 1): ?>
   <p>No platforms listed in this database yet.</p>
@@ -8,7 +8,7 @@ $this->layout()->title = 'Platform List';
     <?=$this->firstLetterMenu($platforms, 'Platform'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($platforms as $i => $current): ?>
+  foreach ($platforms as $i => $current): ?>
     <?php $first = $this->firstletter($current['Platform']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

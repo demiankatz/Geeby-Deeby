@@ -1,6 +1,6 @@
 <?php
-$title = $user['Username'];
-$this->layout()->title = 'User Reviews - ' . $title;
+    $title = $user['Username'];
+    $this->layout()->title = 'User Reviews - ' . $title;
 ?>
 <p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
 <?=$this->render('geeby-deeby/item/reviews-list.phtml')?>

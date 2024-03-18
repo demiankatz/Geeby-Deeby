@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Item List';
+    $this->layout()->title = 'Item List';
 ?>
 <?php if (count($items) < 1): ?>
   <p>No items listed in this database yet.</p>
@@ -8,7 +8,7 @@ $this->layout()->title = 'Item List';
     <?=$this->firstLetterMenu($items, 'Item_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($items as $i => $current): ?>
+  foreach ($items as $i => $current): ?>
     <?php $first = $this->firstletter($current['Item_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

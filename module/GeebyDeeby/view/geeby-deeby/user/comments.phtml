@@ -1,13 +1,13 @@
 <?php
-$title = $user['Username'];
-$this->layout()->title = 'User Comments - ' . $title;
+    $title = $user['Username'];
+    $this->layout()->title = 'User Comments - ' . $title;
 ?>
 <p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
 <?php if (count($comments) > 0): ?>
   <?php $currentLetter = false;
-    foreach ($comments as $current): ?>
+  foreach ($comments as $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']);
-        if ($currentLetter !== $first): $currentLetter = $first; ?>
+    if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <?php endif; ?>
     <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">

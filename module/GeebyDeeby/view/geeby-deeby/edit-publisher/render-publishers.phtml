@@ -5,7 +5,7 @@
     <?=$this->firstLetterMenu($publishers, 'Publisher_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($publishers as $i => $current): ?>
+  foreach ($publishers as $i => $current): ?>
     <?php $first = $this->firstletter($current['Publisher_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

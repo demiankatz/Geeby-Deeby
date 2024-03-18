@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Language List';
+    $this->layout()->title = 'Language List';
 ?>
 <?php if (count($languages) < 1): ?>
   <p>No languages listed in this database yet.</p>
@@ -8,7 +8,7 @@ $this->layout()->title = 'Language List';
     <?=$this->firstLetterMenu($languages, 'Language_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($languages as $i => $current): ?>
+  foreach ($languages as $i => $current): ?>
     <?php $first = $this->firstletter($current['Language_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

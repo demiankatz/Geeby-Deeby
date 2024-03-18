@@ -1,7 +1,7 @@
 <?php
-$this->layout()->title = 'Edit Publisher Editor';
-$this->layout()->toggleLink = $this->toggleLink('publisher', $publisher['Publisher_ID']);
-$this->scriptManager()->add(['base_editor', 'edit_publishers'])
+  $this->layout()->title = 'Edit Publisher Editor';
+  $this->layout()->toggleLink = $this->toggleLink('publisher', $publisher['Publisher_ID']);
+  $this->scriptManager()->add(['base_editor', 'edit_publishers'])
 ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-publisher/index.phtml')?>

@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Category List';
+    $this->layout()->title = 'Category List';
 ?>
 <?php if (count($categories) < 1): ?>
   <p>No categories listed in this database yet.</p>
@@ -8,9 +8,9 @@ $this->layout()->title = 'Category List';
     <?=$this->firstLetterMenu($categories, 'Category'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($categories as $i => $current): ?>
+  foreach ($categories as $i => $current): ?>
     <?php $first = $this->firstletter($current['Category']);
-        if ($currentLetter !== $first): $currentLetter = $first; ?>
+    if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>
         <a name="<?=$this->escapeHtml($currentLetter)?>"/>
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>

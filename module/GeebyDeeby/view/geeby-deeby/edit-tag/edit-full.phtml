@@ -1,7 +1,7 @@
 <?php
-$this->layout()->title = 'Edit Tag';
-$this->layout()->toggleLink = $this->toggleLink('tag', $tag['Tag_ID']);
-$this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_tags']);
+  $this->layout()->title = 'Edit Tag';
+  $this->layout()->toggleLink = $this->toggleLink('tag', $tag['Tag_ID']);
+  $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_tags']);
 ?>
 <div class="edit_container">
   <?=$this->render('geeby-deeby/edit-tag/index.phtml')?>

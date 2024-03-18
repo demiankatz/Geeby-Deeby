@@ -260,7 +260,7 @@ class SeriesController extends AbstractBase
             $lastVol = $vol;
         }
         $view->itemStats = [
-            'Different' => count($results),
+            'Different' =>  count($results),
             'Start' => $min,
             'End' => $max,
             'StartVol' => $minVol,

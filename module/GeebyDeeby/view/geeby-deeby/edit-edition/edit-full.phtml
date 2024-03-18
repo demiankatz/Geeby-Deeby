@@ -1,7 +1,7 @@
 <?php
-$this->layout()->title = 'Edit Edition';
-$this->layout()->toggleLink = $this->toggleLink('edition', $edition['Edition_ID']);
-$this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_items', 'edit_editions']);
+  $this->layout()->title = 'Edit Edition';
+  $this->layout()->toggleLink = $this->toggleLink('edition', $edition['Edition_ID']);
+  $this->scriptManager()->add(['base_editor', 'vendor/autocomplete', 'autocomplete', 'edit_items', 'edit_editions']);
 ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-edition/index.phtml')?>

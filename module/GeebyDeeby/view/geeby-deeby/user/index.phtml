@@ -1,6 +1,6 @@
 <?php
-$title = $user['Username'];
-$this->layout()->title = 'User - ' . $title;
+    $title = $user['Username'];
+    $this->layout()->title = 'User - ' . $title;
 ?>
 
 <?php if ($this->auth()->hasIdentity() && $this->auth()->getIdentity() == $user['User_ID']): ?>
@@ -58,14 +58,14 @@ $this->layout()->title = 'User - ' . $title;
     <th scope="row">Reviews and Comments:</th>
     <td>
       <?php $revCount = count($reviews);
-if ($revCount > 0): ?>
+      if ($revCount > 0): ?>
         <a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Reviews'])?>"><?=$revCount?> item review<?=$revCount > 1 ? 's' : ''?>.</a>
       <?php else: ?>
         0 item reviews.
       <?php endif; ?>
       <br />
       <?php $commentCount = count($comments);
-if ($commentCount > 0): ?>
+      if ($commentCount > 0): ?>
         <a href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Comments'])?>"><?=$commentCount?> series comment<?=$commentCount > 1 ? 's' : ''?>.</a>
       <?php else: ?>
         0 series comments.

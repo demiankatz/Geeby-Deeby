@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'City List';
+    $this->layout()->title = 'City List';
 ?>
 <?php if (count($cities) < 1): ?>
   <p>No cities listed in this database yet.</p>
@@ -8,7 +8,7 @@ $this->layout()->title = 'City List';
     <?=$this->firstLetterMenu($cities, 'City_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($cities as $i => $current): ?>
+  foreach ($cities as $i => $current): ?>
     <?php $first = $this->firstletter($current['City_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

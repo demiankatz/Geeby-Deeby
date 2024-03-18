@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Series List';
+    $this->layout()->title = 'Series List';
 ?>
 <?php if (count($series) < 1): ?>
   <p>No series listed in this database yet.</p>
@@ -8,7 +8,7 @@ $this->layout()->title = 'Series List';
     <?=$this->firstLetterMenu($series, 'Series_Name'); ?>
   </h2>
   <?php $currentLetter = false;
-    foreach ($series as $i => $current): ?>
+  foreach ($series as $i => $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if($i > 0): ?>

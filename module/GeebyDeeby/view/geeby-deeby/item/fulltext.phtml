@@ -1,5 +1,5 @@
 <?php
-$this->layout()->title = 'Items with Full Text'
+    $this->layout()->title = 'Items with Full Text'
 ?>
 <?php if ($fuzzy): ?>
   <p>Showing fuzzy matches; switch to <a href="?fuzzy=0&source=<?=(int)$source?>">exact matches</a> to only show links where the online text exactly matches the listed edition.</p>
@@ -24,7 +24,7 @@ $this->layout()->title = 'Items with Full Text'
 
 <?php if (count($fulltext) > 0): ?>
   <?php $series = false;
-    foreach ($fulltext as $current): ?>
+  foreach ($fulltext as $current): ?>
     <?php if ($series !== $current['Series_ID']): $series = $current['Series_ID']; ?>
       <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($current['Series_Name']);?>
