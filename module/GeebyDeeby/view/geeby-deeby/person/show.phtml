@@ -40,8 +40,10 @@
 <?php endif; ?>
 
 <?php if (count($credits) > 0 || count($citations) > 0): $displayedSomething = true; ?>
-  <?php $sorts = [ 'series', 'title', 'year' ];
-  $sort = $this->sort ?? $sorts[0]; ?>
+  <?php
+    $sorts = [ 'series', 'title', 'year' ];
+    $sort = $this->sort ?? $sorts[0];
+  ?>
   <div class="pull-right" style="padding:12px 0;">
     Sort by:
     <div class="btn-group" style="margin-top:-4px;">
