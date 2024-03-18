@@ -85,7 +85,8 @@
         </tr>
       <?php endif; ?>
 
-      <?php $platformCount = count($platforms); if ($platformCount > 0): ?>
+      <?php $platformCount = count($platforms); ?>
+      <?php if ($platformCount > 0): ?>
         <tr>
           <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -126,7 +127,11 @@
       <?php endif; ?>
 
       <?php foreach ($this->analyzeCredits($creators, $credits, [$edition]) as $current): ?>
-        <?php $role = $current['role']; $citation = $current['citation']; $group = $current['data']; ?>
+        <?php
+          $role = $current['role'];
+          $citation = $current['citation'];
+          $group = $current['data'];
+        ?>
         <tr>
           <th scope="row">
             <?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's')
@@ -138,7 +143,8 @@
               <a href="<?=$this->url('person', ['id' => $person])?>">
                 <?=$this->showperson($details['person'])?>
               </a>
-              <?php $realNameCount = count($details['realPerson']); if ($realNameCount > 0): ?>
+              <?php $realNameCount = count($details['realPerson']); ?>
+              <?php if ($realNameCount > 0): ?>
                 (pseudonym used by <?=$realNameCount == 1 ? '<a href="' . $this->url('person', ['id' => $details['realPerson'][0]['Person_ID']]) . '">' . $this->showperson($details['realPerson'][0]) . '</a>' : 'multiple people' ?>)
               <?php endif; ?>
               <?php if (!empty($details['notes'])): ?>(<?=$this->escapeHtml($details['notes'])?>)<?php endif; ?><br />
@@ -147,7 +153,8 @@
         </tr>
       <?php endforeach; ?>
 
-      <?php $dateCount = count($dates); if ($dateCount > 0): ?>
+      <?php $dateCount = count($dates); ?>
+      <?php if ($dateCount > 0): ?>
         <tr>
           <th scope="row">Date<?=$dateCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -158,7 +165,8 @@
         </tr>
       <?php endif; ?>
 
-      <?php $pubCount = count($publishers); if ($pubCount > 0): ?>
+      <?php $pubCount = count($publishers); ?>
+      <?php if ($pubCount > 0): ?>
         <tr>
           <th scope="row">Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -196,13 +204,17 @@
         </tr>
       <?php endif; ?>
 
-      <?php $isbnCount = count($isbns); if ($isbnCount > 0): ?>
+      <?php $isbnCount = count($isbns); ?>
+      <?php if ($isbnCount > 0): ?>
         <tr>
           <th scope="row">ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($isbns as $isbn): ?>
               <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn['ISBN13']])?>">
-                <?php $isbnConverter = new \VuFindCode\ISBN($isbn['ISBN13']); $isbn10 = $isbnConverter->get10(); ?>
+                <?php
+                  $isbnConverter = new \VuFindCode\ISBN($isbn['ISBN13']);
+                  $isbn10 = $isbnConverter->get10();
+                ?>
                 <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn['ISBN13'] : $isbn['ISBN13'])?>
               </a>
               <?=!empty($isbn['Note']) ? '(' . $this->escapeHtml($isbn['Note']) . ')' : ''?>
@@ -212,7 +224,8 @@
         </tr>
       <?php endif; ?>
 
-      <?php $oclcCount = count($oclcNumbers); if ($oclcCount > 0): ?>
+      <?php $oclcCount = count($oclcNumbers); ?>
+      <?php if ($oclcCount > 0): ?>
         <tr>
           <th scope="row">OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -225,7 +238,8 @@
         </tr>
       <?php endif; ?>
 
-      <?php $codeCount = count($codes); if ($codeCount > 0): ?>
+      <?php $codeCount = count($codes); ?>
+      <?php if ($codeCount > 0): ?>
         <tr>
           <th scope="row">Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
           <td>

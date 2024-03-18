@@ -21,36 +21,31 @@
         <pre class="prettyprint linenums"><?php echo $this->exception->getTraceAsString() ?></pre>
     </dd>
 </dl>
-<?php
-    $e = $this->exception->getPrevious();
-    if ($e) :
-?>
-<hr/>
-<h2><?php echo 'Previous exceptions' ?>:</h2>
-<ul class="unstyled">
-    <?php while($e) : ?>
-    <li>
-        <h3><?php echo get_class($e); ?></h3>
-        <dl>
-            <dt><?php echo 'File' ?>:</dt>
-            <dd>
-                <pre class="prettyprint linenums"><?php echo $e->getFile() ?>:<?php echo $e->getLine() ?></pre>
-            </dd>
-            <dt><?php echo 'Message' ?>:</dt>
-            <dd>
-                <pre class="prettyprint linenums"><?php echo $e->getMessage() ?></pre>
-            </dd>
-            <dt><?php echo 'Stack trace' ?>:</dt>
-            <dd>
-                <pre class="prettyprint linenums"><?php echo $e->getTraceAsString() ?></pre>
-            </dd>
-        </dl>
-    </li>
-    <?php
-        $e = $e->getPrevious();
-        endwhile;
-    ?>
-</ul>
+<?php if ($e = $this->exception->getPrevious()): ?>
+    <hr/>
+    <h2><?php echo 'Previous exceptions' ?>:</h2>
+    <ul class="unstyled">
+        <?php while($e) : ?>
+            <li>
+                <h3><?php echo $e::class; ?></h3>
+                <dl>
+                    <dt><?php echo 'File' ?>:</dt>
+                    <dd>
+                        <pre class="prettyprint linenums"><?php echo $e->getFile() ?>:<?php echo $e->getLine() ?></pre>
+                    </dd>
+                    <dt><?php echo 'Message' ?>:</dt>
+                    <dd>
+                        <pre class="prettyprint linenums"><?php echo $e->getMessage() ?></pre>
+                    </dd>
+                    <dt><?php echo 'Stack trace' ?>:</dt>
+                    <dd>
+                        <pre class="prettyprint linenums"><?php echo $e->getTraceAsString() ?></pre>
+                    </dd>
+                </dl>
+            </li>
+            <?php $e = $e->getPrevious(); ?>
+        <?php endwhile; ?>
+    </ul>
 <?php endif; ?>
 
 <?php else: ?>

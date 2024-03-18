@@ -31,6 +31,8 @@ namespace GeebyDeeby\Controller;
 
 use Laminas\Crypt\Password\Bcrypt;
 
+use function is_object;
+
 /**
  * User controller
  *
@@ -150,7 +152,7 @@ class UserController extends AbstractBase
                 $view->error = 'Please fill out all required fields.';
             } elseif (
                 $password1 != $password2
-                || strpos($view->address, '://') !== false // block spam addresses
+                || str_contains($view->address, '://')   // block spam addresses
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
             } else {

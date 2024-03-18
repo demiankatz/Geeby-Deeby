@@ -33,6 +33,10 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
 
+use function intval;
+use function is_callable;
+use function is_object;
+
 /**
  * Abstract base controller
  *

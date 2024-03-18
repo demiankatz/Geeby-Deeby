@@ -29,6 +29,10 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use function count;
+use function in_array;
+use function strlen;
+
 /**
  * Row Definition for Editions
  *

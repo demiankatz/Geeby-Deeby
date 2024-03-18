@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use function count;
+
 /**
  * Edit publisher controller
  *

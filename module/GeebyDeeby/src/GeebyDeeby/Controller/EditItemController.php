@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Controller;
 
+use function count;
+use function intval;
+
 /**
  * Edit item controller
  *
