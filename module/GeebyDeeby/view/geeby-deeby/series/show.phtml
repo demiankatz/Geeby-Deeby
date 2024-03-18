@@ -29,8 +29,8 @@
 <table class="series">
   <tr><th scope="row">Language:</th><td><?=$this->escapeHtml($language['Language_Name'])?></td></tr>
 
-  <?php $altTitleCount = count($altTitles);
-  if ($altTitleCount > 0): ?>
+  <?php $altTitleCount = count($altTitles); ?>
+  <?php if ($altTitleCount > 0): ?>
     <tr>
       <th scope="row">Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
       <td>
@@ -43,8 +43,8 @@
     </tr>
   <?php endif; ?>
 
-  <?php $pubCount = count($publishers);
-  if ($pubCount > 0): ?>
+  <?php $pubCount = count($publishers); ?>
+  <?php if ($pubCount > 0): ?>
     <tr>
       <th scope="row">Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
       <td>
@@ -82,8 +82,8 @@
     </tr>
   <?php endif; ?>
 
-  <?php $catCount = count($categories);
-  if ($catCount > 0): ?>
+  <?php $catCount = count($categories); ?>
+  <?php if ($catCount > 0): ?>
     <tr>
       <th scope="row"><?=$catCount > 1 ? 'Categories' : 'Category'?>:</th>
       <td>

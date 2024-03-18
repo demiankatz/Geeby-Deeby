@@ -31,8 +31,8 @@
       </td>
     </tr>
   <?php endforeach; ?>
-  <?php $uriCount = count($uris);
-  if ($uriCount > 0): $displayedSomething = true; ?>
+  <?php $uriCount = count($uris); ?>
+  <?php if ($uriCount > 0): $displayedSomething = true; ?>
     <tr>
       <th>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</th>
       <td>

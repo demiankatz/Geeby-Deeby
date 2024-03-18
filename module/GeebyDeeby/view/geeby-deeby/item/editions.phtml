@@ -39,8 +39,8 @@
     <h2>Item-Level Details</h2>
     <table class="item">
       <?php ob_start(); ?>
-      <?php $altTitleCount = count($altTitles);
-      if ($altTitleCount > 0): ?>
+      <?php $altTitleCount = count($altTitles); ?>
+      <?php if ($altTitleCount > 0): ?>
         <tr>
           <th scope="row">Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -53,8 +53,8 @@
         </tr>
       <?php endif; ?>
 
-      <?php $tagCount = count($tags);
-      if ($tagCount > 0): ?>
+      <?php $tagCount = count($tags); ?>
+      <?php if ($tagCount > 0): ?>
         <tr>
           <th scope="row">Subject<?=$tagCount > 1 ? 's' : ''?> / Tag<?=$tagCount > 1 ? 's' : ''?>:</th>
           <td>

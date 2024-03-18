@@ -6,8 +6,8 @@
 <?php else: ?>
   <?php $currentCat = false; ?>
   <?php foreach ($faqs as $current): ?>
-    <?php $cat = $current['FAQ_Category_Name'];
-    if ($currentCat !== $cat): $currentCat = $cat; ?>
+    <?php $cat = $current['FAQ_Category_Name']; ?>
+    <?php if ($currentCat !== $cat): $currentCat = $cat; ?>
       <h2><?=$cat?></h2>
     <?php endif; ?>
     <p><b><?=$current['FAQ_Category_ID'] . '.' . $current['FAQ_ID'] . ' ' . $current['FAQ_Name']?></b></p><blockquote><?=$current['FAQ_Body']?></blockquote>

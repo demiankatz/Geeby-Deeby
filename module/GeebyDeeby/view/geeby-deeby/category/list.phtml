@@ -9,8 +9,8 @@
   </h2>
   <?php $currentLetter = false; ?>
   <?php foreach ($categories as $i => $current): ?>
-    <?php $first = $this->firstletter($current['Category']);
-    if ($currentLetter !== $first): $currentLetter = $first; ?>
+    <?php $first = $this->firstletter($current['Category']); ?>
+    <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>
         <a name="<?=$this->escapeHtml($currentLetter)?>"/>
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>

@@ -4,8 +4,8 @@
     $this->layout()->toggleLink = $this->toggleLink('edit/publisher', $publisher['Publisher_ID']);
     $displayedSomething = false;
 ?>
-<?php $uriCount = count($uris);
-if ($uriCount > 0): $displayedSomething = true; ?>
+<?php $uriCount = count($uris); ?>
+<?php if ($uriCount > 0): $displayedSomething = true; ?>
   <p><b>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</b>
     <?php $i = 0; ?>
     <?php foreach ($uris as $uri): $i++ ?>
@@ -18,8 +18,8 @@ if ($uriCount > 0): $displayedSomething = true; ?>
 <?php else: ?>
   <?php $currentLetter = false; ?>
   <?php foreach ($series as $current): ?>
-    <?php $first = $this->firstletter($current['Series_Name']);
-    if ($currentLetter !== $first): $currentLetter = $first; ?>
+    <?php $first = $this->firstletter($current['Series_Name']); ?>
+    <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>
     <?php endif; ?>
     <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">

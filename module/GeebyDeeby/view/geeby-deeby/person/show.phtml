@@ -4,8 +4,8 @@
     $this->layout()->toggleLink = $this->toggleLink('edit/person', $person['Person_ID']);
     $displayedSomething = false;
 ?>
-<?php $realNameCount = count($realNames);
-if ($realNameCount > 0): $displayedSomething = true; ?>
+<?php $realNameCount = count($realNames); ?>
+<?php if ($realNameCount > 0): $displayedSomething = true; ?>
   <p><b>Pseudonym For:</b>
     <?php $i = 0; ?>
     <?php foreach ($realNames as $realName): $i++; ?>
@@ -14,8 +14,8 @@ if ($realNameCount > 0): $displayedSomething = true; ?>
   </p>
 <?php endif; ?>
 
-<?php $pseudoCount = count($pseudonyms);
-if ($pseudoCount > 0): $displayedSomething = true; ?>
+<?php $pseudoCount = count($pseudonyms); ?>
+<?php if ($pseudoCount > 0): $displayedSomething = true; ?>
   <p><b><?=$pseudoCount > 1 ? 'Pseudonyms' : 'Pseudonym'?>:</b>
     <?php $i = 0; ?>
     <?php foreach ($pseudonyms as $pseudonym): $i++; ?>
@@ -24,8 +24,8 @@ if ($pseudoCount > 0): $displayedSomething = true; ?>
   </p>
 <?php endif; ?>
 
-<?php $uriCount = count($uris);
-if ($uriCount > 0): $displayedSomething = true; ?>
+<?php $uriCount = count($uris); ?>
+<?php if ($uriCount > 0): $displayedSomething = true; ?>
   <p><b>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</b>
     <?php $i = 0; ?>
     <?php foreach ($uris as $uri): $i++ ?>

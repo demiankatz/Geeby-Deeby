@@ -182,8 +182,8 @@
           </td>
         </tr>
       <?php endif; ?>
-      <?php $altTitleCount = count($altTitles);
-      if ($altTitleCount > 0): ?>
+      <?php $altTitleCount = count($altTitles); ?>
+      <?php if ($altTitleCount > 0): ?>
         <tr>
           <th scope="row">Alternate Title<?=$altTitleCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -197,8 +197,8 @@
       <?php endif; ?>
 
       <?php $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID');
-      $platformCount = count($platforms);
-      if ($platformCount > 0): ?>
+      $platformCount = count($platforms); ?>
+      <?php if ($platformCount > 0): ?>
         <tr>
           <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -212,8 +212,8 @@
         </tr>
       <?php endif; ?>
 
-      <?php $tagCount = count($tags);
-      if ($tagCount > 0): ?>
+      <?php $tagCount = count($tags); ?>
+      <?php if ($tagCount > 0): ?>
         <tr>
           <th scope="row">Subject<?=$tagCount > 1 ? 's' : ''?> / Tag<?=$tagCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -395,8 +395,8 @@
         </tr>
       <?php endforeach; ?>
 
-      <?php $dateCount = count($dates);
-      if ($dateCount > 0): ?>
+      <?php $dateCount = count($dates); ?>
+      <?php if ($dateCount > 0): ?>
         <tr>
           <th scope="row">Date<?=$dateCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -407,9 +407,11 @@
         </tr>
       <?php endif; ?>
 
-      <?php $isbns = $this->groupeditions($isbns, 'ISBN13', $editions);
-      $isbnCount = count($isbns);
-      if ($isbnCount > 0): ?>
+      <?php
+        $isbns = $this->groupeditions($isbns, 'ISBN13', $editions);
+        $isbnCount = count($isbns);
+      ?>
+      <?php if ($isbnCount > 0): ?>
         <tr>
           <th scope="row">ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -426,8 +428,8 @@
         </tr>
       <?php endif; ?>
 
-      <?php $pubCount = count($publishers);
-      if ($pubCount > 0): ?>
+      <?php $pubCount = count($publishers); ?>
+      <?php if ($pubCount > 0): ?>
         <tr>
           <th scope="row">Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -471,9 +473,11 @@
         </tr>
       <?php endif; ?>
 
-      <?php $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions);
-      $oclcCount = count($oclcNumbers);
-      if ($oclcCount > 0): ?>
+      <?php
+        $oclcNumbers = $this->groupeditions($oclcNumbers, 'OCLC_Number', $editions);
+        $oclcCount = count($oclcNumbers);
+      ?>
+      <?php if ($oclcCount > 0): ?>
         <tr>
           <th scope="row">OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
           <td>
@@ -486,9 +490,11 @@
         </tr>
       <?php endif; ?>
 
-      <?php $codes = $this->groupeditions($codes, 'Product_Code', $editions);
-      $codeCount = count($codes);
-      if ($codeCount > 0): ?>
+      <?php
+        $codes = $this->groupeditions($codes, 'Product_Code', $editions);
+        $codeCount = count($codes);
+      ?>
+      <?php if ($codeCount > 0): ?>
         <tr>
           <th scope="row">Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
           <td>
