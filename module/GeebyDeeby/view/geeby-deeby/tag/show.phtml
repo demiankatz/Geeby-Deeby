@@ -45,8 +45,10 @@
   <?php endif; ?>
 </table>
 <?php if (count($items) > 0): $displayedSomething = true; ?>
-  <?php $sorts = [ 'series', 'title' ];
-  $sort = $this->sort ?? $sorts[0]; ?>
+  <?php
+    $sorts = [ 'series', 'title' ];
+    $sort = $this->sort ?? $sorts[0];
+  ?>
   <div class="pull-right" style="padding:12px 0;">
     Sort by:
     <div class="btn-group" style="margin-top:-4px;">
