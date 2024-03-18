@@ -127,9 +127,11 @@
       <?php endif; ?>
 
       <?php foreach ($this->analyzeCredits($creators, $credits, [$edition]) as $current): ?>
-        <?php $role = $current['role'];
-        $citation = $current['citation'];
-        $group = $current['data']; ?>
+        <?php
+          $role = $current['role'];
+          $citation = $current['citation'];
+          $group = $current['data'];
+        ?>
         <tr>
           <th scope="row">
             <?=$this->escapeHtml($role) . (count($group) == 1 ? '' : 's')
@@ -209,8 +211,10 @@
           <td>
             <?php foreach ($isbns as $isbn): ?>
               <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn['ISBN13']])?>">
-                <?php $isbnConverter = new \VuFindCode\ISBN($isbn['ISBN13']);
-                $isbn10 = $isbnConverter->get10(); ?>
+                <?php
+                  $isbnConverter = new \VuFindCode\ISBN($isbn['ISBN13']);
+                  $isbn10 = $isbnConverter->get10();
+                ?>
                 <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn['ISBN13'] : $isbn['ISBN13'])?>
               </a>
               <?=!empty($isbn['Note']) ? '(' . $this->escapeHtml($isbn['Note']) . ')' : ''?>
