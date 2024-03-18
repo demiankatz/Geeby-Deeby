@@ -32,6 +32,8 @@ namespace GeebyDeeby\Controller;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 
+use function call_user_func;
+
 /**
  * Migration controller
  *

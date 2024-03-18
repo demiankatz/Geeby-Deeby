@@ -22,7 +22,7 @@
           <?=
               $this->iconButton(
                   'gear',
-                  "Series.editLink('Publisher', " . $current['Series_Publisher_ID'] . ")",
+                  "Series.editLink('Publisher', " . $current['Series_Publisher_ID'] . ')',
                   'Edit options for ' . $currentLabel
               )
       ?>
@@ -31,7 +31,7 @@
           <?=
         $this->iconButton(
             'trash',
-            "Series.unlink('Publisher', " . $current['Series_Publisher_ID'] . ")",
+            "Series.unlink('Publisher', " . $current['Series_Publisher_ID'] . ')',
             'Unlink ' . $currentLabel
         )
       ?>

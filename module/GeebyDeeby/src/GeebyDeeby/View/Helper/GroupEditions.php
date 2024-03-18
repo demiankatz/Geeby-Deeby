@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use function count;
+
 /**
  * View helper to group together edition data
  *

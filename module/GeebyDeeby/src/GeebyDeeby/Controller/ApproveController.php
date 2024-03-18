@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Controller;
 
+use function count;
+use function intval;
+
 /**
  * Approval controller
  *
@@ -229,7 +232,7 @@ class ApproveController extends AbstractBase
             );
         } catch (\Laminas\Db\Adapter\Exception\RuntimeException $e) {
             // Ignore duplicate insert errors, but rethrow others....
-            if (strpos($e->getMessage(), 'Duplicate entry') !== 0) {
+            if (!str_starts_with($e->getMessage(), 'Duplicate entry')) {
                 throw $e;
             }
         }
@@ -292,7 +295,7 @@ class ApproveController extends AbstractBase
             return true;
         }
         $view = $this->getViewRenderer();
-        $subject = $view->config('siteTitle') . " Membership";
+        $subject = $view->config('siteTitle') . ' Membership';
         $message = $view->render('emails/account-approval.phtml');
         $from = $view->config('siteEmail');
         return $this->serviceLocator->get(\GeebyDeeby\EmailService::class)

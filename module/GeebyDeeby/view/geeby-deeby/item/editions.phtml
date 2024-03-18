@@ -245,7 +245,7 @@ if ($tagCount > 0): ?>
 
       <?php $table_contents = ob_get_contents(); ?>
       <?php ob_end_clean(); ?>
-      <?=strlen(trim($table_contents)) > 0 ? $table_contents : "No information available." ?>
+      <?=strlen(trim($table_contents)) > 0 ? $table_contents : 'No information available.' ?>
     </table>
   </div>
 </div>

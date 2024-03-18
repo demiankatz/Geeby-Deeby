@@ -10,7 +10,7 @@ if (PHP_SAPI == 'cli') {
 return [
     'modules' => $modules,
     'module_listener_options' => [
-        'config_glob_paths'    => [
+        'config_glob_paths' => [
             'config/autoload/{,*.}{global,local}.php',
         ],
         'module_paths' => [

@@ -32,6 +32,9 @@ namespace GeebyDeeby\Controller;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 
+use function count;
+use function is_object;
+
 /**
  * Series controller
  *
@@ -257,7 +260,7 @@ class SeriesController extends AbstractBase
             $lastVol = $vol;
         }
         $view->itemStats = [
-            'Different' =>  count($results),
+            'Different' => count($results),
             'Start' => $min,
             'End' => $max,
             'StartVol' => $minVol,

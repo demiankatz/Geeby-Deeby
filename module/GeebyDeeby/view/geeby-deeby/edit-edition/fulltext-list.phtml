@@ -9,7 +9,7 @@
           <?=
             $this->iconButton(
                 'gear',
-                "Edition.editLink('FullText', " . $current['Sequence_ID'] . ")",
+                "Edition.editLink('FullText', " . $current['Sequence_ID'] . ')',
                 'Edit options for URL: ' . $current['Full_Text_URL']
             )
       ?>
@@ -18,7 +18,7 @@
           <?=
         $this->iconButton(
             'trash',
-            "Edition.unlink('FullText', " . $current['Sequence_ID'] . ")",
+            "Edition.unlink('FullText', " . $current['Sequence_ID'] . ')',
             'Delete full text URL: ' . $current['Full_Text_URL']
         )
       ?>
