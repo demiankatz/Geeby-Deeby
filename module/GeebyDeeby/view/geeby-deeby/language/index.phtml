@@ -6,8 +6,8 @@
 <?php if (count($series) < 1): ?>
   <p>No information is available about this language.</p>
 <?php else: ?>
-  <?php $currentLetter = false;
-  foreach ($series as $current): ?>
+  <?php $currentLetter = false; ?>
+  <?php foreach ($series as $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']);
     if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>

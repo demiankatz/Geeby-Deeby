@@ -431,8 +431,8 @@
         <tr>
           <th scope="row">Publisher<?=$pubCount > 1 ? 's' : ''?>:</th>
           <td>
-            <?php $pubLines = [];
-            foreach ($publishers as $publisher): ob_start(); ?>
+            <?php $pubLines = []; ?>
+            <?php foreach ($publishers as $publisher): ob_start(); ?>
               <?php if (count($editions) > 1): ?>
                 <?=$this->escapeHtml($this->fixTitle($publisher['Edition_Name']))?>:
               <?php endif; ?>
@@ -526,8 +526,8 @@
 
       <?php if ($descCount > 0): ?>
         <tr><th scope="row">Edition Description<?=$descCount > 1 ? 's' : ''?>:</th><td>
-          <?php $displayedCount = 0;
-          foreach ($editions as $ed): ?>
+          <?php $displayedCount = 0; ?>
+          <?php foreach ($editions as $ed): ?>
             <?php if (!empty($ed['Edition_Description'])): $displayedCount++; ?>
               <?php if ($displayedCount > 1): ?><br /><?php endif; ?>
               <?php if (count($editions) > 1): ?>
@@ -646,8 +646,8 @@
         <tr>
           <th scope="row">Users Who Own This Item:</th>
           <td>
-            <?php $prevUser = false;
-            foreach ($owners as $owner): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><?php if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $owner['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
+            <?php $prevUser = false; ?>
+            <?php foreach ($owners as $owner): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><?php if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $owner['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
           </td>
         </tr>
       <?php endif; ?>
@@ -656,8 +656,8 @@
         <tr>
           <th scope="row">Users Who Want This Item:</th>
           <td>
-            <?php $prevUser = false;
-            foreach ($buyers as $buyer): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><?php if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $buyer['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
+            <?php $prevUser = false; ?>
+            <?php foreach ($buyers as $buyer): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><?php if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $buyer['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
           </td>
         </tr>
       <?php endif; ?>
@@ -666,8 +666,8 @@
         <tr>
           <th scope="row">Users with Extra Copies:</th>
           <td>
-            <?php $prevUser = false;
-            foreach ($sellers as $seller): $separator = $prevUser; ?>
+            <?php $prevUser = false; ?>
+            <?php foreach ($sellers as $seller): $separator = $prevUser; ?>
               <?php if ($this->auth()->hasIdentity() && $seller['User_ID'] == $this->auth()->getIdentity()): $userHasExtraItem = true; endif; ?>
               <?php if ($prevUser !== $seller['Username']): $prevUser = $seller['Username'];?>
                 <?php if ($separator): ?><br /><?php endif; ?>
@@ -699,8 +699,8 @@
 
 <?php if (count($files) > 0): ?>
   <h2>Related Documents</h2>
-  <?php $type = false;
-  foreach ($files as $file): ?>
+  <?php $type = false; ?>
+  <?php foreach ($files as $file): ?>
     <?php if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
       <h3 class="filetype"><?=$this->escapeHtml($type)?></h3>
     <?php endif; ?>
@@ -717,8 +717,8 @@
 
 <?php if (count($bibliography) > 0): ?>
   <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
-  <?php $type = false;
-  foreach ($bibliography as $bib): ?>
+  <?php $type = false; ?>
+  <?php foreach ($bibliography as $bib): ?>
     <?php if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
       <h3 class="materialType"><?=$this->escapeHtml($type)?></h3>
     <?php endif; ?>

@@ -7,8 +7,8 @@
   <h2>
     <?=$this->firstLetterMenu($materialTypes, 'Material_Type_Name'); ?>
   </h2>
-  <?php $currentLetter = false;
-  foreach ($materialTypes as $i => $current): ?>
+  <?php $currentLetter = false; ?>
+  <?php foreach ($materialTypes as $i => $current): ?>
     <?php $first = $this->firstletter($current['Material_Type_Name']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

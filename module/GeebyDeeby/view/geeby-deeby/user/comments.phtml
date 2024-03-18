@@ -4,8 +4,8 @@
 ?>
 <p><a href="<?=$this->url('user', ['id' => $user['User_ID']])?>">Get more information on this user.</a></p>
 <?php if (count($comments) > 0): ?>
-  <?php $currentLetter = false;
-  foreach ($comments as $current): ?>
+  <?php $currentLetter = false; ?>
+  <?php foreach ($comments as $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']);
     if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>

@@ -18,8 +18,8 @@
             <?php if (!isset($parts['want']) || count($parts['want']) < 1): ?>
               None.
             <?php else: ?>
-              <?php $output = [];
-              foreach ($parts['want'] as $current): ?>
+              <?php $output = []; ?>
+              <?php foreach ($parts['want'] as $current): ?>
                 <?php $output[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
                   . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
                   . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');
@@ -33,8 +33,8 @@
             <?php if (!isset($parts['have']) || count($parts['have']) < 1): ?>
               None.
             <?php else: ?>
-              <?php $output = [];
-              foreach ($parts['have'] as $current): ?>
+              <?php $output = []; ?>
+              <?php foreach ($parts['have'] as $current): ?>
                 <?php $output[] = '<a href="' . $this->url('item', ['id' => $current['Item_ID']]) . '">'
                   . $this->escapeHtml($this->formatItemNumber($current, '[', ']', $this->fixTitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name'])))
                   . '</a>' . (empty($current['Collection_Note']) ? '' : ' (' . $this->escapeHtml($current['Collection_Note']) . ')');

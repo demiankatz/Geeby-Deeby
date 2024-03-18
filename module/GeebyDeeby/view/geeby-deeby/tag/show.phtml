@@ -36,8 +36,8 @@
     <tr>
       <th>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</th>
       <td>
-        <?php $i = 0;
-        foreach ($uris as $uri): $i++ ?>
+        <?php $i = 0; ?>
+        <?php foreach ($uris as $uri): $i++ ?>
           <a href="<?=$this->escapeHtmlAttr($uri['URI'])?>"><?=$this->escapeHtml($uri['URI'])?></a><?=$i < $uriCount ? ', ' : ''?>
         <?php endforeach; ?>
       </td>

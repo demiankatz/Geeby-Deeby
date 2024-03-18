@@ -4,8 +4,8 @@
 <?php if (count($faqs) < 1): ?>
   <p>No FAQs listed in this database yet.</p>
 <?php else: ?>
-  <?php $currentCat = false;
-  foreach ($faqs as $current): ?>
+  <?php $currentCat = false; ?>
+  <?php foreach ($faqs as $current): ?>
     <?php $cat = $current['FAQ_Category_Name'];
     if ($currentCat !== $cat): $currentCat = $cat; ?>
       <h2><?=$cat?></h2>

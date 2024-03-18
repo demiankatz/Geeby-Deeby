@@ -7,8 +7,8 @@
 <?php $uriCount = count($uris);
 if ($uriCount > 0): $displayedSomething = true; ?>
   <p><b>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</b>
-    <?php $i = 0;
-    foreach ($uris as $uri): $i++ ?>
+    <?php $i = 0; ?>
+    <?php foreach ($uris as $uri): $i++ ?>
       <a href="<?=$this->escapeHtmlAttr($uri['URI'])?>"><?=$this->escapeHtml($uri['URI'])?></a><?=$i < $uriCount ? ', ' : ''?>
     <?php endforeach; ?>
   </p>
@@ -16,8 +16,8 @@ if ($uriCount > 0): $displayedSomething = true; ?>
 <?php if (!$displayedSomething && count($series) < 1): ?>
   <p>No information is available about this publisher.</p>
 <?php else: ?>
-  <?php $currentLetter = false;
-  foreach ($series as $current): ?>
+  <?php $currentLetter = false; ?>
+  <?php foreach ($series as $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']);
     if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>

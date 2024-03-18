@@ -2,8 +2,8 @@
     $this->layout()->title = 'Series with Comments';
 ?>
 <?php if (count($comments) > 0): ?>
-  <?php $currentLetter = $currentSeries = false;
-  foreach ($comments as $current): ?>
+  <?php $currentLetter = $currentSeries = false; ?>
+  <?php foreach ($comments as $current): ?>
     <?php $first = $this->firstletter($current['Series_Name']);
     if ($currentLetter !== $first): $currentLetter = $first; ?>
       <h2><?=$this->escapeHtml($currentLetter)?></h2>

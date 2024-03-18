@@ -1,5 +1,5 @@
-<?php $currentHeading = false;
-foreach ($items as $item): ?>
+<?php $currentHeading = false; ?>
+<?php foreach ($items as $item): ?>
   <?php if ($sort === 'series' && $currentHeading !== $item['Series_ID']): $currentHeading = $item['Series_ID']; ?>
     <h2 class="series"><a href="<?=$this->url('series', ['id' => $currentHeading])?>">
       <?=$this->fixtitle($item['Series_Name']);?>

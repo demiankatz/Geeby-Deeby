@@ -7,8 +7,8 @@
   <h2>
     <?=$this->firstLetterMenu($platforms, 'Platform'); ?>
   </h2>
-  <?php $currentLetter = false;
-  foreach ($platforms as $i => $current): ?>
+  <?php $currentLetter = false; ?>
+  <?php foreach ($platforms as $i => $current): ?>
     <?php $first = $this->firstletter($current['Platform']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

@@ -9,8 +9,8 @@
 <?php else: ?>
   <?=$this->render('geeby-deeby/user/sale-disclaimer.phtml')?>
 
-  <?php $series = false;
-  foreach ($extras as $extra): ?>
+  <?php $series = false; ?>
+  <?php foreach ($extras as $extra): ?>
     <?php if ($series !== $extra['Series_ID']): $series = $extra['Series_ID']; ?>
       <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($extra['Series_Name']);?>

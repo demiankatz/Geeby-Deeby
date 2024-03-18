@@ -30,8 +30,8 @@
   <p>No dupes found.</p>
 <?php else: ?>
   <table>
-  <?php $group = 0;
-  foreach ($details as $thumb => $current): $group++; ?>
+  <?php $group = 0; ?>
+  <?php foreach ($details as $thumb => $current): $group++; ?>
     <tr>
       <td><img src="<?=$this->escapeHtml($thumb)?>" /><br /></td>
       <td>

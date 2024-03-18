@@ -7,8 +7,8 @@
   <h2>
     <?=$this->firstLetterMenu($users, 'Username'); ?>
   </h2>
-  <?php $currentLetter = false;
-  foreach ($users as $i => $current): ?>
+  <?php $currentLetter = false; ?>
+  <?php foreach ($users as $i => $current): ?>
     <?php $first = $this->firstletter($current['Username']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

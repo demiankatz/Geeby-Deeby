@@ -182,8 +182,8 @@
 
 <?php if (count($files) > 0): ?>
   <h2>Related Documents</h2>
-  <?php $type = false;
-  foreach ($files as $file): ?>
+  <?php $type = false; ?>
+  <?php foreach ($files as $file): ?>
     <?php if ($type !== $file['File_Type']): $type = $file['File_Type']; ?>
       <h3 class="filetype"><?=$this->escapeHtml($type)?></h3>
     <?php endif; ?>
@@ -200,8 +200,8 @@
 
 <?php if (count($bibliography) > 0): ?>
   <h2>Bibliography of Items About "<?=$this->escapeHtml($title)?>"</h2>
-  <?php $type = false;
-  foreach ($bibliography as $bib): ?>
+  <?php $type = false; ?>
+  <?php foreach ($bibliography as $bib): ?>
     <?php if ($type !== $bib['Material_Type_Plural_Name']): $type = $bib['Material_Type_Plural_Name']; ?>
       <h3 class="materialType"><?=$this->escapeHtml($type)?></h3>
     <?php endif; ?>

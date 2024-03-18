@@ -7,8 +7,8 @@
   <h2>
     <?=$this->firstLetterMenu($categories, 'Category'); ?>
   </h2>
-  <?php $currentLetter = false;
-  foreach ($categories as $i => $current): ?>
+  <?php $currentLetter = false; ?>
+  <?php foreach ($categories as $i => $current): ?>
     <?php $first = $this->firstletter($current['Category']);
     if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

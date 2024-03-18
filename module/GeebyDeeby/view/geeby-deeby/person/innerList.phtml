@@ -1,5 +1,5 @@
-<?php $role = $series = $year = false;
-foreach ($list as $current): ?>
+<?php $role = $series = $year = false; ?>
+<?php foreach ($list as $current): ?>
   <?php if ($role !== $current['Role_Name']): $role = $current['Role_Name'];
   $series = false; ?>
     <h2>Items with "<?=$this->escapeHtml($title)?>" as <?=$labelPrefix . ' ' . $this->escapeHtml($role)?></h2>
