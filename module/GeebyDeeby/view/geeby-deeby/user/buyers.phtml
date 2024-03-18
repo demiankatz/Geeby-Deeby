@@ -9,8 +9,11 @@
 <?php else: ?>
   <?php $series = $seller = false; ?>
   <?php foreach ($buyers as $extra): ?>
-    <?php if ($seller !== $extra['User_ID']): $series = false;
-    $seller = $extra['User_ID']; ?>
+    <?php if ($seller !== $extra['User_ID']): ?>
+      <?php
+        $series = false;
+        $seller = $extra['User_ID'];
+      ?>
       <h2 class="user"><a href="<?=$this->url('user', ['id' => $seller])?>">
         <?=$this->fixtitle($extra['Username']);?>
       </a></h2>
