@@ -802,6 +802,8 @@ class DatabaseIngester extends BaseIngester
             return self::FULLTEXT_SOURCE_IA;
         } elseif (strstr($url, 'usf.edu')) {
             return self::FULLTEXT_SOURCE_USF;
+        } elseif (strstr($url, 'stanford.edu')) {
+            return self::FULLTEXT_SOURCE_STANFORD;
         }
         return null;
     }
