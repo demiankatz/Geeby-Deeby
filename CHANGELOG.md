@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next Release - TBD
+## 2.5.0 - 2024-03-21
 
 ### Added
 
@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Changed
 
 - Raised minimum PHP required version to 8.1.
+- Updated dependencies.
 
 ### Removed
 
