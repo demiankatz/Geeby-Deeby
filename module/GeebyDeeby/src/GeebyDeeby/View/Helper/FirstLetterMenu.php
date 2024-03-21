@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use function count;
+
 /**
  * List first letters as a horizontal jump menu
  *

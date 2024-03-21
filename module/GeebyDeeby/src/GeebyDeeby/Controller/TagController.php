@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use function is_object;
+
 /**
  * Tag controller
  *

@@ -7,7 +7,7 @@
           <?=
             $this->iconButton(
                 'trash',
-                "Series.unlink('Material', " . $current['Material_Type_ID'] . ")",
+                "Series.unlink('Material', " . $current['Material_Type_ID'] . ')',
                 'Unlink material type: ' . $current['Material_Type_Name']
             )
           ?>

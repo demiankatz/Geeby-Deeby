@@ -87,7 +87,7 @@ class ToggleLink extends \Laminas\View\Helper\AbstractHelper
 
         $url = $this->view->url($route, compact('id'));
         if ($label === null) {
-            $label = (strpos($route, 'edit/') === false && $route !== 'edit')
+            $label = (!str_contains($route, 'edit/') && $route !== 'edit')
                 ? '[switch to public view]'
                 : '[edit]';
         }

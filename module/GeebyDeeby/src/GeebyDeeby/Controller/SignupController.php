@@ -31,6 +31,8 @@ namespace GeebyDeeby\Controller;
 
 use Laminas\Crypt\Password\Bcrypt;
 
+use function count;
+
 /**
  * Signup controller
  *
@@ -66,7 +68,7 @@ class SignupController extends AbstractBase
                     . 'numbers, dashes and underscores.';
             } elseif (
                 $password1 != $password2
-                || strpos($view->address, '://') !== false // block spam addresses
+                || str_contains($view->address, '://')   // block spam addresses
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
             } else {

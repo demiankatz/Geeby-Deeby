@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Controller;
 
+use function count;
+use function is_object;
+
 /**
  * Edit edition controller
  *
