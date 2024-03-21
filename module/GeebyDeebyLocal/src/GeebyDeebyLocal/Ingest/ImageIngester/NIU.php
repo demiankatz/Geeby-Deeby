@@ -112,6 +112,6 @@ class NIU extends AbstractThumbIngestor
         if (!$pid) {
             throw new \Exception("Could not find first page PID for $uri");
         }
-        return "https://dimenovels.lib.niu.edu/iiif/2/" . urlencode($pid);
+        return 'https://dimenovels.lib.niu.edu/iiif/2/' . urlencode($pid);
     }
 }

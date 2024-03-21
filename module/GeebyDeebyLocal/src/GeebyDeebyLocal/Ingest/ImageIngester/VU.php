@@ -82,7 +82,7 @@ class VU extends AbstractThumbIngestor
             ->resource->service->{'@id'} ?? null;
         if (null === $image) {
             throw new \Exception(
-                "Problem finding IIIF source for " . $this->extractPID($uri)
+                'Problem finding IIIF source for ' . $this->extractPID($uri)
             );
         }
         return $image;

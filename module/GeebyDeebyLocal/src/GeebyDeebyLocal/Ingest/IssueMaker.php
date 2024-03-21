@@ -32,6 +32,8 @@ namespace GeebyDeebyLocal\Ingest;
 use GeebyDeeby\Articles;
 use GeebyDeeby\Db\Table\PluginManager;
 
+use function count;
+
 /**
  * Class to move Works into Issues within a Series.
  *
@@ -87,7 +89,7 @@ class IssueMaker
     {
         $works = $this->getEligibleWorks($seriesObj);
         if (count($works) == 0) {
-            $this->writeln("No eligible works.");
+            $this->writeln('No eligible works.');
             return false;
         }
         foreach ($works as $currentEdition) {

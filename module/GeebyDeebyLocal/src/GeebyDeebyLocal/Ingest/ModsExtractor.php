@@ -29,6 +29,10 @@
 
 namespace GeebyDeebyLocal\Ingest;
 
+use function in_array;
+use function intval;
+use function strlen;
+
 /**
  * MODS Extractor
  *

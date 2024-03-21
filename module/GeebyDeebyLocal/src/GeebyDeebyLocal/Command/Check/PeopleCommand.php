@@ -136,7 +136,7 @@ class PeopleCommand extends Command
             try {
                 $expectedHeading = $this->getExpectedHeading($uri);
             } catch (\Exception $e) {
-                $expectedHeading = "ERROR: " . $e->getMessage();
+                $expectedHeading = 'ERROR: ' . $e->getMessage();
             }
             $match = $actualHeading === $expectedHeading ? 'yes' : 'no';
             $output->writeln(

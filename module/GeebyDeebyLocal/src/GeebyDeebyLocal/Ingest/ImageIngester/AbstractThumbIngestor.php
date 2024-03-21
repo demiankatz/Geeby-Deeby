@@ -31,6 +31,8 @@ namespace GeebyDeebyLocal\Ingest\ImageIngester;
 
 use GeebyDeebyLocal\Ingest\BaseIngester;
 
+use function in_array;
+
 /**
  * Abstract thumbnail loader.
  *
@@ -97,7 +99,7 @@ abstract class AbstractThumbIngestor extends BaseIngester
         $table = $this->getDbTable('editionsimages');
         foreach ($this->getMissingImageLinks() as $link) {
             if (!in_array($link->Edition_ID, $existingImages)) {
-                $this->writeln("Adding image to edition " . $link->Edition_ID);
+                $this->writeln('Adding image to edition ' . $link->Edition_ID);
                 try {
                     $iiifUrl = $this->getIIIFURI($link->Full_Text_URL);
                 } catch (\Exception $e) {

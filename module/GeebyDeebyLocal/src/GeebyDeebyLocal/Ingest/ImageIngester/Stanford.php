@@ -75,7 +75,7 @@ class Stanford extends AbstractThumbIngestor
             ->resource->service->{'@id'} ?? null;
         if (null === $image) {
             throw new \Exception(
-                "Problem finding IIIF source for " . $uri
+                'Problem finding IIIF source for ' . $uri
             );
         }
         return $image;

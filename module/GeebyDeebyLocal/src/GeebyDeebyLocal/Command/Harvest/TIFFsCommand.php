@@ -58,7 +58,7 @@ class TIFFsCommand extends Command
      *
      * @var string
      */
-    protected $baseUrl = "https://dimenovels.lib.niu.edu/islandora/object/";
+    protected $baseUrl = 'https://dimenovels.lib.niu.edu/islandora/object/';
 
     /**
      * Solr harvester
@@ -127,7 +127,7 @@ class TIFFsCommand extends Command
             file_put_contents(
                 $dir . '/' . str_pad($page, 5, '0', STR_PAD_LEFT) . '.tiff',
                 file_get_contents(
-                    $this->baseUrl . urlencode($pid) . "/datastream/OBJ/download"
+                    $this->baseUrl . urlencode($pid) . '/datastream/OBJ/download'
                 )
             );
         }

@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Controller;
 
+use function in_array;
+
 /**
  * Edition controller
  *

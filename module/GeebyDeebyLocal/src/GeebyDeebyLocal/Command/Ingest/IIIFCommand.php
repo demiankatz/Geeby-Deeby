@@ -96,7 +96,7 @@ class IIIFCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         foreach ($this->ingesters as $label => $ingester) {
-            $output->writeln("Checking images for " . $label);
+            $output->writeln('Checking images for ' . $label);
             $ingester->setOutputInterface($output);
             $ingester->ingestImages();
         }

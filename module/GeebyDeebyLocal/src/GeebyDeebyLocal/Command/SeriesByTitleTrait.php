@@ -34,6 +34,8 @@ use GeebyDeeby\Db\Table\Series;
 use GeebyDeeby\Db\Table\SeriesAltTitles;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function count;
+
 /**
  * Adds getSeriesByTitle method to Command classes; assumes the presence of
  * $this->series and $this->seriesAltTitles database table classes.

@@ -31,6 +31,8 @@ namespace GeebyDeebyLocal\Controller\Plugin;
 
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 
+use function count;
+
 /**
  * Action Helper - Podcast
  *

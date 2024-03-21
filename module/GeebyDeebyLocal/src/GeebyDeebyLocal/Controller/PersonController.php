@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Controller;
 
+use function count;
+
 /**
  * Person controller
  *

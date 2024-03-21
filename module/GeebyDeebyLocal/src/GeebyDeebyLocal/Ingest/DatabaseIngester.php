@@ -29,6 +29,13 @@
 
 namespace GeebyDeebyLocal\Ingest;
 
+use function chr;
+use function count;
+use function in_array;
+use function intval;
+use function ord;
+use function strlen;
+
 /**
  * Class to load information into the database.
  *
@@ -189,7 +196,7 @@ class DatabaseIngester extends BaseIngester
     protected function ingestExistingWork($details, $editionObj, $item, $series)
     {
         if (count($details['contents']) != 1) {
-            $this->writeln("FATAL: too many contents for single-part item.");
+            $this->writeln('FATAL: too many contents for single-part item.');
             return false;
         }
         if (!$this->checkItemTitles($item, $details['contents'][0])) {
@@ -295,13 +302,13 @@ class DatabaseIngester extends BaseIngester
             },
             $details['contents']
         );
-        $this->writeln("Working on " . $seriesObj->Series_Name . " no. $pos...");
+        $this->writeln('Working on ' . $seriesObj->Series_Name . " no. $pos...");
         $this->writeln(
-            "Contents (" . count($contentSummary) . "): "
-            . implode(" -- ", $contentSummary)
+            'Contents (' . count($contentSummary) . '): '
+            . implode(' -- ', $contentSummary)
         );
         if (isset($details['publisher']['name'])) {
-            $this->writeln("Publisher: " . $details['publisher']['name']);
+            $this->writeln('Publisher: ' . $details['publisher']['name']);
         }
         $this->editionPreferences = [];
         $childDetails
@@ -328,8 +335,8 @@ class DatabaseIngester extends BaseIngester
                     ->fuzzyCompare($seriesTitle, $childDetails[0][0]['title']);
                 if ($foundMatch) {
                     $this->writeln(
-                        "WARNING: assuming first child is top-level item due to "
-                        . "series title match."
+                        'WARNING: assuming first child is top-level item due to '
+                        . 'series title match.'
                     );
                     $baseContainerTitle = trim($childDetails[0][0]['title']);
                     $newChildData = array_shift($childDetails)[0];
@@ -513,7 +520,7 @@ class DatabaseIngester extends BaseIngester
             || ($current && $current->Day > 0 && null === $day)
         ) {
             $this->writeln(
-                "WARNING: More specific date in database than in incoming data."
+                'WARNING: More specific date in database than in incoming data.'
             );
         }
         if (count($known) == 0) {
@@ -656,7 +663,7 @@ class DatabaseIngester extends BaseIngester
     {
         [$name, $street] = $this->separateNameAndStreet($publisher['name']);
         if (empty($street)) {
-            $this->writeln("WARNING: No street address; skipping publisher.");
+            $this->writeln('WARNING: No street address; skipping publisher.');
             return true;
         }
         $place = $publisher['place'];
@@ -682,7 +689,7 @@ class DatabaseIngester extends BaseIngester
         if (!$match) {
             $this->writeln(
                 "WARNING: No series/publisher match for $name, $street, $place; "
-                . "skipping publisher."
+                . 'skipping publisher.'
             );
             return true;
         }
@@ -695,13 +702,13 @@ class DatabaseIngester extends BaseIngester
             foreach ($edPublishers as $ed) {
                 // fast-forward to end of results...
             }
-            $this->writeln("Publisher mismatch in edition.");
+            $this->writeln('Publisher mismatch in edition.');
             $this->writeln(
                 "Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}"
             );
             $this->writeln("New: $name, $street, $place");
             if (!$this->askQuestion('Change?')) {
-                $this->writeln("FATAL: Aborting ingest due to publisher mismatch.");
+                $this->writeln('FATAL: Aborting ingest due to publisher mismatch.');
                 return false;
             }
         }
@@ -736,7 +743,7 @@ class DatabaseIngester extends BaseIngester
         }
         if (false === strstr($editionObj->Edition_Description, $notes)) {
             $this->writeln(
-                "FATAL: edition description mismatch: "
+                'FATAL: edition description mismatch: '
                 . "{$notes} vs. {$editionObj->Edition_Description}"
             );
             return false;
@@ -1038,7 +1045,7 @@ class DatabaseIngester extends BaseIngester
         }
         $missing = array_unique(array_diff($subjectIds, $existingIds));
         if (count($missing) > 0) {
-            $this->writeln("Adding subject IDs: " . implode(', ', $missing));
+            $this->writeln('Adding subject IDs: ' . implode(', ', $missing));
             foreach ($missing as $id) {
                 $itemsTags->insert(['Item_ID' => $item, 'Tag_ID' => $id]);
             }
@@ -1525,7 +1532,7 @@ class DatabaseIngester extends BaseIngester
             ]
         );
         $newObj = $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
-        $this->writeln("Added edition ID " . $newObj->Edition_ID);
+        $this->writeln('Added edition ID ' . $newObj->Edition_ID);
         return $this->updateWorkInDatabase(
             $data,
             [
@@ -1580,7 +1587,7 @@ class DatabaseIngester extends BaseIngester
     {
         $item = $this->getItemForNewEdition($data);
         $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
-        $this->writeln("Added edition ID " . $newObj->Edition_ID);
+        $this->writeln('Added edition ID ' . $newObj->Edition_ID);
         return $this->updateWorkInDatabase(
             $data,
             [
@@ -1610,7 +1617,7 @@ class DatabaseIngester extends BaseIngester
         if (count($lookup) == 0) {
             $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
             $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
-            $this->writeln("Added edition ID " . $newObj->Edition_ID);
+            $this->writeln('Added edition ID ' . $newObj->Edition_ID);
             $edition = $newObj;
         } elseif (count($lookup) == 1) {
             foreach ($lookup as $current) {
@@ -1733,13 +1740,13 @@ class DatabaseIngester extends BaseIngester
         $ed = $db['edition'];
         if (!empty($ed->Extent_In_Parent) && $ed->Extent_In_Parent !== $extent) {
             $this->writeln(
-                "WARNING: Unexpected extent: " . $extent
-                . "; Expected: " . $ed->Extent_In_Parent
+                'WARNING: Unexpected extent: ' . $extent
+                . '; Expected: ' . $ed->Extent_In_Parent
             );
             return true;
         }
         if (empty($ed->Parent_Edition_ID)) {
-            $this->writeln("FATAL ERROR: Missing parent ID.");
+            $this->writeln('FATAL ERROR: Missing parent ID.');
             return false;
         }
         if (empty($ed->Extent_In_Parent)) {
@@ -2018,7 +2025,7 @@ class DatabaseIngester extends BaseIngester
                 if (count($incomingList) == 0) {
                     $this->writeln(
                         "WARNING: no incoming {$roleName}s, but {$roleName}s "
-                        . "found in database."
+                        . 'found in database.'
                     );
                 } else {
                     $this->writeln(
@@ -2152,13 +2159,13 @@ class DatabaseIngester extends BaseIngester
         if (isset($this->editionPreferences[$menuHash])) {
             $char = $this->editionPreferences[$menuHash];
         } else {
-            $this->writeln("Multiple editions found at same position.");
+            $this->writeln('Multiple editions found at same position.');
             if (!empty($urls)) {
                 $this->writeln(
-                    "Incoming URL(s): " . implode(' | ', array_unique($urls))
+                    'Incoming URL(s): ' . implode(' | ', array_unique($urls))
                 );
             }
-            $this->writeln("Please pick one:");
+            $this->writeln('Please pick one:');
             $this->writeln($menuString);
             $char = strtoupper(
                 $this->getCharSelection("\nPlease select one: ", $options)
@@ -2280,10 +2287,10 @@ class DatabaseIngester extends BaseIngester
         foreach ($children as $child) {
             if (!isset($child['matched'])) {
                 foreach ($titlesChecked as $titleChecked) {
-                    $this->writeln("Title checked: " . $titleChecked);
+                    $this->writeln('Title checked: ' . $titleChecked);
                 }
                 $this->writeln(
-                    "FATAL: No series match found for edition "
+                    'FATAL: No series match found for edition '
                     . $child['edition']->Edition_ID
                 );
                 return false;
@@ -2353,10 +2360,10 @@ class DatabaseIngester extends BaseIngester
             if (!isset($child['matched'])) {
                 $this->writeln("Unmatched item: {$child['item']['Item_Name']}");
                 foreach ($contents as $current) {
-                    $this->writeln("Possible match: " . $current['title']);
+                    $this->writeln('Possible match: ' . $current['title']);
                 }
                 $this->writeln(
-                    "WARNING: No child match found for edition "
+                    'WARNING: No child match found for edition '
                     . $child['edition']->Edition_ID
                 );
                 $result[] = [null, $child];
@@ -2365,7 +2372,7 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if ($matches === 0) {
-            $this->writeln("FATAL: No child matches found.");
+            $this->writeln('FATAL: No child matches found.');
             return false;
         }
         return $result;

@@ -38,6 +38,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function count;
+
 /**
  * Console command: ingest spreadsheet
  *
@@ -167,7 +169,7 @@ class SpreadsheetCommand extends Command
         $continuePrompt = 'Continue with next item anyway?';
         while ($line = fgetcsv($handle)) {
             if (count($line) < 7) {
-                $output->writeln("Short line encountered; breaking out...");
+                $output->writeln('Short line encountered; breaking out...');
                 break;
             }
             if (!isset($line[7])) {
