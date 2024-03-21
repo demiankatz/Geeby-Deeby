@@ -31,6 +31,7 @@ namespace GeebyDeebyLocal\Command\Check;
 
 use GeebyDeeby\Db\Table\PeopleURIs;
 use GeebyDeeby\View\Helper\ShowPerson;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -45,15 +46,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+#[AsCommand(
+    name: 'check/people',
+    description: 'Check people headings against linked data URIs'
+)]
 class PeopleCommand extends Command
 {
-    /**
-     * The name of the command (the part after "cli.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'check/people';
-
     /**
      * Database table object for fetching information.
      *
@@ -81,7 +79,7 @@ class PeopleCommand extends Command
      */
     protected function configure()
     {
-        $this->setDescription('Check people headings against linked data URIs')
+        $this
             ->setHelp('Confirms that people headings are valid and links are good.')
             ->addArgument(
                 'startFrom',

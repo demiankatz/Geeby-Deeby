@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Table\Series;
 use GeebyDeeby\Db\Table\SeriesAltTitles;
 use GeebyDeebyLocal\Ingest\FedoraHarvester;
 use GeebyDeebyLocal\Ingest\SolrHarvester;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,16 +48,13 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+#[AsCommand(
+    name: 'harvest/collection',
+    description: 'Harvest a collection from NIU'
+)]
 class CollectionCommand extends Command
 {
     use \GeebyDeebyLocal\Command\SeriesByTitleTrait;
-
-    /**
-     * The name of the command (the part after "cli.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'harvest/collection';
 
     /**
      * Fedora harvester
@@ -104,7 +102,6 @@ class CollectionCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Harvest a series from NIU')
             ->setHelp(
                 'Harvests records from a series to a directory for later processing.'
             )->addArgument(

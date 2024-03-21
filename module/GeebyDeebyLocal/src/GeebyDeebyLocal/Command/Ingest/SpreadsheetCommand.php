@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\Db\Table\Series;
 use GeebyDeeby\Db\Table\SeriesAltTitles;
 use GeebyDeebyLocal\Ingest\DatabaseIngester;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,16 +50,13 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+#[AsCommand(
+    name: 'ingest/spreadsheet',
+    description: 'Ingest metadata from CSV spreadsheet'
+)]
 class SpreadsheetCommand extends Command
 {
     use \GeebyDeebyLocal\Command\SeriesByTitleTrait;
-
-    /**
-     * The name of the command (the part after "cli.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'ingest/spreadsheet';
 
     /**
      * Editions table
@@ -106,7 +104,6 @@ class SpreadsheetCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Ingest metadata from CSV spreadsheet')
             ->setHelp('Loads data from a CSV spreadsheet of metadata.')
             ->addArgument(
                 'file',

@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\Db\Table\Series;
 use GeebyDeebyLocal\Ingest\DatabaseIngester;
 use GeebyDeebyLocal\Ingest\ModsExtractor;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,15 +50,12 @@ use function is_object;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+#[AsCommand(
+    name: 'ingest/directory',
+    description: 'Ingest directory of harvested MODS'
+)]
 class DirectoryCommand extends Command
 {
-    /**
-     * The name of the command (the part after "cli.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'ingest/directory';
-
     /**
      * Series table
      *
@@ -118,7 +116,6 @@ class DirectoryCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Ingest directory of harvested MODS')
             ->setHelp('Loads data from a directory of harvested MODS files.')
             ->addArgument(
                 'dir',

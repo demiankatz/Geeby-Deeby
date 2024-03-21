@@ -31,6 +31,7 @@ namespace GeebyDeebyLocal\Command\Make;
 
 use GeebyDeeby\Db\Table\Series;
 use GeebyDeebyLocal\Ingest\IssueMaker;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -45,15 +46,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+#[AsCommand(
+    name: 'make/issues',
+    description: 'Format series entries into issues'
+)]
 class IssuesCommand extends Command
 {
-    /**
-     * The name of the command (the part after "cli.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'make/issues';
-
     /**
      * Issue maker
      *
@@ -91,7 +89,6 @@ class IssuesCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Format series entries into issues')
             ->setHelp('Creates issue containers around works in a series.')
             ->addArgument(
                 'series',
