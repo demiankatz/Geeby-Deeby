@@ -31,6 +31,7 @@ namespace GeebyDeebyConsole\Command\Check;
 
 use GeebyDeeby\Db\Table\EditionsFullText;
 use Laminas\Http\Client;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -46,15 +47,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
+#[AsCommand(
+    name: 'check/fulltext',
+    description: 'Full text link checker'
+)]
 class FullTextCommand extends Command
 {
-    /**
-     * The name of the command (the part after "cli.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'check/fulltext';
-
     /**
      * Database table for retrieving full text from editions.
      *
@@ -89,7 +87,6 @@ class FullTextCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Full text link checker')
             ->setHelp(
                 'Checks for problems with full text links; '
                 . 'outputs a CSV with URLs and status codes.'
