@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.6.0 - 2024-07-05
+
+### Added
+
+- Ability to include additional details in search results.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.5.0 - 2024-03-21
 
 ### Added

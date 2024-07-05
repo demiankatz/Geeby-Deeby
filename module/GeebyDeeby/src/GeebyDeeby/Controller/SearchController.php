@@ -56,6 +56,50 @@ class SearchController extends AbstractBase
     }
 
     /**
+     * Retrieve creator details by AJAX.
+     *
+     * @return mixed
+     */
+    public function creatorAjaxAction()
+    {
+        $nameHelper = $this->serviceLocator->get('ViewHelperManager')->get('showPerson');
+        $post = $this->params()->fromPost();
+        $ids = explode(',', $post['ids']);
+        $index = [];
+        foreach ($this->getDbTable('person')->getListForItemIds($ids) as $row) {
+            $index[$row['Item_ID']] ??= [];
+            $index[$row['Item_ID']][] = $row;
+        }
+        $formatPerson = function ($person) use ($nameHelper) {
+            return htmlspecialchars(($nameHelper)($person));
+        };
+        $response = [];
+        foreach ($index as $id => $data) {
+            $response[$id] = implode('; ', array_map($formatPerson, $data));
+        }
+        return $this->jsonDie($response, true);
+    }
+
+    /**
+     * Retrieve edition attribute details by AJAX.
+     *
+     * @return mixed
+     */
+    public function editionAttributeAjaxAction()
+    {
+        $post = $this->params()->fromPost();
+        $attributeId = $post['attribute_id'];
+        $ids = explode(',', $post['ids']);
+        $result = [];
+        foreach ($this->getDbTable('editionsattributesvalues')->getAttributesForItem($ids, $attributeId) as $row) {
+            // We only want to display one value per item, so it doesn't matter if we overwrite existing data here:
+            $result[$row['Item_ID']] = '<b>' . htmlspecialchars($row['Editions_Attribute_Name']) . '</b>: '
+                . htmlspecialchars($row['Editions_Attribute_Value']);
+        }
+        return $this->jsonDie($result, true);
+    }
+
+    /**
      * Keyword results
      *
      * @return mixed

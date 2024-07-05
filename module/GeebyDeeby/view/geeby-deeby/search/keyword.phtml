@@ -1,76 +1,109 @@
 <?php
-    $this->layout()->title = 'Search Results - Keyword';
-    $empty = true;
+  $this->layout()->title = 'Search Results - Keyword';
+  $this->scriptManager()->add(['search']);
+  $empty = true;
+  $config = $this->config('search_controls') ?? [];
 ?>
+<?=$this->render('geeby-deeby/search/controls.phtml')?>
 <?php if (count($series) > 0): $empty = false; ?>
   <h2>Series</h2>
-  <p>
+  <ol>
     <?php foreach ($series as $current): ?>
-      <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
-        <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
-      </a><br />
+      <li>
+        <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
+          <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+        </a>
+      </li>
     <?php endforeach; ?>
-  </p>
+  </ol>
 <?php endif; ?>
 <?php if (count($seriesAltTitles) > 0): $empty = false; ?>
   <h2>Series Alternate Titles</h2>
-  <p>
+  <ol>
     <?php foreach ($seriesAltTitles as $current): ?>
-      <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
-        <?=$this->escapeHtml($this->fixtitle($current['Series_AltName']))?>
-      </a><br />
+      <li>
+        <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
+          <?=$this->escapeHtml($this->fixtitle($current['Series_AltName']))?>
+        </a>
+      </li>
     <?php endforeach; ?>
-  </p>
+  </ol>
 <?php endif; ?>
 <?php if (count($items) > 0): $empty = false; ?>
   <h2>Items</h2>
-  <p>
+  <ol>
     <?php foreach ($items as $current): ?>
-      <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
-        <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
-      </a><br />
+      <li>
+        <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
+          <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
+        </a>
+        <span class="hidden creators" data-loaded="0" data-item-id="<?=$current['Item_ID']?>">
+          / <span class="values"></span>
+        </span>
+        <?php foreach (array_keys($config['edition_attributes'] ?? []) as $id): ?>
+          <span class="hidden edition-attributes" data-loaded="0" data-edition-attribute-id="<?=$id?>" data-item-id="<?=$current['Item_ID']?>">
+            <br /><span class="values"></span>
+          </span>
+        <?php endforeach; ?>
+      </li>
     <?php endforeach; ?>
-  </p>
+  </ol>
 <?php endif; ?>
 <?php if (count($itemsAltTitles) > 0): $empty = false; ?>
   <h2>Item Alternate Titles</h2>
-  <p>
+  <ol>
     <?php foreach ($itemsAltTitles as $current): ?>
-      <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
-        <?=$this->escapeHtml($this->fixtitle($current['Item_AltName']))?>
-      </a><br />
+      <li>
+        <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
+          <?=$this->escapeHtml($this->fixtitle($current['Item_AltName']))?>
+        </a>
+        <span class="hidden creators" data-loaded="0" data-item-id="<?=$current['Item_ID']?>">
+          / <span class="values"></span>
+        </span>
+        <?php foreach (array_keys($config['edition_attributes'] ?? []) as $id): ?>
+          <span class="hidden edition-attributes" data-loaded="0" data-edition-attribute-id="<?=$id?>" data-item-id="<?=$current['Item_ID']?>">
+            <br /><span class="values"></span>
+          </span>
+        <?php endforeach; ?>
+      </li>
     <?php endforeach; ?>
-  </p>
+  </ol>
 <?php endif; ?>
 <?php if (count($categories) > 0): $empty = false; ?>
   <h2>Categories</h2>
-  <p>
+  <ol>
     <?php foreach ($categories as $current): ?>
-      <a href="<?=$this->url('category', ['id' => $current['Category_ID']])?>">
-        <?=$this->escapeHtml($this->fixtitle($current['Category']))?>
-      </a><br />
+      <li>
+        <a href="<?=$this->url('category', ['id' => $current['Category_ID']])?>">
+          <?=$this->escapeHtml($this->fixtitle($current['Category']))?>
+        </a>
+      </li>
     <?php endforeach; ?>
-  </p>
+  </ol>
 <?php endif; ?>
 <?php if (count($people) > 0): $empty = false; ?>
   <h2>People</h2>
-  <p>
+  <ol>
     <?php foreach ($people as $current): ?>
-      <a href="<?=$this->url('person', ['id' => $current['Person_ID']])?>">
-        <?=$this->escapeHtml($this->showperson($current))?>
-      </a><br />
+      <li>
+        <a href="<?=$this->url('person', ['id' => $current['Person_ID']])?>">
+          <?=$this->escapeHtml($this->showperson($current))?>
+        </a>
+      </li>
     <?php endforeach; ?>
-  </p>
+  </ol>
 <?php endif; ?>
 <?php if (count($tags) > 0): $empty = false; ?>
   <h2>Subjects/Tags</h2>
-  <p>
+  <ol>
     <?php foreach ($tags as $current): ?>
-      <a href="<?=$this->url('tag', ['id' => $current['Tag_ID']])?>">
-        <?=$this->escapeHtml($current['Tag'])?>
-      </a><br />
+      <li>
+        <a href="<?=$this->url('tag', ['id' => $current['Tag_ID']])?>">
+          <?=$this->escapeHtml($current['Tag'])?>
+        </a>
+      </li>
     <?php endforeach; ?>
-  </p>
+  </ol>
 <?php endif; ?>
 <?php if ($empty): ?>
   <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>

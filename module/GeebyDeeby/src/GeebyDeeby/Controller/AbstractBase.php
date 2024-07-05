@@ -90,7 +90,7 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Die with a JSON-encoded error message.
+     * Die with a JSON-encoded message.
      *
      * @param string $msg     The message to send back.
      * @param bool   $success Success status
