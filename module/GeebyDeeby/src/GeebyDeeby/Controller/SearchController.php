@@ -56,6 +56,31 @@ class SearchController extends AbstractBase
     }
 
     /**
+     * Retrieve creator details by AJAX.
+     *
+     * @return mixed
+     */
+    public function creatorAjaxAction()
+    {
+        $nameHelper = $this->serviceLocator->get('ViewHelperManager')->get('showPerson');
+        $post = $this->params()->fromPost();
+        $ids = explode(',', $post['ids']);
+        $index = [];
+        foreach ($this->getDbTable('person')->getListForItemIds($ids) as $row) {
+            $index[$row['Item_ID']] ??= [];
+            $index[$row['Item_ID']][] = $row;
+        }
+        $formatPerson = function ($person) use ($nameHelper) {
+            return htmlspecialchars(($nameHelper)($person));
+        };
+        $response = [];
+        foreach ($index as $id => $data) {
+            $response[$id] = implode('; ', array_map($formatPerson, $data));
+        }
+        return $this->jsonDie($response, true);
+    }
+
+    /**
      * Keyword results
      *
      * @return mixed

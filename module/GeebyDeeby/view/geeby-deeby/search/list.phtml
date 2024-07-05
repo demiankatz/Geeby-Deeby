@@ -7,5 +7,11 @@
         <?=$this->escapeHtml($this->fixtitle($current[$this->prefix . '_Name'] ?? $current[$this->prefix . '_AltName']))?>
       </a>
     </div>
+    <?php if ($this->prefix === 'Item'): ?>
+      <div class="result row hidden creators" data-loaded="0" data-item-id="<?=$current[$this->prefix . '_ID']?>">
+        <span class="col-md-1">&nbsp;</span>
+        <span class="col-md-10 values"></span>
+      </div>
+    <?php endif; ?>
   <?php endforeach; ?>
 </div>

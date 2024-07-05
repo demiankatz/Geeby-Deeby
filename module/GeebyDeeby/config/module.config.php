@@ -1204,6 +1204,17 @@ return [
                     ],
                 ],
             ],
+            'search-creator-ajax' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/Search/CreatorAjax',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Search',
+                        'action'        => 'creatorAjax',
+                    ],
+                ],
+            ],
             'series' => [
                 'type'    => 'Segment',
                 'options' => [

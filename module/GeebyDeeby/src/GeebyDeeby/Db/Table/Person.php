@@ -62,7 +62,7 @@ class Person extends Gateway
     }
 
     /**
-     * Get a list of categories.
+     * Get a list of people.
      *
      * @param bool $biosOnly Should we filter to only people with biographies?
      *
@@ -74,6 +74,33 @@ class Person extends Gateway
             if ($biosOnly) {
                 $select->where->notEqualTo('Biography', '');
             }
+            $select->order(['Last_Name', 'First_Name']);
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get people for item IDs.
+     *
+     * @param array $itemIds Item IDs to match.
+     *
+     * @return mixed
+     */
+    public function getListForItemIds($itemIds)
+    {
+        $callback = function ($select) use ($itemIds) {
+            $select->quantifier('DISTINCT');
+            $select->join(
+                ['ec' => 'Editions_Credits'],
+                'ec.Person_ID = People.Person_ID',
+                []
+            );
+            $select->join(
+                ['e' => 'Editions'],
+                'ec.Edition_ID = e.Edition_ID',
+                ['Item_ID']
+            );
+            $select->where->in('Item_ID', $itemIds);
             $select->order(['Last_Name', 'First_Name']);
         };
         return $this->select($callback);

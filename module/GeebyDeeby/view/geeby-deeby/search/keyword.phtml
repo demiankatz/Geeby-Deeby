@@ -1,7 +1,9 @@
 <?php
     $this->layout()->title = 'Search Results - Keyword';
+    $this->scriptManager()->add(['search']);
     $empty = true;
 ?>
+<?=$this->render('geeby-deeby/search/controls.phtml')?>
 <?php if (count($series) > 0): $empty = false; ?>
   <h2>Series</h2>
   <p>
@@ -28,7 +30,11 @@
     <?php foreach ($items as $current): ?>
       <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
         <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
-      </a><br />
+      </a>
+      <span class="hidden creators" data-loaded="0" data-item-id="<?=$current['Item_ID']?>">
+        / <span class="values"></span>
+      </span>
+      <br />
     <?php endforeach; ?>
   </p>
 <?php endif; ?>
@@ -38,7 +44,11 @@
     <?php foreach ($itemsAltTitles as $current): ?>
       <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
         <?=$this->escapeHtml($this->fixtitle($current['Item_AltName']))?>
-      </a><br />
+      </a>
+      <span class="hidden creators" data-loaded="0" data-item-id="<?=$current['Item_ID']?>">
+        / <span class="values"></span>
+      </span>
+      <br />
     <?php endforeach; ?>
   </p>
 <?php endif; ?>
