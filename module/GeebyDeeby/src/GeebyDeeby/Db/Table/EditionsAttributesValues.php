@@ -32,6 +32,8 @@ namespace GeebyDeeby\Db\Table;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
 
+use function is_array;
+
 /**
  * Table Definition for Editions_Attributes_Values
  *
