@@ -93,7 +93,8 @@ class SearchController extends AbstractBase
         $result = [];
         foreach ($this->getDbTable('editionsattributesvalues')->getAttributesForItem($ids, $attributeId) as $row) {
             // We only want to display one value per item, so it doesn't matter if we overwrite existing data here:
-            $result[$row['Item_ID']] = '<b>' . htmlspecialchars($row['Editions_Attribute_Name']) . '</b>: ' . htmlspecialchars($row['Editions_Attribute_Value']);
+            $result[$row['Item_ID']] = '<b>' . htmlspecialchars($row['Editions_Attribute_Name']) . '</b>: '
+                . htmlspecialchars($row['Editions_Attribute_Value']);
         }
         return $this->jsonDie($result, true);
     }

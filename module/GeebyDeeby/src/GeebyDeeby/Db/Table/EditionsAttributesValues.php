@@ -82,8 +82,8 @@ class EditionsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified item.
      *
-     * @param int|int[]  $itemID      Item ID (or array of IDs)
-     * @param ?int       $attributeID Attribute ID filter (null for all attributes)
+     * @param int|int[] $itemID      Item ID (or array of IDs)
+     * @param ?int      $attributeID Attribute ID filter (null for all attributes)
      *
      * @return mixed
      */
