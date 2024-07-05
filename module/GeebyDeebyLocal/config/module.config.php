@@ -35,6 +35,11 @@ return [
                 ],
             ],
         ],
+        'search_controls' => [
+            'edition_attributes' => [
+                1 => 'Show first sentence (if available)',
+            ],
+        ],
     ],
     'controllers' => [
         'aliases' => [
