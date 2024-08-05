@@ -323,7 +323,7 @@ class ModsExtractor
         $part = isset($part[0]) ? (string)$part[0] : '';
         $chapter = $mods
             ->xpath('mods:part/mods:detail[@type="chapter"]/mods:number');
-        $chapter = isset($chapter[0]) ? (string)$chapter[0] : '';
+        $chapter = preg_replace('/^[Cc]hapters? /', '', (string)($chapter[0] ?? ''));
         $pageStart = $mods->xpath('mods:part/mods:extent[@unit="pages"]/mods:start');
         $pageStart = isset($pageStart[0]) ? (string)$pageStart[0] : '';
         $pageEnd = $mods->xpath('mods:part/mods:extent[@unit="pages"]/mods:end');
