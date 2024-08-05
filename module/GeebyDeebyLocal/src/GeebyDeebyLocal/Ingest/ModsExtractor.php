@@ -162,6 +162,20 @@ class ModsExtractor
     }
 
     /**
+     * Is a "First Last" name equivalent to a "Last, Name" name?
+     *
+     * @param string $name         First Last name
+     * @param string $invertedName Last, First name
+     *
+     * @return bool
+     */
+    protected function nameIsInvertedName(string $name, string $invertedName): bool
+    {
+        $parts = explode(', ', $invertedName, 2);
+        return $name === $parts[1] . ' ' . $parts[0];
+    }
+
+    /**
      * Extract publisher information.
      *
      * @param object $mods     Simple XML object representing part of a MODS record.
@@ -192,7 +206,7 @@ class ModsExtractor
         $authModsStr = (string)($authMods[0] ?? '');
         if (
             preg_match('/\(\d{4}/', $authModsStr)
-            || strlen($authModsStr) > strlen($parts[0])
+            || (strlen($authModsStr) > strlen($parts[0]) && !$this->nameIsInvertedName($parts[0], $authModsStr))
         ) {
             $newParts = explode(',', $authModsStr);
             foreach ($newParts as $i => $part) {
