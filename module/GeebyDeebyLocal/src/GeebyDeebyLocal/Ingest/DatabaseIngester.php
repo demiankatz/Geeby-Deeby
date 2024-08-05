@@ -743,10 +743,9 @@ class DatabaseIngester extends BaseIngester
         }
         if (false === strstr($editionObj->Edition_Description, $notes)) {
             $this->writeln(
-                'FATAL: edition description mismatch: '
+                'WARNING: edition description mismatch: '
                 . "{$notes} vs. {$editionObj->Edition_Description}"
             );
-            return false;
         }
         return true;
     }
