@@ -59,6 +59,12 @@ class SignupController extends AbstractBase
             $view->user = $this->params()->fromPost('Username');
             $view->fullname = $this->params()->fromPost('Fullname');
             $view->address = $this->params()->fromPost('Address');
+            if (!empty($view->address)) {
+                $emailValidator = new \Laminas\Validator\EmailAddress();
+                $validEmail = $emailValidator->isValid($view->address);
+            } else {
+                $validEmail = true;
+            }
             $password1 = $this->params()->fromPost('Password1');
             $password2 = $this->params()->fromPost('Password2');
             if ($view->user == '' || $view->fullname == '' || $password1 == '') {
@@ -71,6 +77,8 @@ class SignupController extends AbstractBase
                 || str_contains($view->address, '://')   // block spam addresses
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
+            } elseif (!$validEmail) {
+                $view->error = 'The email address you provided is invalid. Please try again.';
             } else {
                 $table = $this->getDbTable('user');
                 $exists = $table->select(['Username' => $view->user]);
