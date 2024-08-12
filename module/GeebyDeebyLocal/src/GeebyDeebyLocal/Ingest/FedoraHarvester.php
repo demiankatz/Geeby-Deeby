@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Ingest;
 
+use function sprintf;
+
 /**
  * Fedora Harvester
  *
