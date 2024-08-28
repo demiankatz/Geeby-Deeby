@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Db\Table;
 
-use Laminas\Crypt\Password\Bcrypt;
+use GeebyDeeby\Crypt\PasswordHasher;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
 
@@ -116,8 +116,8 @@ class User extends Gateway
     public function passwordLogin($username, $password)
     {
         $row = $this->select(['Username' => $username])->current();
-        $bcrypt = new Bcrypt();
-        return ($row && $bcrypt->verify($password, $row->Password_Hash))
+        $hasher = new PasswordHasher();
+        return ($row && $hasher->verify($password, $row->Password_Hash))
             ? $row : null;
     }
 }

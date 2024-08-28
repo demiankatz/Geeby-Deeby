@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- \GeebyDeeby\Crypt\PasswordHasher class to replace laminas-crypt library.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Dependency on deprecated laminas-crypt library.
+
+### Fixed
+
+- Nothing.
+
 ## 2.7.0 - 2024-08-12
 
 ### Added
