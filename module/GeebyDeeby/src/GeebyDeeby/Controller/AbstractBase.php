@@ -476,6 +476,24 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Perform authentication
+     *
+     * @param string $username Username
+     * @param string $password Password
+     *
+     * @return \GeebyDeeby\Authentication\Adapter
+     * @throws \Exception
+     */
+    protected function getAuthenticationAdapter($username, $password)
+    {
+        return new \GeebyDeeby\Authentication\Adapter(
+            $this->getDbTable('user'),
+            $username,
+            $password
+        );
+    }
+
+    /**
      * Format an RDF response.
      *
      * @param \EasyRdf\Graph $graph Graph to output

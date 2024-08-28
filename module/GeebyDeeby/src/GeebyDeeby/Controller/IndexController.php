@@ -59,13 +59,13 @@ class IndexController extends AbstractBase
     {
         $view = $this->createViewModel();
         if ($this->getRequest()->isPost()) {
-            $adapter = new \GeebyDeeby\Authentication\Adapter(
-                $this->getDbTable('user'),
-                $this->params()->fromPost('user'),
-                $this->params()->fromPost('pass')
-            );
             try {
-                $result = $this->getAuth()->authenticate($adapter);
+                $result = $this->getAuth()->authenticate(
+                    $this->getAuthenticationAdapter(
+                        $this->params()->fromPost('user'),
+                        $this->params()->fromPost('pass')
+                    )
+                );
             } catch (\GeebyDeeby\Authentication\UnapprovedUserException $e) {
                 $view->msg = 'Your account has not been approved yet.';
                 return $view;
