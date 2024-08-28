@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
-use Laminas\Crypt\Password\Bcrypt;
+use GeebyDeeby\Crypt\PasswordHasher;
 
 /**
  * Edit user controller
@@ -97,8 +97,8 @@ class EditUserController extends AbstractBase
 
         // Change password, if necessary:
         if ($password && isset($view->affectedRow)) {
-            $bcrypt = new Bcrypt();
-            $view->affectedRow->Password_Hash = $bcrypt->create($password);
+            $hasher = new PasswordHasher();
+            $view->affectedRow->Password_Hash = $hasher->create($password);
             $view->affectedRow->save();
         }
 

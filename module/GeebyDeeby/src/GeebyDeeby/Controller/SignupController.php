@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
-use Laminas\Crypt\Password\Bcrypt;
+use GeebyDeeby\Crypt\PasswordHasher;
 
 use function count;
 
@@ -85,11 +85,11 @@ class SignupController extends AbstractBase
                 if (count($exists) > 0) {
                     $view->error = 'The username you selected is already in use.';
                 } else {
-                    $bcrypt = new Bcrypt();
+                    $hasher = new PasswordHasher();
                     $table->insert(
                         [
                             'Username' => $view->user,
-                            'Password_Hash' => $bcrypt->create($password1),
+                            'Password_Hash' => $hasher->create($password1),
                             'Name' => $view->fullname,
                             'Address' => $view->address,
                             'Join_Reason' => $view->reason,

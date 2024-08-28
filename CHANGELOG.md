@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.0 - 2024-08-28
+
+### Added
+
+- Added a check to verify existing password before changing to new one.
+- \GeebyDeeby\Crypt\PasswordHasher class to replace laminas-crypt library.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Dependency on deprecated laminas-crypt library.
+
+### Fixed
+
+- Nothing.
+
 ## 2.7.0 - 2024-08-12
 
 ### Added

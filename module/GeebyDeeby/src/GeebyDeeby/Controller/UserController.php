@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
-use Laminas\Crypt\Password\Bcrypt;
+use GeebyDeeby\Crypt\PasswordHasher;
 
 use function is_object;
 
@@ -146,6 +146,7 @@ class UserController extends AbstractBase
         if (null !== $this->params()->fromPost('submit')) {
             $view->fullname = $this->params()->fromPost('Fullname');
             $view->address = $this->params()->fromPost('Address');
+            $password = $this->params()->fromPost('Password');
             $password1 = $this->params()->fromPost('Password1');
             $password2 = $this->params()->fromPost('Password2');
             if ($view->fullname == '') {
@@ -156,22 +157,34 @@ class UserController extends AbstractBase
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
             } else {
-                $table = $this->getDbTable('user');
-                $update = [
-                    'Name' => $view->fullname, 'Address' => $view->address,
-                ];
-                if (!empty($password1)) {
-                    $bcrypt = new Bcrypt();
-                    $update['Password_Hash'] = $bcrypt->create($password1);
+                try {
+                    $passwordCheck = $this->getAuthenticationAdapter(
+                        $view->user['Username'],
+                        $password
+                    )->authenticate();
+                } catch (\Exception $e) {
+                    $passwordCheck = null;
                 }
-                $table->update(
-                    $update,
-                    ['User_ID' => $view->user['User_ID']]
-                );
-                return $this->redirect()->toRoute(
-                    'user',
-                    ['id' => $view->user['User_ID']]
-                );
+                if (!empty($password1) && !($passwordCheck?->isValid())) {
+                    $view->error = 'The existing password you provided is incorrect.';
+                } else {
+                    $table = $this->getDbTable('user');
+                    $update = [
+                        'Name' => $view->fullname, 'Address' => $view->address,
+                    ];
+                    if (!empty($password1)) {
+                        $hasher = new PasswordHasher();
+                        $update['Password_Hash'] = $hasher->create($password1);
+                    }
+                    $table->update(
+                        $update,
+                        ['User_ID' => $view->user['User_ID']]
+                    );
+                    return $this->redirect()->toRoute(
+                        'user',
+                        ['id' => $view->user['User_ID']]
+                    );
+                }
             }
         } else {
             $view->fullname = $view->user['Name'];
