@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
+- Added a check to verify existing password before changing to new one.
 - \GeebyDeeby\Crypt\PasswordHasher class to replace laminas-crypt library.
 
 ### Changed
