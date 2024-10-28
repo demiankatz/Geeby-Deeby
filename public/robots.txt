@@ -1,0 +1,108 @@
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Sogou web spider
+Disallow: /
+
+User-agent: Sogou inst spider
+Disallow: /
+
+# ---
+
+# Dark Visitors
+# https://darkvisitors.com/
+
+# Claude
+User-agent: anthropic-ai
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: ClaudeBot/1.0
+Disallow: /
+User-agent: Claude-Web
+Disallow: /
+
+# Common Crawl
+User-agent: CCBot
+Disallow: /
+
+# ChatGPT user prompt research
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+# Google AI training data crawl
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: omgili
+Disallow: /
+
+# ---
+
+# Islandora Issues
+# https://github.com/Islandora/documentation/issues/2286
+
+User-agent: AcademicBotRTU
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+# OpenAI training data crawl
+User-agent: GPTBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: test-bot
+Disallow: /
+
+User-agent: Timpibot
+Disallow: /
+
+User-agent: Timpibot/0.9
+Disallow: /
+
+# --- From https://github.com/ai-robots-txt/ai.robots.txt/blob/main/robots.txt, deduplicated with stanzas above, updated 10/28/24
+
+User-agent: AI2Bot
+User-agent: Ai2Bot-Dolma
+User-agent: Amazonbot
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: cohere-ai
+User-agent: facebookexternalhit
+User-agent: FriendlyCrawler
+User-agent: GoogleOther
+User-agent: GoogleOther-Image
+User-agent: GoogleOther-Video
+User-agent: iaskspider/2.0
+User-agent: ICC-Crawler
+User-agent: ImagesiftBot
+User-agent: img2dataset
+User-agent: ISSCyberRiskCrawler
+User-agent: Kangaroo Bot
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
+User-agent: OAI-SearchBot
+User-agent: omgilibot
+User-agent: PerplexityBot
+User-agent: Scrapy
+User-agent: Sidetrade indexer bot
+User-agent: VelenPublicWebCrawler
+User-agent: Webzio-Extended
+User-agent: YouBot
+Disallow: /
+
+# ---
+
