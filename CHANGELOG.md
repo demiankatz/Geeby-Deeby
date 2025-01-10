@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- The laminas-mail dependency has been replaced with symfony-mailer. The emailTransport configuration setting now requires a DSN instead of an array. See [the Symfony Mailer documentation](https://symfony.com/doc/current/mailer.html) for help converting your email settings if you are using a non-default configuration.
+- Various other minor dependency updates have been applied.
+
+### Removed
+
+- Dependency on deprecated laminas-mail package.
+
+### Fixed
+
+- Nothing.
+
 ## 2.8.0 - 2024-08-28
 
 ### Added
