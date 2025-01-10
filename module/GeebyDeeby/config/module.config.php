@@ -6,7 +6,7 @@ return [
         'siteEmail' => 'me@emailhost.com',
         'siteOwner' => 'Webmaster',
         // See https://symfony.com/doc/current/mailer.html for more documentation on email transport options:
-        'emailTransport' => "sendmail://default",
+        'emailTransport' => 'sendmail://default',
         'dbHost' => 'localhost',
         'dbName' => 'gbdb', // database schema name
         'dbUser' => 'gbdb', // database username
