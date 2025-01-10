@@ -20,12 +20,6 @@ return [
     // This is a bare-minimum example of setting up SMTP email support;
     // uncomment and fill in details as needed:
     //'geeby-deeby' => [
-    //    'emailTransport' => [
-    //        'type' => 'smtp',
-    //        'options' => [
-    //            'host' => 'smtp.myemailservice.com',
-    //            'port' => 25,
-    //        ],
-    //    ],
+    //    'emailTransport' => "smtp://user:pass@smtp.example.com:25",
     //],
 ];
