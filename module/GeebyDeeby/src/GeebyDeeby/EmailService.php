@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby;
 
-use Laminas\Mail;
+use Symfony\Component\Mailer;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 
 /**
  * Class for sending emails
@@ -45,18 +47,18 @@ class EmailService
     /**
      * Mail transport
      *
-     * @var Mail\Transport\TransportInterface
+     * @var Mailer\MailerInterface
      */
     protected $transport;
 
     /**
      * Constructor
      *
-     * @param array $transportConfig Transport configuration
+     * @param string $transportConfig Transport configuration
      */
-    public function __construct($transportConfig = [])
+    public function __construct($transportConfig = 'sendmail://default')
     {
-        $this->transport = Mail\Transport\Factory::create($transportConfig);
+        $this->transport = new Mailer\Mailer(Mailer\Transport::fromDsn($transportConfig));
     }
 
     /**
@@ -72,11 +74,11 @@ class EmailService
      */
     public function send($recipient, $subject, $body, $sender)
     {
-        $message = new Mail\Message();
-        $message->addFrom($sender);
-        $message->addTo($recipient);
-        $message->setSubject($subject);
-        $message->setBody($body);
+        $message = new Email();
+        $message->addFrom(new Address($sender));
+        $message->addTo(new Address($recipient));
+        $message->subject($subject);
+        $message->text($body);
         $this->transport->send($message);
     }
 }

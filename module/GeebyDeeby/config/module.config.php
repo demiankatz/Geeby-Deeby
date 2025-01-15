@@ -5,12 +5,8 @@ return [
         'siteTitle' => 'My Gamebook Web Page',
         'siteEmail' => 'me@emailhost.com',
         'siteOwner' => 'Webmaster',
-        // See https://docs.laminas.dev/laminas-mail/transport/intro/ for more
-        // documentation on email transport options:
-        'emailTransport' => [
-            'type' => 'sendmail',
-            'options' => [],
-        ],
+        // See https://symfony.com/doc/current/mailer.html for more documentation on email transport options:
+        'emailTransport' => 'sendmail://default',
         'dbHost' => 'localhost',
         'dbName' => 'gbdb', // database schema name
         'dbUser' => 'gbdb', // database username
