@@ -187,6 +187,7 @@ return [
         'factories' => [
             'GeebyDeebyLocal\Ingest\DatabaseIngester' => 'GeebyDeebyLocal\Ingest\DatabaseIngesterFactory',
             'GeebyDeebyLocal\Ingest\FedoraHarvester' => 'GeebyDeebyLocal\Ingest\FedoraHarvesterFactory',
+            'GeebyDeebyLocal\Ingest\IssueMaker' => 'GeebyDeebyLocal\Ingest\IssueMakerFactory',
             'GeebyDeebyLocal\Ingest\SolrHarvester' => 'GeebyDeebyLocal\Ingest\SolrHarvesterFactory',
         ],
     ],

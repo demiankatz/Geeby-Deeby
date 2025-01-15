@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Factory for make/issue command.
+ * Factory for IssueMaker
  *
  * PHP version 7
  *
- * Copyright (C) Demian Katz 2020.
+ * Copyright (C) Demian Katz 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -27,14 +27,13 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeebyLocal\Command\Make;
+namespace GeebyDeebyLocal\Ingest;
 
-use GeebyDeebyLocal\Ingest\IssueMaker;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Factory for make/issue command.
+ * Factory for IssueMaker
  *
  * @category GeebyDeeby
  * @package  Console
@@ -42,7 +41,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class IssueCommandFactory implements FactoryInterface
+class IssueMakerFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -68,9 +67,8 @@ class IssueCommandFactory implements FactoryInterface
         }
         $dbManager = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
         return new $requestedName(
-            $container->get(IssueMaker::class),
-            $dbManager->get('edition'),
-            $dbManager->get('series')
+            $dbManager,
+            $container->get(\GeebyDeeby\Articles::class)
         );
     }
 }
