@@ -47,6 +47,10 @@ class EditEditionController extends \GeebyDeeby\Controller\EditEditionController
      */
     public function convertToIssueAction()
     {
+        $ok = $this->checkPermission('Data_Manager');
+        if ($ok !== true) {
+            return $ok;
+        }
         $view = $this->createViewModel();
         $editionId = $this->params()->fromRoute('id');
         $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
