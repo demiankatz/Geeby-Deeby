@@ -67,10 +67,9 @@ class IssuesCommandFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
         $dbManager = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
-        $issueMaker = new IssueMaker(
-            $dbManager,
-            $container->get(\GeebyDeeby\Articles::class)
+        return new $requestedName(
+            $container->get(IssueMaker::class),
+            $dbManager->get('series')
         );
-        return new $requestedName($issueMaker, $dbManager->get('series'));
     }
 }
