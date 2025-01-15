@@ -1,0 +1,16 @@
+<?php $this->layout()->title = 'Convert to Issue' ?>
+
+<?php if ($result): ?>
+    <?=$this->escapeHtml($result)?>
+<?php endif; ?>
+
+<?php if ($parent): ?>
+    <p>
+        <a href="<?=$this->url('edit/edition', ['id' => $parent])?>">Issue Edition</a>
+    </p>
+<?php else: ?>
+    <form target="" method="post">
+        <label>Issue Title Prefix (number will be automatically added): <input style="width: 100%;" type="text" name="prefix" value="<?=$this->escapeHtmlAttr($prefix)?>"></label><br>
+        <input type="submit" name="convert" value="Convert">
+    </form>
+<?php endif; ?>

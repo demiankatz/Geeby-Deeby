@@ -5,6 +5,9 @@
 ?>
 <div class="edit_container" style="width: 800px;">
   <?=$this->render('geeby-deeby/edit-edition/index.phtml')?>
+  <?php if ($item['Material_Type_ID'] === 1 /* Work */): ?>
+    <a href="<?=$this->url('edit/edition', ['id' => $edition['Edition_ID'], 'action' => 'converttoissue'])?>">Convert to Issue</a>
+  <?php endif; ?>
 </div>
 <hr />
 <ul class="nav nav-tabs">
