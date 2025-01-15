@@ -45,8 +45,6 @@ use function count;
  */
 class IssueMaker
 {
-    use \GeebyDeebyConsole\ConsoleOutputTrait;
-
     // constant values drawn from dimenovels.org database:
     public const MATERIALTYPE_WORK = 1;
     public const MATERIALTYPE_ISSUE = 2;
@@ -64,6 +62,35 @@ class IssueMaker
      * @var Articles
      */
     protected $articles;
+
+    /**
+     * Last message sent to writeln()
+     *
+     * @var string
+     */
+    protected $lastMessage = '';
+
+    /**
+     * Process a status message
+     *
+     * @param string $msg Message
+     *
+     * @return void
+     */
+    protected function writeln(string $msg)
+    {
+        $this->lastMessage = $msg;
+    }
+
+    /**
+     * Get the last message
+     *
+     * @return string
+     */
+    public function getLastMessage()
+    {
+        return $this->lastMessage;
+    }
 
     /**
      * Constructor

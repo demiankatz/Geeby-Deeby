@@ -29,7 +29,7 @@
 
 namespace GeebyDeebyLocal\Command\Make;
 
-use GeebyDeebyLocal\Ingest\IssueMaker;
+use GeebyDeebyLocal\Ingest\ConsoleIssueMaker;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
@@ -68,7 +68,7 @@ class IssuesCommandFactory implements FactoryInterface
         }
         $dbManager = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
         return new $requestedName(
-            $container->get(IssueMaker::class),
+            $container->get(ConsoleIssueMaker::class),
             $dbManager->get('series')
         );
     }

@@ -44,6 +44,7 @@ return [
     'controllers' => [
         'aliases' => [
             'GeebyDeeby\Controller\About' => 'GeebyDeebyLocal\Controller\AboutController',
+            'GeebyDeeby\Controller\EditEdition' => 'GeebyDeebyLocal\Controller\EditEditionController',
             'GeebyDeeby\Controller\Edition' => 'GeebyDeebyLocal\Controller\EditionController',
             'GeebyDeeby\Controller\Ingest' => 'GeebyDeebyLocal\Controller\IngestController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeebyLocal\Controller\ItemController',
@@ -185,6 +186,7 @@ return [
     ],
     'service_manager' => [
         'factories' => [
+            'GeebyDeebyLocal\Ingest\ConsoleIssueMaker' => 'GeebyDeebyLocal\Ingest\IssueMakerFactory',
             'GeebyDeebyLocal\Ingest\DatabaseIngester' => 'GeebyDeebyLocal\Ingest\DatabaseIngesterFactory',
             'GeebyDeebyLocal\Ingest\FedoraHarvester' => 'GeebyDeebyLocal\Ingest\FedoraHarvesterFactory',
             'GeebyDeebyLocal\Ingest\IssueMaker' => 'GeebyDeebyLocal\Ingest\IssueMakerFactory',
