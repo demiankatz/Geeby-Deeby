@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby;
 
+use function in_array;
+use function strlen;
+
 /**
  * Class for managing articles
  *
@@ -68,7 +71,7 @@ class Articles
             'Una', 'Gli', 'A "', 'The "', '¡La', '"The', 'Ta',
         ];
         $this->unspacedArticles = [
-            "¡", "¿", "L'", '"', '¡La "', 'The "', 'El "', 'A "',
+            '¡', '¿', "L'", '"', '¡La "', 'The "', 'El "', 'A "',
         ];
     }
 
@@ -85,7 +88,7 @@ class Articles
     public function separateArticle($title, $padArticleWhenAppropriate = true)
     {
         foreach ($this->articles as $art) {
-            $suffix = ", " . $art;
+            $suffix = ', ' . $art;
             if (in_array($art, $this->unspacedArticles)) {
                 $prefix = $art;
             } else {
@@ -123,7 +126,7 @@ class Articles
     public function articleAwareAppend($title, $extra)
     {
         foreach ($this->articles as $art) {
-            $suffix = ", " . $art;
+            $suffix = ', ' . $art;
             $suflen = strlen($suffix);
             if (substr($title, strlen($title) - $suflen) == $suffix) {
                 return substr($title, 0, strlen($title) - $suflen)
@@ -145,7 +148,7 @@ class Articles
     {
         foreach ($this->articles as $art) {
             $article = in_array($art, $this->unspacedArticles)
-                ? $art : $art . " ";
+                ? $art : $art . ' ';
             $artlen = strlen($article);
             if (strtolower(substr($title, 0, $artlen)) == strtolower($article)) {
                 $title = substr($title, $artlen, strlen($title) - $artlen);

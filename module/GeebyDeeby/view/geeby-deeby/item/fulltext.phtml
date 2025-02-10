@@ -23,7 +23,8 @@
 </form>
 
 <?php if (count($fulltext) > 0): ?>
-  <?php $series = false; foreach ($fulltext as $current): ?>
+  <?php $series = false; ?>
+  <?php foreach ($fulltext as $current): ?>
     <?php if ($series !== $current['Series_ID']): $series = $current['Series_ID']; ?>
       <h2 class="series"><a href="<?=$this->url('series', ['id' => $series])?>">
         <?=$this->fixtitle($current['Series_Name']);?>

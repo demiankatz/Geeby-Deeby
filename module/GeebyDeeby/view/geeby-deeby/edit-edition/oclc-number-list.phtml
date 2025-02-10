@@ -9,7 +9,7 @@
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('OCLCNumber', " . $current['Sequence_ID'] . ")",
+                "Edition.unlink('OCLCNumber', " . $current['Sequence_ID'] . ')',
                 'Delete OCLC number: ' . $current['OCLC_Number']
             )
           ?>

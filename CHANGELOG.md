@@ -2,6 +2,99 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.0 - 2025-01-10
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- The laminas-mail dependency has been replaced with symfony-mailer. The emailTransport configuration setting now requires a DSN instead of an array. See [the Symfony Mailer documentation](https://symfony.com/doc/current/mailer.html) for help converting your email settings if you are using a non-default configuration.
+- Various other minor dependency updates have been applied.
+
+### Removed
+
+- Dependency on deprecated laminas-mail package.
+
+### Fixed
+
+- Nothing.
+
+## 2.8.0 - 2024-08-28
+
+### Added
+
+- Added a check to verify existing password before changing to new one.
+- \GeebyDeeby\Crypt\PasswordHasher class to replace laminas-crypt library.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Dependency on deprecated laminas-crypt library.
+
+### Fixed
+
+- Nothing.
+
+## 2.7.0 - 2024-08-12
+
+### Added
+
+- Email validation during account signup.
+
+### Changed
+
+- Updated dependencies.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.6.0 - 2024-07-05
+
+### Added
+
+- Ability to include additional details in search results.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.5.0 - 2024-03-21
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Raised minimum PHP required version to 8.1.
+- Updated dependencies.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.4.1 - 2023-07-25
 
 ### Added

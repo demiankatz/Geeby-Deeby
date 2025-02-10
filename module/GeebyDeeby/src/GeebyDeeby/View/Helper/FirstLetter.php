@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use function strlen;
+
 /**
  * "First letter" view helper for displaying labels within alphabetical lists
  *

@@ -4,7 +4,8 @@
   <h2>
     <?=$this->firstLetterMenu($predicates, 'Predicate_Abbrev'); ?>
   </h2>
-  <?php $currentLetter = false; foreach ($predicates as $i => $current): ?>
+  <?php $currentLetter = false; ?>
+  <?php foreach ($predicates as $i => $current): ?>
     <?php $first = $this->firstletter($current['Predicate_Abbrev']); ?>
     <?php if ($currentLetter !== $first): $currentLetter = $first; ?>
       <?php if ($i > 0): ?>

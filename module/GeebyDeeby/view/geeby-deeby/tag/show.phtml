@@ -31,11 +31,13 @@
       </td>
     </tr>
   <?php endforeach; ?>
-  <?php $uriCount = count($uris); if ($uriCount > 0): $displayedSomething = true; ?>
+  <?php $uriCount = count($uris); ?>
+  <?php if ($uriCount > 0): $displayedSomething = true; ?>
     <tr>
       <th>External Identifier<?php if ($uriCount > 1): ?>s<?php endif; ?>:</th>
       <td>
-        <?php $i = 0; foreach ($uris as $uri): $i++ ?>
+        <?php $i = 0; ?>
+        <?php foreach ($uris as $uri): $i++ ?>
           <a href="<?=$this->escapeHtmlAttr($uri['URI'])?>"><?=$this->escapeHtml($uri['URI'])?></a><?=$i < $uriCount ? ', ' : ''?>
         <?php endforeach; ?>
       </td>
@@ -43,7 +45,10 @@
   <?php endif; ?>
 </table>
 <?php if (count($items) > 0): $displayedSomething = true; ?>
-  <?php $sorts = [ 'series', 'title' ]; $sort = $this->sort ?? $sorts[0]; ?>
+  <?php
+    $sorts = [ 'series', 'title' ];
+    $sort = $this->sort ?? $sorts[0];
+  ?>
   <div class="pull-right" style="padding:12px 0;">
     Sort by:
     <div class="btn-group" style="margin-top:-4px;">

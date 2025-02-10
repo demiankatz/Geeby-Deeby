@@ -12,7 +12,7 @@
           <?=
             $this->iconButton(
                 'trash',
-                "Item.unlink('AboutPerson', " . $current['Person_ID'] . ")",
+                "Item.unlink('AboutPerson', " . $current['Person_ID'] . ')',
                 'Unlink reference to person: ' . $currentName
             )
           ?>

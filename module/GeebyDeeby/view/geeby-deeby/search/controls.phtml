@@ -1,0 +1,9 @@
+<?php $config = $this->config('search_controls') ?? []; ?>
+<div class="results row">
+  <ul class="search-controls hidden">
+    <li><label><input class="creator-toggle" type="checkbox" /> Show credits</label></li>
+    <?php foreach ($config['edition_attributes'] ?? [] as $id => $label): ?>
+      <li><label><input class="edition-attribute-toggle" data-edition-attribute-id="<?=$id?>" type="checkbox" /> <?=$this->escapeHtml($label)?></label></li>
+    <?php endforeach; ?>
+  </ul>
+</div>

@@ -15,7 +15,7 @@
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('Image', " . $current['Sequence_ID'] . ")",
+                "Edition.unlink('Image', " . $current['Sequence_ID'] . ')',
                 !empty($current['IIIF_URI'])
               ? 'Delete image with IIIF URI: ' . $current['IIIF_URI']
               : 'Delete image with path: ' . $current['Image_Path']

@@ -33,6 +33,9 @@ use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\TableGateway\AbstractTableGateway;
 
+use function array_slice;
+use function count;
+
 /**
  * Generic table gateway.
  *

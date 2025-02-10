@@ -32,6 +32,8 @@ namespace GeebyDeeby\Db\Table;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
 
+use function is_array;
+
 /**
  * Table Definition for Editions_Attributes_Values
  *
@@ -82,13 +84,14 @@ class EditionsAttributesValues extends Gateway
     /**
      * Get a list of attributes for the specified item.
      *
-     * @param int $itemID Item ID
+     * @param int|int[] $itemID      Item ID (or array of IDs)
+     * @param ?int      $attributeID Attribute ID filter (null for all attributes)
      *
      * @return mixed
      */
-    public function getAttributesForItem($itemID)
+    public function getAttributesForItem($itemID, $attributeID = null)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID, $attributeID) {
             $select->join(
                 ['e' => 'Editions'],
                 'e.Edition_ID = Editions_Attributes_Values.Edition_ID'
@@ -103,7 +106,14 @@ class EditionsAttributesValues extends Gateway
                 . 'Editions_Attributes_Values.Editions_Attribute_ID'
             );
             $select->order(['ea.Display_Priority', 'ea.Editions_Attribute_Name']);
-            $select->where->equalTo('i.Item_ID', $itemID);
+            if (is_array($itemID)) {
+                $select->where->in('i.Item_ID', $itemID);
+            } else {
+                $select->where->equalTo('i.Item_ID', $itemID);
+            }
+            if ($attributeID) {
+                $select->where->equalTo('ea.Editions_Attribute_ID', $attributeID);
+            }
         };
         return $this->select($callback);
     }

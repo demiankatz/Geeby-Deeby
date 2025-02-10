@@ -63,7 +63,7 @@ class EmailServiceFactory implements \Laminas\ServiceManager\Factory\FactoryInte
         }
         $config = $container->get('Config');
         return new $name(
-            $config['geeby-deeby']['emailTransport'] ?? ['type' => 'sendmail']
+            $config['geeby-deeby']['emailTransport'] ?? 'sendmail://default'
         );
     }
 }

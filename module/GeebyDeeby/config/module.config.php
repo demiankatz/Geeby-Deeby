@@ -5,12 +5,8 @@ return [
         'siteTitle' => 'My Gamebook Web Page',
         'siteEmail' => 'me@emailhost.com',
         'siteOwner' => 'Webmaster',
-        // See https://docs.laminas.dev/laminas-mail/transport/intro/ for more
-        // documentation on email transport options:
-        'emailTransport' => [
-            'type' => 'sendmail',
-            'options' => [],
-        ],
+        // See https://symfony.com/doc/current/mailer.html for more documentation on email transport options:
+        'emailTransport' => 'sendmail://default',
         'dbHost' => 'localhost',
         'dbName' => 'gbdb', // database schema name
         'dbUser' => 'gbdb', // database username
@@ -59,6 +55,13 @@ return [
             // if you wish to create custom link groupings. These custom groups
             // may be accessed by adding the group name as a subdirectory of the
             // main /Links URL. (e.g. http://mysite.org/Links/MyGroupName).
+        ],
+        'search_controls' => [
+            // You can add edition attribute IDs and labels here to make them
+            // available for display in search results:
+            'edition_attributes' => [
+                // 1234 => 'Show my example attribute',
+            ],
         ],
     ],
     'controller_plugins' => [
@@ -1201,6 +1204,28 @@ return [
                         '__NAMESPACE__' => 'GeebyDeeby\Controller',
                         'controller'    => 'Search',
                         'action'        => 'index',
+                    ],
+                ],
+            ],
+            'search-creator-ajax' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/Search/CreatorAjax',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Search',
+                        'action'        => 'creatorAjax',
+                    ],
+                ],
+            ],
+            'search-edition-attribute-ajax' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/Search/EditionAttributeAjax',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
+                        'controller'    => 'Search',
+                        'action'        => 'editionAttributeAjax',
                     ],
                 ],
             ],

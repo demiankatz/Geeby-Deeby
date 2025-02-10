@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use function count;
+
 /**
  * Generic row gateway
  *

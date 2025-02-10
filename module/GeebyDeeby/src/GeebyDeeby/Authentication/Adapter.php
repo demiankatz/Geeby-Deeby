@@ -31,6 +31,8 @@ namespace GeebyDeeby\Authentication;
 
 use Laminas\Authentication\Result;
 
+use function is_object;
+
 /**
  * GeebyDeeby Authentication Adapter
  *

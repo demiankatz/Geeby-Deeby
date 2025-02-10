@@ -15,7 +15,7 @@
           <?=
             $this->iconButton(
                 'trash',
-                "Item.unlink('Attachment', " . $current['Item_ID'] . ")",
+                "Item.unlink('Attachment', " . $current['Item_ID'] . ')',
                 'Unlink attached item: ' . $current['Item_Name']
             )
           ?>

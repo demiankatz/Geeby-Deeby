@@ -29,8 +29,10 @@
 
 namespace GeebyDeeby\Controller;
 
-use Laminas\Crypt\Password\Bcrypt;
+use GeebyDeeby\Crypt\PasswordHasher;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
+
+use function call_user_func;
 
 /**
  * Migration controller
@@ -369,10 +371,10 @@ class MigrateController extends AbstractBase
     protected function migrateUserPasswords()
     {
         $users = $this->getDbTable('user');
-        $bcrypt = new Bcrypt();
+        $hasher = new PasswordHasher();
         $count = 0;
         foreach ($users->select(['Password_Hash' => '']) as $user) {
-            $user->Password_Hash = $bcrypt->create($user->Password);
+            $user->Password_Hash = $hasher->create($user->Password);
             $user->save();
             $count++;
         }

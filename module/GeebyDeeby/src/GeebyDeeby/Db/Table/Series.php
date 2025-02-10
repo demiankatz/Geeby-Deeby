@@ -105,7 +105,7 @@ class Series extends Gateway
                 [
                     'Series_ID',
                     'Series_Name' => new Expression(
-                        "Concat(Series_AltName, " .
+                        'Concat(Series_AltName, ' .
                         "' [alt. title for ', Series_Name, ']')"
                     ),
                 ]

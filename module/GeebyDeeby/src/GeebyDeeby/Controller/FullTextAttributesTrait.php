@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use function count;
+
 /**
  * Trait for shared logic related to full text attribute display.
  *

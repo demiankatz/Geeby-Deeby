@@ -60,7 +60,7 @@ abstract class AbstractPluginManager extends Base
         $expectedInterface = $this->getExpectedInterface();
         if (!($plugin instanceof $expectedInterface)) {
             throw new ServiceManagerRuntimeException(
-                'Plugin ' . get_class($plugin) . ' does not belong to '
+                'Plugin ' . $plugin::class . ' does not belong to '
                 . $expectedInterface
             );
         }

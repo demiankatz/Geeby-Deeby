@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use function count;
+use function in_array;
+
 /**
  * Credit analysis view helper
  *

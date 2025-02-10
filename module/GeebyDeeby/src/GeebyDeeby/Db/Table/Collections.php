@@ -34,6 +34,8 @@ use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 
+use function is_array;
+
 /**
  * Table Definition for Collections
  *

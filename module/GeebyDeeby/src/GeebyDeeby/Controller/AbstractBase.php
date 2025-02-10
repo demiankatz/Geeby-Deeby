@@ -33,6 +33,10 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
 
+use function intval;
+use function is_callable;
+use function is_object;
+
 /**
  * Abstract base controller
  *
@@ -86,7 +90,7 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Die with a JSON-encoded error message.
+     * Die with a JSON-encoded message.
      *
      * @param string $msg     The message to send back.
      * @param bool   $success Success status
@@ -469,6 +473,24 @@ class AbstractBase extends AbstractActionController
         return $forward
             ? $this->forwardTo('GeebyDeeby\Controller\Index', 'Login')
             : $this->redirect()->toRoute('login');
+    }
+
+    /**
+     * Perform authentication
+     *
+     * @param string $username Username
+     * @param string $password Password
+     *
+     * @return \GeebyDeeby\Authentication\Adapter
+     * @throws \Exception
+     */
+    protected function getAuthenticationAdapter($username, $password)
+    {
+        return new \GeebyDeeby\Authentication\Adapter(
+            $this->getDbTable('user'),
+            $username,
+            $password
+        );
     }
 
     /**

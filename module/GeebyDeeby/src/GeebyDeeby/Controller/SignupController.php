@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Controller;
 
-use Laminas\Crypt\Password\Bcrypt;
+use GeebyDeeby\Crypt\PasswordHasher;
+
+use function count;
 
 /**
  * Signup controller
@@ -57,6 +59,12 @@ class SignupController extends AbstractBase
             $view->user = $this->params()->fromPost('Username');
             $view->fullname = $this->params()->fromPost('Fullname');
             $view->address = $this->params()->fromPost('Address');
+            if (!empty($view->address)) {
+                $emailValidator = new \Laminas\Validator\EmailAddress();
+                $validEmail = $emailValidator->isValid($view->address);
+            } else {
+                $validEmail = true;
+            }
             $password1 = $this->params()->fromPost('Password1');
             $password2 = $this->params()->fromPost('Password2');
             if ($view->user == '' || $view->fullname == '' || $password1 == '') {
@@ -66,20 +74,22 @@ class SignupController extends AbstractBase
                     . 'numbers, dashes and underscores.';
             } elseif (
                 $password1 != $password2
-                || strpos($view->address, '://') !== false // block spam addresses
+                || str_contains($view->address, '://')   // block spam addresses
             ) {
                 $view->error = 'Your passwords did not match. Please try again.';
+            } elseif (!$validEmail) {
+                $view->error = 'The email address you provided is invalid. Please try again.';
             } else {
                 $table = $this->getDbTable('user');
                 $exists = $table->select(['Username' => $view->user]);
                 if (count($exists) > 0) {
                     $view->error = 'The username you selected is already in use.';
                 } else {
-                    $bcrypt = new Bcrypt();
+                    $hasher = new PasswordHasher();
                     $table->insert(
                         [
                             'Username' => $view->user,
-                            'Password_Hash' => $bcrypt->create($password1),
+                            'Password_Hash' => $hasher->create($password1),
                             'Name' => $view->fullname,
                             'Address' => $view->address,
                             'Join_Reason' => $view->reason,

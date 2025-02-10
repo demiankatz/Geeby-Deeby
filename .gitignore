@@ -12,4 +12,5 @@ public/*.xls
 vendor/
 !public/css/vendor
 !public/js/vendor
+.php_cs_cache
 .vscode

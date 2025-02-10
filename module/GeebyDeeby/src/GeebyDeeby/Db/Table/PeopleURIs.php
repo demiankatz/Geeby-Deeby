@@ -32,6 +32,8 @@ namespace GeebyDeeby\Db\Table;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
 
+use function is_callable;
+
 /**
  * Table Definition for People_URIs
  *

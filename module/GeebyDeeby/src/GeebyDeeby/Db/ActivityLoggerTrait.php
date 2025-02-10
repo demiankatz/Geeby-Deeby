@@ -116,7 +116,7 @@ trait ActivityLoggerTrait
             $log = rtrim(static::$logDir, '/') . "/{$filename}";
             $handle = fopen($log, 'a');
             if ($handle) {
-                fputs($handle, $this->getLogMessage($extras));
+                fwrite($handle, $this->getLogMessage($extras));
                 fclose($handle);
             }
         }

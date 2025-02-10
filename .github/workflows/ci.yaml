@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['7.4', '8.0', '8.1']
+        php-version: ['8.1', '8.2', '8.3']
         include:
-          - php-version: 7.4
-            phing_tasks: "startup"
-          - php-version: 8.0
-            phing_tasks: "startup"
           - php-version: 8.1
+            phing_tasks: "startup"
+          - php-version: 8.2
+            phing_tasks: "startup"
+          - php-version: 8.3
             phing_tasks: "startup phpcs-console php-cs-fixer-dryrun"
 
     steps:
@@ -23,23 +23,24 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: intl, xsl
+          tools: composer:2.1.6
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Cache php-cs-fixer data
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .php_cs_cache
           key: "php-${{ matrix.php-version }}-php-cs-fixer-${{ github.sha }}"
