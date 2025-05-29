@@ -172,6 +172,9 @@ class ModsExtractor
     protected function nameIsInvertedName(string $name, string $invertedName): bool
     {
         $parts = explode(', ', $invertedName, 2);
+        if (count($parts) < 2) {
+            return false;
+        }
         return $name === $parts[1] . ' ' . $parts[0];
     }
 
