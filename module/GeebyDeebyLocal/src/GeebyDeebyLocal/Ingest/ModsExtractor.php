@@ -29,6 +29,7 @@
 
 namespace GeebyDeebyLocal\Ingest;
 
+use function count;
 use function in_array;
 use function intval;
 use function strlen;
