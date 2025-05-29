@@ -571,8 +571,8 @@ class DatabaseIngester extends BaseIngester
     {
         return rtrim(
             str_replace(
-                [' st.', ' w.', '23rd', 'no. ', '&', 'ave.'],
-                [' street', ' west', '23d', '', 'and', 'avenue'],
+                [' st.', ' w.', '23rd', 'no. ', '&', 'ave.', ' n. ', ' e. ', ' w. '],
+                [' street', ' west', '23d', '', 'and', 'avenue', ' north ', ' east ', ' west '],
                 strtolower($street)
             ),
             '.'
