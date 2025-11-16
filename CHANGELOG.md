@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Series listing by person now accounts for extra name details correctly.
+
 ## 2.9.0 - 2025-01-10
 
 ### Added
