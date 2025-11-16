@@ -318,7 +318,7 @@ class EditionsCredits extends Gateway
                 ]
             );
             $fields = [
-                'Last_Name', 'First_Name', $bestTitle,
+                'Last_Name', 'First_Name', 'Extra_Details', $bestTitle,
             ];
             $select->order($fields);
             $select->where->equalTo('Series_ID', $seriesID);
