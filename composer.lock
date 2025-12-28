@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c276bb3d333751c0300dca0123f3e87b",
+    "content-hash": "44cf4e06de8ed424911f990a75104480",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -686,95 +686,6 @@
             "time": "2025-12-05T11:02:08+00:00"
         },
         {
-            "name": "laminas/laminas-i18n",
-            "version": "2.32.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-i18n.git",
-                "reference": "8e71b40318f0df6253329e837188e1d77cf83aea"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-i18n/zipball/8e71b40318f0df6253329e837188e1d77cf83aea",
-                "reference": "8e71b40318f0df6253329e837188e1d77cf83aea",
-                "shasum": ""
-            },
-            "require": {
-                "ext-ctype": "*",
-                "ext-intl": "*",
-                "laminas/laminas-escaper": "^2.0",
-                "laminas/laminas-servicemanager": "^3.21.0",
-                "laminas/laminas-stdlib": "^3.0",
-                "laminas/laminas-translator": "^1.0",
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
-                "psr/container": "^1.0.0"
-            },
-            "conflict": {
-                "laminas/laminas-view": "<2.20.0",
-                "zendframework/zend-i18n": "*"
-            },
-            "require-dev": {
-                "laminas/laminas-cache": "^3.13.0",
-                "laminas/laminas-cache-storage-adapter-memory": "^2.4.0",
-                "laminas/laminas-cache-storage-deprecated-factory": "^1.3",
-                "laminas/laminas-coding-standard": "^3.1",
-                "laminas/laminas-config": "^3.10.1",
-                "laminas/laminas-eventmanager": "^3.15.0",
-                "laminas/laminas-filter": "^2.42",
-                "laminas/laminas-validator": "^2.65.0",
-                "laminas/laminas-view": "^2.44",
-                "phpunit/phpunit": "^11.5.46",
-                "psalm/plugin-phpunit": "^0.19.5",
-                "vimeo/psalm": "^6.14.2"
-            },
-            "suggest": {
-                "laminas/laminas-cache": "You should install this package to cache the translations",
-                "laminas/laminas-config": "You should install this package to use the INI translation format",
-                "laminas/laminas-eventmanager": "You should install this package to use the events in the translator",
-                "laminas/laminas-filter": "You should install this package to use the provided filters",
-                "laminas/laminas-i18n-resources": "This package provides validator and captcha translations",
-                "laminas/laminas-validator": "You should install this package to use the provided validators",
-                "laminas/laminas-view": "You should install this package to use the provided view helpers"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "component": "Laminas\\I18n",
-                    "config-provider": "Laminas\\I18n\\ConfigProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\I18n\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Provide translations for your application, and filter and validate internationalized values",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "i18n",
-                "laminas"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-i18n/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-i18n/issues",
-                "rss": "https://github.com/laminas/laminas-i18n/releases.atom",
-                "source": "https://github.com/laminas/laminas-i18n"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2025-12-15T14:23:40+00:00"
-        },
-        {
             "name": "laminas/laminas-json",
             "version": "3.7.1",
             "source": {
@@ -892,95 +803,6 @@
             ],
             "abandoned": true,
             "time": "2024-12-05T14:43:32+00:00"
-        },
-        {
-            "name": "laminas/laminas-log",
-            "version": "2.17.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-log.git",
-                "reference": "abc93b0c597e5dd55a18d29f0ae3b18c2f0e3f0c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-log/zipball/abc93b0c597e5dd55a18d29f0ae3b18c2f0e3f0c",
-                "reference": "abc93b0c597e5dd55a18d29f0ae3b18c2f0e3f0c",
-                "shasum": ""
-            },
-            "require": {
-                "laminas/laminas-servicemanager": "^3.21.0",
-                "laminas/laminas-stdlib": "^3.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
-                "psr/log": "^1.1.2"
-            },
-            "conflict": {
-                "zendframework/zend-log": "*"
-            },
-            "provide": {
-                "psr/log-implementation": "1.0.0"
-            },
-            "require-dev": {
-                "ext-dom": "*",
-                "ext-json": "*",
-                "ext-xml": "*",
-                "firephp/firephp-core": "^0.5.3",
-                "laminas/laminas-coding-standard": "~2.3.0",
-                "laminas/laminas-db": "^2.6",
-                "laminas/laminas-escaper": "^2.5",
-                "laminas/laminas-filter": "^2.5",
-                "laminas/laminas-mail": "^2.6.1",
-                "laminas/laminas-validator": "^2.10.1",
-                "mikey179/vfsstream": "^1.6.7",
-                "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.5.10"
-            },
-            "suggest": {
-                "ext-mongo": "mongo extension to use Mongo writer",
-                "ext-mongodb": "mongodb extension to use MongoDB writer",
-                "laminas/laminas-db": "Laminas\\Db component to use the database log writer",
-                "laminas/laminas-escaper": "Laminas\\Escaper component, for use in the XML log formatter",
-                "laminas/laminas-mail": "Laminas\\Mail component to use the email log writer",
-                "laminas/laminas-validator": "Laminas\\Validator component to block invalid log messages"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "component": "Laminas\\Log",
-                    "config-provider": "Laminas\\Log\\ConfigProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Log\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Robust, composite logger with filtering, formatting, and PSR-3 support",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "laminas",
-                "log",
-                "logging"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-log/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-log/issues",
-                "rss": "https://github.com/laminas/laminas-log/releases.atom",
-                "source": "https://github.com/laminas/laminas-log"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "abandoned": "monolog/monolog",
-            "time": "2024-12-05T15:59:56+00:00"
         },
         {
             "name": "laminas/laminas-modulemanager",
@@ -1287,76 +1109,6 @@
             "time": "2025-11-09T16:54:18+00:00"
         },
         {
-            "name": "laminas/laminas-serializer",
-            "version": "2.18.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-serializer.git",
-                "reference": "7f177bc994ceee27acacd80edfad6d7e883a22a1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-serializer/zipball/7f177bc994ceee27acacd80edfad6d7e883a22a1",
-                "reference": "7f177bc994ceee27acacd80edfad6d7e883a22a1",
-                "shasum": ""
-            },
-            "require": {
-                "laminas/laminas-json": "^3.1",
-                "laminas/laminas-stdlib": "^3.2",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
-            },
-            "conflict": {
-                "zendframework/zend-serializer": "*"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "~2.4.0",
-                "laminas/laminas-math": "^3.6",
-                "laminas/laminas-servicemanager": "^3.21.0",
-                "phpunit/phpunit": "~9.6.0"
-            },
-            "suggest": {
-                "laminas/laminas-math": "(^3.3) To support Python Pickle serialization",
-                "laminas/laminas-servicemanager": "(^3.6) To support plugin manager support"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "component": "Laminas\\Serializer",
-                    "config-provider": "Laminas\\Serializer\\ConfigProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Serializer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Serialize and deserialize PHP structures to a variety of representations",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "laminas",
-                "serializer"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-serializer/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-serializer/issues",
-                "rss": "https://github.com/laminas/laminas-serializer/releases.atom",
-                "source": "https://github.com/laminas/laminas-serializer"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2025-01-28T00:47:31+00:00"
-        },
-        {
             "name": "laminas/laminas-servicemanager",
             "version": "3.24.0",
             "source": {
@@ -1589,59 +1341,6 @@
                 }
             ],
             "time": "2025-10-11T18:13:12+00:00"
-        },
-        {
-            "name": "laminas/laminas-translator",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-translator.git",
-                "reference": "c4c1637ea56afe812f1af3212656fd6f9c02c551"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-translator/zipball/c4c1637ea56afe812f1af3212656fd6f9c02c551",
-                "reference": "c4c1637ea56afe812f1af3212656fd6f9c02c551",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "~3.1.0",
-                "vimeo/psalm": "^6.13.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Translator\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Interfaces for the Translator component of laminas-i18n",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "i18n",
-                "laminas"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-i18n/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-translator/issues",
-                "rss": "https://github.com/laminas/laminas-translator/releases.atom",
-                "source": "https://github.com/laminas/laminas-translator"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2025-10-14T20:58:42+00:00"
         },
         {
             "name": "laminas/laminas-uri",
@@ -2098,30 +1797,30 @@
         },
         {
             "name": "psr/log",
-            "version": "1.1.4",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/d49695b909c3b7628b6289db5479a1c204601f11",
-                "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=8.0.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "3.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Psr\\Log\\": "Psr/Log/"
+                    "Psr\\Log\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2142,9 +1841,9 @@
                 "psr-3"
             ],
             "support": {
-                "source": "https://github.com/php-fig/log/tree/1.1.4"
+                "source": "https://github.com/php-fig/log/tree/3.0.2"
             },
-            "time": "2021-05-03T11:20:27+00:00"
+            "time": "2024-09-11T13:17:53+00:00"
         },
         {
             "name": "symfony/console",
