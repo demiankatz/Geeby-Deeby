@@ -176,7 +176,7 @@ class EditSeriesController extends AbstractBase
             }
             return $this->jsonReportSuccess();
         }
-        return $this->jsonError('Unexpected action');
+        return $this->jsonDie('Unexpected action');
     }
 
     /**
