@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next Release - TBD
+## 2.10.0 - 2025-12-28
 
 ### Added
 
@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- Various bugs detected by PHPstan.
 - Series listing by person now accounts for extra name details correctly.
 
 ## 2.9.0 - 2025-01-10
