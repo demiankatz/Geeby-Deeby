@@ -68,7 +68,7 @@ class EditionsReleaseDates extends Gateway
      */
     public function getDatesForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->quantifier('DISTINCT');
             $select->columns(['Year', 'Month', 'Day']);
             $select->join(
@@ -99,7 +99,7 @@ class EditionsReleaseDates extends Gateway
      */
     public function getDatesForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Release_Dates.Note_ID = n.Note_ID',
@@ -121,7 +121,7 @@ class EditionsReleaseDates extends Gateway
      */
     public function getDatesForEditionOrParentEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->quantifier('DISTINCT');
             $select->columns(['Year', 'Month', 'Day']);
             $select->join(
@@ -149,7 +149,7 @@ class EditionsReleaseDates extends Gateway
      */
     public function getItemsByYear()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'Editions_Release_Dates.Edition_ID = eds.Edition_ID'

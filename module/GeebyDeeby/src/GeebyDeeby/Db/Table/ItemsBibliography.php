@@ -67,7 +67,7 @@ class ItemsBibliography extends Gateway
      */
     public function getItemsDescribingItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Bibliography.Bib_Item_ID = i.Item_ID'
@@ -91,7 +91,7 @@ class ItemsBibliography extends Gateway
      */
     public function getItemsDescribedByItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Bibliography.Item_ID = i.Item_ID'

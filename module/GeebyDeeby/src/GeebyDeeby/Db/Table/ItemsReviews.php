@@ -78,7 +78,7 @@ class ItemsReviews extends Gateway
      */
     public function getReviewsForItem($itemID, $approved = 'y')
     {
-        $callback = function ($select) use ($itemID, $approved) {
+        $callback = function ($select) use ($itemID, $approved): void {
             $select->order('Username');
             $select->join(
                 ['u' => 'Users'],
@@ -103,7 +103,7 @@ class ItemsReviews extends Gateway
      */
     public function getReviewIDsByUser($userID, $approved = 'y')
     {
-        $callback = function ($select) use ($userID, $approved) {
+        $callback = function ($select) use ($userID, $approved): void {
             if (null !== $approved) {
                 $select->where->equalTo('Approved', $approved);
             }
@@ -124,7 +124,7 @@ class ItemsReviews extends Gateway
      */
     public function getReviewsByUser($userID, $approved = 'y', $series = true)
     {
-        $callback = function ($select) use ($userID, $approved, $series) {
+        $callback = function ($select) use ($userID, $approved, $series): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Reviews.Item_ID = i.Item_ID'

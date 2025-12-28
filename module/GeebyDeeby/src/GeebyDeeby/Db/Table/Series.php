@@ -67,7 +67,7 @@ class Series extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Series_Name');
         };
         return $this->select($callback);
@@ -82,7 +82,7 @@ class Series extends Gateway
      */
     public function getSeriesForLanguage($langID)
     {
-        $callback = function ($select) use ($langID) {
+        $callback = function ($select) use ($langID): void {
             $select->where->equalTo('Language_ID', $langID);
             $select->order('Series_Name');
         };
@@ -99,7 +99,7 @@ class Series extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query) {
+        $callback = function ($select) use ($query): void {
             $select2 = clone $select;
             $select2->columns(
                 [
@@ -138,7 +138,7 @@ class Series extends Gateway
      */
     public function keywordSearch($tokens)
     {
-        $callback = function ($select) use ($tokens) {
+        $callback = function ($select) use ($tokens): void {
             foreach ($tokens as $token) {
                 $select->where->like('Series_Name', '%' . $token . '%');
             }
@@ -166,7 +166,7 @@ class Series extends Gateway
             $itemID,
             $includePosition,
             $includeParentPosition
-        ) {
+        ): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'Series.Series_ID = eds.Series_ID',

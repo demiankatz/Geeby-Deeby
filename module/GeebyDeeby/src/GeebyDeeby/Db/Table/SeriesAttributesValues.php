@@ -67,7 +67,7 @@ class SeriesAttributesValues extends Gateway
      */
     public function getAttributesForSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['sa' => 'Series_Attributes'],
                 'sa.Series_Attribute_ID = '

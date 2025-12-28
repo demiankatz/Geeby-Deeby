@@ -83,7 +83,7 @@ class SeriesController extends AbstractBase
 
         // Check for missing creators
         $editions = $this->getDbTable('edition');
-        $callback = function ($select) use ($seriesId) {
+        $callback = function ($select) use ($seriesId): void {
             $select->join(
                 ['ic' => 'Items_Creators'],
                 'Editions.Item_ID = ic.Item_ID',
@@ -106,7 +106,7 @@ class SeriesController extends AbstractBase
 
         // Check for missing credits
         $editions = $this->getDbTable('edition');
-        $callback = function ($select) use ($seriesId) {
+        $callback = function ($select) use ($seriesId): void {
             $select->join(
                 ['ec' => 'Editions_Credits'],
                 'Editions.Edition_ID = ec.Edition_ID',
@@ -128,7 +128,7 @@ class SeriesController extends AbstractBase
         $view->missingCredits = $editions->select($callback)->toArray();
 
         // Check for missing dates
-        $callback = function ($select) use ($seriesId) {
+        $callback = function ($select) use ($seriesId): void {
             $select->join(
                 ['d' => 'Editions_Release_Dates'],
                 'Editions.Edition_ID = d.Edition_ID',
@@ -151,7 +151,7 @@ class SeriesController extends AbstractBase
         $view->missingDates = $editions->select($callback)->toArray();
 
         // Get date range stats
-        $callback = function ($select) use ($seriesId) {
+        $callback = function ($select) use ($seriesId): void {
             $select->where(['Series_ID' => $seriesId]);
             $select->columns(
                 [
@@ -184,7 +184,7 @@ class SeriesController extends AbstractBase
         $view->dateStats = current($editions->select($callback)->toArray());
 
         // Check for missing items
-        $callback = function ($select) use ($seriesId) {
+        $callback = function ($select) use ($seriesId): void {
             $select->where(['Series_ID' => $seriesId]);
             $select->columns(
                 [

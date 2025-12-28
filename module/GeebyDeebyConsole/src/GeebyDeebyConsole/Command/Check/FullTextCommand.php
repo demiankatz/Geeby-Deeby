@@ -61,6 +61,13 @@ class FullTextCommand extends Command
     protected $table;
 
     /**
+     * HTTP client
+     *
+     * @var Client
+     */
+    protected $client;
+
+    /**
      * Constructor
      *
      * @param EditionsFullText $table  Database table for retrieving full text from

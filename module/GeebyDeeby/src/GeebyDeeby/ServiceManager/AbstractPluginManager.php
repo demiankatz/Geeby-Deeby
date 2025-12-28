@@ -30,8 +30,7 @@
 namespace GeebyDeeby\ServiceManager;
 
 use Laminas\ServiceManager\AbstractPluginManager as Base;
-use Laminas\ServiceManager\Exception\RuntimeException
-as ServiceManagerRuntimeException;
+use Laminas\ServiceManager\Exception\InvalidServiceException;
 
 /**
  * GeebyDeeby Plugin Manager
@@ -52,14 +51,14 @@ abstract class AbstractPluginManager extends Base
      *
      * @param mixed $plugin Plugin to validate
      *
-     * @throws ServiceManagerRuntimeException if invalid
+     * @throws InvalidServiceException if invalid
      * @return void
      */
     public function validate($plugin)
     {
         $expectedInterface = $this->getExpectedInterface();
         if (!($plugin instanceof $expectedInterface)) {
-            throw new ServiceManagerRuntimeException(
+            throw new InvalidServiceException(
                 'Plugin ' . $plugin::class . ' does not belong to '
                 . $expectedInterface
             );

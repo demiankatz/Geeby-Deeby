@@ -67,7 +67,7 @@ class ItemsFiles extends Gateway
      */
     public function getItemsForFile($fileID)
     {
-        $callback = function ($select) use ($fileID) {
+        $callback = function ($select) use ($fileID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Files.Item_ID = i.Item_ID'
@@ -87,7 +87,7 @@ class ItemsFiles extends Gateway
      */
     public function getFilesForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['f' => 'Files'],
                 'Items_Files.File_ID = f.File_ID'

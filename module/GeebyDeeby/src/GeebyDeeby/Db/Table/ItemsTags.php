@@ -70,7 +70,7 @@ class ItemsTags extends Gateway
      */
     public function getItemsForTag($tagID, $sort = 'title')
     {
-        $callback = function ($select) use ($tagID, $sort) {
+        $callback = function ($select) use ($tagID, $sort): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Tags.Item_ID = i.Item_ID'
@@ -128,7 +128,7 @@ class ItemsTags extends Gateway
      */
     public function getTags($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(['t' => 'Tags'], 't.Tag_ID = Items_Tags.Tag_ID');
             $select->order('Tag');
             $select->where->equalTo('Item_ID', $itemID);

@@ -68,7 +68,7 @@ class SeriesAltTitles extends Gateway
      */
     public function getAltTitles($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Series_AltTitles.Note_ID = n.Note_ID',
@@ -90,7 +90,7 @@ class SeriesAltTitles extends Gateway
      */
     public function keywordSearch($tokens)
     {
-        $callback = function ($select) use ($tokens) {
+        $callback = function ($select) use ($tokens): void {
             foreach ($tokens as $token) {
                 $select->where->like('Series_AltName', '%' . $token . '%');
             }

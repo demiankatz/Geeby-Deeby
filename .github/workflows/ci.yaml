@@ -8,14 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['8.1', '8.2', '8.3']
+        php-version: ['8.2', '8.3', '8.4']
         include:
-          - php-version: 8.1
-            phing_tasks: "startup"
           - php-version: 8.2
             phing_tasks: "startup"
           - php-version: 8.3
-            phing_tasks: "startup phpcs-console php-cs-fixer-dryrun"
+            phing_tasks: "startup"
+          - php-version: 8.4
+            phing_tasks: "startup qa-console"
 
     steps:
       - name: Setup PHP
@@ -23,10 +23,10 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: intl, xsl
-          tools: composer:2.1.6
+          tools: composer:2.8.1
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Get composer cache directory
         id: composer-cache
@@ -45,6 +45,27 @@ jobs:
           path: .php_cs_cache
           key: "php-${{ matrix.php-version }}-php-cs-fixer-${{ github.sha }}"
           restore-keys: "php-${{ matrix.php-version }}-php-cs-fixer-"
+
+      - name: Cache phpstan data
+        uses: actions/cache@v4
+        with:
+          path: .phpstan_cache
+          key: "php-${{ matrix.php-version }}-phpstan-${{ github.sha }}"
+          restore-keys: "php-${{ matrix.php-version }}-phpstan-"
+
+      - name: Cache PHP_CodeSniffer data
+        uses: actions/cache@v4
+        with:
+          path: tests/phpcs.cache.json
+          key: "php-${{ matrix.php-version }}-phpcs-${{ github.sha }}"
+          restore-keys: "php-${{ matrix.php-version }}-phpcs-"
+
+      - name: Cache rector data
+        uses: actions/cache@v4
+        with:
+          path: .rector
+          key: "php-${{ matrix.php-version }}-rector-${{ github.sha }}"
+          restore-keys: "php-${{ matrix.php-version }}-rector-"
 
       - name: Install composer dependencies
         run: composer install

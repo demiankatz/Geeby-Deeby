@@ -67,7 +67,7 @@ class ItemsDescriptions extends Gateway
      */
     public function getDescriptions($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->order('Source');
             $select->where->equalTo('Item_ID', $itemID);
         };

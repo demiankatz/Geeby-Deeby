@@ -69,7 +69,7 @@ class EditionsFullText extends Gateway
      */
     public function getFullTextForEdition($edition)
     {
-        $callback = function ($select) use ($edition) {
+        $callback = function ($select) use ($edition): void {
             $select->join(
                 ['fts' => 'Full_Text_Sources'],
                 'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID'
@@ -91,7 +91,7 @@ class EditionsFullText extends Gateway
      */
     public function getFullTextForEditionOrParentEdition($edition)
     {
-        $callback = function ($select) use ($edition) {
+        $callback = function ($select) use ($edition): void {
             $select->quantifier('DISTINCT');
             $select->columns(['Sequence_ID', 'Full_Text_URL']);
             $select->join(
@@ -121,7 +121,7 @@ class EditionsFullText extends Gateway
      */
     public function getFullTextForItem($item)
     {
-        $callback = function ($select) use ($item) {
+        $callback = function ($select) use ($item): void {
             $select->quantifier('DISTINCT');
             $select->columns(['Sequence_ID', 'Full_Text_URL']);
             $select->join(
@@ -158,7 +158,7 @@ class EditionsFullText extends Gateway
         $fuzzy = false,
         $source = null
     ) {
-        $callback = function ($select) use ($series, $fuzzy, $source) {
+        $callback = function ($select) use ($series, $fuzzy, $source): void {
             if ($fuzzy) {
                 $select->join(
                     ['eds2' => 'Editions'],

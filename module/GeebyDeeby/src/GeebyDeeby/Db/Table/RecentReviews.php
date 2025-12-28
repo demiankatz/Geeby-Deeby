@@ -65,7 +65,7 @@ class RecentReviews extends Gateway
      */
     public function getRecentItemReviews()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->join(
                 ['u' => 'Users'],
                 'Recent_Reviews.User_ID = u.User_ID'
@@ -87,7 +87,7 @@ class RecentReviews extends Gateway
      */
     public function getRecentSeriesComments()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->join(
                 ['u' => 'Users'],
                 'Recent_Reviews.User_ID = u.User_ID'

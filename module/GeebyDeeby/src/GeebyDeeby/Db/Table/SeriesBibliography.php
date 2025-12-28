@@ -67,7 +67,7 @@ class SeriesBibliography extends Gateway
      */
     public function getItemsDescribingSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Series_Bibliography.Item_ID = i.Item_ID'
@@ -91,7 +91,7 @@ class SeriesBibliography extends Gateway
      */
     public function getSeriesDescribedByItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Bibliography.Series_ID = s.Series_ID'
