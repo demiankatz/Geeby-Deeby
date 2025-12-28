@@ -11,7 +11,7 @@
 ?>
 <?=$this->render('geeby-deeby/search/controls.phtml')?>
 <div class="results row">
-  <?php foreach($lists as $title => $results): ?>
+  <?php foreach ($lists as $title => $results): ?>
     <?php if (count($results) > 0): $empty = false; ?>
       <?php $prefix = explode(' ', $title); ?>
       <?=$this->render('geeby-deeby/search/list.phtml', ['title' => $title,'items' => $results,'prefix' => $prefix[0]]) ?>
