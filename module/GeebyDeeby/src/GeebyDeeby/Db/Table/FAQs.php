@@ -65,7 +65,7 @@ class FAQs extends Gateway
      */
     public function getAll()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->join(
                 ['fc' => 'FAQ_Categories'],
                 'FAQs.FAQ_Category_ID= fc.FAQ_Category_ID'

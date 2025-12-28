@@ -91,5 +91,6 @@ trait SeriesByTitleTrait
         foreach ($result as $current) {
             return $current;
         }
+        return false;
     }
 }

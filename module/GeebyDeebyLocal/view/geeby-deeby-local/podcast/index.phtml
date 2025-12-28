@@ -17,9 +17,9 @@ All episodes are available through an <a href="<?=$this->url('podcast-rss')?>">R
 <h2>Previous Episodes</h2>
 <div class="row">
   <div class="col-sm-12">
-    <?php if(count($episodes) > 1): ?>
+    <?php if (count($episodes) > 1): ?>
       <?php next($episodes) ?>
-      <?php while($this->latest = current($episodes)): ?>
+      <?php while ($this->latest = current($episodes)): ?>
         <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
         <hr/>
         <?php next($episodes) ?>

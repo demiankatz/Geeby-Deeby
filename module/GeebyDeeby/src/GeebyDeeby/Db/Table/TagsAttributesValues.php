@@ -67,7 +67,7 @@ class TagsAttributesValues extends Gateway
      */
     public function getAttributesForTag($tagID)
     {
-        $callback = function ($select) use ($tagID) {
+        $callback = function ($select) use ($tagID): void {
             $select->join(
                 ['ta' => 'Tags_Attributes'],
                 'ta.Tags_Attribute_ID = '

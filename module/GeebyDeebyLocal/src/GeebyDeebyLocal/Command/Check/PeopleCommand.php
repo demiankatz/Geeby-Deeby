@@ -116,7 +116,7 @@ class PeopleCommand extends Command
     {
         $startFrom = $input->getArgument('startFrom');
         $callback = empty($startFrom) ? false
-            : function ($select) use ($startFrom) {
+            : function ($select) use ($startFrom): void {
                 $select->where->greaterThan('Last_Name', $startFrom);
             };
         $list = $this->table->getPeopleWithURIs($callback);

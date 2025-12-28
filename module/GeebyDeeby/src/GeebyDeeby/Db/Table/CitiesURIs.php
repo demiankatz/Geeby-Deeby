@@ -67,7 +67,7 @@ class CitiesURIs extends Gateway
      */
     public function getURIsForCity($cityID)
     {
-        $callback = function ($select) use ($cityID) {
+        $callback = function ($select) use ($cityID): void {
             $select->join(
                 ['pr' => 'Predicates'],
                 'Cities_URIs.Predicate_ID = pr.Predicate_ID'
@@ -86,7 +86,7 @@ class CitiesURIs extends Gateway
      */
     public function getCitiesForURI($uri)
     {
-        $callback = function ($select) use ($uri) {
+        $callback = function ($select) use ($uri): void {
             $select->join(
                 ['c' => 'Cities'],
                 'Cities_URIs.City_ID = c.City_ID'

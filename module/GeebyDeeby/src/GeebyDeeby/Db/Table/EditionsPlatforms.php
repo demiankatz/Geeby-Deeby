@@ -67,7 +67,7 @@ class EditionsPlatforms extends Gateway
      */
     public function getItemsForPlatform($platformID)
     {
-        $callback = function ($select) use ($platformID) {
+        $callback = function ($select) use ($platformID): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'Editions_Platforms.Edition_ID = eds.Edition_ID',
@@ -107,7 +107,7 @@ class EditionsPlatforms extends Gateway
      */
     public function getPlatformsForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['p' => 'Platforms'],
                 'Editions_Platforms.Platform_ID = p.Platform_ID'
@@ -131,7 +131,7 @@ class EditionsPlatforms extends Gateway
      */
     public function getPlatformsForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['p' => 'Platforms'],
                 'Editions_Platforms.Platform_ID = p.Platform_ID'

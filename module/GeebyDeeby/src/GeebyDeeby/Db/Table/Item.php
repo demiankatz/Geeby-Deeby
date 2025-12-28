@@ -67,7 +67,7 @@ class Item extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Item_Name');
         };
         return $this->select($callback);
@@ -83,7 +83,7 @@ class Item extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query) {
+        $callback = function ($select) use ($query): void {
             $select2 = clone $select;
             $select2->columns(
                 [
@@ -121,7 +121,7 @@ class Item extends Gateway
      */
     public function keywordSearch($tokens)
     {
-        $callback = function ($select) use ($tokens) {
+        $callback = function ($select) use ($tokens): void {
             foreach ($tokens as $token) {
                 $select->where->like('Item_Name', '%' . $token . '%');
             }
@@ -144,7 +144,7 @@ class Item extends Gateway
         $topOnly = true,
         $groupByMaterial = true
     ) {
-        $callback = function ($select) use ($seriesID, $topOnly, $groupByMaterial) {
+        $callback = function ($select) use ($seriesID, $topOnly, $groupByMaterial): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'eds.Item_ID = Items.Item_ID',
@@ -236,7 +236,7 @@ class Item extends Gateway
      */
     public function getItemChildren($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->columns([]); // no columns needed from non-parent Items table
             $select->join(
                 ['eds' => 'Editions'],
@@ -286,7 +286,7 @@ class Item extends Gateway
      */
     public function getItemParents($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->columns([]); // no columns needed from non-parent Items table
             $select->join(
                 ['eds' => 'Editions'],
@@ -334,7 +334,7 @@ class Item extends Gateway
      */
     public function getItemsForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'eds.Item_ID = Items.Item_ID',

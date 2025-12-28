@@ -45,9 +45,19 @@ use function is_object;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
+ *
+ * @method Plugin\Followup followup() Followup plugin
+ * @method Plugin\Podcast podcast() Podcast plugin
  */
 class AbstractBase extends AbstractActionController
 {
+    /**
+     * Service locator
+     *
+     * @var ServiceLocatorInterface
+     */
+    protected $serviceLocator;
+
     /**
      * Constructor
      *
@@ -256,7 +266,7 @@ class AbstractBase extends AbstractActionController
             $row = [$key[0] => 'NEW'];
         }
         return $this->createViewModel(
-            [$assignTo => $row, $assignTo . 'Obj' => $rowObj]
+            [$assignTo => $row ?? null, $assignTo . 'Obj' => $rowObj ?? null]
         );
     }
 

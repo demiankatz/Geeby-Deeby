@@ -169,9 +169,9 @@ class DirectoryCommand extends Command
                     $output->writeln("Missing edition data in $i.json");
                     return 1;
                 }
-                $extra = $this->edition->getByPrimaryKey($extras->edition);
+                $extra = $this->editions->getByPrimaryKey($extras->edition);
             }
-            if (!$this->ingester->ingest($details, $job->type, $extra)) {
+            if (!$this->ingester->ingest($details, $job->type, $extra ?? null)) {
                 $prompt = 'Continue with next item anyway?';
                 if ($this->ingester->askQuestion($prompt)) {
                     continue;

@@ -67,7 +67,7 @@ class SeriesFiles extends Gateway
      */
     public function getSeriesForFile($fileID)
     {
-        $callback = function ($select) use ($fileID) {
+        $callback = function ($select) use ($fileID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Files.Series_ID = s.Series_ID'
@@ -87,7 +87,7 @@ class SeriesFiles extends Gateway
      */
     public function getFilesForSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['f' => 'Files'],
                 'Series_Files.File_ID = f.File_ID'

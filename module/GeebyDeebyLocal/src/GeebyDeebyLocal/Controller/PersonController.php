@@ -90,6 +90,6 @@ class PersonController extends \GeebyDeeby\Controller\PersonController
         }
         $name->set('rdfs:label', $authName);
 
-        return $person;
+        return $person ?? $name;
     }
 }

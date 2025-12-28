@@ -69,7 +69,7 @@ class EditionsAttributesValues extends Gateway
      */
     public function getAttributesForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['ea' => 'Editions_Attributes'],
                 'ea.Editions_Attribute_ID = '
@@ -91,7 +91,7 @@ class EditionsAttributesValues extends Gateway
      */
     public function getAttributesForItem($itemID, $attributeID = null)
     {
-        $callback = function ($select) use ($itemID, $attributeID) {
+        $callback = function ($select) use ($itemID, $attributeID): void {
             $select->join(
                 ['e' => 'Editions'],
                 'e.Edition_ID = Editions_Attributes_Values.Edition_ID'

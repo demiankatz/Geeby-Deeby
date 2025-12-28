@@ -106,6 +106,7 @@ class PodcastController extends \GeebyDeeby\Controller\AbstractBase
         $episode = $this->params()->fromQuery('file');
         $details = false;
         $meta = $this->podcast()->getMetadata();
+        $i = 0;
         foreach ($meta as $i => $current) {
             if ($current['filename'] == $episode) {
                 $details = $current;

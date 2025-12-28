@@ -126,7 +126,7 @@ abstract class AbstractThumbIngestor extends BaseIngester
      */
     protected function getExistingImages()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->where->like('Image_Path', '%' . $this->domain . '%');
         };
         $results = [];
@@ -152,7 +152,7 @@ abstract class AbstractThumbIngestor extends BaseIngester
      */
     protected function getMissingImageLinks()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->where(['Full_Text_Source_ID' => $this->fullTextSource]);
         };
         return $this->getDbTable('editionsfulltext')->select($callback);

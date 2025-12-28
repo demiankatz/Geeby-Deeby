@@ -251,12 +251,14 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
                     }
                 }
             }
-            $final[$person] = [
-                'person' => $credit,
-                'realPerson' => $this
-                    ->getRealPersonDetails($person, array_keys($creators)),
-                'notes' => implode('; ', array_unique($notes)),
-            ];
+            if (isset($credit)) {
+                $final[$person] = [
+                    'person' => $credit,
+                    'realPerson' => $this
+                        ->getRealPersonDetails($person, array_keys($creators)),
+                    'notes' => implode('; ', array_unique($notes)),
+                ];
+            }
         }
         return $final;
     }

@@ -118,7 +118,7 @@ class DatabaseIngester extends BaseIngester
     {
         readline_callback_handler_install(
             $prompt,
-            function () {
+            function (): void {
             }
         );
         $char = stream_get_contents(STDIN, 1);
@@ -704,7 +704,7 @@ class DatabaseIngester extends BaseIngester
             }
             $this->writeln('Publisher mismatch in edition.');
             $this->writeln(
-                "Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}"
+                isset($ed) ? "Old: {$ed['Publisher_Name']}, {$ed['Street']}, {$ed['City_Name']}" : 'Old: none'
             );
             $this->writeln("New: $name, $street, $place");
             if (!$this->askQuestion('Change?')) {
@@ -1179,7 +1179,7 @@ class DatabaseIngester extends BaseIngester
         do {
             $strippedTitle = substr($data['title'], 0, $pos);
             // check to see if we have a title match
-            $callback = function ($select) use ($strippedTitle) {
+            $callback = function ($select) use ($strippedTitle): void {
                 $select->where->like('Item_Name', $strippedTitle . '%');
             };
             $options = $table->select($callback);
@@ -1207,7 +1207,7 @@ class DatabaseIngester extends BaseIngester
         do {
             $strippedTitle = substr($data['title'], 0, $pos);
             // check to see if we have a title match
-            $callback = function ($select) use ($strippedTitle) {
+            $callback = function ($select) use ($strippedTitle): void {
                 $select->where->like('Item_AltName', $strippedTitle . '%');
             };
             $options = $table->select($callback);
@@ -1621,6 +1621,7 @@ class DatabaseIngester extends BaseIngester
             $this->writeln('Added edition ID ' . $newObj->Edition_ID);
             $edition = $newObj;
         } elseif (count($lookup) == 1) {
+            $edition = null;
             foreach ($lookup as $current) {
                 $edition = $current;
             }
@@ -1826,7 +1827,7 @@ class DatabaseIngester extends BaseIngester
     protected function fuzzyPersonMatch($first, $last, $raw, $expected)
     {
         $peopleTable = $this->getDbTable('person');
-        $callback = function ($select) use ($first, $last) {
+        $callback = function ($select) use ($first, $last): void {
             if (strlen($first) > 0) {
                 $initial = substr($first, 0, 1);
                 $select->where->like('First_Name', $initial . '%');
@@ -1838,7 +1839,7 @@ class DatabaseIngester extends BaseIngester
         $options = '';
         $result = $peopleTable->select($callback);
         if (count($result) === 0) {
-            $fuzzierCallback = function ($select) use ($last) {
+            $fuzzierCallback = function ($select) use ($last): void {
                 $chunk = substr($last, 0, strlen($last) - 1);
                 $select->where->like('Last_Name', $chunk . '%');
                 $select->order(['Last_Name', 'First_Name']);

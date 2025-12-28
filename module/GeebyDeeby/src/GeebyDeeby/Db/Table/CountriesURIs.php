@@ -67,7 +67,7 @@ class CountriesURIs extends Gateway
      */
     public function getURIsForCountry($countryID)
     {
-        $callback = function ($select) use ($countryID) {
+        $callback = function ($select) use ($countryID): void {
             $select->join(
                 ['pr' => 'Predicates'],
                 'Countries_URIs.Predicate_ID = pr.Predicate_ID'
@@ -86,7 +86,7 @@ class CountriesURIs extends Gateway
      */
     public function getCountriesForURI($uri)
     {
-        $callback = function ($select) use ($uri) {
+        $callback = function ($select) use ($uri): void {
             $select->join(
                 ['c' => 'Countries'],
                 'Countries_URIs.Country_ID = c.Country_ID'

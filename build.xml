@@ -29,23 +29,53 @@
     <!-- Call standard tasks -->
     <phingcall target="php-cs-fixer-dryrun"/>
     <phingcall target="phpcs"/>
+    <phingcall target="phpstan-checkstyle" />
+    <phingcall target="rector-console"/>
+  </target>
+
+  <!-- Quality Assurance PHP Tasks -->
+  <target name="qa-console" description="quality assurance tasks">
+    <phingcall target="php-cs-fixer-dryrun"/>
+    <phingcall target="phpcs-console"/>
+    <phingcall target="phpstan-console" />
+    <phingcall target="rector-console"/>
+  </target>
+
+  <!-- Fix PHP Tasks -->
+  <target name="fix-php" description="quality assurance php tasks">
+    <!-- Rector may introduce style issues, so run it first -->
+    <phingcall target="rector"/>
+    <phingcall target="php-cs-fixer"/>
+    <phingcall target="phpcbf"/>
   </target>
 
   <!-- PHP CodeSniffer -->
   <target name="phpcbf">
     <exec executable="${srcdir}/vendor/bin/phpcbf" escape="false" passthru="true" checkreturn="true">
-      <arg line="--standard=${srcdir}/tests/phpcs.xml" />
+      <arg line="--cache=${srcdir}/tests/phpcs.cache.json --standard=${srcdir}/tests/phpcs.xml" />
     </exec>    
   </target>
   <target name="phpcs">
     <exec executable="${srcdir}/vendor/bin/phpcs" escape="false"> 
-      <arg line="--standard=${srcdir}/tests/phpcs.xml --report=checkstyle &gt; ${builddir}/reports/checkstyle.xml" />
+      <arg line="--cache=${srcdir}/tests/phpcs.cache.json --standard=${srcdir}/tests/phpcs.xml --report=checkstyle &gt; ${builddir}/reports/checkstyle.xml" />
     </exec>
   </target>
   <target name="phpcs-console">
     <exec executable="${srcdir}/vendor/bin/phpcs" escape="false" passthru="true" checkreturn="true">
-      <arg line="--standard=${srcdir}/tests/phpcs.xml" />
+      <arg line="--cache=${srcdir}/tests/phpcs.cache.json --standard=${srcdir}/tests/phpcs.xml" />
     </exec>  
+  </target>
+
+  <!-- Phpstan -->
+  <target name="phpstan-checkstyle">
+    <exec executable="${srcdir}/vendor/bin/phpstan" escape="false" passthru="true" checkreturn="true">
+      <arg line="--configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G --error-format=checkstyle analyse &gt; ${builddir}/reports/phpstan-checkstyle.xml" />
+    </exec>
+  </target>
+  <target name="phpstan-console">
+    <exec executable="${srcdir}/vendor/bin/phpstan" escape="false" passthru="true" checkreturn="true">
+      <arg line="--configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G analyse" />
+    </exec>
   </target>
 
   <!-- php-cs-fixer (first task applies fixes, second task simply checks if they are needed) -->
@@ -63,6 +93,18 @@
     </exec>  
     <exec executable="${srcdir}/vendor/bin/php-cs-fixer" passthru="true" escape="false" checkreturn="true">
       <arg line="fix --config=${srcdir}/tests/gbdb_templates.php-cs-fixer.php --dry-run --verbose --diff" />
+    </exec>
+  </target>
+
+  <!-- Rector -->
+  <target name="rector-console">
+    <exec executable="${srcdir}/vendor/bin/rector" escape="false" passthru="true" checkreturn="true">
+      <arg line="--config=${srcdir}/tests/rector.php --dry-run" />
+    </exec>
+  </target>
+  <target name="rector">
+    <exec executable="${srcdir}/vendor/bin/rector" escape="false" passthru="true" checkreturn="true">
+      <arg line="--config=${srcdir}/tests/rector.php" />
     </exec>
   </target>
 

@@ -332,13 +332,13 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                 } else {
                     $extra = (substr($rawExtra, 0, 2) == ', ')
                         ? substr($rawExtra, 2) : $rawExtra;
-                    $extraType = (preg_match('/[0-9]{4}/', $extra))
-                        ? 'date' : 'termsOfAddress';
                 }
             }
             $name->addChild('namePart', $mainName);
             if (!empty($extra)) {
                 $part = $name->addChild('namePart', $extra);
+                $extraType = (preg_match('/[0-9]{4}/', $extra))
+                    ? 'date' : 'termsOfAddress';
                 $part['type'] = $extraType;
             }
             $name->role->roleTerm = strtolower($credit->Role_Name);

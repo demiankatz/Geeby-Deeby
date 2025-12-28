@@ -96,7 +96,7 @@ class NIU extends AbstractThumbIngestor
     {
         // Wire up output before proceeding...
         $this->solr->setOutputInterface($this->outputInterface);
-        return parent::ingestImages();
+        parent::ingestImages();
     }
 
     /**

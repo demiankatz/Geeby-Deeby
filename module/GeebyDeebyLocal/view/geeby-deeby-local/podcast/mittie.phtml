@@ -11,10 +11,10 @@
 <?php $this->latest = current($episodes) ?>
 <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
 
-<?php if(count($episodes) > 1): ?>
+<?php if (count($episodes) > 1): ?>
   <h2>Previous Episodes</h2>
   <?php next($episodes) ?>
-  <?php while($this->latest = current($episodes)): ?>
+  <?php while ($this->latest = current($episodes)): ?>
     <?=$this->partial('geeby-deeby-local/podcast/episode.phtml')?>
     <hr/>
     <?php next($episodes) ?>

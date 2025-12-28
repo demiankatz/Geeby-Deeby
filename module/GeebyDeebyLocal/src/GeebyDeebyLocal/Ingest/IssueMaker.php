@@ -295,7 +295,7 @@ class IssueMaker
     protected function getEligibleWorks($seriesObj)
     {
         $workId = self::MATERIALTYPE_WORK;
-        $callback = function ($select) use ($workId, $seriesObj) {
+        $callback = function ($select) use ($workId, $seriesObj): void {
             $select->join(['i' => 'Items'], 'i.Item_ID = Editions.Item_ID', []);
             $select->where(
                 [
@@ -319,7 +319,7 @@ class IssueMaker
     protected function issueAlreadyExists($workEdition)
     {
         $issueId = self::MATERIALTYPE_ISSUE;
-        $callback = function ($select) use ($issueId, $workEdition) {
+        $callback = function ($select) use ($issueId, $workEdition): void {
             $select->join(['i' => 'Items'], 'i.Item_ID = Editions.Item_ID', []);
             $select->where(
                 [
