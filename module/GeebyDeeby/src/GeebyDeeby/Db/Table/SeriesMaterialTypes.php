@@ -67,7 +67,7 @@ class SeriesMaterialTypes extends Gateway
      */
     public function getSeriesForMaterialType($typeID)
     {
-        $callback = function ($select) use ($typeID) {
+        $callback = function ($select) use ($typeID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Material_Types.Series_ID = s.Series_ID'
@@ -87,7 +87,7 @@ class SeriesMaterialTypes extends Gateway
      */
     public function getMaterials($seriesID = null)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['mt' => 'Material_Types'],
                 'Series_Material_Types.Material_Type_ID = mt.Material_Type_ID'

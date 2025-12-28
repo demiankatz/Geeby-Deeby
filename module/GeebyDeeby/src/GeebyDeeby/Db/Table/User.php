@@ -73,7 +73,7 @@ class User extends Gateway
      */
     public function getUnapproved()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
                 [
@@ -94,7 +94,7 @@ class User extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
                 ['User_ID', 'Username', 'Name', 'Address', 'Person_ID']

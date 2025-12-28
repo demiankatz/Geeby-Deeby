@@ -68,7 +68,7 @@ class PublishersAddresses extends Gateway
      */
     public function getAddressesForPublisher($pubID)
     {
-        $callback = function ($select) use ($pubID) {
+        $callback = function ($select) use ($pubID): void {
             $select->join(
                 ['ci' => 'Cities'],
                 'Publishers_Addresses.City_ID = ci.City_ID',

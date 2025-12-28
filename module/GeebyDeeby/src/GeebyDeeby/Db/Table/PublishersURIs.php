@@ -67,7 +67,7 @@ class PublishersURIs extends Gateway
      */
     public function getURIsForPublisher($publisherID)
     {
-        $callback = function ($select) use ($publisherID) {
+        $callback = function ($select) use ($publisherID): void {
             $select->join(
                 ['pr' => 'Predicates'],
                 'Publishers_URIs.Predicate_ID = pr.Predicate_ID'
@@ -86,7 +86,7 @@ class PublishersURIs extends Gateway
      */
     public function getPublishersForURI($uri)
     {
-        $callback = function ($select) use ($uri) {
+        $callback = function ($select) use ($uri): void {
             $select->join(
                 ['p' => 'Publishers'],
                 'Publishers_URIs.Publisher_ID = p.Publisher_ID'

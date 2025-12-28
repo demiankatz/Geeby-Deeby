@@ -72,7 +72,7 @@ class EditionsFullTextAttributesValues extends Gateway
      */
     public function getAttributesForFullTextIDs($fullTextID)
     {
-        $callback = function ($select) use ($fullTextID) {
+        $callback = function ($select) use ($fullTextID): void {
             $select->join(
                 ['efta' => 'Editions_Full_Text_Attributes'],
                 'efta.Editions_Full_Text_Attribute_ID = '

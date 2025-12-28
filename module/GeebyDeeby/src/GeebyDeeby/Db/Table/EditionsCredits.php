@@ -92,7 +92,7 @@ class EditionsCredits extends Gateway
         $sort = 'title',
         $includeYear = true
     ) {
-        $callback = function ($select) use ($personID, $sort, $includeYear) {
+        $callback = function ($select) use ($personID, $sort, $includeYear): void {
             $count = new Expression(
                 'count(?)',
                 ['eds.Edition_ID'],
@@ -149,7 +149,7 @@ class EditionsCredits extends Gateway
      */
     public function getSeriesCreditsForPerson($personID)
     {
-        $callback = function ($select) use ($personID) {
+        $callback = function ($select) use ($personID): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'Editions_Credits.Edition_ID = eds.Edition_ID',
@@ -200,7 +200,7 @@ class EditionsCredits extends Gateway
      */
     public function getCreditsForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['p' => 'People'],
                 'Editions_Credits.Person_ID = p.Person_ID'
@@ -235,7 +235,7 @@ class EditionsCredits extends Gateway
      */
     public function getCreditsForItem($itemID, $group = false)
     {
-        $callback = function ($select) use ($itemID, $group) {
+        $callback = function ($select) use ($itemID, $group): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'Editions_Credits.Edition_ID = eds.Edition_ID',
@@ -278,7 +278,7 @@ class EditionsCredits extends Gateway
      */
     public function getPeopleForSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->quantifier('DISTINCT');
             $select->columns([]);
             $select->join(

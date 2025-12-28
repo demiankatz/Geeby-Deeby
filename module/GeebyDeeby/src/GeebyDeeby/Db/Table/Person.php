@@ -70,7 +70,7 @@ class Person extends Gateway
      */
     public function getList($biosOnly = false)
     {
-        $callback = function ($select) use ($biosOnly) {
+        $callback = function ($select) use ($biosOnly): void {
             if ($biosOnly) {
                 $select->where->notEqualTo('Biography', '');
             }
@@ -88,7 +88,7 @@ class Person extends Gateway
      */
     public function getListForItemIds($itemIds)
     {
-        $callback = function ($select) use ($itemIds) {
+        $callback = function ($select) use ($itemIds): void {
             $select->quantifier('DISTINCT');
             $select->join(
                 ['ec' => 'Editions_Credits'],
@@ -120,7 +120,7 @@ class Person extends Gateway
         $first = $parts[0];
         $c = count($parts);
         $last = ($c > 1) ? $parts[$c - 1] : false;
-        $callback = function ($select) use ($first, $last, $limit) {
+        $callback = function ($select) use ($first, $last, $limit): void {
             if ($limit !== false) {
                 $select->limit($limit);
             }
@@ -149,7 +149,7 @@ class Person extends Gateway
      */
     public function keywordSearch($tokens)
     {
-        $callback = function ($select) use ($tokens) {
+        $callback = function ($select) use ($tokens): void {
             foreach ($tokens as $token) {
                 $nest = $select->where->NEST;
                 $nest->like('First_Name', '%' . $token . '%');

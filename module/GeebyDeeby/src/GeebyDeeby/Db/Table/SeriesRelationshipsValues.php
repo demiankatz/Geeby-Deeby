@@ -67,7 +67,7 @@ class SeriesRelationshipsValues extends Gateway
      */
     public function getSeriesRelatedtoObjectSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Relationships_Values.Subject_Series_ID = s.Series_ID'
@@ -86,7 +86,7 @@ class SeriesRelationshipsValues extends Gateway
      */
     public function getSeriesRelatedtoSubjectSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Relationships_Values.Object_Series_ID = s.Series_ID'

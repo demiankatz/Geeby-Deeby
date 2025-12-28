@@ -67,7 +67,7 @@ class PeopleFiles extends Gateway
      */
     public function getPeopleForFile($fileID)
     {
-        $callback = function ($select) use ($fileID) {
+        $callback = function ($select) use ($fileID): void {
             $select->join(
                 ['p' => 'People'],
                 'People_Files.Person_ID = p.Person_ID'
@@ -87,7 +87,7 @@ class PeopleFiles extends Gateway
      */
     public function getFilesForPerson($personID)
     {
-        $callback = function ($select) use ($personID) {
+        $callback = function ($select) use ($personID): void {
             $select->join(
                 ['f' => 'Files'],
                 'People_Files.File_ID = f.File_ID'

@@ -66,7 +66,7 @@ class ItemsInCollections extends Gateway
      */
     public function getAllCollections()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->columns([]);
             $select->join(
                 ['i' => 'Items'],
@@ -87,7 +87,7 @@ class ItemsInCollections extends Gateway
      */
     public function getCollectionsForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_In_Collections.Collection_Item_ID = i.Item_ID'
@@ -119,7 +119,7 @@ class ItemsInCollections extends Gateway
      */
     public function getItemsForCollection($collectionID)
     {
-        $callback = function ($select) use ($collectionID) {
+        $callback = function ($select) use ($collectionID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_In_Collections.Item_ID = i.Item_ID'

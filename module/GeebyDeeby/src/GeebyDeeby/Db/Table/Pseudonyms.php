@@ -67,7 +67,7 @@ class Pseudonyms extends Gateway
      */
     public function getPseudonyms($personID)
     {
-        $callback = function ($select) use ($personID) {
+        $callback = function ($select) use ($personID): void {
             $select->join(
                 ['p' => 'People'],
                 'Pseudonyms.Pseudo_Person_ID = p.Person_ID'
@@ -87,7 +87,7 @@ class Pseudonyms extends Gateway
      */
     public function getRealNames($personID)
     {
-        $callback = function ($select) use ($personID) {
+        $callback = function ($select) use ($personID): void {
             $select->join(
                 ['p' => 'People'],
                 'Pseudonyms.Real_Person_ID = p.Person_ID'

@@ -68,7 +68,7 @@ class EditionsProductCodes extends Gateway
      */
     public function getProductCodesForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Product_Codes.Note_ID = n.Note_ID',
@@ -90,7 +90,7 @@ class EditionsProductCodes extends Gateway
      */
     public function getProductCodesForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Product_Codes.Note_ID = n.Note_ID',

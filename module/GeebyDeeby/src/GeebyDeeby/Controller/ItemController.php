@@ -342,15 +342,11 @@ class ItemController extends AbstractBase
         $reviews = $this->getDbTable('itemsreviews');
         $view->reviews = $reviews->getReviewsForItem($id);
         $user = $this->getCurrentUser();
-        if ($user) {
-            $view->userHasReview = (bool)count(
-                $reviews->select(
-                    ['User_ID' => $user->User_ID, 'Item_ID' => $id]
-                )
-            );
-        } else {
-            $view->userHasReview = false;
-        }
+        $view->userHasReview = $user ? (bool)count(
+            $reviews->select(
+                ['User_ID' => $user->User_ID, 'Item_ID' => $id]
+            )
+        ) : false;
         $collections = $this->getDbTable('collections');
         $view->buyers = $collections->getForItem($id, 'want');
         $view->owners = $collections->getForItem($id, 'have');
