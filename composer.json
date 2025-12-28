@@ -36,7 +36,7 @@
         "squizlabs/php_codesniffer": "4.0.1"
     },
     "scripts": {
-        "fix": "phinbg fix-php",
+        "fix": "phing fix-php",
         "qa": "phing qa-console"
     }
 }
