@@ -3,7 +3,7 @@
 
 <?php if (isset($this->display_exceptions) && $this->display_exceptions): ?>
 
-<?php if(isset($this->exception) && $this->exception instanceof Throwable): ?>
+<?php if (isset($this->exception) && $this->exception instanceof Throwable): ?>
 <hr/>
 <h2><?php echo 'Additional information' ?>:</h2>
 <h3><?php echo get_class($this->exception); ?></h3>
@@ -25,7 +25,7 @@
     <hr/>
     <h2><?php echo 'Previous exceptions' ?>:</h2>
     <ul class="unstyled">
-        <?php while($e) : ?>
+        <?php while ($e): ?>
             <li>
                 <h3><?php echo $e::class; ?></h3>
                 <dl>
