@@ -68,7 +68,7 @@ class SeriesPublishers extends Gateway
      */
     public function getSeriesForCity($cityID)
     {
-        $callback = function ($select) use ($cityID) {
+        $callback = function ($select) use ($cityID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
@@ -93,7 +93,7 @@ class SeriesPublishers extends Gateway
      */
     public function getSeriesForCountry($countryID)
     {
-        $callback = function ($select) use ($countryID) {
+        $callback = function ($select) use ($countryID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
@@ -118,7 +118,7 @@ class SeriesPublishers extends Gateway
      */
     public function getSeriesForPublisher($publisherID)
     {
-        $callback = function ($select) use ($publisherID) {
+        $callback = function ($select) use ($publisherID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Publishers.Series_ID = s.Series_ID'
@@ -139,7 +139,7 @@ class SeriesPublishers extends Gateway
      */
     public function getPublishers($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['p' => 'Publishers'],
                 'Series_Publishers.Publisher_ID = p.Publisher_ID'

@@ -67,7 +67,7 @@ class SeriesCategories extends Gateway
      */
     public function getCategories($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['c' => 'Categories'],
                 'Series_Categories.Category_ID = c.Category_ID'
@@ -87,7 +87,7 @@ class SeriesCategories extends Gateway
      */
     public function getSeriesForCategory($catID)
     {
-        $callback = function ($select) use ($catID) {
+        $callback = function ($select) use ($catID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Categories.Series_ID = s.Series_ID'

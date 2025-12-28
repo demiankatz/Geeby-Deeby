@@ -67,7 +67,7 @@ class EditionsImages extends Gateway
      */
     public function getDuplicateThumbs()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $count = new Expression(
                 'count(?)',
                 ['Thumb_Path'],
@@ -89,7 +89,7 @@ class EditionsImages extends Gateway
      */
     public function getEditionsForThumb($thumb)
     {
-        $callback = function ($select) use ($thumb) {
+        $callback = function ($select) use ($thumb): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'Editions_Images.Edition_ID = eds.Edition_ID'
@@ -108,7 +108,7 @@ class EditionsImages extends Gateway
      */
     public function getImagesForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_Images.Note_ID = n.Note_ID',
@@ -130,7 +130,7 @@ class EditionsImages extends Gateway
      */
     public function getImagesForEditionOrParentEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->quantifier('DISTINCT');
             $select->join(
                 ['n' => 'Notes'],
@@ -159,7 +159,7 @@ class EditionsImages extends Gateway
      */
     public function getImagesForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->quantifier('DISTINCT');
             $fields = [
                 'Edition_ID',
@@ -217,7 +217,7 @@ class EditionsImages extends Gateway
      */
     public function getImagesForSeries($seriesID, $groupByMaterial = true)
     {
-        $callback = function ($select) use ($seriesID, $groupByMaterial) {
+        $callback = function ($select) use ($seriesID, $groupByMaterial): void {
             $select->columns(['Thumb_Path', 'IIIF_URI']);
             $select->join(
                 ['eds' => 'Editions'],

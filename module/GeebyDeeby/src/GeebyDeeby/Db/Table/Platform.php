@@ -65,7 +65,7 @@ class Platform extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Platform');
         };
         return $this->select($callback);

@@ -67,7 +67,7 @@ class SeriesLinks extends Gateway
      */
     public function getLinksForSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['l' => 'Links'],
                 'Series_Links.Link_ID = l.Link_ID'
@@ -87,7 +87,7 @@ class SeriesLinks extends Gateway
      */
     public function getSeriesForLink($linkID)
     {
-        $callback = function ($select) use ($linkID) {
+        $callback = function ($select) use ($linkID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Links.Series_ID = s.Series_ID'

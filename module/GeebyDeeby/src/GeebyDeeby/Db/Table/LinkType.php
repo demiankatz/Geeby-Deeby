@@ -65,7 +65,7 @@ class LinkType extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Link_Type');
         };
         return $this->select($callback);

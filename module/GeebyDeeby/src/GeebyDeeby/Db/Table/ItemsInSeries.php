@@ -65,7 +65,7 @@ class ItemsInSeries extends Gateway
      */
     public function getAll()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->join(
                 ['s' => 'Series'],
                 'Items_In_Series.Series_ID = s.Series_ID'

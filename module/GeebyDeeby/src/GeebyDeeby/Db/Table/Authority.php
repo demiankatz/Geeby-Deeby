@@ -65,7 +65,7 @@ class Authority extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Authority_Name');
         };
         return $this->select($callback);

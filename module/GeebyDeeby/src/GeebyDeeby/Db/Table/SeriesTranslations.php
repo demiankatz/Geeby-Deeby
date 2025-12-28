@@ -67,7 +67,7 @@ class SeriesTranslations extends Gateway
      */
     public function getTranslatedFrom($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Translations.Trans_Series_ID = s.Series_ID'
@@ -91,7 +91,7 @@ class SeriesTranslations extends Gateway
      */
     public function getTranslatedInto($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Translations.Source_Series_ID = s.Series_ID'

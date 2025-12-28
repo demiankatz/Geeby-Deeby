@@ -65,7 +65,7 @@ class File extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order(['File_Name']);
         };
         return $this->select($callback);
@@ -83,7 +83,7 @@ class File extends Gateway
      */
     public function getFilesByType($include = null, $exclude = null)
     {
-        $callback = function ($select) use ($include, $exclude) {
+        $callback = function ($select) use ($include, $exclude): void {
             $select->join(
                 ['ft' => 'File_Types'],
                 'Files.File_Type_ID = ft.File_Type_ID'

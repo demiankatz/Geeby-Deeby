@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Raised minimum PHP version to 8.2.
+- Updated dependencies.
+
+### Removed
+
+- Unused dependencies (laminas-dependency-plugin, laminas-eventmanager, laminas-i18n, laminas-log, laminas-modulemanager, laminas-serializer). Note that some of these libraries may still be used as indirect dependencies via other packages.
+
+### Fixed
+
+- Series listing by person now accounts for extra name details correctly.
+
 ## 2.9.0 - 2025-01-10
 
 ### Added

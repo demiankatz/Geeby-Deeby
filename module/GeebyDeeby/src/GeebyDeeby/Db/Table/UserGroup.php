@@ -65,7 +65,7 @@ class UserGroup extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Group_Name');
         };
         return $this->select($callback);
