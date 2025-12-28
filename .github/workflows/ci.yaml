@@ -15,7 +15,7 @@ jobs:
           - php-version: 8.3
             phing_tasks: "startup"
           - php-version: 8.4
-            phing_tasks: "startup phpcs-console php-cs-fixer-dryrun"
+            phing_tasks: "startup qa-console"
 
     steps:
       - name: Setup PHP
