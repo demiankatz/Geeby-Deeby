@@ -10,11 +10,12 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- Raised minimum PHP version to 8.2.
+- Updated dependencies.
 
 ### Removed
 
-- Nothing.
+- Unused dependencies (laminas-dependency-plugin, laminas-eventmanager, laminas-i18n, laminas-log, laminas-modulemanager, laminas-serializer). Note that some of these libraries may still be used as indirect dependencies via other packages.
 
 ### Fixed
 
