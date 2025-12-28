@@ -11,9 +11,6 @@
     "config": {
         "platform": {
             "php": "8.2"
-        },
-        "allow-plugins": {
-            "laminas/laminas-dependency-plugin": false
         }
     },
     "require": {
