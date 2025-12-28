@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
+- Images should now load lazily.
 - Raised minimum PHP version to 8.2.
 - Updated dependencies.
 
