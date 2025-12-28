@@ -67,7 +67,7 @@ class TagsURIs extends Gateway
      */
     public function getURIsForTag($tagID)
     {
-        $callback = function ($select) use ($tagID) {
+        $callback = function ($select) use ($tagID): void {
             $select->join(
                 ['pr' => 'Predicates'],
                 'Tags_URIs.Predicate_ID = pr.Predicate_ID'
@@ -86,7 +86,7 @@ class TagsURIs extends Gateway
      */
     public function getTagsForURI($uri)
     {
-        $callback = function ($select) use ($uri) {
+        $callback = function ($select) use ($uri): void {
             $select->join(
                 ['t' => 'Tags'],
                 'Tags_URIs.Tag_ID = t.Tag_ID'

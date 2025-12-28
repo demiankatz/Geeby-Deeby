@@ -88,7 +88,7 @@ class ItemsCreators extends Gateway
      */
     public function getItemCitationsForPerson($personID, $sort = 'title')
     {
-        $callback = function ($select) use ($personID, $sort) {
+        $callback = function ($select) use ($personID, $sort): void {
             $count = new Expression(
                 'count(distinct(?))',
                 ['icc.Citation_ID'],
@@ -144,7 +144,7 @@ class ItemsCreators extends Gateway
      */
     public function getSeriesCitationsForPerson($personID)
     {
-        $callback = function ($select) use ($personID) {
+        $callback = function ($select) use ($personID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Creators.Item_ID = i.Item_ID'
@@ -188,7 +188,7 @@ class ItemsCreators extends Gateway
      */
     public function getCreatorsForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['p' => 'People'],
                 'Items_Creators.Person_ID = p.Person_ID'

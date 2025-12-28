@@ -65,7 +65,7 @@ class Category extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Category');
         };
         return $this->select($callback);
@@ -80,7 +80,7 @@ class Category extends Gateway
      */
     public function keywordSearch($tokens)
     {
-        $callback = function ($select) use ($tokens) {
+        $callback = function ($select) use ($tokens): void {
             foreach ($tokens as $token) {
                 $select->where->like('Category', '%' . $token . '%');
             }

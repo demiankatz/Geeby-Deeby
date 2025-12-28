@@ -68,7 +68,7 @@ class EditionsOCLCNumbers extends Gateway
      */
     public function getOCLCNumbersForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_OCLC_Numbers.Note_ID = n.Note_ID',
@@ -90,7 +90,7 @@ class EditionsOCLCNumbers extends Gateway
      */
     public function getOCLCNumbersForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_OCLC_Numbers.Note_ID = n.Note_ID',

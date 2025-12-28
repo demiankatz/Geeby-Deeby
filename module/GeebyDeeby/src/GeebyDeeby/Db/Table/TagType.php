@@ -65,7 +65,7 @@ class TagType extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Tag_Type');
         };
         return $this->select($callback);

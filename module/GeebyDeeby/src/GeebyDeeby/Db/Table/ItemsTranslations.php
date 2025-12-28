@@ -106,7 +106,7 @@ class ItemsTranslations extends Gateway
      */
     public function getTranslatedFrom($itemID, $includeLang = false)
     {
-        $callback = function ($select) use ($itemID, $includeLang) {
+        $callback = function ($select) use ($itemID, $includeLang): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Translations.Trans_Item_ID = i.Item_ID'
@@ -130,7 +130,7 @@ class ItemsTranslations extends Gateway
      */
     public function getTranslatedInto($itemID, $includeLang = false)
     {
-        $callback = function ($select) use ($itemID, $includeLang) {
+        $callback = function ($select) use ($itemID, $includeLang): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Translations.Source_Item_ID = i.Item_ID'

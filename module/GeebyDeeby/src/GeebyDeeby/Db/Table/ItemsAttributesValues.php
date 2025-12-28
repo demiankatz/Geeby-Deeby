@@ -67,7 +67,7 @@ class ItemsAttributesValues extends Gateway
      */
     public function getAttributesForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['ia' => 'Items_Attributes'],
                 'ia.Items_Attribute_ID = '

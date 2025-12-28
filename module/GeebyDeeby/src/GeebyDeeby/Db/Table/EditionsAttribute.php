@@ -67,7 +67,7 @@ class EditionsAttribute extends Gateway
      */
     public function getList($where = null)
     {
-        $callback = function ($select) use ($where) {
+        $callback = function ($select) use ($where): void {
             if (null !== $where) {
                 $select->where($where);
             }

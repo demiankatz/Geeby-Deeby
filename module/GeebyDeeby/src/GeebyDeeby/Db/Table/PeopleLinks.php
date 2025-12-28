@@ -67,7 +67,7 @@ class PeopleLinks extends Gateway
      */
     public function getLinksForPerson($personID)
     {
-        $callback = function ($select) use ($personID) {
+        $callback = function ($select) use ($personID): void {
             $select->join(
                 ['l' => 'Links'],
                 'People_Links.Link_ID = l.Link_ID'
@@ -87,7 +87,7 @@ class PeopleLinks extends Gateway
      */
     public function getPeopleForLink($linkID)
     {
-        $callback = function ($select) use ($linkID) {
+        $callback = function ($select) use ($linkID): void {
             $select->join(
                 ['p' => 'People'],
                 'People_Links.Person_ID = p.Person_ID'

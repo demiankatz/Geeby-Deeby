@@ -67,7 +67,7 @@ class Tag extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order(['Tag']);
         };
         return $this->select($callback);
@@ -83,7 +83,7 @@ class Tag extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query, $limit) {
+        $callback = function ($select) use ($query, $limit): void {
             if ($limit !== false) {
                 $select->limit($limit);
             }
@@ -102,7 +102,7 @@ class Tag extends Gateway
      */
     public function getTagsForSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID) {
+        $callback = function ($select) use ($seriesID): void {
             $select->quantifier('DISTINCT');
             $select->columns(['Tag_ID', 'Tag']);
             $select->join(
@@ -149,7 +149,7 @@ class Tag extends Gateway
      */
     public function keywordSearch($tokens)
     {
-        $callback = function ($select) use ($tokens) {
+        $callback = function ($select) use ($tokens): void {
             foreach ($tokens as $token) {
                 $select->where->like('Tag', '%' . $token . '%');
             }

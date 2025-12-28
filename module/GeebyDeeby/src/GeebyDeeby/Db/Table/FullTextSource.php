@@ -70,7 +70,7 @@ class FullTextSource extends Gateway
         $filter = [];
         if (!empty($seriesID)) {
             $fulltext = $this->getDbTable('editionsfulltext');
-            $filterCallback = function ($select) use ($seriesID) {
+            $filterCallback = function ($select) use ($seriesID): void {
                 $select->join(
                     ['e' => 'Editions'],
                     'Editions_Full_Text.Edition_ID = e.Edition_ID',
@@ -85,7 +85,7 @@ class FullTextSource extends Gateway
                 $filter[] = $current['Full_Text_Source_ID'];
             }
         }
-        $callback = function ($select) use ($filter) {
+        $callback = function ($select) use ($filter): void {
             $select->order('Full_Text_Source_Name');
             if (!empty($filter)) {
                 $select->where->in('Full_Text_Source_ID', $filter);

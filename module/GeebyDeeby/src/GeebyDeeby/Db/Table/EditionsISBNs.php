@@ -68,7 +68,7 @@ class EditionsISBNs extends Gateway
      */
     public function getISBNsForEdition($editionID)
     {
-        $callback = function ($select) use ($editionID) {
+        $callback = function ($select) use ($editionID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_ISBNs.Note_ID = n.Note_ID',
@@ -90,7 +90,7 @@ class EditionsISBNs extends Gateway
      */
     public function getISBNsForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['n' => 'Notes'],
                 'Editions_ISBNs.Note_ID = n.Note_ID',
@@ -116,7 +116,7 @@ class EditionsISBNs extends Gateway
      */
     public function searchForItems($q)
     {
-        $callback = function ($select) use ($q) {
+        $callback = function ($select) use ($q): void {
             $select->join(
                 ['eds' => 'Editions'],
                 'Editions_ISBNs.Edition_ID = eds.Edition_ID'

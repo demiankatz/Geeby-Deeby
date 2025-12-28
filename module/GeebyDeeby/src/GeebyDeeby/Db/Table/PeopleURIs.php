@@ -69,7 +69,7 @@ class PeopleURIs extends Gateway
      */
     public function getURIsForPerson($personID)
     {
-        $callback = function ($select) use ($personID) {
+        $callback = function ($select) use ($personID): void {
             $select->join(
                 ['pr' => 'Predicates'],
                 'People_URIs.Predicate_ID = pr.Predicate_ID'
@@ -88,7 +88,7 @@ class PeopleURIs extends Gateway
      */
     public function getPeopleForURI($uri)
     {
-        $callback = function ($select) use ($uri) {
+        $callback = function ($select) use ($uri): void {
             $select->join(
                 ['p' => 'People'],
                 'People_URIs.Person_ID = p.Person_ID'
@@ -112,7 +112,7 @@ class PeopleURIs extends Gateway
      */
     public function getPeopleWithURIs($extraCallback = false)
     {
-        $callback = function ($select) use ($extraCallback) {
+        $callback = function ($select) use ($extraCallback): void {
             $select->join(
                 ['p' => 'People'],
                 'People_URIs.Person_ID = p.Person_ID'
