@@ -29,6 +29,7 @@
     <!-- Call standard tasks -->
     <phingcall target="php-cs-fixer-dryrun"/>
     <phingcall target="phpcs"/>
+    <phingcall target="phpstan-checkstyle" />
     <phingcall target="rector-console"/>
   </target>
 
@@ -36,6 +37,7 @@
   <target name="qa-console" description="quality assurance tasks">
     <phingcall target="php-cs-fixer-dryrun"/>
     <phingcall target="phpcs-console"/>
+    <phingcall target="phpstan-console" />
     <phingcall target="rector-console"/>
   </target>
 
@@ -50,18 +52,30 @@
   <!-- PHP CodeSniffer -->
   <target name="phpcbf">
     <exec executable="${srcdir}/vendor/bin/phpcbf" escape="false" passthru="true" checkreturn="true">
-      <arg line="--standard=${srcdir}/tests/phpcs.xml" />
+      <arg line="--cache=${srcdir}/tests/phpcs.cache.json --standard=${srcdir}/tests/phpcs.xml" />
     </exec>    
   </target>
   <target name="phpcs">
     <exec executable="${srcdir}/vendor/bin/phpcs" escape="false"> 
-      <arg line="--standard=${srcdir}/tests/phpcs.xml --report=checkstyle &gt; ${builddir}/reports/checkstyle.xml" />
+      <arg line="--cache=${srcdir}/tests/phpcs.cache.json --standard=${srcdir}/tests/phpcs.xml --report=checkstyle &gt; ${builddir}/reports/checkstyle.xml" />
     </exec>
   </target>
   <target name="phpcs-console">
     <exec executable="${srcdir}/vendor/bin/phpcs" escape="false" passthru="true" checkreturn="true">
-      <arg line="--standard=${srcdir}/tests/phpcs.xml" />
+      <arg line="--cache=${srcdir}/tests/phpcs.cache.json --standard=${srcdir}/tests/phpcs.xml" />
     </exec>  
+  </target>
+
+  <!-- Phpstan -->
+  <target name="phpstan-checkstyle">
+    <exec executable="${srcdir}/vendor/bin/phpstan" escape="false" passthru="true" checkreturn="true">
+      <arg line="--configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G --error-format=checkstyle analyse &gt; ${builddir}/reports/phpstan-checkstyle.xml" />
+    </exec>
+  </target>
+  <target name="phpstan-console">
+    <exec executable="${srcdir}/vendor/bin/phpstan" escape="false" passthru="true" checkreturn="true">
+      <arg line="--configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G analyse" />
+    </exec>
   </target>
 
   <!-- php-cs-fixer (first task applies fixes, second task simply checks if they are needed) -->
