@@ -65,7 +65,7 @@ class Citation extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Citation');
         };
         return $this->select($callback);

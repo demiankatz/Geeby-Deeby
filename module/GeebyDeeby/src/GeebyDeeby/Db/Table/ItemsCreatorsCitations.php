@@ -67,7 +67,7 @@ class ItemsCreatorsCitations extends Gateway
      */
     public function getCitations($rowID)
     {
-        $callback = function ($select) use ($rowID) {
+        $callback = function ($select) use ($rowID): void {
             $select->join(
                 ['c' => 'Citations'],
                 'Items_Creators_Citations.Citation_ID = c.Citation_ID'

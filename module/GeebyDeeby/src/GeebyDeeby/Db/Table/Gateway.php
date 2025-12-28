@@ -117,7 +117,7 @@ class Gateway extends AbstractTableGateway
         if (count($key) != count($keyCols)) {
             throw new \Exception('Invalid key value passed in.');
         }
-        $query = function ($select) use ($key, $keyCols) {
+        $query = function ($select) use ($key, $keyCols): void {
             foreach ($keyCols as $i => $col) {
                 $select->where->equalTo($col, $key[$i]);
             }

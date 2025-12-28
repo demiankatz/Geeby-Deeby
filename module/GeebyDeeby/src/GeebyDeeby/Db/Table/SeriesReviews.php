@@ -76,7 +76,7 @@ class SeriesReviews extends Gateway
      */
     public function getReviewsForSeries($seriesID, $approved = 'y')
     {
-        $callback = function ($select) use ($seriesID, $approved) {
+        $callback = function ($select) use ($seriesID, $approved): void {
             $select->order('Username');
             $select->join(
                 ['u' => 'Users'],
@@ -101,7 +101,7 @@ class SeriesReviews extends Gateway
      */
     public function getReviewsByUser($userID, $approved = 'y')
     {
-        $callback = function ($select) use ($userID, $approved) {
+        $callback = function ($select) use ($userID, $approved): void {
             $select->join(
                 ['s' => 'Series'],
                 'Series_Reviews.Series_ID = s.Series_ID'

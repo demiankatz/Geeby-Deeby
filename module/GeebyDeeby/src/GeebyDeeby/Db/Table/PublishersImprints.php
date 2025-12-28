@@ -67,7 +67,7 @@ class PublishersImprints extends Gateway
      */
     public function getImprintsForPublisher($pubID)
     {
-        $callback = function ($select) use ($pubID) {
+        $callback = function ($select) use ($pubID): void {
             $select->order('Imprint_Name');
             $select->where->equalTo('Publisher_ID', $pubID);
         };

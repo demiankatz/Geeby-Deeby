@@ -65,7 +65,7 @@ class Note extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Note');
         };
         return $this->select($callback);
@@ -81,7 +81,7 @@ class Note extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query, $limit) {
+        $callback = function ($select) use ($query, $limit): void {
             if ($limit !== false) {
                 $select->limit($limit);
             }

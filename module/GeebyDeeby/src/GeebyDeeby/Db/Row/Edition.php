@@ -177,7 +177,7 @@ class Edition extends TableAwareGateway
         if (count($clonable) == 0) {
             return;
         }
-        $callback = function ($select) use ($editionId, $clonable) {
+        $callback = function ($select) use ($editionId, $clonable): void {
             $select->where->equalTo('Edition_ID', $editionId)
                 ->in('Editions_Attribute_ID', $clonable);
         };
@@ -236,7 +236,7 @@ class Edition extends TableAwareGateway
             $pos,
             $rep,
             $next
-        ) {
+        ): void {
             $select->where->equalTo('Series_ID', $series);
             $select->where->notEqualTo('Edition_ID', $edition);
             $fields = [

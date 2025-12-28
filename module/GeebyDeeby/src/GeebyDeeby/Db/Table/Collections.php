@@ -79,7 +79,7 @@ class Collections extends Gateway
      */
     public function getForItem($itemID, $type = null)
     {
-        $callback = function ($select) use ($itemID, $type) {
+        $callback = function ($select) use ($itemID, $type): void {
             $select->join(
                 ['u' => 'Users'],
                 'Collections.User_ID = u.User_ID'
@@ -105,7 +105,7 @@ class Collections extends Gateway
      */
     public function getForUser($userID, $type = null, $groupByLang = false)
     {
-        $callback = function ($select) use ($userID, $type, $groupByLang) {
+        $callback = function ($select) use ($userID, $type, $groupByLang): void {
             $select->join(
                 ['i' => 'Items'],
                 'Collections.Item_ID = i.Item_ID'
@@ -167,7 +167,7 @@ class Collections extends Gateway
      */
     public function compareCollections($userID, $userStatus, $desiredStatus)
     {
-        $callback = function ($select) use ($userID, $userStatus, $desiredStatus) {
+        $callback = function ($select) use ($userID, $userStatus, $desiredStatus): void {
             $select->join(
                 ['i' => 'Items'],
                 'Collections.Item_ID = i.Item_ID'
@@ -219,7 +219,7 @@ class Collections extends Gateway
      */
     public function getUserStatistics($userID)
     {
-        $callback = function ($select) use ($userID) {
+        $callback = function ($select) use ($userID): void {
             $count = new Expression(
                 'count(?)',
                 ['Item_ID'],

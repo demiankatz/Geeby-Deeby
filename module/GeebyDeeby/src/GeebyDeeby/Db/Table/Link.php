@@ -65,7 +65,7 @@ class Link extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order(['Link_Name']);
         };
         return $this->select($callback);
@@ -80,7 +80,7 @@ class Link extends Gateway
      */
     public function getListByType($typeFilter = null)
     {
-        $callback = function ($select) use ($typeFilter) {
+        $callback = function ($select) use ($typeFilter): void {
             $select->join(
                 ['lt' => 'Link_Types'],
                 'Links.Link_Type_ID = lt.Link_Type_ID'

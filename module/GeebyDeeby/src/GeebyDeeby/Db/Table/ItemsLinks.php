@@ -67,7 +67,7 @@ class ItemsLinks extends Gateway
      */
     public function getLinksForItem($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['l' => 'Links'],
                 'Items_Links.Link_ID = l.Link_ID'
@@ -87,7 +87,7 @@ class ItemsLinks extends Gateway
      */
     public function getItemsForLink($linkID)
     {
-        $callback = function ($select) use ($linkID) {
+        $callback = function ($select) use ($linkID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Links.Item_ID = i.Item_ID'

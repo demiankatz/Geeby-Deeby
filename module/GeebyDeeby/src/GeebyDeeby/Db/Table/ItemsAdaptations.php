@@ -67,7 +67,7 @@ class ItemsAdaptations extends Gateway
      */
     public function getAdaptedFrom($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Adaptations.Adapted_Item_ID = i.Item_ID'
@@ -91,7 +91,7 @@ class ItemsAdaptations extends Gateway
      */
     public function getAdaptedInto($itemID)
     {
-        $callback = function ($select) use ($itemID) {
+        $callback = function ($select) use ($itemID): void {
             $select->join(
                 ['i' => 'Items'],
                 'Items_Adaptations.Source_Item_ID = i.Item_ID'

@@ -69,7 +69,7 @@ class Edition extends Gateway
      */
     public function getList()
     {
-        $callback = function ($select) {
+        $callback = function ($select): void {
             $select->order('Edition_Name');
         };
         return $this->select($callback);
@@ -85,7 +85,7 @@ class Edition extends Gateway
      */
     public function getSuggestions($query, $limit = false)
     {
-        $callback = function ($select) use ($query, $limit) {
+        $callback = function ($select) use ($query, $limit): void {
             if ($limit !== false) {
                 $select->limit($limit);
             }
@@ -104,7 +104,7 @@ class Edition extends Gateway
      */
     public function keywordSearch($tokens)
     {
-        $callback = function ($select) use ($tokens) {
+        $callback = function ($select) use ($tokens): void {
             foreach ($tokens as $token) {
                 $select->where->like('Edition_Name', '%' . $token . '%');
             }
@@ -127,7 +127,7 @@ class Edition extends Gateway
             return false;
         }
         $parent = $ed->Parent_Edition_ID;
-        $callback = function ($select) use ($parent) {
+        $callback = function ($select) use ($parent): void {
             $select->join(
                 ['items' => 'Items'],
                 'Editions.Item_ID = items.Item_ID'
@@ -199,7 +199,7 @@ class Edition extends Gateway
      */
     public function getEditionsForItem($itemID, $includeParents = false)
     {
-        $callback = function ($select) use ($itemID, $includeParents) {
+        $callback = function ($select) use ($itemID, $includeParents): void {
             $year = new Expression(
                 'min(?)',
                 ['erd.Year'],
@@ -279,7 +279,7 @@ class Edition extends Gateway
      */
     public function getPublishersForWhereClause($field, $value)
     {
-        $callback = function ($select) use ($field, $value) {
+        $callback = function ($select) use ($field, $value): void {
             $select->join(
                 ['sp' => 'Series_Publishers'],
                 'Editions.Preferred_Series_Publisher_ID = sp.Series_Publisher_ID'
