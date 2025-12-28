@@ -5,8 +5,6 @@ parameters:
     ignoreErrors:
         - '#Access to an undefined property GeebyDeeby\\Db\\Row.*#'
         - '#Access to an undefined property \$this\(GeebyDeeby\\Db\\Row.*#'
-    bootstrapFiles:
-        - phpstan-constants.php
     level: 1
     parallel:
         processTimeout: 600.0
