@@ -4,6 +4,34 @@
   <property name="package"  value="${phing.project.name}" override="true" />
   <property name="builddir" value="${tmp}/build/${phing.project.name}" override="true" />
   <property name="srcdir"   value="${project.basedir}" override="true" />
+  <property name="gbdburl" value="http://localhost" />
+  <property name="gbdbdb" value="gbdb_test" />
+  <property name="gbdbdbuser" value="gbdbtest" />
+  <property name="gbdbdbpass" value="gbdbtestpass" />
+  <property name="mysqlhost" value="localhost" />
+  <property name="mysqlport" value="3306" />
+  <property name="mysqlprotocol" value="" />
+  <property name="mysqlrootuser" value="root" />
+  <property name="mysqlrootpass" value="password" />
+  <property name="mysqlconnectionargs" value="-h ${mysqlhost} -P ${mysqlport} -u ${mysqlrootuser}" />
+  <!-- Add password if not empty -->
+  <if>
+    <not>
+      <equals arg1="${mysqlrootpass}" arg2="" />
+    </not>
+    <then>
+      <property name="mysqlconnectionargs" override="true" value="${mysqlconnectionargs} -p${mysqlrootpass}" />
+    </then>
+  </if>
+  <!-- Add protocol if not empty -->
+  <if>
+    <not>
+      <equals arg1="${mysqlprotocol}" arg2="" />
+    </not>
+    <then>
+      <property name="mysqlconnectionargs" override="true" value="${mysqlconnectionargs} --protocol ${mysqlprotocol}" />
+    </then>
+  </if>
 
   <!-- Main Target -->
   <target name="main" description="main target">
@@ -108,18 +136,46 @@
     </exec>
   </target>
 
+  <!-- Set up test database -->
+  <target name="setup_database" description="clean up existing database and users">
+    <phingcall target="teardown_database" />
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} -e &quot;CREATE DATABASE IF NOT EXISTS ${gbdbdb}&quot;" />
+    </exec>
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} -e &quot;CREATE USER IF NOT EXISTS '${gbdbdbuser}'@'%' IDENTIFIED BY '${gbdbdbpass}'&quot;" />
+    </exec>
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} ${gbdbdb} &lt; ${srcdir}/data/mysql.sql" />
+    </exec>
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} -e &quot;GRANT ALL ON ${gbdbdb}.* TO '${gbdbdbuser}'@'%'&quot;" />
+    </exec>
+    <touch file="${srcdir}/config/autoload/testdb.local.php" />
+    <append destFile="${srcdir}/config/autoload/testdb.local.php" text="&lt;?php return ['geeby-deeby' => ['dbName' => '${gbdbdb}', 'dbUser' => '${gbdbdbuser}', 'dbPass' => '${gbdbdbpass}']]; ?&gt;" />
+  </target>
+
+  <!-- Tear down test database -->
+  <target name="teardown_database" description="clean up existing database and users">
+    <exec executable="mysql" passthru="true">
+      <arg line="${mysqlconnectionargs} -e &quot;DROP DATABASE IF EXISTS ${gbdbdb}&quot;" />
+    </exec>
+    <exec executable="mysql" passthru="true">
+      <arg line="${mysqlconnectionargs} -e &quot;DROP USER IF EXISTS '${gbdbdbuser}'@'%'&quot;" />
+    </exec>
+    <delete file="${srcdir}/config/autoload/testdb.local.php" quiet="true" />
+  </target>
+
   <!-- Set up dependencies -->
-  <target name="startup" description="set up dependencies">
+  <target name="startup" description="set up dependencies and database">
     <exec executable="composer">
       <arg line="install" />
-    </exec>  
+    </exec>
+    <phingcall target="setup_database" />
   </target>
 
   <!-- Clean up -->
-  <target name="shutdown" description="clean up file system">
-    <delete dir="${srcdir}/vendor" includeemptydirs="true" failonerror="true" />
-    <exec command="git">
-      <arg line="reset --hard" />
-    </exec>
+  <target name="shutdown" description="clean up file system and test database">
+    <phingcall target="teardown_database" />
   </target>
 </project>
