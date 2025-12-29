@@ -27,8 +27,7 @@
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-define('APPLICATION_PATH', __DIR__ . '/../../..');
-chdir(APPLICATION_PATH);
+chdir(__DIR__ . '/../../..');
 
 // Composer autoloading
 if (file_exists('vendor/autoload.php')) {

@@ -64,7 +64,8 @@ class BadStringsTest extends \PHPUnit\Framework\TestCase
      */
     public function testForBadStrings(): void
     {
-        $filesToCheck = $this->getAllFiles(APPLICATION_PATH . '/module', '*.php');
+        $basePath = __DIR__ . '/../../../../../../..';
+        $filesToCheck = $this->getAllFiles($basePath . '/module', '*.php');
         $failures =  [];
         foreach ($filesToCheck as $fileToCheck) {
             $fileContents = file_get_contents($fileToCheck);
@@ -84,7 +85,7 @@ class BadStringsTest extends \PHPUnit\Framework\TestCase
             }
             if ($reasons) {
                 $reasonMsg = implode('; ', $reasons);
-                $failures[] = str_replace(APPLICATION_PATH . '/', '', $fileToCheck) . " ($reasonMsg)";
+                $failures[] = str_replace($basePath . '/', '', $fileToCheck) . " ($reasonMsg)";
             }
         }
         // We could use a variety of assertions here, but the goal is to make actionable information
