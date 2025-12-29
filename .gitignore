@@ -5,4 +5,5 @@ vendor/
 .phpstan_cache
 .rector
 .vscode
+module/GeebyDeeby/tests/.phpunit*
 tests/phpcs.cache.json
