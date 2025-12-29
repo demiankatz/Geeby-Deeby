@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\UserEntityInterface;
+
 /**
  * Row Definition for Users
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class User extends TableAwareGateway
+class User extends TableAwareGateway implements UserEntityInterface
 {
     /**
      * Should we disable logging for this class?

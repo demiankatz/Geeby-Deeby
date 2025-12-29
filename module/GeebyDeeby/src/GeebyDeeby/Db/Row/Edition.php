@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\EditionEntityInterface;
+
 use function count;
 use function in_array;
 use function strlen;
@@ -42,7 +44,7 @@ use function strlen;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Edition extends TableAwareGateway
+class Edition extends TableAwareGateway implements EditionEntityInterface
 {
     /**
      * Constructor

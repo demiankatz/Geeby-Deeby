@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\EditionsFullTextEntityInterface;
+
 /**
  * Row Definition for Editions_Full_Text_Attributes
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class EditionsFullTextAttribute extends RowGateway
+class EditionsFullTextAttribute extends RowGateway implements EditionsFullTextEntityInterface
 {
     /**
      * Constructor
