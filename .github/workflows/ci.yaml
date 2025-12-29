@@ -11,11 +11,11 @@ jobs:
         php-version: ['8.2', '8.3', '8.4']
         include:
           - php-version: 8.2
-            phing_tasks: "startup"
+            phing_tasks: "qa-console"
           - php-version: 8.3
-            phing_tasks: "startup"
+            phing_tasks: "qa-console"
           - php-version: 8.4
-            phing_tasks: "startup qa-console"
+            phing_tasks: "qa-console"
 
     steps:
       - name: Setup PHP
