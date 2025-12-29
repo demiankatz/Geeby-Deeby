@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
-use GeebyDeeby\Db\Entity\SeriesPublisherEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesPublishersEntityInterface;
 
 /**
  * Row Definition for Series_Publishers
@@ -40,7 +40,7 @@ use GeebyDeeby\Db\Entity\SeriesPublisherEntityInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class SeriesPublishers extends RowGateway implements SeriesPublisherEntityInterface
+class SeriesPublishers extends RowGateway implements SeriesPublishersEntityInterface
 {
     /**
      * Constructor
