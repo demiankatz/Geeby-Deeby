@@ -20,7 +20,7 @@
  * along with this program; if not, see
  * <https://www.gnu.org/licenses/>.
  *
- * @category VuFind
+ * @category GeebyDeeby
  * @package  Tests
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License

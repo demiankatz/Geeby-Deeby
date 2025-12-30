@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- Tests.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Empty list messages for people/series have been corrected (they previously said "items" instead of appropriate entity types).
+
 ## 2.10.0 - 2025-12-28
 
 ### Added
