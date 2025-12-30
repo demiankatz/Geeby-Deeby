@@ -4,6 +4,51 @@
     $this->layout()->toggleLink = $this->toggleLink('edit/item', $item['Item_ID']);
     $editionViewLink = $this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Editions']);
 
+    // --------------------------------------------------
+    // PRE-COMPUTE ownership flags for top controls ONLY
+    //
+    // These flags are required by the "Add / Modify" buttons
+    // rendered at the top of the page.
+    //
+    // NOTE:
+    // Similar logic exists later in this file when rendering
+    // the "Users Who Own / Want / Sell" sections. That logic
+    // runs AFTER the controls are rendered, so it cannot be
+    // relied upon here.
+    //
+    // This duplication is intentional to preserve existing
+    // rendering behaviour and avoid refactoring side effects.
+    // --------------------------------------------------
+
+    $userHasItem = false;
+    $userWantsItem = false;
+    $userHasExtraItem = false;
+
+    if ($this->auth()->hasIdentity()) {
+        $uid = $this->auth()->getIdentity();
+
+        foreach (($owners ?? []) as $o) {
+            if ($o['User_ID'] == $uid) {
+                $userHasItem = true;
+                break;
+            }
+        }
+
+        foreach (($buyers ?? []) as $b) {
+            if ($b['User_ID'] == $uid) {
+                $userWantsItem = true;
+                break;
+            }
+        }
+
+        foreach (($sellers ?? []) as $s) {
+            if ($s['User_ID'] == $uid) {
+                $userHasExtraItem = true;
+                break;
+            }
+        }
+    }
+
     // If there are too many images to display comfortably, pick a smaller number
     // and set a flag to display a link to edition view, where everything is visible.
     // We'll try to pick at least one image for each distinct label, to the greatest
@@ -653,8 +698,6 @@
       <?php if (!empty($item['Item_Thanks'])): ?>
         <tr><th scope="row">Special Thanks:</th><td><?=$item['Item_Thanks']?></td></tr>
       <?php endif; ?>
-
-      <?php $userHasItem = $userWantsItem = $userHasExtraItem = false; ?>
 
       <?php if (count($owners) > 0): ?>
         <tr>
