@@ -120,7 +120,7 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    protected function logIn(TraversableElement $page, string $username = 'admin', string $password = 'password'): void
+    protected function logIn(TraversableElement $page, string $username, string $password = 'password'): void
     {
         $page->clickLink('Log In');
         $this->findCssAndSetValue($page, '#username', $username);
@@ -143,57 +143,122 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Approve a user.
+     * Create a user.
      *
-     * @param int  $userId   User to approve
-     * @param ?int $groupId  Group to apply (null for no group)
-     * @param int  $personId Person ID to link (-1 for none)
+     * @param TraversableElement $page     Page element
+     * @param string             $username Username to create
+     * @param string             $password New account's password
      *
      * @return void
      */
-    protected function approveUser(int $userId, ?int $groupId = null, int $personId = -1): void
+    protected function createUser(TraversableElement $page, string $username, string $password = 'password'): void
+    {
+        $page->clickLink('Sign Up');
+        $this->findCssAndSetValue($page, '#signup_username', $username);
+        $this->findCssAndSetValue($page, '#signup_fullname', 'test ' . $username);
+        $this->findCssAndSetValue($page, '#signup_email', $username . '@example.com');
+        $this->findCssAndSetValue($page, '#signup_password1', $password);
+        $this->findCssAndSetValue($page, '#signup_password2', $password);
+        $this->clickCss($page, '.signup input[type="submit"]');
+        $this->assertEquals(
+            'Your request for an account has been sent; it should be approved shortly.',
+            $this->findCssAndGetText($page, '.content')
+        );
+    }
+
+    /**
+     * Approve a user.
+     *
+     * @param string $username User to approve
+     * @param ?int   $groupId  Group to apply (null for no group)
+     * @param int    $personId Person ID to link (-1 for none)
+     *
+     * @return void
+     */
+    protected function approveUser(string $username, ?int $groupId = null, int $personId = -1): void
     {
         $userTable = $this->getServiceLocator()->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
         $changes = ['Person_ID' => $personId];
         if ($groupId) {
             $changes['User_Group_ID'] = $groupId;
         }
-        $userTable->update($changes, ['User_ID' => $userId]);
+        $userTable->update($changes, ['Username' => $username]);
+    }
+
+    /**
+     * Data provider for testCreateUser().
+     *
+     * @return Generator<string, array>
+     */
+    public static function createUserProvider(): Generator
+    {
+        yield 'admin' => ['admin'];
+        yield 'user' => ['user'];
     }
 
     /**
      * Test creation of a user.
      *
+     * @param string $username Username to create
+     *
      * @return void
      */
-    public function testCreateUser(): void
+    #[\PHPUnit\Framework\Attributes\DataProvider('createUserProvider')]
+    public function testCreateUser(string $username): void
     {
         $session = $this->getMinkSession();
         $session->visit($this->getGeebyDeebyUrl());
         $page = $session->getPage();
-        $page->clickLink('Sign Up');
-        $this->findCssAndSetValue($page, '#signup_username', 'admin');
-        $this->findCssAndSetValue($page, '#signup_fullname', 'test admin user');
-        $this->findCssAndSetValue($page, '#signup_email', 'admin@example.com');
-        $this->findCssAndSetValue($page, '#signup_password1', 'password');
-        $this->findCssAndSetValue($page, '#signup_password2', 'password');
-        $this->clickCss($page, '.signup input[type="submit"]');
-        $this->assertEquals(
-            'Your request for an account has been sent; it should be approved shortly.',
-            $this->findCssAndGetText($page, '.content')
-        );
+        $this->createUser($page, $username);
+    }
+
+    /**
+     * Data provider for testUserApproval().
+     *
+     * @return Generator<string, array>
+     */
+    public static function userApprovalProvider(): Generator
+    {
+        yield 'admin' => ['admin', 1];
+        yield 'user' => ['user'];
+    }
+
+    /**
+     * Test approving users.
+     *
+     * @param string $username User to approve
+     * @param ?int   $group    Group to assign user to (null for none)
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testCreateUser')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('userApprovalProvider')]
+    public function testUserApproval(string $username, ?int $group = null): void
+    {
+        $session = $this->getMinkSession();
+        $session->visit($this->getGeebyDeebyUrl());
+        $page = $session->getPage();
 
         // Try to log in and confirm that the user exists but is not approved yet:
-        $this->logIn($page);
+        $this->logIn($page, $username);
         $this->assertEquals('Your account has not been approved yet.', $this->findCssAndGetText($page, '.error'));
 
-        // Now make the user an admin to support future tests:
-        $this->approveUser(1, 1);
+        // Now assign appropriate group permissions to the user:
+        $this->approveUser($username, $group);
 
-        // Now go to the edit page:
+        // Now go to the edit page and assert appropriate behavior (admin available if in group 1, not otherwise):
         $session->visit($this->getGeebyDeebyUrl('/edit'));
-        $this->logIn($page);
+        $this->logIn($page, $username);
         $this->assertEquals('Administration', $this->findCssAndGetText($page, 'h1'));
+        if ($group === 1) {
+            $this->assertEquals('Edit Data', $this->findCssAndGetText($page, '.content h2'));
+        } else {
+            $this->assertNotEquals('Edit Data', $this->findCssAndGetText($page, '.content h2'));
+            $this->assertEquals(
+                'You do not have permission to access this page.',
+                $this->findCssAndGetText($page, '.content p')
+            );
+        }
     }
 
     /**
@@ -401,7 +466,7 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\Depends('testCreateUser')]
+    #[\PHPUnit\Framework\Attributes\Depends('testUserApproval')]
     #[\PHPUnit\Framework\Attributes\DataProvider('populateDataProvider')]
     public function testPopulateData(
         string $url,
@@ -414,7 +479,7 @@ class IntegrationTest extends MinkTestCase
         $session = $this->getMinkSession();
         $session->visit($this->getGeebyDeebyUrl("/edit/$url"));
         $page = $session->getPage();
-        $this->logIn($page);
+        $this->logIn($page, 'admin');
         $this->clickCss($page, $buttonSelector);
         $firstValue = null;
         foreach ($data as $selector => $value) {
