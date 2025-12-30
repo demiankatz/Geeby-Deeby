@@ -23,7 +23,7 @@
       <label>Item: <input type="text" id="item_name" /></label>
       <input type="submit" value="Add Existing Item" />
     </form>
-    <button style="margin-left: 5px; float: left;" onclick="Item.edit('NEW');">Add New Item</button>
+    <button id="add_item" style="margin-left: 5px; float: left;" onclick="Item.edit('NEW');">Add New Item</button>
     <div style="clear: left;" id="item_list">
       <?=$this->render('geeby-deeby/edit-series/item-list.phtml')?>
     </div>
