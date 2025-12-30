@@ -34,6 +34,7 @@ namespace GeebyDeebyTest\Mink;
 use Behat\Mink\Element\TraversableElement;
 use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Mink integration test for the platform.
@@ -46,6 +47,13 @@ use Generator;
  */
 class IntegrationTest extends MinkTestCase
 {
+    /**
+     * Service locator
+     *
+     * @var ?ServiceLocatorInterface
+     */
+    protected $serviceLocator = null;
+
     /**
      * Data provider for testEmptyDatabase()
      *
@@ -121,6 +129,39 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Get the service locator.
+     *
+     * @return ServiceLocatorInterface
+     */
+    protected function getServiceLocator(): ServiceLocatorInterface
+    {
+        if (null === $this->serviceLocator) {
+            $app = \Laminas\Mvc\Application::init(require 'config/application.config.php');
+            $this->serviceLocator = $app->getServiceManager();
+        }
+        return $this->serviceLocator;
+    }
+
+    /**
+     * Approve a user.
+     *
+     * @param int  $userId   User to approve
+     * @param ?int $groupId  Group to apply (null for no group)
+     * @param int  $personId Person ID to link (-1 for none)
+     *
+     * @return void
+     */
+    protected function approveUser(int $userId, ?int $groupId = null, int $personId = -1): void
+    {
+        $userTable = $this->getServiceLocator()->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
+        $changes = ['Person_ID' => $personId];
+        if ($groupId) {
+            $changes['User_Group_ID'] = $groupId;
+        }
+        $userTable->update($changes, ['User_ID' => $userId]);
+    }
+
+    /**
      * Test creation of a user.
      *
      * @return void
@@ -147,10 +188,7 @@ class IntegrationTest extends MinkTestCase
         $this->assertEquals('Your account has not been approved yet.', $this->findCssAndGetText($page, '.error'));
 
         // Now make the user an admin to support future tests:
-        $app = \Laminas\Mvc\Application::init(require 'config/application.config.php');
-        $serviceManager = $app->getServiceManager();
-        $userTable = $serviceManager->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
-        $userTable->update(['User_Group_ID' => 1, 'Person_ID' => -1], ['User_ID' => 1]);
+        $this->approveUser(1, 1);
 
         // Now go to the edit page:
         $session->visit($this->getGeebyDeebyUrl('/edit'));
