@@ -353,4 +353,66 @@ class Item extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get items with online full text associated with a person
+     *
+     * @param int $personId Person_ID to filter by
+     *
+     * @return \Laminas\Db\ResultSet\ResultSet
+     */
+    public function getItemsWithFullTextByPerson(int $personId)
+    {
+        $callback = function ($select) use ($personId): void {
+
+            // Base table is already "Items" via TableGateway
+
+            // Item-level creators
+            $select->join(
+                ['ic' => 'Items_Creators'],
+                'Items.Item_ID = ic.Item_ID',
+                [],
+                $select::JOIN_LEFT
+            );
+
+            // Editions
+            $select->join(
+                ['eds' => 'Editions'],
+                'eds.Item_ID = Items.Item_ID'
+            );
+
+            // Full text
+            $select->join(
+                ['eft' => 'Editions_Full_Text'],
+                'eft.Edition_ID = eds.Edition_ID'
+            );
+
+            // Edition-level credits
+            $select->join(
+                ['ec' => 'Editions_Credits'],
+                'eds.Edition_ID = ec.Edition_ID',
+                [],
+                $select::JOIN_LEFT
+            );
+
+            // Filter by person (item OR edition credit)
+            $select->where->nest()
+                ->equalTo('ic.Person_ID', $personId)
+                ->or
+                ->equalTo('ec.Person_ID', $personId)
+            ->unnest();
+
+            // Prevent duplicates
+            $select->group([
+                'eds.Item_ID',
+                'eds.Series_ID',
+                'eds.Volume',
+                'eds.Position',
+                'eds.Replacement_Number',
+            ]);
+        };
+
+        return $this->select($callback);
+    }
+    
 }
