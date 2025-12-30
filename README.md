@@ -147,3 +147,6 @@ The package includes Mink integration tests that can drive a browser to verify t
 4. When finished, run `vendor/bin/phing shutdown` (again providing any appropriate properties) to clean up the test database.
 
 It may be useful to create a wrapper script around `vendor/bin/phing` so you don't have to re-type your properties every time.
+
+Note: The test process will create data in the database. The tests are not intended to be run more than once. If you want
+to repeat the tests, run the `startup` task first to reset the database.
