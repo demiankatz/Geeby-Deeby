@@ -38,6 +38,6 @@ namespace GeebyDeeby\Db\Entity;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-interface EditionsFullTextEntityInterface extends EntityInterface
+interface EditionsFullTextAttributeEntityInterface extends EntityInterface
 {
 }
