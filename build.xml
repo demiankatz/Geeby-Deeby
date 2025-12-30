@@ -16,6 +16,9 @@
   <property name="mysqlrootpass" value="password" />
   <property name="phpunit_command" value="${srcdir}/vendor/bin/phpunit" />
   <property name="phpunit_extra_params" value="" />
+  <property name="screenshot_dir" value="" /><!-- set to a directory name to capture screenshots of failed tests -->
+  <property name="snooze_multiplier" value="1" /><!-- can be used to slow down Mink tests; increase when tests fail on slow systems -->
+  <property name="default_test_timeout" value="5000" /><!-- default timeout (in ms) for Mink tests; increase when tests fail on slow systems -->
 
   <property name="mysqlconnectionargs" value="-h ${mysqlhost} -P ${mysqlport} -u ${mysqlrootuser}" />
   <!-- Add password if not empty -->
@@ -133,7 +136,10 @@
   <target name="phpunitfast" description="Run tests">
     <exec dir="${srcdir}/module/GeebyDeeby/tests" executable="${sh}" passthru="true" checkreturn="true">
       <arg line="-c &apos;${phpunit_command} ${phpunit_extra_params}&apos;" />
+      <env key="GBDB_SCREENSHOT_DIR" value="${screenshot_dir}" />
       <env key="GBDB_URL" value="${gbdburl}" />
+      <env key="GBDB_SNOOZE_MULTIPLIER" value="${snooze_multiplier}" />
+      <env key="GBDB_DEFAULT_TEST_TIMEOUT" value="${default_test_timeout}" />
     </exec>
   </target>
 

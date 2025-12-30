@@ -3,7 +3,7 @@
     $pageCount = count($paginator);
 ?>
 <?php if ($pageCount < 1): ?>
-  <p>No items listed in this database yet.</p>
+  <p>No series listed in this database yet.</p>
 <?php else: ?>
   <p>Viewing page <?=$paginator->getCurrentPageNumber()?> of <?=$pageCount?></p>
   <?php foreach ($paginator as $current): ?>
