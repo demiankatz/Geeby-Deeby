@@ -422,14 +422,31 @@
           <th scope="row">ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($isbns as $isbn => $note): ?>
-              <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn])?>">
-                <?php
-                  $isbnConverter = new \VuFindCode\ISBN($isbn);
-                  $isbn10 = $isbnConverter->get10();
-                ?>
-                <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn : $isbn)?>
-              </a>
-              <?=!empty($note) ? '(' . $this->escapeHtml($note) . ')' : ''?>
+              <?php
+                $isbnConverter = new \VuFindCode\ISBN($isbn);
+                $isbn10 = $isbnConverter->get10();
+                $isbn13 = $isbnConverter->get13();
+              ?>
+
+              <?php if (!empty($isbn10)): ?>
+                <a href="<?=$this->url('item', [
+                    'id' => $item['Item_ID'],
+                    'action' => 'ISBNDetails',
+                    'extra' => $isbn10
+                ])?>">
+                  <?=$this->escapeHtml($isbn10)?>
+                </a>
+              <?php endif; ?><?php if (!empty($isbn10) && !empty($isbn13)): ?>/<?php endif; ?><?php if (!empty($isbn13)): ?>
+                <a href="<?=$this->url('item', [
+                    'id' => $item['Item_ID'],
+                    'action' => 'ISBNDetails',
+                    'extra' => $isbn13
+                ])?>">
+                  <?=$this->escapeHtml($isbn13)?>
+                </a>
+              <?php endif; ?>
+
+              <?=!empty($note) ? ' (' . $this->escapeHtml($note) . ')' : ''?>
               <br />
             <?php endforeach; ?>
           </td>
