@@ -157,19 +157,28 @@
 
   <!-- Set up test database -->
   <target name="setup_database" description="clean up existing database and users">
+    <!-- clean up anything from past runs -->
     <phingcall target="teardown_database" />
+    <!-- create database and user -->
     <exec executable="mysql" passthru="true" checkreturn="true">
       <arg line="${mysqlconnectionargs} -e &quot;CREATE DATABASE IF NOT EXISTS ${gbdbdb}&quot;" />
     </exec>
     <exec executable="mysql" passthru="true" checkreturn="true">
       <arg line="${mysqlconnectionargs} -e &quot;CREATE USER IF NOT EXISTS '${gbdbdbuser}'@'%' IDENTIFIED BY '${gbdbdbpass}'&quot;" />
     </exec>
+    <!-- load the database definitions -->
     <exec executable="mysql" passthru="true" checkreturn="true">
       <arg line="${mysqlconnectionargs} ${gbdbdb} &lt; ${srcdir}/data/mysql.sql" />
     </exec>
+    <!-- grant access to new user -->
     <exec executable="mysql" passthru="true" checkreturn="true">
       <arg line="${mysqlconnectionargs} -e &quot;GRANT ALL ON ${gbdbdb}.* TO '${gbdbdbuser}'@'%'&quot;" />
     </exec>
+    <!-- create superuser role -->
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} ${gbdbdb} -e &quot;insert into User_Groups(Group_Name, Content_Editor, User_Editor, Approver, Data_Manager) values ('Superuser', 1, 1, 1, 1);&quot;" />
+    </exec>
+    <!-- create configuration file -->
     <touch file="${srcdir}/config/autoload/testdb.local.php" />
     <append destFile="${srcdir}/config/autoload/testdb.local.php" text="&lt;?php return ['geeby-deeby' => ['dbName' => '${gbdbdb}', 'dbUser' => '${gbdbdbuser}', 'dbPass' => '${gbdbdbpass}']]; ?&gt;" />
   </target>
