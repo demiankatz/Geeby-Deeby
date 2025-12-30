@@ -2,18 +2,17 @@
 
 # Geeby-Deeby
 
-
 A bibliography and collection management system developed as the foundation for gamebooks.org and dimenovels.org.
 
-# Installation
+## Installation
 
 The following sections run through the installation process; you should follow all of them in the order listed here.
 
-## Install Dependencies
+### Install Dependencies
 
 First, after cloning this repository to a directory, use "composer install" to load dependencies (see http://getcomposer.org for details).
 
-## Publish Web Content
+### Publish Web Content
 
 The easiest way to get Geeby-Deeby running is to create a symbolic link to /public in your system's web root (often something like `/var/www` or `/var/www/html`). So, for example, if you had installed Geeby-Deeby into `/opt/gbdb`, you could run a command like: `sudo ln -s /opt/gbdb/public /var/www/html/gbdb`.
 
@@ -25,7 +24,7 @@ You may also need to adjust your Apache configuration to allow .htaccess overrid
 </Directory>
 </pre>
 
-## Database Configuration
+### Database Configuration
 
 After that, you'll have to set up a database....
 
@@ -79,12 +78,12 @@ return array(
 );
 </pre>
 
-## Additional Configuration Options
+### Additional Configuration Options
 
 You can now make some additional configurations as needed; refer to the 'geeby-deeby' array in `module/GeebyDeeby/config/module.config.php` to see all of the settings that may be overridden in your `local.php` file. To start with, you should at least customize the 'siteTitle', 'siteEmail' and 'siteOwner' settings, which will control the name of your site, and the name/email used in site-related contact information. You should adjust the 'emailTransport' setting if you need to
 use SMTP to send messages.
 
-## Establishing a Superuser
+### Establishing a Superuser
 
 Finally, you need to establish a superuser account so you can edit the content of the site.
 
@@ -110,11 +109,11 @@ update Users set User_Group_ID=1, Person_ID=-1 where User_ID=1;
 
 (Of course, this assumes that both the Superuser group and the new user you created have IDs of '1' -- if this is a fresh database, that should always be the case, but if you made any mistakes and had to create new rows, please substitute appropriate ID values as needed).
 
-## Accessing the Data Entry Backend
+### Accessing the Data Entry Backend
 
 Now, you can add "/edit" to the base URL of your installation (for example, `http://localhost/gbdb/edit`), and log in -- you are ready to populate the database through the web interface.
 
-# Command Line Utilities
+## Command Line Utilities
 
 Geeby-Deeby includes some utilities that can be run from the command line for data integrity
 checking, etc. Simply run `php cli.php` from the Geeby-Deeby directory to get a summary of
@@ -122,9 +121,29 @@ commands. You can add the `--help` switch to get more information about a partic
 for example, `php cli.php check/fulltext --help` will tell you more about the command to check
 the integrity of full text links.
 
-# Upgrading
+## Upgrading
 
 Whenever you pull down changes from the upstream repository, you should be sure to do two things:
 
 1. Run `composer install` to load the latest dependencies.
 2. Check the `data/migrations` directory for new SQL scripts added since your last upgrade. These should be run in chronological order to bring your database structure up to date (e.g. `mysql -ugbdb_user -pgbdb_pass gbdb < data/migrations/YYYYMMDD-nnn-name-of-migration.sql`>)
+
+## Developer Tools
+
+### Code Quality
+
+You can run `composer qa` to detect code quality problems, and `composer fix` to auto-fix many problems.
+
+### Integration Tests
+
+The package includes Mink integration tests that can drive a browser to verify the software's functionality. To run tests, follow these steps:
+
+1. Run `vendor/bin/phing startup` to create an empty database for testing. You may need to provide your MySQL database's root credentials using the `mysqlrootuser` and `mysqlrootpass` properties. You can use the `gbdbdb`, `gbdbdbuser` and `gbdbdbpass` properties to control the name and credentials of the test database/user.
+
+2. Run a Chrome-compatible browser in test mode; for example: `chromium-browser --disable-gpu --headless --remote-debugging-address=0.0.0.0 --remote-debugging-port=9222 --window-size="1366,768" --disable-extensions --user-data-dir=~/chromium-test-user-dir`
+
+3. Run `vendor/bin/phing phpunitfast` to run the test suite.
+
+4. When finished, run `vendor/bin/phing shutdown` (again providing any appropriate properties) to clean up the test database.
+
+It may be useful to create a wrapper script around `vendor/bin/phing` so you don't have to re-type your properties every time.
