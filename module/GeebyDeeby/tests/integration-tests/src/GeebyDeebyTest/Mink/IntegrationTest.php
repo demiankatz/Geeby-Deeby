@@ -1080,8 +1080,9 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'link list' => [
             'List Links',
-            '|test link type 1 test link 1 https://gamebooks.org/ \\(last verified: [\d-]+\\) '
-            . 'test link 2 \\(edited\\) This link has been edited. https://dimenovels.org '
+            '|test link type 1 Back to Top ↑ '
+            . 'test link 1 https://gamebooks.org/ \\(last verified: [\d-]+\\) '
+            . 'test link 2 \\(edited\\) This has been edited. https://dimenovels.org '
             . '\\(last verified: 2025-12-01\\)|',
             null,
             true,
