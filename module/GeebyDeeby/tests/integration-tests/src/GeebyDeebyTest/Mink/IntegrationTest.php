@@ -263,35 +263,75 @@ class IntegrationTest extends MinkTestCase
      */
     public static function populateDataProvider(): Generator
     {
-        yield 'category' => [
+        yield 'category 1' => [
             'CategoryList',
             '#add_category',
             ['#Category_Name' => 'test category', '#Description' => 'test description'],
             '#category_list',
         ];
-        yield 'citation' => [
+        yield 'category 2' => [
+            'CategoryList',
+            '#add_category',
+            ['#Category_Name' => 'second test category', '#Description' => 'test description 2'],
+            '#category_list',
+            null,
+            2,
+        ];
+        yield 'citation 1' => [
             'CitationList',
             '#add_citation',
             ['#Citation_Text' => 'test citation'],
             '#citation_list',
         ];
-        yield 'edition attribute' => [
+        yield 'citation 2' => [
+            'CitationList',
+            '#add_citation',
+            ['#Citation_Text' => 'second test citation'],
+            '#citation_list',
+            null,
+            2,
+        ];
+        yield 'edition attribute 1' => [
             'EditionsAttributeList',
             '#add_edition_attribute',
-            ['#Editions_Attribute_Name' => 'test edition attribute'],
+            ['#Editions_Attribute_Name' => 'test edition attribute 1'],
             '#editions_attribute_list',
         ];
-        yield 'file type' => [
+        yield 'edition attribute 2' => [
+            'EditionsAttributeList',
+            '#add_edition_attribute',
+            ['#Editions_Attribute_Name' => 'test edition attribute 2'],
+            '#editions_attribute_list',
+            null,
+            2,
+        ];
+        yield 'file type 1' => [
             'FileList',
             '#add_file_type',
-            ['#File_Type' => 'test file type'],
+            ['#File_Type' => 'test file type 1'],
             '#file_type_list',
         ];
-        yield 'file' => [
+        yield 'file type 2' => [
+            'FileList',
+            '#add_file_type',
+            ['#File_Type' => 'test file type 2'],
+            '#file_type_list',
+            null,
+            2,
+        ];
+        yield 'file 1' => [
             'FileList',
             '#add_file',
-            ['#File_Name' => 'test file', '#File_Path' => '/foo/bar'],
+            ['#File_Name' => 'test file 1', '#File_Path' => '/foo/bar/1'],
             '#file_list',
+        ];
+        yield 'file 2' => [
+            'FileList',
+            '#add_file',
+            ['#File_Name' => 'test file 2', '#File_Path' => '/foo/bar/2'],
+            '#file_list',
+            null,
+            2,
         ];
         yield 'full text attribute' => [
             'EditionFullTextAttributeList',
@@ -466,6 +506,49 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Populate a form and return the first value entered (or empty string if no data provided).
+     *
+     * @param TraversableElement $page Page containing form
+     * @param array              $data Data to enter into the form (indexed by selector)
+     *
+     * @return string
+     */
+    protected function populateForm(TraversableElement $page, array $data): string
+    {
+        $firstValue = null;
+        foreach ($data as $selector => $value) {
+            $firstValue ??= $value;
+            $this->findCssAndSetValue($page, $selector, $value);
+        }
+        return $firstValue ?? '';
+    }
+
+    /**
+     * Assert that a list of links contains the expected value (and, if provided, matches the expected count)
+     *
+     * @param TraversableElement $page              Page containing list
+     * @param string             $listSelector      Selector for container containing links
+     * @param string             $expectedLink      Link text we expect to find in the list
+     * @param ?int               $expectedLinkCount Expected count of links (or null to skip check)
+     *
+     * @return void
+     * @throws \Exception
+     */
+    protected function assertLinkListIsCorrect(
+        TraversableElement $page,
+        string $listSelector,
+        string $expectedLink,
+        ?int $expectedLinkCount = null
+    ): void {
+        $links = $page->findAll('css', "$listSelector a");
+        $linkText = array_map(fn ($a) => $a->getText(), $links);
+        $this->assertTrue(in_array($expectedLink, $linkText), "Link list should include '$expectedLink'");
+        if (null !== $expectedLinkCount) {
+            $this->assertCount($expectedLinkCount, $links);
+        }
+    }
+
+    /**
      * Populate some data in the database.
      *
      * @param string  $url               URL for edit screen (will be appended to /edit/)
@@ -490,16 +573,94 @@ class IntegrationTest extends MinkTestCase
         $page = $this->goToPage("/edit/$url");
         $this->logIn($page, 'admin');
         $this->clickCss($page, $buttonSelector);
-        foreach ($data as $selector => $value) {
-            $expectedDisplay = $expectedDisplay === null ? $value : $expectedDisplay;
-            $this->findCssAndSetValue($page, $selector, $value);
-        }
+        $firstValue = $this->populateForm($page, $data);
         $this->clickCss($page, '.modal-body input[type="submit"]');
         $this->waitForPageLoad($page);
-        $links = $page->findAll('css', "$listSelector a");
-        $linkText = array_map(fn ($a) => $a->getText(), $links);
-        $this->assertTrue(in_array($expectedDisplay, $linkText), "Link list should include '$expectedDisplay'");
-        $this->assertCount($expectedLinkCount, $links);
+        $this->assertLinkListIsCorrect($page, $listSelector, $expectedDisplay ?? $firstValue, $expectedLinkCount);
+    }
+
+    /**
+     * Data provider for testEditExistingData().
+     *
+     * @return Generator<string, array>
+     */
+    public static function editExistingDataProvider(): Generator
+    {
+        // We're going to derive some data from the populateDataProvider, so let's obtain that as an array:
+        $populateData = iterator_to_array(static::populateDataProvider());
+
+        /**
+         * Function to derive an edit test case from a populate test case.
+         *
+         * @param array  $testCase       Original populate test case
+         * @param array  $fieldOverrides Specific edits to make (instead of default append "(edited)")
+         * @param ?array $fieldsToEdit   Array of fields to append "(edit)" to
+         * @param bool   $inModal        Do we expect the edit screen to be in a modal?
+         *
+         * @return array
+         */
+        $deriveTestCase = function (
+            array $testCase,
+            ?array $fieldsToEdit = null,
+            array $fieldOverrides = [],
+            ?string $expectedDisplay = null,
+            bool $inModal = true
+        ): array {
+            // Extract the test case to convenience variables:
+            [$url, , $data, $listSelector] = $testCase;
+            $linkToClick = $testCase[4] ?? reset($data);
+            foreach ($fieldsToEdit ?? array_keys($data) as $key) {
+                $data[$key] = $fieldOverrides[$key] ?? ($data[$key] . ' (edited)');
+            }
+            $expectedDisplay ??= $linkToClick . ' (edited)';
+            return [$url, $linkToClick, $data, $listSelector, $expectedDisplay, $inModal];
+        };
+
+        yield 'category' => $deriveTestCase($populateData['category 2']);
+        yield 'citation' => $deriveTestCase($populateData['citation 2']);
+        yield 'edition attribute' => $deriveTestCase($populateData['edition attribute 2']);
+        yield 'file type' => $deriveTestCase($populateData['file type 2']);
+        yield 'file' => $deriveTestCase(
+            $populateData['file 2'],
+            fieldOverrides: ['#File_Path' => '/foo/2_edited'],
+            inModal: false
+        );
+    }
+
+    /**
+     * Edit existing data in the database.
+     *
+     * @param string $url             URL for edit screen (will be appended to /edit/)
+     * @param string $linkToClick     Text of link to click to open edit form
+     * @param array  $data            Data to enter into the edit form (indexed by selector)
+     * @param string $listSelector    Selector for container listing all values
+     * @param string $expectedDisplay Expected display value for edited item
+     * @param bool   $inModal         Do we expect the edit screen to be in a modal?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('editExistingDataProvider')]
+    public function testEditExistingData(
+        string $url,
+        string $linkToClick,
+        array $data,
+        string $listSelector,
+        string $expectedDisplay,
+        bool $inModal
+    ): void {
+        $page = $this->goToPage("/edit/$url");
+        $this->logIn($page, 'admin');
+        $page->clickLink($linkToClick);
+        $this->populateForm($page, $data);
+        $baseSelector = $inModal ? '.modal-body' : '.edit_container';
+        $this->clickCss($page, $baseSelector . ' input[type="submit"]');
+        $this->waitForPageLoad($page);
+        // If we're not in a modal, we need to return to the previous page to check our results:
+        if (!$inModal) {
+            $this->getMinkSession()->visit($this->getGeebyDeebyUrl("/edit/$url"));
+        }
+        $this->assertLinkListIsCorrect($page, $listSelector, $expectedDisplay);
     }
 
     /**
