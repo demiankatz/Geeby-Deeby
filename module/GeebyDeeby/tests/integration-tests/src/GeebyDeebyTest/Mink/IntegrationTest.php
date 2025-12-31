@@ -417,11 +417,19 @@ class IntegrationTest extends MinkTestCase
             null,
             2,
         ];
-        yield 'link' => [
+        yield 'link 1' => [
             'LinkList',
             '#add_link',
-            ['#Link_Name' => 'test link', '#URL' => 'https://gamebooks.org/'],
+            ['#Link_Name' => 'test link 1', '#URL' => 'https://gamebooks.org/'],
             '#link_list',
+        ];
+        yield 'link 2' => [
+            'LinkList',
+            '#add_link',
+            ['#Link_Name' => 'test link 2', '#URL' => 'https://dimenovels.org/raw/'],
+            '#link_list',
+            null,
+            2,
         ];
         yield 'material type' => [
             'MaterialTypeList',
@@ -657,7 +665,7 @@ class IntegrationTest extends MinkTestCase
             // Extract the test case to convenience variables:
             [$url, , $data, $listSelector] = $testCase;
             $linkToClick = $testCase[4] ?? reset($data);
-            foreach ($fieldsToEdit ?? array_keys($data) as $key) {
+            foreach ($fieldsToEdit ?? array_merge(array_keys($fieldOverrides), array_keys($data)) as $key) {
                 $data[$key] = $fieldOverrides[$key] ?? ($data[$key] . ' (edited)');
             }
             $expectedDisplay ??= $linkToClick . ' (edited)';
@@ -670,7 +678,10 @@ class IntegrationTest extends MinkTestCase
         yield 'file type' => $deriveTestCase($populateData['file type 2']);
         yield 'file' => $deriveTestCase(
             $populateData['file 2'],
-            fieldOverrides: ['#File_Path' => '/foo/2_edited'],
+            fieldOverrides: [
+                '#File_Path' => '/foo/2_edited',
+                '#Description' => 'This has been edited.',
+            ],
             inModal: false
         );
         yield 'full text attribute' => $deriveTestCase($populateData['full text attribute 2']);
@@ -679,6 +690,15 @@ class IntegrationTest extends MinkTestCase
         yield 'item relationship' => $deriveTestCase($populateData['item relationship 2']);
         yield 'language' => $deriveTestCase($populateData['language 2']);
         yield 'link type' => $deriveTestCase($populateData['link type 2']);
+        yield 'link' => $deriveTestCase(
+            $populateData['link 2'],
+            fieldOverrides: [
+                '#URL' => 'https://dimenovels.org',
+                '#Description' => 'This has been edited.',
+                '#Date_Checked' => '2025-12-01',
+            ],
+            inModal: false
+        );
     }
 
     /**
