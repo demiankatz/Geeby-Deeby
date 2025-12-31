@@ -36,6 +36,8 @@ use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
+use function in_array;
+
 /**
  * Mink integration test for the platform.
  *
@@ -261,89 +263,201 @@ class IntegrationTest extends MinkTestCase
      */
     public static function populateDataProvider(): Generator
     {
-        yield 'category' => [
+        yield 'category 1' => [
             'CategoryList',
             '#add_category',
             ['#Category_Name' => 'test category', '#Description' => 'test description'],
             '#category_list',
         ];
-        yield 'citation' => [
+        yield 'category 2' => [
+            'CategoryList',
+            '#add_category',
+            ['#Category_Name' => 'second test category', '#Description' => 'test description 2'],
+            '#category_list',
+            null,
+            2,
+        ];
+        yield 'citation 1' => [
             'CitationList',
             '#add_citation',
             ['#Citation_Text' => 'test citation'],
             '#citation_list',
         ];
-        yield 'edition attribute' => [
+        yield 'citation 2' => [
+            'CitationList',
+            '#add_citation',
+            ['#Citation_Text' => 'second test citation'],
+            '#citation_list',
+            null,
+            2,
+        ];
+        yield 'edition attribute 1' => [
             'EditionsAttributeList',
             '#add_edition_attribute',
-            ['#Editions_Attribute_Name' => 'test edition attribute'],
+            ['#Editions_Attribute_Name' => 'test edition attribute 1'],
             '#editions_attribute_list',
         ];
-        yield 'file type' => [
+        yield 'edition attribute 2' => [
+            'EditionsAttributeList',
+            '#add_edition_attribute',
+            ['#Editions_Attribute_Name' => 'test edition attribute 2'],
+            '#editions_attribute_list',
+            null,
+            2,
+        ];
+        yield 'file type 1' => [
             'FileList',
             '#add_file_type',
-            ['#File_Type' => 'test file type'],
+            ['#File_Type' => 'test file type 1'],
             '#file_type_list',
         ];
-        yield 'file' => [
+        yield 'file type 2' => [
+            'FileList',
+            '#add_file_type',
+            ['#File_Type' => 'test file type 2'],
+            '#file_type_list',
+            null,
+            2,
+        ];
+        yield 'file 1' => [
             'FileList',
             '#add_file',
-            ['#File_Name' => 'test file', '#File_Path' => '/foo/bar'],
+            ['#File_Name' => 'test file 1', '#File_Path' => '/foo/bar/1'],
             '#file_list',
         ];
-        yield 'full text attribute' => [
+        yield 'file 2' => [
+            'FileList',
+            '#add_file',
+            ['#File_Name' => 'test file 2', '#File_Path' => '/foo/bar/2'],
+            '#file_list',
+            null,
+            2,
+        ];
+        yield 'full text attribute 1' => [
             'EditionFullTextAttributeList',
             '#add_edition_full_text_attribute',
-            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute'],
+            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute 1'],
             '#edition_full_text_attribute_list',
         ];
-        yield 'full text source' => [
+        yield 'full text attribute 2' => [
+            'EditionFullTextAttributeList',
+            '#add_edition_full_text_attribute',
+            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute 2'],
+            '#edition_full_text_attribute_list',
+            null,
+            2,
+        ];
+        yield 'full text source 1' => [
             'FullTextSourceList',
             '#add_source',
-            ['#Full_Text_Source_Name' => 'test full text source'],
+            ['#Full_Text_Source_Name' => 'test full text source 1'],
             '#full_text_source_list',
         ];
-        yield 'item attribute' => [
+        yield 'full text source 2' => [
+            'FullTextSourceList',
+            '#add_source',
+            ['#Full_Text_Source_Name' => 'test full text source 2'],
+            '#full_text_source_list',
+            null,
+            2,
+        ];
+        yield 'item attribute 1' => [
             'ItemsAttributeList',
             '#add_item_attribute',
-            ['#Items_Attribute_Name' => 'test item attribute'],
+            ['#Items_Attribute_Name' => 'test item attribute 1'],
             '#items_attribute_list',
         ];
-        yield 'item relationships' => [
+        yield 'item attribute 2' => [
+            'ItemsAttributeList',
+            '#add_item_attribute',
+            ['#Items_Attribute_Name' => 'test item attribute 2'],
+            '#items_attribute_list',
+            null,
+            2,
+        ];
+        yield 'item relationship 1' => [
             'ItemsRelationshipList',
             '#add_item_relationship',
-            ['#Items_Relationship_Name' => 'test item relationship'],
+            ['#Items_Relationship_Name' => 'test item relationship 1'],
             '#items_relationship_list',
         ];
-        yield 'language' => [
+        yield 'item relationship 2' => [
+            'ItemsRelationshipList',
+            '#add_item_relationship',
+            ['#Items_Relationship_Name' => 'test item relationship 2'],
+            '#items_relationship_list',
+            null,
+            2,
+        ];
+        yield 'language 1' => [
             'LanguageList',
             '#add_language',
-            ['#Language_Name' => 'test language'],
+            ['#Language_Name' => 'test language 1'],
             '#language_list',
         ];
-        yield 'link type' => [
+        yield 'language 2' => [
+            'LanguageList',
+            '#add_language',
+            ['#Language_Name' => 'test language 2'],
+            '#language_list',
+            null,
+            2,
+        ];
+        yield 'link type 1' => [
             'LinkList',
             '#add_link_type',
-            ['#Link_Type' => 'test link type'],
+            ['#Link_Type' => 'test link type 1'],
             '#link_type_list',
         ];
-        yield 'link' => [
+        yield 'link type 2' => [
+            'LinkList',
+            '#add_link_type',
+            ['#Link_Type' => 'test link type 2'],
+            '#link_type_list',
+            null,
+            2,
+        ];
+        yield 'link 1' => [
             'LinkList',
             '#add_link',
-            ['#Link_Name' => 'test link', '#URL' => 'https://gamebooks.org/'],
+            ['#Link_Name' => 'test link 1', '#URL' => 'https://gamebooks.org/'],
             '#link_list',
         ];
-        yield 'material type' => [
+        yield 'link 2' => [
+            'LinkList',
+            '#add_link',
+            ['#Link_Name' => 'test link 2', '#URL' => 'https://dimenovels.org/raw/'],
+            '#link_list',
+            null,
+            2,
+        ];
+        yield 'material type 1' => [
             'MaterialTypeList',
             '#add_material_type',
             ['#Material_Type_Name' => 'test material', '#Material_Type_Plural_Name' => 'test materials'],
             '#material_type_list',
         ];
-        yield 'note' => [
+        yield 'material type 2' => [
+            'MaterialTypeList',
+            '#add_material_type',
+            ['#Material_Type_Name' => 'second test material', '#Material_Type_Plural_Name' => 'second test materials'],
+            '#material_type_list',
+            null,
+            2,
+        ];
+        yield 'note 1' => [
             'NoteList',
             '#add_note',
             ['#Note_Text' => 'test note'],
             '#note_list',
+        ];
+        yield 'note 2' => [
+            'NoteList',
+            '#add_note',
+            ['#Note_Text' => 'test note 2'],
+            '#note_list',
+            null,
+            2,
         ];
         yield 'person role' => [
             'PersonList',
@@ -351,11 +465,27 @@ class IntegrationTest extends MinkTestCase
             ['#Role_Name' => 'test person role'],
             '#person_role_list',
         ];
+        yield 'person role 2' => [
+            'PersonList',
+            '#add_person_role',
+            ['#Role_Name' => 'test person role 2'],
+            '#person_role_list',
+            null,
+            2,
+        ];
         yield 'person authority' => [
             'PersonList',
             '#add_person_authority',
             ['#Authority_Name' => 'test person authority'],
             '#person_authority_list',
+        ];
+        yield 'person authority 2' => [
+            'PersonList',
+            '#add_person_authority',
+            ['#Authority_Name' => 'test person authority 2'],
+            '#person_authority_list',
+            null,
+            2,
         ];
         yield 'person 1' => [
             'PersonList',
@@ -367,77 +497,165 @@ class IntegrationTest extends MinkTestCase
         yield 'person 2' => [
             'PersonList',
             '#add_person',
-            ['#First_Name' => 'test-second', '#Last_Name' => 'zlastname'], // sort to end of list for easy assertion
+            ['#First_Name' => 'test-second', '#Last_Name' => 'lastname'],
             '#person_list',
-            'zlastname, test-second',
+            'lastname, test-second',
             6, // number is higher due to jump links
         ];
-        yield 'country' => [
+        yield 'country 1' => [
             'CountryList',
             '#add_country',
             ['#Country_Name' => 'test country'],
             '#country_list',
         ];
-        yield 'city' => [
+        yield 'country 2' => [
+            'CountryList',
+            '#add_country',
+            ['#Country_Name' => 'test country 2'],
+            '#country_list',
+            null,
+            2,
+        ];
+        yield 'city 1' => [
             'CountryList',
             '#add_city',
             ['#City_Name' => 'test city'],
             '#city_list',
         ];
-        yield 'platform' => [
+        yield 'city 2' => [
+            'CountryList',
+            '#add_city',
+            ['#City_Name' => 'test city 2'],
+            '#city_list',
+            null,
+            2,
+        ];
+        yield 'platform 1' => [
             'PlatformList',
             '#add_platform',
             ['#Platform_Name' => 'test platform'],
             '#platform_list',
         ];
-        yield 'predicate' => [
+        yield 'platform 2' => [
+            'PlatformList',
+            '#add_platform',
+            ['#Platform_Name' => 'test platform 2'],
+            '#platform_list',
+            null,
+            2,
+        ];
+        yield 'predicate 1' => [
             'PredicateList',
             '#add_predicate',
             ['#Predicate_Abbrev' => 'test_predicate', '#Predicate_URI' => 'http://test-predicate'],
             '#predicate_list',
             'test_predicate (http://test-predicate)',
         ];
-        yield 'publisher' => [
+        yield 'predicate 2' => [
+            'PredicateList',
+            '#add_predicate',
+            ['#Predicate_Abbrev' => 'another_test_predicate', '#Predicate_URI' => 'http://test-predicate/2'],
+            '#predicate_list',
+            'another_test_predicate (http://test-predicate/2)',
+            6, // number is higher due to jump links
+        ];
+        yield 'publisher 1' => [
             'PublisherList',
             '#add_publisher',
             ['#Publisher_Name' => 'test publisher'],
             '#publisher_list',
         ];
-        yield 'series attribute' => [
+        yield 'publisher 2' => [
+            'PublisherList',
+            '#add_publisher',
+            ['#Publisher_Name' => 'test publisher 2'],
+            '#publisher_list',
+            null,
+            2,
+        ];
+        yield 'series attribute 1' => [
             'SeriesAttributeList',
             '#add_series_attribute',
             ['#Series_Attribute_Name' => 'test series attribute'],
             '#series_attribute_list',
         ];
-        yield 'series relationships' => [
+        yield 'series attribute 2' => [
+            'SeriesAttributeList',
+            '#add_series_attribute',
+            ['#Series_Attribute_Name' => 'test series attribute 2'],
+            '#series_attribute_list',
+            null,
+            2,
+        ];
+        yield 'series relationship 1' => [
             'SeriesAttributeList',
             '#add_series_relationship',
             ['#Series_Relationship_Name' => 'test series relationship'],
             '#series_relationship_list',
         ];
-        yield 'tag attribute' => [
+        yield 'series relationship 2' => [
+            'SeriesAttributeList',
+            '#add_series_relationship',
+            ['#Series_Relationship_Name' => 'test series relationship 2'],
+            '#series_relationship_list',
+            null,
+            2,
+        ];
+        yield 'tag attribute 1' => [
             'TagsAttributeList',
             '#add_tag_attribute',
             ['#Tags_Attribute_Name' => 'test tag attribute'],
             '#tags_attribute_list',
         ];
-        yield 'tag relationships' => [
+        yield 'tag attribute 2' => [
+            'TagsAttributeList',
+            '#add_tag_attribute',
+            ['#Tags_Attribute_Name' => 'test tag attribute 2'],
+            '#tags_attribute_list',
+            null,
+            2,
+        ];
+        yield 'tag relationship 1' => [
             'TagsAttributeList',
             '#add_tag_relationship',
             ['#Tags_Relationship_Name' => 'test tag relationship'],
             '#tags_relationship_list',
         ];
-        yield 'tag type' => [
+        yield 'tag relationship 2' => [
+            'TagsAttributeList',
+            '#add_tag_relationship',
+            ['#Tags_Relationship_Name' => 'test tag relationship 2'],
+            '#tags_relationship_list',
+            null,
+            2,
+        ];
+        yield 'tag type 1' => [
             'TagList',
             '#add_tag_type',
             ['#Tag_Type' => 'test tag type'],
             '#tag_type_list',
         ];
-        yield 'tag' => [
+        yield 'tag type 2' => [
+            'TagList',
+            '#add_tag_type',
+            ['#Tag_Type' => 'test tag type 2'],
+            '#tag_type_list',
+            null,
+            2,
+        ];
+        yield 'tag 1' => [
             'TagList',
             '#add_tag',
             ['#Tag_Name' => 'test tag'],
             '#tag_list',
+        ];
+        yield 'tag 2' => [
+            'TagList',
+            '#add_tag',
+            ['#Tag_Name' => 'test tag 2'],
+            '#tag_list',
+            null,
+            2,
         ];
         yield 'series 1' => [
             'SeriesList',
@@ -450,7 +668,7 @@ class IntegrationTest extends MinkTestCase
             '#add_series',
             ['#Series_Name' => 'test series 2'],
             '#series_list',
-            'test series 2',
+            null,
             2,
         ];
         yield 'item' => [
@@ -461,6 +679,49 @@ class IntegrationTest extends MinkTestCase
             '[edit edition]',
             2,
         ];
+    }
+
+    /**
+     * Populate a form and return the first value entered (or empty string if no data provided).
+     *
+     * @param TraversableElement $page Page containing form
+     * @param array              $data Data to enter into the form (indexed by selector)
+     *
+     * @return string
+     */
+    protected function populateForm(TraversableElement $page, array $data): string
+    {
+        $firstValue = null;
+        foreach ($data as $selector => $value) {
+            $firstValue ??= $value;
+            $this->findCssAndSetValue($page, $selector, $value);
+        }
+        return $firstValue ?? '';
+    }
+
+    /**
+     * Assert that a list of links contains the expected value (and, if provided, matches the expected count)
+     *
+     * @param TraversableElement $page              Page containing list
+     * @param string             $listSelector      Selector for container containing links
+     * @param string             $expectedLink      Link text we expect to find in the list
+     * @param ?int               $expectedLinkCount Expected count of links (or null to skip check)
+     *
+     * @return void
+     * @throws \Exception
+     */
+    protected function assertLinkListIsCorrect(
+        TraversableElement $page,
+        string $listSelector,
+        string $expectedLink,
+        ?int $expectedLinkCount = null
+    ): void {
+        $links = $page->findAll('css', "$listSelector a");
+        $linkText = array_map(fn ($a) => $a->getText(), $links);
+        $this->assertTrue(in_array($expectedLink, $linkText), "Link list should include '$expectedLink'");
+        if (null !== $expectedLinkCount) {
+            $this->assertCount($expectedLinkCount, $links);
+        }
     }
 
     /**
@@ -488,17 +749,144 @@ class IntegrationTest extends MinkTestCase
         $page = $this->goToPage("/edit/$url");
         $this->logIn($page, 'admin');
         $this->clickCss($page, $buttonSelector);
-        foreach ($data as $selector => $value) {
-            $expectedDisplay = $expectedDisplay === null ? $value : $expectedDisplay;
-            $this->findCssAndSetValue($page, $selector, $value);
-        }
+        $firstValue = $this->populateForm($page, $data);
         $this->clickCss($page, '.modal-body input[type="submit"]');
         $this->waitForPageLoad($page);
-        $this->assertEquals(
-            $expectedDisplay,
-            $this->findCssAndGetText($page, "$listSelector a", index: $expectedLinkCount - 1)
+        $this->assertLinkListIsCorrect($page, $listSelector, $expectedDisplay ?? $firstValue, $expectedLinkCount);
+    }
+
+    /**
+     * Data provider for testEditExistingData().
+     *
+     * @return Generator<string, array>
+     */
+    public static function editExistingDataProvider(): Generator
+    {
+        // We're going to derive some data from the populateDataProvider, so let's obtain that as an array:
+        $populateData = iterator_to_array(static::populateDataProvider());
+
+        /**
+         * Function to derive an edit test case from a populate test case.
+         *
+         * @param array  $testCase       Original populate test case
+         * @param array  $fieldOverrides Specific edits to make (instead of default append "(edited)")
+         * @param ?array $fieldsToEdit   Array of fields to append "(edit)" to
+         * @param bool   $inModal        Do we expect the edit screen to be in a modal?
+         *
+         * @return array
+         */
+        $deriveTestCase = function (
+            array $testCase,
+            ?array $fieldsToEdit = null,
+            array $fieldOverrides = [],
+            ?string $expectedDisplay = null,
+            bool $inModal = true
+        ): array {
+            // Extract the test case to convenience variables:
+            [$url, , $data, $listSelector] = $testCase;
+            $linkToClick = $testCase[4] ?? reset($data);
+            foreach ($fieldsToEdit ?? array_merge(array_keys($fieldOverrides), array_keys($data)) as $key) {
+                $data[$key] = $fieldOverrides[$key] ?? ($data[$key] . ' (edited)');
+            }
+            $expectedDisplay ??= $linkToClick . ' (edited)';
+            return [$url, $linkToClick, $data, $listSelector, $expectedDisplay, $inModal];
+        };
+
+        yield 'category' => $deriveTestCase($populateData['category 2']);
+        yield 'citation' => $deriveTestCase($populateData['citation 2']);
+        yield 'edition attribute' => $deriveTestCase($populateData['edition attribute 2']);
+        yield 'file type' => $deriveTestCase($populateData['file type 2']);
+        yield 'file' => $deriveTestCase(
+            $populateData['file 2'],
+            fieldOverrides: [
+                '#File_Path' => '/foo/2_edited',
+                '#Description' => 'This has been edited.',
+            ],
+            inModal: false
         );
-        $this->assertCount($expectedLinkCount, $page->findAll('css', "$listSelector a"));
+        yield 'full text attribute' => $deriveTestCase($populateData['full text attribute 2']);
+        yield 'full text source' => $deriveTestCase($populateData['full text source 2']);
+        yield 'item attribute' => $deriveTestCase($populateData['item attribute 2']);
+        yield 'item relationship' => $deriveTestCase($populateData['item relationship 2']);
+        yield 'language' => $deriveTestCase($populateData['language 2']);
+        yield 'link type' => $deriveTestCase($populateData['link type 2']);
+        yield 'link' => $deriveTestCase(
+            $populateData['link 2'],
+            fieldOverrides: [
+                '#URL' => 'https://dimenovels.org',
+                '#Description' => 'This has been edited.',
+                '#Date_Checked' => '2025-12-01',
+            ],
+            inModal: false
+        );
+        yield 'material type' => $deriveTestCase($populateData['material type 2']);
+        yield 'note' => $deriveTestCase($populateData['note 2']);
+        yield 'person role' => $deriveTestCase($populateData['person role 2']);
+        yield 'person authority' => $deriveTestCase($populateData['person authority 2']);
+        yield 'person' => $deriveTestCase(
+            $populateData['person 2'],
+            fieldOverrides: ['#First_Name' => 'test-second-edited', '#Last_Name' => 'last', '#Biography' => 'bio'],
+            inModal: false,
+            expectedDisplay: 'last, test-second-edited'
+        );
+        yield 'country' => $deriveTestCase($populateData['country 2'], inModal: false);
+        yield 'city' => $deriveTestCase($populateData['city 2'], inModal: false);
+        yield 'platform' => $deriveTestCase($populateData['platform 2']);
+        yield 'predicate' => $deriveTestCase(
+            $populateData['predicate 2'],
+            fieldOverrides: ['#Predicate_Abbrev' => 'edited_test_predicate', '#Predicate_URI' => 'http://edit-pred/'],
+            expectedDisplay: 'edited_test_predicate (http://edit-pred/)',
+        );
+        yield 'publisher' => $deriveTestCase($populateData['publisher 2'], inModal: false);
+        yield 'series attribute' => $deriveTestCase($populateData['series attribute 2']);
+        yield 'series relationship' => $deriveTestCase($populateData['series relationship 2']);
+        yield 'tag attribute' => $deriveTestCase($populateData['tag attribute 2']);
+        yield 'tag relationship' => $deriveTestCase($populateData['tag relationship 2']);
+        yield 'tag type' => $deriveTestCase($populateData['tag type 2']);
+        yield 'tag' => $deriveTestCase($populateData['tag 2'], inModal: false);
+        yield 'series' => $deriveTestCase(
+            $populateData['series 2'],
+            fieldOverrides: [
+                '#Series_Description' => 'This has been edited.',
+            ],
+            inModal: false
+        );
+    }
+
+    /**
+     * Edit existing data in the database.
+     *
+     * @param string $url             URL for edit screen (will be appended to /edit/)
+     * @param string $linkToClick     Text of link to click to open edit form
+     * @param array  $data            Data to enter into the edit form (indexed by selector)
+     * @param string $listSelector    Selector for container listing all values
+     * @param string $expectedDisplay Expected display value for edited item
+     * @param bool   $inModal         Do we expect the edit screen to be in a modal?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('editExistingDataProvider')]
+    public function testEditExistingData(
+        string $url,
+        string $linkToClick,
+        array $data,
+        string $listSelector,
+        string $expectedDisplay,
+        bool $inModal
+    ): void {
+        $page = $this->goToPage("/edit/$url");
+        $this->logIn($page, 'admin');
+        $page->clickLink($linkToClick);
+        $this->populateForm($page, $data);
+        $baseSelector = $inModal ? '.modal-body' : '.edit_container';
+        $this->clickCss($page, $baseSelector . ' input[type="submit"]');
+        $this->waitForPageLoad($page);
+        // If we're not in a modal, we need to return to the previous page to check our results:
+        if (!$inModal) {
+            $this->getMinkSession()->visit($this->getGeebyDeebyUrl("/edit/$url"));
+        }
+        $this->assertLinkListIsCorrect($page, $listSelector, $expectedDisplay);
     }
 
     /**
@@ -591,8 +979,9 @@ class IntegrationTest extends MinkTestCase
         $page->clickLink('Full Text Links');
         $this->findCssAndSetValue($page, '#Full_Text_URL', 'http://example.com/fulltext');
         $this->clickCss($page, '.active .edit_container input[type="submit"]');
+        $this->waitForPageLoad($page);
         $this->assertEquals(
-            'test full text source: http://example.com/fulltext '
+            'test full text source 1: http://example.com/fulltext '
             . 'Edit options for URL: http://example.com/fulltext '
             . 'Delete full text URL: http://example.com/fulltext',
             $this->findCssAndGetText($page, '#fulltext_list')
@@ -632,5 +1021,100 @@ class IntegrationTest extends MinkTestCase
                 $this->findCssAndGetText($page, '.content p', index: 1)
             );
         }
+    }
+
+    /**
+     * Data provider for testPopulatedDatabase()
+     *
+     * @return Generator<string, array>
+     */
+    public static function populatedDatabaseProvider(): Generator
+    {
+        yield 'series by name' => ['by name', 'T test series 1 test series 2 (edited)', 0];
+        yield 'series by category' => [
+            'by category',
+            'S T second test category (edited) T Back to Top ↑ test category',
+            0,
+        ];
+        yield 'series by city' => ['by city', 'T test city test city 2 (edited)', 0];
+        yield 'series by country' => ['by country', 'T test country test country 2 (edited)', 0];
+        yield 'series by language' => ['by language', 'T test language 1 test language 2 (edited)', 0];
+        // TODO: link a material type to a series so this test will become interesting
+        //yield 'series by material type' => ['by material type', 'No material types listed in this database yet.', 0];
+        yield 'series by publisher' => ['by publisher', 'T test publisher test publisher 2 (edited)', 0];
+        // TODO: add a comment test so this will have content:
+        //yield 'series with comments' => ['with comments', 'No comments listed.', 0];
+        yield 'recently added series' => [
+            'recently added',
+            'Viewing page 1 of 1 test series 2 (edited) test series 1 First | Previous | 1 | Next | Last',
+            0,
+        ];
+        yield 'people by name' => [
+            'by name',
+            'L T last, test-second-edited T Back to Top ↑ test-last, test-first, extra',
+            1,
+        ];
+        yield 'people with biographical notes' => ['with biographical notes', 'L last, test-second-edited', 1];
+        yield 'recently added people' => [
+            'recently added',
+            'Viewing page 1 of 1 last, test-second-edited test-last, test-first, extra '
+            . 'First | Previous | 1 | Next | Last',
+            1,
+        ];
+        yield 'items by name' => ['by name', 'T test item', 2];
+        yield 'items by platform' => ['by platform', 'T test platform test platform 2 (edited)', 2];
+        yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
+        // TODO: add year data so this will have content:
+        //yield 'items by year' => ['by year', 'No items listed in this database yet.', 2];
+        yield 'items with full text' => ['with full text', '/.*test series 1 test item$/', 2, true];
+        // TODO: add review so this will have content:
+        //yield 'items with reviews' => ['with reviews', 'No reviews listed.', 2];
+        yield 'recently added items' => [
+            'recently added',
+            'Viewing page 1 of 1 test item First | Previous | 1 | Next | Last',
+            2,
+        ];
+        yield 'file list' => [
+            'List Files',
+            'test file type 1 test file 1 test file 2 (edited) - This has been edited.',
+        ];
+        yield 'link list' => [
+            'List Links',
+            '|test link type 1 Back to Top ↑ '
+            . 'test link 1 https://gamebooks.org/ \\(last verified: [\d-]+\\) '
+            . 'test link 2 \\(edited\\) This has been edited. https://dimenovels.org '
+            . '\\(last verified: 2025-12-01\\)|',
+            null,
+            true,
+        ];
+        yield 'user list' => ['List Registered Users', 'A U admin U Back to Top ↑ user'];
+        // TODO: add reviews/comments so this will have content:
+        //yield 'recent reviews' => ['Browse Recent Reviews', 'No reviews available. No comments available.'];
+        // TODO: add FAQs so this will have content:
+        //yield 'FAQs' => ['List All', 'No FAQs listed in this database yet.'];
+    }
+
+    /**
+     * Test the behavior of a populated database.
+     *
+     * @param string $linkText        Text of link to click
+     * @param string $expectedMessage Expected message on resulting page
+     * @param ?int   $containerIndex  Index of paragraph containing link (null to search whole page)
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('populatedDatabaseProvider')]
+    public function testPopulatedDatabase(
+        string $linkText,
+        string $expectedMessage,
+        ?int $containerIndex = null,
+        bool $regExMatch = false
+    ): void {
+        $page = $this->goToPage();
+        $target = $containerIndex === null ? $page : $this->findCss($page, 'p', index: $containerIndex);
+        $target->clickLink($linkText);
+        $assertion = $regExMatch ? 'assertMatchesRegularExpression' : 'assertEquals';
+        $this->$assertion($expectedMessage, $this->findCssAndGetText($page, '.content'));
     }
 }
