@@ -30,6 +30,9 @@
 namespace GeebyDeeby\View\Helper;
 
 use GeebyDeeby\Controller\EditionController;
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\View\Helper\EscapeHtml;
+use Laminas\View\Helper\Partial;
 
 /**
  * Edition display view helper
@@ -40,23 +43,26 @@ use GeebyDeeby\Controller\EditionController;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ShowEdition extends \Laminas\View\Helper\AbstractHelper
+class ShowEdition
 {
-    /**
-     * Edition controller
-     *
-     * @var EditionController
-     */
-    protected $controller;
-
     /**
      * Constructor
      *
-     * @param EditionController $controller Edition controller
+     * @param EditionController $controller       Edition controller
+     * @param EscapeHtml        $escapeHtmlHelper EscapeHtml view helper
+     * @param FixTitle          $fixTitleHelper   FixTitle view helper
+     * @param Partial           $partialHelper    Partial view helper
      */
-    public function __construct(EditionController $controller)
-    {
-        $this->controller = $controller;
+    public function __construct(
+        #[Autowire(container: 'ControllerManager')]
+        protected EditionController $controller,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected EscapeHtml $escapeHtmlHelper,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected FixTitle $fixTitleHelper,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected Partial $partialHelper,
+    ) {
     }
 
     /**
@@ -71,9 +77,9 @@ class ShowEdition extends \Laminas\View\Helper\AbstractHelper
         $view = $this->controller->getViewModelWithEditionAndDetails($id);
         $view->skipTitle = true;
         return '<h2>'
-            . $this->view->escapeHtml(
-                $this->view->fixtitle($view->edition['Edition_Name'])
+            . ($this->escapeHtmlHelper)(
+                ($this->fixTitleHelper)($view->edition['Edition_Name'])
             ) . '</h2>'
-            . $this->view->partial('geeby-deeby/edition/show', $view);
+            . ($this->partialHelper)('geeby-deeby/edition/show', $view);
     }
 }

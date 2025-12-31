@@ -29,6 +29,10 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\View\Helper\EscapeHtml;
+use Laminas\View\Helper\EscapeHtmlAttr;
+
 /**
  * Button view helper
  *
@@ -38,8 +42,22 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class IconButton extends \Laminas\View\Helper\AbstractHelper
+class IconButton
 {
+    /**
+     * Constructor
+     *
+     * @param EscapeHtmlAttr $escapeHtmlAttrHelper EscapeHtmlAttr view helper
+     * @param EscapeHtml     $escapeHtmlHelper     EscapeHtml view helper
+     */
+    public function __construct(
+        #[Autowire(container: 'ViewHelperManager')]
+        protected EscapeHtmlAttr $escapeHtmlAttrHelper,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected EscapeHtml $escapeHtmlHelper
+    ) {
+    }
+
     /**
      * Create a button control.
      *
@@ -51,8 +69,8 @@ class IconButton extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($type, $action, $label)
     {
-        $safeAction = $this->view->plugin('escapeHtmlAttr')->__invoke($action);
-        $safeLabel = $this->view->plugin('escapeHtml')->__invoke($label);
+        $safeAction = ($this->escapeHtmlAttrHelper)($action);
+        $safeLabel = ($this->escapeHtmlHelper)($label);
         return <<<HTML
             <button onclick="$safeAction">
               <span class="ui-icon ui-icon-$type">

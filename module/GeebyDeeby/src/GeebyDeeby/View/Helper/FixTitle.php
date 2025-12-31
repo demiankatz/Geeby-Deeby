@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+
 /**
  * Title display view helper
  *
@@ -38,23 +40,16 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class FixTitle extends \Laminas\View\Helper\AbstractHelper
+class FixTitle
 {
-    /**
-     * Articles object.
-     *
-     * @var \GeebyDeeby\Articles
-     */
-    protected $articles;
-
     /**
      * Constructor
      *
      * @param \GeebyDeeby\Articles $articles Articles object
      */
-    public function __construct(\GeebyDeeby\Articles $articles)
+    #[Autowire()]
+    public function __construct(protected \GeebyDeeby\Articles $articles)
     {
-        $this->articles = $articles;
     }
 
     /**

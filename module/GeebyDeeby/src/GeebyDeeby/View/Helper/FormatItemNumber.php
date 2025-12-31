@@ -38,7 +38,7 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class FormatItemNumber extends \Laminas\View\Helper\AbstractHelper
+class FormatItemNumber
 {
     /**
      * Format date information for display

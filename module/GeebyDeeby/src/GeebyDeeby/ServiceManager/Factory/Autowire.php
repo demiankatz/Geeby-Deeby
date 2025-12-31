@@ -1,11 +1,11 @@
 <?php
 
 /**
- * ToggleLink view helper factory.
+ * Autowiring Attribute (adapted from VuFind)
  *
  * PHP version 8
  *
- * Copyright (C) Demian Katz 2020.
+ * Copyright (C) The National Library of Finland 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,45 +21,37 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db_Row
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  ServiceManager
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeeby\View\Helper;
+namespace GeebyDeeby\ServiceManager\Factory;
 
-use Psr\Container\ContainerInterface;
+use Attribute;
 
 /**
- * ToggleLink view helper factory.
+ * Autowiring Attribute (adapted from VuFind)
  *
  * @category GeebyDeeby
- * @package  Db_Row
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  ServiceManager
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ToggleLinkFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+#[Attribute]
+class Autowire
 {
     /**
-     * Create service
+     * Constructor.
      *
-     * @param ContainerInterface $container Service manager
-     * @param string             $name      Requested service name
-     * @param ?array             $options   Extra options
-     *
-     * @return mixed
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param ?string $service   Service to inject (mutually exclusive with $config)
+     * @param ?string $container Container or plugin manager to use to get the service
      */
-    public function __invoke(
-        ContainerInterface $container,
-        $name,
-        ?array $options = null
+    public function __construct(
+        public readonly ?string $service = null,
+        public readonly ?string $container = null,
     ) {
-        $table = $container->get(\GeebyDeeby\Db\Table\PluginManager::class)
-            ->get('user');
-        return new $name($table);
     }
 }

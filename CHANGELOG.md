@@ -6,17 +6,18 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
+- Autowiring support for services.
 - "Full text by person" screen.
 - Dates on items in series lists (plus associated new ItemNotes view helper).
 - Tests.
 
 ### Changed
 
-- Nothing.
+- View helpers have been modernized.
 
 ### Removed
 
-- Nothing.
+- View helper factories.
 
 ### Fixed
 

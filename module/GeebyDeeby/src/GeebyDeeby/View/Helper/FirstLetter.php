@@ -40,7 +40,7 @@ use function strlen;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class FirstLetter extends \Laminas\View\Helper\AbstractHelper
+class FirstLetter
 {
     /**
      * Return a normalized first letter for label/grouping purposes.
