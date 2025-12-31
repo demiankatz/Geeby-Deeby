@@ -47,7 +47,7 @@ class ScriptManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInt
      *
      * @param ContainerInterface $container Service manager
      * @param string             $name      Requested service name
-     * @param array              $options   Extra options
+     * @param ?array             $options   Extra options
      *
      * @return mixed
      *
@@ -56,7 +56,7 @@ class ScriptManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInt
     public function __invoke(
         ContainerInterface $container,
         $name,
-        array $options = null
+        ?array $options = null
     ) {
         $base = $container->get('ViewHelperManager')->get('basePath')->__invoke();
         return new $name(

@@ -47,7 +47,7 @@ class AdapterFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
      *
      * @param ContainerInterface $container Service manager
      * @param string             $name      Requested service name
-     * @param array              $options   Extra options
+     * @param ?array             $options   Extra options
      *
      * @return mixed
      *
@@ -56,7 +56,7 @@ class AdapterFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
     public function __invoke(
         ContainerInterface $container,
         $name,
-        array $options = null
+        ?array $options = null
     ) {
         $config = $container->get('Config');
         return new \Laminas\Db\Adapter\Adapter(
