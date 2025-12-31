@@ -57,6 +57,33 @@ class IntegrationTest extends MinkTestCase
     protected $serviceLocator = null;
 
     /**
+     * Do a basic page content comparison.
+     *
+     * @param string $expectedMessage Expected message on resulting page
+     * @param string $path            URL path to visit initially.
+     * @param string $linkText        Text of link to click on resulting page (null to skip clicking)
+     * @param ?int   $containerIndex  Index of paragraph containing link (null to search whole page)
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    protected function assertPageContent(
+        string $expectedMessage,
+        string $path = '',
+        ?string $linkText = null,
+        ?int $containerIndex = null,
+        bool $regExMatch = false
+    ): void {
+        $page = $this->goToPage($path);
+        if ($linkText) {
+            $target = $containerIndex === null ? $page : $this->findCss($page, 'p', index: $containerIndex);
+            $target->clickLink($linkText);
+        }
+        $assertion = $regExMatch ? 'assertMatchesRegularExpression' : 'assertEquals';
+        $this->$assertion($expectedMessage, $this->findCssAndGetText($page, '.content'));
+    }
+
+    /**
      * Data provider for testEmptyDatabase()
      *
      * @return Generator<string, array>
@@ -83,13 +110,18 @@ class IntegrationTest extends MinkTestCase
         yield 'items by platform' => ['by platform', 'No platforms listed in this database yet.', 2];
         yield 'items by subject/tag' => ['by subject/tag', 'No subjects/tags listed in this database yet.', 2];
         yield 'items by year' => ['by year', 'No items listed in this database yet.', 2];
-        yield 'items with full text' => ['with full text', 'No full text listed.', 2];
+        yield 'items with full text' => ['with full text', '/.*No full text listed.$/', 2, true];
         yield 'items with reviews' => ['with reviews', 'No reviews listed.', 2];
         yield 'recently added items' => ['recently added', 'No items listed in this database yet.', 2];
         yield 'file list' => ['List Files', 'No files listed in this database yet.'];
         yield 'link list' => ['List Links', 'No links listed in this database yet.'];
         yield 'user list' => ['List Registered Users', 'No users listed in this database yet.'];
-        yield 'recent reviews' => ['Browse Recent Reviews', 'No reviews available. No comments available.'];
+        yield 'recent reviews' => [
+            'Browse Recent Reviews',
+            '/.*No reviews available. No comments available.$/',
+            null,
+            true,
+        ];
         yield 'FAQs' => ['List All', 'No FAQs listed in this database yet.'];
     }
 
@@ -99,16 +131,18 @@ class IntegrationTest extends MinkTestCase
      * @param string $linkText        Text of link to click
      * @param string $expectedMessage Expected message on resulting page
      * @param ?int   $containerIndex  Index of paragraph containing link (null to search whole page)
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
      *
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('emptyDatabaseProvider')]
-    public function testEmptyDatabase(string $linkText, string $expectedMessage, ?int $containerIndex = null): void
-    {
-        $page = $this->goToPage();
-        $target = $containerIndex === null ? $page : $this->findCss($page, 'p', index: $containerIndex);
-        $target->clickLink($linkText);
-        $this->assertStringEndsWith($expectedMessage, $this->findCssAndGetText($page, '.content'));
+    public function testEmptyDatabase(
+        string $linkText,
+        string $expectedMessage,
+        ?int $containerIndex = null,
+        bool $regExMatch = false
+    ): void {
+        $this->assertPageContent($expectedMessage, '', $linkText, $containerIndex, $regExMatch);
     }
 
     /**
@@ -890,6 +924,50 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Data provider for testEmptyLinkLists().
+     *
+     * @return Generator<string, array>
+     */
+    public static function emptyLinkListsProvider(): Generator
+    {
+        yield 'series' => [
+            '/Series/1',
+            '/.*No items listed in this series yet. User Comments No comments available.$/',
+            true,
+        ];
+        yield 'category' => ['/Category/1', 'test description No series are listed in this category.'];
+        yield 'city' => ['/City/1', 'No information is available about this city.'];
+        yield 'country' => ['/Country/1', 'No information is available about this country.'];
+        yield 'language' => ['/Language/2', 'No information is available about this language.'];
+        yield 'material type' => ['/Material/1', 'No information is available about this material type.'];
+        yield 'publisher' => ['/Publisher/1', 'No information is available about this publisher.'];
+        yield 'person' => ['/Person/1', 'No further information on this person is available at the moment.'];
+        yield 'person with biography' => ['/Person/2', 'bio'];
+        yield 'item 404' => ['/Item/2', 'The item you requested does not exist.'];
+        yield 'platform' => ['/Platform/1', 'No information is available about this platform.'];
+        yield 'tag' => ['/Tag/1', 'No information is available about this subject/tag.'];
+    }
+
+    /**
+     * Test that appropriate empty messages are provided before content is linked up.
+     *
+     * @param string $path            URL path to check
+     * @param string $expectedMessage Content expected on page
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('emptyLinkListsProvider')]
+    protected function testEmptyLinkLists(
+        string $path,
+        string $expectedMessage,
+        bool $regExMatch = false
+    ): void {
+        $this->assertPageContent($expectedMessage, $path, regExMatch: $regExMatch);
+    }
+
+    /**
      * Assert the contents of the top and bottom controls.
      *
      * @param TraversableElement $page     Page being examined
@@ -1111,10 +1189,6 @@ class IntegrationTest extends MinkTestCase
         ?int $containerIndex = null,
         bool $regExMatch = false
     ): void {
-        $page = $this->goToPage();
-        $target = $containerIndex === null ? $page : $this->findCss($page, 'p', index: $containerIndex);
-        $target->clickLink($linkText);
-        $assertion = $regExMatch ? 'assertMatchesRegularExpression' : 'assertEquals';
-        $this->$assertion($expectedMessage, $this->findCssAndGetText($page, '.content'));
+        $this->assertPageContent($expectedMessage, '', $linkText, $containerIndex, $regExMatch);
     }
 }
