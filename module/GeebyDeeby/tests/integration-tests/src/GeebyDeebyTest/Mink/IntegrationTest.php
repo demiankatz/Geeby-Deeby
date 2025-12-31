@@ -585,7 +585,7 @@ class IntegrationTest extends MinkTestCase
             ['#Series_Attribute_Name' => 'test series attribute 2'],
             '#series_attribute_list',
             null,
-            2
+            2,
         ];
         yield 'series relationship 1' => [
             'SeriesAttributeList',
@@ -599,7 +599,7 @@ class IntegrationTest extends MinkTestCase
             ['#Series_Relationship_Name' => 'test series relationship 2'],
             '#series_relationship_list',
             null,
-            2
+            2,
         ];
         yield 'tag attribute 1' => [
             'TagsAttributeList',
@@ -613,7 +613,7 @@ class IntegrationTest extends MinkTestCase
             ['#Tags_Attribute_Name' => 'test tag attribute 2'],
             '#tags_attribute_list',
             null,
-            2
+            2,
         ];
         yield 'tag relationship 1' => [
             'TagsAttributeList',
@@ -627,7 +627,7 @@ class IntegrationTest extends MinkTestCase
             ['#Tags_Relationship_Name' => 'test tag relationship 2'],
             '#tags_relationship_list',
             null,
-            2
+            2,
         ];
         yield 'tag type 1' => [
             'TagList',
@@ -641,7 +641,7 @@ class IntegrationTest extends MinkTestCase
             ['#Tag_Type' => 'test tag type 2'],
             '#tag_type_list',
             null,
-            2
+            2,
         ];
         yield 'tag 1' => [
             'TagList',
@@ -655,7 +655,7 @@ class IntegrationTest extends MinkTestCase
             ['#Tag_Name' => 'test tag 2'],
             '#tag_list',
             null,
-            2
+            2,
         ];
         yield 'series 1' => [
             'SeriesList',
