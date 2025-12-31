@@ -414,5 +414,4 @@ class Item extends Gateway
 
         return $this->select($callback);
     }
-    
 }

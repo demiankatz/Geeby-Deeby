@@ -7,8 +7,8 @@
 <p>
   <a href="<?=$this->url('people')?>">[List All People]</a>
   <a href="<?=$this->url('person', [
-      'id'    => $person['Person_ID'],
-      'extra' => 'FullText'
+      'id' => $person['Person_ID'],
+      'extra' => 'FullText',
   ])?>">[List Person Full Text]</a>
 </p>
 <?php $realNameCount = count($realNames); ?>

@@ -155,7 +155,6 @@ class PersonController extends AbstractBase
         return $view;
     }
 
-
     /**
      * Person list
      *
