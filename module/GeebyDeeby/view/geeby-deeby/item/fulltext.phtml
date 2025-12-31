@@ -33,7 +33,7 @@
     <span class="item">
       <?=$this->escapeHtml($this->formatItemNumber($current))?>
       <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
-        <?=$this->escapeHtml($this->fixtitle(isset($current['Item_AltName']) && !empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
+        <?=$this->escapeHtml($this->fixtitle(!empty($current['Item_AltName']) ? $current['Item_AltName'] : $current['Item_Name']))?>
       </a>
       <?=$this->itemNotes($current)?>
       <br />
