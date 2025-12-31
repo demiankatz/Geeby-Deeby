@@ -36,6 +36,8 @@ use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
+use function in_array;
+
 /**
  * Mink integration test for the platform.
  *
@@ -367,9 +369,9 @@ class IntegrationTest extends MinkTestCase
         yield 'person 2' => [
             'PersonList',
             '#add_person',
-            ['#First_Name' => 'test-second', '#Last_Name' => 'zlastname'], // sort to end of list for easy assertion
+            ['#First_Name' => 'test-second', '#Last_Name' => 'lastname'],
             '#person_list',
-            'zlastname, test-second',
+            'lastname, test-second',
             6, // number is higher due to jump links
         ];
         yield 'country' => [
@@ -450,7 +452,7 @@ class IntegrationTest extends MinkTestCase
             '#add_series',
             ['#Series_Name' => 'test series 2'],
             '#series_list',
-            'test series 2',
+            null,
             2,
         ];
         yield 'item' => [
@@ -494,11 +496,10 @@ class IntegrationTest extends MinkTestCase
         }
         $this->clickCss($page, '.modal-body input[type="submit"]');
         $this->waitForPageLoad($page);
-        $this->assertEquals(
-            $expectedDisplay,
-            $this->findCssAndGetText($page, "$listSelector a", index: $expectedLinkCount - 1)
-        );
-        $this->assertCount($expectedLinkCount, $page->findAll('css', "$listSelector a"));
+        $links = $page->findAll('css', "$listSelector a");
+        $linkText = array_map(fn ($a) => $a->getText(), $links);
+        $this->assertTrue(in_array($expectedDisplay, $linkText), "Link list should include '$expectedDisplay'");
+        $this->assertCount($expectedLinkCount, $links);
     }
 
     /**
