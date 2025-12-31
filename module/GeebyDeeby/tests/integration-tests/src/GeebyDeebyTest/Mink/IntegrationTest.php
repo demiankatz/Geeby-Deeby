@@ -357,12 +357,20 @@ class IntegrationTest extends MinkTestCase
             ['#Authority_Name' => 'test person authority'],
             '#person_authority_list',
         ];
-        yield 'person' => [
+        yield 'person 1' => [
             'PersonList',
             '#add_person',
             ['#First_Name' => 'test-first', '#Last_Name' => 'test-last', '#Extra_Details' => ', extra'],
             '#person_list',
             'test-last, test-first, extra',
+        ];
+        yield 'person 2' => [
+            'PersonList',
+            '#add_person',
+            ['#First_Name' => 'test-second', '#Last_Name' => 'zlastname'], // sort to end of list for easy assertion
+            '#person_list',
+            'zlastname, test-second',
+            6, // number is higher due to jump links
         ];
         yield 'country' => [
             'CountryList',
@@ -431,18 +439,25 @@ class IntegrationTest extends MinkTestCase
             ['#Tag_Name' => 'test tag'],
             '#tag_list',
         ];
-        yield 'series' => [
+        yield 'series 1' => [
             'SeriesList',
             '#add_series',
-            ['#Series_Name' => 'test series'],
+            ['#Series_Name' => 'test series 1'],
             '#series_list',
+        ];
+        yield 'series 2' => [
+            'url' => 'SeriesList',
+            'buttonSelector' => '#add_series',
+            'data' => ['#Series_Name' => 'test series 2'],
+            'listSelector' => '#series_list',
+            'expectedDisplay' => 2,
         ];
         yield 'item' => [
             'Series/1',
             '#add_item',
             ['#Item_Name' => 'test item'],
             '#item_list',
-            '[edit item]',
+            '[edit edition]',
             2,
         ];
     }
@@ -478,7 +493,10 @@ class IntegrationTest extends MinkTestCase
         }
         $this->clickCss($page, '.modal-body input[type="submit"]');
         $this->waitForPageLoad($page);
-        $this->assertEquals($expectedDisplay, $this->findCssAndGetText($page, "$listSelector a"));
+        $this->assertEquals(
+            $expectedDisplay,
+            $this->findCssAndGetText($page, "$listSelector a", index: $expectedLinkCount - 1)
+        );
         $this->assertCount($expectedLinkCount, $page->findAll('css', "$listSelector a"));
     }
 
@@ -519,6 +537,7 @@ class IntegrationTest extends MinkTestCase
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('collectionBehaviorProvider')]
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
     public function testCollectionBehavior(string $subPage, string $controlsSelector): void
     {
         $page = $this->goToPage('/Item/1' . $subPage);
@@ -545,5 +564,72 @@ class IntegrationTest extends MinkTestCase
         $this->findCss($page, $controlsSelector)->clickLink('Modify Sale/Trade List');
         $this->clickCss($page, '.content input[type="submit"]', index: 1);
         $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
+    }
+
+    /**
+     * Test adding details to an edition.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testEditionEditor(): void
+    {
+        $page = $this->goToPage('/edit/Edition/1');
+        $this->logIn($page, 'admin');
+
+        // Add a credit:
+        $this->findCssAndSetValue($page, '#credit_person', '1');
+        $this->findCssAndSetValue($page, '#credit_note', '1');
+        $this->clickCss($page, '.active .edit_container input[type="submit"]');
+        $this->assertEquals(
+            'test person role: test-last, test-first, extra (test note)',
+            $this->findCssAndGetText($page, '#credit_list table td', index: 2)
+        );
+
+        // Add a full-text link:
+        $page->clickLink('Full Text Links');
+        $this->findCssAndSetValue($page, '#Full_Text_URL', 'http://example.com/fulltext');
+        $this->clickCss($page, '.active .edit_container input[type="submit"]');
+        $this->assertEquals(
+            'test full text source: http://example.com/fulltext '
+            . 'Edit options for URL: http://example.com/fulltext '
+            . 'Delete full text URL: http://example.com/fulltext',
+            $this->findCssAndGetText($page, '#fulltext_list')
+        );
+    }
+
+    /**
+     * Data provider for testPersonFullText().
+     *
+     * @return Generator<string, array>
+     */
+    public static function personFullTextProvider(): Generator
+    {
+        yield 'credit full text' => [1, 'test item'];
+        yield 'no full text' => [2, null];
+    }
+
+    /**
+     * Test person full text.
+     *
+     * @param int     $personId           ID of person to check
+     * @param ?string $firstExpectedTitle First expected title on full text list (null for none expected)
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('personFullTextProvider')]
+    #[\PHPUnit\Framework\Attributes\Depends('testEditionEditor')]
+    public function testPersonFullText(int $personId, ?string $firstExpectedTitle): void
+    {
+        $page = $this->goToPage("/Person/$personId/FullText");
+        if ($firstExpectedTitle) {
+            $this->assertEquals($firstExpectedTitle, $this->findCssAndGetText($page, 'li'));
+        } else {
+            $this->unFindCss($page, 'ul');
+            $this->assertEquals(
+                'No full-text items are currently associated with this person.',
+                $this->findCssAndGetText($page, '.content p', index: 1)
+            );
+        }
     }
 }
