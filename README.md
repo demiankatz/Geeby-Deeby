@@ -64,6 +64,8 @@ Once back at the command line, run this to load the database structure you will 
 mysql -ugbdb_user -pgbdb_pass gbdb < data/mysql.sql
 ```
 
+(Note that you can also use the [gamebooks.sql file from the gamebooks.org branch](https://github.com/demiankatz/Geeby-Deeby/blob/gamebooks.org/data/gamebooks.sql) if you want to populate your database with a signficant amount of real-world data).
+
 Finally, unless you decided to use the default of "gbdb" for database name, database username and database password (NOT RECOMMENDED), you will need to configure the software with appropriate credentials.
 
 To do this, create a copy of the `config/autoload/local.php.dist` called simply `config/autoload/local.php`. You can override all of Geeby-Deeby's default configuration settings through this file. To start with, you should edit it to look something like this:

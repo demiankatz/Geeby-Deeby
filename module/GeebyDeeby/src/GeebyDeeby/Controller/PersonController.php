@@ -131,6 +131,31 @@ class PersonController extends AbstractBase
     }
 
     /**
+     * Person full text listing
+     *
+     * Displays items associated with this person that have
+     * available online full text sources.
+     *
+     * @return mixed
+     */
+    public function fullTextAction()
+    {
+        $personId = (int)$this->params()->fromRoute('id');
+
+        $person = $this->getDbTable('person')->getByPrimaryKey($personId);
+        if (!is_object($person)) {
+            return $this->forwardTo(__NAMESPACE__ . '\Person', 'notfound');
+        }
+
+        $view = $this->createViewModel();
+        $view->person = $person->toArray();
+        $view->items  = $this->getDbTable('item')
+            ->getItemsWithFullTextByPerson($personId);
+
+        return $view;
+    }
+
+    /**
      * Person list
      *
      * @return mixed
