@@ -157,18 +157,15 @@ class Item extends Gateway
                         ['eds.Edition_ID'],
                         [Expression::TYPE_IDENTIFIER]
                     ),
-                    'Earliest_Year' => new Expression(
-                        'MIN(erd.Year)'
-                    ),
                 ]
             );
             $select->join(
                 ['erd' => 'Editions_Release_Dates'],
                 'erd.Edition_ID = eds.Edition_ID',
                 [
-                    'Release_Year'  => 'Year',
-                    'Release_Month' => 'Month',
-                    'Release_Day'   => 'Day',
+                    'Earliest_Year' => new Expression(
+                        'MIN(erd.Year)'
+                    ),
                 ],
                 Select::JOIN_LEFT
             );
