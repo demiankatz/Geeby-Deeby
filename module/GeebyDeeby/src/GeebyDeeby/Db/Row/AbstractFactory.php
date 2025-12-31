@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Abstract row factory

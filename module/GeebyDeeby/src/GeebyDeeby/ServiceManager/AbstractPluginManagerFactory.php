@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\ServiceManager;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Abstract plugin manager factory.

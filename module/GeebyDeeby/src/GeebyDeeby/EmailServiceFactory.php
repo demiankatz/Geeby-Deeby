@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Email service factory.

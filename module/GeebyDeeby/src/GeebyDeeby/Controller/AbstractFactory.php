@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Abstract controller factory

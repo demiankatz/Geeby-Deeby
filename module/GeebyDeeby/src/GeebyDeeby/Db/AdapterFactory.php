@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Db;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Database adapter factory.

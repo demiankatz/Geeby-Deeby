@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Db\Table;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Abstract table factory

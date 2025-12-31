@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\View\Helper;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * ToggleLink view helper factory.
