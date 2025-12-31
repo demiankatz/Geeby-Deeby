@@ -333,41 +333,89 @@ class IntegrationTest extends MinkTestCase
             null,
             2,
         ];
-        yield 'full text attribute' => [
+        yield 'full text attribute 1' => [
             'EditionFullTextAttributeList',
             '#add_edition_full_text_attribute',
-            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute'],
+            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute 1'],
             '#edition_full_text_attribute_list',
         ];
-        yield 'full text source' => [
+        yield 'full text attribute 2' => [
+            'EditionFullTextAttributeList',
+            '#add_edition_full_text_attribute',
+            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute 2'],
+            '#edition_full_text_attribute_list',
+            null,
+            2,
+        ];
+        yield 'full text source 1' => [
             'FullTextSourceList',
             '#add_source',
-            ['#Full_Text_Source_Name' => 'test full text source'],
+            ['#Full_Text_Source_Name' => 'test full text source 1'],
             '#full_text_source_list',
         ];
-        yield 'item attribute' => [
+        yield 'full text source 2' => [
+            'FullTextSourceList',
+            '#add_source',
+            ['#Full_Text_Source_Name' => 'test full text source 2'],
+            '#full_text_source_list',
+            null,
+            2,
+        ];
+        yield 'item attribute 1' => [
             'ItemsAttributeList',
             '#add_item_attribute',
-            ['#Items_Attribute_Name' => 'test item attribute'],
+            ['#Items_Attribute_Name' => 'test item attribute 1'],
             '#items_attribute_list',
         ];
-        yield 'item relationships' => [
+        yield 'item attribute 2' => [
+            'ItemsAttributeList',
+            '#add_item_attribute',
+            ['#Items_Attribute_Name' => 'test item attribute 2'],
+            '#items_attribute_list',
+            null,
+            2,
+        ];
+        yield 'item relationship 1' => [
             'ItemsRelationshipList',
             '#add_item_relationship',
-            ['#Items_Relationship_Name' => 'test item relationship'],
+            ['#Items_Relationship_Name' => 'test item relationship 1'],
             '#items_relationship_list',
         ];
-        yield 'language' => [
+        yield 'item relationship 2' => [
+            'ItemsRelationshipList',
+            '#add_item_relationship',
+            ['#Items_Relationship_Name' => 'test item relationship 2'],
+            '#items_relationship_list',
+            null,
+            2,
+        ];
+        yield 'language 1' => [
             'LanguageList',
             '#add_language',
-            ['#Language_Name' => 'test language'],
+            ['#Language_Name' => 'test language 1'],
             '#language_list',
         ];
-        yield 'link type' => [
+        yield 'language 2' => [
+            'LanguageList',
+            '#add_language',
+            ['#Language_Name' => 'test language 2'],
+            '#language_list',
+            null,
+            2,
+        ];
+        yield 'link type 1' => [
             'LinkList',
             '#add_link_type',
-            ['#Link_Type' => 'test link type'],
+            ['#Link_Type' => 'test link type 1'],
             '#link_type_list',
+        ];
+        yield 'link type 2' => [
+            'LinkList',
+            '#add_link_type',
+            ['#Link_Type' => 'test link type 2'],
+            '#link_type_list',
+            null,
+            2,
         ];
         yield 'link' => [
             'LinkList',
@@ -625,6 +673,12 @@ class IntegrationTest extends MinkTestCase
             fieldOverrides: ['#File_Path' => '/foo/2_edited'],
             inModal: false
         );
+        yield 'full text attribute' => $deriveTestCase($populateData['full text attribute 2']);
+        yield 'full text source' => $deriveTestCase($populateData['full text source 2']);
+        yield 'item attribute' => $deriveTestCase($populateData['item attribute 2']);
+        yield 'item relationship' => $deriveTestCase($populateData['item relationship 2']);
+        yield 'language' => $deriveTestCase($populateData['language 2']);
+        yield 'link type' => $deriveTestCase($populateData['link type 2']);
     }
 
     /**
@@ -753,8 +807,9 @@ class IntegrationTest extends MinkTestCase
         $page->clickLink('Full Text Links');
         $this->findCssAndSetValue($page, '#Full_Text_URL', 'http://example.com/fulltext');
         $this->clickCss($page, '.active .edit_container input[type="submit"]');
+        $this->waitForPageLoad($page);
         $this->assertEquals(
-            'test full text source: http://example.com/fulltext '
+            'test full text source 1: http://example.com/fulltext '
             . 'Edit options for URL: http://example.com/fulltext '
             . 'Delete full text URL: http://example.com/fulltext',
             $this->findCssAndGetText($page, '#fulltext_list')
