@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Abstract row factory
@@ -60,7 +60,7 @@ class AbstractFactory implements \Laminas\ServiceManager\Factory\AbstractFactory
      *
      * @param ContainerInterface $container     Service container
      * @param string             $requestedName Name of service
-     * @param array              $options       Options (unused)
+     * @param ?array             $options       Options (unused)
      *
      * @return object
      *
@@ -69,7 +69,7 @@ class AbstractFactory implements \Laminas\ServiceManager\Factory\AbstractFactory
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         $adapter = $container->get('Laminas\Db\Adapter\Adapter');
         $row = new $requestedName($adapter);

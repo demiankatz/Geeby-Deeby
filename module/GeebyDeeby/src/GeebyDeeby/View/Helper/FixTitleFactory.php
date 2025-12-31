@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\View\Helper;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * FixTitle view helper factory.
@@ -47,7 +47,7 @@ class FixTitleFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
      *
      * @param ContainerInterface $container Service manager
      * @param string             $name      Requested service name
-     * @param array              $options   Extra options
+     * @param ?array             $options   Extra options
      *
      * @return mixed
      *
@@ -56,7 +56,7 @@ class FixTitleFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
     public function __invoke(
         ContainerInterface $container,
         $name,
-        array $options = null
+        ?array $options = null
     ) {
         return new $name($container->get('GeebyDeeby\Articles'));
     }

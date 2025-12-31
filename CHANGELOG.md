@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Added
 
 - "Full text by person" screen.
+- Dates on items in series lists (plus associated new ItemNotes view helper).
 - Tests.
 
 ### Changed
@@ -21,6 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Collection-related buttons now display appropriate add/modify labels, reflecting actual collection status.
 - Empty list messages for people/series have been corrected (they previously said "items" instead of appropriate entity types).
+- Outdated references to the Interop\Container namespace.
 
 ## 2.10.0 - 2025-12-28
 
