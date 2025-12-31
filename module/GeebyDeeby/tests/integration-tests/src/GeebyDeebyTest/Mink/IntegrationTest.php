@@ -825,7 +825,7 @@ class IntegrationTest extends MinkTestCase
         yield 'person authority' => $deriveTestCase($populateData['person authority 2']);
         yield 'person' => $deriveTestCase(
             $populateData['person 2'],
-            fieldOverrides: ['#First_Name' => 'test-second-edited', '#Last_Name' => 'last'],
+            fieldOverrides: ['#First_Name' => 'test-second-edited', '#Last_Name' => 'last', '#Biography' => 'bio'],
             inModal: false,
             expectedDisplay: 'last, test-second-edited'
         );
@@ -1021,5 +1021,100 @@ class IntegrationTest extends MinkTestCase
                 $this->findCssAndGetText($page, '.content p', index: 1)
             );
         }
+    }
+
+    /**
+     * Data provider for testPopulatedDatabase()
+     *
+     * @return Generator<string, array>
+     */
+    public static function populatedDatabaseProvider(): Generator
+    {
+        yield 'series by name' => ['by name', 'T test series 1 test series 2 (edited)', 0];
+        yield 'series by category' => [
+            'by category',
+            'S T second test category (edited) T Back to Top ↑ test category',
+            0,
+        ];
+        yield 'series by city' => ['by city', 'T test city test city 2 (edited)', 0];
+        yield 'series by country' => ['by country', 'T test country test country 2 (edited)', 0];
+        yield 'series by language' => ['by language', 'T test language 1 test language 2 (edited)', 0];
+        // TODO: link a material type to a series so this test will become interesting
+        //yield 'series by material type' => ['by material type', 'No material types listed in this database yet.', 0];
+        yield 'series by publisher' => ['by publisher', 'T test publisher test publisher 2 (edited)', 0];
+        // TODO: add a comment test so this will have content:
+        //yield 'series with comments' => ['with comments', 'No comments listed.', 0];
+        yield 'recently added series' => [
+            'recently added',
+            'Viewing page 1 of 1 test series 2 (edited) test series 1 First | Previous | 1 | Next | Last',
+            0,
+        ];
+        yield 'people by name' => [
+            'by name',
+            'L T last, test-second-edited T Back to Top ↑ test-last, test-first, extra',
+            1,
+        ];
+        yield 'people with biographical notes' => ['with biographical notes', 'L last, test-second-edited', 1];
+        yield 'recently added people' => [
+            'recently added',
+            'Viewing page 1 of 1 last, test-second-edited test-last, test-first, extra '
+            . 'First | Previous | 1 | Next | Last',
+            1,
+        ];
+        yield 'items by name' => ['by name', 'T test item', 2];
+        yield 'items by platform' => ['by platform', 'T test platform test platform 2 (edited)', 2];
+        yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
+        // TODO: add year data so this will have content:
+        //yield 'items by year' => ['by year', 'No items listed in this database yet.', 2];
+        yield 'items with full text' => ['with full text', '/.*test series 1 test item$/', 2, true];
+        // TODO: add review so this will have content:
+        //yield 'items with reviews' => ['with reviews', 'No reviews listed.', 2];
+        yield 'recently added items' => [
+            'recently added',
+            'Viewing page 1 of 1 test item First | Previous | 1 | Next | Last',
+            2,
+        ];
+        yield 'file list' => [
+            'List Files',
+            'test file type 1 test file 1 test file 2 (edited) - This has been edited.',
+        ];
+        yield 'link list' => [
+            'List Links',
+            '|test link type 1 Back to Top ↑ '
+            . 'test link 1 https://gamebooks.org/ \\(last verified: [\d-]+\\) '
+            . 'test link 2 \\(edited\\) This has been edited. https://dimenovels.org '
+            . '\\(last verified: 2025-12-01\\)|',
+            null,
+            true,
+        ];
+        yield 'user list' => ['List Registered Users', 'A U admin U Back to Top ↑ user'];
+        // TODO: add reviews/comments so this will have content:
+        //yield 'recent reviews' => ['Browse Recent Reviews', 'No reviews available. No comments available.'];
+        // TODO: add FAQs so this will have content:
+        //yield 'FAQs' => ['List All', 'No FAQs listed in this database yet.'];
+    }
+
+    /**
+     * Test the behavior of a populated database.
+     *
+     * @param string $linkText        Text of link to click
+     * @param string $expectedMessage Expected message on resulting page
+     * @param ?int   $containerIndex  Index of paragraph containing link (null to search whole page)
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('populatedDatabaseProvider')]
+    public function testPopulatedDatabase(
+        string $linkText,
+        string $expectedMessage,
+        ?int $containerIndex = null,
+        bool $regExMatch = false
+    ): void {
+        $page = $this->goToPage();
+        $target = $containerIndex === null ? $page : $this->findCss($page, 'p', index: $containerIndex);
+        $target->clickLink($linkText);
+        $assertion = $regExMatch ? 'assertMatchesRegularExpression' : 'assertEquals';
+        $this->$assertion($expectedMessage, $this->findCssAndGetText($page, '.content'));
     }
 }
