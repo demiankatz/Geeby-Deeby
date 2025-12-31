@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- Collection-related buttons now display appropriate add/modify labels, reflecting actual collection status.
 - Empty list messages for people/series have been corrected (they previously said "items" instead of appropriate entity types).
 
 ## 2.10.0 - 2025-12-28

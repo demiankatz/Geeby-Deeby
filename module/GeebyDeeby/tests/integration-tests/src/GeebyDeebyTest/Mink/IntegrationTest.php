@@ -34,6 +34,7 @@ namespace GeebyDeebyTest\Mink;
 use Behat\Mink\Element\TraversableElement;
 use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Mink integration test for the platform.
@@ -46,6 +47,13 @@ use Generator;
  */
 class IntegrationTest extends MinkTestCase
 {
+    /**
+     * Service locator
+     *
+     * @var ?ServiceLocatorInterface
+     */
+    protected $serviceLocator = null;
+
     /**
      * Data provider for testEmptyDatabase()
      *
@@ -95,9 +103,7 @@ class IntegrationTest extends MinkTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('emptyDatabaseProvider')]
     public function testEmptyDatabase(string $linkText, string $expectedMessage, ?int $containerIndex = null): void
     {
-        $session = $this->getMinkSession();
-        $session->visit($this->getGeebyDeebyUrl());
-        $page = $session->getPage();
+        $page = $this->goToPage();
         $target = $containerIndex === null ? $page : $this->findCss($page, 'p', index: $containerIndex);
         $target->clickLink($linkText);
         $this->assertStringEndsWith($expectedMessage, $this->findCssAndGetText($page, '.content'));
@@ -112,7 +118,7 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    protected function logIn(TraversableElement $page, string $username = 'admin', string $password = 'password'): void
+    protected function logIn(TraversableElement $page, string $username, string $password = 'password'): void
     {
         $page->clickLink('Log In');
         $this->findCssAndSetValue($page, '#username', $username);
@@ -121,41 +127,131 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Test creation of a user.
+     * Get the service locator.
+     *
+     * @return ServiceLocatorInterface
+     */
+    protected function getServiceLocator(): ServiceLocatorInterface
+    {
+        if (null === $this->serviceLocator) {
+            $app = \Laminas\Mvc\Application::init(require 'config/application.config.php');
+            $this->serviceLocator = $app->getServiceManager();
+        }
+        return $this->serviceLocator;
+    }
+
+    /**
+     * Create a user.
+     *
+     * @param TraversableElement $page     Page element
+     * @param string             $username Username to create
+     * @param string             $password New account's password
      *
      * @return void
      */
-    public function testCreateUser(): void
+    protected function createUser(TraversableElement $page, string $username, string $password = 'password'): void
     {
-        $session = $this->getMinkSession();
-        $session->visit($this->getGeebyDeebyUrl());
-        $page = $session->getPage();
         $page->clickLink('Sign Up');
-        $this->findCssAndSetValue($page, '#signup_username', 'admin');
-        $this->findCssAndSetValue($page, '#signup_fullname', 'test admin user');
-        $this->findCssAndSetValue($page, '#signup_email', 'admin@example.com');
-        $this->findCssAndSetValue($page, '#signup_password1', 'password');
-        $this->findCssAndSetValue($page, '#signup_password2', 'password');
+        $this->findCssAndSetValue($page, '#signup_username', $username);
+        $this->findCssAndSetValue($page, '#signup_fullname', 'test ' . $username);
+        $this->findCssAndSetValue($page, '#signup_email', $username . '@example.com');
+        $this->findCssAndSetValue($page, '#signup_password1', $password);
+        $this->findCssAndSetValue($page, '#signup_password2', $password);
         $this->clickCss($page, '.signup input[type="submit"]');
         $this->assertEquals(
             'Your request for an account has been sent; it should be approved shortly.',
             $this->findCssAndGetText($page, '.content')
         );
+    }
+
+    /**
+     * Approve a user.
+     *
+     * @param string $username User to approve
+     * @param ?int   $groupId  Group to apply (null for no group)
+     * @param int    $personId Person ID to link (-1 for none)
+     *
+     * @return void
+     */
+    protected function approveUser(string $username, ?int $groupId = null, int $personId = -1): void
+    {
+        $userTable = $this->getServiceLocator()->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
+        $changes = ['Person_ID' => $personId];
+        if ($groupId) {
+            $changes['User_Group_ID'] = $groupId;
+        }
+        $userTable->update($changes, ['Username' => $username]);
+    }
+
+    /**
+     * Data provider for testCreateUser().
+     *
+     * @return Generator<string, array>
+     */
+    public static function createUserProvider(): Generator
+    {
+        yield 'admin' => ['admin'];
+        yield 'user' => ['user'];
+    }
+
+    /**
+     * Test creation of a user.
+     *
+     * @param string $username Username to create
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('createUserProvider')]
+    public function testCreateUser(string $username): void
+    {
+        $this->createUser($this->goToPage(), $username);
+    }
+
+    /**
+     * Data provider for testUserApproval().
+     *
+     * @return Generator<string, array>
+     */
+    public static function userApprovalProvider(): Generator
+    {
+        yield 'admin' => ['admin', 1];
+        yield 'user' => ['user'];
+    }
+
+    /**
+     * Test approving users.
+     *
+     * @param string $username User to approve
+     * @param ?int   $group    Group to assign user to (null for none)
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testCreateUser')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('userApprovalProvider')]
+    public function testUserApproval(string $username, ?int $group = null): void
+    {
+        $page = $this->goToPage();
 
         // Try to log in and confirm that the user exists but is not approved yet:
-        $this->logIn($page);
+        $this->logIn($page, $username);
         $this->assertEquals('Your account has not been approved yet.', $this->findCssAndGetText($page, '.error'));
 
-        // Now make the user an admin to support future tests:
-        $app = \Laminas\Mvc\Application::init(require 'config/application.config.php');
-        $serviceManager = $app->getServiceManager();
-        $userTable = $serviceManager->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
-        $userTable->update(['User_Group_ID' => 1, 'Person_ID' => -1], ['User_ID' => 1]);
+        // Now assign appropriate group permissions to the user:
+        $this->approveUser($username, $group);
 
-        // Now go to the edit page:
-        $session->visit($this->getGeebyDeebyUrl('/edit'));
-        $this->logIn($page);
-        $this->assertEquals('Administration', $this->findCssAndGetText($page, 'h1'));
+        // Now go to the edit page and assert appropriate behavior (admin available if in group 1, not otherwise):
+        $nextPage = $this->goToPage('/edit');
+        $this->logIn($nextPage, $username);
+        $this->assertEquals('Administration', $this->findCssAndGetText($nextPage, 'h1'));
+        if ($group === 1) {
+            $this->assertEquals('Edit Data', $this->findCssAndGetText($nextPage, '.content h2'));
+        } else {
+            $this->assertNotEquals('Edit Data', $this->findCssAndGetText($nextPage, '.content h2'));
+            $this->assertEquals(
+                'You do not have permission to access this page.',
+                $this->findCssAndGetText($nextPage, '.content p')
+            );
+        }
     }
 
     /**
@@ -363,7 +459,7 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\Depends('testCreateUser')]
+    #[\PHPUnit\Framework\Attributes\Depends('testUserApproval')]
     #[\PHPUnit\Framework\Attributes\DataProvider('populateDataProvider')]
     public function testPopulateData(
         string $url,
@@ -373,12 +469,9 @@ class IntegrationTest extends MinkTestCase
         ?string $expectedDisplay = null,
         int $expectedLinkCount = 1
     ): void {
-        $session = $this->getMinkSession();
-        $session->visit($this->getGeebyDeebyUrl("/edit/$url"));
-        $page = $session->getPage();
-        $this->logIn($page);
+        $page = $this->goToPage("/edit/$url");
+        $this->logIn($page, 'admin');
         $this->clickCss($page, $buttonSelector);
-        $firstValue = null;
         foreach ($data as $selector => $value) {
             $expectedDisplay = $expectedDisplay === null ? $value : $expectedDisplay;
             $this->findCssAndSetValue($page, $selector, $value);
@@ -387,5 +480,70 @@ class IntegrationTest extends MinkTestCase
         $this->waitForPageLoad($page);
         $this->assertEquals($expectedDisplay, $this->findCssAndGetText($page, "$listSelector a"));
         $this->assertCount($expectedLinkCount, $page->findAll('css', "$listSelector a"));
+    }
+
+    /**
+     * Assert the contents of the top and bottom controls.
+     *
+     * @param TraversableElement $page     Page being examined
+     * @param string             $expected Expected control text
+     *
+     * @return void
+     * @throws \Exception
+     */
+    protected function assertControls(TraversableElement $page, string $expected): void
+    {
+        $this->assertEquals($expected, $this->findCssAndGetText($page, '.controls.top'));
+        $this->assertEquals($expected, $this->findCssAndGetText($page, '.controls.bottom'));
+    }
+
+    /**
+     * Data provider for testCollectionBehavior().
+     *
+     * @return Generator<string, array>
+     */
+    public static function collectionBehaviorProvider(): Generator
+    {
+        yield 'default page, top buttons' => ['', '.controls.top'];
+        yield 'default page, bottom buttons' => ['', '.controls.bottom'];
+        yield 'editions view, top buttons' => ['/Editions', '.controls.top'];
+        yield 'editions view, bottom buttons' => ['/Editions', '.controls.bottom'];
+    }
+
+    /**
+     * Test collection management functionality.
+     *
+     * @param string $subPage          Subpage of item page to test.
+     * @param string $controlsSelector Selector for button bar to use for testing.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('collectionBehaviorProvider')]
+    public function testCollectionBehavior(string $subPage, string $controlsSelector): void
+    {
+        $page = $this->goToPage('/Item/1' . $subPage);
+        $this->assertControls($page, 'Please log in to manage your collection or post a review.');
+        $this->logIn($page, 'user');
+        // Add to all lists:
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Have List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Want List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Modify Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Sale/Trade List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Modify Want List Modify Sale/Trade List');
+        // Remove from all lists:
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Have List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Modify Want List Modify Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Want List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Modify Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Sale/Trade List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
     }
 }
