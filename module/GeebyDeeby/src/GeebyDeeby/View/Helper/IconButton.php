@@ -30,7 +30,7 @@
 namespace GeebyDeeby\View\Helper;
 
 /**
- * Title display view helper
+ * Button view helper
  *
  * @category GeebyDeeby
  * @package  View_Helpers

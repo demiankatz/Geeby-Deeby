@@ -1425,6 +1425,8 @@ return [
                 'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\IconButton' =>
                 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'GeebyDeeby\View\Helper\ItemNotes' =>
+                'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\View\Helper\ScriptManager' =>
                 'GeebyDeeby\View\Helper\ScriptManagerFactory',
             'GeebyDeeby\View\Helper\ShowEdition' =>
@@ -1454,6 +1456,7 @@ return [
             'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
             'groupEditions' => 'GeebyDeeby\View\Helper\GroupEditions',
             'iconButton' => 'GeebyDeeby\View\Helper\IconButton',
+            'itemNotes' => 'GeebyDeeby\View\Helper\ItemNotes',
             'scriptmanager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'scriptManager' => 'GeebyDeeby\View\Helper\ScriptManager',
             'showedition' => 'GeebyDeeby\View\Helper\ShowEdition',

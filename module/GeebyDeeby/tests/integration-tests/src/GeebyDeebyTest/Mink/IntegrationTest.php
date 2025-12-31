@@ -446,11 +446,12 @@ class IntegrationTest extends MinkTestCase
             '#series_list',
         ];
         yield 'series 2' => [
-            'url' => 'SeriesList',
-            'buttonSelector' => '#add_series',
-            'data' => ['#Series_Name' => 'test series 2'],
-            'listSelector' => '#series_list',
-            'expectedDisplay' => 2,
+            'SeriesList',
+            '#add_series',
+            ['#Series_Name' => 'test series 2'],
+            '#series_list',
+            'test series 2',
+            2,
         ];
         yield 'item' => [
             'Series/1',
