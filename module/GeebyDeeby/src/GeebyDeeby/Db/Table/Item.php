@@ -149,13 +149,28 @@ class Item extends Gateway
                 ['eds' => 'Editions'],
                 'eds.Item_ID = Items.Item_ID',
                 [
-                    'Volume', 'Position', 'Replacement_Number',
+                    'Volume',
+                    'Position',
+                    'Replacement_Number',
                     'Edition_ID' => new Expression(
                         'min(?)',
                         ['eds.Edition_ID'],
                         [Expression::TYPE_IDENTIFIER]
                     ),
+                    'Earliest_Year' => new Expression(
+                        'MIN(erd.Year)'
+                    ),
                 ]
+            );
+            $select->join(
+                ['erd' => 'Editions_Release_Dates'],
+                'erd.Edition_ID = eds.Edition_ID',
+                [
+                    'Release_Year'  => 'Year',
+                    'Release_Month' => 'Month',
+                    'Release_Day'   => 'Day',
+                ],
+                Select::JOIN_LEFT
             );
             $select->join(
                 ['mt' => 'Material_Types'],

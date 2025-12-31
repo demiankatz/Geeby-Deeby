@@ -170,11 +170,22 @@
     <?php endif; ?>
     <?=$this->escapeHtml($this->formatItemNumber($item))?>
     <a href="<?=$this->url('item', ['id' => $item['Item_ID']])?>">
-      <?=$this->escapeHtml($this->fixtitle(isset($item['Item_AltName']) && !empty($item['Item_AltName']) ? $item['Item_AltName'] : $item['Item_Name']))?>
+      <?=$this->escapeHtml(
+        $this->fixtitle(
+          !empty($item['Item_AltName']) ? $item['Item_AltName'] : $item['Item_Name']
+        )
+      )?>
     </a>
+    <?php if (isset($item['Earliest_Year'])): ?>
+      <?php if ((int)$item['Earliest_Year'] === -1): ?>
+        (Unpublished)
+      <?php elseif ((int)$item['Earliest_Year'] > 0): ?>
+        (<?=$this->escapeHtml($item['Earliest_Year'])?>)
+      <?php endif; ?>
+    <?php endif; ?>
     <?php if (!empty($item['Child_Items'])): ?>
       <?php $parts = array_unique(explode('||', $item['Child_Items'])); ?>
-      (<i><?=$this->escapeHtml($this->fixtitle($parts[0]))?></i><?php if (count($parts) == 2): ?> and 1 more item<?php elseif (count($parts) > 2): ?> and <?=(count($parts) - 1)?> more items<?php endif;?>)
+      (<i><?=$this->escapeHtml($this->fixtitle($parts[0]))?></i><?php if (count($parts) == 2): ?> and 1 more item<?php elseif (count($parts) > 2): ?> and <?=count($parts) - 1?> more items<?php endif;?>)
     <?php endif; ?>
     <br />
   <?php endforeach; ?>
