@@ -29,8 +29,8 @@
 
 namespace GeebyDeebyConsole\Command\Check;
 
-use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for check/fulltext command.
