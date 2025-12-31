@@ -431,17 +431,33 @@ class IntegrationTest extends MinkTestCase
             null,
             2,
         ];
-        yield 'material type' => [
+        yield 'material type 1' => [
             'MaterialTypeList',
             '#add_material_type',
             ['#Material_Type_Name' => 'test material', '#Material_Type_Plural_Name' => 'test materials'],
             '#material_type_list',
         ];
-        yield 'note' => [
+        yield 'material type 2' => [
+            'MaterialTypeList',
+            '#add_material_type',
+            ['#Material_Type_Name' => 'second test material', '#Material_Type_Plural_Name' => 'second test materials'],
+            '#material_type_list',
+            null,
+            2,
+        ];
+        yield 'note 1' => [
             'NoteList',
             '#add_note',
             ['#Note_Text' => 'test note'],
             '#note_list',
+        ];
+        yield 'note 2' => [
+            'NoteList',
+            '#add_note',
+            ['#Note_Text' => 'test note 2'],
+            '#note_list',
+            null,
+            2,
         ];
         yield 'person role' => [
             'PersonList',
@@ -449,11 +465,27 @@ class IntegrationTest extends MinkTestCase
             ['#Role_Name' => 'test person role'],
             '#person_role_list',
         ];
+        yield 'person role 2' => [
+            'PersonList',
+            '#add_person_role',
+            ['#Role_Name' => 'test person role 2'],
+            '#person_role_list',
+            null,
+            2,
+        ];
         yield 'person authority' => [
             'PersonList',
             '#add_person_authority',
             ['#Authority_Name' => 'test person authority'],
             '#person_authority_list',
+        ];
+        yield 'person authority 2' => [
+            'PersonList',
+            '#add_person_authority',
+            ['#Authority_Name' => 'test person authority 2'],
+            '#person_authority_list',
+            null,
+            2,
         ];
         yield 'person 1' => [
             'PersonList',
@@ -698,6 +730,16 @@ class IntegrationTest extends MinkTestCase
                 '#Date_Checked' => '2025-12-01',
             ],
             inModal: false
+        );
+        yield 'material type' => $deriveTestCase($populateData['material type 2']);
+        yield 'note' => $deriveTestCase($populateData['note 2']);
+        yield 'person role' => $deriveTestCase($populateData['person role 2']);
+        yield 'person authority' => $deriveTestCase($populateData['person authority 2']);
+        yield 'person' => $deriveTestCase(
+            $populateData['person 2'],
+            fieldOverrides: ['#First_Name' => 'test-second-edited', '#Last_Name' => 'last'],
+            inModal: false,
+            expectedDisplay: 'last, test-second-edited'
         );
     }
 
