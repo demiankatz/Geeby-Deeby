@@ -29,7 +29,10 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+
 use function count;
+use function is_array;
 
 /**
  * List first letters as a horizontal jump menu
@@ -40,8 +43,19 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class FirstLetterMenu extends \Laminas\View\Helper\AbstractHelper
+class FirstLetterMenu
 {
+    /**
+     * Constructor
+     *
+     * @param FirstLetter $firstLetterHelper FirstLetter helper
+     */
+    public function __construct(
+        #[Autowire(container: 'ViewHelperManager')]
+        protected FirstLetter $firstLetterHelper
+    ) {
+    }
+
     /**
      * Build HTML to list first letters as a horizontal jump menu
      *
@@ -52,11 +66,13 @@ class FirstLetterMenu extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($list, $index)
     {
-        $list = $list->toArray();
+        if (!is_array($list)) {
+            $list = $list->toArray();
+        }
         $currentLetter = false;
         $letters = [];
         for ($i = 0; $i < count($list); $i++) {
-            $first = $this->view->firstLetter($list[$i][$index]);
+            $first = ($this->firstLetterHelper)($list[$i][$index]);
             if ($currentLetter !== $first) {
                 $currentLetter = $first;
                 $letters[] = $first;
