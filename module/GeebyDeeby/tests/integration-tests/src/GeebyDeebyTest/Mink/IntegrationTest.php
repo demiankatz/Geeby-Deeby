@@ -103,9 +103,7 @@ class IntegrationTest extends MinkTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('emptyDatabaseProvider')]
     public function testEmptyDatabase(string $linkText, string $expectedMessage, ?int $containerIndex = null): void
     {
-        $session = $this->getMinkSession();
-        $session->visit($this->getGeebyDeebyUrl());
-        $page = $session->getPage();
+        $page = $this->goToPage();
         $target = $containerIndex === null ? $page : $this->findCss($page, 'p', index: $containerIndex);
         $target->clickLink($linkText);
         $this->assertStringEndsWith($expectedMessage, $this->findCssAndGetText($page, '.content'));
@@ -206,10 +204,7 @@ class IntegrationTest extends MinkTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('createUserProvider')]
     public function testCreateUser(string $username): void
     {
-        $session = $this->getMinkSession();
-        $session->visit($this->getGeebyDeebyUrl());
-        $page = $session->getPage();
-        $this->createUser($page, $username);
+        $this->createUser($this->goToPage(), $username);
     }
 
     /**
@@ -235,9 +230,7 @@ class IntegrationTest extends MinkTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('userApprovalProvider')]
     public function testUserApproval(string $username, ?int $group = null): void
     {
-        $session = $this->getMinkSession();
-        $session->visit($this->getGeebyDeebyUrl());
-        $page = $session->getPage();
+        $page = $this->goToPage();
 
         // Try to log in and confirm that the user exists but is not approved yet:
         $this->logIn($page, $username);
@@ -247,16 +240,16 @@ class IntegrationTest extends MinkTestCase
         $this->approveUser($username, $group);
 
         // Now go to the edit page and assert appropriate behavior (admin available if in group 1, not otherwise):
-        $session->visit($this->getGeebyDeebyUrl('/edit'));
-        $this->logIn($page, $username);
-        $this->assertEquals('Administration', $this->findCssAndGetText($page, 'h1'));
+        $nextPage = $this->goToPage('/edit');
+        $this->logIn($nextPage, $username);
+        $this->assertEquals('Administration', $this->findCssAndGetText($nextPage, 'h1'));
         if ($group === 1) {
-            $this->assertEquals('Edit Data', $this->findCssAndGetText($page, '.content h2'));
+            $this->assertEquals('Edit Data', $this->findCssAndGetText($nextPage, '.content h2'));
         } else {
-            $this->assertNotEquals('Edit Data', $this->findCssAndGetText($page, '.content h2'));
+            $this->assertNotEquals('Edit Data', $this->findCssAndGetText($nextPage, '.content h2'));
             $this->assertEquals(
                 'You do not have permission to access this page.',
-                $this->findCssAndGetText($page, '.content p')
+                $this->findCssAndGetText($nextPage, '.content p')
             );
         }
     }
@@ -476,12 +469,9 @@ class IntegrationTest extends MinkTestCase
         ?string $expectedDisplay = null,
         int $expectedLinkCount = 1
     ): void {
-        $session = $this->getMinkSession();
-        $session->visit($this->getGeebyDeebyUrl("/edit/$url"));
-        $page = $session->getPage();
+        $page = $this->goToPage("/edit/$url");
         $this->logIn($page, 'admin');
         $this->clickCss($page, $buttonSelector);
-        $firstValue = null;
         foreach ($data as $selector => $value) {
             $expectedDisplay = $expectedDisplay === null ? $value : $expectedDisplay;
             $this->findCssAndSetValue($page, $selector, $value);
@@ -490,5 +480,70 @@ class IntegrationTest extends MinkTestCase
         $this->waitForPageLoad($page);
         $this->assertEquals($expectedDisplay, $this->findCssAndGetText($page, "$listSelector a"));
         $this->assertCount($expectedLinkCount, $page->findAll('css', "$listSelector a"));
+    }
+
+    /**
+     * Assert the contents of the top and bottom controls.
+     *
+     * @param TraversableElement $page     Page being examined
+     * @param string             $expected Expected control text
+     *
+     * @return void
+     * @throws \Exception
+     */
+    protected function assertControls(TraversableElement $page, string $expected): void
+    {
+        $this->assertEquals($expected, $this->findCssAndGetText($page, '.controls.top'));
+        $this->assertEquals($expected, $this->findCssAndGetText($page, '.controls.bottom'));
+    }
+
+    /**
+     * Data provider for testCollectionBehavior().
+     *
+     * @return Generator<string, array>
+     */
+    public static function collectionBehaviorProvider(): Generator
+    {
+        yield 'default page, top buttons' => ['', '.controls.top'];
+        yield 'default page, bottom buttons' => ['', '.controls.bottom'];
+        yield 'editions view, top buttons' => ['/Editions', '.controls.top'];
+        yield 'editions view, bottom buttons' => ['/Editions', '.controls.bottom'];
+    }
+
+    /**
+     * Test collection management functionality.
+     *
+     * @param string $subPage          Subpage of item page to test.
+     * @param string $controlsSelector Selector for button bar to use for testing.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('collectionBehaviorProvider')]
+    public function testCollectionBehavior(string $subPage, string $controlsSelector): void
+    {
+        $page = $this->goToPage('/Item/1' . $subPage);
+        $this->assertControls($page, 'Please log in to manage your collection or post a review.');
+        $this->logIn($page, 'user');
+        // Add to all lists:
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Have List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Want List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Modify Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Sale/Trade List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Modify Want List Modify Sale/Trade List');
+        // Remove from all lists:
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Have List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Modify Want List Modify Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Want List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Modify Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Sale/Trade List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
     }
 }
