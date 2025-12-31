@@ -175,6 +175,16 @@ class EditionsFullText extends Gateway
                 );
             }
             $select->join(
+                ['erd' => 'Editions_Release_Dates'],
+                'erd.Edition_ID = eds.Edition_ID',
+                [
+                    'Earliest_Year' => new Expression(
+                        'MIN(erd.Year)'
+                    ),
+                ],
+                Select::JOIN_LEFT
+            );
+            $select->join(
                 ['i' => 'Items'],
                 'eds.Item_ID = i.Item_ID'
             );
