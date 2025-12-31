@@ -29,8 +29,8 @@
 
 namespace GeebyDeebyConsole\Command\Check;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for check/fulltext command.
@@ -48,7 +48,7 @@ class FullTextCommandFactory implements FactoryInterface
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
-     * @param null|array         $options       Extra options (optional)
+     * @param ?array             $options       Extra options (optional)
      *
      * @return object
      *
@@ -60,7 +60,7 @@ class FullTextCommandFactory implements FactoryInterface
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
