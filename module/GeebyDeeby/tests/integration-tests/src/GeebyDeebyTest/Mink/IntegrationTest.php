@@ -502,72 +502,160 @@ class IntegrationTest extends MinkTestCase
             'lastname, test-second',
             6, // number is higher due to jump links
         ];
-        yield 'country' => [
+        yield 'country 1' => [
             'CountryList',
             '#add_country',
             ['#Country_Name' => 'test country'],
             '#country_list',
         ];
-        yield 'city' => [
+        yield 'country 2' => [
+            'CountryList',
+            '#add_country',
+            ['#Country_Name' => 'test country 2'],
+            '#country_list',
+            null,
+            2,
+        ];
+        yield 'city 1' => [
             'CountryList',
             '#add_city',
             ['#City_Name' => 'test city'],
             '#city_list',
         ];
-        yield 'platform' => [
+        yield 'city 2' => [
+            'CountryList',
+            '#add_city',
+            ['#City_Name' => 'test city 2'],
+            '#city_list',
+            null,
+            2,
+        ];
+        yield 'platform 1' => [
             'PlatformList',
             '#add_platform',
             ['#Platform_Name' => 'test platform'],
             '#platform_list',
         ];
-        yield 'predicate' => [
+        yield 'platform 2' => [
+            'PlatformList',
+            '#add_platform',
+            ['#Platform_Name' => 'test platform 2'],
+            '#platform_list',
+            null,
+            2,
+        ];
+        yield 'predicate 1' => [
             'PredicateList',
             '#add_predicate',
             ['#Predicate_Abbrev' => 'test_predicate', '#Predicate_URI' => 'http://test-predicate'],
             '#predicate_list',
             'test_predicate (http://test-predicate)',
         ];
-        yield 'publisher' => [
+        yield 'predicate 2' => [
+            'PredicateList',
+            '#add_predicate',
+            ['#Predicate_Abbrev' => 'another_test_predicate', '#Predicate_URI' => 'http://test-predicate/2'],
+            '#predicate_list',
+            'another_test_predicate (http://test-predicate/2)',
+            6, // number is higher due to jump links
+        ];
+        yield 'publisher 1' => [
             'PublisherList',
             '#add_publisher',
             ['#Publisher_Name' => 'test publisher'],
             '#publisher_list',
         ];
-        yield 'series attribute' => [
+        yield 'publisher 2' => [
+            'PublisherList',
+            '#add_publisher',
+            ['#Publisher_Name' => 'test publisher 2'],
+            '#publisher_list',
+            null,
+            2,
+        ];
+        yield 'series attribute 1' => [
             'SeriesAttributeList',
             '#add_series_attribute',
             ['#Series_Attribute_Name' => 'test series attribute'],
             '#series_attribute_list',
         ];
-        yield 'series relationships' => [
+        yield 'series attribute 2' => [
+            'SeriesAttributeList',
+            '#add_series_attribute',
+            ['#Series_Attribute_Name' => 'test series attribute 2'],
+            '#series_attribute_list',
+            null,
+            2
+        ];
+        yield 'series relationship 1' => [
             'SeriesAttributeList',
             '#add_series_relationship',
             ['#Series_Relationship_Name' => 'test series relationship'],
             '#series_relationship_list',
         ];
-        yield 'tag attribute' => [
+        yield 'series relationship 2' => [
+            'SeriesAttributeList',
+            '#add_series_relationship',
+            ['#Series_Relationship_Name' => 'test series relationship 2'],
+            '#series_relationship_list',
+            null,
+            2
+        ];
+        yield 'tag attribute 1' => [
             'TagsAttributeList',
             '#add_tag_attribute',
             ['#Tags_Attribute_Name' => 'test tag attribute'],
             '#tags_attribute_list',
         ];
-        yield 'tag relationships' => [
+        yield 'tag attribute 2' => [
+            'TagsAttributeList',
+            '#add_tag_attribute',
+            ['#Tags_Attribute_Name' => 'test tag attribute 2'],
+            '#tags_attribute_list',
+            null,
+            2
+        ];
+        yield 'tag relationship 1' => [
             'TagsAttributeList',
             '#add_tag_relationship',
             ['#Tags_Relationship_Name' => 'test tag relationship'],
             '#tags_relationship_list',
         ];
-        yield 'tag type' => [
+        yield 'tag relationship 2' => [
+            'TagsAttributeList',
+            '#add_tag_relationship',
+            ['#Tags_Relationship_Name' => 'test tag relationship 2'],
+            '#tags_relationship_list',
+            null,
+            2
+        ];
+        yield 'tag type 1' => [
             'TagList',
             '#add_tag_type',
             ['#Tag_Type' => 'test tag type'],
             '#tag_type_list',
         ];
-        yield 'tag' => [
+        yield 'tag type 2' => [
+            'TagList',
+            '#add_tag_type',
+            ['#Tag_Type' => 'test tag type 2'],
+            '#tag_type_list',
+            null,
+            2
+        ];
+        yield 'tag 1' => [
             'TagList',
             '#add_tag',
             ['#Tag_Name' => 'test tag'],
             '#tag_list',
+        ];
+        yield 'tag 2' => [
+            'TagList',
+            '#add_tag',
+            ['#Tag_Name' => 'test tag 2'],
+            '#tag_list',
+            null,
+            2
         ];
         yield 'series 1' => [
             'SeriesList',
@@ -740,6 +828,28 @@ class IntegrationTest extends MinkTestCase
             fieldOverrides: ['#First_Name' => 'test-second-edited', '#Last_Name' => 'last'],
             inModal: false,
             expectedDisplay: 'last, test-second-edited'
+        );
+        yield 'country' => $deriveTestCase($populateData['country 2'], inModal: false);
+        yield 'city' => $deriveTestCase($populateData['city 2'], inModal: false);
+        yield 'platform' => $deriveTestCase($populateData['platform 2']);
+        yield 'predicate' => $deriveTestCase(
+            $populateData['predicate 2'],
+            fieldOverrides: ['#Predicate_Abbrev' => 'edited_test_predicate', '#Predicate_URI' => 'http://edit-pred/'],
+            expectedDisplay: 'edited_test_predicate (http://edit-pred/)',
+        );
+        yield 'publisher' => $deriveTestCase($populateData['publisher 2'], inModal: false);
+        yield 'series attribute' => $deriveTestCase($populateData['series attribute 2']);
+        yield 'series relationship' => $deriveTestCase($populateData['series relationship 2']);
+        yield 'tag attribute' => $deriveTestCase($populateData['tag attribute 2']);
+        yield 'tag relationship' => $deriveTestCase($populateData['tag relationship 2']);
+        yield 'tag type' => $deriveTestCase($populateData['tag type 2']);
+        yield 'tag' => $deriveTestCase($populateData['tag 2'], inModal: false);
+        yield 'series' => $deriveTestCase(
+            $populateData['series 2'],
+            fieldOverrides: [
+                '#Series_Description' => 'This has been edited.',
+            ],
+            inModal: false
         );
     }
 
