@@ -167,6 +167,17 @@
     </exec>
   </target>
 
+  <!-- PHPUnit without logging output, stopping at first error or failure -->
+  <target name="phpunitfaster" description="Run tests">
+    <exec dir="${srcdir}/module/GeebyDeeby/tests" executable="${sh}" passthru="true" checkreturn="true">
+      <arg line="-c &apos;${phpunit_command} --stop-on-defect ${phpunit_extra_params}&apos;" />
+      <env key="GBDB_SCREENSHOT_DIR" value="${screenshot_dir}" />
+      <env key="GBDB_URL" value="${gbdburl}" />
+      <env key="GBDB_SNOOZE_MULTIPLIER" value="${snooze_multiplier}" />
+      <env key="GBDB_DEFAULT_TEST_TIMEOUT" value="${default_test_timeout}" />
+    </exec>
+  </target>
+
   <!-- Rector -->
   <target name="rector-console">
     <exec executable="${srcdir}/vendor/bin/rector" escape="false" passthru="true" checkreturn="true">
