@@ -73,6 +73,20 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Go to the specified Geeby-Deeby page.
+     *
+     * @param string $path Path to load.
+     *
+     * @return TraversableElement
+     */
+    protected function goToPage(string $path = ''): TraversableElement
+    {
+        $session = $this->getMinkSession();
+        $session->visit($this->getGeebyDeebyUrl($path));
+        return $session->getPage();
+    }
+
+    /**
      * Sleep if necessary.
      *
      * @param int $secs Seconds to sleep

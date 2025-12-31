@@ -4,6 +4,59 @@
     $this->layout()->toggleLink = $this->toggleLink('edit/item', $item['Item_ID']);
     $editionViewLink = $this->url('item', ['id' => $item['Item_ID'], 'extra' => 'Editions']);
 
+    // --------------------------------------------------
+    // PRE-COMPUTE collection rows to set status flags.
+    //
+    // These flags are required by the "Add / Modify" buttons
+    // rendered at the top of the page.
+    // --------------------------------------------------
+    $userHasItem = $userWantsItem = $userHasExtraItem = false;
+?>
+<?php ob_start(); ?>
+<?php if (count($owners) > 0): ?>
+  <tr class="collection-owners">
+    <th scope="row">Users Who Own This Item:</th>
+    <td>
+      <?php $prevUser = false; ?>
+      <?php foreach ($owners as $owner): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><?php if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $owner['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
+    </td>
+  </tr>
+<?php endif; ?>
+<?php $ownersRow = ob_get_clean(); ?>
+
+<?php ob_start(); ?>
+<?php if (count($buyers) > 0): ?>
+  <tr class="collection-buyers">
+    <th scope="row">Users Who Want This Item:</th>
+    <td>
+      <?php $prevUser = false; ?>
+      <?php foreach ($buyers as $buyer): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><?php if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $buyer['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
+    </td>
+  </tr>
+<?php endif; ?>
+<?php $buyersRow = ob_get_clean(); ?>
+
+<?php ob_start(); ?>
+<?php if (count($sellers) > 0): ?>
+  <tr class="collection-sellers">
+    <th scope="row">Users with Extra Copies:</th>
+    <td>
+      <?php $prevUser = false; ?>
+      <?php foreach ($sellers as $seller): $separator = $prevUser; ?>
+        <?php if ($this->auth()->hasIdentity() && $seller['User_ID'] == $this->auth()->getIdentity()): $userHasExtraItem = true; endif; ?>
+        <?php if ($prevUser !== $seller['Username']): $prevUser = $seller['Username'];?>
+          <?php if ($separator): ?><br /><?php endif; ?>
+          <a href="<?=$this->url('user', ['id' => $seller['User_ID'], 'action' => 'Extras'])?>">
+            <?=$this->escapeHtml($prevUser)?>
+          </a>
+        <?php endif; ?>
+        <?php if (!empty($seller['Collection_Note'])): ?> - <?=$this->escapeHtml($seller['Collection_Note'])?><?php endif; ?>
+      <?php endforeach; ?>
+    </td>
+  </tr>
+<?php endif; ?>
+<?php $sellersRow = ob_get_clean(); ?>
+<?php
     // If there are too many images to display comfortably, pick a smaller number
     // and set a flag to display a link to edition view, where everything is visible.
     // We'll try to pick at least one image for each distinct label, to the greatest
@@ -654,46 +707,7 @@
         <tr><th scope="row">Special Thanks:</th><td><?=$item['Item_Thanks']?></td></tr>
       <?php endif; ?>
 
-      <?php $userHasItem = $userWantsItem = $userHasExtraItem = false; ?>
-
-      <?php if (count($owners) > 0): ?>
-        <tr>
-          <th scope="row">Users Who Own This Item:</th>
-          <td>
-            <?php $prevUser = false; ?>
-            <?php foreach ($owners as $owner): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $owner['User_ID'] == $this->auth()->getIdentity()): $userHasItem = true; endif; ?><?php if ($prevUser !== $owner['Username']): $prevUser = $owner['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $owner['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($owner['Collection_Note'])): ?> (<?=$this->escapeHtml($owner['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
-          </td>
-        </tr>
-      <?php endif; ?>
-
-      <?php if (count($buyers) > 0): ?>
-        <tr>
-          <th scope="row">Users Who Want This Item:</th>
-          <td>
-            <?php $prevUser = false; ?>
-            <?php foreach ($buyers as $buyer): $separator = $prevUser; ?><?php if ($this->auth()->hasIdentity() && $buyer['User_ID'] == $this->auth()->getIdentity()): $userWantsItem = true; endif; ?><?php if ($prevUser !== $buyer['Username']): $prevUser = $buyer['Username'];?><?php if ($separator): ?>, <?php endif; ?><a href="<?=$this->url('user', ['id' => $buyer['User_ID'], 'action' => 'Collection'])?>"><?=$this->escapeHtml($prevUser)?></a><?php endif; ?><?php if (!empty($buyer['Collection_Note'])): ?> (<?=$this->escapeHtml($buyer['Collection_Note'])?>)<?php endif; ?><?php endforeach; ?>
-          </td>
-        </tr>
-      <?php endif; ?>
-
-      <?php if (count($sellers) > 0): ?>
-        <tr>
-          <th scope="row">Users with Extra Copies:</th>
-          <td>
-            <?php $prevUser = false; ?>
-            <?php foreach ($sellers as $seller): $separator = $prevUser; ?>
-              <?php if ($this->auth()->hasIdentity() && $seller['User_ID'] == $this->auth()->getIdentity()): $userHasExtraItem = true; endif; ?>
-              <?php if ($prevUser !== $seller['Username']): $prevUser = $seller['Username'];?>
-                <?php if ($separator): ?><br /><?php endif; ?>
-                <a href="<?=$this->url('user', ['id' => $seller['User_ID'], 'action' => 'Extras'])?>">
-                  <?=$this->escapeHtml($prevUser)?>
-                </a>
-              <?php endif; ?>
-              <?php if (!empty($seller['Collection_Note'])): ?> - <?=$this->escapeHtml($seller['Collection_Note'])?><?php endif; ?>
-            <?php endforeach; ?>
-          </td>
-        </tr>
-      <?php endif; ?>
+      <?= $ownersRow . $buyersRow . $sellersRow ?>
     </table>
   </div>
 </div>
