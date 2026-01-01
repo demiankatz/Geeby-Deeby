@@ -45,11 +45,11 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
- * @todo Add separate tests for edition contents and preferred publisher/titles.
+ * @todo Add tests for edition contents and preferred publisher/titles.
  * @todo Add test to set imprint and address on a series/publisher link
- * @todo Add item adaptations/attached items/credits/references/relationships/translations
+ * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
  * @todo Add test to set citation on creator relationship
- * @todo Add series attached items/categories/relationships/translations
+ * @todo Add tests for series attached items/categories/relationships/translations
  * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
  * @todo Add tests for creating/approving comments/reviews
@@ -1211,6 +1211,46 @@ class IntegrationTest extends MinkTestCase
             '/^No descriptions set.$/',
             '/Test description \\(Source: User Summary\\)/',
         ];
+        yield 'series alternate title' => [
+            '/edit/Series/1',
+            'Alternate Titles',
+            ['#Alt_Title' => 'test alternate series title', '#Alt_Title_Note' => '1'],
+            '#alttitle_list',
+            '/^No alternate titles set.$/',
+            '/test alternate series title \\(test note\\)/',
+        ];
+        yield 'series material type' => [
+            '/edit/Series/1',
+            'Material Types',
+            [],
+            '#material_list',
+            '/^No material types set.$/',
+            '/second test material \\(edited\\)/',
+        ];
+        yield 'series publisher' => [
+            '/edit/Series/1',
+            'Publishers',
+            ['#Publisher_ID' => '1', '#Publisher_Note_ID' => '1'],
+            '#publisher_list',
+            '/^No publishers set.$/',
+            '/test publisher \\(test note\\)/',
+        ];
+        yield 'series relationship' => [
+            '/edit/Series/1',
+            'Relationships',
+            ['#target_series' => '2'],
+            '#relationship_list',
+            '/^No relationships defined.$/',
+            '/test series 2 \\(edited\\)/',
+        ];
+        yield 'series translation' => [
+            '/edit/Series/1',
+            'Translations',
+            ['#trans_name' => '2'],
+            '#translationfrom_list',
+            '/^No relevant series.$/',
+            '/test series 2 \\(edited\\)/',
+        ];
     }
 
     /**
@@ -1274,6 +1314,10 @@ class IntegrationTest extends MinkTestCase
             . ' [List All Series] [List Series Full Text] [List Series Images] [List Series People]'
             . ' [List Series Subjects/Tags]'
             . ' Language: test language 1'
+            . ' Alternate Title: test alternate series title (test note)'
+            . ' Publisher: test publisher (test note)'
+            . ' Translated From: test series 2 (edited) (test language 1)'
+            . ' test series relationship: test series 2 (edited)'
             . ' second test materials (edited)'
             . ' test item (1952)'
             . ' Related Documents test file type 1 test file 1'
@@ -1285,9 +1329,9 @@ class IntegrationTest extends MinkTestCase
         //yield 'category' => ['/Category/1', 'test description No series are listed in this category.'];
         //yield 'city' => ['/City/1', 'No information is available about this city.'];
         //yield 'country' => ['/Country/1', 'No information is available about this country.'];
-        //yield 'language' => ['/Language/1', 'No information is available about this language.'];
-        //yield 'material type' => ['/Material/1', 'No information is available about this material type.'];
-        yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1'];
+        yield 'language' => ['/Language/1', 'T test series 1 test series 2 (edited)'];
+        yield 'material type' => ['/Material/2', 'T test series 1'];
+        yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1 T test series 1'];
         yield 'person' => [
             '/Person/1',
             '[List All People] [List Person Full Text]'
@@ -1478,8 +1522,7 @@ class IntegrationTest extends MinkTestCase
         yield 'series by city' => ['by city', 'T test city test city 2 (edited)', 0];
         yield 'series by country' => ['by country', 'T test country test country 2 (edited)', 0];
         yield 'series by language' => ['by language', 'T test language 1 test language 2 (edited)', 0];
-        // TODO: link a material type to a series so this test will become interesting
-        //yield 'series by material type' => ['by material type', 'No material types listed in this database yet.', 0];
+        yield 'series by material type' => ['by material type', 'S second test material (edited)', 0];
         yield 'series by publisher' => ['by publisher', 'T test publisher test publisher 2 (edited)', 0];
         // TODO: add a comment test so this will have content:
         //yield 'series with comments' => ['with comments', 'No comments listed.', 0];
