@@ -534,6 +534,14 @@ class IntegrationTest extends MinkTestCase
             'lastname, test-second',
             6, // number is higher due to jump links
         ];
+        yield 'person 3' => [
+            'PersonList',
+            '#add_person',
+            ['#First_Name' => 'test-third', '#Last_Name' => 'lastname'],
+            '#person_list',
+            'lastname, test-third',
+            7, // number is higher due to jump links
+        ];
         yield 'country 1' => [
             'CountryList',
             '#add_country',
@@ -1139,8 +1147,6 @@ class IntegrationTest extends MinkTestCase
             '|http://publisher/1 \\(edited_test_predicate\\)|',
         ];
         // TODO: add test to set imprint and address on a series/publisher link
-        // TODO: add series links
-        // TODO: add item links
         yield 'tag URI' => [
             '/edit/Tag/1',
             null,
@@ -1148,6 +1154,14 @@ class IntegrationTest extends MinkTestCase
             '#uri_list',
             '/^No URIs defined.$/',
             '|http://tag/1 \\(edited_test_predicate\\)|',
+        ];
+        yield 'tag relationship' => [
+            '/edit/Tag/1',
+            'Relationships',
+            ['#target_tag' => '2'],
+            '#relationship_list',
+            '/^No relationships defined.$/',
+            '/test tag relationship: test tag 2 \\(edited\\)/',
         ];
         yield 'tag to item link' => [
             '/edit/Tag/1',
@@ -1165,14 +1179,33 @@ class IntegrationTest extends MinkTestCase
             '/test tag[^2]*$/',
             '/test tag.*test tag 2 \\(edited\\)/',
         ];
-        yield 'tag relationship' => [
-            '/edit/Tag/1',
-            'Relationships',
-            ['#target_tag' => '2'],
-            '#relationship_list',
-            '/^No relationships defined.$/',
-            '/test tag relationship: test tag 2 \\(edited\\)/',
+        yield 'item alternate title' => [
+            '/edit/Item/1',
+            'Alternate Titles',
+            ['#Alt_Title' => 'test alternate title', '#Alt_Title_Note' => '1'],
+            '#alttitle_list',
+            '/^No alternate titles set.$/',
+            '/test alternate title \\(test note\\)/',
         ];
+        yield 'item creator' => [
+            '/edit/Item/1',
+            'Creators',
+            ['#creator_person' => '2'],
+            '#creator_list',
+            '/No creators.$/',
+            '/test person role: last, test-second-edited/',
+        ];
+        yield 'item description' => [
+            '/edit/Item/1',
+            'Descriptions',
+            ['#Description' => 'Test description'],
+            '#description_list',
+            '/^No descriptions set.$/',
+            '/Test description \\(Source: User Summary\\)/',
+        ];
+        // TODO: add item adaptations/attached items/credits/references/relationships/translations
+        // TODO: add test to set citation on creator relationship
+        // TODO: add series links
     }
 
     /**
@@ -1248,7 +1281,7 @@ class IntegrationTest extends MinkTestCase
         //yield 'category' => ['/Category/1', 'test description No series are listed in this category.'];
         //yield 'city' => ['/City/1', 'No information is available about this city.'];
         //yield 'country' => ['/Country/1', 'No information is available about this country.'];
-        //yield 'language' => ['/Language/2', 'No information is available about this language.'];
+        //yield 'language' => ['/Language/1', 'No information is available about this language.'];
         //yield 'material type' => ['/Material/1', 'No information is available about this material type.'];
         yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1'];
         yield 'person' => [
@@ -1264,11 +1297,22 @@ class IntegrationTest extends MinkTestCase
             . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
             . ' (last verified: 2025-12-01)',
         ];
+        yield 'person 2' => [
+            '/Person/2',
+            '[List All People] [List Person Full Text]'
+            . ' Pseudonym: test-last, test-first, extra'
+            . ' bio'
+            . ' Sort by: Series Title Year'
+            . ' Items with "last, test-second-edited" as Cited test person role'
+            . ' test series 1'
+            . ' test item',
+        ];
         yield 'item' => [
             '/Item/1',
             'Please log in to manage your collection or post a review.'
             . ' (test note) View: Combined By Edition Online Full Text: test full text source 1'
             . ' Series: test series 1'
+            . ' Alternate Title: test alternate title (test note)'
             . ' Platform: test platform'
             . ' Subjects / Tags: test tag test tag 2 (edited)'
             . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
@@ -1276,6 +1320,7 @@ class IntegrationTest extends MinkTestCase
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)'
+            . ' User Summary: Test description'
             . ' Please log in to manage your collection or post a review.'
             . ' Related Documents test file type 1 test file 1'
             . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
@@ -1385,7 +1430,8 @@ class IntegrationTest extends MinkTestCase
     public static function personFullTextProvider(): Generator
     {
         yield 'credit full text' => [1, 'test item'];
-        yield 'no full text' => [2, null];
+        yield 'cited full text' => [2, 'test item'];
+        yield 'no full text' => [3, null];
     }
 
     /**
@@ -1440,13 +1486,13 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'people by name' => [
             'by name',
-            'L T last, test-second-edited T Back to Top ↑ test-last, test-first, extra',
+            'L T last, test-second-edited lastname, test-third T Back to Top ↑ test-last, test-first, extra',
             1,
         ];
         yield 'people with biographical notes' => ['with biographical notes', 'L last, test-second-edited', 1];
         yield 'recently added people' => [
             'recently added',
-            'Viewing page 1 of 1 last, test-second-edited test-last, test-first, extra '
+            'Viewing page 1 of 1 lastname, test-third last, test-second-edited test-last, test-first, extra '
             . 'First | Previous | 1 | Next | Last',
             1,
         ];
