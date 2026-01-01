@@ -1114,6 +1114,31 @@ class IntegrationTest extends MinkTestCase
             '|http://person/1 \\(edited_test_predicate\\)|',
             '#add_uri',
         ];
+        yield 'publisher address' => [
+            '/edit/Publisher/1',
+            null,
+            ['#Street' => 'fake st.'],
+            '#address_list',
+            '/^No addresses set.$/',
+            '/test country -- fake st./',
+        ];
+        yield 'publisher imprint' => [
+            '/edit/Publisher/1',
+            'Imprints',
+            ['#Imprint' => 'test imprint'],
+            '#imprint_list',
+            '/^No imprints set.$/',
+            '/test imprint/',
+        ];
+        yield 'publisher URI' => [
+            '/edit/Publisher/1',
+            'URIs',
+            ['#uri' => 'http://publisher/1'],
+            '#uri_list',
+            '/^No URIs defined.$/',
+            '|http://publisher/1 \\(edited_test_predicate\\)|',
+        ];
+        // TODO: add test to set imprint and address on a series/publisher link
     }
 
     /**
@@ -1180,7 +1205,8 @@ class IntegrationTest extends MinkTestCase
             . ' second test materials (edited)'
             . ' test item (1952)'
             . ' Related Documents test file type 1 test file 1'
-            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org (last verified: 2025-12-01)'
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
+            . ' (last verified: 2025-12-01)'
             . ' User Comments No comments available. Please log in to leave a comment.',
         ];
         // TODO: add data so the following commented-out tests will be non-empty
@@ -1189,7 +1215,7 @@ class IntegrationTest extends MinkTestCase
         //yield 'country' => ['/Country/1', 'No information is available about this country.'];
         //yield 'language' => ['/Language/2', 'No information is available about this language.'];
         //yield 'material type' => ['/Material/1', 'No information is available about this material type.'];
-        //yield 'publisher' => ['/Publisher/1', 'No information is available about this publisher.'];
+        yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1'];
         yield 'person' => [
             '/Person/1',
             '[List All People] [List Person Full Text]'
@@ -1200,7 +1226,8 @@ class IntegrationTest extends MinkTestCase
             . ' test series 1'
             . ' test item (test note)'
             . ' Related Documents test file type 1 test file 1'
-            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org (last verified: 2025-12-01)',
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
+            . ' (last verified: 2025-12-01)',
         ];
         yield 'item' => [
             '/Item/1',
@@ -1215,7 +1242,8 @@ class IntegrationTest extends MinkTestCase
             . ' Product Code: pc-test (test note)'
             . ' Please log in to manage your collection or post a review.'
             . ' Related Documents test file type 1 test file 1'
-            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org (last verified: 2025-12-01)',
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
+            . ' (last verified: 2025-12-01)',
         ];
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
         //yield 'tag' => ['/Tag/1', 'No information is available about this subject/tag.'];
