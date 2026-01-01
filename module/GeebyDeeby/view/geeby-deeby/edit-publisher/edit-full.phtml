@@ -30,21 +30,25 @@
   </div>
 
   <div id="imprints-tab" class="tab-pane">
-    <form onsubmit="Publisher.link('Imprint'); return false;">
-      <label>Imprint: <input type="text" id="Imprint" /></label>
-      <input type="submit" value="Add" />
-    </form>
+    <div class="edit_container">
+      <form onsubmit="Publisher.link('Imprint'); return false;">
+        <label>Imprint: <input type="text" id="Imprint" /></label>
+        <input type="submit" value="Add" />
+      </form>
+    </div>
     <div id="imprint_list">
       <?=$this->render('geeby-deeby/edit-publisher/imprint-list.phtml')?>
     </div>
   </div>
 
   <div id="uris-tab" class="tab-pane">
-    <form onsubmit="Publisher.link('URI'); return false;">
-      <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
-      <label>URI: <input type="text" id="uri" /></label>
-      <input type="submit" value="Add URI" />
-    </form>
+    <div class="edit_container">
+      <form onsubmit="Publisher.link('URI'); return false;">
+        <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
+        <label>URI: <input type="text" id="uri" /></label>
+        <input type="submit" value="Add URI" />
+      </form>
+    </div>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-publisher/uri-list.phtml')?>
     </div>
