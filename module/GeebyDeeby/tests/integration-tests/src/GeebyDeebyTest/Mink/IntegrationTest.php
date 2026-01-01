@@ -25,8 +25,6 @@
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
- *
- * @GeebyDeeby.SkipBadStringCheck
  */
 
 namespace GeebyDeebyTest\Mink;
@@ -968,6 +966,81 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Data provider for testLinkCreation().
+     *
+     * @return Generator<string, array>
+     */
+    public static function linkCreationProvider(): Generator
+    {
+        yield 'edition credit' => [
+            '/edit/Edition/1',
+            null,
+            ['#credit_person' => '1', '#credit_note' => '1'],
+            '#credit_list',
+            '/^No credits.$/',
+            '/test person role: test-last, test-first, extra \\(test note\\)/',
+        ];
+        yield 'edition full text link' => [
+            '/edit/Edition/1',
+            'Full Text Links',
+            ['#Full_Text_URL' => 'http://example.com/fulltext'],
+            '#fulltext_list',
+            '/^No full text set.$/',
+            '|test full text source 1: http://example.com/fulltext '
+            . 'Edit options for URL: http://example.com/fulltext '
+            . 'Delete full text URL: http://example.com/fulltext|',
+        ];
+    }
+
+    /**
+     * Test linking additional data to records.
+     *
+     * @param string  $url                  Path relative to Geeby-Deeby base URL for entering data
+     * @param ?string $tabToClick           Tab to click before populating data (null to use default tab)
+     * @param array   $valuesToSet          Array of selector => value (data to link)
+     * @param string  $containerSelector    Selector for container listing links
+     * @param ?string $beforeContainerRegex Regular expression to check in container before linking data (null to skip)
+     * @param ?string $afterContainerRegex  Regular expression to check in container after linking data (null to skip)
+     * @param string  $submitSelector       Selector for submit button
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testEditExistingData')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('linkCreationProvider')]
+    public function testLinkCreation(
+        string $url,
+        ?string $tabToClick,
+        array $valuesToSet,
+        string $containerSelector,
+        ?string $beforeContainerRegex = null,
+        ?string $afterContainerRegex = null,
+        string $submitSelector = '.active .edit_container input[type="submit"]'
+    ): void {
+        $page = $this->goToPage($url);
+        $this->logIn($page, 'admin');
+        if ($tabToClick) {
+            $page->clickLink($tabToClick);
+        }
+        if ($beforeContainerRegex) {
+            $this->assertMatchesRegularExpression(
+                $beforeContainerRegex,
+                $this->findCssAndGetText($page, $containerSelector)
+            );
+        }
+        foreach ($valuesToSet as $selector => $value) {
+            $this->findCssAndSetValue($page, $selector, $value);
+        }
+        $this->clickCss($page, $submitSelector);
+        $this->waitForPageLoad($page);
+        if ($afterContainerRegex) {
+            $this->assertMatchesRegularExpression(
+                $afterContainerRegex,
+                $this->findCssAndGetText($page, $containerSelector)
+            );
+        }
+    }
+
+    /**
      * Assert the contents of the top and bottom controls.
      *
      * @param TraversableElement $page     Page being examined
@@ -1034,39 +1107,6 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Test adding details to an edition.
-     *
-     * @return void
-     */
-    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
-    public function testEditionEditor(): void
-    {
-        $page = $this->goToPage('/edit/Edition/1');
-        $this->logIn($page, 'admin');
-
-        // Add a credit:
-        $this->findCssAndSetValue($page, '#credit_person', '1');
-        $this->findCssAndSetValue($page, '#credit_note', '1');
-        $this->clickCss($page, '.active .edit_container input[type="submit"]');
-        $this->assertEquals(
-            'test person role: test-last, test-first, extra (test note)',
-            $this->findCssAndGetText($page, '#credit_list table td', index: 2)
-        );
-
-        // Add a full-text link:
-        $page->clickLink('Full Text Links');
-        $this->findCssAndSetValue($page, '#Full_Text_URL', 'http://example.com/fulltext');
-        $this->clickCss($page, '.active .edit_container input[type="submit"]');
-        $this->waitForPageLoad($page);
-        $this->assertEquals(
-            'test full text source 1: http://example.com/fulltext '
-            . 'Edit options for URL: http://example.com/fulltext '
-            . 'Delete full text URL: http://example.com/fulltext',
-            $this->findCssAndGetText($page, '#fulltext_list')
-        );
-    }
-
-    /**
      * Data provider for testPersonFullText().
      *
      * @return Generator<string, array>
@@ -1086,7 +1126,7 @@ class IntegrationTest extends MinkTestCase
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('personFullTextProvider')]
-    #[\PHPUnit\Framework\Attributes\Depends('testEditionEditor')]
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
     public function testPersonFullText(int $personId, ?string $firstExpectedTitle): void
     {
         $page = $this->goToPage("/Person/$personId/FullText");
