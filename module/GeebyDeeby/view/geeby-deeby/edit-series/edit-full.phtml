@@ -41,22 +41,24 @@
   </div>
 
   <div id="publishers-tab" class="tab-pane">
-    <form class="edit_container" onsubmit="Series.link('Publisher'); return false;">
-      <table class="edit">
-        <tr>
-          <th scope="row"><label for="Publisher_ID">Publisher:</label></th>
-          <td><input id="Publisher_ID" /></td>
-        </tr>
-        <tr>
-          <th scope="row"><label for="Publisher_Note_ID">Note:</label></th>
-          <td><input id="Publisher_Note_ID" class="Note_ID" /></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><input type="submit" value="Add" /></td>
-        </tr>
-      </table>
-    </form>
+    <div class="edit_container">
+      <form onsubmit="Series.link('Publisher'); return false;">
+        <table class="edit">
+          <tr>
+            <th scope="row"><label for="Publisher_ID">Publisher:</label></th>
+            <td><input id="Publisher_ID" /></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="Publisher_Note_ID">Note:</label></th>
+            <td><input id="Publisher_Note_ID" class="Note_ID" /></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="submit" value="Add" /></td>
+          </tr>
+        </table>
+      </form>
+    </div>
     <div id="publisher_list">
       <?=$this->render('geeby-deeby/edit-series/publisher-list.phtml')?>
     </div>

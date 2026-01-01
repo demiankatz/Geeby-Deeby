@@ -1139,6 +1139,40 @@ class IntegrationTest extends MinkTestCase
             '|http://publisher/1 \\(edited_test_predicate\\)|',
         ];
         // TODO: add test to set imprint and address on a series/publisher link
+        // TODO: add series links
+        // TODO: add item links
+        yield 'tag URI' => [
+            '/edit/Tag/1',
+            null,
+            ['#uri' => 'http://tag/1'],
+            '#uri_list',
+            '/^No URIs defined.$/',
+            '|http://tag/1 \\(edited_test_predicate\\)|',
+        ];
+        yield 'tag to item link' => [
+            '/edit/Tag/1',
+            'Linked Items',
+            ['#Item_ID' => '1'],
+            '#item_list',
+            '/^No relevant items.$/',
+            '/test item/',
+        ];
+        yield 'item to tag link' => [
+            '/edit/Item/1',
+            'Subjects/Tags',
+            ['#Tag_ID' => '2'],
+            '#tag_list',
+            '/test tag[^2]*$/',
+            '/test tag.*test tag 2 \\(edited\\)/',
+        ];
+        yield 'tag relationship' => [
+            '/edit/Tag/1',
+            'Relationships',
+            ['#target_tag' => '2'],
+            '#relationship_list',
+            '/^No relationships defined.$/',
+            '/test tag relationship: test tag 2 \\(edited\\)/',
+        ];
     }
 
     /**
@@ -1187,6 +1221,7 @@ class IntegrationTest extends MinkTestCase
                 $this->findCssAndGetText($page, $containerSelector)
             );
         }
+        // TODO: add test for deleting links
     }
 
     /**
@@ -1235,6 +1270,7 @@ class IntegrationTest extends MinkTestCase
             . ' (test note) View: Combined By Edition Online Full Text: test full text source 1'
             . ' Series: test series 1'
             . ' Platform: test platform'
+            . ' Subjects / Tags: test tag test tag 2 (edited)'
             . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
             . ' Date: February 3, 1952 (test note)'
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
@@ -1246,7 +1282,14 @@ class IntegrationTest extends MinkTestCase
             . ' (last verified: 2025-12-01)',
         ];
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
-        //yield 'tag' => ['/Tag/1', 'No information is available about this subject/tag.'];
+        yield 'tag' => [
+            '/Tag/1',
+            'test tag relationship: test tag 2 (edited)'
+            . ' External Identifier: http://tag/1'
+            . ' Sort by: Series Title'
+            . ' test series 1'
+            . ' test item',
+        ];
     }
 
     /**
