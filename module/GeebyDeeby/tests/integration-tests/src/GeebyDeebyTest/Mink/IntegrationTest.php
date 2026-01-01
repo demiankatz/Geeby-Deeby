@@ -44,6 +44,16 @@ use function in_array;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
+ *
+ * @todo Add separate tests for edition contents and preferred publisher/titles.
+ * @todo Add test to set imprint and address on a series/publisher link
+ * @todo Add item adaptations/attached items/credits/references/relationships/translations
+ * @todo Add test to set citation on creator relationship
+ * @todo Add series attached items/categories/relationships/translations
+ * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
+ * @todo Add tests for deleting links/relationships
+ * @todo Add tests for creating/approving comments/reviews
+ * @todo Add tests for approving users
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -1049,7 +1059,6 @@ class IntegrationTest extends MinkTestCase
             '/^No platforms set.$/',
             '/test platform/',
         ];
-        // TODO: add separate tests for edition contents and preferred publisher/titles.
         yield 'file related item' => [
             '/edit/File/1',
             null,
@@ -1146,7 +1155,6 @@ class IntegrationTest extends MinkTestCase
             '/^No URIs defined.$/',
             '|http://publisher/1 \\(edited_test_predicate\\)|',
         ];
-        // TODO: add test to set imprint and address on a series/publisher link
         yield 'tag URI' => [
             '/edit/Tag/1',
             null,
@@ -1203,9 +1211,6 @@ class IntegrationTest extends MinkTestCase
             '/^No descriptions set.$/',
             '/Test description \\(Source: User Summary\\)/',
         ];
-        // TODO: add item adaptations/attached items/credits/references/relationships/translations
-        // TODO: add test to set citation on creator relationship
-        // TODO: add series links
     }
 
     /**
@@ -1254,11 +1259,10 @@ class IntegrationTest extends MinkTestCase
                 $this->findCssAndGetText($page, $containerSelector)
             );
         }
-        // TODO: add test for deleting links
     }
 
     /**
-     * Data provider for testEmptyLinkLists().
+     * Data provider for testPopulatedRecords().
      *
      * @return Generator<string, array>
      */
