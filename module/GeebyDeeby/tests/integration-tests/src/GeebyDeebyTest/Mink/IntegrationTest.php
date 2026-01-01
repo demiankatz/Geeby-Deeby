@@ -1093,6 +1093,74 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Data provider for testEmptyLinkLists().
+     *
+     * @return Generator<string, array>
+     */
+    public static function populatedRecordsProvider(): Generator
+    {
+        yield 'series' => [
+            '/Series/1',
+            'Please log in to leave a comment.'
+            . ' [List All Series] [List Series Full Text] [List Series Images] [List Series People]'
+            . ' [List Series Subjects/Tags]'
+            . ' Language: test language 1'
+            . ' second test materials (edited)'
+            . ' test item (1952)'
+            . ' User Comments No comments available. Please log in to leave a comment.',
+        ];
+        // TODO: add data so the following commented-out tests will be non-empty
+        //yield 'category' => ['/Category/1', 'test description No series are listed in this category.'];
+        //yield 'city' => ['/City/1', 'No information is available about this city.'];
+        //yield 'country' => ['/Country/1', 'No information is available about this country.'];
+        //yield 'language' => ['/Language/2', 'No information is available about this language.'];
+        //yield 'material type' => ['/Material/1', 'No information is available about this material type.'];
+        //yield 'publisher' => ['/Publisher/1', 'No information is available about this publisher.'];
+        yield 'person' => [
+            '/Person/1',
+            '[List All People] [List Person Full Text]'
+            . ' Sort by: Series Title Year'
+            . ' Items with "test-last, test-first, extra" as Credited test person role'
+            . ' test series 1'
+            . ' test item (test note)',
+        ];
+        yield 'item' => [
+            '/Item/1',
+            'Please log in to manage your collection or post a review.'
+            . ' (test note) View: Combined By Edition Online Full Text: test full text source 1'
+            . ' Series: test series 1'
+            . ' Platform: test platform'
+            . ' test person role: test-last, test-first, extra (test note)'
+            . ' Date: February 3, 1952 (test note)'
+            . ' ISBN: 0123456789 / 9780123456786 (test note)'
+            . ' OCLC Number: 12345 (test note)'
+            . ' Product Code: pc-test (test note)'
+            . ' Please log in to manage your collection or post a review.',
+        ];
+        yield 'platform' => ['/Platform/1', 'test series 1 test item'];
+        //yield 'tag' => ['/Tag/1', 'No information is available about this subject/tag.'];
+    }
+
+    /**
+     * Test that appropriate empty messages are provided before content is linked up.
+     *
+     * @param string $path            URL path to check
+     * @param string $expectedMessage Content expected on page
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsProvider')]
+    public function testPopulatedRecords(
+        string $path,
+        string $expectedMessage,
+        bool $regExMatch = false
+    ): void {
+        $this->assertPageContent($expectedMessage, $path, regExMatch: $regExMatch);
+    }
+
+    /**
      * Assert the contents of the top and bottom controls.
      *
      * @param TraversableElement $page     Page being examined
