@@ -1041,7 +1041,79 @@ class IntegrationTest extends MinkTestCase
             '/^No platforms set.$/',
             '/test platform/',
         ];
-        // TODO: add separate tests for contents and preferred publisher/titles.
+        // TODO: add separate tests for edition contents and preferred publisher/titles.
+        yield 'file related item' => [
+            '/edit/File/1',
+            null,
+            ['#file_item_id' => '1'],
+            '#item_list',
+            '/^No relevant items.$/',
+            '/test item/',
+            '#link_item',
+        ];
+        yield 'file related series' => [
+            '/edit/File/1',
+            null,
+            ['#file_series_id' => '1'],
+            '#series_list',
+            '/^No relevant series.$/',
+            '/test series 1/',
+            '#link_series',
+        ];
+        yield 'file related person' => [
+            '/edit/File/1',
+            null,
+            ['#file_person_id' => '1'],
+            '#person_list',
+            '/^No relevant people.$/',
+            '/test-last, test-first, extra/',
+            '#link_person',
+        ];
+        yield 'link related item' => [
+            '/edit/Link/2',
+            null,
+            ['#link_item_id' => '1'],
+            '#item_list',
+            '/^No relevant items.$/',
+            '/test item/',
+            '#link_item',
+        ];
+        yield 'link related series' => [
+            '/edit/Link/2',
+            null,
+            ['#link_series_id' => '1'],
+            '#series_list',
+            '/^No relevant series.$/',
+            '/test series 1/',
+            '#link_series',
+        ];
+        yield 'link related person' => [
+            '/edit/Link/2',
+            null,
+            ['#link_person_id' => '1'],
+            '#person_list',
+            '/^No relevant people.$/',
+            '/test-last, test-first, extra/',
+            '#link_person',
+        ];
+        yield 'pseudonym' => [
+            '/edit/Person/1',
+            null,
+            ['#pseudo_name' => '2'],
+            '#aliasrealname_list',
+            '/^No relevant names.$/',
+            '/last, test-second-edited/',
+            '#add_relationship',
+        ];
+        yield 'person uri' => [
+            '/edit/Person/1',
+            null,
+            ['#uri' => 'http://person/1'],
+            '#uri_list',
+            '/^No URIs defined.$/',
+            '|http://person/1 \\(edited_test_predicate\\)|',
+            '#add_uri',
+        ];
     }
 
     /**
@@ -1107,6 +1179,8 @@ class IntegrationTest extends MinkTestCase
             . ' Language: test language 1'
             . ' second test materials (edited)'
             . ' test item (1952)'
+            . ' Related Documents test file type 1 test file 1'
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org (last verified: 2025-12-01)'
             . ' User Comments No comments available. Please log in to leave a comment.',
         ];
         // TODO: add data so the following commented-out tests will be non-empty
@@ -1119,10 +1193,14 @@ class IntegrationTest extends MinkTestCase
         yield 'person' => [
             '/Person/1',
             '[List All People] [List Person Full Text]'
+            . ' Pseudonym For: last, test-second-edited'
+            . ' External Identifier: http://person/1'
             . ' Sort by: Series Title Year'
             . ' Items with "test-last, test-first, extra" as Credited test person role'
             . ' test series 1'
-            . ' test item (test note)',
+            . ' test item (test note)'
+            . ' Related Documents test file type 1 test file 1'
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org (last verified: 2025-12-01)',
         ];
         yield 'item' => [
             '/Item/1',
@@ -1130,12 +1208,14 @@ class IntegrationTest extends MinkTestCase
             . ' (test note) View: Combined By Edition Online Full Text: test full text source 1'
             . ' Series: test series 1'
             . ' Platform: test platform'
-            . ' test person role: test-last, test-first, extra (test note)'
+            . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
             . ' Date: February 3, 1952 (test note)'
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)'
-            . ' Please log in to manage your collection or post a review.',
+            . ' Please log in to manage your collection or post a review.'
+            . ' Related Documents test file type 1 test file 1'
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org (last verified: 2025-12-01)',
         ];
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
         //yield 'tag' => ['/Tag/1', 'No information is available about this subject/tag.'];
