@@ -980,6 +980,41 @@ class IntegrationTest extends MinkTestCase
             '/^No credits.$/',
             '/test person role: test-last, test-first, extra \\(test note\\)/',
         ];
+        yield 'edition ISBN' => [
+            '/edit/Edition/1',
+            'Codes/ISBNs',
+            ['#isbn' => '0123456789', '#isbn_note' => '1'],
+            '#isbn_list',
+            '/^No ISBNs set.$/',
+            '|0123456789 / 9780123456786 \\(test note\\)|',
+            '#add_isbn',
+        ];
+        yield 'edition OCLC number' => [
+            '/edit/Edition/1',
+            'Codes/ISBNs',
+            ['#oclc_number' => '12345', '#oclc_number_note' => '1'],
+            '#oclcnumber_list',
+            '/^No OCLC numbers set.$/',
+            '/12345 \\(test note\\)/',
+            '#add_oclc_number',
+        ];
+        yield 'edition product code' => [
+            '/edit/Edition/1',
+            'Codes/ISBNs',
+            ['#product_code' => 'pc-test', '#product_code_note' => '1'],
+            '#productcode_list',
+            '/^No product codes set.$/',
+            '/pc-test \\(test note\\)/',
+            '#add_product_code',
+        ];
+        yield 'edition date' => [
+            '/edit/Edition/1',
+            'Dates',
+            ['#releaseMonth' => '2', '#releaseDay' => '3', '#releaseYear' => '1952', '#releaseNote' => '1'],
+            '#date_list',
+            '/^No dates set.$/',
+            '/February 3, 1952 \\(test note\\)/',
+        ];
         yield 'edition full text link' => [
             '/edit/Edition/1',
             'Full Text Links',
@@ -990,6 +1025,23 @@ class IntegrationTest extends MinkTestCase
             . 'Edit options for URL: http://example.com/fulltext '
             . 'Delete full text URL: http://example.com/fulltext|',
         ];
+        yield 'edition image' => [
+            '/edit/Edition/1',
+            'Images',
+            ['#iiif_uri' => 'http://example.com/iiif', '#image_note' => '1'],
+            '#image_list',
+            '/^No images.$/',
+            '|IIIF URI: http://example.com/iiif Note: test note|',
+        ];
+        yield 'edition platform' => [
+            '/edit/Edition/1',
+            'Platforms',
+            [], // use default
+            '#platform_list',
+            '/^No platforms set.$/',
+            '/test platform/',
+        ];
+        // TODO: add separate tests for contents and preferred publisher/titles.
     }
 
     /**
@@ -1182,9 +1234,8 @@ class IntegrationTest extends MinkTestCase
         yield 'items by name' => ['by name', 'T test item', 2];
         yield 'items by platform' => ['by platform', 'T test platform test platform 2 (edited)', 2];
         yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
-        // TODO: add year data so this will have content:
-        //yield 'items by year' => ['by year', 'No items listed in this database yet.', 2];
-        yield 'items with full text' => ['with full text', '/.*test series 1 test item$/', 2, true];
+        yield 'items by year' => ['by year', '1952 test item (test note)', 2];
+        yield 'items with full text' => ['with full text', '/.*test series 1 test item \\(1952\\)$/', 2, true];
         // TODO: add review so this will have content:
         //yield 'items with reviews' => ['with reviews', 'No reviews listed.', 2];
         yield 'recently added items' => [
