@@ -98,7 +98,7 @@ class PersonService extends AbstractDbService
      *
      * @return mixed
      */
-    public function getList($biosOnly = false): array
+    public function getList(bool $biosOnly = false): array
     {
         return iterator_to_array($this->personTable->getList($biosOnly));
     }
@@ -111,7 +111,7 @@ class PersonService extends AbstractDbService
      *
      * @return Paginator
      */
-    public function getNewPeoplePaginator($page = 1, $pageSize = 50): Paginator
+    public function getNewPeoplePaginator(int $page = 1, int $pageSize = 50): Paginator
     {
         $adapter = $this->personTable->getAdapter();
         $query = new \Laminas\Db\Sql\Select($this->personTable->getTable());
@@ -125,5 +125,42 @@ class PersonService extends AbstractDbService
         $paginator->setItemCountPerPage($pageSize);
         $paginator->setCurrentPageNumber($page);
         return $paginator;
+    }
+
+    /**
+     * Get people for item IDs.
+     *
+     * @param array $itemIds Item IDs to match.
+     *
+     * @return array
+     */
+    public function getListForItemIds(array $itemIds): array
+    {
+        return iterator_to_array($this->personTable->getListForItemIds($itemIds));
+    }
+
+    /**
+     * Get autocomplete suggestions.
+     *
+     * @param string $query The user query.
+     * @param ?int   $limit Limit on returned rows (null for no limit).
+     *
+     * @return array
+     */
+    public function getSuggestions(string $query, ?int $limit = null)
+    {
+        return iterator_to_array($this->personTable->getSuggestions($query, $limit ?? false));
+    }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return array
+     */
+    public function keywordSearch(array $tokens): array
+    {
+        return iterator_to_array($this->personTable->keywordSearch($tokens));
     }
 }

@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PersonService;
+
 use function is_callable;
 
 /**
@@ -49,13 +51,19 @@ class SuggestController extends AbstractBase
      */
     public function indexAction()
     {
-        $table = $this->getDbTable($this->params()->fromRoute('table'));
+        $serviceMap = [
+            'person' => PersonService::class,
+        ];
+        $serviceName = strtolower($this->params()->fromRoute('table'));
+        $table = isset($serviceMap[$serviceName])
+            ? $this->getDbService($serviceMap[$serviceName])
+            : $this->getDbTable($serviceName);
         if (!is_callable([$table, 'getSuggestions'])) {
             throw new \Exception('Suggestions not supported.');
         }
         $suggestions = $table->getSuggestions(
             $this->params()->fromQuery('q'),
-            $this->params()->fromQuery('limit', false)
+            $this->params()->fromQuery('limit')
         );
         $headers = $this->getResponse()->getHeaders();
         $headers->addHeaderLine(

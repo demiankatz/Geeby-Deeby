@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PersonService;
+
 use function strlen;
 
 /**
@@ -66,7 +68,7 @@ class SearchController extends AbstractBase
         $post = $this->params()->fromPost();
         $ids = explode(',', $post['ids']);
         $index = [];
-        foreach ($this->getDbTable('person')->getListForItemIds($ids) as $row) {
+        foreach ($this->getDbService(PersonService::class)->getListForItemIds($ids) as $row) {
             $index[$row['Item_ID']] ??= [];
             $index[$row['Item_ID']][] = $row;
         }
@@ -115,7 +117,7 @@ class SearchController extends AbstractBase
         $view->itemsAltTitles = $this->getDbTable('itemsalttitles')
             ->keywordSearch($tokens);
         $view->categories = $this->getDbTable('category')->keywordSearch($tokens);
-        $view->people = $this->getDbTable('person')->keywordSearch($tokens);
+        $view->people = $this->getDbService(PersonService::class)->keywordSearch($tokens);
         $view->tags = $this->getDbTable('tag')->keywordSearch($tokens);
         return $view;
     }
@@ -178,7 +180,7 @@ class SearchController extends AbstractBase
         $q = str_replace(',', ' ', $this->layout()->query);
         $tokens = $this->tokenize($q);
         $view = $this->createViewModel();
-        $view->people = $this->getDbTable('person')->keywordSearch($tokens);
+        $view->people = $this->getDbService(PersonService::class)->keywordSearch($tokens);
         return $view;
     }
 
