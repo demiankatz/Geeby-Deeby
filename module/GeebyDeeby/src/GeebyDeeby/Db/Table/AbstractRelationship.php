@@ -55,13 +55,13 @@ abstract class AbstractRelationship extends Gateway
      *
      * @param Adapter       $adapter Database adapter
      * @param PluginManager $tm      Table manager
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param ?RowGateway   $rowObj  Row prototype object (null for default)
      * @param string        $prefix  Prefix to use in table/class names.
      */
     public function __construct(
         Adapter $adapter,
         PluginManager $tm,
-        RowGateway $rowObj = null,
+        ?RowGateway $rowObj,
         $prefix
     ) {
         $this->prefix = $prefix;
