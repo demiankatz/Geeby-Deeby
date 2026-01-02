@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PersonService;
+use Laminas\View\Model\ViewModel;
+
 use function is_object;
 
 /**
@@ -142,15 +145,14 @@ class PersonController extends AbstractBase
     {
         $personId = (int)$this->params()->fromRoute('id');
 
-        $person = $this->getDbTable('person')->getByPrimaryKey($personId);
+        $person = $this->getDbService(PersonService::class)->getByPrimaryKey($personId);
         if (!is_object($person)) {
             return $this->forwardTo(__NAMESPACE__ . '\Person', 'notfound');
         }
 
         $view = $this->createViewModel();
         $view->person = $person->toArray();
-        $view->items  = $this->getDbTable('item')
-            ->getItemsWithFullTextByPerson($personId);
+        $view->items  = $this->getDbTable('item')->getItemsWithFullTextByPerson($personId);
 
         return $view;
     }
@@ -170,7 +172,7 @@ class PersonController extends AbstractBase
         return $this->createViewModel(
             [
                 'bioMode' => $bios,
-                'people' => $this->getDbTable('person')->getList($bios),
+                'people' => $this->getDbService(PersonService::class)->getList($bios),
             ]
         );
     }
@@ -178,22 +180,13 @@ class PersonController extends AbstractBase
     /**
      * New people action
      *
-     * @return mixed
+     * @return ViewModel
      */
-    public function newAction()
+    public function newAction(): ViewModel
     {
-        $table = $this->getDbTable('person');
-        $adapter = $table->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($table->getTable());
-        $query->order('Person_ID DESC');
-        $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+        $paginator = $this->getDbService(PersonService::class)->getNewPeoplePaginator(
+            $this->params()->fromQuery('page', 1)
         );
-        $paginator->setItemCountPerPage(50);
-        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
         return $this->createViewModel(compact('paginator'));
     }
 
@@ -218,14 +211,11 @@ class PersonController extends AbstractBase
      */
     protected function getPersonViewModel($id, $sort = 'title')
     {
-        $table = $this->getDbTable('person');
-        $rowObj = $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = $this->getDbService(PersonService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
-        $view = $this->createViewModel(
-            ['person' => $rowObj->toArray()]
-        );
+        $view = $this->createViewModel(['person' => $entity->toArray()]);
         $view->sort = $sort;
         $view->citations = $this->getDbTable('itemscreators')
             ->getCitationsForPerson($id, $view->sort);

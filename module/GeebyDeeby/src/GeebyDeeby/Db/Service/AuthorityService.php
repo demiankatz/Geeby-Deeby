@@ -66,13 +66,13 @@ class AuthorityService extends AbstractDbService
     }
 
     /**
-     * Retrieve an entity using its primary key.
+     * Retrieve an entity using its primary key (null if not found).
      *
      * @param int $id Primary key value
      *
-     * @return AuthorityEntityInterface
+     * @return ?AuthorityEntityInterface
      */
-    public function getByPrimaryKey(int $id): AuthorityEntityInterface
+    public function getByPrimaryKey(int $id): ?AuthorityEntityInterface
     {
         return $this->authorityTable->getByPrimaryKey($id);
     }

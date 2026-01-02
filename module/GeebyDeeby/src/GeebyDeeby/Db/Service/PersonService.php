@@ -32,6 +32,7 @@ namespace GeebyDeeby\Db\Service;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
 use GeebyDeeby\Db\Table\Person;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\Paginator\Paginator;
 
 /**
  * Database service for the People table.
@@ -66,13 +67,13 @@ class PersonService extends AbstractDbService
     }
 
     /**
-     * Retrieve an entity using its primary key.
+     * Retrieve an entity using its primary key (null if not found).
      *
      * @param int $id Primary key value
      *
-     * @return PersonEntityInterface
+     * @return ?PersonEntityInterface
      */
-    public function getByPrimaryKey(int $id): PersonEntityInterface
+    public function getByPrimaryKey(int $id): ?PersonEntityInterface
     {
         return $this->personTable->getByPrimaryKey($id);
     }
@@ -91,12 +92,38 @@ class PersonService extends AbstractDbService
     }
 
     /**
-     * Get a list of authorities.
+     * Get a list of people.
      *
-     * @return array
+     * @param bool $biosOnly Should we filter to only people with biographies?
+     *
+     * @return mixed
      */
-    public function getList(): array
+    public function getList($biosOnly = false): array
     {
-        return iterator_to_array($this->personTable->getList());
+        return iterator_to_array($this->personTable->getList($biosOnly));
+    }
+
+    /**
+     * Get a paginator populated with new people.
+     *
+     * @param int $page     Result page to load
+     * @param int $pageSize Result count per page
+     *
+     * @return Paginator
+     */
+    public function getNewPeoplePaginator($page = 1, $pageSize = 50): Paginator
+    {
+        $adapter = $this->personTable->getAdapter();
+        $query = new \Laminas\Db\Sql\Select($this->personTable->getTable());
+        $query->order('Person_ID DESC');
+        $paginator = new Paginator(
+            new \Laminas\Paginator\Adapter\DbSelect(
+                $query,
+                $adapter
+            )
+        );
+        $paginator->setItemCountPerPage($pageSize);
+        $paginator->setCurrentPageNumber($page);
+        return $paginator;
     }
 }

@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Crypt\PasswordHasher;
+use GeebyDeeby\Db\Service\PersonService;
 
 /**
  * Edit user controller
@@ -91,8 +92,10 @@ class EditUserController extends AbstractBase
 
         // Add associated person details, if necessary:
         if (isset($view->user) && $view->user['Person_ID'] > 0) {
-            $view->person = $this->getDbTable('person')
-                ->getByPrimaryKey($view->user['Person_ID']);
+            $person = $this->getDbService(PersonService::class)->getByPrimaryKey($view->user['Person_ID']);
+            if ($person) {
+                $view->person = $person->toArray();
+            }
         }
 
         // Change password, if necessary:
