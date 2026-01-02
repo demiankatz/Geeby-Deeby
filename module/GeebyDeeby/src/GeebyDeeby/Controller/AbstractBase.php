@@ -227,6 +227,7 @@ class AbstractBase extends AbstractActionController
             $value = trim($this->params()->fromPost($post));
             // Handle IDs intelligently: empty value should be treated as null and
             // other values should be converted to integers!
+            // TODO: fix me
             if (str_ends_with($method, 'Id')) {
                 $value = empty($value) ? null : intval($value);
             }
@@ -280,7 +281,6 @@ class AbstractBase extends AbstractActionController
             $row->$attr = trim($this->params()->fromPost($post));
             // Handle IDs intelligently: empty value should be treated as null and
             // other values should be converted to integers!
-            // TODO: fix me
             if (substr($attr, -3) == '_ID') {
                 $row->$attr = empty($row->$attr) ? null : intval($row->$attr);
             }
