@@ -163,7 +163,9 @@ class Person extends TableAwareGateway implements PersonEntityInterface
      */
     public function getAuthority(): ?AuthorityEntityInterface
     {
-        return $this->getTableManager()->get('authority')->getByPrimaryKey($this->Authority_ID);
+        return $this->Authority_ID
+            ? $this->getTableManager()->get('authority')->getByPrimaryKey($this->Authority_ID)
+            : null;
     }
 
     /**
