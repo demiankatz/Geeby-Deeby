@@ -29,10 +29,13 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Entity\EntityInterface;
 use GeebyDeeby\Db\Service\DbServiceInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
+use ReflectionClass;
+use ReflectionUnionType;
 
 use function intval;
 use function is_callable;
@@ -200,6 +203,29 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Is the specified method a foreign key setter?
+     *
+     * @param ReflectionClass $reflectionClass Reflection of entity class
+     * @param string          $method          Method to check
+     *
+     * @return bool
+     */
+    protected function isForeignKeySetter(ReflectionClass $reflectionClass, string $method): bool
+    {
+        $reflectionMethod = $reflectionClass->getMethod($method);
+        $firstParamType = $reflectionMethod->getParameters()[0]->getType();
+        if ($firstParamType instanceof ReflectionUnionType) {
+            $types = $firstParamType->getTypes();
+            foreach ($types as $type) {
+                if (is_subclass_of($type->getName(), EntityInterface::class)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Support method for handleGenericItem() -- save.
      *
      * @param string $serviceName Service name to load list from
@@ -223,12 +249,12 @@ class AbstractBase extends AbstractActionController
         if (!is_object($entity)) {
             return $this->jsonDie('Problem loading row');
         }
+        $reflectionClass = new ReflectionClass($entity);
         foreach ($assignMap as $post => $method) {
             $value = trim($this->params()->fromPost($post));
             // Handle IDs intelligently: empty value should be treated as null and
             // other values should be converted to integers!
-            // TODO: fix me
-            if (str_ends_with($method, 'Id')) {
+            if ($this->isForeignKeySetter($reflectionClass, $method)) {
                 $value = empty($value) ? null : intval($value);
             }
             $entity->$method($value);

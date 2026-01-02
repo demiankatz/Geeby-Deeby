@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\AuthorityEntityInterface;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
 
 /**
@@ -40,7 +41,7 @@ use GeebyDeeby\Db\Entity\PersonEntityInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Person extends RowGateway implements PersonEntityInterface
+class Person extends TableAwareGateway implements PersonEntityInterface
 {
     /**
      * Constructor
@@ -53,20 +54,6 @@ class Person extends RowGateway implements PersonEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
-     *
-     * @return string|bool
-     */
-    public function validate()
-    {
-        if (empty($this->Last_Name)) {
-            return 'Last name cannot be blank.';
-        }
-        return false;
-    }
-
-    /**
      * Get the display name to represent the row to a user.
      *
      * @return string
@@ -76,5 +63,123 @@ class Person extends RowGateway implements PersonEntityInterface
         $n = $this->First_Name . ' ' . $this->Last_Name
             . ' ' . $this->Extra_Details;
         return trim(preg_replace(['/\s+/', '/\s+,/'], [' ', ','], $n));
+    }
+
+    /**
+     * Get first name.
+     *
+     * @return string
+     */
+    public function getFirstName(): string
+    {
+        return $this->First_Name;
+    }
+
+    /**
+     * Set first name.
+     *
+     * @param string $name New value
+     *
+     * @return static
+     */
+    public function setFirstName(string $name): static
+    {
+        $this->First_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get last name.
+     *
+     * @return string
+     */
+    public function getLastName(): string
+    {
+        return $this->Last_Name;
+    }
+
+    /**
+     * Set last name.
+     *
+     * @param string $name New value
+     *
+     * @return static
+     */
+    public function setLastName(string $name): static
+    {
+        $this->Last_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get extra details.
+     *
+     * @return string
+     */
+    public function getExtraDetails(): string
+    {
+        return $this->Extra_Details;
+    }
+
+    /**
+     * Set extra details.
+     *
+     * @param string $details New value
+     *
+     * @return static
+     */
+    public function setExtraDetails(string $details): static
+    {
+        $this->Extra_Details = $details;
+        return $this;
+    }
+
+    /**
+     * Get biography.
+     *
+     * @return string
+     */
+    public function getBiography(): string
+    {
+        return $this->Biography;
+    }
+
+    /**
+     * Set biography.
+     *
+     * @param string $bio New value
+     *
+     * @return static
+     */
+    public function setBiography(string $bio): static
+    {
+        $this->Biography = $bio;
+        return $this;
+    }
+
+    /**
+     * Get associated authority (if any).
+     *
+     * @return ?AuthorityEntityInterface
+     */
+    public function getAuthority(): ?AuthorityEntityInterface
+    {
+        return $this->getTableManager()->get('authority')->getByPrimaryKey($this->Authority_ID);
+    }
+
+    /**
+     * Set associated authority.
+     *
+     * @param null|int|AuthorityEntityInterface $authority Associated authority entity or ID, or null
+     *
+     * @return static
+     */
+    public function setAuthority(null|int|AuthorityEntityInterface $authority): static
+    {
+        if ($authority instanceof AuthorityEntityInterface) {
+            $authority = $authority->Authority_ID;
+        }
+        $this->Authority_ID = $authority;
+        return $this;
     }
 }

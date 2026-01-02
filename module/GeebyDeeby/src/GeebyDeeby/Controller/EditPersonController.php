@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\AuthorityService;
+use GeebyDeeby\Db\Service\PersonService;
 
 /**
  * Edit person controller
@@ -71,13 +72,13 @@ class EditPersonController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'first' => 'First_Name',
-            'last' => 'Last_Name',
-            'extra' => 'Extra_Details',
-            'bio' => 'Biography',
-            'authority' => 'Authority_ID',
+            'first' => 'setFirstName',
+            'last' => 'setLastName',
+            'extra' => 'setExtraDetails',
+            'bio' => 'setBiography',
+            'authority' => 'setAuthority',
         ];
-        [$view, $ok] = $this->handleGenericItem('person', $assignMap, 'person');
+        [$view, $ok] = $this->handleGenericItem(PersonService::class, $assignMap, 'person');
         if (!$ok) {
             return $view;
         }

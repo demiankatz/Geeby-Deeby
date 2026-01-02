@@ -40,4 +40,83 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface PersonEntityInterface extends EntityInterface
 {
+    /**
+     * Get first name.
+     *
+     * @return string
+     */
+    public function getFirstName(): string;
+
+    /**
+     * Set first name.
+     *
+     * @param string $name New value
+     *
+     * @return static
+     */
+    public function setFirstName(string $name): static;
+
+    /**
+     * Get last name.
+     *
+     * @return string
+     */
+    public function getLastName(): string;
+
+    /**
+     * Set last name.
+     *
+     * @param string $name New value
+     *
+     * @return static
+     */
+    public function setLastName(string $name): static;
+
+    /**
+     * Get extra details.
+     *
+     * @return string
+     */
+    public function getExtraDetails(): string;
+
+    /**
+     * Set extra details.
+     *
+     * @param string $details New value
+     *
+     * @return static
+     */
+    public function setExtraDetails(string $details): static;
+
+    /**
+     * Get biography.
+     *
+     * @return string
+     */
+    public function getBiography(): string;
+
+    /**
+     * Set biography.
+     *
+     * @param string $bio New value
+     *
+     * @return static
+     */
+    public function setBiography(string $bio): static;
+
+    /**
+     * Get associated authority (if any).
+     *
+     * @return ?AuthorityEntityInterface
+     */
+    public function getAuthority(): ?AuthorityEntityInterface;
+
+    /**
+     * Set associated authority.
+     *
+     * @param null|int|AuthorityEntityInterface $authority Associated authority entity or ID, or null
+     *
+     * @return static
+     */
+    public function setAuthority(null|int|AuthorityEntityInterface $authority): static;
 }
