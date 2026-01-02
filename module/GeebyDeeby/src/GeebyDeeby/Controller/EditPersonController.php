@@ -51,7 +51,7 @@ class EditPersonController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'person',
+            PersonService::class,
             'people',
             'geeby-deeby/edit-person/render-people'
         );
