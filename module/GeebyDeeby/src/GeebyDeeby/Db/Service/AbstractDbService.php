@@ -44,16 +44,6 @@ use Laminas\Db\RowGateway\AbstractRowGateway;
 abstract class AbstractDbService implements DbServiceInterface
 {
     /**
-     * Create an empty entity.
-     *
-     * @return EntityInterface
-     */
-    public function createEntity(): EntityInterface
-    {
-        throw new \Exception('Missing createEntity implementation in ' . static::class);
-    }
-
-    /**
      * Persist an entity.
      *
      * @param EntityInterface $entity Entity to persist.
