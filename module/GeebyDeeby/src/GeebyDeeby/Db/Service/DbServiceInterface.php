@@ -43,6 +43,13 @@ use GeebyDeeby\Db\Entity\EntityInterface;
 interface DbServiceInterface
 {
     /**
+     * Create an empty entity.
+     *
+     * @return EntityInterface
+     */
+    public function createEntity(): EntityInterface;
+
+    /**
      * Persist an entity.
      *
      * @param EntityInterface $entity Entity to persist.

@@ -44,7 +44,7 @@ use Laminas\Db\RowGateway\AbstractRowGateway;
 abstract class AbstractDbService implements DbServiceInterface
 {
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return EntityInterface
      */
