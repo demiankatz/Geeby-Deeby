@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Row Definition for Authorities
+ * Database service plugin manager
  *
  * PHP version 8
  *
- * Copyright (C) Demian Katz 2012.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,57 +21,51 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeeby\Db\Row;
+namespace GeebyDeeby\Db\Service;
 
-use GeebyDeeby\Db\Entity\AuthorityEntityInterface;
+use GeebyDeeby\ServiceManager\Factory\AbstractAutowiringFactory;
 
 /**
- * Row Definition for Authorities
+ * Database service plugin manager
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Db_Table
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Authority extends RowGateway implements AuthorityEntityInterface
+class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
 {
     /**
      * Constructor
      *
-     * @param \Laminas\Db\Adapter\Adapter $adapter Database adapter
+     * Make sure table gateways are properly initialized.
+     *
+     * @param mixed $configOrContainerInstance Config or container (for backward compatibility)
+     * @param array $v3config                  Configuration settings (optional)
      */
-    public function __construct($adapter)
-    {
-        parent::__construct('Authority_ID', 'Authorities', $adapter);
+    public function __construct(
+        $configOrContainerInstance = null,
+        array $v3config = []
+    ) {
+        $this->addAbstractFactory(AbstractAutowiringFactory::class);
+        parent::__construct($configOrContainerInstance, $v3config);
     }
 
     /**
-     * Get the name of the authority.
+     * Return the name of the base class or interface that plug-ins must conform
+     * to.
      *
      * @return string
      */
-    public function getAuthorityName(): string
+    protected function getExpectedInterface()
     {
-        return $this->Authority_Name;
-    }
-
-    /**
-     * Set the name of the authority.
-     *
-     * @param string $name New name.
-     *
-     * @return static
-     */
-    public function setAuthorityName(string $name): static
-    {
-        $this->Authority_Name = $name;
-        return $this;
+        return DbServiceInterface::class;
     }
 }

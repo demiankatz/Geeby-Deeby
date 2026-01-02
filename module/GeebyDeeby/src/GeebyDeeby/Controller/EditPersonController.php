@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\AuthorityService;
+
 /**
  * Edit person controller
  *
@@ -156,7 +158,7 @@ class EditPersonController extends AbstractBase
     public function authoritylistAction()
     {
         return $this->getGenericList(
-            'authority',
+            AuthorityService::class,
             'authorities',
             'geeby-deeby/edit-person/render-authorities'
         );
@@ -169,8 +171,8 @@ class EditPersonController extends AbstractBase
      */
     public function authorityAction()
     {
-        $assignMap = ['authority' => 'Authority_Name'];
-        [$response] = $this->handleGenericItem('authority', $assignMap, 'authority');
+        $assignMap = ['authority' => 'setAuthorityName'];
+        [$response] = $this->handleGenericItem(AuthorityService::class, $assignMap, 'authority');
         return $response;
     }
 

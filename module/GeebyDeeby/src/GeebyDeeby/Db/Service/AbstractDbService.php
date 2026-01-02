@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Marker interface for database entity models.
+ * Database service abstract base class
  *
  * PHP version 8
  *
- * Copyright (C) Demian Katz 2025.
+ * Copyright (C) Villanova University 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,33 +24,47 @@
  * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeeby\Db\Entity;
+namespace GeebyDeeby\Db\Service;
+
+use GeebyDeeby\Db\Entity\EntityInterface;
+use Laminas\Db\RowGateway\AbstractRowGateway;
 
 /**
- * Marker interface for database entity models.
+ * Database service abstract base class
  *
  * @category GeebyDeeby
  * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-interface EntityInterface
+abstract class AbstractDbService implements DbServiceInterface
 {
     /**
-     * Return an array representation of the entity
+     * Create an empty entity
      *
-     * @return array
+     * @return EntityInterface
      */
-    public function toArray();
+    public function createEntity(): EntityInterface
+    {
+        throw new \Exception('Missing createEntity implementation in ' . static::class);
+    }
 
     /**
-     * Get an array of primary key fields for the entity.
+     * Persist an entity.
      *
-     * @return array
+     * @param EntityInterface $entity Entity to persist.
+     *
+     * @return void
      */
-    public function getPrimaryKeyColumn();
+    public function persistEntity(EntityInterface $entity): void
+    {
+        if (!$entity instanceof AbstractRowGateway) {
+            throw new \Exception('Unexpected entity type');
+        }
+        $entity->save();
+    }
 }

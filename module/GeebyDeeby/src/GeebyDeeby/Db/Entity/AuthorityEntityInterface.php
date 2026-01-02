@@ -40,4 +40,19 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface AuthorityEntityInterface extends EntityInterface
 {
+    /**
+     * Get the name of the authority.
+     *
+     * @return string
+     */
+    public function getAuthorityName(): string;
+
+    /**
+     * Set the name of the authority.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setAuthorityName(string $name): static;
 }

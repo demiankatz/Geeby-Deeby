@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\DbServiceInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
@@ -86,6 +87,20 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Get a database service.
+     *
+     * @param class-string<T> $name Name of service to retrieve
+     *
+     * @template T
+     *
+     * @return T
+     */
+    protected function getDbService(string $name): DbServiceInterface
+    {
+        return $this->serviceLocator->get(\GeebyDeeby\Db\Service\PluginManager::class)->get($name);
+    }
+
+    /**
      * Get a database table gateway.
      *
      * @param string $table Name of table service to pull
@@ -96,6 +111,18 @@ class AbstractBase extends AbstractActionController
     {
         return $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager')
             ->get(strtolower($table));
+    }
+
+    /**
+     * Is the provided service name a database service?
+     *
+     * @param string $name Service name to check
+     *
+     * @return bool
+     */
+    protected function isDatabaseService(string $name): bool
+    {
+        return str_starts_with($name, 'GeebyDeeby\Db\Service');
     }
 
     /**
@@ -140,25 +167,27 @@ class AbstractBase extends AbstractActionController
     /**
      * Generic method for displaying a list of items.
      *
-     * @param string $table      Table to load list from
-     * @param string $assignTo   View variable to assign list to
-     * @param string $tpl        Template to use in AJAX mode
-     * @param string $permission Permission to check
+     * @param string $serviceName Service name to load list from
+     * @param string $assignTo    View variable to assign list to
+     * @param string $tpl         Template to use in AJAX mode
+     * @param string $permission  Permission to check
      *
-     * @return mixed
+     * @return ViewModel
      */
     protected function getGenericList(
-        $table,
-        $assignTo,
-        $tpl,
-        $permission = 'Content_Editor'
-    ) {
+        string $serviceName,
+        string $assignTo,
+        string $tpl,
+        string $permission = 'Content_Editor'
+    ): ViewModel {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
         }
-        $table = $this->getDbTable($table);
-        $view = $this->createViewModel([$assignTo => $table->getList()]);
+        $service = $this->isDatabaseService($serviceName)
+            ? $this->getDbService($serviceName)
+            : $this->getDbTable($serviceName);
+        $view = $this->createViewModel([$assignTo => $service->getList()]);
 
         // If this is an AJAX request, render the core list only, not the
         // framing layout and buttons.
@@ -173,13 +202,66 @@ class AbstractBase extends AbstractActionController
     /**
      * Support method for handleGenericItem() -- save.
      *
+     * @param string $serviceName Service name to load list from
+     * @param array  $assignMap   Map of POST fields => object properties for saving
+     * @param string $idField     POST/Route field for unique ID
+     *
+     * @return mixed
+     */
+    protected function saveGenericItem(string $serviceName, array $assignMap, string $idField = 'id')
+    {
+        // Extract values from the POST fields:
+        $id = $this->params()->fromRoute(
+            $idField,
+            $this->params()->fromPost($idField, 'NEW')
+        );
+        $id = $id == 'NEW' ? false : intval($id);
+
+        // Attempt to save changes:
+        $service = $this->getDbService($serviceName);
+        $entity = $id === false ? $service->createEntity() : $service->getByPrimaryKey($id);
+        if (!is_object($entity)) {
+            return $this->jsonDie('Problem loading row');
+        }
+        foreach ($assignMap as $post => $method) {
+            $value = trim($this->params()->fromPost($post));
+            // Handle IDs intelligently: empty value should be treated as null and
+            // other values should be converted to integers!
+            if (str_ends_with($method, 'Id')) {
+                $value = empty($value) ? null : intval($value);
+            }
+            $entity->$method($value);
+        }
+        $problem = is_callable([$service, 'getValidationError'])
+            ? $service->getValidationError($entity)
+            : "$serviceName is missing getValidationError implementation.";
+        if ($problem) {
+            return $this->jsonDie($problem);
+        }
+        try {
+            $service->persistEntity($entity);
+        } catch (\Exception $e) {
+            return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
+        }
+
+        // If we made it this far, we can report success:
+        $view = $this->jsonReportSuccess();
+        $view->affectedEntity = $entity;
+        return $view;
+    }
+
+    /**
+     * Support method for handleGenericItem() -- save.
+     *
      * @param string $table     Table to load item from
      * @param array  $assignMap Map of POST fields => object properties for saving
      * @param string $idField   POST/Route field for unique ID
      *
      * @return mixed
+     *
+     * @deprecated use saveGenericItem
      */
-    protected function saveGenericItem($table, $assignMap, $idField = 'id')
+    protected function saveGenericItemUsingTable($table, $assignMap, $idField = 'id')
     {
         // Extract values from the POST fields:
         $id = $this->params()->fromRoute(
@@ -198,6 +280,7 @@ class AbstractBase extends AbstractActionController
             $row->$attr = trim($this->params()->fromPost($post));
             // Handle IDs intelligently: empty value should be treated as null and
             // other values should be converted to integers!
+            // TODO: fix me
             if (substr($attr, -3) == '_ID') {
                 $row->$attr = empty($row->$attr) ? null : intval($row->$attr);
             }
@@ -221,11 +304,32 @@ class AbstractBase extends AbstractActionController
     /**
      * Support method for handleGenericItem() -- delete record.
      *
-     * @param string $table Table to delete item from.
+     * @param string $serviceName Database service to delete item from.
      *
      * @return mixed
      */
-    protected function deleteGenericItem($table)
+    protected function deleteGenericItem($serviceName)
+    {
+        try {
+            //$id = $this->params()->fromRoute('id');
+            //$service = $this->getDbService($serviceName);
+            throw new \Exception('TODO: delete not implemented yet');
+        } catch (\Exception $e) {
+            return $this->jsonDie($e->getMessage());
+        }
+        return $this->jsonReportSuccess();
+    }
+
+    /**
+     * Support method for handleGenericItem() -- delete record.
+     *
+     * @param string $table Table to delete item from.
+     *
+     * @return mixed
+     *
+     * @deprecated use deleteGenericItem()
+     */
+    protected function deleteGenericItemUsingTable($table)
     {
         try {
             $id = $this->params()->fromRoute('id');
@@ -241,12 +345,45 @@ class AbstractBase extends AbstractActionController
     /**
      * Support method for handleGenericItem() -- show form.
      *
+     * @param string $serviceName Database service to load item from
+     * @param string $assignTo    Variable to assign form data to
+     *
+     * @return ViewModel
+     */
+    protected function showGenericItem(string $serviceName, string $assignTo): ViewModel
+    {
+        $id = $this->params()->fromRoute('id', 'NEW');
+        $id = $id == 'NEW' ? false : intval($id);
+        $service = $this->getDbService($serviceName);
+        if ($id) {
+            $rowObj = $service->getByPrimaryKey($id);
+            if (is_object($rowObj)) {
+                $row = $rowObj->toArray();
+            } else {
+                $id = false;
+            }
+        }
+        if (!$id) {
+            $rowObj = $service->createEntity();
+            $key = $rowObj->getPrimaryKeyColumn();
+            $row = [$key[0] => 'NEW'];
+        }
+        return $this->createViewModel(
+            [$assignTo => $row ?? null, $assignTo . 'Obj' => $rowObj ?? null]
+        );
+    }
+
+    /**
+     * Support method for handleGenericItem() -- show form using table.
+     *
      * @param string $table    Table to load item from
      * @param string $assignTo Variable to assign form data to
      *
      * @return mixed
+     *
+     * @deprecated use showGenericItem
      */
-    protected function showGenericItem($table, $assignTo)
+    protected function showGenericItemUsingTable($table, $assignTo)
     {
         $id = $this->params()->fromRoute('id', 'NEW');
         $id = $id == 'NEW' ? false : intval($id);
@@ -274,29 +411,36 @@ class AbstractBase extends AbstractActionController
      * two elements: the view object or response, and a boolean indicating whether
      * or not the user has permission to proceed.
      *
-     * @param string $table      Table to load item from
-     * @param array  $assignMap  Map of POST fields => object properties for saving
-     * @param string $assignTo   Variable to assign form data to (for showing form)
-     * @param string $permission Permission to check
+     * @param string $serviceName Service name to load item from
+     * @param array  $assignMap   Map of POST fields => object properties for saving
+     * @param string $assignTo    Variable to assign form data to (for showing form)
+     * @param string $permission  Permission to check
      *
      * @return array
      */
     protected function handleGenericItem(
-        $table,
-        $assignMap,
-        $assignTo,
-        $permission = 'Content_Editor'
-    ) {
+        string $serviceName,
+        array $assignMap,
+        string $assignTo,
+        string $permission = 'Content_Editor'
+    ): array {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return [$ok, false];
         }
+        $useService = $this->isDatabaseService($serviceName);
         if ($this->getRequest()->isPost()) {
-            $view = $this->saveGenericItem($table, $assignMap);
+            $view = $useService
+                ? $this->saveGenericItem($serviceName, $assignMap)
+                : $this->saveGenericItemUsingTable($serviceName, $assignMap);
         } elseif ($this->getRequest()->isDelete()) {
-            $view = $this->deleteGenericItem($table);
+            $view = $useService
+                ? $this->deleteGenericItem($serviceName)
+                : $this->deleteGenericItemUsingTable($serviceName);
         } else {
-            $view = $this->showGenericItem($table, $assignTo);
+            $view = $useService
+                ? $this->showGenericItem($serviceName, $assignTo)
+                : $this->showGenericItemUsingTable($serviceName, $assignTo);
             $view->setTerminal($this->getRequest()->isXmlHttpRequest());
         }
         return [$view, true];

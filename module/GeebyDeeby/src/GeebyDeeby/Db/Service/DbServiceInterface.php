@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Marker interface for database entity models.
+ * Marker interface for database services.
  *
  * PHP version 8
  *
@@ -24,33 +24,30 @@
  * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeeby\Db\Entity;
+namespace GeebyDeeby\Db\Service;
+
+use GeebyDeeby\Db\Entity\EntityInterface;
 
 /**
- * Marker interface for database entity models.
+ * Marker interface for database services.
  *
  * @category GeebyDeeby
  * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-interface EntityInterface
+interface DbServiceInterface
 {
     /**
-     * Return an array representation of the entity
+     * Persist an entity.
      *
-     * @return array
-     */
-    public function toArray();
-
-    /**
-     * Get an array of primary key fields for the entity.
+     * @param EntityInterface $entity Entity to persist.
      *
-     * @return array
+     * @return void
      */
-    public function getPrimaryKeyColumn();
+    public function persistEntity(EntityInterface $entity): void;
 }

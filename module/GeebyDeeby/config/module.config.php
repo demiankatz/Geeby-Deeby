@@ -1331,6 +1331,8 @@ return [
                 'Laminas\ServiceManager\Factory\InvokableFactory',
             'GeebyDeeby\Db\Row\PluginManager' =>
                 'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
+            'GeebyDeeby\Db\Service\PluginManager' =>
+                'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
             'GeebyDeeby\Db\Table\PluginManager' =>
                 'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
             'GeebyDeeby\EmailService' => 'GeebyDeeby\EmailServiceFactory',
