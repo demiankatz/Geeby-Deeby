@@ -58,10 +58,9 @@ class Person extends TableAwareGateway implements PersonEntityInterface
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
-        $n = $this->First_Name . ' ' . $this->Last_Name
-            . ' ' . $this->Extra_Details;
+        $n = $this->getFirstName() . ' ' . $this->getLastName() . ' ' . $this->getExtraDetails();
         return trim(preg_replace(['/\s+/', '/\s+,/'], [' ', ','], $n));
     }
 

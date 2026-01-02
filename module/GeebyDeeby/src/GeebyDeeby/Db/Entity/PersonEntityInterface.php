@@ -41,6 +41,13 @@ namespace GeebyDeeby\Db\Entity;
 interface PersonEntityInterface extends EntityInterface
 {
     /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName(): string;
+
+    /**
      * Get first name.
      *
      * @return string
