@@ -54,6 +54,8 @@ use function in_array;
  * @todo Add tests for deleting links/relationships
  * @todo Add tests for creating/approving comments/reviews
  * @todo Add tests for approving users
+ * @todo Add tests for suggestion controller
+ * @todo Add tests for searches
  */
 class IntegrationTest extends MinkTestCase
 {
