@@ -38,26 +38,28 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class DescriptionSource extends \Laminas\View\Helper\AbstractHelper
+class DescriptionSource
 {
     /**
      * Descriptions of source types
      *
      * @var array
      */
-    protected $descriptionTypes;
+    protected array $descriptionTypes = [
+        'User' => 'User Summary',
+        'LC' => 'LC Cataloging in Publication Summary',
+        'Cover' => 'Cover Text',
+        'Ad' => 'Advertisement Blurb',
+    ];
 
     /**
-     * Constructor
+     * Make helper invokable.
+     *
+     * @return static
      */
-    public function __construct()
+    public function __invoke(): static
     {
-        $this->descriptionTypes = [
-            'User' => 'User Summary',
-            'LC' => 'LC Cataloging in Publication Summary',
-            'Cover' => 'Cover Text',
-            'Ad' => 'Advertisement Blurb',
-        ];
+        return $this;
     }
 
     /**
@@ -65,7 +67,7 @@ class DescriptionSource extends \Laminas\View\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getList()
+    public function getList(): array
     {
         return $this->descriptionTypes;
     }
@@ -77,7 +79,7 @@ class DescriptionSource extends \Laminas\View\Helper\AbstractHelper
      *
      * @return string
      */
-    public function getName($source)
+    public function getName(string $source): string
     {
         return $this->descriptionTypes[$source] ?? 'Unknown';
     }

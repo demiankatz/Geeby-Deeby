@@ -15,45 +15,51 @@
 
 <div class="tab-content">
   <div id="uris-tab" class="tab-pane active">
-    <form onsubmit="Tag.link('URI'); return false;">
-      <label>
-        Predicate:
-        <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
-      </label>
-      <label>
-        URI:
-        <input type="text" id="uri" />
-      </label>
-      <input type="submit" value="Add URI" />
-    </form>
+    <div class="edit_container">
+      <form onsubmit="Tag.link('URI'); return false;">
+        <label>
+          Predicate:
+          <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
+        </label>
+        <label>
+          URI:
+          <input type="text" id="uri" />
+        </label>
+        <input type="submit" value="Add URI" />
+      </form>
+    </div>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-tag/uri-list.phtml')?>
     </div>
   </div>
 
   <div id="items-tab" class="tab-pane">
-    <form onsubmit="Tag.link('Item'); return false;">
-      <label>Tagged Item:
-      <input id="Item_ID" class="Item_ID" /></label>
-      <input type="submit" value="Add Item" />
-    </form>
+    <div class="edit_container">
+      <form onsubmit="Tag.link('Item'); return false;">
+        <label>Tagged Item:
+        <input id="Item_ID" class="Item_ID" /></label>
+        <input type="submit" value="Add Item" />
+      </form>
+    </div>
     <div id="item_list">
       <?=$this->render('geeby-deeby/edit-tag/item-list.phtml')?>
     </div>
   </div>
 
   <div id="relationships-tab" class="tab-pane">
-    <form onsubmit="Tag.link('Relationship'); return false;">
-      <label class="sr-only" for="relationship_type">Relationship Type:</label>
-      <select id="relationship_type">
-        <?php foreach ($this->relationships as $value => $label): ?>
-          <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
-        <?php endforeach; ?>
-      </select>
-      <label class="sr-only" for="target_tag">Target Tag:</label>
-      <input type="text" id="target_tag" />
-      <input type="submit" value="Add Relationship" />
-    </form>
+    <div class="edit_container">
+      <form onsubmit="Tag.link('Relationship'); return false;">
+        <label class="sr-only" for="relationship_type">Relationship Type:</label>
+        <select id="relationship_type">
+          <?php foreach ($this->relationships as $value => $label): ?>
+            <option value="/<?=$this->escapeHtmlAttr($value)?>"><?=$this->escapeHtml($label)?></option>
+          <?php endforeach; ?>
+        </select>
+        <label class="sr-only" for="target_tag">Target Tag:</label>
+        <input type="text" id="target_tag" />
+        <input type="submit" value="Add Relationship" />
+      </form>
+    </div>
     <hr/>
     <div id="relationship_list">
       <?=$this->render('geeby-deeby/edit-tag/relationship-list.phtml')?>

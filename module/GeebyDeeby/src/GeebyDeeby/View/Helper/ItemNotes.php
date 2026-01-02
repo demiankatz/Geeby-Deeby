@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\View\Helper\EscapeHtml;
+
 use function count;
 
 /**
@@ -40,8 +43,22 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ItemNotes extends \Laminas\View\Helper\AbstractHelper
+class ItemNotes
 {
+    /**
+     * Constructor
+     *
+     * @param FixTitle   $fixTitleHelper   FixTitle view helper
+     * @param EscapeHtml $escapeHtmlHelper EscapeHtml view helper
+     */
+    public function __construct(
+        #[Autowire(container: 'ViewHelperManager')]
+        protected FixTitle $fixTitleHelper,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected EscapeHtml $escapeHtmlHelper
+    ) {
+    }
+
     /**
      * Display parenthetical notes following an item title.
      *
@@ -51,18 +68,16 @@ class ItemNotes extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($item): string
     {
-        $escapeHtml = $this->getView()->plugin('escapeHtml');
-        $fixTitle = $this->getView()->plugin('fixtitle');
         $itemNotes = [];
         $earliestYear = (int)($item['Earliest_Year'] ?? 0);
         if ($earliestYear === -1) {
             $itemNotes[] = 'Unpublished';
         } elseif ($earliestYear > 0) {
-            $itemNotes[] = ($escapeHtml)($item['Earliest_Year']);
+            $itemNotes[] = ($this->escapeHtmlHelper)($item['Earliest_Year']);
         }
         if (!empty($item['Child_Items'])) {
             $parts = array_unique(explode('||', $item['Child_Items']));
-            $childNote = '<i>' . ($escapeHtml)(($fixTitle)($parts[0])) . '</i>';
+            $childNote = '<i>' . ($this->escapeHtmlHelper)(($this->fixTitleHelper)($parts[0])) . '</i>';
             if (count($parts) == 2) {
                 $childNote .= ' and 1 more item';
             } elseif (count($parts) > 2) {

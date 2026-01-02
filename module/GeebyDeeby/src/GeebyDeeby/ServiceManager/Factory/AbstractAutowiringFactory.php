@@ -1,11 +1,11 @@
 <?php
 
 /**
- * FixTitle view helper factory.
+ * Abstract Autowiring Factory (adapted from VuFind)
  *
  * PHP version 8
  *
- * Copyright (C) Demian Katz 2019.
+ * Copyright (C) The National Library of Finland 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,43 +21,44 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  ServiceManager
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeeby\View\Helper;
+namespace GeebyDeeby\ServiceManager\Factory;
 
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * FixTitle view helper factory.
+ * Abstract Autowiring Factory (adapted from VuFind)
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  ServiceManager
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class FixTitleFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class AbstractAutowiringFactory extends AutowiringFactory implements AbstractFactoryInterface
 {
+    use AutowireableTrait;
+
     /**
-     * Create service
+     * Can the factory create an instance for the service?
      *
-     * @param ContainerInterface $container Service manager
-     * @param string             $name      Requested service name
-     * @param ?array             $options   Extra options
+     * @param ContainerInterface $container     Service container
+     * @param string             $requestedName Name of service
      *
-     * @return mixed
+     * @return bool
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(
-        ContainerInterface $container,
-        $name,
-        ?array $options = null
-    ) {
-        return new $name($container->get('GeebyDeeby\Articles'));
+    public function canCreate(ContainerInterface $container, $requestedName)
+    {
+        return $this->isAutowireable($requestedName);
     }
 }

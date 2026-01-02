@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+
 /**
  * Configuration view helper
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Config extends \Laminas\View\Helper\AbstractHelper
+class Config
 {
     /**
      * Configuration.
@@ -52,9 +54,11 @@ class Config extends \Laminas\View\Helper\AbstractHelper
      *
      * @param array $config Configuration
      */
-    public function __construct(array $config)
-    {
-        $this->config = $config;
+    public function __construct(
+        #[Autowire(service: 'config')]
+        array $config
+    ) {
+        $this->config = $config['geeby-deeby'];
     }
 
     /**

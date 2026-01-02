@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+
 /**
  * Release date view helper
  *
@@ -38,24 +40,27 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class FormatReleaseDate extends \Laminas\View\Helper\AbstractHelper
+class FormatReleaseDate
 {
     /**
      * Month information
      *
      * @var array
      */
-    protected $months;
+    protected $months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December',
+    ];
 
     /**
      * Constructor
+     *
+     * @param FixTitle $fixTitleHelper FixTitle view helper.
      */
-    public function __construct()
-    {
-        $this->months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December',
-        ];
+    public function __construct(
+        #[Autowire(container: 'ViewHelperManager')]
+        protected FixTitle $fixTitleHelper
+    ) {
     }
 
     /**
@@ -98,8 +103,7 @@ class FormatReleaseDate extends \Laminas\View\Helper\AbstractHelper
         // Add the note, if any:
         $note = $arr['Note'];
         if ($showEdition) {
-            $fixTitle = $this->getView()->plugin('fixtitle');
-            $name = $fixTitle($arr['Edition_Name']);
+            $name = ($this->fixTitleHelper)($arr['Edition_Name']);
             $note = empty($note) ? $name : $name . ' - ' . $note;
         }
         if (!empty($note)) {

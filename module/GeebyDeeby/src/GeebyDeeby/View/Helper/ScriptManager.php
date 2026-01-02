@@ -29,6 +29,10 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\View\Helper\BasePath;
+use Laminas\View\Helper\HeadScript;
+
 /**
  * Script manager (wrapper around HeadScript helper).
  *
@@ -38,7 +42,7 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ScriptManager extends \Laminas\View\Helper\AbstractHelper
+class ScriptManager
 {
     /**
      * Base path
@@ -48,22 +52,28 @@ class ScriptManager extends \Laminas\View\Helper\AbstractHelper
     protected $basePath;
 
     /**
-     * HeadScript helper
-     *
-     * @var object
-     */
-    protected $headScript;
-
-    /**
      * Constructor
      *
-     * @param string $basePath   Base path
-     * @param object $headScript HeadScript helper
+     * @param string|BasePath $basePath   BasePath view helper (or base path string)
+     * @param HeadScript      $headScript HeadScript view helper
      */
-    public function __construct($basePath, $headScript)
+    public function __construct(
+        #[Autowire(container: 'ViewHelperManager', service: BasePath::class)]
+        string|BasePath $basePath,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected HeadScript $headScript
+    ) {
+        $this->basePath = $basePath instanceof BasePath ? ($basePath)() : $basePath;
+    }
+
+    /**
+     * Make helper invokable.
+     *
+     * @return static
+     */
+    public function __invoke(): static
     {
-        $this->basePath = $basePath;
-        $this->headScript = $headScript;
+        return $this;
     }
 
     /**

@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Authentication\AuthenticationService;
 
 /**
@@ -40,23 +41,16 @@ use Laminas\Authentication\AuthenticationService;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Auth extends \Laminas\View\Helper\AbstractHelper
+class Auth
 {
-    /**
-     * Auth object.
-     *
-     * @var AuthenticationService
-     */
-    protected $auth;
-
     /**
      * Constructor
      *
      * @param AuthenticationService $auth Auth object
      */
-    public function __construct(AuthenticationService $auth)
+    #[Autowire()]
+    public function __construct(protected AuthenticationService $auth)
     {
-        $this->auth = $auth;
     }
 
     /**

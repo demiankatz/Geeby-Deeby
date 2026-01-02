@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+
 use function count;
 
 /**
@@ -40,8 +42,19 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class GroupEditions extends \Laminas\View\Helper\AbstractHelper
+class GroupEditions
 {
+    /**
+     * Constructor
+     *
+     * @param FixTitle $fixTitleHelper FixTitle view helper.
+     */
+    public function __construct(
+        #[Autowire(container: 'ViewHelperManager')]
+        protected FixTitle $fixTitleHelper
+    ) {
+    }
+
     /**
      * Group together edition data
      *
@@ -55,8 +68,6 @@ class GroupEditions extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($data, $groupField, $editions, $idField = null)
     {
-        $fixTitle = $this->getView()->plugin('fixtitle');
-
         // Group the data:
         $grouped = [];
         $editionsByGroup = [];
@@ -84,7 +95,7 @@ class GroupEditions extends \Laminas\View\Helper\AbstractHelper
             foreach ($details as $detail) {
                 $note = $detail['Note'] ?? '';
                 if ($showEds) {
-                    $name = $fixTitle($detail['Edition_Name']);
+                    $name = ($this->fixTitleHelper)($detail['Edition_Name']);
                     $note = empty($note) ? $name : $name . ' - ' . $note;
                 }
                 if (!empty($note)) {
