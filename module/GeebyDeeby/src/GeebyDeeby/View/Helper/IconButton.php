@@ -31,7 +31,7 @@ namespace GeebyDeeby\View\Helper;
 
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\View\Helper\EscapeHtml;
-use Laminas\View\Helper\EscapeHtmlAttr;
+use Laminas\View\Helper\HtmlAttributes;
 
 /**
  * Button view helper
@@ -47,12 +47,12 @@ class IconButton
     /**
      * Constructor
      *
-     * @param EscapeHtmlAttr $escapeHtmlAttrHelper EscapeHtmlAttr view helper
+     * @param HtmlAttributes $htmlAttributesHelper HtmlAttributes view helper
      * @param EscapeHtml     $escapeHtmlHelper     EscapeHtml view helper
      */
     public function __construct(
         #[Autowire(container: 'ViewHelperManager')]
-        protected EscapeHtmlAttr $escapeHtmlAttrHelper,
+        protected HtmlAttributes $htmlAttributesHelper,
         #[Autowire(container: 'ViewHelperManager')]
         protected EscapeHtml $escapeHtmlHelper
     ) {
@@ -61,18 +61,20 @@ class IconButton
     /**
      * Create a button control.
      *
-     * @param string $type   Type of button
-     * @param string $action Javascript for button to execute
-     * @param string $label  Screen reader label
+     * @param string $type            Type of button
+     * @param string $action          Javascript for button to execute
+     * @param string $label           Screen reader label
+     * @param array  $extraAttributes Extra attributes to include in button tag
      *
      * @return string
      */
-    public function __invoke($type, $action, $label)
+    public function __invoke(string $type, string $action, string $label, array $extraAttributes = []): string
     {
-        $safeAction = ($this->escapeHtmlAttrHelper)($action);
+        $extraAttributes['onclick'] = $action;
+        $attributes = ($this->htmlAttributesHelper)($extraAttributes);
         $safeLabel = ($this->escapeHtmlHelper)($label);
         return <<<HTML
-            <button onclick="$safeAction">
+            <button $attributes>
               <span class="ui-icon ui-icon-$type">
               </span>
               <span class="sr-only">$safeLabel</span>
