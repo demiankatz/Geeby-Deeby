@@ -25,7 +25,8 @@
             $this->iconButton(
                 'trash',
                 'User.destroy(' . $current['User_ID'] . ')',
-                'Delete user: ' . $current['Username']
+                'Delete user: ' . $current['Username'],
+                ['id' => "deleteUser{$current['User_ID']}"]
             )
           ?>
         </td>
