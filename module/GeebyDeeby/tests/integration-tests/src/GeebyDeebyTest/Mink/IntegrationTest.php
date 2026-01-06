@@ -53,7 +53,6 @@ use function in_array;
  * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
  * @todo Add tests for creating/approving comments/reviews
- * @todo Add tests for approving users
  * @todo Add tests for suggestion controller
  * @todo Add tests for searches
  */
@@ -187,31 +186,7 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Create a user.
-     *
-     * @param TraversableElement $page     Page element
-     * @param string             $username Username to create
-     * @param string             $password New account's password
-     *
-     * @return void
-     */
-    protected function createUser(TraversableElement $page, string $username, string $password = 'password'): void
-    {
-        $page->clickLink('Sign Up');
-        $this->findCssAndSetValue($page, '#signup_username', $username);
-        $this->findCssAndSetValue($page, '#signup_fullname', 'test ' . $username);
-        $this->findCssAndSetValue($page, '#signup_email', $username . '@example.com');
-        $this->findCssAndSetValue($page, '#signup_password1', $password);
-        $this->findCssAndSetValue($page, '#signup_password2', $password);
-        $this->clickCss($page, '.signup input[type="submit"]');
-        $this->assertEquals(
-            'Your request for an account has been sent; it should be approved shortly.',
-            $this->findCssAndGetText($page, '.content')
-        );
-    }
-
-    /**
-     * Approve a user.
+     * Approve a user by directly manipulating the database.
      *
      * @param string $username User to approve
      * @param ?int   $groupId  Group to apply (null for no group)
@@ -219,8 +194,11 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    protected function approveUser(string $username, ?int $groupId = null, int $personId = -1): void
-    {
+    protected function approveUserWithDirectDatabaseAccess(
+        string $username,
+        ?int $groupId = null,
+        int $personId = -1
+    ): void {
         $userTable = $this->getServiceLocator()->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
         $changes = ['Person_ID' => $personId];
         if ($groupId) {
@@ -238,19 +216,33 @@ class IntegrationTest extends MinkTestCase
     {
         yield 'admin' => ['admin'];
         yield 'user' => ['user'];
+        yield 'user2' => ['user2'];
+        yield 'user3' => ['user3'];
     }
 
     /**
      * Test creation of a user.
      *
      * @param string $username Username to create
+     * @param string $password Password of new user
      *
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('createUserProvider')]
-    public function testCreateUser(string $username): void
+    public function testCreateUser(string $username, string $password = 'password'): void
     {
-        $this->createUser($this->goToPage(), $username);
+        $page = $this->goToPage();
+        $page->clickLink('Sign Up');
+        $this->findCssAndSetValue($page, '#signup_username', $username);
+        $this->findCssAndSetValue($page, '#signup_fullname', 'test ' . $username);
+        $this->findCssAndSetValue($page, '#signup_email', $username . '@example.com');
+        $this->findCssAndSetValue($page, '#signup_password1', $password);
+        $this->findCssAndSetValue($page, '#signup_password2', $password);
+        $this->clickCss($page, '.signup input[type="submit"]');
+        $this->assertEquals(
+            'Your request for an account has been sent; it should be approved shortly.',
+            $this->findCssAndGetText($page, '.content')
+        );
     }
 
     /**
@@ -283,7 +275,7 @@ class IntegrationTest extends MinkTestCase
         $this->assertEquals('Your account has not been approved yet.', $this->findCssAndGetText($page, '.error'));
 
         // Now assign appropriate group permissions to the user:
-        $this->approveUser($username, $group);
+        $this->approveUserWithDirectDatabaseAccess($username, $group);
 
         // Now go to the edit page and assert appropriate behavior (admin available if in group 1, not otherwise):
         $nextPage = $this->goToPage('/edit');
@@ -298,6 +290,65 @@ class IntegrationTest extends MinkTestCase
                 $this->findCssAndGetText($nextPage, '.content p')
             );
         }
+    }
+
+    /**
+     * Test that an admin can approve a pending user.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testUserApproval')]
+    public function testUserApprovalByAdmin(): void
+    {
+        $header = 'Username Full Name Email Person Record Join Reason Options';
+        $user2 = 'user2 I want to submit spam to the site. Reject';
+        $user3 = str_replace('2', '3', $user2);
+        $page = $this->goToPage('/edit/Approve');
+        $this->logIn($page, 'admin');
+        $this->assertEquals('user2', $this->findCssAndGetValue($page, '#Username_3'));
+        $this->assertEquals("$header $user2 $user3", $this->findCssAndGetText($page, '.content table'));
+        // Click the approve button:
+        $this->clickCss($page, '#UserButtons_3 #approveForm0 input');
+        $this->waitForPageLoad($page);
+        // If all went to plan, the user should have disappeared:
+        $this->assertEquals("$header $user3", $this->findCssAndGetText($page, '.content table'));
+        // Let's also test rejecting the other user:
+        $this->assertEquals('user3', $this->findCssAndGetValue($page, '#Username_4'));
+        // First cancel the alert to keep the user, and confirm that nothing happened:
+        $this->clickCss($page, '#UserButtons_4 button');
+        $this->getMinkSession()->getDriver()->dismissAlert();
+        $this->assertEquals("$header $user3", $this->findCssAndGetText($page, '.content table'));
+        // Now delete for real:
+        $this->clickCss($page, '#UserButtons_4 button');
+        $this->getMinkSession()->getDriver()->acceptAlert();
+        $this->waitForPageLoad($page);
+        $this->assertEquals($header, $this->findCssAndGetText($page, '.content table'));
+    }
+
+    /**
+     * Test that an admin can delete a user.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testUserApprovalByAdmin')]
+    public function testDeleteUser(): void
+    {
+        $page = $this->goToPage('/edit/UserList');
+        $this->logIn($page, 'admin');
+        // Based on what happened in testUserApprovalByAdmin, we expect the user list to contain
+        // user2 (approved) but not user3 (rejected).
+        $userList = $this->findCssAndGetText($page, '#user_list');
+        $this->assertStringNotContainsString('user3', $userList);
+        $this->assertStringContainsString('user2', $userList);
+        // Test that we can cancel a delete operation:
+        $this->clickCss($page, '#deleteUser3');
+        $this->getMinkSession()->getDriver()->dismissAlert();
+        $this->assertStringContainsString('user2', $userList);
+        // Now delete the approved user:
+        $this->clickCss($page, '#deleteUser3');
+        $this->getMinkSession()->getDriver()->acceptAlert();
+        $this->waitForPageLoad($page);
+        $this->assertStringNotContainsString('user2', $this->findCssAndGetText($page, '#user_list'));
     }
 
     /**
@@ -731,6 +782,14 @@ class IntegrationTest extends MinkTestCase
             '[edit edition]',
             2,
         ];
+        yield 'user group' => [
+            'UserList',
+            '#add_user_group',
+            ['#Group_Name' => 'test group'],
+            '#user_group_list',
+            null,
+            2,
+        ];
     }
 
     /**
@@ -903,6 +962,7 @@ class IntegrationTest extends MinkTestCase
             ],
             inModal: false
         );
+        yield 'user group' => $deriveTestCase($populateData['user group']);
     }
 
     /**
