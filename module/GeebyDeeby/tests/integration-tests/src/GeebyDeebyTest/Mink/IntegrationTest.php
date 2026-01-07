@@ -53,7 +53,6 @@ use function in_array;
  * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
  * @todo Add tests for creating/approving comments/reviews
- * @todo Add tests for suggestion controller
  * @todo Add tests for searches
  */
 class IntegrationTest extends MinkTestCase
@@ -214,8 +213,8 @@ class IntegrationTest extends MinkTestCase
      */
     public static function createUserProvider(): Generator
     {
-        yield 'admin' => ['admin'];
-        yield 'user' => ['user'];
+        yield 'admin' => ['admin', 'password', 'admin@example.com'];
+        yield 'user' => ['user', 'password', 'user@example.com'];
         yield 'user2' => ['user2'];
         yield 'user3' => ['user3'];
     }
@@ -223,19 +222,22 @@ class IntegrationTest extends MinkTestCase
     /**
      * Test creation of a user.
      *
-     * @param string $username Username to create
-     * @param string $password Password of new user
+     * @param string  $username Username to create
+     * @param string  $password Password of new user
+     * @param ?string $email    Email address of user (null for none)
      *
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('createUserProvider')]
-    public function testCreateUser(string $username, string $password = 'password'): void
+    public function testCreateUser(string $username, string $password = 'password', ?string $email = null): void
     {
         $page = $this->goToPage();
         $page->clickLink('Sign Up');
         $this->findCssAndSetValue($page, '#signup_username', $username);
         $this->findCssAndSetValue($page, '#signup_fullname', 'test ' . $username);
-        $this->findCssAndSetValue($page, '#signup_email', $username . '@example.com');
+        if ($email) {
+            $this->findCssAndSetValue($page, '#signup_email', $email);
+        }
         $this->findCssAndSetValue($page, '#signup_password1', $password);
         $this->findCssAndSetValue($page, '#signup_password2', $password);
         $this->clickCss($page, '.signup input[type="submit"]');
@@ -1361,6 +1363,51 @@ class IntegrationTest extends MinkTestCase
                 $this->findCssAndGetText($page, $containerSelector)
             );
         }
+    }
+
+    /**
+     * Data provider for testSuggestions().
+     *
+     * @return Generator<string, array>
+     */
+    public static function suggestionsProvider(): Generator
+    {
+        yield 'edition' => ['Edition', 'test', '1: test series 1 edition'];
+        yield 'item' => ['Item', 'test', "1: test alternate title [alt. title for test item]\n1: test item"];
+        yield 'note' => ['Note', 'test', "1: test note\n2: test note 2 (edited)"];
+        yield 'person' => [
+            'Person',
+            'test',
+            "2: test-second-edited last\n3: test-third lastname\n1: test-first test-last, extra",
+        ];
+        yield 'predicate' => ['Predicate', 'test', '1: test_predicate'];
+        yield 'publisher' => ['Publisher', 'test', "1: test publisher\n2: test publisher 2 (edited)"];
+        yield 'series' => [
+            'Series',
+            'test',
+            "1: test alternate series title [alt. title for test series 1]\n"
+            . "1: test series 1\n2: test series 2 (edited)",
+        ];
+        yield 'tag' => ['Tag', 'test', "1: test tag\n2: test tag 2 (edited)"];
+    }
+
+    /**
+     * Test suggestions.
+     *
+     * @param string $type     Suggestion type
+     * @param string $query    Query
+     * @param string $expected Expected result
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('suggestionsProvider')]
+    public function testSuggestions(string $type, string $query, string $expected): void
+    {
+        $this->assertSame(
+            $expected,
+            trim(file_get_contents($this->getGeebyDeebyUrl("/Suggest/$type?q=" . urlencode($query))))
+        );
     }
 
     /**
