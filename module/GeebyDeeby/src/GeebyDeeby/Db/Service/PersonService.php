@@ -96,7 +96,7 @@ class PersonService extends AbstractDbService
      *
      * @param bool $biosOnly Should we filter to only people with biographies?
      *
-     * @return mixed
+     * @return PersonEntityInterface[]
      */
     public function getList(bool $biosOnly = false): array
     {
@@ -132,7 +132,7 @@ class PersonService extends AbstractDbService
      *
      * @param array $itemIds Item IDs to match.
      *
-     * @return array
+     * @return PersonEntityInterface[]
      */
     public function getListForItemIds(array $itemIds): array
     {
@@ -145,9 +145,9 @@ class PersonService extends AbstractDbService
      * @param string $query The user query.
      * @param ?int   $limit Limit on returned rows (null for no limit).
      *
-     * @return array
+     * @return PersonEntityInterface[]
      */
-    public function getSuggestions(string $query, ?int $limit = null)
+    public function getSuggestions(string $query, ?int $limit = null): array
     {
         return iterator_to_array($this->personTable->getSuggestions($query, $limit ?? false));
     }
@@ -157,7 +157,7 @@ class PersonService extends AbstractDbService
      *
      * @param array $tokens Keywords.
      *
-     * @return array
+     * @return PersonEntityInterface[]
      */
     public function keywordSearch(array $tokens): array
     {

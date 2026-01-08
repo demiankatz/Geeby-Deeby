@@ -41,6 +41,13 @@ namespace GeebyDeeby\Db\Entity;
 interface PersonEntityInterface extends EntityInterface
 {
     /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
      * Get the display name to represent the row to a user.
      *
      * @return string

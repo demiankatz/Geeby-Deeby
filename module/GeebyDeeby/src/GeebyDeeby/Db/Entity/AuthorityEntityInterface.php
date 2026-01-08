@@ -41,6 +41,13 @@ namespace GeebyDeeby\Db\Entity;
 interface AuthorityEntityInterface extends EntityInterface
 {
     /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
      * Get the name of the authority.
      *
      * @return string

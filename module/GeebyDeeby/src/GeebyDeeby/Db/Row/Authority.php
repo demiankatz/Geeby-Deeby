@@ -53,6 +53,16 @@ class Authority extends RowGateway implements AuthorityEntityInterface
     }
 
     /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->Authority_ID;
+    }
+
+    /**
      * Get the name of the authority.
      *
      * @return string

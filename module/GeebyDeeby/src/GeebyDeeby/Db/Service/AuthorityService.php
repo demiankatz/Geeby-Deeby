@@ -93,7 +93,7 @@ class AuthorityService extends AbstractDbService
     /**
      * Get a list of authorities.
      *
-     * @return array
+     * @return AuthorityEntityInterface[]
      */
     public function getList(): array
     {
