@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\MaterialTypeService;
+
 use function is_object;
 
 /**
@@ -50,8 +52,7 @@ class MaterialTypeController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('materialtype');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
+        $rowObj = (null === $id) ? null : $this->getDbService(MaterialTypeService::class)->getByPrimaryKey($id);
         if (!is_object($rowObj)) {
             return $this->forwardTo(__NAMESPACE__ . '\MaterialType', 'notfound');
         }

@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\MaterialTypeService;
+
 use function count;
 use function intval;
 
@@ -126,7 +128,7 @@ class EditItemController extends AbstractBase
             $view->attributeValues = $attributeValues;
         }
 
-        $view->materials = $this->getDbTable('materialtype')->getList();
+        $view->materials = $this->getDbService(MaterialTypeService::class)->getList();
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {

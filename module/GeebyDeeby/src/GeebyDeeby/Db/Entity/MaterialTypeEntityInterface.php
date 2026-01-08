@@ -40,4 +40,74 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface MaterialTypeEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the singular name of the material type.
+     *
+     * @return string
+     */
+    public function getSingularName(): string;
+
+    /**
+     * Set the singular name of the material type.
+     *
+     * @param string $name Name
+     *
+     * @return static
+     */
+    public function setSingularName(string $name): static;
+
+    /**
+     * Get the plural name of the material type.
+     *
+     * @return string
+     */
+    public function getPluralName(): string;
+
+    /**
+     * Set the plural name of the material type.
+     *
+     * @param string $name Name
+     *
+     * @return static
+     */
+    public function setPluralName(string $name): static;
+
+    /**
+     * Is this flagged as the default material type?
+     *
+     * @return bool
+     */
+    public function isDefault(): bool;
+
+    /**
+     * Set the default status of the material type.
+     *
+     * @param string $state New state
+     *
+     * @return static
+     */
+    public function setIsDefault(bool $state): static;
+
+    /**
+     * Get the RDF class (or null if none).
+     *
+     * @return ?string
+     */
+    public function getRdfClass(): ?string;
+
+    /**
+     * Set the RDF class (or null if none).
+     *
+     * @param ?string $class New RDF class (or null to clear)
+     *
+     * @return static
+     */
+    public function setRdfClass(?string $class): static;
 }

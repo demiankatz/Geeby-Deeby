@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\MaterialTypeService;
+
 use function count;
 use function is_object;
 
@@ -188,7 +190,7 @@ class ItemController extends AbstractBase
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $view->item['Item_ID'];
         $uri = $this->getServerUrl('item', ['id' => $id]);
-        $type = $this->getDbTable('materialtype')
+        $type = $this->getDbService(MaterialTypeService::class)
             ->getByPrimaryKey($view->item['Material_Type_ID']);
         if (!empty($type->Material_Type_RDF_Class)) {
             $class = (array)$class;

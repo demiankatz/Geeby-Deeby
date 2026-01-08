@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\MaterialTypeService;
+
 use function count;
 use function intval;
 
@@ -126,7 +128,7 @@ class EditSeriesController extends AbstractBase
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->materials = $this->getDbTable('materialtype')->getList();
+            $view->materials = $this->getDbService(MaterialTypeService::class)->getList();
             $view->countries = $this->getDbTable('country')->getList();
             $view->categories = $this->getDbTable('category')->getList();
             $config = $this->serviceLocator->get('config');
