@@ -53,7 +53,6 @@ use function in_array;
  * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
  * @todo Add tests for creating/approving comments/reviews
- * @todo Add tests for suggestion controller
  * @todo Add tests for searches
  */
 class IntegrationTest extends MinkTestCase
@@ -214,8 +213,8 @@ class IntegrationTest extends MinkTestCase
      */
     public static function createUserProvider(): Generator
     {
-        yield 'admin' => ['admin'];
-        yield 'user' => ['user'];
+        yield 'admin' => ['admin', 'password', 'admin@example.com'];
+        yield 'user' => ['user', 'password', 'user@example.com'];
         yield 'user2' => ['user2'];
         yield 'user3' => ['user3'];
     }
@@ -223,19 +222,22 @@ class IntegrationTest extends MinkTestCase
     /**
      * Test creation of a user.
      *
-     * @param string $username Username to create
-     * @param string $password Password of new user
+     * @param string  $username Username to create
+     * @param string  $password Password of new user
+     * @param ?string $email    Email address of user (null for none)
      *
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('createUserProvider')]
-    public function testCreateUser(string $username, string $password = 'password'): void
+    public function testCreateUser(string $username, string $password = 'password', ?string $email = null): void
     {
         $page = $this->goToPage();
         $page->clickLink('Sign Up');
         $this->findCssAndSetValue($page, '#signup_username', $username);
         $this->findCssAndSetValue($page, '#signup_fullname', 'test ' . $username);
-        $this->findCssAndSetValue($page, '#signup_email', $username . '@example.com');
+        if ($email) {
+            $this->findCssAndSetValue($page, '#signup_email', $email);
+        }
         $this->findCssAndSetValue($page, '#signup_password1', $password);
         $this->findCssAndSetValue($page, '#signup_password2', $password);
         $this->clickCss($page, '.signup input[type="submit"]');
@@ -1002,6 +1004,48 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Assert the current default material type.
+     *
+     * @param int  $type  Expected default material type ID.
+     * @param bool $logIn Do we need to log in?
+     *
+     * @return void
+     */
+    protected function assertDefaultMaterialType(int $type, bool $logIn = false): void
+    {
+        $page = $this->goToPage('/edit/Series/1');
+        if ($logIn) {
+            $this->logIn($page, 'admin');
+        }
+        $this->clickCss($page, '#add_item');
+        $options = $page->findAll('css', '#Material_Type_ID option');
+        $selected = $options[0];
+        foreach ($options as $next) {
+            if ($next->isSelected()) {
+                $selected = $next;
+                break;
+            }
+        }
+        $this->assertSame((string)$type, $selected->getValue());
+    }
+
+    /**
+     * Test setting a default material type.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testEditExistingData')]
+    public function testSetDefaultMaterialType(): void
+    {
+        $this->assertDefaultMaterialType(2, logIn: true);
+        $page = $this->goToPage('/edit/MaterialTypeList');
+        $page->clickLink('test material'); // click material type 1
+        $this->clickCss($page, '#Default'); // set default
+        $this->clickCss($page, '.modal-body input[type="submit"]');
+        $this->assertDefaultMaterialType(1); // default should have changed!
+    }
+
+    /**
      * Data provider for testEmptyLinkLists().
      *
      * @return Generator<string, array>
@@ -1287,7 +1331,7 @@ class IntegrationTest extends MinkTestCase
             [],
             '#material_list',
             '/^No material types set.$/',
-            '/second test material \\(edited\\)/',
+            '/test material/',
         ];
         yield 'series publisher' => [
             '/edit/Series/1',
@@ -1328,7 +1372,7 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\Depends('testEditExistingData')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSetDefaultMaterialType')]
     #[\PHPUnit\Framework\Attributes\DataProvider('linkCreationProvider')]
     public function testLinkCreation(
         string $url,
@@ -1364,6 +1408,51 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Data provider for testSuggestions().
+     *
+     * @return Generator<string, array>
+     */
+    public static function suggestionsProvider(): Generator
+    {
+        yield 'edition' => ['Edition', 'test', '1: test series 1 edition'];
+        yield 'item' => ['Item', 'test', "1: test alternate title [alt. title for test item]\n1: test item"];
+        yield 'note' => ['Note', 'test', "1: test note\n2: test note 2 (edited)"];
+        yield 'person' => [
+            'Person',
+            'test',
+            "2: test-second-edited last\n3: test-third lastname\n1: test-first test-last, extra",
+        ];
+        yield 'predicate' => ['Predicate', 'test', '1: test_predicate'];
+        yield 'publisher' => ['Publisher', 'test', "1: test publisher\n2: test publisher 2 (edited)"];
+        yield 'series' => [
+            'Series',
+            'test',
+            "1: test alternate series title [alt. title for test series 1]\n"
+            . "1: test series 1\n2: test series 2 (edited)",
+        ];
+        yield 'tag' => ['Tag', 'test', "1: test tag\n2: test tag 2 (edited)"];
+    }
+
+    /**
+     * Test suggestions.
+     *
+     * @param string $type     Suggestion type
+     * @param string $query    Query
+     * @param string $expected Expected result
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('suggestionsProvider')]
+    public function testSuggestions(string $type, string $query, string $expected): void
+    {
+        $this->assertSame(
+            $expected,
+            trim(file_get_contents($this->getGeebyDeebyUrl("/Suggest/$type?q=" . urlencode($query))))
+        );
+    }
+
+    /**
      * Data provider for testPopulatedRecords().
      *
      * @return Generator<string, array>
@@ -1392,7 +1481,7 @@ class IntegrationTest extends MinkTestCase
         //yield 'city' => ['/City/1', 'No information is available about this city.'];
         //yield 'country' => ['/Country/1', 'No information is available about this country.'];
         yield 'language' => ['/Language/1', 'T test series 1 test series 2 (edited)'];
-        yield 'material type' => ['/Material/2', 'T test series 1'];
+        yield 'material type' => ['/Material/1', 'T test series 1'];
         yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1 T test series 1'];
         yield 'person' => [
             '/Person/1',
@@ -1584,7 +1673,7 @@ class IntegrationTest extends MinkTestCase
         yield 'series by city' => ['by city', 'T test city test city 2 (edited)', 0];
         yield 'series by country' => ['by country', 'T test country test country 2 (edited)', 0];
         yield 'series by language' => ['by language', 'T test language 1 test language 2 (edited)', 0];
-        yield 'series by material type' => ['by material type', 'S second test material (edited)', 0];
+        yield 'series by material type' => ['by material type', 'T test material', 0];
         yield 'series by publisher' => ['by publisher', 'T test publisher test publisher 2 (edited)', 0];
         // TODO: add a comment test so this will have content:
         //yield 'series with comments' => ['with comments', 'No comments listed.', 0];
@@ -1648,6 +1737,7 @@ class IntegrationTest extends MinkTestCase
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedDatabaseProvider')]
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
     public function testPopulatedDatabase(
         string $linkText,
         string $expectedMessage,
