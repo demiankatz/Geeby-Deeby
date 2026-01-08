@@ -149,7 +149,7 @@ class PersonService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->personTable->getSuggestions($query, $limit ?? false));
+        return iterator_to_array($this->personTable->getSuggestions($query, $limit));
     }
 
     /**

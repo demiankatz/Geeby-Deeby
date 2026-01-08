@@ -79,14 +79,14 @@ class Edition extends Gateway
      * Get autocomplete suggestions.
      *
      * @param string $query The user query.
-     * @param mixed  $limit Limit on returned rows (false for no limit).
+     * @param mixed  $limit Limit on returned rows (null for no limit).
      *
      * @return mixed
      */
-    public function getSuggestions($query, $limit = false)
+    public function getSuggestions($query, $limit = null)
     {
         $callback = function ($select) use ($query, $limit): void {
-            if ($limit !== false) {
+            if ($limit) {
                 $select->limit($limit);
             }
             $select->where->like('Edition_Name', $query . '%');
