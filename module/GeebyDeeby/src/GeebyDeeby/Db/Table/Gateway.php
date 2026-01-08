@@ -142,7 +142,7 @@ class Gateway extends AbstractTableGateway
      * do it manually after the fact with this support method.
      *
      * @param mixed $rawResults Iterable result set.
-     * @param mixed $limit      Result size limit (or false for none)
+     * @param mixed $limit      Result size limit (or false/null for none)
      *
      * @return array
      */

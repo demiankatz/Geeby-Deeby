@@ -110,18 +110,18 @@ class Person extends Gateway
      * Get autocomplete suggestions.
      *
      * @param string $query The user query.
-     * @param mixed  $limit Limit on returned rows (false for no limit).
+     * @param mixed  $limit Limit on returned rows (null for no limit).
      *
      * @return mixed
      */
-    public function getSuggestions($query, $limit = false)
+    public function getSuggestions($query, $limit = null)
     {
         $parts = preg_split("/[\s,]+/", $query);
         $first = $parts[0];
         $c = count($parts);
         $last = ($c > 1) ? $parts[$c - 1] : false;
         $callback = function ($select) use ($first, $last, $limit): void {
-            if ($limit !== false) {
+            if ($limit) {
                 $select->limit($limit);
             }
             $nest = $select->where->NEST;
