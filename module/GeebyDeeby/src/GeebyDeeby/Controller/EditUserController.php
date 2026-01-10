@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Crypt\PasswordHasher;
 use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\UserGroupService;
 
 /**
  * Edit user controller
@@ -123,7 +124,7 @@ class EditUserController extends AbstractBase
     public function usergrouplistAction()
     {
         return $this->getGenericList(
-            'usergroup',
+            UserGroupService::class,
             'usergroups',
             'geeby-deeby/edit-user/render-usergroups',
             'User_Editor'
@@ -138,14 +139,13 @@ class EditUserController extends AbstractBase
     public function usergroupAction()
     {
         $assignMap = [
-            'name' => 'Group_Name',
-            'content_editor' => 'Content_Editor',
-            'user_editor' => 'User_Editor',
-            'approver' => 'Approver',
-            'data_manager' => 'Data_Manager',
+            'name' => 'setGroupName',
+            'content_editor' => 'setIsContentEditor',
+            'user_editor' => 'setIsUserEditor',
+            'approver' => 'setIsApprover',
+            'data_manager' => 'setIsDataManager',
         ];
-        [$response] = $this
-            ->handleGenericItem('usergroup', $assignMap, 'usergroup', 'User_Editor');
+        [$response] = $this->handleGenericItem(UserGroupService::class, $assignMap, 'usergroup', 'User_Editor');
         return $response;
     }
 }

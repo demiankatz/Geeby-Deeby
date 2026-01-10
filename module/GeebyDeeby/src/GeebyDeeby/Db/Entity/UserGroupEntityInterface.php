@@ -40,4 +40,90 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface UserGroupEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the user group name.
+     *
+     * @return string
+     */
+    public function getGroupName(): string;
+
+    /**
+     * Set the user group name.
+     *
+     * @param string $name New user group name
+     *
+     * @return static
+     */
+    public function setGroupName(string $name): static;
+
+    /**
+     * Does the group grant content editor permission?
+     *
+     * @return bool
+     */
+    public function isContentEditor(): bool;
+
+    /**
+     * Set whether the group grants content editor permission.
+     *
+     * @param bool $state New state
+     *
+     * @return static
+     */
+    public function setIsContentEditor(bool $state): static;
+
+    /**
+     * Does the group grant user editor permission?
+     *
+     * @return bool
+     */
+    public function isUserEditor(): bool;
+
+    /**
+     * Set whether the group grants user editor permission.
+     *
+     * @param bool $state New state
+     *
+     * @return static
+     */
+    public function setIsUserEditor(bool $state): static;
+
+    /**
+     * Does the group grant approver permission?
+     *
+     * @return bool
+     */
+    public function isApprover(): bool;
+
+    /**
+     * Set whether the group grants approver permission.
+     *
+     * @param bool $state New state
+     *
+     * @return static
+     */
+    public function setIsApprover(bool $state): static;
+
+    /**
+     * Does the group grant data manager permission?
+     *
+     * @return bool
+     */
+    public function isDataManager(): bool;
+
+    /**
+     * Set whether the group grants data manager permission.
+     *
+     * @param bool $state New state
+     *
+     * @return static
+     */
+    public function setIsDataManager(bool $state): static;
 }
