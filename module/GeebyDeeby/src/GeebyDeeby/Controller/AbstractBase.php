@@ -337,9 +337,13 @@ class AbstractBase extends AbstractActionController
     protected function deleteGenericItem($serviceName)
     {
         try {
-            //$id = $this->params()->fromRoute('id');
-            //$service = $this->getDbService($serviceName);
-            throw new \Exception('TODO: delete not implemented yet');
+            $id = $this->params()->fromRoute('id');
+            $service = $this->getDbService($serviceName);
+            if (!is_callable([$service, 'getByPrimaryKey'])) {
+                throw new \Exception('Cannot retrieve entities from ' . $service);
+            }
+            $entity = $service->getByPrimaryKey($id);
+            $service->deleteEntity($entity);
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
         }

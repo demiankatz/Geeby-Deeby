@@ -57,4 +57,19 @@ abstract class AbstractDbService implements DbServiceInterface
         }
         $entity->save();
     }
+
+    /**
+     * Delete an entity.
+     *
+     * @param EntityInterface $entity Entity to persist.
+     *
+     * @return void
+     */
+    public function deleteEntity(EntityInterface $entity): void
+    {
+        if (!$entity instanceof AbstractRowGateway) {
+            throw new \Exception('Unexpected entity type');
+        }
+        $entity->delete();
+    }
 }
