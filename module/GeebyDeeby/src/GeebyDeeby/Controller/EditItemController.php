@@ -440,10 +440,7 @@ class EditItemController extends AbstractBase
         $table = $this->getDbTable('itemscreators');
         $view = $this->createViewModel();
         $view->row = $table->select(['Item_Creator_ID' => $rowId])->current();
-        $view->citations = array_map(
-            fn ($entity) => $entity->toArray(),
-            $this->getDbService(CitationService::class)->getList()
-        );
+        $view->citations = $this->getDbService(CitationService::class)->getList();
         $view->selectedCitations = $this->getDbTable('itemscreatorscitations')
             ->getCitations($rowId);
         $view->setTemplate('geeby-deeby/edit-item/modify-creator');
