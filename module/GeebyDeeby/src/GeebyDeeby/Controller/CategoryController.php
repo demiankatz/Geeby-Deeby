@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CategoryService;
+
 use function is_object;
 
 /**
@@ -50,13 +52,12 @@ class CategoryController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('category');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(CategoryService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Category', 'notfound');
         }
         $view = $this->createViewModel(
-            ['category' => $rowObj->toArray()]
+            ['category' => $entity->toArray()]
         );
         $view->series = $this->getDbTable('seriescategories')
             ->getSeriesForCategory($id);
@@ -71,7 +72,7 @@ class CategoryController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['categories' => $this->getDbTable('category')->getList()]
+            ['categories' => $this->getDbService(CategoryService::class)->getList()]
         );
     }
 

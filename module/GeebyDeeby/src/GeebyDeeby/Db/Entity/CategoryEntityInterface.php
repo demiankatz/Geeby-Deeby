@@ -40,4 +40,42 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface CategoryEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the category.
+     *
+     * @return string
+     */
+    public function getCategoryName(): string;
+
+    /**
+     * Set the name of the category.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCategoryName(string $name): static;
+
+    /**
+     * Get a description of the category.
+     *
+     * @return string
+     */
+    public function getDescription(): string;
+
+    /**
+     * Set the description.
+     *
+     * @param string $description New description
+     *
+     * @return static
+     */
+    public function setDescription(string $description): static;
 }

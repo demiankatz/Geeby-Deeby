@@ -53,16 +53,58 @@ class Category extends RowGateway implements CategoryEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Category)) {
-            return 'Category name cannot be blank.';
-        }
-        return false;
+        return $this->Category_ID;
+    }
+
+    /**
+     * Get the name of the category.
+     *
+     * @return string
+     */
+    public function getCategoryName(): string
+    {
+        return $this->Category;
+    }
+
+    /**
+     * Set the name of the category.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCategoryName(string $name): static
+    {
+        $this->Category = $name;
+        return $this;
+    }
+
+    /**
+     * Get a description of the category.
+     *
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->Description;
+    }
+
+    /**
+     * Set the description.
+     *
+     * @param string $description New description
+     *
+     * @return static
+     */
+    public function setDescription(string $description): static
+    {
+        $this->Description = $description;
+        return $this;
     }
 }

@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CategoryService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 
 use function count;
@@ -130,7 +131,7 @@ class EditSeriesController extends AbstractBase
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->materials = $this->getDbService(MaterialTypeService::class)->getList();
             $view->countries = $this->getDbTable('country')->getList();
-            $view->categories = $this->getDbTable('category')->getList();
+            $view->categories = $this->getDbService(CategoryService::class)->getList();
             $config = $this->serviceLocator->get('config');
             $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
                 ?? true;

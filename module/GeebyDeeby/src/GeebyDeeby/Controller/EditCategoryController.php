@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CategoryService;
+
 /**
  * Edit category controller
  *
@@ -48,7 +50,7 @@ class EditCategoryController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'category',
+            CategoryService::class,
             'categories',
             'geeby-deeby/edit-category/render-categories'
         );
@@ -61,8 +63,8 @@ class EditCategoryController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['name' => 'Category', 'desc' => 'Description'];
-        [$response] = $this->handleGenericItem('category', $assignMap, 'category');
+        $assignMap = ['name' => 'setCategoryName', 'desc' => 'setDescription'];
+        [$response] = $this->handleGenericItem(CategoryService::class, $assignMap, 'category');
         return $response;
     }
 }
