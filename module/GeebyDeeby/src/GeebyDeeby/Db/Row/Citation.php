@@ -53,16 +53,35 @@ class Citation extends RowGateway implements CitationEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Citation)) {
-            return 'Citation cannot be blank.';
-        }
-        return false;
+        return $this->Citation_ID;
+    }
+
+    /**
+     * Get the name of the citation.
+     *
+     * @return string
+     */
+    public function getCitationName(): string
+    {
+        return $this->Citation;
+    }
+
+    /**
+     * Set the name of the citation.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCitationName(string $name): static
+    {
+        $this->Citation = $name;
+        return $this;
     }
 }

@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CitationService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 
 use function count;
@@ -439,7 +440,10 @@ class EditItemController extends AbstractBase
         $table = $this->getDbTable('itemscreators');
         $view = $this->createViewModel();
         $view->row = $table->select(['Item_Creator_ID' => $rowId])->current();
-        $view->citations = $this->getDbTable('citation')->select();
+        $view->citations = array_map(
+            fn ($entity) => $entity->toArray(),
+            $this->getDbService(CitationService::class)->getList()
+        );
         $view->selectedCitations = $this->getDbTable('itemscreatorscitations')
             ->getCitations($rowId);
         $view->setTemplate('geeby-deeby/edit-item/modify-creator');

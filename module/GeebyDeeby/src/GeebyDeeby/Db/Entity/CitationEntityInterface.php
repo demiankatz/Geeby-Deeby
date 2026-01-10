@@ -40,4 +40,26 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface CitationEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the citation.
+     *
+     * @return string
+     */
+    public function getCitationName(): string;
+
+    /**
+     * Set the name of the citation.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCitationName(string $name): static;
 }
