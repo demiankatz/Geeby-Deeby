@@ -40,4 +40,26 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface CityEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the city.
+     *
+     * @return string
+     */
+    public function getCityName(): string;
+
+    /**
+     * Set the name of the city.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCityName(string $name): static;
 }

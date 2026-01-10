@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CityService;
+
 use function is_object;
 
 /**
@@ -128,13 +130,12 @@ class CityController extends AbstractBase
     public function getCityViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('city');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(CityService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $view = $this->createViewModel(
-            ['city' => $rowObj->toArray()]
+            ['city' => $entity->toArray()]
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForCity($id);
@@ -150,7 +151,7 @@ class CityController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['cities' => $this->getDbTable('city')->getList()]
+            ['cities' => $this->getDbService(CityService::class)->getList()]
         );
     }
 

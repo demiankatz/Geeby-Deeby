@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CityService;
+
 /**
  * Edit city controller
  *
@@ -48,7 +50,7 @@ class EditCityController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'city',
+            CityService::class,
             'cities',
             'geeby-deeby/edit-city/render-cities'
         );
@@ -61,8 +63,8 @@ class EditCityController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['city' => 'City_Name'];
-        [$view, $ok] = $this->handleGenericItem('city', $assignMap, 'city');
+        $assignMap = ['city' => 'setCityName'];
+        [$view, $ok] = $this->handleGenericItem(CityService::class, $assignMap, 'city');
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
             $view->uris = $this->getDbTable('citiesuris')
                 ->getURIsForCity($view->cityObj->City_ID);

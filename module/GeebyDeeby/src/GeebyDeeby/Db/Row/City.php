@@ -53,16 +53,35 @@ class City extends RowGateway implements CityEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->City_Name)) {
-            return 'City name cannot be blank.';
-        }
-        return false;
+        return $this->City_ID;
+    }
+
+    /**
+     * Get the name of the city.
+     *
+     * @return string
+     */
+    public function getCityName(): string
+    {
+        return $this->City_Name;
+    }
+
+    /**
+     * Set the name of the city.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCityName(string $name): static
+    {
+        $this->City_Name = $name;
+        return $this;
     }
 }
