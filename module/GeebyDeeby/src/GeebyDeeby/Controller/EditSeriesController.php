@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\CategoryService;
 use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\SeriesAttributeService;
 
 use function count;
 use function intval;
@@ -118,7 +119,7 @@ class EditSeriesController extends AbstractBase
 
         $languages = $this->getDbTable('language');
         $view->languages = $languages->getList();
-        $view->attributes = $this->getDbTable('seriesattribute')->getList();
+        $view->attributes = $this->getDbService(SeriesAttributeService::class)->getList();
         $attributeValues = [];
         $values = $this->getDbTable('seriesattributesvalues')
             ->getAttributesForSeries($seriesId);
