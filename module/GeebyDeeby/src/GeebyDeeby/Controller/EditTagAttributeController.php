@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\TagsAttributeService;
+
 /**
  * Edit tag attribute controller
  *
@@ -48,7 +50,7 @@ class EditTagAttributeController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'tagsattribute',
+            TagsAttributeService::class,
             'attributes',
             'geeby-deeby/edit-tag-attribute/render-tag-attributes'
         );
@@ -69,14 +71,13 @@ class EditTagAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'attribute_name' => 'Tags_Attribute_Name',
-            'rdf_property' => 'Tags_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority',
+            'attribute_name' => 'setAttributeName',
+            'rdf_property' => 'setRdfProperty',
+            'allow_html' => 'setAllowsHTML',
+            'priority' => 'setDisplayPriority',
 
         ];
-        [$response] = $this
-            ->handleGenericItem('tagsattribute', $assignMap, 'attribute');
+        [$response] = $this->handleGenericItem(TagsAttributeService::class, $assignMap, 'attribute');
 
         return $response;
     }

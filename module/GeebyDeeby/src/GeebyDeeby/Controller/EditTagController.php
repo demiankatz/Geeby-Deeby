@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\TagsAttributeService;
+
 /**
  * Edit tag controller
  *
@@ -116,7 +118,7 @@ class EditTagController extends AbstractBase
 
         // Add attribute details if we have a Tag_ID.
         if ($tagId) {
-            $view->attributes = $this->getDbTable('tagsattribute')->getList();
+            $view->attributes = $this->getDbService(TagsAttributeService::class)->getList();
             $attributeValues = [];
             $values = $this->getDbTable('tagsattributesvalues')
                 ->getAttributesForTag($tagId);
