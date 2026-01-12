@@ -91,7 +91,7 @@ class CountryService extends AbstractDbService
     }
 
     /**
-     * Get a list of cities.
+     * Get a list of countries.
      *
      * @return CountryEntityInterface[]
      */
