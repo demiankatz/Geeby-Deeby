@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsAttributeService;
+
 use function count;
 use function is_object;
 
@@ -151,7 +153,7 @@ class EditEditionController extends AbstractBase
 
         // Add attribute details if we have an Edition_ID.
         if ($editionId) {
-            $view->attributes = $this->getDbTable('editionsattribute')->getList();
+            $view->attributes = $this->getDbService(EditionsAttributeService::class)->getList();
             $attributeValues = [];
             $values = $this->getDbTable('editionsattributesvalues')
                 ->getAttributesForEdition($editionId);

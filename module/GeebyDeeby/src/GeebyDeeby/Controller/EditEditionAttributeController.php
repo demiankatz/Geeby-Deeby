@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsAttributeService;
+
 /**
  * Edit edition attribute controller
  *
@@ -48,7 +50,7 @@ class EditEditionAttributeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'editionsattribute',
+            EditionsAttributeService::class,
             'attributes',
             'geeby-deeby/edit-edition-attribute/render-edition-attributes'
         );
@@ -62,15 +64,14 @@ class EditEditionAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'attribute_name' => 'Editions_Attribute_Name',
-            'rdf_property' => 'Editions_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'copy_to_clone' => 'Copy_To_Clone',
-            'priority' => 'Display_Priority',
+            'attribute_name' => 'setAttributeName',
+            'rdf_property' => 'setRdfProperty',
+            'allow_html' => 'setAllowsHTML',
+            'copy_to_clone' => 'setCopyToClone',
+            'priority' => 'setDisplayPriority',
 
         ];
-        [$response] = $this
-            ->handleGenericItem('editionsattribute', $assignMap, 'attribute');
+        [$response] = $this->handleGenericItem(EditionsAttributeService::class, $assignMap, 'attribute');
 
         return $response;
     }

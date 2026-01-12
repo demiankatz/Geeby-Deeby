@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database service for the Items_Attributes table.
+ * Database service for the Editions_Attributes table.
  *
  * PHP version 8
  *
@@ -29,12 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use GeebyDeeby\Db\Entity\ItemsAttributeEntityInterface;
-use GeebyDeeby\Db\Table\ItemsAttribute;
+use GeebyDeeby\Db\Entity\EditionsAttributeEntityInterface;
+use GeebyDeeby\Db\Table\EditionsAttribute;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
- * Database service for the Items_Attributes table.
+ * Database service for the Editions_Attributes table.
  *
  * @category GeebyDeeby
  * @package  Database
@@ -42,27 +42,27 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ItemsAttributeService extends AbstractDbService
+class EditionsAttributeService extends AbstractDbService
 {
     /**
      * Constructor
      *
-     * @param ItemsAttribute $itemsAttributeTable ItemsAttribute table
+     * @param EditionsAttribute $editionsAttributeTable EditionsAttribute table
      */
     public function __construct(
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsAttribute $itemsAttributeTable
+        protected EditionsAttribute $editionsAttributeTable
     ) {
     }
 
     /**
      * Create an empty entity
      *
-     * @return ItemsAttributeEntityInterface
+     * @return EditionsAttributeEntityInterface
      */
-    public function createEntity(): ItemsAttributeEntityInterface
+    public function createEntity(): EditionsAttributeEntityInterface
     {
-        return $this->itemsAttributeTable->createRow();
+        return $this->editionsAttributeTable->createRow();
     }
 
     /**
@@ -70,33 +70,33 @@ class ItemsAttributeService extends AbstractDbService
      *
      * @param int $id Primary key value
      *
-     * @return ?ItemsAttributeEntityInterface
+     * @return ?EditionsAttributeEntityInterface
      */
-    public function getByPrimaryKey(int $id): ?ItemsAttributeEntityInterface
+    public function getByPrimaryKey(int $id): ?EditionsAttributeEntityInterface
     {
-        return $this->itemsAttributeTable->getByPrimaryKey($id);
+        return $this->editionsAttributeTable->getByPrimaryKey($id);
     }
 
     /**
      * Validate a populated entity -- return error message if problem found, null otherwise.
      *
-     * @param ItemsAttributeEntityInterface $entity Entity to validate
+     * @param EditionsAttributeEntityInterface $entity Entity to validate
      *
      * @return ?string
      */
-    public function getValidationError(ItemsAttributeEntityInterface $entity): ?string
+    public function getValidationError(EditionsAttributeEntityInterface $entity): ?string
     {
         $name = $entity->getAttributeName();
         return empty($name) ? 'Name cannot be blank.' : null;
     }
 
     /**
-     * Get a list of item attributes.
+     * Get a list of edition attributes.
      *
-     * @return ItemsAttributeEntityInterface[]
+     * @return EditionsAttributeEntityInterface[]
      */
     public function getList(): array
     {
-        return iterator_to_array($this->itemsAttributeTable->getList());
+        return iterator_to_array($this->editionsAttributeTable->getList());
     }
 }
