@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributeService;
+use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
 
 use function count;
 use function is_object;
@@ -657,8 +658,7 @@ class EditEditionController extends AbstractBase
         foreach ($table->select(['Sequence_ID' => $rowId]) as $current) {
             $view->row = $current;
         }
-        $view->attributes = $this->getDbTable('editionsfulltextattribute')
-            ->getList();
+        $view->attributes = $this->getDbService(EditionsFullTextAttributeService::class)->getList();
         $attributeValues = [];
         $values = $this->getDbTable('editionsfulltextattributesvalues')
             ->getAttributesForFullTextIDs([$rowId]);
