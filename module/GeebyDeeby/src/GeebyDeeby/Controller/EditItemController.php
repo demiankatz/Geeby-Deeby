@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CitationService;
+use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 
 use function count;
@@ -118,7 +119,7 @@ class EditItemController extends AbstractBase
 
         // Add attribute details if we have an Item_ID.
         if ($itemId) {
-            $view->attributes = $this->getDbTable('itemsattribute')->getList();
+            $view->attributes = $this->getDbService(ItemsAttributeService::class)->getList();
             $attributeValues = [];
             $values = $this->getDbTable('itemsattributesvalues')
                 ->getAttributesForItem($itemId);
