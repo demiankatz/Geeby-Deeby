@@ -388,8 +388,7 @@ class AbstractBase extends AbstractActionController
      * @param array  $params     Extra parameters for the RouteMatch object (no
      * need to provide action here, since $action takes care of that)
      *
-     * @return bool              Returns false so this can be returned by a
-     * controller without causing duplicate ViewModel attachment.
+     * @return mixed
      */
     public function forwardTo($controller, $action, $params = [])
     {
