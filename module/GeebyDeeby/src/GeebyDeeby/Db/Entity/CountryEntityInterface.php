@@ -40,4 +40,26 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface CountryEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the Country.
+     *
+     * @return string
+     */
+    public function getCountryName(): string;
+
+    /**
+     * Set the name of the Country.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCountryName(string $name): static;
 }

@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CityService;
+use GeebyDeeby\Db\Service\CountryService;
 
 use function count;
 
@@ -71,7 +72,7 @@ class EditPublisherController extends AbstractBase
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
             $view->cities = $this->getDbService(CityService::class)->getList();
-            $view->countries = $this->getDbTable('country')->getList();
+            $view->countries = $this->getDbService(CountryService::class)->getList();
             $view->addresses = $this->getDbTable('publishersaddresses')
                 ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
             $view->imprints = $this->getDbTable('publishersimprints')

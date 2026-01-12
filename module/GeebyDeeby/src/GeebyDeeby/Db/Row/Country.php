@@ -53,16 +53,35 @@ class Country extends RowGateway implements CountryEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Country_Name)) {
-            return 'Country name cannot be blank.';
-        }
-        return false;
+        return $this->Country_ID;
+    }
+
+    /**
+     * Get the name of the Country.
+     *
+     * @return string
+     */
+    public function getCountryName(): string
+    {
+        return $this->Country_Name;
+    }
+
+    /**
+     * Set the name of the Country.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCountryName(string $name): static
+    {
+        $this->Country_Name = $name;
+        return $this;
     }
 }

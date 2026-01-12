@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CategoryService;
+use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 
 use function count;
@@ -130,7 +131,7 @@ class EditSeriesController extends AbstractBase
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->materials = $this->getDbService(MaterialTypeService::class)->getList();
-            $view->countries = $this->getDbTable('country')->getList();
+            $view->countries = $this->getDbService(CountryService::class)->getList();
             $view->categories = $this->getDbService(CategoryService::class)->getList();
             $config = $this->serviceLocator->get('config');
             $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']

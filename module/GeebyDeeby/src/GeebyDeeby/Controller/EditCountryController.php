@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CountryService;
+
 /**
  * Edit country controller
  *
@@ -48,14 +50,13 @@ class EditCountryController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'country',
+            CountryService::class,
             'countries',
             'geeby-deeby/edit-country/render-countries'
         );
         // If this is not an AJAX request, we also want to display cities:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->cities
-                = $this->forwardTo(__NAMESPACE__ . '\EditCity', 'list')->cities;
+            $view->cities = $this->forwardTo(__NAMESPACE__ . '\EditCity', 'list')->cities;
         }
         return $view;
     }
@@ -67,8 +68,8 @@ class EditCountryController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['country' => 'Country_Name'];
-        [$view, $ok] = $this->handleGenericItem('country', $assignMap, 'country');
+        $assignMap = ['country' => 'setCountryName'];
+        [$view, $ok] = $this->handleGenericItem(CountryService::class, $assignMap, 'country');
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
             $view->uris = $this->getDbTable('countriesuris')

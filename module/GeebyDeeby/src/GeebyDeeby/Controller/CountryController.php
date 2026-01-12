@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CountryService;
+
 use function is_object;
 
 /**
@@ -129,13 +131,12 @@ class CountryController extends AbstractBase
     public function getCountryViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('country');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(CountryService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $view = $this->createViewModel(
-            ['country' => $rowObj->toArray()]
+            ['country' => $entity->toArray()]
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForCountry($id);
@@ -151,7 +152,7 @@ class CountryController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['countries' => $this->getDbTable('country')->getList()]
+            ['countries' => $this->getDbService(CountryService::class)->getList()]
         );
     }
 
