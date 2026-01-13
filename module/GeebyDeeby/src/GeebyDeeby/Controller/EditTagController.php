@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\TagsAttributeService;
+use GeebyDeeby\Db\Service\TagsRelationshipService;
 
 /**
  * Edit tag controller
@@ -137,8 +138,7 @@ class EditTagController extends AbstractBase
             $view->items = $this->getDbTable('itemstags')
                 ->getItemsForTag($view->tagObj->Tag_ID);
             $view->predicates = $this->getDbTable('predicate')->getList();
-            $view->relationships = $this->getDbTable('tagsrelationship')
-                ->getOptionList();
+            $view->relationships = $this->getDbService(TagsRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
                 ->getRelationshipsForTag($tagId);
         }

@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CitationService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
+use GeebyDeeby\Db\Service\ItemsRelationshipService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 
 use function count;
@@ -159,8 +160,7 @@ class EditItemController extends AbstractBase
                 ->getTags($itemId);
             $view->item_alt_titles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($itemId);
-            $view->relationships = $this->getDbTable('itemsrelationship')
-                ->getOptionList();
+            $view->relationships = $this->getDbService(ItemsRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this
                 ->getDbTable('itemsrelationshipsvalues')
                 ->getRelationshipsForItem($itemId);

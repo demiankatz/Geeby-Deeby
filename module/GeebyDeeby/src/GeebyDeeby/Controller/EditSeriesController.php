@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\CategoryService;
 use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
+use GeebyDeeby\Db\Service\SeriesRelationshipService;
 
 use function count;
 use function intval;
@@ -145,8 +146,7 @@ class EditSeriesController extends AbstractBase
                 ->getMaterials($seriesId);
             $view->series_publishers = $this->getDbTable('seriespublishers')
                 ->getPublishers($seriesId);
-            $view->relationships = $this->getDbTable('seriesrelationship')
-                ->getOptionList();
+            $view->relationships = $this->getDbService(SeriesRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this
                 ->getDbTable('seriesrelationshipsvalues')
                 ->getRelationshipsForSeries($seriesId);
