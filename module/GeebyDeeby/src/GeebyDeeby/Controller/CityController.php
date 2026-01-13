@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CitiesUriService;
 use GeebyDeeby\Db\Service\CityService;
 
 use function is_object;
@@ -139,7 +140,7 @@ class CityController extends AbstractBase
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForCity($id);
-        $view->uris = $this->getDbTable('citiesuris')->getURIsForCity($id);
+        $view->uris = $this->getDbService(CitiesUriService::class)->getURIsForCity($id);
         return $view;
     }
 

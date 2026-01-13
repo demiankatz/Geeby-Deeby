@@ -49,6 +49,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'authority' => 'GeebyDeeby\Db\Row\Authority',
         'category' => 'GeebyDeeby\Db\Row\Category',
         'citation' => 'GeebyDeeby\Db\Row\Citation',
+        'citiesuris' => 'GeebyDeeby\Db\Row\CitiesURIs',
         'city' => 'GeebyDeeby\Db\Row\City',
         'collections' => 'GeebyDeeby\Db\Row\Collections',
         'country' => 'GeebyDeeby\Db\Row\Country',

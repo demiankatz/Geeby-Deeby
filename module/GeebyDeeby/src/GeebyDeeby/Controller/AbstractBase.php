@@ -37,6 +37,7 @@ use Laminas\View\Model\ViewModel;
 use ReflectionClass;
 use ReflectionUnionType;
 
+use function func_get_args;
 use function intval;
 use function is_callable;
 use function is_object;
@@ -479,6 +480,111 @@ class AbstractBase extends AbstractActionController
     /**
      * Handle generic linking between two items.
      *
+     * @param string    $tableName          Name of database table to modify
+     * @param string    $primaryColumn      Name of database column whose value is in 'id' route parameter
+     * @param string    $secondaryColumn    Name of database column whose value is in 'extra' route parameter
+     * @param string    $listVariable       Name of view variable to assign list to when displaying existing links
+     * @param string    $listMethod         Name of method on table class to call for list assignment
+     * @param string    $listTemplate       Name of template to use for displaying list
+     * @param array     $extraFields        Extra fields to insert with the link (optional)
+     * @param ?callable $insertCallback     Callback function when inserting a new row
+     * @param string    $retrieveLinkMethod Name of service method to fetch a link using primary/secondary values
+     *
+     * @return mixed
+     */
+    public function handleGenericLink(
+        $tableName,
+        $primaryColumn,
+        $secondaryColumn,
+        $listVariable,
+        $listMethod,
+        $listTemplate,
+        $extraFields = [],
+        $insertCallback = null,
+        string $retrieveLinkMethod = 'retrieveLink'
+    ) {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
+        return $this->isDatabaseService($tableName)
+            ? $this->handleGenericLinkForService(...func_get_args())
+            : $this->handleGenericLinkForTable(...func_get_args());
+    }
+
+    /**
+     * Handle generic linking between two items using a database service.
+     *
+     * @param string    $serviceName        Name of database service to leverage
+     * @param string    $primarySetter      Name of entity setter whose value is in 'id' route parameter
+     * @param string    $secondarySetter    Name of entity setter whose value is in 'extra' route parameter
+     * @param string    $listVariable       Name of view variable to assign list to when displaying existing links
+     * @param string    $listMethod         Name of service method to call for list assignment
+     * @param string    $listTemplate       Name of template to use for displaying list
+     * @param array     $extraFields        Extra fields to insert with the link (method name => value, optional)
+     * @param ?callable $insertCallback     Callback function when inserting a new row (optional)
+     * @param string    $retrieveLinkMethod Name of service method to fetch a link using primary/secondary values
+     *
+     * @return mixed
+     */
+    public function handleGenericLinkForService(
+        string $serviceName,
+        string $primarySetter,
+        string $secondarySetter,
+        string $listVariable,
+        string $listMethod,
+        string $listTemplate,
+        array $extraFields = [],
+        ?callable $insertCallback = null,
+        string $retrieveLinkMethod = 'retrieveLink'
+    ) {
+        $primary = $this->params()->fromRoute('id');
+        $secondary = $this->params()->fromRoute('extra');
+        $service = $this->getDbService($serviceName);
+        if (!empty($primary) && !empty($secondary)) {
+            try {
+                if ($this->getRequest()->isPut() || $this->getRequest()->isPost()) {
+                    $entity = $service->createEntity();
+                    $entity->$primarySetter($primary);
+                    $entity->$secondarySetter($secondary);
+                    foreach ($extraFields as $extraSetter => $extraValue) {
+                        $entity->$extraSetter($extraValue);
+                    }
+                    $service->persistEntity($entity);
+                    if (is_callable($insertCallback)) {
+                        return $this->jsonDie('TODO: callback not supported yet!');
+                    }
+                } elseif ($this->getRequest()->isDelete()) {
+                    if (!empty($extraFields)) {
+                        return $this->jsonDie('TODO: support extra fields when deleting!');
+                    }
+                    if (!is_callable([$service, $retrieveLinkMethod])) {
+                        return $this->jsonDie("$serviceName lacks $retrieveLinkMethod method");
+                    }
+                    $link = $service->$retrieveLinkMethod($primary, $secondary);
+                    if (!$link) {
+                        return $this->jsonDie("Could not retrieve $serviceName link using $primary / $secondary");
+                    }
+                    $service->deleteEntity($link);
+                } else {
+                    return $this->jsonDie('Unexpected method');
+                }
+                return $this->jsonReportSuccess();
+            } catch (\Exception $e) {
+                return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
+            }
+        }
+
+        // If we got this far, display a list:
+        $view = $this->createViewModel([$listVariable => $service->$listMethod($primary)]);
+        $view->setTemplate($listTemplate);
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    /**
+     * Handle generic linking between two items using a legacy table object.
+     *
      * @param string   $tableName       Name of database table to modify
      * @param string   $primaryColumn   Name of database column whose value is in
      * 'id' route parameter
@@ -494,8 +600,10 @@ class AbstractBase extends AbstractActionController
      * @param Callback $insertCallback  Callback function when inserting a new row
      *
      * @return mixed
+     *
+     * @deprecated use handleGenericLinkForService()
      */
-    public function handleGenericLink(
+    public function handleGenericLinkForTable(
         $tableName,
         $primaryColumn,
         $secondaryColumn,
@@ -505,10 +613,6 @@ class AbstractBase extends AbstractActionController
         $extraFields = [],
         $insertCallback = null
     ) {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
         $primary = $this->params()->fromRoute('id');
         $secondary = $this->params()->fromRoute('extra');
         $table = $this->getDbTable($tableName);

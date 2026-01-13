@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CitiesUriService;
 use GeebyDeeby\Db\Service\CityService;
 
 /**
@@ -66,8 +67,7 @@ class EditCityController extends AbstractBase
         $assignMap = ['city' => 'setCityName'];
         [$view, $ok] = $this->handleGenericItem(CityService::class, $assignMap, 'city');
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbTable('citiesuris')
-                ->getURIsForCity($view->cityObj->City_ID);
+            $view->uris = $this->getDbService(CitiesUriService::class)->getURIsForCity($view->cityObj);
             $view->setTemplate('geeby-deeby/edit-city/edit-full');
             $view->predicates = $this->getDbTable('predicate')->getList();
         }
@@ -82,15 +82,16 @@ class EditCityController extends AbstractBase
     public function uriAction()
     {
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+            ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'citiesuris',
-            'City_ID',
-            'URI',
+            CitiesUriService::class,
+            'setCity',
+            'setUri',
             'uris',
             'getURIsForCity',
             'geeby-deeby/edit-city/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByCityAndUri'
         );
     }
 }
