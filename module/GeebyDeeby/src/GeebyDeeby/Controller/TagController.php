@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\TagService;
+
 use function is_object;
 
 /**
@@ -113,15 +115,10 @@ class TagController extends AbstractBase
      */
     public function labelAction()
     {
+        $label = $this->params()->fromRoute('label', '');
         // Look up tags by label, and redirect to the first match:
-        $tags = $this->getDbTable('tag')->select(
-            ['Tag' => $this->params()->fromRoute('label')]
-        );
-        foreach ($tags as $tag) {
-            return $this->redirect()->toRoute(
-                'tag',
-                ['id' => $tag['Tag_ID']]
-            );
+        if ($tag = $this->getDbService(TagService::class)->getByLabel($label)) {
+            return $this->redirect()->toRoute('tag', ['id' => $tag->getId()]);
         }
         // If we got this far, there was no match; time to 404!
         $response = $this->getResponse();
@@ -155,13 +152,12 @@ class TagController extends AbstractBase
     protected function getViewModelWithTag($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('tag');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(TagService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $view = $this->createViewModel(
-            $extras + ['tag' => $rowObj->toArray()]
+            $extras + ['tag' => $entity->toArray()]
         );
         $view->items = $this->getDbTable('itemstags')
             ->getItemsForTag($id, $extras['sort'] ?? 'series');
@@ -194,7 +190,7 @@ class TagController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['tags' => $this->getDbTable('tag')->getList()]
+            ['tags' => $this->getDbService(TagService::class)->getList()]
         );
     }
 

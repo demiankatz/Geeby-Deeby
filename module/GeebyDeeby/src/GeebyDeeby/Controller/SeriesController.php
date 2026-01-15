@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\TagService;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 
@@ -445,8 +446,7 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        $view->tags = $this->getDbTable('tag')
-            ->getTagsForSeries($view->series['Series_ID']);
+        $view->tags = $this->getDbService(TagService::class)->getTagsForSeries($view->series['Series_ID']);
         return $view;
     }
 

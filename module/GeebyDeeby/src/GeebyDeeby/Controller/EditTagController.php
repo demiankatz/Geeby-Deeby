@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\TagsAttributeService;
+use GeebyDeeby\Db\Service\TagService;
 use GeebyDeeby\Db\Service\TagsRelationshipService;
 use GeebyDeeby\Db\Service\TagTypeService;
 
@@ -52,7 +53,7 @@ class EditTagController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'tag',
+            TagService::class,
             'tags',
             'geeby-deeby/edit-tag/render-tags'
         );
@@ -98,10 +99,10 @@ class EditTagController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'tag' => 'Tag',
-            'type_id' => 'Tag_Type_ID',
+            'tag' => 'setTag',
+            'type_id' => 'setTagType',
         ];
-        [$view, $ok] = $this->handleGenericItem('tag', $assignMap, 'tag');
+        [$view, $ok] = $this->handleGenericItem(TagService::class, $assignMap, 'tag');
         if (!$ok) {
             return $view;
         }

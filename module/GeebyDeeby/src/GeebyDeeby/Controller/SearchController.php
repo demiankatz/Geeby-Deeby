@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\TagService;
 
 use function strlen;
 
@@ -118,7 +119,7 @@ class SearchController extends AbstractBase
             ->keywordSearch($tokens);
         $view->categories = $this->getDbTable('category')->keywordSearch($tokens);
         $view->people = $this->getDbService(PersonService::class)->keywordSearch($tokens);
-        $view->tags = $this->getDbTable('tag')->keywordSearch($tokens);
+        $view->tags = $this->getDbService(TagService::class)->keywordSearch($tokens);
         return $view;
     }
 
