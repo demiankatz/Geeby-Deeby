@@ -68,5 +68,5 @@ interface PublisherEntityInterface extends EntityInterface
      *
      * @return string
      */
-    public function getDisplayName();
+    public function getDisplayName(): string;
 }

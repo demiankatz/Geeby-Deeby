@@ -90,7 +90,7 @@ class Publisher extends RowGateway implements PublisherEntityInterface
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->Publisher_Name;
     }
