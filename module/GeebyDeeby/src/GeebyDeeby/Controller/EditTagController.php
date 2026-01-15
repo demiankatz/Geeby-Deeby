@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\TagsAttributeService;
 use GeebyDeeby\Db\Service\TagService;
 use GeebyDeeby\Db\Service\TagsRelationshipService;
+use GeebyDeeby\Db\Service\TagsUriService;
 use GeebyDeeby\Db\Service\TagTypeService;
 
 /**
@@ -134,8 +135,7 @@ class EditTagController extends AbstractBase
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbTable('tagsuris')
-                ->getURIsForTag($view->tagObj->Tag_ID);
+            $view->uris = $this->getDbService(TagsUriService::class)->getURIsForTag($view->tagObj);
             $view->setTemplate('geeby-deeby/edit-tag/edit-full');
             $view->items = $this->getDbTable('itemstags')
                 ->getItemsForTag($view->tagObj->Tag_ID);
@@ -246,16 +246,16 @@ class EditTagController extends AbstractBase
      */
     public function uriAction()
     {
-        $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+        $extras = ($pid = $this->params()->fromPost('predicate_id')) ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'tagsuris',
-            'Tag_ID',
-            'URI',
+            TagsUriService::class,
+            'setTag',
+            'setUri',
             'uris',
             'getURIsForTag',
             'geeby-deeby/edit-tag/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByTagAndUri'
         );
     }
 }

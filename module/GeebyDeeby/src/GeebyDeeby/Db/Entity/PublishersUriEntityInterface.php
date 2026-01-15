@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Interface for publisher entity models.
+ * Interface for publisher URI entity models.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace GeebyDeeby\Db\Entity;
 
 /**
- * Interface for publisher entity models.
+ * Interface for publisher URI entity models.
  *
  * @category GeebyDeeby
  * @package  Database

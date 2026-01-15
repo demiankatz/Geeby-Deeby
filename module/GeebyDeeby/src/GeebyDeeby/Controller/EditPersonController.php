@@ -90,8 +90,7 @@ class EditPersonController extends AbstractBase
                 ->getPseudonyms($view->personObj->Person_ID);
             $view->realnames = $this->getDbTable('pseudonyms')
                 ->getRealNames($view->personObj->Person_ID);
-            $view->uris = $this->getDbService(PeopleUriService::class)
-                ->getURIsForPerson($view->personObj->Person_ID);
+            $view->uris = $this->getDbService(PeopleUriService::class)->getURIsForPerson($view->personObj);
             $view->setTemplate('geeby-deeby/edit-person/edit-full');
             $view->predicates = $this->getDbTable('predicate')->getList();
         }

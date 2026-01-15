@@ -73,8 +73,7 @@ class EditCountryController extends AbstractBase
         [$view, $ok] = $this->handleGenericItem(CountryService::class, $assignMap, 'country');
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbService(CountriesUriService::class)
-                ->getURIsForCountry($view->countryObj->Country_ID);
+            $view->uris = $this->getDbService(CountriesUriService::class)->getURIsForCountry($view->countryObj);
             $view->setTemplate('geeby-deeby/edit-country/edit-full');
             $view->predicates = $this->getDbTable('predicate')->getList();
         }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Interface for city URI entity models.
+ * Interface for tag URI entity models.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace GeebyDeeby\Db\Entity;
 
 /**
- * Interface for city URI entity models.
+ * Interface for tag URI entity models.
  *
  * @category GeebyDeeby
  * @package  Database
@@ -38,7 +38,7 @@ namespace GeebyDeeby\Db\Entity;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-interface CitiesUriEntityInterface extends EntityInterface
+interface TagsUriEntityInterface extends EntityInterface
 {
     /**
      * Get identifier (returns null for an uninitialized or non-persisted object).
@@ -48,20 +48,20 @@ interface CitiesUriEntityInterface extends EntityInterface
     public function getId(): ?int;
 
     /**
-     * Get associated city.
+     * Get associated tag.
      *
-     * @return CityEntityInterface
+     * @return TagEntityInterface
      */
-    public function getCity(): CityEntityInterface;
+    public function getTag(): TagEntityInterface;
 
     /**
-     * Set associated city.
+     * Set associated tag.
      *
-     * @param int|CityEntityInterface $city Associated city entity or ID
+     * @param int|TagEntityInterface $tag Associated tag entity or ID
      *
      * @return static
      */
-    public function setCity(int|CityEntityInterface $city): static;
+    public function setTag(int|TagEntityInterface $tag): static;
 
     /**
      * Get associated predicate.
@@ -80,14 +80,14 @@ interface CitiesUriEntityInterface extends EntityInterface
     public function setPredicate(int|PredicateEntityInterface $predicate): static;
 
     /**
-     * Get the URI associated with the city.
+     * Get the URI associated with the tag.
      *
      * @return string
      */
     public function getUri(): string;
 
     /**
-     * Set the URI associated with the city.
+     * Set the URI associated with the tag.
      *
      * @param string $uri New URI.
      *
