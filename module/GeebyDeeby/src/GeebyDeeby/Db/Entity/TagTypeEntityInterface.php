@@ -40,4 +40,26 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface TagTypeEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the tag type.
+     *
+     * @return string
+     */
+    public function getTagType(): string;
+
+    /**
+     * Set the name of the tag type.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setTagType(string $name): static;
 }

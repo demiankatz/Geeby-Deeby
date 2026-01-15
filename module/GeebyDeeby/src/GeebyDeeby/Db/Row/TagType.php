@@ -53,16 +53,35 @@ class TagType extends RowGateway implements TagTypeEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Tag_Type)) {
-            return 'Type cannot be blank.';
-        }
-        return false;
+        return $this->Tag_Type_ID;
+    }
+
+    /**
+     * Get the name of the tag type.
+     *
+     * @return string
+     */
+    public function getTagType(): string
+    {
+        return $this->Tag_Type;
+    }
+
+    /**
+     * Set the name of the tag type.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setTagType(string $name): static
+    {
+        $this->Tag_Type = $name;
+        return $this;
     }
 }
