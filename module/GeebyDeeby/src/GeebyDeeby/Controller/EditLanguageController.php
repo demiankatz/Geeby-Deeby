@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\LanguageService;
+
 /**
  * Edit language controller
  *
@@ -48,7 +50,7 @@ class EditLanguageController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'language',
+            LanguageService::class,
             'languages',
             'geeby-deeby/edit-language/render-languages'
         );
@@ -61,8 +63,8 @@ class EditLanguageController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['language' => 'Language_Name'];
-        [$response] = $this->handleGenericItem('language', $assignMap, 'language');
+        $assignMap = ['language' => 'setLanguageName'];
+        [$response] = $this->handleGenericItem(LanguageService::class, $assignMap, 'language');
         return $response;
     }
 }

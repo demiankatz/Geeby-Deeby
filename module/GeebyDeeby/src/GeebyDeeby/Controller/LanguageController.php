@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\LanguageService;
+
 use function is_object;
 
 /**
@@ -50,13 +52,12 @@ class LanguageController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('language');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(LanguageService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Language', 'notfound');
         }
         $view = $this->createViewModel(
-            ['language' => $rowObj->toArray()]
+            ['language' => $entity->toArray()]
         );
         $view->series = $this->getDbTable('series')
             ->getSeriesForLanguage($id);
@@ -71,7 +72,7 @@ class LanguageController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['languages' => $this->getDbTable('language')->getList()]
+            ['languages' => $this->getDbService(LanguageService::class)->getList()]
         );
     }
 

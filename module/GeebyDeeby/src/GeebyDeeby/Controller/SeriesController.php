@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\TagService;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
@@ -602,7 +603,7 @@ class SeriesController extends AbstractBase
             ?? true;
         $view->items = $this->getDbTable('item')
             ->getItemsForSeries($id, true, $view->groupByMaterial);
-        $view->language = $this->getDbTable('language')
+        $view->language = $this->getDbService(LanguageService::class)
             ->getByPrimaryKey($view->series['Language_ID']);
         $view->publishers = $this->getDbTable('seriespublishers')
             ->getPublishers($id);

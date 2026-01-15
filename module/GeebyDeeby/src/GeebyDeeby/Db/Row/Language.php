@@ -53,16 +53,35 @@ class Language extends RowGateway implements LanguageEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Language_Name)) {
-            return 'Language name cannot be blank.';
-        }
-        return false;
+        return $this->Language_ID;
+    }
+
+    /**
+     * Get the name of the language.
+     *
+     * @return string
+     */
+    public function getLanguageName(): string
+    {
+        return $this->Language_Name;
+    }
+
+    /**
+     * Set the name of the language.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setLanguageName(string $name): static
+    {
+        $this->Language_Name = $name;
+        return $this;
     }
 }

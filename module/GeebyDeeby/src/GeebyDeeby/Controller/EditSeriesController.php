@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CategoryService;
 use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
@@ -118,8 +119,7 @@ class EditSeriesController extends AbstractBase
             );
         }
 
-        $languages = $this->getDbTable('language');
-        $view->languages = $languages->getList();
+        $view->languages = $this->getDbService(LanguageService::class)->getList();
         $view->attributes = $this->getDbService(SeriesAttributeService::class)->getList();
         $attributeValues = [];
         $values = $this->getDbTable('seriesattributesvalues')

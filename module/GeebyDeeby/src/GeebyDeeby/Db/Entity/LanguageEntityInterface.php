@@ -40,4 +40,26 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface LanguageEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the language.
+     *
+     * @return string
+     */
+    public function getLanguageName(): string;
+
+    /**
+     * Set the name of the language.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setLanguageName(string $name): static;
 }
