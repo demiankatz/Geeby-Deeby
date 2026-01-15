@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\AuthorityService;
+use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Service\PersonService;
 
 /**
@@ -89,7 +90,7 @@ class EditPersonController extends AbstractBase
                 ->getPseudonyms($view->personObj->Person_ID);
             $view->realnames = $this->getDbTable('pseudonyms')
                 ->getRealNames($view->personObj->Person_ID);
-            $view->uris = $this->getDbTable('peopleuris')
+            $view->uris = $this->getDbService(PeopleUriService::class)
                 ->getURIsForPerson($view->personObj->Person_ID);
             $view->setTemplate('geeby-deeby/edit-person/edit-full');
             $view->predicates = $this->getDbTable('predicate')->getList();
@@ -104,16 +105,16 @@ class EditPersonController extends AbstractBase
      */
     public function uriAction()
     {
-        $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+        $extras = ($pid = $this->params()->fromPost('predicate_id')) ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'peopleuris',
-            'Person_ID',
-            'URI',
+            PeopleUriService::class,
+            'setPerson',
+            'setUri',
             'uris',
             'getURIsForPerson',
             'geeby-deeby/edit-person/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByPersonAndUri'
         );
     }
 

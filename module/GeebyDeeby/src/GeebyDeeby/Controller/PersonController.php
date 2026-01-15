@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Service\PersonService;
 use Laminas\View\Model\ViewModel;
 
@@ -228,7 +229,7 @@ class PersonController extends AbstractBase
         $view->bibliography = $this->getDbTable('peoplebibliography')
             ->getItemsDescribingPerson($id);
         $view->links = $this->getDbTable('peoplelinks')->getLinksForPerson($id);
-        $view->uris = $this->getDbTable('peopleuris')->getURIsForPerson($id);
+        $view->uris = $this->getDbService(PeopleUriService::class)->getURIsForPerson($id);
         return $view;
     }
 }
