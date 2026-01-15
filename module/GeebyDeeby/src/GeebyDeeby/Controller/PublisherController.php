@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PublishersUriService;
+
 use function is_object;
 
 /**
@@ -140,7 +142,7 @@ class PublisherController extends AbstractBase
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForPublisher($id);
-        $view->uris = $this->getDbTable('publishersuris')->getURIsForPublisher($id);
+        $view->uris = $this->getDbService(PublishersUriService::class)->getURIsForPublisher($id);
         return $view;
     }
 

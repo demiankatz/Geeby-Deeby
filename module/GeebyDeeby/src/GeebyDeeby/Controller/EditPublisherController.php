@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CityService;
 use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\PublishersUriService;
 
 use function count;
 
@@ -78,8 +79,8 @@ class EditPublisherController extends AbstractBase
             $view->imprints = $this->getDbTable('publishersimprints')
                 ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
             $view->predicates = $this->getDbTable('predicate')->getList();
-            $view->uris = $this->getDbTable('publishersuris')
-                ->getURIsForPublisher($view->publisherObj->Publisher_ID);
+            $view->uris = $this->getDbService(PublishersUriService::class)
+                ->getURIsForPublisher($view->publisherObj);
             $view->setTemplate('geeby-deeby/edit-publisher/edit-full');
         }
         return $view;
@@ -185,16 +186,16 @@ class EditPublisherController extends AbstractBase
      */
     public function uriAction()
     {
-        $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+        $extras = ($pid = $this->params()->fromPost('predicate_id')) ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'publishersuris',
-            'Publisher_ID',
-            'URI',
+            PublishersUriService::class,
+            'setPublisher',
+            'setUri',
             'uris',
             'getURIsForPublisher',
             'geeby-deeby/edit-publisher/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByPublisherAndUri'
         );
     }
 }

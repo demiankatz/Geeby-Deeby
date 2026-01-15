@@ -53,6 +53,16 @@ class Publisher extends RowGateway implements PublisherEntityInterface
     }
 
     /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->Publisher_ID;
+    }
+
+    /**
      * Validate the fields in the current object.  Return error message if problem
      * found, boolean false if no errors were found.
      *
