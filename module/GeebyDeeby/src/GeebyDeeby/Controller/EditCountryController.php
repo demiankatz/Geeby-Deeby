@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CountriesUriService;
 use GeebyDeeby\Db\Service\CountryService;
 
 /**
@@ -72,7 +73,7 @@ class EditCountryController extends AbstractBase
         [$view, $ok] = $this->handleGenericItem(CountryService::class, $assignMap, 'country');
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbTable('countriesuris')
+            $view->uris = $this->getDbService(CountriesUriService::class)
                 ->getURIsForCountry($view->countryObj->Country_ID);
             $view->setTemplate('geeby-deeby/edit-country/edit-full');
             $view->predicates = $this->getDbTable('predicate')->getList();
@@ -88,15 +89,16 @@ class EditCountryController extends AbstractBase
     public function uriAction()
     {
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+            ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'countriesuris',
-            'Country_ID',
-            'URI',
+            CountriesUriService::class,
+            'setCountry',
+            'setUri',
             'uris',
             'getURIsForCountry',
             'geeby-deeby/edit-country/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByCountryAndUri'
         );
     }
 }

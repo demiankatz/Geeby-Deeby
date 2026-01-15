@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CountriesUriService;
 use GeebyDeeby\Db\Service\CountryService;
 
 use function is_object;
@@ -140,7 +141,7 @@ class CountryController extends AbstractBase
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForCountry($id);
-        $view->uris = $this->getDbTable('countriesuris')->getURIsForCountry($id);
+        $view->uris = $this->getDbService(CountriesUriService::class)->getURIsForCountry($id);
         return $view;
     }
 

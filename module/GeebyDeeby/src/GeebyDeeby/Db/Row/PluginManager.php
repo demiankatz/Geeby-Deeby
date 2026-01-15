@@ -53,6 +53,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'city' => 'GeebyDeeby\Db\Row\City',
         'collections' => 'GeebyDeeby\Db\Row\Collections',
         'country' => 'GeebyDeeby\Db\Row\Country',
+        'countriesuris' => 'GeebyDeeby\Db\Row\CountriesURIs',
         'edition' => 'GeebyDeeby\Db\Row\Edition',
         'editionsattribute' => 'GeebyDeeby\Db\Row\EditionsAttribute',
         'editionsfulltextattribute' => 'GeebyDeeby\Db\Row\EditionsFullTextAttribute',
