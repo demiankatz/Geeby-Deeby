@@ -40,4 +40,33 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface PublisherEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the publisher name.
+     *
+     * @return string
+     */
+    public function getPublisherName(): string;
+
+    /**
+     * Set the publisher name.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setPublisherName(string $name): static;
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName();
 }

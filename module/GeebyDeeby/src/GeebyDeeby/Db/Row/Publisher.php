@@ -63,17 +63,26 @@ class Publisher extends RowGateway implements PublisherEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get the publisher name.
      *
-     * @return string|bool
+     * @return string
      */
-    public function validate()
+    public function getPublisherName(): string
     {
-        if (empty($this->Publisher_Name)) {
-            return 'Publisher name cannot be blank.';
-        }
-        return false;
+        return $this->Publisher_Name;
+    }
+
+    /**
+     * Set the publisher name.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setPublisherName(string $name): static
+    {
+        $this->Publisher_Name = $name;
+        return $this;
     }
 
     /**

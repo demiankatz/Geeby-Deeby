@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\PublishersUriService;
 
 use function is_object;
@@ -132,13 +133,12 @@ class PublisherController extends AbstractBase
     protected function getPublisherViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('publisher');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(PublisherService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $view = $this->createViewModel(
-            ['publisher' => $rowObj->toArray()]
+            ['publisher' => $entity->toArray()]
         );
         $view->series = $this->getDbTable('seriespublishers')
             ->getSeriesForPublisher($id);
@@ -154,7 +154,7 @@ class PublisherController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['publishers' => $this->getDbTable('publisher')->getList()]
+            ['publishers' => $this->getDbService(PublisherService::class)->getList()]
         );
     }
 
