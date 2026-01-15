@@ -86,7 +86,7 @@ class TagTypeService extends AbstractDbService
      */
     public function getValidationError(TagTypeEntityInterface $entity): ?string
     {
-        $name = $entity->getTagType();
+        $name = $entity->getTagTypeName();
         return empty($name) ? 'Type cannot be blank.' : null;
     }
 

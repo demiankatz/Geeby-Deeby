@@ -67,7 +67,7 @@ class TagType extends RowGateway implements TagTypeEntityInterface
      *
      * @return string
      */
-    public function getTagType(): string
+    public function getTagTypeName(): string
     {
         return $this->Tag_Type;
     }
@@ -79,7 +79,7 @@ class TagType extends RowGateway implements TagTypeEntityInterface
      *
      * @return static
      */
-    public function setTagType(string $name): static
+    public function setTagTypeName(string $name): static
     {
         $this->Tag_Type = $name;
         return $this;

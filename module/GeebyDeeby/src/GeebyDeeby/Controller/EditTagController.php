@@ -233,7 +233,7 @@ class EditTagController extends AbstractBase
      */
     public function typeAction()
     {
-        $assignMap = ['tagType' => 'setTagType'];
+        $assignMap = ['tagType' => 'setTagTypeName'];
         [$response] = $this->handleGenericItem(TagTypeService::class, $assignMap, 'tagType');
         return $response;
     }

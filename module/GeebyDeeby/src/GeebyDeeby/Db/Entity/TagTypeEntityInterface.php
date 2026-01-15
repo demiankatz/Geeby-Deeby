@@ -52,7 +52,7 @@ interface TagTypeEntityInterface extends EntityInterface
      *
      * @return string
      */
-    public function getTagType(): string;
+    public function getTagTypeName(): string;
 
     /**
      * Set the name of the tag type.
@@ -61,5 +61,5 @@ interface TagTypeEntityInterface extends EntityInterface
      *
      * @return static
      */
-    public function setTagType(string $name): static;
+    public function setTagTypeName(string $name): static;
 }
