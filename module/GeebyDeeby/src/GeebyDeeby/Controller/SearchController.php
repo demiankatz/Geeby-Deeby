@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
 
 use function strlen;
@@ -111,7 +112,7 @@ class SearchController extends AbstractBase
     {
         $tokens = $this->tokenize($this->layout()->query);
         $view = $this->createViewModel();
-        $view->series = $this->getDbTable('series')->keywordSearch($tokens);
+        $view->series = $this->getDbService(SeriesService::class)->keywordSearch($tokens);
         $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
             ->keywordSearch($tokens);
         $view->items = $this->getDbTable('item')->keywordSearch($tokens);
@@ -198,7 +199,7 @@ class SearchController extends AbstractBase
             ->stripLeadingArticles($this->layout()->query);
         $tokens = [$q];
         $view = $this->createViewModel();
-        $view->series = $this->getDbTable('series')->keywordSearch($tokens);
+        $view->series = $this->getDbService(SeriesService::class)->keywordSearch($tokens);
         $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
             ->keywordSearch($tokens);
         $view->items = $this->getDbTable('item')->keywordSearch($tokens);

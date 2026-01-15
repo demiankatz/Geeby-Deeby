@@ -40,4 +40,65 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface SeriesEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the series.
+     *
+     * @return string
+     */
+    public function getSeriesName(): string;
+
+    /**
+     * Set the name of the series.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setSeriesName(string $name): static;
+
+    /**
+     * Get the description of the series.
+     *
+     * @return string
+     */
+    public function getDescription(): string;
+
+    /**
+     * Set the description of the series.
+     *
+     * @param string $desc New description.
+     *
+     * @return static
+     */
+    public function setDescription(string $desc): static;
+
+    /**
+     * Get associated language.
+     *
+     * @return LanguageEntityInterface
+     */
+    public function getLanguage(): LanguageEntityInterface;
+
+    /**
+     * Set associated language.
+     *
+     * @param int|LanguageEntityInterface $language Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setLanguage(int|LanguageEntityInterface $language): static;
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName(): string;
 }

@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\CitationService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
 use function intval;
@@ -187,9 +188,9 @@ class EditItemController extends AbstractBase
                     ]
                 );
             } elseif ($seriesID = $this->params()->fromPost('series_id', false)) {
-                $series = $this->getDbTable('series')->getByPrimaryKey($seriesID);
+                $series = $this->getDbService(SeriesService::class)->getByPrimaryKey($seriesID);
                 $edName = $this->serviceLocator->get('GeebyDeeby\Articles')
-                    ->articleAwareAppend($series->Series_Name, ' edition');
+                    ->articleAwareAppend($series->getSeriesName(), ' edition');
                 $this->getDbTable('edition')->insert(
                     [
                         'Edition_Name' => $edName,

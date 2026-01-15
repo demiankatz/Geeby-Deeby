@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
+use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
 use function is_object;
@@ -177,7 +178,7 @@ class EditEditionController extends AbstractBase
             isset($view->edition['Series_ID'])
             && !empty($view->edition['Series_ID'])
         ) {
-            $view->series = $this->getDbTable('series')
+            $view->series = $this->getDbService(SeriesService::class)
                 ->getByPrimaryKey($view->edition['Series_ID']);
             $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
                 ->getAltTitles($view->edition['Series_ID']);

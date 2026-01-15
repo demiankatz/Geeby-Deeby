@@ -35,6 +35,7 @@ use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
+use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
 use function intval;
@@ -58,7 +59,7 @@ class EditSeriesController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'series',
+            SeriesService::class,
             'series',
             'geeby-deeby/edit-series/render-series'
         );
@@ -99,17 +100,15 @@ class EditSeriesController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'name' => 'Series_Name',
-            'desc' => 'Series_Description',
-            'lang' => 'Language_ID',
+            'name' => 'setSeriesName',
+            'desc' => 'setDescription',
+            'lang' => 'setLanguage',
         ];
-        [$view, $ok] = $this->handleGenericItem('series', $assignMap, 'series');
+        [$view, $ok] = $this->handleGenericItem(SeriesService::class, $assignMap, 'series');
         if (!$ok) {
             return $view;
         }
-        $seriesId = $view->seriesObj->Series_ID
-            ?? $view->affectedRow->Series_ID
-            ?? null;
+        $seriesId = $view->seriesObj?->getId() ?? $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost() && $this->params()->fromPost('attribs')) {
@@ -135,6 +134,11 @@ class EditSeriesController extends AbstractBase
             $view->materials = $this->getDbService(MaterialTypeService::class)->getList();
             $view->countries = $this->getDbService(CountryService::class)->getList();
             $view->categories = $this->getDbService(CategoryService::class)->getList();
+            $view->selectedCategories = array_map(
+                fn ($category) => $category['Category_ID'],
+                $this->getDbTable('seriescategories')->getCategories($seriesId)->toArray()
+            );
+
             $config = $this->serviceLocator->get('config');
             $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
                 ?? true;
@@ -374,7 +378,7 @@ class EditSeriesController extends AbstractBase
             return $this->jsonReportSuccess();
         }
 
-        $series = $this->getDbTable('series')->getByPrimaryKey(
+        $series = $this->getDbService(SeriesService::class)->getByPrimaryKey(
             $this->params()->fromRoute('id')
         );
         $edName = $this->serviceLocator->get('GeebyDeeby\Articles')

@@ -82,10 +82,9 @@
   <div id="categories-tab" class="tab-pane">
     <?php if (!empty($categories)): ?>
       <div class="edit_container">
-        <?php $selected_categories = $seriesObj->getCategoryIDs(); ?>
         <form onsubmit="Series.saveCategories(); return false;">
           <?php foreach ($categories as $current): ?>
-            <input type="checkbox" id="Category_ID_<?=$current['Category_ID']?>" class="Category_ID" value="<?=$current['Category_ID']?>"<?=in_array($current['Category_ID'], $selected_categories) ? ' checked="checked"' : '' ?> />
+            <input type="checkbox" id="Category_ID_<?=$current['Category_ID']?>" class="Category_ID" value="<?=$current['Category_ID']?>"<?=in_array($current['Category_ID'], $selectedCategories) ? ' checked="checked"' : '' ?> />
             <label for="Category_ID_<?=$current['Category_ID']?>"><?=$this->escapeHtml($current['Category'])?></label><br />
           <?php endforeach; ?>
           <input type="submit" value="Save" />

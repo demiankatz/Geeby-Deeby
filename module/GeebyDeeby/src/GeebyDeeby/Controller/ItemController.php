@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
 use function is_object;
@@ -288,8 +289,7 @@ class ItemController extends AbstractBase
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForItem($id);
         $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
-        $view->series = $this->getDbTable('series')
-            ->getSeriesForItem($id, true, true);
+        $view->series = $this->getDbService(SeriesService::class)->getSeriesForItem($id, true, true);
         $view->platforms = $this->getDbTable('editionsplatforms')
             ->getPlatformsForItem($id);
         // Contains/containedIn are item-level relationships (see
@@ -599,8 +599,7 @@ class ItemController extends AbstractBase
         // Do we have a series ID?  If not, the user may need to pick one:
         $series = $this->params()->fromPost('series');
         if (null === $series) {
-            $seriesOptions = $this->getDbTable('series')
-                ->getSeriesForItem($item, false)->toArray();
+            $seriesOptions = $this->getDbService(SeriesService::class)->getSeriesForItem($item, false);
             if (count($seriesOptions) > 1) {
                 $view = $this->createViewModel(['series' => $seriesOptions]);
                 $view->setTemplate('geeby-deeby/item/collection-pick-series');

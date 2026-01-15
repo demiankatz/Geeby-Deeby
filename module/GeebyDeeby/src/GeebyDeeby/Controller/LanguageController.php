@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\LanguageService;
+use GeebyDeeby\Db\Service\SeriesService;
 
 use function is_object;
 
@@ -56,12 +57,12 @@ class LanguageController extends AbstractBase
         if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Language', 'notfound');
         }
-        $view = $this->createViewModel(
-            ['language' => $entity->toArray()]
+        return $this->createViewModel(
+            [
+                'language' => $entity->toArray(),
+                'series' => $this->getDbService(SeriesService::class)->getSeriesForLanguage($id),
+            ]
         );
-        $view->series = $this->getDbTable('series')
-            ->getSeriesForLanguage($id);
-        return $view;
     }
 
     /**

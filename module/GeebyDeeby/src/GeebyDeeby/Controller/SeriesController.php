@@ -30,9 +30,11 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\LanguageService;
+use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
+use Laminas\View\Model\ViewModel;
 
 use function count;
 use function is_object;
@@ -58,9 +60,8 @@ class SeriesController extends AbstractBase
     protected function getViewModelWithSeries($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('series');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(SeriesService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
@@ -69,7 +70,7 @@ class SeriesController extends AbstractBase
             = $this->getDbTable('seriesrelationshipsvalues')
             ->getRelationshipsForSeries($id);
         return $this->createViewModel(
-            ['series' => $rowObj->toArray()] + $extras
+            ['series' => $entity->toArray()] + $extras
         );
     }
 
@@ -490,7 +491,7 @@ class SeriesController extends AbstractBase
      */
     protected function getRdfList()
     {
-        $list = $this->getDbTable('series')->getList();
+        $list = $this->getDbService(SeriesService::class)->getList();
         $graph = new \EasyRdf\Graph();
         foreach ($list as $series) {
             $this->addSeriesToGraph($graph, $series);
@@ -642,7 +643,7 @@ class SeriesController extends AbstractBase
     {
         return $this->createViewModel(
             [
-                'series' => $this->getDbTable('series')->getList(),
+                'series' => $this->getDbService(SeriesService::class)->getList(),
             ]
         );
     }
@@ -650,22 +651,13 @@ class SeriesController extends AbstractBase
     /**
      * New series action
      *
-     * @return mixed
+     * @return ViewModel
      */
-    public function newAction()
+    public function newAction(): ViewModel
     {
-        $table = $this->getDbTable('series');
-        $adapter = $table->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($table->getTable());
-        $query->order('Series_ID DESC');
-        $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+        $paginator = $this->getDbService(SeriesService::class)->getNewSeriesPaginator(
+            $this->params()->fromQuery('page', 1)
         );
-        $paginator->setItemCountPerPage(50);
-        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
         return $this->createViewModel(compact('paginator'));
     }
 
