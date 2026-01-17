@@ -40,4 +40,81 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the item.
+     *
+     * @return string
+     */
+    public function getItemName(): string;
+
+    /**
+     * Set the name of the item.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setItemName(string $name): static;
+
+    /**
+     * Get errata for the item.
+     *
+     * @return string
+     */
+    public function getErrata(): string;
+
+    /**
+     * Set errata for the item.
+     *
+     * @param string $errata New errata
+     *
+     * @return static
+     */
+    public function setErrata(string $errata): static;
+
+    /**
+     * Get thanks for the item.
+     *
+     * @return string
+     */
+    public function getThanks(): string;
+
+    /**
+     * Set thanks for the item.
+     *
+     * @param string $thanks New thanks
+     *
+     * @return static
+     */
+    public function setThanks(string $thanks): static;
+
+    /**
+     * Get associated material type.
+     *
+     * @return MaterialTypeEntityInterface
+     */
+    public function getMaterialType(): MaterialTypeEntityInterface;
+
+    /**
+     * Set associated material type.
+     *
+     * @param int|MaterialTypeEntityInterface $materialType Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setMaterialType(int|MaterialTypeEntityInterface $materialType): static;
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName(): string;
 }

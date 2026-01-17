@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CitationService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
+use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -57,7 +58,7 @@ class EditItemController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'item',
+            ItemService::class,
             'items',
             'geeby-deeby/edit-item/render-items'
         );
@@ -98,18 +99,16 @@ class EditItemController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'name' => 'Item_Name',
-            'errata' => 'Item_Errata',
-            'thanks' => 'Item_Thanks',
-            'material' => 'Material_Type_ID',
+            'name' => 'setItemName',
+            'errata' => 'setErrata',
+            'thanks' => 'setThanks',
+            'material' => 'setMaterialType',
         ];
-        [$view, $ok] = $this->handleGenericItem('item', $assignMap, 'item');
+        [$view, $ok] = $this->handleGenericItem(ItemService::class, $assignMap, 'item');
         if (!$ok) {
             return $view;
         }
-        $itemId = $view->itemObj->Item_ID
-            ?? $view->affectedRow->Item_ID
-            ?? null;
+        $itemId = $view->itemObj?->getId() ?? $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if (
@@ -180,7 +179,7 @@ class EditItemController extends AbstractBase
                 $this->getDbTable('edition')->insert(
                     [
                         'Edition_Name' => $parentEdition->Edition_Name,
-                        'Item_ID' => $view->affectedRow->Item_ID,
+                        'Item_ID' => $itemId,
                         'Series_ID' => $parentEdition->Series_ID,
                         'Edition_Length' => $this->params()->fromPost('len'),
                         'Edition_Endings' => $this->params()->fromPost('endings'),
@@ -194,7 +193,7 @@ class EditItemController extends AbstractBase
                 $this->getDbTable('edition')->insert(
                     [
                         'Edition_Name' => $edName,
-                        'Item_ID' => $view->affectedRow->Item_ID,
+                        'Item_ID' => $itemId,
                         'Series_ID' => $seriesID,
                         'Edition_Length' => $this->params()->fromPost('len'),
                         'Edition_Endings' => $this->params()->fromPost('endings'),

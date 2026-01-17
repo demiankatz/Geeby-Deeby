@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function is_object;
@@ -116,9 +117,7 @@ class EditionController extends AbstractBase
             return false;
         }
         if (!empty($rowObj->Item_ID)) {
-            $itemTable = $this->getDbTable('item');
-            $itemObj = $itemTable->getByPrimaryKey($rowObj->Item_ID);
-            $item = $itemObj->toArray();
+            $item = $this->getDbService(ItemService::class)->getByPrimaryKey($rowObj->Item_ID)->toArray();
             if (!empty($rowObj->Preferred_Item_AltName_ID)) {
                 $ian = $this->getDbTable('itemsalttitles');
                 $tmpRow = $ian->select(

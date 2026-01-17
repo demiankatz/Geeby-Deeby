@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
@@ -602,7 +603,7 @@ class SeriesController extends AbstractBase
         $config = $this->serviceLocator->get('config');
         $view->groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
             ?? true;
-        $view->items = $this->getDbTable('item')
+        $view->items = $this->getDbService(ItemService::class)
             ->getItemsForSeries($id, true, $view->groupByMaterial);
         $view->language = $this->getDbService(LanguageService::class)
             ->getByPrimaryKey($view->series['Language_ID']);

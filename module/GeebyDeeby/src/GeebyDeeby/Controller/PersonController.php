@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Service\PersonService;
 use Laminas\View\Model\ViewModel;
@@ -153,7 +154,7 @@ class PersonController extends AbstractBase
 
         $view = $this->createViewModel();
         $view->person = $person->toArray();
-        $view->items  = $this->getDbTable('item')->getItemsWithFullTextByPerson($personId);
+        $view->items  = $this->getDbService(ItemService::class)->getItemsWithFullTextByPerson($personId);
 
         return $view;
     }

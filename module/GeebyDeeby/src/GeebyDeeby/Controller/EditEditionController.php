@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
+use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
@@ -166,11 +167,11 @@ class EditEditionController extends AbstractBase
             $view->attributeValues = $attributeValues;
         }
 
-        $itemTable = $this->getDbTable('item');
+        $ItemService = $this->getDbService(ItemService::class);
 
         // Add item/series details if necessary:
         if (isset($view->edition['Item_ID']) && !empty($view->edition['Item_ID'])) {
-            $view->item = $itemTable->getByPrimaryKey($view->edition['Item_ID']);
+            $view->item = $ItemService->getByPrimaryKey($view->edition['Item_ID']);
             $view->itemAltTitles = $this->getDbTable('itemsalttitles')
                 ->getAltTitles($view->edition['Item_ID']);
         }
@@ -212,8 +213,7 @@ class EditEditionController extends AbstractBase
                 $view->next = $view->editionObj->getNextInSeries();
                 $view->previous = $view->editionObj->getPreviousInSeries();
             }
-            $view->item_list = $itemTable
-                ->getItemsForEdition($editionId);
+            $view->item_list = $ItemService->getItemsForEdition($editionId);
         }
         return $view;
     }

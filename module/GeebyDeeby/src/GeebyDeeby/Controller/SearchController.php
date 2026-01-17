@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PersonService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
@@ -115,7 +116,7 @@ class SearchController extends AbstractBase
         $view->series = $this->getDbService(SeriesService::class)->keywordSearch($tokens);
         $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
             ->keywordSearch($tokens);
-        $view->items = $this->getDbTable('item')->keywordSearch($tokens);
+        $view->items = $this->getDbService(ItemService::class)->keywordSearch($tokens);
         $view->itemsAltTitles = $this->getDbTable('itemsalttitles')
             ->keywordSearch($tokens);
         $view->categories = $this->getDbTable('category')->keywordSearch($tokens);
@@ -202,7 +203,7 @@ class SearchController extends AbstractBase
         $view->series = $this->getDbService(SeriesService::class)->keywordSearch($tokens);
         $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
             ->keywordSearch($tokens);
-        $view->items = $this->getDbTable('item')->keywordSearch($tokens);
+        $view->items = $this->getDbService(ItemService::class)->keywordSearch($tokens);
         $view->itemsAltTitles = $this->getDbTable('itemsalttitles')
             ->keywordSearch($tokens);
         return $view;

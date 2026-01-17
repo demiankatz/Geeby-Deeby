@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
 
@@ -89,9 +90,8 @@ class ItemController extends AbstractBase
     protected function getViewModelWithItem($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('item');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(ItemService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
@@ -102,7 +102,7 @@ class ItemController extends AbstractBase
             ->getDbTable('itemsrelationshipsvalues')
             ->getRelationshipsForItem($id);
         return $this->createViewModel(
-            ['item' => $rowObj->toArray()] + $extras
+            ['item' => $entity->toArray()] + $extras
         );
     }
 
@@ -296,9 +296,9 @@ class ItemController extends AbstractBase
         // addItemRelationships below), while children/parents are edition-level
         // relationships. These are very similar, but the edition relationships
         // are preferred and more valuable.
-        $itemTable = $this->getDbTable('item');
-        $view->children = $itemTable->getItemChildren($id);
-        $view->parents = $itemTable->getItemParents($id);
+        $itemService = $this->getDbService(ItemService::class);
+        $view->children = $itemService->getItemChildren($id);
+        $view->parents = $itemService->getItemParents($id);
 
         $edTable = $this->getDbTable('edition');
         $view->publishers = $edTable->getPublishersForItem($id);
@@ -428,7 +428,7 @@ class ItemController extends AbstractBase
 
         // Standard case: all items:
         return $this->createViewModel(
-            ['items' => $this->getDbTable('item')->getList()]
+            ['items' => $this->getDbService(ItemService::class)->getList()]
         );
     }
 
@@ -449,18 +449,9 @@ class ItemController extends AbstractBase
      */
     public function newAction()
     {
-        $table = $this->getDbTable('item');
-        $adapter = $table->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($table->getTable());
-        $query->order('Item_ID DESC');
-        $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+        $paginator = $this->getDbService(ItemService::class)->getNewItemsPaginator(
+            $this->params()->fromQuery('page', 1)
         );
-        $paginator->setItemCountPerPage(50);
-        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
         return $this->createViewModel(compact('paginator'));
     }
 
