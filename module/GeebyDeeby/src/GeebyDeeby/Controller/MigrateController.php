@@ -65,8 +65,6 @@ class MigrateController extends AbstractBase
                 'release dates from Items_Release_Dates.',
             'migrateItemCreditsToEditions' =>
                 'credits from Items_Credits.',
-            'migrateItemLengthAndEndingsToEditions' =>
-                'length/ending values from Items.',
             'migrateItemImagesToEditions' =>
                 'Images from Items_Images',
             'migrateItemISBNsToEditions' =>
@@ -187,33 +185,6 @@ class MigrateController extends AbstractBase
             'itemsreleasedates',
             'editionsreleasedates'
         );
-    }
-
-    /**
-     * Migrate key Items fields to Editions.
-     *
-     * @return int Number of rows migrated
-     */
-    protected function migrateItemLengthAndEndingsToEditions()
-    {
-        $i = $this->getDbTable('item');
-        $e = $this->getDbTable('edition');
-        $count = 0;
-        foreach ($i->getList() as $current) {
-            if (!empty($current->Item_Length) || !empty($current->Item_Endings)) {
-                $currentEds = $e->getEditionsForItem($current['Item_ID']);
-                foreach ($currentEds as $currentEd) {
-                    $currentEd->Edition_Length = $current->Item_Length;
-                    $currentEd->Edition_Endings = $current->Item_Endings;
-                    $currentEd->save();
-                }
-                $current->Item_Length = null;
-                $current->Item_Endings = null;
-                $current->save();
-                $count++;
-            }
-        }
-        return $count;
     }
 
     /**
