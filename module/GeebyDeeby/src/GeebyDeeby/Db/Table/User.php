@@ -81,7 +81,7 @@ class User extends Gateway
                     'Join_Reason',
                 ]
             );
-            $select->where->equalTo('Person_ID', 0);
+            $select->where->equalTo('Approved', 'n');
             $select->order('Username');
         };
         return $this->select($callback);
@@ -90,15 +90,20 @@ class User extends Gateway
     /**
      * Get a list of users.
      *
+     * @param bool $approved Limit to approved users?
+     *
      * @return mixed
      */
-    public function getList()
+    public function getList($approved = true)
     {
-        $callback = function ($select): void {
+        $callback = function ($select) use ($approved): void {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
                 ['User_ID', 'Username', 'Name', 'Address', 'Person_ID']
             );
+            if ($approved) {
+                $select->where->equalTo('Approved', 'y');
+            }
             $select->order('Username');
         };
         return $this->select($callback);
