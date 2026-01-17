@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
+- The database system has been refactored to abstract Laminas Row and Table classes behind generalized services and entity interfaces.
 - The getSuggestions() methods of various Row classes now accept null as well as false to indicate no limit.
 - View helpers have been modernized.
 
