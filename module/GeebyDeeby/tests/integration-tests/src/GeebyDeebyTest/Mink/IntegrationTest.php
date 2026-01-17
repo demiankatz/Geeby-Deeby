@@ -188,17 +188,17 @@ class IntegrationTest extends MinkTestCase
      *
      * @param string $username User to approve
      * @param ?int   $groupId  Group to apply (null for no group)
-     * @param int    $personId Person ID to link (-1 for none)
+     * @param ?int   $personId Person ID to link
      *
      * @return void
      */
     protected function approveUserWithDirectDatabaseAccess(
         string $username,
         ?int $groupId = null,
-        int $personId = -1
+        ?int $personId = null
     ): void {
         $userTable = $this->getServiceLocator()->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
-        $changes = ['Person_ID' => $personId];
+        $changes = ['Person_ID' => $personId, 'Approved' => 'y'];
         if ($groupId) {
             $changes['User_Group_ID'] = $groupId;
         }
