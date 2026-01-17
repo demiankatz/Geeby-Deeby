@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Changed
 
 - The getSuggestions() methods of various Row classes now accept null as well as false to indicate no limit.
+- The Recent_Reviews table has been removed and replaced with an Added column in the Items_Reviews and Series_Reviews tables.
 - View helpers have been modernized.
 
 ### Removed

@@ -113,7 +113,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'publishersaddresses' => 'GeebyDeeby\Db\Table\PublishersAddresses',
         'publishersimprints' => 'GeebyDeeby\Db\Table\PublishersImprints',
         'publishersuris' => 'GeebyDeeby\Db\Table\PublishersURIs',
-        'recentreviews' => 'GeebyDeeby\Db\Table\RecentReviews',
         'role' => 'GeebyDeeby\Db\Table\Role',
         'series' => 'GeebyDeeby\Db\Table\Series',
         'seriesalttitles' => 'GeebyDeeby\Db\Table\SeriesAltTitles',

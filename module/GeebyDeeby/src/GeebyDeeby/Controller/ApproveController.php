@@ -218,24 +218,8 @@ class ApproveController extends AbstractBase
         $table = $this->getDbTable(
             $type == 'item' ? 'itemsreviews' : 'seriesreviews'
         );
-        $value = ['Review' => $text, 'Approved' => 'y'];
+        $value = ['Review' => $text, 'Approved' => 'y', 'Added' => date('Y-m-d')];
         $table->update($value, $itemWhere + $userWhere + ['Approved' => 'n']);
-        $recentTable = $this->getDbTable('recentreviews');
-        try {
-            $recentTable->insert(
-                [
-                    'User_ID' => $userId,
-                    'Item_ID' => $itemId,
-                    'Type' => $type,
-                    'Added' => date('Y-m-d'),
-                ]
-            );
-        } catch (\Laminas\Db\Adapter\Exception\RuntimeException $e) {
-            // Ignore duplicate insert errors, but rethrow others....
-            if (!str_starts_with($e->getMessage(), 'Duplicate entry')) {
-                throw $e;
-            }
-        }
         return $this->jsonReportSuccess();
     }
 

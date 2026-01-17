@@ -126,4 +126,25 @@ class SeriesReviews extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get recent series comments
+     *
+     * @return mixed
+     */
+    public function getRecentSeriesComments()
+    {
+        $callback = function ($select): void {
+            $select->join(
+                ['u' => 'Users'],
+                'Series_Reviews.User_ID = u.User_ID'
+            );
+            $select->join(
+                ['s' => 'Series'],
+                'Series_Reviews.Series_ID = s.Series_ID'
+            );
+            $select->order(['Added desc', 'Username']);
+        };
+        return $this->select($callback);
+    }
 }
