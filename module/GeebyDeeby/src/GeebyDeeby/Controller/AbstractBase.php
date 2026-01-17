@@ -516,8 +516,10 @@ class AbstractBase extends AbstractActionController
      * Handle generic linking between two items using a database service.
      *
      * @param string    $serviceName        Name of database service to leverage
-     * @param string    $primarySetter      Name of entity setter whose value is in 'id' route parameter
-     * @param string    $secondarySetter    Name of entity setter whose value is in 'extra' route parameter
+     * @param ?string   $primarySetter      Name of entity setter whose value is in 'id' route parameter
+     * (null to disable creation)
+     * @param ?string   $secondarySetter    Name of entity setter whose value is in 'extra' route parameter
+     * (null to disable creation)
      * @param string    $listVariable       Name of view variable to assign list to when displaying existing links
      * @param string    $listMethod         Name of service method to call for list assignment
      * @param string    $listTemplate       Name of template to use for displaying list
@@ -529,8 +531,8 @@ class AbstractBase extends AbstractActionController
      */
     public function handleGenericLinkForService(
         string $serviceName,
-        string $primarySetter,
-        string $secondarySetter,
+        ?string $primarySetter,
+        ?string $secondarySetter,
         string $listVariable,
         string $listMethod,
         string $listTemplate,
@@ -544,6 +546,9 @@ class AbstractBase extends AbstractActionController
         if (!empty($primary) && !empty($secondary)) {
             try {
                 if ($this->getRequest()->isPut() || $this->getRequest()->isPost()) {
+                    if (!$primarySetter || !$secondarySetter) {
+                        return $this->jsonDie('Primary and secondary setters must be configured to support PUT/POST');
+                    }
                     $entity = $service->createEntity();
                     $entity->$primarySetter($primary);
                     $entity->$secondarySetter($secondary);

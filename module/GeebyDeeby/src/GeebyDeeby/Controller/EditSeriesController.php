@@ -34,6 +34,7 @@ use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\PublishersAddressService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -284,7 +285,7 @@ class EditSeriesController extends AbstractBase
         }
         $view = $this->createViewModel();
         $view->row = $table->getByPrimaryKey($rowId);
-        $view->addresses = $this->getDbTable('publishersaddresses')
+        $view->addresses = $this->getDbService(PublishersAddressService::class)
             ->getAddressesForPublisher($view->row->Publisher_ID);
         $view->imprints = $this->getDbTable('publishersimprints')
             ->getImprintsForPublisher($view->row->Publisher_ID);

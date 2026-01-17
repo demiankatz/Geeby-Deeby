@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\CityService;
 use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\PredicateService;
+use GeebyDeeby\Db\Service\PublishersAddressService;
 use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\PublishersUriService;
 
@@ -75,7 +76,7 @@ class EditPublisherController extends AbstractBase
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
             $view->cities = $this->getDbService(CityService::class)->getList();
             $view->countries = $this->getDbService(CountryService::class)->getList();
-            $view->addresses = $this->getDbTable('publishersaddresses')
+            $view->addresses = $this->getDbService(PublishersAddressService::class)
                 ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
             $view->imprints = $this->getDbTable('publishersimprints')
                 ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
@@ -96,19 +97,18 @@ class EditPublisherController extends AbstractBase
     {
         // Special case: new address:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('publishersaddresses');
-            $row = $table->createRow();
-            $row->Publisher_ID = $this->params()->fromRoute('id');
-            $row->Country_ID = $this->params()->fromPost('country');
-            $row->City_ID = $this->params()->fromPost('city');
-            if (empty($row->City_ID)) {
-                $row->City_ID = null;
-            }
-            $row->Street = $this->params()->fromPost('street');
-            if (empty($row->Country_ID)) {
+            $countryId = $this->params()->fromPost('country');
+            if (!$countryId) {
                 return $this->jsonDie('Country must be specified.');
             }
-            $table->insert((array)$row);
+            $cityId = $this->params()->fromPost('city');
+            $addressService = $this->getDbService(PublishersAddressService::class);
+            $entity = $addressService->createEntity()
+                ->setPublisher($this->params()->fromRoute('id'))
+                ->setCountry((int)$countryId)
+                ->setCity($cityId ? (int)$cityId : null)
+                ->setStreet($this->params()->fromPost('street'));
+            $addressService->persistEntity($entity);
             return $this->jsonReportSuccess();
         } else {
             // Prevent deletion of imprints that are linked up:
@@ -126,12 +126,13 @@ class EditPublisherController extends AbstractBase
             }
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'publishersaddresses',
-                'Publisher_ID',
-                'Address_ID',
+                PublishersAddressService::class,
+                null,
+                null,
                 'addresses',
                 'getAddressesForPublisher',
-                'geeby-deeby/edit-publisher/address-list.phtml'
+                'geeby-deeby/edit-publisher/address-list.phtml',
+                retrieveLinkMethod: 'getAddressesForPublisherPublisherAddress'
             );
         }
     }
