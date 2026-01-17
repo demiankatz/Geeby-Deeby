@@ -17,7 +17,7 @@
       </select>
     </label>
     <label><span class="sr-only">Target:</span><input id="pseudo_name" /></label>
-    <input type="submit" value="Add Relationship" />
+    <input id="add_relationship" type="submit" value="Add Relationship" />
   </form>
 </div>
 <hr/>
@@ -42,7 +42,7 @@
     <form onsubmit="Person.link('URI'); return false;">
       <?=$this->render('geeby-deeby/edit-predicate/select.phtml')?>
       <label>URI: <input type="text" id="uri" /></label>
-      <input type="submit" value="Add URI" />
+      <input id="add_uri" type="submit" value="Add URI" />
     </form>
     <div id="uri_list">
       <?=$this->render('geeby-deeby/edit-person/uri-list.phtml')?>

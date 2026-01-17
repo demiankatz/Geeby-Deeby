@@ -3,7 +3,7 @@
 /**
  * Script manager (wrapper around HeadScript helper).
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2017.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  View_Helpers
@@ -29,6 +29,10 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\View\Helper\BasePath;
+use Laminas\View\Helper\HeadScript;
+
 /**
  * Script manager (wrapper around HeadScript helper).
  *
@@ -38,7 +42,7 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ScriptManager extends \Laminas\View\Helper\AbstractHelper
+class ScriptManager
 {
     /**
      * Base path
@@ -48,22 +52,28 @@ class ScriptManager extends \Laminas\View\Helper\AbstractHelper
     protected $basePath;
 
     /**
-     * HeadScript helper
-     *
-     * @var object
-     */
-    protected $headScript;
-
-    /**
      * Constructor
      *
-     * @param string $basePath   Base path
-     * @param object $headScript HeadScript helper
+     * @param string|BasePath $basePath   BasePath view helper (or base path string)
+     * @param HeadScript      $headScript HeadScript view helper
      */
-    public function __construct($basePath, $headScript)
+    public function __construct(
+        #[Autowire(container: 'ViewHelperManager', service: BasePath::class)]
+        string|BasePath $basePath,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected HeadScript $headScript
+    ) {
+        $this->basePath = $basePath instanceof BasePath ? ($basePath)() : $basePath;
+    }
+
+    /**
+     * Make helper invokable.
+     *
+     * @return static
+     */
+    public function __invoke(): static
     {
-        $this->basePath = $basePath;
-        $this->headScript = $headScript;
+        return $this;
     }
 
     /**

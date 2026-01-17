@@ -13,6 +13,12 @@
             "php": "8.2"
         }
     },
+    "autoload": {
+        "psr-4": {
+            "GeebyDeeby\\": ["module/GeebyDeeby/src/GeebyDeeby", "module/GeebyDeeby"],
+            "GeebyDeebyTest\\": ["module/GeebyDeeby/src/GeebyDeebyTest"]
+        }
+    },
     "require": {
         "php": ">=8.2",
         "easyrdf/easyrdf": "^1.1.1",
@@ -30,9 +36,12 @@
         "symfony/mailer": "^6.4.4"
     },
     "require-dev": {
+        "behat/mink": "1.12.0",
+        "dmore/chrome-mink-driver": "2.10.0",
         "friendsofphp/php-cs-fixer": "3.89.2",
         "phing/phing": "3.1.0",
         "phpstan/phpstan": "2.1.32",
+        "phpunit/phpunit": "11.5.43",
         "rector/rector": "2.2.7",
         "squizlabs/php_codesniffer": "4.0.1"
     },

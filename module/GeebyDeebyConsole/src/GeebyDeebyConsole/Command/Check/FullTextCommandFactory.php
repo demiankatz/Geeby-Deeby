@@ -3,7 +3,7 @@
 /**
  * Factory for check/fulltext command.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2020.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Console
@@ -29,8 +29,8 @@
 
 namespace GeebyDeebyConsole\Command\Check;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for check/fulltext command.
@@ -48,7 +48,7 @@ class FullTextCommandFactory implements FactoryInterface
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
-     * @param null|array         $options       Extra options (optional)
+     * @param ?array             $options       Extra options (optional)
      *
      * @return object
      *
@@ -60,7 +60,7 @@ class FullTextCommandFactory implements FactoryInterface
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');

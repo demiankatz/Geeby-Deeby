@@ -3,7 +3,7 @@
 /**
  * Database table plugin manager
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -69,7 +69,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'editionsplatforms' => 'GeebyDeeby\Db\Table\EditionsPlatforms',
         'editionsproductcodes' => 'GeebyDeeby\Db\Table\EditionsProductCodes',
         'editionsreleasedates' => 'GeebyDeeby\Db\Table\EditionsReleaseDates',
-        'faqs' => 'GeebyDeeby\Db\Table\FAQs',
         'file' => 'GeebyDeeby\Db\Table\File',
         'filetype' => 'GeebyDeeby\Db\Table\FileType',
         'fulltextsource' => 'GeebyDeeby\Db\Table\FullTextSource',

@@ -3,7 +3,7 @@
 /**
  * Abstract base controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -388,8 +388,7 @@ class AbstractBase extends AbstractActionController
      * @param array  $params     Extra parameters for the RouteMatch object (no
      * need to provide action here, since $action takes care of that)
      *
-     * @return bool              Returns false so this can be returned by a
-     * controller without causing duplicate ViewModel attachment.
+     * @return mixed
      */
     public function forwardTo($controller, $action, $params = [])
     {

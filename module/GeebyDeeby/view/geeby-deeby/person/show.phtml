@@ -4,6 +4,13 @@
     $this->layout()->toggleLink = $this->toggleLink('edit/person', $person['Person_ID']);
     $displayedSomething = false;
 ?>
+<p>
+  <a href="<?=$this->url('people')?>">[List All People]</a>
+  <a href="<?=$this->url('person', [
+      'id' => $person['Person_ID'],
+      'extra' => 'FullText',
+  ])?>">[List Person Full Text]</a>
+</p>
 <?php $realNameCount = count($realNames); ?>
 <?php if ($realNameCount > 0): $displayedSomething = true; ?>
   <p><b>Pseudonym For:</b>

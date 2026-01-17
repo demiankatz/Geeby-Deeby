@@ -3,7 +3,7 @@
 /**
  * Person controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -127,6 +127,31 @@ class PersonController extends AbstractBase
         if (!is_object($view)) {
             return $this->forwardTo(__NAMESPACE__ . '\Person', 'notfound');
         }
+        return $view;
+    }
+
+    /**
+     * Person full text listing
+     *
+     * Displays items associated with this person that have
+     * available online full text sources.
+     *
+     * @return mixed
+     */
+    public function fullTextAction()
+    {
+        $personId = (int)$this->params()->fromRoute('id');
+
+        $person = $this->getDbTable('person')->getByPrimaryKey($personId);
+        if (!is_object($person)) {
+            return $this->forwardTo(__NAMESPACE__ . '\Person', 'notfound');
+        }
+
+        $view = $this->createViewModel();
+        $view->person = $person->toArray();
+        $view->items  = $this->getDbTable('item')
+            ->getItemsWithFullTextByPerson($personId);
+
         return $view;
     }
 

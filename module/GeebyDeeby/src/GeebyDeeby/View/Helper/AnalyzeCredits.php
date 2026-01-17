@@ -3,7 +3,7 @@
 /**
  * Credit analysis view helper
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2018.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  View_Helpers
@@ -28,6 +28,10 @@
  */
 
 namespace GeebyDeeby\View\Helper;
+
+use GeebyDeeby\Db\Table\ItemsCreatorsCitations;
+use GeebyDeeby\Db\Table\Pseudonyms;
+use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 use function count;
 use function in_array;
@@ -41,22 +45,8 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
+class AnalyzeCredits
 {
-    /**
-     * Items_Creators_Citations table.
-     *
-     * @var object
-     */
-    protected $citationsTable;
-
-    /**
-     * Pseudonyms table.
-     *
-     * @var object
-     */
-    protected $pseudonymsTable;
-
     /**
      * Pseudonym information.
      *
@@ -74,13 +64,18 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
     /**
      * Constructor
      *
-     * @param object $pseudonyms Pseudonyms table.
-     * @param object $citations  Items_Creators_Citations table.
+     * @param Pseudonyms             $pseudonymsTable Pseudonyms table.
+     * @param ItemsCreatorsCitations $citationsTable  Items_Creators_Citations table.
+     * @param FixTitle               $fixTitleHelper  FixTitle view helper.
      */
-    public function __construct($pseudonyms, $citations)
-    {
-        $this->pseudonymsTable = $pseudonyms;
-        $this->citationsTable = $citations;
+    public function __construct(
+        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
+        protected Pseudonyms $pseudonymsTable,
+        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
+        protected ItemsCreatorsCitations $citationsTable,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected FixTitle $fixTitleHelper
+    ) {
     }
 
     /**
@@ -226,7 +221,6 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
     protected function analyzeGroup($creators, $editions, $details)
     {
         $final = [];
-        $fixTitle = $this->view->plugin('fixtitle');
         foreach ($details as $person => $credits) {
             $notes = [];
             foreach ($credits as $current) {
@@ -234,7 +228,7 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
                 // editions have different attributions.
                 if (count($credits) != count($editions)) {
                     foreach ($credits as $credit) {
-                        $note = $fixTitle($credit['Edition_Name']);
+                        $note = ($this->fixTitleHelper)($credit['Edition_Name']);
                         if (!empty($credit['Note'])) {
                             if (!empty($note)) {
                                 $note .= ' - ';

@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="gbdb" basedir="." default="main">
+  <property name="sh" value="/bin/sh" />
   <property name="tmp" value="/tmp" />
   <property name="package"  value="${phing.project.name}" override="true" />
   <property name="builddir" value="${tmp}/build/${phing.project.name}" override="true" />
   <property name="srcdir"   value="${project.basedir}" override="true" />
+  <property name="gbdburl" value="http://localhost" />
+  <property name="gbdbdb" value="gbdb_test" />
+  <property name="gbdbdbuser" value="gbdbtest" />
+  <property name="gbdbdbpass" value="gbdbtestpass" />
+  <property name="mysqlhost" value="localhost" />
+  <property name="mysqlport" value="3306" />
+  <property name="mysqlprotocol" value="" />
+  <property name="mysqlrootuser" value="root" />
+  <property name="mysqlrootpass" value="password" />
+  <property name="phpunit_command" value="${srcdir}/vendor/bin/phpunit" />
+  <property name="phpunit_extra_params" value="" />
+  <property name="screenshot_dir" value="" /><!-- set to a directory name to capture screenshots of failed tests -->
+  <property name="snooze_multiplier" value="1" /><!-- can be used to slow down Mink tests; increase when tests fail on slow systems -->
+  <property name="default_test_timeout" value="5000" /><!-- default timeout (in ms) for Mink tests; increase when tests fail on slow systems -->
+
+  <property name="mysqlconnectionargs" value="-h ${mysqlhost} -P ${mysqlport} -u ${mysqlrootuser}" />
+  <!-- Add password if not empty -->
+  <if>
+    <not>
+      <equals arg1="${mysqlrootpass}" arg2="" />
+    </not>
+    <then>
+      <property name="mysqlconnectionargs" override="true" value="${mysqlconnectionargs} -p${mysqlrootpass}" />
+    </then>
+  </if>
+  <!-- Add protocol if not empty -->
+  <if>
+    <not>
+      <equals arg1="${mysqlprotocol}" arg2="" />
+    </not>
+    <then>
+      <property name="mysqlconnectionargs" override="true" value="${mysqlconnectionargs} --protocol ${mysqlprotocol}" />
+    </then>
+  </if>
 
   <!-- Main Target -->
   <target name="main" description="main target">
@@ -35,6 +70,7 @@
 
   <!-- Quality Assurance PHP Tasks -->
   <target name="qa-console" description="quality assurance tasks">
+    <phingcall target="phpunitfast"/>
     <phingcall target="php-cs-fixer-dryrun"/>
     <phingcall target="phpcs-console"/>
     <phingcall target="phpstan-console" />
@@ -51,9 +87,33 @@
 
   <!-- PHP CodeSniffer -->
   <target name="phpcbf">
-    <exec executable="${srcdir}/vendor/bin/phpcbf" escape="false" passthru="true" checkreturn="true">
+    <!-- Run phpcs first to find any problems (faster than phpcbf): -->
+    <exec executable="${srcdir}/vendor/bin/phpcs" escape="false" returnProperty="phpcs_retval" outputProperty="phpcs_output">
       <arg line="--cache=${srcdir}/tests/phpcs.cache.json --standard=${srcdir}/tests/phpcs.xml" />
-    </exec>    
+    </exec>
+    <if>
+      <not><equals arg1="${phpcs_retval}" arg2="0" /></not>
+      <then>
+        <echo msg="Trying to fix the following issues: " />
+        <echo msg="${phpcs_output}" />
+        <!-- Extract file names from phpcs output: -->
+        <property name="phpcbf_filelist" value="${phpcs_output}">
+          <filterchain>
+            <linecontainsregexp>
+              <regexp pattern="^FILE: (.*)" />
+            </linecontainsregexp>
+            <striplinebreaks />
+            <replaceregexp>
+              <regexp pattern="FILE: " replace=" " />
+            </replaceregexp>
+          </filterchain>
+        </property>
+        <!-- Finally, run phpcbf: -->
+        <exec executable="${srcdir}/vendor/bin/phpcbf" escape="false" passthru="true">
+          <arg line="--standard=${srcdir}/tests/phpcs.xml ${phpcbf_filelist}" />
+        </exec>
+      </then>
+    </if>
   </target>
   <target name="phpcs">
     <exec executable="${srcdir}/vendor/bin/phpcs" escape="false"> 
@@ -96,6 +156,28 @@
     </exec>
   </target>
 
+  <!-- PHPUnit without logging output -->
+  <target name="phpunitfast" description="Run tests">
+    <exec dir="${srcdir}/module/GeebyDeeby/tests" executable="${sh}" passthru="true" checkreturn="true">
+      <arg line="-c &apos;${phpunit_command} ${phpunit_extra_params}&apos;" />
+      <env key="GBDB_SCREENSHOT_DIR" value="${screenshot_dir}" />
+      <env key="GBDB_URL" value="${gbdburl}" />
+      <env key="GBDB_SNOOZE_MULTIPLIER" value="${snooze_multiplier}" />
+      <env key="GBDB_DEFAULT_TEST_TIMEOUT" value="${default_test_timeout}" />
+    </exec>
+  </target>
+
+  <!-- PHPUnit without logging output, stopping at first error or failure -->
+  <target name="phpunitfaster" description="Run tests">
+    <exec dir="${srcdir}/module/GeebyDeeby/tests" executable="${sh}" passthru="true" checkreturn="true">
+      <arg line="-c &apos;${phpunit_command} --stop-on-defect ${phpunit_extra_params}&apos;" />
+      <env key="GBDB_SCREENSHOT_DIR" value="${screenshot_dir}" />
+      <env key="GBDB_URL" value="${gbdburl}" />
+      <env key="GBDB_SNOOZE_MULTIPLIER" value="${snooze_multiplier}" />
+      <env key="GBDB_DEFAULT_TEST_TIMEOUT" value="${default_test_timeout}" />
+    </exec>
+  </target>
+
   <!-- Rector -->
   <target name="rector-console">
     <exec executable="${srcdir}/vendor/bin/rector" escape="false" passthru="true" checkreturn="true">
@@ -108,18 +190,55 @@
     </exec>
   </target>
 
+  <!-- Set up test database -->
+  <target name="setup_database" description="clean up existing database and users">
+    <!-- clean up anything from past runs -->
+    <phingcall target="teardown_database" />
+    <!-- create database and user -->
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} -e &quot;CREATE DATABASE IF NOT EXISTS ${gbdbdb}&quot;" />
+    </exec>
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} -e &quot;CREATE USER IF NOT EXISTS '${gbdbdbuser}'@'%' IDENTIFIED BY '${gbdbdbpass}'&quot;" />
+    </exec>
+    <!-- load the database definitions -->
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} ${gbdbdb} &lt; ${srcdir}/data/mysql.sql" />
+    </exec>
+    <!-- grant access to new user -->
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} -e &quot;GRANT ALL ON ${gbdbdb}.* TO '${gbdbdbuser}'@'%'&quot;" />
+    </exec>
+    <!-- create superuser role -->
+    <exec executable="mysql" passthru="true" checkreturn="true">
+      <arg line="${mysqlconnectionargs} ${gbdbdb} -e &quot;insert into User_Groups(Group_Name, Content_Editor, User_Editor, Approver, Data_Manager) values ('Superuser', 1, 1, 1, 1);&quot;" />
+    </exec>
+    <!-- create configuration file -->
+    <touch file="${srcdir}/config/autoload/testdb.local.php" />
+    <append destFile="${srcdir}/config/autoload/testdb.local.php" text="&lt;?php return ['geeby-deeby' => ['dbName' => '${gbdbdb}', 'dbUser' => '${gbdbdbuser}', 'dbPass' => '${gbdbdbpass}']]; ?&gt;" />
+  </target>
+
+  <!-- Tear down test database -->
+  <target name="teardown_database" description="clean up existing database and users">
+    <exec executable="mysql" passthru="true">
+      <arg line="${mysqlconnectionargs} -e &quot;DROP DATABASE IF EXISTS ${gbdbdb}&quot;" />
+    </exec>
+    <exec executable="mysql" passthru="true">
+      <arg line="${mysqlconnectionargs} -e &quot;DROP USER IF EXISTS '${gbdbdbuser}'@'%'&quot;" />
+    </exec>
+    <delete file="${srcdir}/config/autoload/testdb.local.php" quiet="true" />
+  </target>
+
   <!-- Set up dependencies -->
-  <target name="startup" description="set up dependencies">
+  <target name="startup" description="set up dependencies and database">
     <exec executable="composer">
       <arg line="install" />
-    </exec>  
+    </exec>
+    <phingcall target="setup_database" />
   </target>
 
   <!-- Clean up -->
-  <target name="shutdown" description="clean up file system">
-    <delete dir="${srcdir}/vendor" includeemptydirs="true" failonerror="true" />
-    <exec command="git">
-      <arg line="reset --hard" />
-    </exec>
+  <target name="shutdown" description="clean up file system and test database">
+    <phingcall target="teardown_database" />
   </target>
 </project>

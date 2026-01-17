@@ -3,7 +3,7 @@
 /**
  * Abstract plugin manager factory.
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2019.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  ServiceManager
@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\ServiceManager;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Abstract plugin manager factory.
@@ -63,7 +63,7 @@ class AbstractPluginManagerFactory implements \Laminas\ServiceManager\Factory\Fa
      *
      * @param ContainerInterface $container Service manager
      * @param string             $name      Requested service name
-     * @param array              $options   Extra options
+     * @param ?array             $options   Extra options
      *
      * @return mixed
      *
@@ -72,7 +72,7 @@ class AbstractPluginManagerFactory implements \Laminas\ServiceManager\Factory\Fa
     public function __invoke(
         ContainerInterface $container,
         $name,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');

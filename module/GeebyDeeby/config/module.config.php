@@ -986,17 +986,6 @@ return [
                     ],
                 ],
             ],
-            'faqs' => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'    => '/FAQs[/[:extra]]',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
-                        'controller'    => 'FAQs',
-                        'action'        => 'index',
-                    ],
-                ],
-            ],
             'files' => [
                 'type'    => 'Segment',
                 'options' => [
@@ -1382,7 +1371,6 @@ return [
             'GeebyDeeby\Controller\EditTagAttribute' => 'GeebyDeeby\Controller\EditTagAttributeController',
             'GeebyDeeby\Controller\EditTagRelationship' => 'GeebyDeeby\Controller\EditTagRelationshipController',
             'GeebyDeeby\Controller\EditUser' => 'GeebyDeeby\Controller\EditUserController',
-            'GeebyDeeby\Controller\FAQs' => 'GeebyDeeby\Controller\FAQsController',
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',
@@ -1403,65 +1391,36 @@ return [
         ],
     ],
     'view_helpers' => [
-        'factories' => [
-            'GeebyDeeby\View\Helper\AnalyzeCredits' =>
-                'GeebyDeeby\View\Helper\AnalyzeCreditsFactory',
-            'GeebyDeeby\View\Helper\Auth' => 'GeebyDeeby\View\Helper\AuthFactory',
-            'GeebyDeeby\View\Helper\Config' =>
-                'GeebyDeeby\View\Helper\ConfigFactory',
-            'GeebyDeeby\View\Helper\DescriptionSource' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\View\Helper\FirstLetter' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\View\Helper\FirstLetterMenu' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\View\Helper\FixTitle' =>
-                'GeebyDeeby\View\Helper\FixTitleFactory',
-            'GeebyDeeby\View\Helper\FormatItemNumber' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\View\Helper\FormatReleaseDate' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\View\Helper\GroupEditions' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\View\Helper\IconButton' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\View\Helper\ScriptManager' =>
-                'GeebyDeeby\View\Helper\ScriptManagerFactory',
-            'GeebyDeeby\View\Helper\ShowEdition' =>
-                'GeebyDeeby\View\Helper\ShowEditionFactory',
-            'GeebyDeeby\View\Helper\ShowPerson' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\View\Helper\ToggleLink' =>
-                'GeebyDeeby\View\Helper\ToggleLinkFactory',
-        ],
+        'abstract_factories' => [\GeebyDeeby\ServiceManager\Factory\AbstractAutowiringFactory::class],
         'aliases' => [
-            'analyzecredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
-            'analyzeCredits' => 'GeebyDeeby\View\Helper\AnalyzeCredits',
-            'auth' => 'GeebyDeeby\View\Helper\Auth',
-            'config' => 'GeebyDeeby\View\Helper\Config',
-            'descriptionsource' => 'GeebyDeeby\View\Helper\DescriptionSource',
-            'descriptionSource' => 'GeebyDeeby\View\Helper\DescriptionSource',
-            'firstletter' => 'GeebyDeeby\View\Helper\FirstLetter',
-            'firstLetter' => 'GeebyDeeby\View\Helper\FirstLetter',
-            'firstlettermenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
-            'firstLetterMenu' => 'GeebyDeeby\View\Helper\FirstLetterMenu',
-            'fixtitle' => 'GeebyDeeby\View\Helper\FixTitle',
-            'fixTitle' => 'GeebyDeeby\View\Helper\FixTitle',
-            'formatitemnumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
-            'formatItemNumber' => 'GeebyDeeby\View\Helper\FormatItemNumber',
-            'formatreleasedate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
-            'formatReleaseDate' => 'GeebyDeeby\View\Helper\FormatReleaseDate',
-            'groupeditions' => 'GeebyDeeby\View\Helper\GroupEditions',
-            'groupEditions' => 'GeebyDeeby\View\Helper\GroupEditions',
-            'iconButton' => 'GeebyDeeby\View\Helper\IconButton',
-            'scriptmanager' => 'GeebyDeeby\View\Helper\ScriptManager',
-            'scriptManager' => 'GeebyDeeby\View\Helper\ScriptManager',
-            'showedition' => 'GeebyDeeby\View\Helper\ShowEdition',
-            'showEdition' => 'GeebyDeeby\View\Helper\ShowEdition',
-            'showperson' => 'GeebyDeeby\View\Helper\ShowPerson',
-            'showPerson' => 'GeebyDeeby\View\Helper\ShowPerson',
-            'togglelink' => 'GeebyDeeby\View\Helper\ToggleLink',
-            'toggleLink' => 'GeebyDeeby\View\Helper\ToggleLink',
+            'analyzecredits' => \GeebyDeeby\View\Helper\AnalyzeCredits::class,
+            'analyzeCredits' => \GeebyDeeby\View\Helper\AnalyzeCredits::class,
+            'auth' => \GeebyDeeby\View\Helper\Auth::class,
+            'config' => \GeebyDeeby\View\Helper\Config::class,
+            'descriptionsource' => \GeebyDeeby\View\Helper\DescriptionSource::class,
+            'descriptionSource' => \GeebyDeeby\View\Helper\DescriptionSource::class,
+            'firstletter' => \GeebyDeeby\View\Helper\FirstLetter::class,
+            'firstLetter' => \GeebyDeeby\View\Helper\FirstLetter::class,
+            'firstlettermenu' => \GeebyDeeby\View\Helper\FirstLetterMenu::class,
+            'firstLetterMenu' => \GeebyDeeby\View\Helper\FirstLetterMenu::class,
+            'fixtitle' => \GeebyDeeby\View\Helper\FixTitle::class,
+            'fixTitle' => \GeebyDeeby\View\Helper\FixTitle::class,
+            'formatitemnumber' => \GeebyDeeby\View\Helper\FormatItemNumber::class,
+            'formatItemNumber' => \GeebyDeeby\View\Helper\FormatItemNumber::class,
+            'formatreleasedate' => \GeebyDeeby\View\Helper\FormatReleaseDate::class,
+            'formatReleaseDate' => \GeebyDeeby\View\Helper\FormatReleaseDate::class,
+            'groupeditions' => \GeebyDeeby\View\Helper\GroupEditions::class,
+            'groupEditions' => \GeebyDeeby\View\Helper\GroupEditions::class,
+            'iconButton' => \GeebyDeeby\View\Helper\IconButton::class,
+            'itemNotes' => \GeebyDeeby\View\Helper\ItemNotes::class,
+            'scriptmanager' => \GeebyDeeby\View\Helper\ScriptManager::class,
+            'scriptManager' => \GeebyDeeby\View\Helper\ScriptManager::class,
+            'showedition' => \GeebyDeeby\View\Helper\ShowEdition::class,
+            'showEdition' => \GeebyDeeby\View\Helper\ShowEdition::class,
+            'showperson' => \GeebyDeeby\View\Helper\ShowPerson::class,
+            'showPerson' => \GeebyDeeby\View\Helper\ShowPerson::class,
+            'togglelink' => \GeebyDeeby\View\Helper\ToggleLink::class,
+            'toggleLink' => \GeebyDeeby\View\Helper\ToggleLink::class,
         ],
     ],
     'view_manager' => [

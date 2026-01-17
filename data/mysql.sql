@@ -397,37 +397,6 @@ CREATE TABLE `Editions_Release_Dates` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `FAQ_Categories`
---
-
-DROP TABLE IF EXISTS `FAQ_Categories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FAQ_Categories` (
-  `FAQ_Category_ID` int(11) NOT NULL DEFAULT '0',
-  `FAQ_Category_Name` tinytext,
-  PRIMARY KEY (`FAQ_Category_ID`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `FAQs`
---
-
-DROP TABLE IF EXISTS `FAQs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FAQs` (
-  `FAQ_Category_ID` int(11) NOT NULL DEFAULT '0',
-  `FAQ_ID` int(11) NOT NULL DEFAULT '0',
-  `FAQ_Name` tinytext,
-  `FAQ_Body` text,
-  PRIMARY KEY (`FAQ_Category_ID`,`FAQ_ID`),
-  FOREIGN KEY (`FAQ_Category_ID`) REFERENCES `FAQ_Categories` (`FAQ_Category_ID`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `File_Types`
 --
 

@@ -3,7 +3,7 @@
 /**
  * Migration controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -65,8 +65,6 @@ class MigrateController extends AbstractBase
                 'release dates from Items_Release_Dates.',
             'migrateItemCreditsToEditions' =>
                 'credits from Items_Credits.',
-            'migrateItemLengthAndEndingsToEditions' =>
-                'length/ending values from Items.',
             'migrateItemImagesToEditions' =>
                 'Images from Items_Images',
             'migrateItemISBNsToEditions' =>
@@ -77,8 +75,6 @@ class MigrateController extends AbstractBase
                 'platforms from Items_Platforms',
             'migratePublisherImprints' =>
                 'imprints from Series_Publishers',
-            'migratePublisherCountries' =>
-                'countries from Series_Publishers',
             'migrateUserPasswords' =>
                 'user password hashes',
         ];
@@ -190,33 +186,6 @@ class MigrateController extends AbstractBase
     }
 
     /**
-     * Migrate key Items fields to Editions.
-     *
-     * @return int Number of rows migrated
-     */
-    protected function migrateItemLengthAndEndingsToEditions()
-    {
-        $i = $this->getDbTable('item');
-        $e = $this->getDbTable('edition');
-        $count = 0;
-        foreach ($i->getList() as $current) {
-            if (!empty($current->Item_Length) || !empty($current->Item_Endings)) {
-                $currentEds = $e->getEditionsForItem($current['Item_ID']);
-                foreach ($currentEds as $currentEd) {
-                    $currentEd->Edition_Length = $current->Item_Length;
-                    $currentEd->Edition_Endings = $current->Item_Endings;
-                    $currentEd->save();
-                }
-                $current->Item_Length = null;
-                $current->Item_Endings = null;
-                $current->save();
-                $count++;
-            }
-        }
-        return $count;
-    }
-
-    /**
      * Migrate Item ISBNs to Editions.
      *
      * @return int Number of rows migrated
@@ -315,52 +284,6 @@ class MigrateController extends AbstractBase
         // No row found -- create one!
         $pi->insert($imprint);
         return $this->getImprintID($current);
-    }
-
-    /**
-     * Migrate countries from Series_Publishers.
-     *
-     * @return int Number of rows migrated
-     */
-    protected function migratePublisherCountries()
-    {
-        $sp = $this->getDbTable('seriespublishers');
-        $count = 0;
-        foreach ($sp->select() as $current) {
-            if (!isset($current->Country_ID) || empty($current->Country_ID)) {
-                continue;
-            }
-            $current->Address_ID = $this->getAddressID($current);
-            $current->Country_ID = 0;
-            $current->save();
-            $count++;
-        }
-        return $count;
-    }
-
-    /**
-     * Support method for migratePublisherCountries -- create or retrieve country ID
-     * for provided Series_Publishers row.
-     *
-     * @param \GeebyDeeby\Db\Row\SeriesPublishers $current Series_Publishers row
-     *
-     * @return string
-     */
-    protected function getAddressID($current)
-    {
-        $pi = $this->getDbTable('publishersaddresses');
-        $address = [
-            'Publisher_ID' => $current->Publisher_ID,
-            'Country_ID' => $current->Country_ID,
-        ];
-        $row = $pi->select($address)->current();
-        if (isset($row['Address_ID'])) {
-            return $row['Address_ID'];
-        }
-
-        // No row found -- create one!
-        $pi->insert($address);
-        return $this->getAddressID($current);
     }
 
     /**

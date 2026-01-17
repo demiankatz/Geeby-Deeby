@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Config view helper factory.
+ * Mix-in for detecting whether a live test environment is currently running.
  *
- * PHP version 5
+ * PHP version 8
  *
- * Copyright (C) Demian Katz 2019.
+ * Copyright (C) Demian Katz 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,48 +17,45 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Tests
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeeby\View\Helper;
-
-use Interop\Container\ContainerInterface;
+namespace GeebyDeebyTest\Feature;
 
 /**
- * Config view helper factory.
+ * Mix-in for detecting whether a live test environment is currently running.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Tests
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ConfigFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+trait LiveDetectionTrait
 {
     /**
-     * Create service
+     * Flag to allow other traits to test for the presence of this one (to enforce
+     * dependencies).
      *
-     * @param ContainerInterface $container Service manager
-     * @param string             $name      Requested service name
-     * @param array              $options   Extra options
-     *
-     * @return mixed
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @var bool
      */
-    public function __invoke(
-        ContainerInterface $container,
-        $name,
-        array $options = null
-    ) {
-        $cfg = $container->get('config');
-        return new $name($cfg['geeby-deeby']);
+    public $hasLiveDetectionTrait = true;
+
+    /**
+     * Is this test running in a continuous integration context?
+     *
+     * @return bool
+     */
+    public function continuousIntegrationRunning()
+    {
+        // We'll assume that if the database configuration exists, then CI is active:
+        return file_exists(__DIR__ . '/../../../../../config/autoload/testdb.local.php');
     }
 }

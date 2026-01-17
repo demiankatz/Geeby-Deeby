@@ -1,11 +1,11 @@
 <?php
 
 /**
- * ShowEdition view helper factory.
+ * Autowiring Attribute (adapted from VuFind)
  *
- * PHP version 5
+ * PHP version 8
  *
- * Copyright (C) Demian Katz 2019.
+ * Copyright (C) The National Library of Finland 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,49 +17,43 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  ServiceManager
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeeby\View\Helper;
+namespace GeebyDeeby\ServiceManager\Factory;
 
-use Interop\Container\ContainerInterface;
+use Attribute;
 
 /**
- * ShowEdition view helper factory.
+ * Autowiring Attribute (adapted from VuFind)
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  ServiceManager
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ShowEditionFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+#[Attribute]
+class Autowire
 {
     /**
-     * Create service
+     * Constructor.
      *
-     * @param ContainerInterface $container Service manager
-     * @param string             $name      Requested service name
-     * @param array              $options   Extra options
-     *
-     * @return mixed
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param ?string $service   Service to inject (mutually exclusive with $config)
+     * @param ?string $container Container or plugin manager to use to get the service
      */
-    public function __invoke(
-        ContainerInterface $container,
-        $name,
-        array $options = null
+    public function __construct(
+        public readonly ?string $service = null,
+        public readonly ?string $container = null,
     ) {
-        $controller = $container->get('ControllerManager')
-            ->get('GeebyDeeby\Controller\Edition');
-        return new $name($controller);
     }
 }

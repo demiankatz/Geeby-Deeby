@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- Autowiring support for services.
+- "Full text by person" screen.
+- Dates on items in series lists (plus associated new ItemNotes view helper).
+- Tests.
+
+### Changed
+
+- The getSuggestions() methods of various Row classes now accept null as well as false to indicate no limit.
+- View helpers have been modernized.
+
+### Removed
+
+- FAQ-related database tables and FAQ functionality (underdeveloped and little-used; will be replaced with static pages where needed).
+- Obsolete data migration methods.
+- View helper factories.
+
+### Fixed
+
+- Collection-related buttons now display appropriate add/modify labels, reflecting actual collection status.
+- Empty list messages for people/series have been corrected (they previously said "items" instead of appropriate entity types).
+- Outdated references to the Interop\Container namespace.
+
 ## 2.10.0 - 2025-12-28
 
 ### Added
