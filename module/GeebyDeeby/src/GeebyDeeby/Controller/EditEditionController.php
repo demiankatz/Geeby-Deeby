@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PlatformService;
+use GeebyDeeby\Db\Service\RoleService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
@@ -189,7 +190,7 @@ class EditEditionController extends AbstractBase
         }
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->roles = $this->getDbTable('role')->getList();
+            $view->roles = $this->getDbService(RoleService::class)->getList();
             $view->credits = $this->getDbTable('editionscredits')
                 ->getCreditsForEdition($editionId);
             $view->images = $this->getDbTable('editionsimages')

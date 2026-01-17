@@ -40,4 +40,58 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface RoleEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the role name.
+     *
+     * @return string
+     */
+    public function getRoleName(): string;
+
+    /**
+     * Set the role name.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setRoleName(string $name): static;
+
+    /**
+     * Get the item creator predicate.
+     *
+     * @return string
+     */
+    public function getItemCreatorPredicate(): string;
+
+    /**
+     * Set the item creator predicate.
+     *
+     * @param string $predicate New predicate
+     *
+     * @return static
+     */
+    public function setItemCreatorPredicate(string $predicate): static;
+
+    /**
+     * Get the edition credit predicate.
+     *
+     * @return string
+     */
+    public function getEditionCreditPredicate(): string;
+
+    /**
+     * Set the edition credit predicate.
+     *
+     * @param string $predicate New predicate
+     *
+     * @return static
+     */
+    public function setEditionCreditPredicate(string $predicate): static;
 }

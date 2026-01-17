@@ -34,6 +34,7 @@ use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\RoleService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
@@ -139,7 +140,7 @@ class EditItemController extends AbstractBase
                 ->getAdaptedFrom($itemId);
             $view->adaptedFrom = $this->getDbTable('itemsadaptations')
                 ->getAdaptedInto($itemId);
-            $view->roles = $this->getDbTable('role')->getList();
+            $view->roles = $this->getDbService(RoleService::class)->getList();
             $view->creators = $this->getDbTable('itemscreators')
                 ->getCreatorsForItem($itemId);
             $view->credits = $this->getDbTable('editionscredits')

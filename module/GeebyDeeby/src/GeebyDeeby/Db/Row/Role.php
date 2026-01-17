@@ -53,16 +53,81 @@ class Role extends RowGateway implements RoleEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Role_Name)) {
-            return 'Role cannot be blank.';
-        }
-        return false;
+        return $this->Role_ID ?? null;
+    }
+
+    /**
+     * Get the role name.
+     *
+     * @return string
+     */
+    public function getRoleName(): string
+    {
+        return $this->Role_Name;
+    }
+
+    /**
+     * Set the role name.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setRoleName(string $name): static
+    {
+        $this->Role_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get the item creator predicate.
+     *
+     * @return string
+     */
+    public function getItemCreatorPredicate(): string
+    {
+        return $this->Item_Creator_Predicate;
+    }
+
+    /**
+     * Set the item creator predicate.
+     *
+     * @param string $predicate New predicate
+     *
+     * @return static
+     */
+    public function setItemCreatorPredicate(string $predicate): static
+    {
+        $this->Item_Creator_Predicate = $predicate;
+        return $this;
+    }
+
+    /**
+     * Get the edition credit predicate.
+     *
+     * @return string
+     */
+    public function getEditionCreditPredicate(): string
+    {
+        return $this->Edition_Credit_Predicate;
+    }
+
+    /**
+     * Set the edition credit predicate.
+     *
+     * @param string $predicate New predicate
+     *
+     * @return static
+     */
+    public function setEditionCreditPredicate(string $predicate): static
+    {
+        $this->Edition_Credit_Predicate = $predicate;
+        return $this;
     }
 }

@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\AuthorityService;
 use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Service\PersonService;
 use GeebyDeeby\Db\Service\PredicateService;
+use GeebyDeeby\Db\Service\RoleService;
 
 /**
  * Edit person controller
@@ -186,7 +187,7 @@ class EditPersonController extends AbstractBase
     public function rolelistAction()
     {
         return $this->getGenericList(
-            'role',
+            RoleService::class,
             'roles',
             'geeby-deeby/edit-person/render-roles'
         );
@@ -200,11 +201,11 @@ class EditPersonController extends AbstractBase
     public function roleAction()
     {
         $assignMap = [
-            'role' => 'Role_Name',
-            'Item_Creator_Predicate' => 'Item_Creator_Predicate',
-            'Edition_Credit_Predicate' => 'Edition_Credit_Predicate',
+            'role' => 'setRoleName',
+            'Item_Creator_Predicate' => 'setItemCreatorPredicate',
+            'Edition_Credit_Predicate' => 'setEditionCreditPredicate',
         ];
-        [$response] = $this->handleGenericItem('role', $assignMap, 'role');
+        [$response] = $this->handleGenericItem(RoleService::class, $assignMap, 'role');
         return $response;
     }
 
