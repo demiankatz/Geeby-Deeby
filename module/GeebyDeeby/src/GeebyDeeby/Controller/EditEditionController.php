@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
 use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\PlatformService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
@@ -199,7 +200,7 @@ class EditEditionController extends AbstractBase
                 ->getOCLCNumbersForEdition($editionId);
             $view->editionPlatforms = $this->getDbTable('editionsplatforms')
                 ->getPlatformsForEdition($editionId);
-            $view->platforms = $this->getDbTable('platform')->getList();
+            $view->platforms = $this->getDbService(PlatformService::class)->getList();
             $view->productCodes = $this->getDbTable('editionsproductcodes')
                 ->getProductCodesForEdition($editionId);
             $view->releaseDates = $this->getDbTable('editionsreleasedates')

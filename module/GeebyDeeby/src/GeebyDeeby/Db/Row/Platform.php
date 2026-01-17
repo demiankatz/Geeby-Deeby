@@ -53,16 +53,35 @@ class Platform extends RowGateway implements PlatformEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Platform)) {
-            return 'Platform cannot be blank.';
-        }
-        return false;
+        return $this->Platform_ID ?? null;
+    }
+
+    /**
+     * Get the platform name.
+     *
+     * @return string
+     */
+    public function getPlatformName(): string
+    {
+        return $this->Platform;
+    }
+
+    /**
+     * Set the platform name.
+     *
+     * @param string $platform New platform name
+     *
+     * @return static
+     */
+    public function setPlatformName(string $platform): static
+    {
+        $this->Platform = $platform;
+        return $this;
     }
 }

@@ -40,4 +40,26 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface PlatformEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the platform name.
+     *
+     * @return string
+     */
+    public function getPlatformName(): string;
+
+    /**
+     * Set the platform name.
+     *
+     * @param string $platform New platform name
+     *
+     * @return static
+     */
+    public function setPlatformName(string $platform): static;
 }
