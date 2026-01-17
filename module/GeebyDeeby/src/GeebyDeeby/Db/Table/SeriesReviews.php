@@ -143,6 +143,7 @@ class SeriesReviews extends Gateway
                 ['s' => 'Series'],
                 'Series_Reviews.Series_ID = s.Series_ID'
             );
+            $select->where->equalTo('Approved', 'y');
             $select->order(['Added desc', 'Username']);
         };
         return $this->select($callback);

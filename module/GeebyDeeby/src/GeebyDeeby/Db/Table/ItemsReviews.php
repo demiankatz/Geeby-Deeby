@@ -230,6 +230,7 @@ class ItemsReviews extends Gateway
                 ['i' => 'Items'],
                 'Items_Reviews.Item_ID = i.Item_ID'
             );
+            $select->where->equalTo('Approved', 'y');
             $select->order(['Added desc', 'Username']);
         };
         return $this->select($callback);
