@@ -599,16 +599,6 @@ return [
                             ],
                         ],
                     ],
-                    'migrate' => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/Migrate',
-                            'defaults' => [
-                                'controller'    => 'Migrate',
-                                'action'        => 'index',
-                            ],
-                        ],
-                    ],
                     'note' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -1379,7 +1369,6 @@ return [
             'GeebyDeeby\Controller\Language' => 'GeebyDeeby\Controller\LanguageController',
             'GeebyDeeby\Controller\Link' => 'GeebyDeeby\Controller\LinkController',
             'GeebyDeeby\Controller\MaterialType' => 'GeebyDeeby\Controller\MaterialTypeController',
-            'GeebyDeeby\Controller\Migrate' => 'GeebyDeeby\Controller\MigrateController',
             'GeebyDeeby\Controller\Person' => 'GeebyDeeby\Controller\PersonController',
             'GeebyDeeby\Controller\Platform' => 'GeebyDeeby\Controller\PlatformController',
             'GeebyDeeby\Controller\Publisher' => 'GeebyDeeby\Controller\PublisherController',
