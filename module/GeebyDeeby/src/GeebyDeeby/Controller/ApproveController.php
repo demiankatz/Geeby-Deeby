@@ -85,17 +85,15 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Problem loading user data.');
         }
         $row = current($user->toArray());
-        if ($row['Person_ID'] != 0) {
+        if ($row['Approved'] != 'n') {
             return $this->jsonDie('User already approved.');
         }
         $person_id = intval($this->params()->fromPost('person_id'));
-        if ($person_id === 0) {
-            return $this->jsonDie('Invalid Person ID.');
-        }
-        $row['Person_ID'] = $person_id;
+        $row['Person_ID'] = $person_id ? $person_id : null;
         $row['Username'] = $this->params()->fromPost('username');
         $row['Name'] = $this->params()->fromPost('fullname');
         $row['Address'] = $this->params()->fromPost('address');
+        $row['Approved'] = 'y';
         $table->update($row, $where);
         try {
             $this->sendApprovalEmail($row['Address']);
@@ -120,11 +118,9 @@ class ApproveController extends AbstractBase
             return $ok;
         }
         $view = $this->createViewModel();
-        $view->newUsers = $this->getDbTable('user')->getUnapproved();
-        $view->pendingReviews = $this->getDbTable('itemsreviews')
-            ->getReviewsByUser(null, 'n', false);
-        $view->pendingComments = $this->getDbTable('seriesreviews')
-            ->getReviewsByUser(null, 'n');
+        $view->newUsers = $this->getDbTable('user')->getList('n');
+        $view->pendingReviews = $this->getDbTable('itemsreviews')->getReviewsByUser(null, 'n', false);
+        $view->pendingComments = $this->getDbTable('seriesreviews')->getReviewsByUser(null, 'n');
         return $view;
     }
 
@@ -170,7 +166,7 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Problem loading user data.');
         }
         $row = current($user->toArray());
-        if ($row['Person_ID'] != 0) {
+        if ($row['Approved'] != 'n') {
             return $this->jsonDie('User already approved.');
         }
         $table->delete($where);

@@ -88,7 +88,7 @@ class Adapter implements \Laminas\Authentication\Adapter\AdapterInterface
     public function authenticate()
     {
         $user = $this->table->passwordLogin($this->username, $this->password);
-        if (is_object($user) && $user->Person_ID === 0) {
+        if (is_object($user) && $user->Approved === 'n') {
             throw new UnapprovedUserException('Unapproved User');
         }
         return new Result(

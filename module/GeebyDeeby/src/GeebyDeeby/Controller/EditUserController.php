@@ -82,6 +82,7 @@ class EditUserController extends AbstractBase
             'username' => 'Username',
             'name' => 'Name',
             'address' => 'Address',
+            'approved' => 'Approved',
             'person_id' => 'Person_ID',
             'group_id' => 'User_Group_ID',
         ];

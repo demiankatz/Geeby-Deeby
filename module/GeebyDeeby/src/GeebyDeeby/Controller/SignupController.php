@@ -93,7 +93,7 @@ class SignupController extends AbstractBase
                             'Name' => $view->fullname,
                             'Address' => $view->address,
                             'Join_Reason' => $view->reason,
-                            'Person_ID' => 0,
+                            'Person_ID' => null,
                         ]
                     );
                     $view->setTemplate('geeby-deeby/signup/success');
