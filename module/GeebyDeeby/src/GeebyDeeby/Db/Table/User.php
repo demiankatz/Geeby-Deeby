@@ -90,18 +90,18 @@ class User extends Gateway
     /**
      * Get a list of users.
      *
-     * @param bool $approved Limit to approved users?
+     * @param bool $approvedOnly Limit to approved users?
      *
      * @return mixed
      */
-    public function getList($approved = true)
+    public function getList($approvedOnly = false)
     {
-        $callback = function ($select) use ($approved): void {
+        $callback = function ($select) use ($approvedOnly): void {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
                 ['User_ID', 'Username', 'Name', 'Address', 'Person_ID']
             );
-            if ($approved) {
+            if ($approvedOnly) {
                 $select->where->equalTo('Approved', 'y');
             }
             $select->order('Username');
