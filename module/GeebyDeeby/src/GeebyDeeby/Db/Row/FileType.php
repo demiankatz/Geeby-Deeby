@@ -53,16 +53,35 @@ class FileType extends RowGateway implements FileTypeEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->File_Type)) {
-            return 'Type cannot be blank.';
-        }
-        return false;
+        return $this->File_Type_ID ?? null;
+    }
+
+    /**
+     * Get the name of the file type.
+     *
+     * @return string
+     */
+    public function getFileTypeName(): string
+    {
+        return $this->File_Type;
+    }
+
+    /**
+     * Set the name of the file type.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setFileTypeName(string $name): static
+    {
+        $this->File_Type = $name;
+        return $this;
     }
 }

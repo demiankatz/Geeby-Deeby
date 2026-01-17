@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\FileTypeService;
+
 /**
  * Edit file controller
  *
@@ -96,7 +98,7 @@ class EditFileController extends AbstractBase
     public function typelistAction()
     {
         return $this->getGenericList(
-            'fileType',
+            FileTypeService::class,
             'fileTypes',
             'geeby-deeby/edit-file/render-types'
         );
@@ -109,8 +111,8 @@ class EditFileController extends AbstractBase
      */
     public function typeAction()
     {
-        $assignMap = ['fileType' => 'File_Type'];
-        [$response] = $this->handleGenericItem('fileType', $assignMap, 'fileType');
+        $assignMap = ['fileType' => 'setFileTypeName'];
+        [$response] = $this->handleGenericItem(FileTypeService::class, $assignMap, 'fileType');
         return $response;
     }
 
