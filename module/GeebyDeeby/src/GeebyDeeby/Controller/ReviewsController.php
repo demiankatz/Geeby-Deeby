@@ -47,11 +47,10 @@ class ReviewsController extends AbstractBase
      */
     public function listAction()
     {
-        $table = $this->getDbTable('recentreviews');
         return $this->createViewModel(
             [
-                'reviews' => $table->getRecentItemReviews(),
-                'comments' => $table->getRecentSeriesComments(),
+                'reviews' => $this->getDbTable('itemsreviews')->getRecentItemReviews(),
+                'comments' => $this->getDbTable('seriesreviews')->getRecentSeriesComments(),
             ]
         );
     }
