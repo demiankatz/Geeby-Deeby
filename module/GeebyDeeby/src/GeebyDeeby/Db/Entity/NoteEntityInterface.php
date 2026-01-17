@@ -40,4 +40,33 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface NoteEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the note.
+     *
+     * @return string
+     */
+    public function getNote(): string;
+
+    /**
+     * Set the note.
+     *
+     * @param string $note New note
+     *
+     * @return static
+     */
+    public function setNote(string $note): static;
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName(): string;
 }

@@ -53,17 +53,36 @@ class Note extends RowGateway implements NoteEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Note)) {
-            return 'Note cannot be blank.';
-        }
-        return false;
+        return $this->Note_ID ?? null;
+    }
+
+    /**
+     * Get the note.
+     *
+     * @return string
+     */
+    public function getNote(): string
+    {
+        return $this->Note;
+    }
+
+    /**
+     * Set the note.
+     *
+     * @param string $note New note
+     *
+     * @return static
+     */
+    public function setNote(string $note): static
+    {
+        $this->Note = $note;
+        return $this;
     }
 
     /**
@@ -71,7 +90,7 @@ class Note extends RowGateway implements NoteEntityInterface
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->Note;
     }
