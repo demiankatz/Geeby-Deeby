@@ -59,7 +59,7 @@ class Language extends RowGateway implements LanguageEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Language_ID;
+        return $this->Language_ID ?? null;
     }
 
     /**

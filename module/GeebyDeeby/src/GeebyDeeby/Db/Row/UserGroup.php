@@ -59,7 +59,7 @@ class UserGroup extends RowGateway implements UserGroupEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->User_Group_ID;
+        return $this->User_Group_ID ?? null;
     }
 
     /**

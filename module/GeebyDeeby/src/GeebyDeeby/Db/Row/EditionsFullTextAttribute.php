@@ -63,7 +63,7 @@ class EditionsFullTextAttribute extends RowGateway implements EditionsFullTextAt
      */
     public function getId(): ?int
     {
-        return $this->Editions_Full_Text_Attribute_ID;
+        return $this->Editions_Full_Text_Attribute_ID ?? null;
     }
 
     /**

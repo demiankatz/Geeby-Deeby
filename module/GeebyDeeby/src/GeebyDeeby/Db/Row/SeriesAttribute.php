@@ -59,7 +59,7 @@ class SeriesAttribute extends RowGateway implements SeriesAttributeEntityInterfa
      */
     public function getId(): ?int
     {
-        return $this->Series_Attribute_ID;
+        return $this->Series_Attribute_ID ?? null;
     }
 
     /**

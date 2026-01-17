@@ -61,7 +61,7 @@ class CountriesURIs extends TableAwareGateway implements CountriesUriEntityInter
      */
     public function getId(): ?int
     {
-        return $this->Sequence_ID;
+        return $this->Sequence_ID ?? null;
     }
 
     /**

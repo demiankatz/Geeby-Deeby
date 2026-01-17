@@ -63,7 +63,7 @@ class ItemsRelationship extends RowGateway implements ItemsRelationshipEntityInt
      */
     public function getId(): ?int
     {
-        return $this->Items_Relationship_ID;
+        return $this->Items_Relationship_ID ?? null;
     }
 
     /**

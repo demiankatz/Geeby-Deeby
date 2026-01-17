@@ -60,7 +60,7 @@ class Tag extends TableAwareGateway implements TagEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Tag_ID;
+        return $this->Tag_ID ?? null;
     }
 
     /**

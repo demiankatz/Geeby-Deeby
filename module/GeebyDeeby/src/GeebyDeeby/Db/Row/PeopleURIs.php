@@ -61,7 +61,7 @@ class PeopleURIs extends TableAwareGateway implements PeopleUriEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Sequence_ID;
+        return $this->Sequence_ID ?? null;
     }
 
     /**

@@ -59,7 +59,7 @@ class TagsAttribute extends RowGateway implements TagsAttributeEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Tags_Attribute_ID;
+        return $this->Tags_Attribute_ID ?? null;
     }
 
     /**

@@ -59,7 +59,7 @@ class Authority extends RowGateway implements AuthorityEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Authority_ID;
+        return $this->Authority_ID ?? null;
     }
 
     /**

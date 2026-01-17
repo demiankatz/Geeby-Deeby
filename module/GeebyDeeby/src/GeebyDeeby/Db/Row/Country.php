@@ -59,7 +59,7 @@ class Country extends RowGateway implements CountryEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Country_ID;
+        return $this->Country_ID ?? null;
     }
 
     /**

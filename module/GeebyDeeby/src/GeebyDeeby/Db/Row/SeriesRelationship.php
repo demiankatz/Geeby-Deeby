@@ -63,7 +63,7 @@ class SeriesRelationship extends RowGateway implements SeriesRelationshipEntityI
      */
     public function getId(): ?int
     {
-        return $this->Series_Relationship_ID;
+        return $this->Series_Relationship_ID ?? null;
     }
 
     /**

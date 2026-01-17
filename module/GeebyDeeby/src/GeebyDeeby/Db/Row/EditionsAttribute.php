@@ -63,7 +63,7 @@ class EditionsAttribute extends RowGateway implements EditionsAttributeEntityInt
      */
     public function getId(): ?int
     {
-        return $this->Editions_Attribute_ID;
+        return $this->Editions_Attribute_ID ?? null;
     }
 
     /**

@@ -60,7 +60,7 @@ class Person extends TableAwareGateway implements PersonEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Person_ID;
+        return $this->Person_ID ?? null;
     }
 
     /**

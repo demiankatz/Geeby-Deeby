@@ -59,7 +59,7 @@ class TagType extends RowGateway implements TagTypeEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Tag_Type_ID;
+        return $this->Tag_Type_ID ?? null;
     }
 
     /**

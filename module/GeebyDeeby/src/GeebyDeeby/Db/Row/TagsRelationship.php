@@ -59,7 +59,7 @@ class TagsRelationship extends RowGateway implements TagsRelationshipEntityInter
      */
     public function getId(): ?int
     {
-        return $this->Tags_Relationship_ID;
+        return $this->Tags_Relationship_ID ?? null;
     }
 
     /**

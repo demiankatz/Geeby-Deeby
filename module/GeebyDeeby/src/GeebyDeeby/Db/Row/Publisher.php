@@ -59,7 +59,7 @@ class Publisher extends RowGateway implements PublisherEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Publisher_ID;
+        return $this->Publisher_ID ?? null;
     }
 
     /**

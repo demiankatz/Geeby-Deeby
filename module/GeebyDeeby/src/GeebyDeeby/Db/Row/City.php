@@ -59,7 +59,7 @@ class City extends RowGateway implements CityEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->City_ID;
+        return $this->City_ID ?? null;
     }
 
     /**

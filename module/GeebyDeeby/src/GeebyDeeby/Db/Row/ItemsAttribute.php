@@ -59,7 +59,7 @@ class ItemsAttribute extends RowGateway implements ItemsAttributeEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Items_Attribute_ID;
+        return $this->Items_Attribute_ID ?? null;
     }
 
     /**

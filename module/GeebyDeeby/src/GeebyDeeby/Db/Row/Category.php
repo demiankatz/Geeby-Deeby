@@ -59,7 +59,7 @@ class Category extends RowGateway implements CategoryEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Category_ID;
+        return $this->Category_ID ?? null;
     }
 
     /**

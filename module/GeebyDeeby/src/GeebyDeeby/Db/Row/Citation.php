@@ -59,7 +59,7 @@ class Citation extends RowGateway implements CitationEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Citation_ID;
+        return $this->Citation_ID ?? null;
     }
 
     /**

@@ -59,7 +59,7 @@ class MaterialType extends RowGateway implements MaterialTypeEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Material_Type_ID;
+        return $this->Material_Type_ID ?? null;
     }
 
     /**

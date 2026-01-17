@@ -61,7 +61,7 @@ class TagsURIs extends TableAwareGateway implements TagsUriEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->Sequence_ID;
+        return $this->Sequence_ID ?? null;
     }
 
     /**
