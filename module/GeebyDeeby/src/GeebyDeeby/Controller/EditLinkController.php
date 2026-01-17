@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\LinkTypeService;
+
 /**
  * Edit link controller
  *
@@ -97,7 +99,7 @@ class EditLinkController extends AbstractBase
     public function typelistAction()
     {
         return $this->getGenericList(
-            'linkType',
+            LinkTypeService::class,
             'linkTypes',
             'geeby-deeby/edit-link/render-types'
         );
@@ -110,8 +112,8 @@ class EditLinkController extends AbstractBase
      */
     public function typeAction()
     {
-        $assignMap = ['linkType' => 'Link_Type'];
-        [$response] = $this->handleGenericItem('linkType', $assignMap, 'linkType');
+        $assignMap = ['linkType' => 'setLinkTypeName'];
+        [$response] = $this->handleGenericItem(LinkTypeService::class, $assignMap, 'linkType');
         return $response;
     }
 

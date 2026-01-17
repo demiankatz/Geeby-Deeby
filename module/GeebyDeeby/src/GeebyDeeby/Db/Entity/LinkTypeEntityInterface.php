@@ -40,4 +40,26 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface LinkTypeEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the link type.
+     *
+     * @return string
+     */
+    public function getLinkTypeName(): string;
+
+    /**
+     * Set the name of the link type.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setLinkTypeName(string $name): static;
 }
