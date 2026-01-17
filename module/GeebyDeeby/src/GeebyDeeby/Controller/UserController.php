@@ -237,7 +237,7 @@ class UserController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['users' => $this->getDbTable('user')->getList(true)]
+            ['users' => $this->getDbTable('user')->getList('y')]
         );
     }
 

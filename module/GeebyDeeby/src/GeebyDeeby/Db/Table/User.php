@@ -67,42 +67,21 @@ class User extends Gateway
     }
 
     /**
-     * Get a list of unapproved users.
-     *
-     * @return mixed
-     */
-    public function getUnapproved()
-    {
-        $callback = function ($select): void {
-            // Don't select all fields -- no need to risk exposing password data!
-            $select->columns(
-                [
-                    'User_ID', 'Username', 'Name', 'Address', 'Person_ID',
-                    'Join_Reason',
-                ]
-            );
-            $select->where->equalTo('Approved', 'n');
-            $select->order('Username');
-        };
-        return $this->select($callback);
-    }
-
-    /**
      * Get a list of users.
      *
-     * @param bool $approvedOnly Limit to approved users?
+     * @param ?bool $approvedFilter Limit to a specific approval status? (Null for no filter)
      *
      * @return mixed
      */
-    public function getList($approvedOnly = false)
+    public function getList($approvedFilter = null)
     {
-        $callback = function ($select) use ($approvedOnly): void {
+        $callback = function ($select) use ($approvedFilter): void {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
-                ['User_ID', 'Username', 'Name', 'Address', 'Person_ID']
+                ['User_ID', 'Username', 'Name', 'Address', 'Person_ID', 'Join_Reason']
             );
-            if ($approvedOnly) {
-                $select->where->equalTo('Approved', 'y');
+            if ($approvedFilter) {
+                $select->where->equalTo('Approved', $approvedFilter);
             }
             $select->order('Username');
         };
