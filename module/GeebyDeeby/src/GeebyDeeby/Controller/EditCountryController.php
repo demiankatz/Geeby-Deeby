@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CountriesUriService;
 use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\PredicateService;
 
 /**
  * Edit country controller
@@ -75,7 +76,7 @@ class EditCountryController extends AbstractBase
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
             $view->uris = $this->getDbService(CountriesUriService::class)->getURIsForCountry($view->countryObj);
             $view->setTemplate('geeby-deeby/edit-country/edit-full');
-            $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
         }
         return $view;
     }

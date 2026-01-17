@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\AuthorityService;
 use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\PredicateService;
 
 /**
  * Edit person controller
@@ -92,7 +93,7 @@ class EditPersonController extends AbstractBase
                 ->getRealNames($view->personObj->Person_ID);
             $view->uris = $this->getDbService(PeopleUriService::class)->getURIsForPerson($view->personObj);
             $view->setTemplate('geeby-deeby/edit-person/edit-full');
-            $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
         }
         return $view;
     }

@@ -40,4 +40,49 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface PredicateEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the predicate.
+     *
+     * @return string
+     */
+    public function getPredicate(): string;
+
+    /**
+     * Set the predicate.
+     *
+     * @param string $predicate New predicate
+     *
+     * @return static
+     */
+    public function setPredicate(string $predicate): static;
+
+    /**
+     * Get the abbreviation.
+     *
+     * @return string
+     */
+    public function getAbbreviation(): string;
+
+    /**
+     * Set the abbreviation.
+     *
+     * @param string $abbrev New abbreviation
+     *
+     * @return static
+     */
+    public function setAbbreviation(string $abbrev): static;
+
+    /**
+     * Get the display name to represent the row to a user.
+     *
+     * @return string
+     */
+    public function getDisplayName(): string;
 }

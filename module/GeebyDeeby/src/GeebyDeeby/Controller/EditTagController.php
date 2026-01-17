@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PredicateService;
 use GeebyDeeby\Db\Service\TagsAttributeService;
 use GeebyDeeby\Db\Service\TagService;
 use GeebyDeeby\Db\Service\TagsRelationshipService;
@@ -139,7 +140,7 @@ class EditTagController extends AbstractBase
             $view->setTemplate('geeby-deeby/edit-tag/edit-full');
             $view->items = $this->getDbTable('itemstags')
                 ->getItemsForTag($view->tagObj->Tag_ID);
-            $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
             $view->relationships = $this->getDbService(TagsRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
                 ->getRelationshipsForTag($tagId);

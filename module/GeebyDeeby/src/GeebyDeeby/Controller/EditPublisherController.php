@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CityService;
 use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\PredicateService;
 use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\PublishersUriService;
 
@@ -78,7 +79,7 @@ class EditPublisherController extends AbstractBase
                 ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
             $view->imprints = $this->getDbTable('publishersimprints')
                 ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
-            $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
             $view->uris = $this->getDbService(PublishersUriService::class)
                 ->getURIsForPublisher($view->publisherObj);
             $view->setTemplate('geeby-deeby/edit-publisher/edit-full');

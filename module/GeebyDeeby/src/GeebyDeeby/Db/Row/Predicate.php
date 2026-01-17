@@ -53,20 +53,59 @@ class Predicate extends RowGateway implements PredicateEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Predicate)) {
-            return 'Predicate cannot be blank.';
-        }
-        if (empty($this->Predicate_Abbrev)) {
-            return 'Predicate abbreviation cannot be blank.';
-        }
-        return false;
+        return $this->Predicate_ID ?? null;
+    }
+
+    /**
+     * Get the predicate.
+     *
+     * @return string
+     */
+    public function getPredicate(): string
+    {
+        return $this->Predicate;
+    }
+
+    /**
+     * Set the predicate.
+     *
+     * @param string $predicate New predicate
+     *
+     * @return static
+     */
+    public function setPredicate(string $predicate): static
+    {
+        $this->Predicate = $predicate;
+        return $this;
+    }
+
+    /**
+     * Get the abbreviation.
+     *
+     * @return string
+     */
+    public function getAbbreviation(): string
+    {
+        return $this->Predicate_Abbrev;
+    }
+
+    /**
+     * Set the abbreviation.
+     *
+     * @param string $abbrev New abbreviation
+     *
+     * @return static
+     */
+    public function setAbbreviation(string $abbrev): static
+    {
+        $this->Predicate_Abbrev = $abbrev;
+        return $this;
     }
 
     /**
@@ -74,7 +113,7 @@ class Predicate extends RowGateway implements PredicateEntityInterface
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->Predicate_Abbrev;
     }

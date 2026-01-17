@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CitiesUriService;
 use GeebyDeeby\Db\Service\CityService;
+use GeebyDeeby\Db\Service\PredicateService;
 
 /**
  * Edit city controller
@@ -69,7 +70,7 @@ class EditCityController extends AbstractBase
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
             $view->uris = $this->getDbService(CitiesUriService::class)->getURIsForCity($view->cityObj);
             $view->setTemplate('geeby-deeby/edit-city/edit-full');
-            $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
         }
         return $view;
     }

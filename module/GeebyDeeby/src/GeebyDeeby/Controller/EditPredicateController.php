@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PredicateService;
+
 /**
  * Edit predicate controller
  *
@@ -48,7 +50,7 @@ class EditPredicateController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'predicate',
+            PredicateService::class,
             'predicates',
             'geeby-deeby/edit-predicate/render-predicates'
         );
@@ -61,8 +63,8 @@ class EditPredicateController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['predicate' => 'Predicate', 'abbrev' => 'Predicate_Abbrev'];
-        [$response] = $this->handleGenericItem('predicate', $assignMap, 'predicate');
+        $assignMap = ['predicate' => 'setPredicate', 'abbrev' => 'setAbbreviation'];
+        [$response] = $this->handleGenericItem(PredicateService::class, $assignMap, 'predicate');
         return $response;
     }
 }
