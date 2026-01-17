@@ -41,6 +41,16 @@ namespace GeebyDeebyLocal\Controller;
 class AboutController extends \GeebyDeeby\Controller\AbstractBase
 {
     /**
+     * FAQ page
+     *
+     * @return mixed
+     */
+    public function faqsAction()
+    {
+        return $this->createViewModel();
+    }
+
+    /**
      * Thanks page
      *
      * @return mixed

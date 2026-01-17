@@ -13,6 +13,16 @@ return [
     ],
     'router' => [
         'routes' => [
+            'faqs' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/FAQs',
+                    'defaults' => [
+                        'controller' => 'GeebyDeeby\Controller\About',
+                        'action'     => 'faqs',
+                    ],
+                ],
+            ],
             'thanks' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
