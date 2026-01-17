@@ -63,7 +63,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'editionsplatforms' => 'GeebyDeeby\Db\Row\EditionsPlatforms',
         'editionsproductcodes' => 'GeebyDeeby\Db\Row\EditionsProductCodes',
         'editionsreleasedates' => 'GeebyDeeby\Db\Row\EditionsReleaseDates',
-        'faqs' => 'GeebyDeeby\Db\Row\FAQs',
         'file' => 'GeebyDeeby\Db\Row\File',
         'filetype' => 'GeebyDeeby\Db\Row\FileType',
         'fulltextsource' => 'GeebyDeeby\Db\Row\FullTextSource',

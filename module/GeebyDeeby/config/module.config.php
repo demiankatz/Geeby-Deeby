@@ -986,17 +986,6 @@ return [
                     ],
                 ],
             ],
-            'faqs' => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'    => '/FAQs[/[:extra]]',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'GeebyDeeby\Controller',
-                        'controller'    => 'FAQs',
-                        'action'        => 'index',
-                    ],
-                ],
-            ],
             'files' => [
                 'type'    => 'Segment',
                 'options' => [
@@ -1382,7 +1371,6 @@ return [
             'GeebyDeeby\Controller\EditTagAttribute' => 'GeebyDeeby\Controller\EditTagAttributeController',
             'GeebyDeeby\Controller\EditTagRelationship' => 'GeebyDeeby\Controller\EditTagRelationshipController',
             'GeebyDeeby\Controller\EditUser' => 'GeebyDeeby\Controller\EditUserController',
-            'GeebyDeeby\Controller\FAQs' => 'GeebyDeeby\Controller\FAQsController',
             'GeebyDeeby\Controller\File' => 'GeebyDeeby\Controller\FileController',
             'GeebyDeeby\Controller\Index' => 'GeebyDeeby\Controller\IndexController',
             'GeebyDeeby\Controller\Item' => 'GeebyDeeby\Controller\ItemController',

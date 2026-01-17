@@ -130,7 +130,6 @@ class IntegrationTest extends MinkTestCase
             null,
             true,
         ];
-        yield 'FAQs' => ['List All', 'No FAQs listed in this database yet.'];
     }
 
     /**
@@ -1722,8 +1721,6 @@ class IntegrationTest extends MinkTestCase
         yield 'user list' => ['List Registered Users', 'A U admin U Back to Top ↑ user'];
         // TODO: add reviews/comments so this will have content:
         //yield 'recent reviews' => ['Browse Recent Reviews', 'No reviews available. No comments available.'];
-        // TODO: add FAQs so this will have content:
-        //yield 'FAQs' => ['List All', 'No FAQs listed in this database yet.'];
     }
 
     /**
