@@ -66,34 +66,34 @@ interface ItemEntityInterface extends EntityInterface
     /**
      * Get errata for the item.
      *
-     * @return string
+     * @return ?string
      */
-    public function getErrata(): string;
+    public function getErrata(): ?string;
 
     /**
      * Set errata for the item.
      *
-     * @param string $errata New errata
+     * @param ?string $errata New errata
      *
      * @return static
      */
-    public function setErrata(string $errata): static;
+    public function setErrata(?string $errata): static;
 
     /**
      * Get thanks for the item.
      *
-     * @return string
+     * @return ?string
      */
-    public function getThanks(): string;
+    public function getThanks(): ?string;
 
     /**
      * Set thanks for the item.
      *
-     * @param string $thanks New thanks
+     * @param ?string $thanks New thanks
      *
      * @return static
      */
-    public function setThanks(string $thanks): static;
+    public function setThanks(?string $thanks): static;
 
     /**
      * Get associated material type.

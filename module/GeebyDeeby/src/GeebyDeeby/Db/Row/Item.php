@@ -89,9 +89,9 @@ class Item extends TableAwareGateway implements ItemEntityInterface
     /**
      * Get errata for the item.
      *
-     * @return string
+     * @return ?string
      */
-    public function getErrata(): string
+    public function getErrata(): ?string
     {
         return $this->Item_Errata;
     }
@@ -103,7 +103,7 @@ class Item extends TableAwareGateway implements ItemEntityInterface
      *
      * @return static
      */
-    public function setErrata(string $errata): static
+    public function setErrata(?string $errata): static
     {
         $this->Item_Errata = $errata;
         return $this;
@@ -112,9 +112,9 @@ class Item extends TableAwareGateway implements ItemEntityInterface
     /**
      * Get thanks for the item.
      *
-     * @return string
+     * @return ?string
      */
-    public function getThanks(): string
+    public function getThanks(): ?string
     {
         return $this->Item_Thanks;
     }
@@ -122,11 +122,11 @@ class Item extends TableAwareGateway implements ItemEntityInterface
     /**
      * Set thanks for the item.
      *
-     * @param string $thanks New thanks
+     * @param ?string $thanks New thanks
      *
      * @return static
      */
-    public function setThanks(string $thanks): static
+    public function setThanks(?string $thanks): static
     {
         $this->Item_Thanks = $thanks;
         return $this;
