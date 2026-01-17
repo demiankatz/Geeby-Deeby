@@ -213,4 +213,26 @@ class ItemsReviews extends Gateway
         };
         return $this->select($callback);
     }
+
+    /**
+     * Get recent item reviews
+     *
+     * @return mixed
+     */
+    public function getRecentItemReviews()
+    {
+        $callback = function ($select): void {
+            $select->join(
+                ['u' => 'Users'],
+                'Items_Reviews.User_ID = u.User_ID'
+            );
+            $select->join(
+                ['i' => 'Items'],
+                'Items_Reviews.Item_ID = i.Item_ID'
+            );
+            $select->where->equalTo('Approved', 'y');
+            $select->order(['Added desc', 'Username']);
+        };
+        return $this->select($callback);
+    }
 }
