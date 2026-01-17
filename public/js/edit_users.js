@@ -4,6 +4,7 @@ var UserEditor = function() {
         'username': { 'id': '#Username', emptyError: 'Username cannot be blank.' },
         'name': { 'id': '#Name', emptyError: 'Name cannot be blank.' },
         'address': { 'id': '#Address' },
+        'approved': { 'id': '#Approved' },
         'person_id': { 'id': '#Person_ID' },
         'group_id': { 'id': '#User_Group_ID' },
         'password': { 'id': '#Password' },

@@ -85,7 +85,7 @@ class ItemsReviews extends Gateway
                 'Items_Reviews.User_ID = u.User_ID'
             );
             if (null !== $approved) {
-                $select->where->equalTo('Approved', $approved);
+                $select->where->equalTo('Items_Reviews.Approved', $approved);
             }
             $select->where->equalTo('Item_ID', $itemID);
         };
@@ -205,7 +205,7 @@ class ItemsReviews extends Gateway
             ];
             $select->order($series ? $all : ['Item_Name']);
             if (null !== $approved) {
-                $select->where->equalTo('Approved', $approved);
+                $select->where->equalTo('Items_Reviews.Approved', $approved);
             }
             if (null !== $userID) {
                 $select->where->equalTo('User_ID', $userID);
@@ -230,7 +230,7 @@ class ItemsReviews extends Gateway
                 ['i' => 'Items'],
                 'Items_Reviews.Item_ID = i.Item_ID'
             );
-            $select->where->equalTo('Approved', 'y');
+            $select->where->equalTo('Items_Reviews.Approved', 'y');
             $select->order(['Added desc', 'Username']);
         };
         return $this->select($callback);

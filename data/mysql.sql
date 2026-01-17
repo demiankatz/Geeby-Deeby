@@ -1438,8 +1438,10 @@ CREATE TABLE `Users` (
   `User_Group_ID` int(11) DEFAULT NULL,
   `Join_Reason` text DEFAULT NULL,
   `Last_Login` datetime DEFAULT NULL,
+  `Approved` enum('y','n') NOT NULL DEFAULT 'n',
   PRIMARY KEY (`User_ID`),
-  FOREIGN KEY (`User_Group_ID`) REFERENCES `User_Groups` (`User_Group_ID`)
+  FOREIGN KEY (`User_Group_ID`) REFERENCES `User_Groups` (`User_Group_ID`),
+  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
