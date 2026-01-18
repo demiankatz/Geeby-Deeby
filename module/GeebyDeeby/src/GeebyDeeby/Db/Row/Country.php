@@ -63,7 +63,7 @@ class Country extends RowGateway implements CountryEntityInterface
     }
 
     /**
-     * Get the name of the Country.
+     * Get the name of the country.
      *
      * @return string
      */
@@ -73,7 +73,7 @@ class Country extends RowGateway implements CountryEntityInterface
     }
 
     /**
-     * Set the name of the Country.
+     * Set the name of the country.
      *
      * @param string $name New name.
      *

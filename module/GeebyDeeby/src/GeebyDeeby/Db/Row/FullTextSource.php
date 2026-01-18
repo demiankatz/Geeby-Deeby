@@ -53,16 +53,35 @@ class FullTextSource extends RowGateway implements FullTextSourceEntityInterface
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Full_Text_Source_Name)) {
-            return 'Name cannot be blank.';
-        }
-        return false;
+        return $this->Full_Text_Source_ID ?? null;
+    }
+
+    /**
+     * Get the name of the source.
+     *
+     * @return string
+     */
+    public function getSourceName(): string
+    {
+        return $this->Full_Text_Source_Name;
+    }
+
+    /**
+     * Set the name of the source.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setSourceName(string $name): static
+    {
+        $this->Full_Text_Source_Name = $name;
+        return $this;
     }
 }

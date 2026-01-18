@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\FullTextSourceService;
+
 /**
  * Edit full text source controller
  *
@@ -48,7 +50,7 @@ class EditFullTextSourceController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'fulltextsource',
+            FullTextSourceService::class,
             'fulltextsources',
             'geeby-deeby/edit-full-text-source/render-sources'
         );
@@ -61,9 +63,9 @@ class EditFullTextSourceController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['fulltextsource' => 'Full_Text_Source_Name'];
+        $assignMap = ['fulltextsource' => 'setSourceName'];
         [$response] = $this->handleGenericItem(
-            'fulltextsource',
+            FullTextSourceService::class,
             $assignMap,
             'fulltextsource'
         );

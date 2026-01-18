@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -522,7 +523,7 @@ class ItemController extends AbstractBase
         $rawSource = $this->params()->fromQuery('source');
         $source = empty($rawSource) ? null : $rawSource;
         $view = $this->createViewModel(compact('fuzzy', 'source'));
-        $view->sources = $this->getDbTable('fulltextsource')->getList();
+        $view->sources = $this->getDbService(FullTextSourceService::class)->getList();
         $view->fulltext = $this->getDbTable('editionsfulltext')
             ->getItemsWithFullText(null, $fuzzy, $source);
         return $view;

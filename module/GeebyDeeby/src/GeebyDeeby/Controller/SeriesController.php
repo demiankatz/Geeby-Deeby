@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -362,8 +363,7 @@ class SeriesController extends AbstractBase
         $view->fuzzy = $fuzzy;
         $rawSource = $this->params()->fromQuery('source');
         $view->source = $source = empty($rawSource) ? null : $rawSource;
-        $view->sources = $this->getDbTable('fulltextsource')
-            ->getList($view->series['Series_ID']);
+        $view->sources = $this->getDbService(FullTextSourceService::class)->getList($view->series['Series_ID']);
         $view->fulltext = $this->getDbTable('editionsfulltext')
             ->getItemsWithFullText($view->series['Series_ID'], $fuzzy, $source);
         $view->setTemplate('geeby-deeby/item/fulltext');

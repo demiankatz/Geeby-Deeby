@@ -40,4 +40,26 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface FullTextSourceEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the source.
+     *
+     * @return string
+     */
+    public function getSourceName(): string;
+
+    /**
+     * Set the name of the source.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setSourceName(string $name): static;
 }

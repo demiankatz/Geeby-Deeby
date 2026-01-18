@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
+use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PlatformService;
 use GeebyDeeby\Db\Service\RoleService;
@@ -209,8 +210,7 @@ class EditEditionController extends AbstractBase
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
             $view->fullText = $this->getDbTable('editionsfulltext')
                 ->getFullTextForEdition($editionId);
-            $view->fullTextSources = $this->getDbTable('fulltextsource')
-                ->getList();
+            $view->fullTextSources = $this->getDbService(FullTextSourceService::class)->getList();
             if (is_object($view->editionObj)) {
                 $view->next = $view->editionObj->getNextInSeries();
                 $view->previous = $view->editionObj->getPreviousInSeries();
@@ -656,8 +656,7 @@ class EditEditionController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         $view = $this->createViewModel();
-        $view->fullTextSources = $this->getDbTable('fulltextsource')
-            ->getList();
+        $view->fullTextSources = $this->getDbService(FullTextSourceService::class)->getList();
         foreach ($table->select(['Sequence_ID' => $rowId]) as $current) {
             $view->row = $current;
         }
