@@ -53,7 +53,6 @@ use function in_array;
  * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
  * @todo Add tests for creating/approving comments/reviews
- * @todo Add tests for searches
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -1555,6 +1554,73 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Data provider for testSearch().
+     *
+     * @return Generator<string, array>
+     */
+    public static function searchProvider(): Generator
+    {
+        $expectedTitleResults = 'Show credits Series test series 1 test series 2 (edited) '
+            . 'Series Alternate Titles test alternate series title '
+            . 'Items test item '
+            . 'Item Alternate Titles test alternate title';
+        $expectedTitleResultsWithCredits = 'Show credits Series test series 1 test series 2 (edited) '
+            . 'Series Alternate Titles test alternate series title '
+            . 'Item test item test-last, test-first, extra '
+            . 'Item Alternate Titles test alternate title test-last, test-first, extra';
+        yield 'title' => ['Title', 'test', $expectedTitleResults, $expectedTitleResultsWithCredits];
+        yield 'bad title' => ['Title', 'xyzzy', 'No results found for xyzzy.'];
+        $expectedPeopleResults = 'People last, test-second-edited lastname, test-third test-last, test-first, extra';
+        yield 'person' => ['Person', 'test', $expectedPeopleResults];
+        yield 'bad person' => ['Person', 'xyzzy', 'No results found for xyzzy.'];
+        $extendedKeywordResults = ' Categories second test category (edited) test category '
+            . $expectedPeopleResults
+            . ' Subjects/Tags test tag test tag 2 (edited)';
+        yield 'keyword' => [
+            'Keyword',
+            'test',
+            $expectedTitleResults . $extendedKeywordResults,
+            str_replace( // add separator in front of credits for this view:
+                'test-last, test-first, extra',
+                ' / test-last, test-first, extra',
+                $expectedTitleResults
+            ) . $extendedKeywordResults,
+        ];
+        yield 'bad keyword' => ['Keyword', 'xyzzy', 'No results found for xyzzy.'];
+        yield 'isbn-10' => ['ISBN', '0123456789', 'ISBNs test item (0123456789 / 9780123456786)'];
+        yield 'isbn-13' => ['ISBN', '9780123456786', 'ISBNs test item (0123456789 / 9780123456786)'];
+        yield 'bad isbn' => ['ISBN', 'bad', 'No results found for bad.'];
+    }
+
+    /**
+     * Test search functionality.
+     *
+     * @param string $type                Search type
+     * @param string $query               Search query
+     * @param string $expected            Expected results
+     * @param string $expectedWithCredits Expected results with credits enabled (null to skip credit check)
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('searchProvider')]
+    public function testSearch(
+        string $type,
+        string $query,
+        string $expected,
+        ?string $expectedWithCredits = null
+    ): void {
+        [$safeQuery, $safeType] = [urlencode($query), urlencode($type)];
+        $page = $this->goToPage("/Search?SearchQuery=$safeQuery&SearchType=$safeType");
+        $this->assertEquals($expected, $this->findCssAndGetText($page, '.content'));
+        if ($expectedWithCredits) {
+            $this->clickCss($page, '.creator-toggle');
+            $this->waitForPageLoad($page);
+            $this->assertEquals($expectedWithCredits, $this->findCssAndGetText($page, '.content'));
+        }
+    }
+
+    /**
      * Assert the contents of the top and bottom controls.
      *
      * @param TraversableElement $page     Page being examined
@@ -1583,7 +1649,7 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Test collection management functionality.
+     * Test collection management add/remove/control label functionality.
      *
      * @param string $subPage          Subpage of item page to test.
      * @param string $controlsSelector Selector for button bar to use for testing.
@@ -1592,7 +1658,7 @@ class IntegrationTest extends MinkTestCase
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('collectionBehaviorProvider')]
     #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
-    public function testCollectionBehavior(string $subPage, string $controlsSelector): void
+    public function testCollectionAddAndRemoveControls(string $subPage, string $controlsSelector): void
     {
         $page = $this->goToPage('/Item/1' . $subPage);
         $this->assertControls($page, 'Please log in to manage your collection or post a review.');

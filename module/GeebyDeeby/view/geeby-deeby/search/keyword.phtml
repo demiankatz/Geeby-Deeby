@@ -3,8 +3,8 @@
   $this->scriptManager()->add(['search']);
   $empty = true;
   $config = $this->config('search_controls') ?? [];
+  ob_start();
 ?>
-<?=$this->render('geeby-deeby/search/controls.phtml')?>
 <?php if (count($series) > 0): $empty = false; ?>
   <h2>Series</h2>
   <ol>
@@ -105,6 +105,13 @@
     <?php endforeach; ?>
   </ol>
 <?php endif; ?>
+<?php
+  $content = ob_get_contents();
+  ob_end_clean();
+?>
 <?php if ($empty): ?>
   <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
+<?php else: ?>
+  <?=$this->render('geeby-deeby/search/controls.phtml')?>
+  <?=$content?>
 <?php endif; ?>

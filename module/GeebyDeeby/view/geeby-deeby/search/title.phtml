@@ -5,19 +5,26 @@
     $lists = [
       'Series' => $series,
       'Series Alternate Titles' => $seriesAltTitles,
-      'Item' => $items,
+      'Items' => $items,
       'Item Alternate Titles' => $itemsAltTitles,
     ];
+    ob_start();
 ?>
-<?=$this->render('geeby-deeby/search/controls.phtml')?>
 <div class="results row">
   <?php foreach ($lists as $title => $results): ?>
     <?php if (count($results) > 0): $empty = false; ?>
-      <?php $prefix = explode(' ', $title); ?>
-      <?=$this->render('geeby-deeby/search/list.phtml', ['title' => $title,'items' => $results,'prefix' => $prefix[0]]) ?>
+      <?php $prefix = str_starts_with($title, 'Item') ? 'Item' : 'Series'; ?>
+      <?=$this->render('geeby-deeby/search/list.phtml', ['title' => $title,'items' => $results,'prefix' => $prefix]) ?>
     <?php endif; ?>
   <?php endforeach; ?>
-  <?php if ($empty): ?>
-    <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
-  <?php endif; ?>
 </div>
+<?php
+  $content = ob_get_contents();
+  ob_end_clean();
+?>
+<?php if ($empty): ?>
+  <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
+<?php else: ?>
+  <?=$this->render('geeby-deeby/search/controls.phtml')?>
+  <?=$content?>
+<?php endif; ?>
