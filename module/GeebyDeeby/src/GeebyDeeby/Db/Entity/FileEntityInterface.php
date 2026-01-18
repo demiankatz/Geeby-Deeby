@@ -40,4 +40,74 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface FileEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the file.
+     *
+     * @return string
+     */
+    public function getFileName(): string;
+
+    /**
+     * Set the name of the file.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setFileName(string $name): static;
+
+    /**
+     * Get the path of the file.
+     *
+     * @return string
+     */
+    public function getFilePath(): string;
+
+    /**
+     * Set the path of the file.
+     *
+     * @param string $path New path.
+     *
+     * @return static
+     */
+    public function setFilePath(string $path): static;
+
+    /**
+     * Get a description of the file.
+     *
+     * @return string
+     */
+    public function getDescription(): string;
+
+    /**
+     * Set the file.
+     *
+     * @param string $description New description
+     *
+     * @return static
+     */
+    public function setDescription(string $description): static;
+
+    /**
+     * Get associated file type.
+     *
+     * @return FileTypeEntityInterface
+     */
+    public function getFileType(): FileTypeEntityInterface;
+
+    /**
+     * Set associated file type.
+     *
+     * @param int|FileTypeEntityInterface $fileType Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setFileType(int|FileTypeEntityInterface $fileType): static;
 }
