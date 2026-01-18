@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Entity;
 
+use DateTime;
+
 /**
  * Interface for link entity models.
  *
@@ -40,4 +42,90 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface LinkEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get the name of the link.
+     *
+     * @return string
+     */
+    public function getLinkName(): string;
+
+    /**
+     * Set the name of the link.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setLinkName(string $name): static;
+
+    /**
+     * Get the URL of the link.
+     *
+     * @return string
+     */
+    public function getUrl(): string;
+
+    /**
+     * Set the URL of the link.
+     *
+     * @param string $url New url.
+     *
+     * @return static
+     */
+    public function setUrl(string $url): static;
+
+    /**
+     * Get a description of the link.
+     *
+     * @return string
+     */
+    public function getDescription(): string;
+
+    /**
+     * Set the link.
+     *
+     * @param string $description New description
+     *
+     * @return static
+     */
+    public function setDescription(string $description): static;
+
+    /**
+     * Set the date the link was last checked.
+     *
+     * @return DateTime
+     */
+    public function getDateChecked(): DateTime;
+
+    /**
+     * Set the date the link was last checked.
+     *
+     * @param string|DateTime $checked Checked date
+     *
+     * @return static
+     */
+    public function setDateChecked(string|DateTime $checked): static;
+
+    /**
+     * Get associated link type.
+     *
+     * @return LinkTypeEntityInterface
+     */
+    public function getLinkType(): LinkTypeEntityInterface;
+
+    /**
+     * Set associated link type.
+     *
+     * @param int|LinkTypeEntityInterface $linkType Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setLinkType(int|LinkTypeEntityInterface $linkType): static;
 }

@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\LinkService;
+
 /**
  * Link controller
  *
@@ -54,11 +56,8 @@ class LinkController extends AbstractBase
         $group = ($extra && isset($groups[$extra]))
             ? $groups[$extra] : false;
 
-        // Initialize values:
-        $table = $this->getDbTable('link');
-
         // Retrieve the relevant links:
-        $links = $table->getListByType(
+        $links = $this->getDbService(LinkService::class)->getListByType(
             $group['typeMatch'] ?? null
         );
 
