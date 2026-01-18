@@ -1566,7 +1566,7 @@ class IntegrationTest extends MinkTestCase
             . 'Item Alternate Titles test alternate title';
         $expectedTitleResultsWithCredits = 'Show credits Series test series 1 test series 2 (edited) '
             . 'Series Alternate Titles test alternate series title '
-            . 'Item test item test-last, test-first, extra '
+            . 'Items test item test-last, test-first, extra '
             . 'Item Alternate Titles test alternate title test-last, test-first, extra';
         yield 'title' => ['Title', 'test', $expectedTitleResults, $expectedTitleResultsWithCredits];
         yield 'bad title' => ['Title', 'xyzzy', 'No results found for xyzzy.'];
@@ -1582,8 +1582,8 @@ class IntegrationTest extends MinkTestCase
             $expectedTitleResults . $extendedKeywordResults,
             str_replace( // add separator in front of credits for this view:
                 'test-last, test-first, extra',
-                ' / test-last, test-first, extra',
-                $expectedTitleResults
+                '/ test-last, test-first, extra',
+                $expectedTitleResultsWithCredits
             ) . $extendedKeywordResults,
         ];
         yield 'bad keyword' => ['Keyword', 'xyzzy', 'No results found for xyzzy.'];
