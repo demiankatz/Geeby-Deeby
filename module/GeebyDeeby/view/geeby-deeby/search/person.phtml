@@ -3,13 +3,16 @@
 ?>
 
 <?php if (count($people) > 0): ?>
-  <p>
+  <h2>People</h2>
+  <ol>
     <?php foreach ($people as $current): ?>
-      <a href="<?=$this->url('person', ['id' => $current['Person_ID']])?>">
-        <?=$this->escapeHtml($this->showperson($current))?>
-      </a><br />
+      <li>
+        <a href="<?=$this->url('person', ['id' => $current['Person_ID']])?>">
+          <?=$this->escapeHtml($this->showperson($current))?>
+        </a>
+      </li>
     <?php endforeach; ?>
-  </p>
+    </ol>
 <?php else: ?>
   <p>No results found for <?=$this->escapeHtml($this->layout()->query)?>.</p>
 <?php endif; ?>
