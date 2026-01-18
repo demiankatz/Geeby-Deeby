@@ -1636,7 +1636,7 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Data provider for testCollectionBehavior().
+     * Data provider for testCollectionAddAndRemoveControls().
      *
      * @return Generator<string, array>
      */
