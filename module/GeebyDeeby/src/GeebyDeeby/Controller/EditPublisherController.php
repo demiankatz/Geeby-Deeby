@@ -34,6 +34,7 @@ use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\PredicateService;
 use GeebyDeeby\Db\Service\PublishersAddressService;
 use GeebyDeeby\Db\Service\PublisherService;
+use GeebyDeeby\Db\Service\PublishersImprintService;
 use GeebyDeeby\Db\Service\PublishersUriService;
 
 use function count;
@@ -78,7 +79,7 @@ class EditPublisherController extends AbstractBase
             $view->countries = $this->getDbService(CountryService::class)->getList();
             $view->addresses = $this->getDbService(PublishersAddressService::class)
                 ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
-            $view->imprints = $this->getDbTable('publishersimprints')
+            $view->imprints = $this->getDbService(PublishersImprintService::class)
                 ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
             $view->predicates = $this->getDbService(PredicateService::class)->getList();
             $view->uris = $this->getDbService(PublishersUriService::class)
@@ -146,39 +147,40 @@ class EditPublisherController extends AbstractBase
     {
         // Special case: new imprint:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('publishersimprints');
-            $row = $table->createRow();
-            $row->Publisher_ID = $this->params()->fromRoute('id');
-            $row->Imprint_Name = $this->params()->fromPost('imprint');
-            if (empty($row->Imprint_Name)) {
+            $name = trim((string)$this->params()->fromPost('imprint'));
+            if (empty($name)) {
                 return $this->jsonDie('Name must not be empty.');
             }
-            $table->insert((array)$row);
+            $service = $this->getDbService(PublishersImprintService::class);
+            $entity = $service->createEntity()
+                ->setPublisher($this->params()->fromRoute('id'))
+                ->setImprintName($name);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            // Prevent deletion of imprints that are linked up:
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('seriespublishers')->select(
-                    ['Imprint_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $row = $result->current();
-                    $msg = 'You cannot delete this imprint; it is used by Series '
-                        . $row->Series_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'publishersimprints',
-                'Publisher_ID',
-                'Imprint_ID',
-                'imprints',
-                'getImprintsForPublisher',
-                'geeby-deeby/edit-publisher/imprint-list.phtml'
-            );
         }
+        // Prevent deletion of imprints that are linked up:
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbTable('seriespublishers')->select(
+                ['Imprint_ID' => $extra]
+            );
+            if (count($result) > 0) {
+                $row = $result->current();
+                $msg = 'You cannot delete this imprint; it is used by Series '
+                    . $row->Series_ID . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            PublishersImprintService::class,
+            null,
+            null,
+            'imprints',
+            'getImprintsForPublisher',
+            'geeby-deeby/edit-publisher/imprint-list.phtml',
+            retrieveLinkMethod: 'getLinkByPublisherAndImprint'
+        );
     }
 
     /**
