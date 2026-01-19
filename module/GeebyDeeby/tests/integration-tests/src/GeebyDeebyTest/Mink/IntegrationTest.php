@@ -46,10 +46,9 @@ use function in_array;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
  * @todo Add tests for edition contents and preferred publisher/titles.
- * @todo Add test to set imprint and address on a series/publisher link
  * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
  * @todo Add test to set citation on creator relationship
- * @todo Add tests for series attached items/categories/relationships/translations
+ * @todo Add tests for series attached items/relationships/translations
  * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
  */
@@ -849,6 +848,21 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Test linking categories to a series.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testCategoryLinking(): void
+    {
+        $page = $this->goToPage('/edit/Series/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Categories');
+        $this->clickCss($page, '#Category_ID_1');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+    }
+
+    /**
      * Data provider for testEditExistingData().
      *
      * @return Generator<string, array>
@@ -998,15 +1012,7 @@ class IntegrationTest extends MinkTestCase
             $this->logIn($page, 'admin');
         }
         $this->clickCss($page, '#add_item');
-        $options = $page->findAll('css', '#Material_Type_ID option');
-        $selected = $options[0];
-        foreach ($options as $next) {
-            if ($next->isSelected()) {
-                $selected = $next;
-                break;
-            }
-        }
-        $this->assertSame((string)$type, $selected->getValue());
+        $this->assertSame((string)$type, $this->getSelectedOption($page, '#Material_Type_ID'));
     }
 
     /**
@@ -1220,10 +1226,10 @@ class IntegrationTest extends MinkTestCase
         yield 'publisher address' => [
             '/edit/Publisher/1',
             null,
-            ['#Street' => 'fake st.'],
+            ['#Country_ID' => '1', '#City_ID' => '1', '#Street' => 'fake st.'],
             '#address_list',
             '/^No addresses set.$/',
-            '/test country -- fake st./',
+            '/test country -- test city -- fake st./',
         ];
         yield 'publisher imprint' => [
             '/edit/Publisher/1',
@@ -1603,6 +1609,29 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Test setting the advanced publisher controls.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testSetPublisherDetails(): void
+    {
+        $page = $this->goToPage('/edit/Series/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Publishers');
+        $editButton = $this->findCss($page, '#publisher_list .ui-icon-gear');
+        $editButton->click();
+        $this->waitForPageLoad($page);
+        $this->findCssAndSetValue($page, '#Address_ID', '1');
+        $this->clickCss($page, '.modal-body input[type="submit"]');
+        $this->waitForPageLoad($page);
+        $this->assertSame(
+            'test publisher (test country -- test city -- fake st. - test note)',
+            $this->findCssAndGetText($page, '#publisher_list td')
+        );
+    }
+
+    /**
      * Data provider for testPopulatedRecords().
      *
      * @return Generator<string, array>
@@ -1617,6 +1646,7 @@ class IntegrationTest extends MinkTestCase
             . ' Language: test language 1'
             . ' Alternate Title: test alternate series title (test note)'
             . ' Publisher: test publisher (test note)'
+            . ' Category: test category'
             . ' Translated From: test series 2 (edited) (test language 1)'
             . ' test series relationship: test series 2 (edited)'
             . ' second test materials (edited)'
@@ -1626,10 +1656,9 @@ class IntegrationTest extends MinkTestCase
             . ' (last verified: 2025-12-01)'
             . ' User Comments this is my comment --user Please log in to leave a comment.',
         ];
-        // TODO: add data so the following commented-out tests will be non-empty
-        //yield 'category' => ['/Category/1', 'test description No series are listed in this category.'];
-        //yield 'city' => ['/City/1', 'No information is available about this city.'];
-        //yield 'country' => ['/Country/1', 'No information is available about this country.'];
+        yield 'category' => ['/Category/1', 'test description T test series 1'];
+        yield 'city' => ['/City/1', 'T test series 1'];
+        yield 'country' => ['/Country/1', 'T test series 1'];
         yield 'language' => ['/Language/1', 'T test series 1 test series 2 (edited)'];
         yield 'material type' => ['/Material/1', 'T test series 1'];
         yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1 T test series 1'];
@@ -1696,9 +1725,10 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSetPublisherDetails')]
     #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCommentApproval')]
+    #[\PHPUnit\Framework\Attributes\Depends('testCategoryLinking')]
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsProvider')]
     public function testPopulatedRecords(
         string $path,
