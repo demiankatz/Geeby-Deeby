@@ -1645,7 +1645,7 @@ class IntegrationTest extends MinkTestCase
             . ' [List Series Subjects/Tags]'
             . ' Language: test language 1'
             . ' Alternate Title: test alternate series title (test note)'
-            . ' Publisher: test publisher (test note)'
+            . ' Publisher: test publisher (test city: fake st.) -- test country (test note)'
             . ' Category: test category'
             . ' Translated From: test series 2 (edited) (test language 1)'
             . ' test series relationship: test series 2 (edited)'
