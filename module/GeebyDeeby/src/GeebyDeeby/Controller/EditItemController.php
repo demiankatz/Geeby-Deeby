@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CitationService;
+use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
@@ -159,8 +160,7 @@ class EditItemController extends AbstractBase
                 ->getDescriptions($itemId);
             $view->tags = $this->getDbTable('itemstags')
                 ->getTags($itemId);
-            $view->item_alt_titles = $this->getDbTable('itemsalttitles')
-                ->getAltTitles($itemId);
+            $view->item_alt_titles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($itemId);
             $view->relationships = $this->getDbService(ItemsRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this
                 ->getDbTable('itemsrelationshipsvalues')
@@ -300,43 +300,42 @@ class EditItemController extends AbstractBase
     {
         // Special case: new title:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemsalttitles');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->Item_AltName = trim($this->params()->fromPost('title'));
-            if (empty($row->Item_AltName)) {
+            $service = $this->getDbService(ItemsAltTitleService::class);
+            $note = $this->params()->fromPost('note_id');
+            $title = trim((string)$this->params()->fromPost('title'));
+            if (empty($title)) {
                 return $this->jsonDie('Title must not be empty.');
             }
-            $table->insert((array)$row);
+            $entity = $service->createEntity()
+                ->setItem($this->params()->fromRoute('id'))
+                ->setNote(empty($note) ? null : $note)
+                ->setAltName($title);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            // Prevent deletion of alttitles that are linked up:
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('edition')->select(
-                    ['Preferred_Item_AltName_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $ed = $result->current();
-                    $msg = 'You cannot delete this title; it is assigned to Edition '
-                        . $ed->Edition_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'itemsalttitles',
-                'Item_ID',
-                'Sequence_ID',
-                'item_alt_titles',
-                'getAltTitles',
-                'geeby-deeby/edit-item/alt-title-list.phtml'
-            );
         }
+        // Prevent deletion of alttitles that are linked up:
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbTable('edition')->select(
+                ['Preferred_Item_AltName_ID' => $extra]
+            );
+            if (count($result) > 0) {
+                $ed = $result->current();
+                $msg = 'You cannot delete this title; it is assigned to Edition '
+                    . $ed->Edition_ID . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            ItemsAltTitleService::class,
+            null,
+            null,
+            'item_alt_titles',
+            'getAltTitles',
+            'geeby-deeby/edit-item/alt-title-list.phtml',
+            retrieveLinkMethod: 'getByItemAndId'
+        );
     }
 
     /**

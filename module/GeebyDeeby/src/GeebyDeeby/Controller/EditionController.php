@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\SeriesService;
 
@@ -119,10 +120,8 @@ class EditionController extends AbstractBase
         if (!empty($rowObj->Item_ID)) {
             $item = $this->getDbService(ItemService::class)->getByPrimaryKey($rowObj->Item_ID)->toArray();
             if (!empty($rowObj->Preferred_Item_AltName_ID)) {
-                $ian = $this->getDbTable('itemsalttitles');
-                $tmpRow = $ian->select(
-                    ['Sequence_ID' => $rowObj->Preferred_Item_AltName_ID]
-                )->current();
+                $tmpRow = $this->getDbService(ItemsAltTitleService::class)
+                    ->getByPrimaryKey($rowObj->Preferred_Item_AltName_ID);
                 $item['Item_AltName'] = $tmpRow['Item_AltName'];
             }
         } else {
