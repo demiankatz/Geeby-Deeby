@@ -106,9 +106,9 @@ class SeriesAltTitles extends TableAwareGateway implements SeriesAltTitleEntityI
      *
      * @return static
      */
-    public function setNote(int|SeriesEntityInterface|null $note): static
+    public function setNote(int|NoteEntityInterface|null $note): static
     {
-        $this->Note_ID = $note instanceof SeriesEntityInterface ? $note->getId() : $note;
+        $this->Note_ID = $note instanceof NoteEntityInterface ? $note->getId() : $note;
         return $this;
     }
 

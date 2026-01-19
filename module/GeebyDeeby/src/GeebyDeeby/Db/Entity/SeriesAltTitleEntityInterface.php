@@ -77,7 +77,7 @@ interface SeriesAltTitleEntityInterface extends EntityInterface
      *
      * @return static
      */
-    public function setNote(int|SeriesEntityInterface|null $note): static;
+    public function setNote(int|NoteEntityInterface|null $note): static;
 
     /**
      * Get the alternate name associated with the series.
