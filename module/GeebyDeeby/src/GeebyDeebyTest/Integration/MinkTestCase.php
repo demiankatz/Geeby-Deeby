@@ -404,6 +404,27 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Get the current value of a <select> control (or null if not found).
+     *
+     * @param Element $page     Page containing element
+     * @param string  $selector Selector targeting element
+     *
+     * @return ?string
+     */
+    protected function getSelectedOption(Element $page, string $selector): ?string
+    {
+        $options = $page->findAll('css', $selector . ' option');
+        $selected = $options[0] ?? null;
+        foreach ($options as $next) {
+            if ($next->isSelected()) {
+                $selected = $next;
+                break;
+            }
+        }
+        return $selected?->getValue();
+    }
+
+    /**
      * Get value of an element selected via CSS; retry if it fails due to DOM change.
      *
      * @param Element $page     Page element
