@@ -295,6 +295,12 @@ class Edition extends Gateway
                 Select::JOIN_LEFT
             );
             $select->join(
+                ['pi' => 'Publishers_Imprints'],
+                'sp.Imprint_ID = pi.Imprint_ID',
+                ['Imprint_Name'],
+                Select::JOIN_LEFT
+            );
+            $select->join(
                 ['c' => 'Countries'],
                 'pa.Country_ID = c.Country_ID',
                 Select::SQL_STAR,
