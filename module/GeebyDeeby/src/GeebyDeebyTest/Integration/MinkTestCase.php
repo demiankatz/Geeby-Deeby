@@ -717,6 +717,23 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Log in as a user.
+     *
+     * @param TraversableElement $page     Page element
+     * @param string             $username Username
+     * @param string             $password Password
+     *
+     * @return void
+     */
+    protected function logIn(TraversableElement $page, string $username, string $password = 'password'): void
+    {
+        $page->clickLink('Log In');
+        $this->findCssAndSetValue($page, '#username', $username);
+        $this->findCssAndSetValue($page, '#password', $password);
+        $this->clickCss($page, '.content input[type="submit"]');
+    }
+
+    /**
      * Standard setup method.
      *
      * @return void
