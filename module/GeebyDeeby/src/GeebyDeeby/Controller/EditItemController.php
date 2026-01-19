@@ -34,6 +34,7 @@ use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
+use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\RoleService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -158,8 +159,7 @@ class EditItemController extends AbstractBase
                 ->getTranslatedFrom($itemId);
             $view->descriptions = $this->getDbTable('itemsdescriptions')
                 ->getDescriptions($itemId);
-            $view->tags = $this->getDbTable('itemstags')
-                ->getTags($itemId);
+            $view->tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($itemId);
             $view->item_alt_titles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($itemId);
             $view->relationships = $this->getDbService(ItemsRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this
@@ -692,12 +692,13 @@ class EditItemController extends AbstractBase
     public function tagAction()
     {
         return $this->handleGenericLink(
-            'itemstags',
-            'Item_ID',
-            'Tag_ID',
+            ItemsTagService::class,
+            'setItem',
+            'setTag',
             'tags',
-            'getTags',
-            'geeby-deeby/edit-item/tag-list.phtml'
+            'getTagsForItem',
+            'geeby-deeby/edit-item/tag-list.phtml',
+            retrieveLinkMethod: 'getByItemAndTag'
         );
     }
 

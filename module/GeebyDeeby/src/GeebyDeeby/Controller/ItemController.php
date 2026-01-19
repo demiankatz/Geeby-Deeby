@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
 
@@ -327,7 +328,7 @@ class ItemController extends AbstractBase
     protected function addItemRelationships($id, $view)
     {
         $view->altTitles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($id);
-        $view->tags = $this->getDbTable('itemstags')->getTags($id);
+        $view->tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($id);
         $collections = $this->getDbTable('itemsincollections');
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);

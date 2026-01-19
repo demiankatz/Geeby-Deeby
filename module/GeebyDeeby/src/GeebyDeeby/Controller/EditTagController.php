@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\PredicateService;
 use GeebyDeeby\Db\Service\TagsAttributeService;
 use GeebyDeeby\Db\Service\TagService;
@@ -111,7 +112,7 @@ class EditTagController extends AbstractBase
         $view->tagTypes = $this->typelistAction()->tagTypes;
 
         // Get tag ID
-        $tagId = $view->tag['Tag_ID'] ?? $view->affectedRow->Tag_ID ?? null;
+        $tagId = $view->tag['Tag_ID'] ?? $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if (
@@ -136,10 +137,9 @@ class EditTagController extends AbstractBase
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbService(TagsUriService::class)->getURIsForTag($view->tagObj);
+            $view->uris = $this->getDbService(TagsUriService::class)->getURIsForTag($tagId);
             $view->setTemplate('geeby-deeby/edit-tag/edit-full');
-            $view->items = $this->getDbTable('itemstags')
-                ->getItemsForTag($view->tagObj->Tag_ID);
+            $view->items = $this->getDbService(ItemsTagService::class)->getItemsForTag($tagId);
             $view->predicates = $this->getDbService(PredicateService::class)->getList();
             $view->relationships = $this->getDbService(TagsRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
@@ -170,12 +170,14 @@ class EditTagController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemstags',
-            'Tag_ID',
-            'Item_ID',
+            ItemsTagService::class,
+            'setTag',
+            'setItem',
             'items',
             'getItemsForTag',
-            'geeby-deeby/edit-tag/item-list.phtml'
+            'geeby-deeby/edit-tag/item-list.phtml',
+            retrieveLinkMethod: 'getByItemAndTag',
+            invertRetrieveLinkParams: true
         );
     }
 

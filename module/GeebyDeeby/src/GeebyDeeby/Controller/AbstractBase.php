@@ -480,15 +480,16 @@ class AbstractBase extends AbstractActionController
     /**
      * Handle generic linking between two items.
      *
-     * @param string    $tableName          Name of database table to modify
-     * @param string    $primaryColumn      Name of database column whose value is in 'id' route parameter
-     * @param string    $secondaryColumn    Name of database column whose value is in 'extra' route parameter
-     * @param string    $listVariable       Name of view variable to assign list to when displaying existing links
-     * @param string    $listMethod         Name of method on table class to call for list assignment
-     * @param string    $listTemplate       Name of template to use for displaying list
-     * @param array     $extraFields        Extra fields to insert with the link (optional)
-     * @param ?callable $insertCallback     Callback function when inserting a new row
-     * @param string    $retrieveLinkMethod Name of service method to fetch a link using primary/secondary values
+     * @param string    $tableName                Name of database table to modify
+     * @param string    $primaryColumn            Name of database column whose value is in 'id' route parameter
+     * @param string    $secondaryColumn          Name of database column whose value is in 'extra' route parameter
+     * @param string    $listVariable             Name of view variable for list used when displaying existing links
+     * @param string    $listMethod               Name of method on table class to call for list assignment
+     * @param string    $listTemplate             Name of template to use for displaying list
+     * @param array     $extraFields              Extra fields to insert with the link (optional)
+     * @param ?callable $insertCallback           Callback function when inserting a new row
+     * @param string    $retrieveLinkMethod       Name of service method to fetch a link using primary/secondary values
+     * @param bool      $invertRetrieveLinkParams Should we invert the parameter order on retrieveLinkMethod?
      *
      * @return mixed
      */
@@ -501,7 +502,8 @@ class AbstractBase extends AbstractActionController
         $listTemplate,
         $extraFields = [],
         $insertCallback = null,
-        string $retrieveLinkMethod = 'retrieveLink'
+        string $retrieveLinkMethod = 'retrieveLink',
+        bool $invertRetrieveLinkParams = false
     ) {
         $ok = $this->checkPermission('Content_Editor');
         if ($ok !== true) {
@@ -515,17 +517,18 @@ class AbstractBase extends AbstractActionController
     /**
      * Handle generic linking between two items using a database service.
      *
-     * @param string    $serviceName        Name of database service to leverage
-     * @param ?string   $primarySetter      Name of entity setter whose value is in 'id' route parameter
+     * @param string    $serviceName              Name of database service to leverage
+     * @param ?string   $primarySetter            Name of entity setter whose value is in 'id' route parameter
      * (null to disable creation)
-     * @param ?string   $secondarySetter    Name of entity setter whose value is in 'extra' route parameter
+     * @param ?string   $secondarySetter          Name of entity setter whose value is in 'extra' route parameter
      * (null to disable creation)
-     * @param string    $listVariable       Name of view variable to assign list to when displaying existing links
-     * @param string    $listMethod         Name of service method to call for list assignment
-     * @param string    $listTemplate       Name of template to use for displaying list
-     * @param array     $extraFields        Extra fields to insert with the link (method name => value, optional)
-     * @param ?callable $insertCallback     Callback function when inserting a new row (optional)
-     * @param string    $retrieveLinkMethod Name of service method to fetch a link using primary/secondary values
+     * @param string    $listVariable             Name of view variable for list used when displaying existing links
+     * @param string    $listMethod               Name of method on table class to call for list assignment
+     * @param string    $listTemplate             Name of template to use for displaying list
+     * @param array     $extraFields              Extra fields to insert with the link (optional)
+     * @param ?callable $insertCallback           Callback function when inserting a new row
+     * @param string    $retrieveLinkMethod       Name of service method to fetch a link using primary/secondary values
+     * @param bool      $invertRetrieveLinkParams Should we invert the parameter order on retrieveLinkMethod?
      *
      * @return mixed
      */
@@ -538,7 +541,8 @@ class AbstractBase extends AbstractActionController
         string $listTemplate,
         array $extraFields = [],
         ?callable $insertCallback = null,
-        string $retrieveLinkMethod = 'retrieveLink'
+        string $retrieveLinkMethod = 'retrieveLink',
+        bool $invertRetrieveLinkParams = false
     ) {
         $primary = $this->params()->fromRoute('id');
         $secondary = $this->params()->fromRoute('extra');
@@ -566,7 +570,9 @@ class AbstractBase extends AbstractActionController
                     if (!is_callable([$service, $retrieveLinkMethod])) {
                         return $this->jsonDie("$serviceName lacks $retrieveLinkMethod method");
                     }
-                    $link = $service->$retrieveLinkMethod($primary, $secondary);
+                    $link = $invertRetrieveLinkParams
+                        ? $service->$retrieveLinkMethod($secondary, $primary)
+                        : $service->$retrieveLinkMethod($primary, $secondary);
                     if (!$link) {
                         return $this->jsonDie("Could not retrieve $serviceName link using $primary / $secondary");
                     }
