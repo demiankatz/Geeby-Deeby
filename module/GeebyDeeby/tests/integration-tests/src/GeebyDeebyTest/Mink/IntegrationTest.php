@@ -45,7 +45,7 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
- * @todo Add tests for edition contents and preferred publisher/titles.
+ * @todo Add tests for edition contents and preferred titles.
  * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
  * @todo Add test to set citation on creator relationship
  * @todo Add tests for series attached items/relationships/translations
@@ -1623,12 +1623,28 @@ class IntegrationTest extends MinkTestCase
         $editButton->click();
         $this->waitForPageLoad($page);
         $this->findCssAndSetValue($page, '#Address_ID', '1');
+        $this->findCssAndSetValue($page, '#Imprint_ID', '1');
         $this->clickCss($page, '.modal-body input[type="submit"]');
         $this->waitForPageLoad($page);
         $this->assertSame(
-            'test publisher (test country -- test city -- fake st. - test note)',
+            'test publisher (test imprint: test country -- test city -- fake st. - test note)',
             $this->findCssAndGetText($page, '#publisher_list td')
         );
+    }
+
+    /**
+     * Test setting a preferred publisher on an edition.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testSetPublisherDetails')]
+    public function testSetPreferredPublisher(): void
+    {
+        $page = $this->goToPage('/edit/Edition/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Preferred Publisher');
+        $this->findCssAndSetValue($page, '#Series_Publisher_ID', '1');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
     }
 
     /**
@@ -1645,7 +1661,7 @@ class IntegrationTest extends MinkTestCase
             . ' [List Series Subjects/Tags]'
             . ' Language: test language 1'
             . ' Alternate Title: test alternate series title (test note)'
-            . ' Publisher: test publisher (test city: fake st.) -- test country (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' Category: test category'
             . ' Translated From: test series 2 (edited) (test language 1)'
             . ' test series relationship: test series 2 (edited)'
@@ -1696,6 +1712,7 @@ class IntegrationTest extends MinkTestCase
             . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
             . ' Date: February 3, 1952 (test note)'
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)'
             . ' User Summary: Test description'
@@ -1704,6 +1721,19 @@ class IntegrationTest extends MinkTestCase
             . ' Related Documents test file type 1 test file 1'
             . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
             . ' (last verified: 2025-12-01)',
+        ];
+        yield 'edition' => [
+            '/Edition/1',
+            '(test note) Online Full Text: test full text source 1'
+            . ' Series: test series 1'
+            . ' Item: test item'
+            . ' Platform: test platform'
+            . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
+            . ' Date: February 3, 1952 (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
+            . ' ISBN: 0123456789 / 9780123456786 (test note)'
+            . ' OCLC Number: 12345 (test note)'
+            . ' Product Code: pc-test (test note)',
         ];
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
         yield 'tag' => [
@@ -1725,7 +1755,7 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\Depends('testSetPublisherDetails')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSetPreferredPublisher')]
     #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCommentApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCategoryLinking')]
