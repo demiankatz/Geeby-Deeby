@@ -35,6 +35,7 @@ use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\PublishersAddressService;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -146,8 +147,7 @@ class EditSeriesController extends AbstractBase
                 ?? true;
             $view->item_list = $this->getDbService(ItemService::class)
                 ->getItemsForSeries($seriesId, true, $groupByMaterial);
-            $view->series_alt_titles = $this->getDbTable('seriesalttitles')
-                ->getAltTitles($seriesId);
+            $view->series_alt_titles = $this->getDbService(SeriesAltTitleService::class)->getAltTitles($seriesId);
             $view->series_materials = $this->getDbTable('seriesmaterialtypes')
                 ->getMaterials($seriesId);
             $view->series_publishers = $this->getDbTable('seriespublishers')
@@ -220,43 +220,42 @@ class EditSeriesController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $table = $this->getDbTable('seriesalttitles');
-            $row = $table->createRow();
-            $row->Series_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->Series_AltName = trim($this->params()->fromPost('title'));
-            if (empty($row->Series_AltName)) {
+            $service = $this->getDbService(SeriesAltTitleService::class);
+            $note = $this->params()->fromPost('note_id');
+            $title = trim((string)$this->params()->fromPost('title'));
+            if (empty($title)) {
                 return $this->jsonDie('Title must not be empty.');
             }
-            $table->insert((array)$row);
+            $entity = $service->createEntity()
+                ->setSeries($this->params()->fromRoute('id'))
+                ->setNote(empty($note) ? null : $note)
+                ->setAltName($title);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            // Prevent deletion of alttitles that are linked up:
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('edition')->select(
-                    ['Preferred_Series_AltName_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $ed = $result->current();
-                    $msg = 'You cannot delete this title; it is assigned to Edition '
-                        . $ed->Edition_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'seriesalttitles',
-                'Series_ID',
-                'Sequence_ID',
-                'series_alt_titles',
-                'getAltTitles',
-                'geeby-deeby/edit-series/alt-title-list.phtml'
-            );
         }
+        // Prevent deletion of alttitles that are linked up:
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbTable('edition')->select(
+                ['Preferred_Series_AltName_ID' => $extra]
+            );
+            if (count($result) > 0) {
+                $ed = $result->current();
+                $msg = 'You cannot delete this title; it is assigned to Edition '
+                    . $ed->Edition_ID . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            SeriesAltTitleService::class,
+            null,
+            null,
+            'series_alt_titles',
+            'getAltTitles',
+            'geeby-deeby/edit-series/alt-title-list.phtml',
+            retrieveLinkMethod: 'getBySeriesAndId'
+        );
     }
 
     /**

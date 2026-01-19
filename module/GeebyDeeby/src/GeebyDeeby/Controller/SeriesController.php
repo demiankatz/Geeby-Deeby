@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
 use Laminas\Db\Sql\Expression;
@@ -597,7 +598,7 @@ class SeriesController extends AbstractBase
             return false;
         }
         $id = $view->series['Series_ID'];
-        $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
+        $view->altTitles = $this->getDbService(SeriesAltTitleService::class)->getAltTitles($id);
         $view->categories = $this->getDbTable('seriescategories')
             ->getCategories($id);
         $config = $this->serviceLocator->get('config');

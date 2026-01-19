@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function is_object;
@@ -120,9 +121,9 @@ class EditionController extends AbstractBase
         if (!empty($rowObj->Item_ID)) {
             $item = $this->getDbService(ItemService::class)->getByPrimaryKey($rowObj->Item_ID)->toArray();
             if (!empty($rowObj->Preferred_Item_AltName_ID)) {
-                $tmpRow = $this->getDbService(ItemsAltTitleService::class)
+                $ian = $this->getDbService(ItemsAltTitleService::class)
                     ->getByPrimaryKey($rowObj->Preferred_Item_AltName_ID);
-                $item['Item_AltName'] = $tmpRow['Item_AltName'];
+                $item['Item_AltName'] = $ian?->getAltName();
             }
         } else {
             $item = [];
@@ -130,11 +131,9 @@ class EditionController extends AbstractBase
         if (!empty($rowObj->Series_ID)) {
             $series = $this->getDbService(SeriesService::class)->getByPrimaryKey($rowObj->Series_ID)->toArray();
             if (!empty($rowObj->Preferred_Series_AltName_ID)) {
-                $ian = $this->getDbTable('seriesalttitles');
-                $tmpSeriesRow = $ian->select(
-                    ['Sequence_ID' => $rowObj->Preferred_Series_AltName_ID]
-                )->current();
-                $series['Series_AltName'] = $tmpSeriesRow['Series_AltName'];
+                $san = $this->getDbService(SeriesAltTitleService::class)
+                    ->getByPrimaryKey($rowObj->Preferred_Series_AltName_ID);
+                $series['Series_AltName'] = $san?->getAltName();
             }
         } else {
             $series = [];

@@ -36,6 +36,7 @@ use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PlatformService;
 use GeebyDeeby\Db\Service\RoleService;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
@@ -185,7 +186,7 @@ class EditEditionController extends AbstractBase
         ) {
             $view->series = $this->getDbService(SeriesService::class)
                 ->getByPrimaryKey($view->edition['Series_ID']);
-            $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
+            $view->seriesAltTitles = $this->getDbService(SeriesAltTitleService::class)
                 ->getAltTitles($view->edition['Series_ID']);
             $view->publishers = $this->getDbTable('seriespublishers')
                 ->getPublishers($view->edition['Series_ID']);
@@ -363,7 +364,7 @@ class EditEditionController extends AbstractBase
         $view = $this->createViewModel();
         $view->edition = $this->getDbTable('edition')
             ->getByPrimaryKey($this->params()->fromRoute('id'));
-        $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
+        $view->seriesAltTitles = $this->getDbService(SeriesAltTitleService::class)
             ->getAltTitles($view->edition['Series_ID']);
         $view->selected = $view->edition['Preferred_Series_AltName_ID'];
         $view->setTemplate('geeby-deeby/edit-edition/series-alt-title-select.phtml');
@@ -387,29 +388,20 @@ class EditEditionController extends AbstractBase
             if (empty($titleText)) {
                 return $this->jsonDie('Title cannot be empty.');
             } else {
-                $table = $this->getDbTable('seriesalttitles');
-                $results = $table->select(
-                    [
-                        'Series_AltName' => $titleText,
-                        'Series_ID' => $edition->Series_ID,
-                    ]
-                );
-                if (count($results) == 0) {
-                    $row = $table->createRow();
-                    $row->Series_ID = $edition->Series_ID;
-                    if (empty($row->Series_ID)) {
+                $service = $this->getDbService(SeriesAltTitleService::class);
+                $entity  = $service->getBySeriesAndTitle($edition->Series_ID, $titleText);
+                if (!$entity) {
+                    if (empty($edition->Series_ID)) {
                         return $this->jsonDie(
                             'Edition must be attached to a Series.'
                         );
                     }
-                    $row->Series_AltName = $titleText;
-                    $table->insert((array)$row);
-                    $results = $table->select((array)$row);
+                    $entity = $service->createEntity()
+                        ->setSeries($edition->Series_ID)
+                        ->setAltName($titleText);
+                    $service->persistEntity($entity);
                 }
-                foreach ($results as $result) {
-                    $result = (array)$result;
-                    $title = $result['Sequence_ID'];
-                }
+                $title = $entity->getId();
                 if (empty($title)) {
                     return $this->jsonDie('Problem inserting title.');
                 }
