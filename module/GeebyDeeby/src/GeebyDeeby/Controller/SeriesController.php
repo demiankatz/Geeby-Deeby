@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
 use Laminas\Db\Sql\Expression;
@@ -608,8 +609,7 @@ class SeriesController extends AbstractBase
             ->getItemsForSeries($id, true, $view->groupByMaterial);
         $view->language = $this->getDbService(LanguageService::class)
             ->getByPrimaryKey($view->series['Language_ID']);
-        $view->publishers = $this->getDbTable('seriespublishers')
-            ->getPublishers($id);
+        $view->publishers = $this->getDbService(SeriesPublisherService::class)->getPublishersForSeries($id);
         $trans = $this->getDbTable('seriestranslations');
         // The variable/function names are a bit unintuitive here --
         // $view->translatedInto is a list of books that $id was translated into;

@@ -37,6 +37,7 @@ use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PlatformService;
 use GeebyDeeby\Db\Service\RoleService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
@@ -188,8 +189,8 @@ class EditEditionController extends AbstractBase
                 ->getByPrimaryKey($view->edition['Series_ID']);
             $view->seriesAltTitles = $this->getDbService(SeriesAltTitleService::class)
                 ->getAltTitles($view->edition['Series_ID']);
-            $view->publishers = $this->getDbTable('seriespublishers')
-                ->getPublishers($view->edition['Series_ID']);
+            $view->publishers = $this->getDbService(SeriesPublisherService::class)
+                ->getPublishersForSeries($view->edition['Series_ID']);
         }
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -239,8 +240,8 @@ class EditEditionController extends AbstractBase
         $view = $this->createViewModel();
         $view->edition = $this->getDbTable('edition')
             ->getByPrimaryKey($this->params()->fromRoute('id'));
-        $view->publishers = $this->getDbTable('seriespublishers')
-            ->getPublishers($view->edition['Series_ID']);
+        $view->publishers = $this->getDbService(SeriesPublisherService::class)
+            ->getPublishersForSeries($view->edition['Series_ID']);
         $view->selected = $view->edition['Preferred_Series_Publisher_ID'];
         $view->setTemplate('geeby-deeby/edit-edition/series-publisher-select.phtml');
         $view->setTerminal(true);

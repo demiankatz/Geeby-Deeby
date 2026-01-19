@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\PublishersUriService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
 
 use function is_object;
 
@@ -140,8 +141,7 @@ class PublisherController extends AbstractBase
         $view = $this->createViewModel(
             ['publisher' => $entity->toArray()]
         );
-        $view->series = $this->getDbTable('seriespublishers')
-            ->getSeriesForPublisher($id);
+        $view->series = $this->getDbService(SeriesPublisherService::class)->getSeriesForPublisher($id);
         $view->uris = $this->getDbService(PublishersUriService::class)->getURIsForPublisher($id);
         return $view;
     }

@@ -38,6 +38,7 @@ use GeebyDeeby\Db\Service\PublishersAddressService;
 use GeebyDeeby\Db\Service\PublishersImprintService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
 use GeebyDeeby\Db\Service\SeriesService;
 
@@ -151,8 +152,8 @@ class EditSeriesController extends AbstractBase
             $view->series_alt_titles = $this->getDbService(SeriesAltTitleService::class)->getAltTitles($seriesId);
             $view->series_materials = $this->getDbTable('seriesmaterialtypes')
                 ->getMaterials($seriesId);
-            $view->series_publishers = $this->getDbTable('seriespublishers')
-                ->getPublishers($seriesId);
+            $view->series_publishers = $this->getDbService(SeriesPublisherService::class)
+                ->getPublishersForSeries($seriesId);
             $view->relationships = $this->getDbService(SeriesRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this
                 ->getDbTable('seriesrelationshipsvalues')
@@ -267,28 +268,22 @@ class EditSeriesController extends AbstractBase
     protected function modifyPublisher()
     {
         $rowId = $this->params()->fromRoute('extra');
-        $table = $this->getDbTable('seriespublishers');
+        $service = $this->getDbService(SeriesPublisherService::class);
         if ($this->getRequest()->isPost()) {
             $imprint = $this->params()->fromPost('imprint');
-            if (empty($imprint)) {
-                $imprint = null;
-            }
             $address = $this->params()->fromPost('address');
-            if (empty($address)) {
-                $address = null;
-            }
-            $fields = [
-                'Imprint_ID' => $imprint, 'Address_ID' => $address,
-            ];
-            $table->update($fields, ['Series_Publisher_ID' => $rowId]);
+            $entity = $service->getByPrimaryKey($rowId);
+            $entity->setImprint(empty($imprint) ? null : $imprint)
+                ->setAddress(empty($address) ? null : $address);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
         $view = $this->createViewModel();
-        $view->row = $table->getByPrimaryKey($rowId);
+        $view->row = $service->getByPrimaryKey($rowId)->toArray();
         $view->addresses = $this->getDbService(PublishersAddressService::class)
-            ->getAddressesForPublisher($view->row->Publisher_ID);
+            ->getAddressesForPublisher($view->row['Publisher_ID']);
         $view->imprints = $this->getDbService(PublishersImprintService::class)
-            ->getImprintsForPublisher($view->row->Publisher_ID);
+            ->getImprintsForPublisher($view->row['Publisher_ID']);
         $view->setTemplate('geeby-deeby/edit-series/modify-publisher');
 
         // If this is an AJAX request, render the core list only, not the
@@ -322,40 +317,39 @@ class EditSeriesController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $table = $this->getDbTable('seriespublishers');
-            $row = $table->createRow();
-            $row->Series_ID = $this->params()->fromRoute('id');
-            $row->Publisher_ID = $this->params()->fromPost('publisher_id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->save();
+            $service = $this->getDbService(SeriesPublisherService::class);
+            $note = $this->params()->fromPost('note_id');
+            $entity = $service->createEntity()
+                ->setSeries($this->params()->fromRoute('id'))
+                ->setPublisher($this->params()->fromPost('publisher_id'))
+                ->setNote($note ? $note : null);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('edition')->select(
-                    ['Preferred_Series_Publisher_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $ed = $result->current();
-                    $msg = 'You cannot delete this publisher; '
-                        . 'it is assigned to Edition '
-                        . $ed->Edition_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'seriespublishers',
-                'Series_ID',
-                'Series_Publisher_ID',
-                'series_publishers',
-                'getPublishers',
-                'geeby-deeby/edit-series/publisher-list.phtml'
-            );
         }
+
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbTable('edition')->select(
+                ['Preferred_Series_Publisher_ID' => $extra]
+            );
+            if (count($result) > 0) {
+                $ed = $result->current();
+                $msg = 'You cannot delete this publisher; '
+                    . 'it is assigned to Edition '
+                    . $ed->Edition_ID . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            SeriesPublisherService::class,
+            null,
+            null,
+            'series_publishers',
+            'getPublishersForSeries',
+            'geeby-deeby/edit-series/publisher-list.phtml',
+            retrieveLinkMethod: 'getBySeriesAndId'
+        );
     }
 
     /**
