@@ -45,14 +45,12 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
- * @todo Add tests for edition contents and preferred publisher/titles.
- * @todo Add test to set imprint and address on a series/publisher link
+ * @todo Add tests for edition contents and preferred titles.
  * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
  * @todo Add test to set citation on creator relationship
- * @todo Add tests for series attached items/categories/relationships/translations
+ * @todo Add tests for series attached items/relationships/translations
  * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
- * @todo Add tests for creating/approving comments/reviews
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -149,23 +147,6 @@ class IntegrationTest extends MinkTestCase
         bool $regExMatch = false
     ): void {
         $this->assertPageContent($expectedMessage, '', $linkText, $containerIndex, $regExMatch);
-    }
-
-    /**
-     * Log in as a user.
-     *
-     * @param TraversableElement $page     Page element
-     * @param string             $username Username
-     * @param string             $password Password
-     *
-     * @return void
-     */
-    protected function logIn(TraversableElement $page, string $username, string $password = 'password'): void
-    {
-        $page->clickLink('Log In');
-        $this->findCssAndSetValue($page, '#username', $username);
-        $this->findCssAndSetValue($page, '#password', $password);
-        $this->clickCss($page, '.content input[type="submit"]');
     }
 
     /**
@@ -867,6 +848,21 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Test linking categories to a series.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testCategoryLinking(): void
+    {
+        $page = $this->goToPage('/edit/Series/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Categories');
+        $this->clickCss($page, '#Category_ID_1');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+    }
+
+    /**
      * Data provider for testEditExistingData().
      *
      * @return Generator<string, array>
@@ -1016,15 +1012,7 @@ class IntegrationTest extends MinkTestCase
             $this->logIn($page, 'admin');
         }
         $this->clickCss($page, '#add_item');
-        $options = $page->findAll('css', '#Material_Type_ID option');
-        $selected = $options[0];
-        foreach ($options as $next) {
-            if ($next->isSelected()) {
-                $selected = $next;
-                break;
-            }
-        }
-        $this->assertSame((string)$type, $selected->getValue());
+        $this->assertSame((string)$type, $this->getSelectedOption($page, '#Material_Type_ID'));
     }
 
     /**
@@ -1238,10 +1226,10 @@ class IntegrationTest extends MinkTestCase
         yield 'publisher address' => [
             '/edit/Publisher/1',
             null,
-            ['#Street' => 'fake st.'],
+            ['#Country_ID' => '1', '#City_ID' => '1', '#Street' => 'fake st.'],
             '#address_list',
             '/^No addresses set.$/',
-            '/test country -- fake st./',
+            '/test country -- test city -- fake st./',
         ];
         yield 'publisher imprint' => [
             '/edit/Publisher/1',
@@ -1451,6 +1439,215 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Assert the contents of the top and bottom controls.
+     *
+     * @param TraversableElement $page     Page being examined
+     * @param string             $expected Expected control text
+     *
+     * @return void
+     * @throws \Exception
+     */
+    protected function assertControls(TraversableElement $page, string $expected): void
+    {
+        $this->assertEquals($expected, $this->findCssAndGetText($page, '.controls.top'));
+        $this->assertEquals($expected, $this->findCssAndGetText($page, '.controls.bottom'));
+    }
+
+    /**
+     * Data provider for testCollectionAddAndRemoveControls().
+     *
+     * @return Generator<string, array>
+     */
+    public static function collectionBehaviorProvider(): Generator
+    {
+        yield 'default page, top buttons' => ['', '.controls.top'];
+        yield 'default page, bottom buttons' => ['', '.controls.bottom'];
+        yield 'editions view, top buttons' => ['/Editions', '.controls.top'];
+        yield 'editions view, bottom buttons' => ['/Editions', '.controls.bottom'];
+    }
+
+    /**
+     * Test collection management add/remove/control label functionality.
+     *
+     * @param string $subPage          Subpage of item page to test.
+     * @param string $controlsSelector Selector for button bar to use for testing.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('collectionBehaviorProvider')]
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testCollectionAddAndRemoveControls(string $subPage, string $controlsSelector): void
+    {
+        $page = $this->goToPage('/Item/1' . $subPage);
+        $this->assertControls($page, 'Please log in to manage your collection or post a review.');
+        $this->logIn($page, 'user');
+        // Add to all lists:
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Have List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Want List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Modify Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Sale/Trade List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Modify Want List Modify Sale/Trade List');
+        // Remove from all lists:
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Have List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Modify Want List Modify Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Want List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Modify Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Modify Sale/Trade List');
+        $this->clickCss($page, '.content input[type="submit"]', index: 1);
+        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
+    }
+
+    /**
+     * Test submitting an item review.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testReviewSubmission(): void
+    {
+        $page = $this->goToPage('/Item/1');
+        $this->logIn($page, 'user');
+        $page->clickLink('Submit Review');
+        $this->findCssAndSetValue($page, '#review', 'this is my review');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertSame(
+            'Your review has been saved. It will appear on the site once it has been approved by an administrator.',
+            $this->findCssAndGetText($page, '.content p')
+        );
+        $page->clickLink('Back to Item');
+        $page->clickLink('Edit Review');
+        $this->assertStringStartsWith(
+            'You have already reviewed this item.',
+            $this->findCssAndGetText($page, '.disclaimer')
+        );
+        $this->assertSame(
+            'this is my review',
+            $this->findCssAndGetValue($page, '#review')
+        );
+    }
+
+    /**
+     * Test approving an item review.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testReviewSubmission')]
+    public function testReviewApproval(): void
+    {
+        $page = $this->goToPage('/edit/Approve');
+        $this->logIn($page, 'admin');
+        $this->assertSame(
+            'test item user Approve Reject',
+            $this->findCssAndGetText($page, '#PendingReview_2_1')
+        );
+        $this->assertSame(
+            'this is my review',
+            $this->findCssAndGetValue($page, '#ReviewText_2_1')
+        );
+        $button = $this->findCss($page, '#ReviewButtons_2_1 button');
+        $this->assertSame('Approve', $button->getText());
+        $button->click();
+    }
+
+    /**
+     * Test submitting a series comment.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testCommentSubmission(): void
+    {
+        $page = $this->goToPage('/Series/1');
+        $this->logIn($page, 'user');
+        $page->clickLink('Submit Comment');
+        $this->findCssAndSetValue($page, '#review', 'this is my comment');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertSame(
+            'Your comment has been saved. It will appear on the site once it has been approved by an administrator.',
+            $this->findCssAndGetText($page, '.content p')
+        );
+        $page->clickLink('Back to Series');
+        $page->clickLink('Edit Comment');
+        $this->assertStringStartsWith(
+            'You have already commented on this series.',
+            $this->findCssAndGetText($page, '.disclaimer')
+        );
+        $this->assertSame(
+            'this is my comment',
+            $this->findCssAndGetValue($page, '#review')
+        );
+    }
+
+    /**
+     * Test approving a series comment.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testCommentSubmission')]
+    public function testCommentApproval(): void
+    {
+        $page = $this->goToPage('/edit/Approve');
+        $this->logIn($page, 'admin');
+        $this->assertSame(
+            'test series 1 user Approve Reject',
+            $this->findCssAndGetText($page, '#PendingComment_2_1')
+        );
+        $this->assertSame(
+            'this is my comment',
+            $this->findCssAndGetValue($page, '#CommentText_2_1')
+        );
+        $button = $this->findCss($page, '#CommentButtons_2_1 button');
+        $this->assertSame('Approve', $button->getText());
+        $button->click();
+    }
+
+    /**
+     * Test setting the advanced publisher controls.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testSetPublisherDetails(): void
+    {
+        $page = $this->goToPage('/edit/Series/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Publishers');
+        $editButton = $this->findCss($page, '#publisher_list .ui-icon-gear');
+        $editButton->click();
+        $this->waitForPageLoad($page);
+        $this->findCssAndSetValue($page, '#Address_ID', '1');
+        $this->findCssAndSetValue($page, '#Imprint_ID', '1');
+        $this->clickCss($page, '.modal-body input[type="submit"]');
+        $this->waitForPageLoad($page);
+        $this->assertSame(
+            'test publisher (test imprint: test country -- test city -- fake st. - test note)',
+            $this->findCssAndGetText($page, '#publisher_list td')
+        );
+    }
+
+    /**
+     * Test setting a preferred publisher on an edition.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testSetPublisherDetails')]
+    public function testSetPreferredPublisher(): void
+    {
+        $page = $this->goToPage('/edit/Edition/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Preferred Publisher');
+        $this->findCssAndSetValue($page, '#Series_Publisher_ID', '1');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+    }
+
+    /**
      * Data provider for testPopulatedRecords().
      *
      * @return Generator<string, array>
@@ -1464,7 +1661,8 @@ class IntegrationTest extends MinkTestCase
             . ' [List Series Subjects/Tags]'
             . ' Language: test language 1'
             . ' Alternate Title: test alternate series title (test note)'
-            . ' Publisher: test publisher (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
+            . ' Category: test category'
             . ' Translated From: test series 2 (edited) (test language 1)'
             . ' test series relationship: test series 2 (edited)'
             . ' second test materials (edited)'
@@ -1472,12 +1670,11 @@ class IntegrationTest extends MinkTestCase
             . ' Related Documents test file type 1 test file 1'
             . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
             . ' (last verified: 2025-12-01)'
-            . ' User Comments No comments available. Please log in to leave a comment.',
+            . ' User Comments this is my comment --user Please log in to leave a comment.',
         ];
-        // TODO: add data so the following commented-out tests will be non-empty
-        //yield 'category' => ['/Category/1', 'test description No series are listed in this category.'];
-        //yield 'city' => ['/City/1', 'No information is available about this city.'];
-        //yield 'country' => ['/Country/1', 'No information is available about this country.'];
+        yield 'category' => ['/Category/1', 'test description T test series 1'];
+        yield 'city' => ['/City/1', 'T test series 1'];
+        yield 'country' => ['/Country/1', 'T test series 1'];
         yield 'language' => ['/Language/1', 'T test series 1 test series 2 (edited)'];
         yield 'material type' => ['/Material/1', 'T test series 1'];
         yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1 T test series 1'];
@@ -1515,13 +1712,28 @@ class IntegrationTest extends MinkTestCase
             . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
             . ' Date: February 3, 1952 (test note)'
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)'
             . ' User Summary: Test description'
+            . ' user\'s Thoughts: this is my review More reviews by user'
             . ' Please log in to manage your collection or post a review.'
             . ' Related Documents test file type 1 test file 1'
             . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
             . ' (last verified: 2025-12-01)',
+        ];
+        yield 'edition' => [
+            '/Edition/1',
+            '(test note) Online Full Text: test full text source 1'
+            . ' Series: test series 1'
+            . ' Item: test item'
+            . ' Platform: test platform'
+            . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
+            . ' Date: February 3, 1952 (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
+            . ' ISBN: 0123456789 / 9780123456786 (test note)'
+            . ' OCLC Number: 12345 (test note)'
+            . ' Product Code: pc-test (test note)',
         ];
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
         yield 'tag' => [
@@ -1543,7 +1755,10 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSetPreferredPublisher')]
+    #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
+    #[\PHPUnit\Framework\Attributes\Depends('testCommentApproval')]
+    #[\PHPUnit\Framework\Attributes\Depends('testCategoryLinking')]
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsProvider')]
     public function testPopulatedRecords(
         string $path,
@@ -1621,72 +1836,6 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Assert the contents of the top and bottom controls.
-     *
-     * @param TraversableElement $page     Page being examined
-     * @param string             $expected Expected control text
-     *
-     * @return void
-     * @throws \Exception
-     */
-    protected function assertControls(TraversableElement $page, string $expected): void
-    {
-        $this->assertEquals($expected, $this->findCssAndGetText($page, '.controls.top'));
-        $this->assertEquals($expected, $this->findCssAndGetText($page, '.controls.bottom'));
-    }
-
-    /**
-     * Data provider for testCollectionAddAndRemoveControls().
-     *
-     * @return Generator<string, array>
-     */
-    public static function collectionBehaviorProvider(): Generator
-    {
-        yield 'default page, top buttons' => ['', '.controls.top'];
-        yield 'default page, bottom buttons' => ['', '.controls.bottom'];
-        yield 'editions view, top buttons' => ['/Editions', '.controls.top'];
-        yield 'editions view, bottom buttons' => ['/Editions', '.controls.bottom'];
-    }
-
-    /**
-     * Test collection management add/remove/control label functionality.
-     *
-     * @param string $subPage          Subpage of item page to test.
-     * @param string $controlsSelector Selector for button bar to use for testing.
-     *
-     * @return void
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('collectionBehaviorProvider')]
-    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
-    public function testCollectionAddAndRemoveControls(string $subPage, string $controlsSelector): void
-    {
-        $page = $this->goToPage('/Item/1' . $subPage);
-        $this->assertControls($page, 'Please log in to manage your collection or post a review.');
-        $this->logIn($page, 'user');
-        // Add to all lists:
-        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
-        $this->findCss($page, $controlsSelector)->clickLink('Add to Have List');
-        $this->clickCss($page, '.content input[type="submit"]');
-        $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Add to Sale/Trade List');
-        $this->findCss($page, $controlsSelector)->clickLink('Add to Want List');
-        $this->clickCss($page, '.content input[type="submit"]');
-        $this->assertControls($page, 'Submit Review Modify Have List Modify Want List Add to Sale/Trade List');
-        $this->findCss($page, $controlsSelector)->clickLink('Add to Sale/Trade List');
-        $this->clickCss($page, '.content input[type="submit"]');
-        $this->assertControls($page, 'Submit Review Modify Have List Modify Want List Modify Sale/Trade List');
-        // Remove from all lists:
-        $this->findCss($page, $controlsSelector)->clickLink('Modify Have List');
-        $this->clickCss($page, '.content input[type="submit"]', index: 1);
-        $this->assertControls($page, 'Submit Review Add to Have List Modify Want List Modify Sale/Trade List');
-        $this->findCss($page, $controlsSelector)->clickLink('Modify Want List');
-        $this->clickCss($page, '.content input[type="submit"]', index: 1);
-        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Modify Sale/Trade List');
-        $this->findCss($page, $controlsSelector)->clickLink('Modify Sale/Trade List');
-        $this->clickCss($page, '.content input[type="submit"]', index: 1);
-        $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
-    }
-
-    /**
      * Data provider for testPersonFullText().
      *
      * @return Generator<string, array>
@@ -1740,8 +1889,7 @@ class IntegrationTest extends MinkTestCase
         yield 'series by language' => ['by language', 'T test language 1 test language 2 (edited)', 0];
         yield 'series by material type' => ['by material type', 'T test material', 0];
         yield 'series by publisher' => ['by publisher', 'T test publisher test publisher 2 (edited)', 0];
-        // TODO: add a comment test so this will have content:
-        //yield 'series with comments' => ['with comments', 'No comments listed.', 0];
+        yield 'series with comments' => ['with comments', 'T test series 1', 0];
         yield 'recently added series' => [
             'recently added',
             'Viewing page 1 of 1 test series 2 (edited) test series 1 First | Previous | 1 | Next | Last',
@@ -1764,8 +1912,7 @@ class IntegrationTest extends MinkTestCase
         yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
         yield 'items by year' => ['by year', '1952 test item (test note)', 2];
         yield 'items with full text' => ['with full text', '/.*test series 1 test item \\(1952\\)$/', 2, true];
-        // TODO: add review so this will have content:
-        //yield 'items with reviews' => ['with reviews', 'No reviews listed.', 2];
+        yield 'items with reviews' => ['with reviews', 'test series 1 test item', 2];
         yield 'recently added items' => [
             'recently added',
             'Viewing page 1 of 1 test item First | Previous | 1 | Next | Last',
@@ -1785,8 +1932,7 @@ class IntegrationTest extends MinkTestCase
             true,
         ];
         yield 'user list' => ['List Registered Users', 'A U admin U Back to Top ↑ user'];
-        // TODO: add reviews/comments so this will have content:
-        //yield 'recent reviews' => ['Browse Recent Reviews', 'No reviews available. No comments available.'];
+        yield 'recent reviews' => ['Browse Recent Reviews', '/.*test item user.*test series 1 user.*/', null, true];
     }
 
     /**
@@ -1801,6 +1947,7 @@ class IntegrationTest extends MinkTestCase
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedDatabaseProvider')]
     #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     public function testPopulatedDatabase(
         string $linkText,
         string $expectedMessage,

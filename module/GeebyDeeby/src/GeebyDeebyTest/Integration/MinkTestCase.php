@@ -404,6 +404,27 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Get the current value of a <select> control (or null if not found).
+     *
+     * @param Element $page     Page containing element
+     * @param string  $selector Selector targeting element
+     *
+     * @return ?string
+     */
+    protected function getSelectedOption(Element $page, string $selector): ?string
+    {
+        $options = $page->findAll('css', $selector . ' option');
+        $selected = $options[0] ?? null;
+        foreach ($options as $next) {
+            if ($next->isSelected()) {
+                $selected = $next;
+                break;
+            }
+        }
+        return $selected?->getValue();
+    }
+
+    /**
      * Get value of an element selected via CSS; retry if it fails due to DOM change.
      *
      * @param Element $page     Page element
@@ -714,6 +735,23 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
         if ($logMsg) {
             error_log($logMsg);
         }
+    }
+
+    /**
+     * Log in as a user.
+     *
+     * @param TraversableElement $page     Page element
+     * @param string             $username Username
+     * @param string             $password Password
+     *
+     * @return void
+     */
+    protected function logIn(TraversableElement $page, string $username, string $password = 'password'): void
+    {
+        $page->clickLink('Log In');
+        $this->findCssAndSetValue($page, '#username', $username);
+        $this->findCssAndSetValue($page, '#password', $password);
+        $this->clickCss($page, '.content input[type="submit"]');
     }
 
     /**
