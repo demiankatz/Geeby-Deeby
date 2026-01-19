@@ -1712,6 +1712,7 @@ class IntegrationTest extends MinkTestCase
             . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
             . ' Date: February 3, 1952 (test note)'
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)'
             . ' User Summary: Test description'
