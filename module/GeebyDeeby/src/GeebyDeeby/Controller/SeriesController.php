@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesCategoryService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
@@ -600,8 +601,7 @@ class SeriesController extends AbstractBase
         }
         $id = $view->series['Series_ID'];
         $view->altTitles = $this->getDbService(SeriesAltTitleService::class)->getAltTitles($id);
-        $view->categories = $this->getDbTable('seriescategories')
-            ->getCategories($id);
+        $view->categories = $this->getDbService(SeriesCategoryService::class)->getCategoriesForSeries($id);
         $config = $this->serviceLocator->get('config');
         $view->groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
             ?? true;

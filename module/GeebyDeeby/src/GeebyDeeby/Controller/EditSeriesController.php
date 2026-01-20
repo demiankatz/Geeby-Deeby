@@ -38,6 +38,7 @@ use GeebyDeeby\Db\Service\PublishersAddressService;
 use GeebyDeeby\Db\Service\PublishersImprintService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
+use GeebyDeeby\Db\Service\SeriesCategoryService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -141,7 +142,7 @@ class EditSeriesController extends AbstractBase
             $view->categories = $this->getDbService(CategoryService::class)->getList();
             $view->selectedCategories = array_map(
                 fn ($category) => $category['Category_ID'],
-                $this->getDbTable('seriescategories')->getCategories($seriesId)->toArray()
+                $this->getDbService(SeriesCategoryService::class)->getCategoriesForSeries($seriesId)
             );
 
             $config = $this->serviceLocator->get('config');

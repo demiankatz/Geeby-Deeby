@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CategoryService;
+use GeebyDeeby\Db\Service\SeriesCategoryService;
 
 use function is_object;
 
@@ -59,8 +60,7 @@ class CategoryController extends AbstractBase
         $view = $this->createViewModel(
             ['category' => $entity->toArray()]
         );
-        $view->series = $this->getDbTable('seriescategories')
-            ->getSeriesForCategory($id);
+        $view->series = $this->getDbService(SeriesCategoryService::class)->getSeriesForCategory($id);
         return $view;
     }
 
