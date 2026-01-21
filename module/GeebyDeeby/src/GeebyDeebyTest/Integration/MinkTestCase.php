@@ -755,6 +755,24 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Populate a form and return the first value entered (or empty string if no data provided).
+     *
+     * @param TraversableElement $page Page containing form
+     * @param array              $data Data to enter into the form (indexed by selector)
+     *
+     * @return string
+     */
+    protected function populateForm(TraversableElement $page, array $data): string
+    {
+        $firstValue = null;
+        foreach ($data as $selector => $value) {
+            $firstValue ??= $value;
+            $this->findCssAndSetValue($page, $selector, $value);
+        }
+        return $firstValue ?? '';
+    }
+
+    /**
      * Standard setup method.
      *
      * @return void
