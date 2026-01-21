@@ -181,13 +181,9 @@ class EditSeriesController extends AbstractBase
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('seriescategories');
             $series = $this->params()->fromRoute('id');
             $categories = $this->params()->fromPost('categories', []);
-            $table->delete(['Series_ID' => $series]);
-            foreach ($categories as $cat) {
-                $table->insert(['Series_ID' => $series, 'Category_ID' => $cat]);
-            }
+            $this->getDbService(SeriesCategoryService::class)->setCategoriesForSeries($series, $categories);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected action');
