@@ -904,6 +904,8 @@ class IntegrationTest extends MinkTestCase
             $this->populateForm($page, $articleData);
             $this->clickCss($page, '.modal-body input[type="submit"]');
             $this->waitForPageLoad($page);
+            $this->findCssAndSetValue($page, '#item_order_' . ($article + 3), (string)$article);
+            $this->clickCss($page, '.list_item input[type="submit"]');
         }
     }
 
