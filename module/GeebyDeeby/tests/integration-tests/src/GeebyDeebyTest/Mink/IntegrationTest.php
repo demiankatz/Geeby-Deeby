@@ -45,10 +45,10 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
- * @todo Add tests for edition contents and preferred titles.
+ * @todo Add tests for edition preferred titles.
  * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
  * @todo Add test to set citation on creator relationship
- * @todo Add tests for series attached items/relationships/translations
+ * @todo Add tests for series relationships/translations
  * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
  */
@@ -774,24 +774,6 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Populate a form and return the first value entered (or empty string if no data provided).
-     *
-     * @param TraversableElement $page Page containing form
-     * @param array              $data Data to enter into the form (indexed by selector)
-     *
-     * @return string
-     */
-    protected function populateForm(TraversableElement $page, array $data): string
-    {
-        $firstValue = null;
-        foreach ($data as $selector => $value) {
-            $firstValue ??= $value;
-            $this->findCssAndSetValue($page, $selector, $value);
-        }
-        return $firstValue ?? '';
-    }
-
-    /**
      * Assert that a list of links contains the expected value (and, if provided, matches the expected count)
      *
      * @param TraversableElement $page              Page containing list
@@ -860,6 +842,71 @@ class IntegrationTest extends MinkTestCase
         $page->clickLink('Categories');
         $this->clickCss($page, '#Category_ID_1');
         $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+    }
+
+    /**
+     * Test creating container items using volume/number numbering.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testBuildingIssues(): void
+    {
+        $page = $this->goToPage('/edit/Series/2');
+        $this->logIn($page, 'admin');
+
+        // Build two issues:
+        foreach ([1, 2] as $issue) {
+            $this->clickCss($page, '#add_item');
+            $issueData = [
+                '#Item_Name' => 'example issue ' . $issue,
+                '#Item_Length' => '32 pages',
+                '#Item_Endings' => '1',
+                '#Item_Errata' => 'none -- perfection!',
+                '#Item_Thanks' => 'for nothing',
+            ];
+            $this->populateForm($page, $issueData);
+            $this->clickCss($page, '.modal-body input[type="submit"]');
+            $this->waitForPageLoad($page);
+            // We only created one item prior to this test, so IDs will start at 2;
+            // take advantage of that fact to identify the relevant order control.
+            $this->findCssAndSetValue($page, '#order' . ($issue + 1), '1,' . $issue);
+            // Order defaults to zero, so the submit button we want will always be
+            // the first one on the page:
+            $this->clickCss($page, '.list_item input[type="submit"]');
+        }
+    }
+
+    /**
+     * Test inserting articles into container items.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testBuildingIssues')]
+    public function testBuildingArticles(): void
+    {
+        // Now add articles to one of the editions:
+        $page = $this->goToPage('/edit/Edition/2');
+        $this->logIn($page, 'admin');
+        $this->assertSame('2: example issue 1', $this->findCssAndGetValue($page, '#Edition_Item_ID'));
+        $page->clickLink('Contents (Attached Items)');
+        $button = $this->findCss($page, '.tab-pane.active button');
+        $this->assertSame('Add New Item', $button->getText());
+        foreach ([1, 2] as $article) {
+            $button->click();
+            $articleData = [
+                '#Item_Name' => 'example article ' . $article,
+                '#Item_Length' => '16 pages',
+                '#Item_Endings' => '0',
+                '#Item_Errata' => 'undetermined',
+                '#Item_Thanks' => 'to test suites',
+            ];
+            $this->populateForm($page, $articleData);
+            $this->clickCss($page, '.modal-body input[type="submit"]');
+            $this->waitForPageLoad($page);
+            $this->findCssAndSetValue($page, '#item_order_' . ($article + 3), (string)$article);
+            $this->clickCss($page, '.list_item input[type="submit"]');
+        }
     }
 
     /**
@@ -1400,7 +1447,11 @@ class IntegrationTest extends MinkTestCase
      */
     public static function suggestionsProvider(): Generator
     {
-        yield 'edition' => ['Edition', 'test', '1: test series 1 edition'];
+        $expectedEditions = '1: test series 1 edition';
+        for ($i = 2; $i <= 5; $i++) {
+            $expectedEditions .= "\n$i: test series 2 edition";
+        }
+        yield 'edition' => ['Edition', 'test', $expectedEditions];
         yield 'item' => ['Item', 'test', "1: test alternate title [alt. title for test item]\n1: test item"];
         yield 'note' => ['Note', 'test', "1: test note\n2: test note 2 (edited)"];
         yield 'person' => [
@@ -1654,7 +1705,7 @@ class IntegrationTest extends MinkTestCase
      */
     public static function populatedRecordsProvider(): Generator
     {
-        yield 'series' => [
+        yield 'series 1' => [
             '/Series/1',
             'Please log in to leave a comment.'
             . ' [List All Series] [List Series Full Text] [List Series Images] [List Series People]'
@@ -1671,6 +1722,19 @@ class IntegrationTest extends MinkTestCase
             . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
             . ' (last verified: 2025-12-01)'
             . ' User Comments this is my comment --user Please log in to leave a comment.',
+        ];
+        yield 'series 2 (with volume/issue numbering)' => [
+            '/Series/2',
+            'Please log in to leave a comment.'
+            . ' [List All Series] [List Series Full Text] [List Series Images] [List Series People]'
+            . ' [List Series Subjects/Tags]'
+            . ' Language: test language 1'
+            . ' Translated Into: test series 1 (test language 1)'
+            . ' This has been edited.'
+            . ' second test materials (edited)'
+            . ' v. 1, no. 1. example issue 1 (example article 1 and 1 more item)'
+            . ' v. 1, no. 2. example issue 2'
+            . ' User Comments No comments available. Please log in to leave a comment.',
         ];
         yield 'category' => ['/Category/1', 'test description T test series 1'];
         yield 'city' => ['/City/1', 'T test series 1'];
@@ -1701,7 +1765,7 @@ class IntegrationTest extends MinkTestCase
             . ' test series 1'
             . ' test item',
         ];
-        yield 'item' => [
+        yield 'item (self-contained)' => [
             '/Item/1',
             'Please log in to manage your collection or post a review.'
             . ' (test note) View: Combined By Edition Online Full Text: test full text source 1'
@@ -1722,7 +1786,26 @@ class IntegrationTest extends MinkTestCase
             . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
             . ' (last verified: 2025-12-01)',
         ];
-        yield 'edition' => [
+        yield 'item (with children)' => [
+            '/Item/2',
+            'Please log in to manage your collection or post a review.'
+            . ' View: Combined By Edition'
+            . ' Series: test series 2 (edited) — v. 1 no. 1'
+            . ' Contents: example article 1 (second test material (edited))'
+            . ' example article 2 (second test material (edited))'
+            . ' Length: 32 pages Number of Endings: 1 Errata: none -- perfection! Special Thanks: for nothing'
+            . ' Please log in to manage your collection or post a review.',
+        ];
+        yield 'item (with parents)' => [
+            '/Item/4',
+            'Please log in to manage your collection or post a review.'
+            . ' View: Combined By Edition'
+            . ' Series: test series 2 (edited) — v. 1 no. 1'
+            . ' Part of: example issue 1 (second test material (edited))'
+            . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
+            . ' Please log in to manage your collection or post a review.',
+        ];
+        yield 'fully populated edition' => [
             '/Edition/1',
             '(test note) Online Full Text: test full text source 1'
             . ' Series: test series 1'
@@ -1734,6 +1817,19 @@ class IntegrationTest extends MinkTestCase
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)',
+        ];
+        yield 'parent edition' => [
+            '/Edition/2',
+            'Series: test series 2 (edited) v. 1 no. 1'
+            . ' Item: example issue 1'
+            . ' Contents: example article 1 example article 2'
+            . ' Length: 32 pages Number of Endings: 1',
+        ];
+        yield 'child edition' => [
+            '/Edition/4',
+            'Series: test series 2 (edited) v. 1 no. 1'
+            . ' Item: example article 1'
+            . ' Length: 16 pages',
         ];
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
         yield 'tag' => [
@@ -1907,7 +2003,11 @@ class IntegrationTest extends MinkTestCase
             . 'First | Previous | 1 | Next | Last',
             1,
         ];
-        yield 'items by name' => ['by name', 'T test item', 2];
+        yield 'items by name' => [
+            'by name',
+            'E T example article 1 example article 2 example issue 1 example issue 2 T Back to Top ↑ test item',
+            2,
+        ];
         yield 'items by platform' => ['by platform', 'T test platform test platform 2 (edited)', 2];
         yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
         yield 'items by year' => ['by year', '1952 test item (test note)', 2];
@@ -1915,7 +2015,8 @@ class IntegrationTest extends MinkTestCase
         yield 'items with reviews' => ['with reviews', 'test series 1 test item', 2];
         yield 'recently added items' => [
             'recently added',
-            'Viewing page 1 of 1 test item First | Previous | 1 | Next | Last',
+            'Viewing page 1 of 1 example article 2 example article 1 example issue 2 example issue 1 test item'
+            . ' First | Previous | 1 | Next | Last',
             2,
         ];
         yield 'file list' => [
@@ -1946,6 +2047,7 @@ class IntegrationTest extends MinkTestCase
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedDatabaseProvider')]
+    #[\PHPUnit\Framework\Attributes\Depends('testBuildingArticles')]
     #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
     #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     public function testPopulatedDatabase(
