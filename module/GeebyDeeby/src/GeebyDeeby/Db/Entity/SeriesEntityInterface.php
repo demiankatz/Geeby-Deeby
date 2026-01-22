@@ -66,18 +66,18 @@ interface SeriesEntityInterface extends EntityInterface
     /**
      * Get the description of the series.
      *
-     * @return string
+     * @return ?string
      */
-    public function getDescription(): string;
+    public function getDescription(): ?string;
 
     /**
      * Set the description of the series.
      *
-     * @param string $desc New description.
+     * @param ?string $desc New description.
      *
      * @return static
      */
-    public function setDescription(string $desc): static;
+    public function setDescription(?string $desc): static;
 
     /**
      * Get associated language.

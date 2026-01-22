@@ -89,9 +89,9 @@ class Series extends TableAwareGateway implements SeriesEntityInterface
     /**
      * Get the description of the series.
      *
-     * @return string
+     * @return ?string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->Series_Description;
     }
@@ -99,11 +99,11 @@ class Series extends TableAwareGateway implements SeriesEntityInterface
     /**
      * Set the description of the series.
      *
-     * @param string $desc New description.
+     * @param ?string $desc New description.
      *
      * @return static
      */
-    public function setDescription(string $desc): static
+    public function setDescription(?string $desc): static
     {
         $this->Series_Description = $desc;
         return $this;
