@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
+use function count;
 use function in_array;
 
 /**
@@ -137,6 +138,97 @@ class EditionService extends AbstractDbService
             $items[] = $this->editionsTable->getByPrimaryKey($edition)->getItem()->getId();
         }
         return $items;
+    }
+
+    /**
+     * Support function for getNextInSeries / getPreviousInSeries.
+     *
+     * @param EditionEntityInterface $edition Edition to start with
+     * @param bool                   $next    Get next (true) or previous (false)?
+     *
+     * @return ?EditionEntityInterface
+     */
+    protected function getAdjacentInSeries(EditionEntityInterface $edition, bool $next): ?EditionEntityInterface
+    {
+        $series = $edition->getSeries();
+        if (!$series) {
+            return null;
+        }
+        $editionId = $edition->getId();
+        $seriesId = $series->getId();
+        $vol = $edition->getVolume();
+        $pos = $edition->getPosition();
+        $rep = $edition->getReplacementNumber();
+        $name = $edition->getEditionName();
+        $callback = function ($select) use (
+            $editionId,
+            $seriesId,
+            $name,
+            $vol,
+            $pos,
+            $rep,
+            $next
+        ): void {
+            $select->where->equalTo('Series_ID', $seriesId);
+            $select->where->notEqualTo('Edition_ID', $editionId);
+            $fields = [
+                'Volume', 'Position', 'Replacement_Number', 'Edition_Name',
+                'Edition_ID',
+            ];
+            $vals = [$vol, $pos, $rep, $name, $editionId];
+            $nest = $select->where->NEST;
+            for ($i = 0; $i < count($fields); $i++) {
+                $clause = $nest->OR->NEST;
+                for ($j = 0; $j <= $i; $j++) {
+                    if ($j == $i) {
+                        if ($next) {
+                            $clause->greaterThan($fields[$j], $vals[$j]);
+                        } else {
+                            $clause->lessThan($fields[$j], $vals[$j]);
+                        }
+                    } else {
+                        $clause->equalTo($fields[$j], $vals[$j]);
+                    }
+                }
+                $clause->UNNEST;
+            }
+            $nest->UNNEST;
+            $select->order(
+                $next ? $fields : array_map(
+                    function ($i) {
+                        return "$i DESC";
+                    },
+                    $fields
+                )
+            );
+            $select->limit(1);
+        };
+        $results = $this->editionsTable->select($callback);
+        return count($results) > 0 ? $results->current() : null;
+    }
+
+    /**
+     * Get previous edition in series.
+     *
+     * @param EditionEntityInterface $edition Edition to start with
+     *
+     * @return ?EditionEntityInterface
+     */
+    public function getNextInSeries(EditionEntityInterface $edition): ?EditionEntityInterface
+    {
+        return $this->getAdjacentInSeries($edition, true);
+    }
+
+    /**
+     * Get previous edition in series.
+     *
+     * @param EditionEntityInterface $edition Edition to start with
+     *
+     * @return ?EditionEntityInterface
+     */
+    public function getPreviousInSeries(EditionEntityInterface $edition)
+    {
+        return $this->getAdjacentInSeries($edition, false);
     }
 
     /**

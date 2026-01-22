@@ -214,8 +214,9 @@ class EditEditionController extends AbstractBase
                 ->getFullTextForEdition($editionId);
             $view->fullTextSources = $this->getDbService(FullTextSourceService::class)->getList();
             if (is_object($view->editionObj)) {
-                $view->next = $view->editionObj->getNextInSeries();
-                $view->previous = $view->editionObj->getPreviousInSeries();
+                $editionService = $this->getDbService(EditionService::class);
+                $view->next = $editionService->getNextInSeries($view->editionObj);
+                $view->previous = $editionService->getPreviousInSeries($view->editionObj);
             }
             $view->item_list = $ItemService->getItemsForEdition($editionId);
         }
@@ -490,12 +491,12 @@ class EditEditionController extends AbstractBase
      */
     public function nextandprevAction()
     {
-        $table = $this->getDbTable('edition');
-        $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $edition = $table->getByPrimaryKey($primary);
-        $view->next = $edition->getNextInSeries();
-        $view->previous = $edition->getPreviousInSeries();
+        $editionService = $this->getDbService(EditionService::class);
+        $edition = $editionService->getByPrimaryKey($primary);
+        $view = $this->createViewModel();
+        $view->next = $editionService->getNextInSeries($edition);
+        $view->previous = $editionService->getPreviousInSeries($edition);
         $view->setTemplate('geeby-deeby/edit-edition/next-and-prev.phtml');
         $view->setTerminal(true);
         return $view;
