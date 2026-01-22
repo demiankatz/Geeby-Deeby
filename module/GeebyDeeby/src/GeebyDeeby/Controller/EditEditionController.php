@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributeService;
+use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -62,7 +63,7 @@ class EditEditionController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'edition',
+            EditionService::class,
             'editions',
             'geeby-deeby/edit-edition/render-editions'
         );
@@ -130,27 +131,25 @@ class EditEditionController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'name' => 'Edition_Name',
-            'desc' => 'Edition_Description',
-            'item_id' => 'Item_ID',
-            'series_id' => 'Series_ID',
-            'volume' => 'Volume',
-            'position' => 'Position',
-            'replacement_number' => 'Replacement_Number',
-            'len' => 'Edition_Length',
-            'endings' => 'Edition_Endings',
-            'parent_edition_id' => 'Parent_Edition_ID',
-            'position_in_parent' => 'Position_In_Parent',
-            'extent_in_parent' => 'Extent_In_Parent',
-            'item_display_order' => 'Item_Display_Order',
+            'name' => 'setEditionName',
+            'desc' => 'setDescription',
+            'item_id' => 'setItem',
+            'series_id' => 'setSeries',
+            'volume' => 'setVolume',
+            'position' => 'setPosition',
+            'replacement_number' => 'setReplacementNumber',
+            'len' => 'setLength',
+            'endings' => 'setEndings',
+            'parent_edition_id' => 'setParentEdition',
+            'position_in_parent' => 'setPositionInParent',
+            'extent_in_parent' => 'setExtentInParent',
+            'item_display_order' => 'setItemDisplayOrder',
         ];
-        [$view, $ok] = $this->handleGenericItem('edition', $assignMap, 'edition');
+        [$view, $ok] = $this->handleGenericItem(EditionService::class, $assignMap, 'edition');
         if (!$ok) {
             return $view;
         }
-        $editionId = $view->edition['Edition_ID']
-            ?? $view->affectedRow->Edition_ID
-            ?? null;
+        $editionId = $view->edition['Edition_ID'] ?? $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if (

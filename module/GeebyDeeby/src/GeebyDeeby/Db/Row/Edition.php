@@ -37,7 +37,6 @@ use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesPublisherEntityInterface;
 
 use function count;
-use function in_array;
 use function strlen;
 
 /**
@@ -59,29 +58,6 @@ class Edition extends TableAwareGateway implements EditionEntityInterface
     public function __construct($adapter)
     {
         parent::__construct('Edition_ID', 'Editions', $adapter);
-    }
-
-    /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
-     *
-     * @return string|bool
-     */
-    public function validate()
-    {
-        if (empty($this->Edition_Name)) {
-            return 'Edition name cannot be blank.';
-        }
-        if (in_array($this->Edition_ID, $this->getEditionParentChain())) {
-            return 'Edition can not be its own parent or grandparent.';
-        }
-        if (
-            !empty($this->Item_ID)
-            && in_array($this->Item_ID, $this->getItemParentChain())
-        ) {
-            return 'Item can not be its own parent or grandparent.';
-        }
-        return false;
     }
 
     /**
@@ -482,45 +458,6 @@ class Edition extends TableAwareGateway implements EditionEntityInterface
     public function getDisplayName(): string
     {
         return $this->Edition_Name;
-    }
-
-    /**
-     * Get an array of all parent Edition IDs.
-     *
-     * @return array
-     */
-    public function getEditionParentChain()
-    {
-        $parents = [];
-        $nextParent = $this->Parent_Edition_ID;
-        $table = $this->getDbTable('edition');
-        while (true) {
-            // Circular parent detection:
-            if (empty($nextParent) || in_array($nextParent, $parents)) {
-                return $parents;
-            }
-            $parents[] = $nextParent;
-            $nextParent = $table->getByPrimaryKey($nextParent)->Parent_Edition_ID;
-        }
-    }
-
-    /**
-     * Get an array of all parent Item IDs.
-     *
-     * @return array
-     */
-    public function getItemParentChain()
-    {
-        $editions = $this->getEditionParentChain();
-        $items = [];
-        $table = $this->getDbTable('edition');
-        foreach ($editions as $edition) {
-            $obj = $table->getByPrimaryKey($edition);
-            if (!empty($obj->Item_ID)) {
-                $items[] = $obj->Item_ID;
-            }
-        }
-        return $items;
     }
 
     /**

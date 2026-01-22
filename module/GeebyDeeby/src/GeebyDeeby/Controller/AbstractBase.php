@@ -35,6 +35,8 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
 use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionParameter;
 use ReflectionUnionType;
 
 use function func_get_args;
@@ -204,19 +206,17 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Is the specified method a foreign key setter?
+     * Is the type a database entity?
      *
-     * @param ReflectionClass $reflectionClass Reflection of entity class
-     * @param string          $method          Method to check
+     * @param ReflectionParameter $param Parameter to check
      *
      * @return bool
      */
-    protected function isForeignKeySetter(ReflectionClass $reflectionClass, string $method): bool
+    protected function isEntityType(ReflectionParameter $param): bool
     {
-        $reflectionMethod = $reflectionClass->getMethod($method);
-        $firstParamType = $reflectionMethod->getParameters()[0]->getType();
-        if ($firstParamType instanceof ReflectionUnionType) {
-            $types = $firstParamType->getTypes();
+        $paramType = $param->getType();
+        if ($paramType instanceof ReflectionUnionType) {
+            $types = $paramType->getTypes();
             foreach ($types as $type) {
                 if (is_subclass_of($type->getName(), EntityInterface::class)) {
                     return true;
@@ -224,6 +224,43 @@ class AbstractBase extends AbstractActionController
             }
         }
         return false;
+    }
+
+    /**
+     * Is the type a nullable int?
+     *
+     * @param ReflectionParameter $param Parameter to check
+     *
+     * @return bool
+     */
+    protected function isNullableIntType(ReflectionParameter $param): bool
+    {
+        $paramType = $param->getType();
+        return $paramType instanceof ReflectionNamedType
+            && $paramType->getName() === 'int'
+            && $paramType->allowsNull();
+    }
+
+    /**
+     * Cast input value to an appropriate type based on examination of the setter method.
+     *
+     * @param string          $value           Value to format
+     * @param ReflectionClass $reflectionClass Reflection of entity class
+     * @param string          $method          Method to check
+     *
+     * @return bool
+     */
+    protected function autocastType(string $value, ReflectionClass $reflectionClass, string $method): string|int|null
+    {
+        $reflectionMethod = $reflectionClass->getMethod($method);
+        $firstParam = $reflectionMethod->getParameters()[0];
+
+        // Handle IDs and nullable ints intelligently: empty value should be treated as null and
+        // other values should be converted to integers!
+        if ($this->isEntityType($firstParam) || $this->isNullableIntType($firstParam)) {
+            return empty($value) ? null : intval($value);
+        }
+        return $value;
     }
 
     /**
@@ -253,12 +290,7 @@ class AbstractBase extends AbstractActionController
         $reflectionClass = new ReflectionClass($entity);
         foreach ($assignMap as $post => $method) {
             $value = trim($this->params()->fromPost($post));
-            // Handle IDs intelligently: empty value should be treated as null and
-            // other values should be converted to integers!
-            if ($this->isForeignKeySetter($reflectionClass, $method)) {
-                $value = empty($value) ? null : intval($value);
-            }
-            $entity->$method($value);
+            $entity->$method($this->autocastType($value, $reflectionClass, $method));
         }
         $problem = is_callable([$service, 'getValidationError'])
             ? $service->getValidationError($entity)
