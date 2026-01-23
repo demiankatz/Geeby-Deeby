@@ -50,11 +50,14 @@ class EditionService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param Editions $editionsTable Editions table
+     * @param Editions    $editionsTable Editions table
+     * @param ItemService $itemService   Item database service
      */
     public function __construct(
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Edition $editionsTable
+        protected Edition $editionsTable,
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected ItemService $itemService
     ) {
     }
 
@@ -239,5 +242,214 @@ class EditionService extends AbstractDbService
     public function getList(): array
     {
         return iterator_to_array($this->editionsTable->getList());
+    }
+
+    /**
+     * Get autocomplete suggestions.
+     *
+     * @param string $query The user query.
+     * @param ?int   $limit Limit on returned rows (null for no limit).
+     *
+     * @return array
+     */
+    public function getSuggestions(string $query, ?int $limit = null): array
+    {
+        return iterator_to_array($this->editionsTable->getSuggestions($query, $limit));
+    }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return array
+     */
+    public function keywordSearch(array $tokens): array
+    {
+        return iterator_to_array($this->editionsTable->keywordSearch($tokens));
+    }
+
+    /**
+     * Get parent item for the specified edition (false if none).
+     *
+     * @param int $editionID Edition ID
+     *
+     * @return ?EditionEntityInterface
+     */
+    public function getParentItemForEdition(int $editionID): ?EditionEntityInterface
+    {
+        return $this->editionsTable->getParentItemForEdition($editionID) ?: null;
+    }
+
+    /**
+     * Get a list of items for the specified edition.
+     *
+     * @param int $editionID Edition ID
+     *
+     * @return mixed
+     */
+    public function getItemsForEdition($editionID)
+    {
+        // Proxy item service (so handleGenericLink() can be used in
+        // EditEditionController):
+        return $this->itemService->getItemsForEdition($editionID);
+    }
+
+    /**
+     * Get a list of items for the specified series (not grouped by material type).
+     *
+     * @param int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getItemsForSeries($seriesID)
+    {
+        // Proxy item service (so handleGenericLink() can be used in
+        // EditSeriesController):
+        return $this->itemService->getItemsForSeries($seriesID, true, false);
+    }
+
+    /**
+     * Get a list of items for the specified series ( grouped by material type).
+     *
+     * @param int $seriesID Series ID
+     *
+     * @return mixed
+     */
+    public function getItemsForSeriesGroupedByMaterial($seriesID)
+    {
+        // Proxy item service (so handleGenericLink() can be used in
+        // EditSeriesController):
+        return $this->itemService->getItemsForSeries($seriesID);
+    }
+
+    /**
+     * Retrieve editions for the specified item.
+     *
+     * @param int  $itemID         Item ID.
+     * @param bool $includeParents Should we include information on parent items?
+     *
+     * @return array
+     */
+    public function getEditionsForItem(int $itemID, bool $includeParents = false): array
+    {
+        return iterator_to_array($this->editionsTable->getEditionsForItem($itemID, $includeParents));
+    }
+
+    /**
+     * Retrieve publishers for the specified edition.
+     *
+     * @param int $id Edition ID.
+     *
+     * @return array
+     */
+    public function getPublishersForEdition(int $id): array
+    {
+        return iterator_to_array($this->editionsTable->getPublishersForEdition($id));
+    }
+
+    /**
+     * Retrieve publishers for the specified item.
+     *
+     * @param int $itemID Item ID.
+     *
+     * @return array
+     */
+    public function getPublishersForItem(int $itemID): array
+    {
+        return iterator_to_array($this->editionsTable->getPublishersForItem($itemID));
+    }
+
+    /**
+     * Delete an edition if there are no attached data items.
+     *
+     * @param int $id ID of edition to delete
+     *
+     * @throws \Exception
+     * @return void
+     */
+    public function safeDelete(int $id): void
+    {
+        $this->editionsTable->safeDelete($id);
+    }
+
+    /**
+     * Get immediate children of the provided edition.
+     *
+     * @param EditionEntityInterface $edition Parent edition
+     *
+     * @return EditionEntityInterface[]
+     */
+    public function getChildren(EditionEntityInterface $edition): array
+    {
+        return iterator_to_array($this->editionsTable->getChildren($edition));
+    }
+
+    /**
+     * Copy information associated with one edition into another.
+     *
+     * @param int|EditionEntityInterface $from Source item (object or ID)
+     * @param int|EditionEntityInterface $to   Target item (object or ID)
+     *
+     * @return void
+     */
+    public function copyAssociatedInfo(int|EditionEntityInterface $from, int|EditionEntityInterface $to): void
+    {
+        $this->editionsTable->copyAssociatedInfo($from, $to);
+    }
+
+    /**
+     * Create a copy of the specified edition.
+     *
+     * @param EditionEntityInterface $source    Edition to copy
+     * @param array                  $overrides Fields to override during copying
+     *
+     * @return EditionEntityInterface
+     */
+    public function copyEdition(EditionEntityInterface $source, array $overrides = []): EditionEntityInterface
+    {
+        return $this->editionsTable->copyEdition($source, $overrides);
+    }
+
+    /**
+     * Copy credits from another edition.
+     *
+     * @param int $from Edition to copy from
+     * @param int $to   Edition to copy to
+     *
+     * @return void
+     */
+    public function copyCredits(int $from, int $to): void
+    {
+        $this->editionsTable->copyCredits($from, $to);
+    }
+
+    /**
+     * Look up editions by item.
+     *
+     * @param int $itemId Item ID
+     *
+     * @return EditionEntityInterface[]
+     */
+    public function getByItem(int $itemId): array
+    {
+        $itemEditions = $this->editionsTable->select(['Item_ID' => $itemId]);
+        return iterator_to_array($itemEditions);
+    }
+
+    /**
+     * Look up editions by item and series.
+     *
+     * @param int $itemId   Item ID
+     * @param int $seriesId Series ID
+     *
+     * @return EditionEntityInterface[]
+     */
+    public function getByItemAndSeries(int $itemId, int $seriesId): array
+    {
+        $seriesEditions = $this->editionsTable->select(
+            ['Item_ID' => $itemId, 'Series_ID' => $seriesId]
+        );
+        return iterator_to_array($seriesEditions);
     }
 }

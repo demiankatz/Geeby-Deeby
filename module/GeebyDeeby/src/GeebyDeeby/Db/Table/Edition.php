@@ -277,7 +277,7 @@ class Edition extends Gateway
      *
      * @return mixed
      */
-    public function getPublishersForWhereClause($field, $value)
+    protected function getPublishersForWhereClause($field, $value)
     {
         $callback = function ($select) use ($field, $value): void {
             $select->join(
@@ -370,8 +370,7 @@ class Edition extends Gateway
         if (count($this->getDbTable('editionsreleasedates')->select($select)) > 0) {
             throw new \Exception('Cannot delete - attached dates.');
         }
-        $children = $this->getDbTable('edition')
-            ->select(['Parent_Edition_ID' => $id]);
+        $children = $this->select(['Parent_Edition_ID' => $id]);
         if (count($children) > 0) {
             throw new \Exception('Cannot delete - has child editions.');
         }
