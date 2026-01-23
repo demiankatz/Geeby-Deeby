@@ -379,6 +379,20 @@ class Edition extends Gateway
     }
 
     /**
+     * Get immediate children of the provided edition.
+     *
+     * @param \GeebyDeeby\Db\Row\Edition $edition Parent edition
+     *
+     * @return mixed
+     */
+    public function getChildren($edition)
+    {
+        return $this->select(
+            ['Parent_Edition_ID' => $edition->Edition_ID]
+        );
+    }
+
+    /**
      * Copy information associated with one edition into another.
      *
      * @param int|\GeebyDeeby\Db\Row\Edition $from Source item (object or ID)
@@ -394,8 +408,9 @@ class Edition extends Gateway
         if (!($to instanceof \GeebyDeeby\Db\Row\Edition)) {
             $to = $this->getByPrimaryKey($to);
         }
-        foreach ($from->getChildren() as $child) {
-            $child->copy(
+        foreach ($this->getChildren($from) as $child) {
+            $this->copyEdition(
+                $child,
                 [
                     'Parent_Edition_ID' => $to->Edition_ID,
                     'Series_ID' => $to->Series_ID,
@@ -403,7 +418,80 @@ class Edition extends Gateway
                 ]
             );
         }
-        $to->copyAttributes($from->Edition_ID);
-        $to->copyCredits($from->Edition_ID);
+        $this->copyAttributes($from->Edition_ID, $to->Edition_ID);
+        $this->copyCredits($from->Edition_ID, $to->Edition_ID);
+    }
+
+    /**
+     * Create a copy of the specified edition.
+     *
+     * @param \GeebyDeeby\Db\Row\Edition $source    Edition to copy
+     * @param array                      $overrides Fields to override during copying
+     *
+     * @return \GeebyDeeby\Db\Row\Edition
+     */
+    public function copyEdition($source, $overrides = [])
+    {
+        $new = $this->createRow();
+        foreach ($source->toArray() as $key => $value) {
+            if ($key != 'Edition_ID') {
+                $new->$key = $value;
+            }
+        }
+        $new->Edition_Name = 'Copy of ' . $new->Edition_Name;
+        foreach ($overrides as $key => $value) {
+            $new->$key = $value;
+        }
+        $new->save();
+        $this->copyAssociatedInfo($source, $new);
+        return $new;
+    }
+
+    /**
+     * Copy attributes from another edition.
+     *
+     * @param int $from Edition to copy from
+     * @param int $to   Edition to copy to
+     *
+     * @return void
+     */
+    protected function copyAttributes($from, $to)
+    {
+        $attrTable = $this->getDbTable('editionsattributesvalues');
+        $clonable = $this->getDbTable('editionsattribute')->getClonableIds();
+        if (count($clonable) == 0) {
+            return;
+        }
+        $callback = function ($select) use ($from, $clonable): void {
+            $select->where->equalTo('Edition_ID', $from)
+                ->in('Editions_Attribute_ID', $clonable);
+        };
+        $attribs = $attrTable->select($callback);
+        foreach ($attribs as $attr) {
+            $arr = (array)$attr;
+            $arr['Edition_ID'] = $to;
+            $attrTable->insert($arr);
+        }
+    }
+
+    /**
+     * Copy credits from another edition.
+     *
+     * @param int $from Edition to copy from
+     * @param int $to   Edition to copy to
+     *
+     * @return void
+     */
+    public function copyCredits($from, $to)
+    {
+        $creditTable = $this->getDbTable('editionscredits');
+        $credits = $creditTable->select(
+            ['Edition_ID' => $from]
+        );
+        foreach ($credits as $credit) {
+            $arr = (array)$credit;
+            $arr['Edition_ID'] = $to;
+            $creditTable->insert($arr);
+        }
     }
 }

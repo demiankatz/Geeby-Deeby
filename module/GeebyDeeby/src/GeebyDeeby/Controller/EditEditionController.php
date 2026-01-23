@@ -445,7 +445,7 @@ class EditEditionController extends AbstractBase
             if (!$old) {
                 return $this->jsonDie('Cannot load edition ' . $editionId);
             }
-            if ($old->copy()) {
+            if ($table->copyEdition($old)) {
                 return $this->jsonReportSuccess();
             } else {
                 return $this->jsonDie('Copy operation failed.');
@@ -969,7 +969,7 @@ class EditEditionController extends AbstractBase
                 }
             }
             if (isset($row['Edition_ID']) && $row['Edition_ID'] != $new) {
-                $edsTable->getByPrimaryKey($new)->copyCredits($row['Edition_ID']);
+                $edsTable->copyCredits($row['Edition_ID'], $new);
             }
         };
         return $this->handleGenericLink(

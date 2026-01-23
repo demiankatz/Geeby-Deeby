@@ -37,7 +37,6 @@ use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesPublisherEntityInterface;
 
 use function count;
-use function strlen;
 
 /**
  * Row Definition for Editions
@@ -463,7 +462,7 @@ class Edition extends TableAwareGateway implements EditionEntityInterface
     /**
      * Create a copy of the current edition.
      *
-     * @param array $overrides Fields to override durign copying.
+     * @param array $overrides Fields to override during copying.
      *
      * @return Edition
      */
@@ -483,18 +482,6 @@ class Edition extends TableAwareGateway implements EditionEntityInterface
         $new->save();
         $table->copyAssociatedInfo($this, $new);
         return $new;
-    }
-
-    /**
-     * Get immediate children of this edition.
-     *
-     * @return mixed
-     */
-    public function getChildren()
-    {
-        return $this->getDbTable('edition')->select(
-            ['Parent_Edition_ID' => $this->Edition_ID]
-        );
     }
 
     /**
@@ -541,22 +528,5 @@ class Edition extends TableAwareGateway implements EditionEntityInterface
             $arr['Edition_ID'] = $this->Edition_ID;
             $creditTable->insert($arr);
         }
-    }
-
-    /**
-     * Save
-     *
-     * @return void
-     */
-    public function save()
-    {
-        // Ensure integrity of parent value.
-        if (empty($this->Parent_Edition_ID)) {
-            $this->Parent_Edition_ID = null;
-        }
-        if (strlen(trim($this->Position_In_Parent)) == 0) {
-            $this->Position_In_Parent = null;
-        }
-        parent::save();
     }
 }
