@@ -36,8 +36,6 @@ use GeebyDeeby\Db\Entity\SeriesAltTitleEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesPublisherEntityInterface;
 
-use function count;
-
 /**
  * Row Definition for Editions
  *

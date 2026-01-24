@@ -134,7 +134,7 @@ class Link extends TableAwareGateway implements LinkEntityInterface
     }
 
     /**
-     * Set the date the link was last checked.
+     * Get the date the link was last checked.
      *
      * @return DateTime
      */
