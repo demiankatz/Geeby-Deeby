@@ -45,18 +45,6 @@ class RowGateway extends \Laminas\Db\RowGateway\RowGateway
     use \GeebyDeeby\Db\ActivityLoggerTrait;
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
-     *
-     * @return string|bool
-     */
-    public function validate()
-    {
-        // Assume valid row by default:
-        return false;
-    }
-
-    /**
      * Get primary key for the table.
      *
      * @return array

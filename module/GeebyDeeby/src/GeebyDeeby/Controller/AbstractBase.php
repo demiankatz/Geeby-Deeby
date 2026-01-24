@@ -313,56 +313,6 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Support method for handleGenericItem() -- save.
-     *
-     * @param string $table     Table to load item from
-     * @param array  $assignMap Map of POST fields => object properties for saving
-     * @param string $idField   POST/Route field for unique ID
-     *
-     * @return mixed
-     *
-     * @deprecated use saveGenericItem
-     */
-    protected function saveGenericItemUsingTable($table, $assignMap, $idField = 'id')
-    {
-        // Extract values from the POST fields:
-        $id = $this->params()->fromRoute(
-            $idField,
-            $this->params()->fromPost($idField, 'NEW')
-        );
-        $id = $id == 'NEW' ? false : intval($id);
-
-        // Attempt to save changes:
-        $table = $this->getDbTable($table);
-        $row = $id === false ? $table->createRow() : $table->getByPrimaryKey($id);
-        if (!is_object($row)) {
-            return $this->jsonDie('Problem loading row');
-        }
-        foreach ($assignMap as $post => $attr) {
-            $row->$attr = trim($this->params()->fromPost($post));
-            // Handle IDs intelligently: empty value should be treated as null and
-            // other values should be converted to integers!
-            if (substr($attr, -3) == '_ID') {
-                $row->$attr = empty($row->$attr) ? null : intval($row->$attr);
-            }
-        }
-        $problem = $row->validate();
-        if ($problem !== false) {
-            return $this->jsonDie($problem);
-        }
-        try {
-            $row->save();
-        } catch (\Exception $e) {
-            return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
-        }
-
-        // If we made it this far, we can report success:
-        $view = $this->jsonReportSuccess();
-        $view->affectedRow = $row;
-        return $view;
-    }
-
-    /**
      * Support method for handleGenericItem() -- delete record.
      *
      * @param string $serviceName Database service to delete item from.
@@ -379,28 +329,6 @@ class AbstractBase extends AbstractActionController
             }
             $entity = $service->getByPrimaryKey($id);
             $service->deleteEntity($entity);
-        } catch (\Exception $e) {
-            return $this->jsonDie($e->getMessage());
-        }
-        return $this->jsonReportSuccess();
-    }
-
-    /**
-     * Support method for handleGenericItem() -- delete record.
-     *
-     * @param string $table Table to delete item from.
-     *
-     * @return mixed
-     *
-     * @deprecated use deleteGenericItem()
-     */
-    protected function deleteGenericItemUsingTable($table)
-    {
-        try {
-            $id = $this->params()->fromRoute('id');
-            $table = $this->getDbTable($table);
-            $rowObj = $table->getByPrimaryKey($id);
-            $rowObj->delete();
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
         }
@@ -439,39 +367,6 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Support method for handleGenericItem() -- show form using table.
-     *
-     * @param string $table    Table to load item from
-     * @param string $assignTo Variable to assign form data to
-     *
-     * @return mixed
-     *
-     * @deprecated use showGenericItem
-     */
-    protected function showGenericItemUsingTable($table, $assignTo)
-    {
-        $id = $this->params()->fromRoute('id', 'NEW');
-        $id = $id == 'NEW' ? false : intval($id);
-        $table = $this->getDbTable($table);
-        if ($id) {
-            $rowObj = $table->getByPrimaryKey($id);
-            if (is_object($rowObj)) {
-                $row = $rowObj->toArray();
-            } else {
-                $id = false;
-            }
-        }
-        if (!$id) {
-            $rowObj = $table->createRow();
-            $key = $rowObj->getPrimaryKeyColumn();
-            $row = [$key[0] => 'NEW'];
-        }
-        return $this->createViewModel(
-            [$assignTo => $row ?? null, $assignTo . 'Obj' => $rowObj ?? null]
-        );
-    }
-
-    /**
      * Generic method for handling item edit/save actions. Returns an array with
      * two elements: the view object or response, and a boolean indicating whether
      * or not the user has permission to proceed.
@@ -495,17 +390,11 @@ class AbstractBase extends AbstractActionController
         }
         $useService = $this->isDatabaseService($serviceName);
         if ($this->getRequest()->isPost()) {
-            $view = $useService
-                ? $this->saveGenericItem($serviceName, $assignMap)
-                : $this->saveGenericItemUsingTable($serviceName, $assignMap);
+            $view = $this->saveGenericItem($serviceName, $assignMap);
         } elseif ($this->getRequest()->isDelete()) {
-            $view = $useService
-                ? $this->deleteGenericItem($serviceName)
-                : $this->deleteGenericItemUsingTable($serviceName);
+            $view = $this->deleteGenericItem($serviceName);
         } else {
-            $view = $useService
-                ? $this->showGenericItem($serviceName, $assignTo)
-                : $this->showGenericItemUsingTable($serviceName, $assignTo);
+            $view = $this->showGenericItem($serviceName, $assignTo);
             $view->setTerminal($this->getRequest()->isXmlHttpRequest());
         }
         return [$view, true];
