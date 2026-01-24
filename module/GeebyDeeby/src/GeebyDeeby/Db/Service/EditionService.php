@@ -487,4 +487,28 @@ class EditionService extends AbstractDbService
     {
         return iterator_to_array($this->editionsTable->select(['Preferred_Item_AltName_ID' => $altId]));
     }
+
+    /**
+     * Get editions with the specified preferred series title ID.
+     *
+     * @param int $altId Series alt title ID.
+     *
+     * @return EditionEntityInterface[]
+     */
+    public function getBySeriesAltTitleId(int $altId): array
+    {
+        return iterator_to_array($this->editionsTable->select(['Preferred_Series_AltName_ID' => $altId]));
+    }
+
+    /**
+     * Get editions with the specified preferred publisher ID.
+     *
+     * @param int $id Preferred publisher ID.
+     *
+     * @return EditionEntityInterface[]
+     */
+    public function getByPreferredPublisherId(int $id): array
+    {
+        return iterator_to_array($this->editionsTable->select(['Preferred_Series_Publisher_ID' => $id]));
+    }
 }

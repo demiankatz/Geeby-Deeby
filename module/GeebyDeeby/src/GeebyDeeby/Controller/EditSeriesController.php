@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CategoryService;
 use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
@@ -232,16 +233,13 @@ class EditSeriesController extends AbstractBase
             $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
-        // Prevent deletion of alttitles that are linked up:
+        // Prevent deletion of alt titles that are linked up:
         if ($this->getRequest()->isDelete()) {
             $extra = $this->params()->fromRoute('extra');
-            $result = $this->getDbTable('edition')->select(
-                ['Preferred_Series_AltName_ID' => $extra]
-            );
+            $result = $this->getDbService(EditionService::class)->getBySeriesAltTitleId($extra);
             if (count($result) > 0) {
-                $ed = $result->current();
-                $msg = 'You cannot delete this title; it is assigned to Edition '
-                    . $ed->Edition_ID . '.';
+                $ed = $result[0];
+                $msg = 'You cannot delete this title; it is assigned to Edition ' . $ed->getId() . '.';
                 return $this->jsonDie($msg);
             }
         }
@@ -326,14 +324,10 @@ class EditSeriesController extends AbstractBase
 
         if ($this->getRequest()->isDelete()) {
             $extra = $this->params()->fromRoute('extra');
-            $result = $this->getDbTable('edition')->select(
-                ['Preferred_Series_Publisher_ID' => $extra]
-            );
+            $result = $this->getDbService(EditionService::class)->getByPreferredPublisherId($extra);
             if (count($result) > 0) {
-                $ed = $result->current();
-                $msg = 'You cannot delete this publisher; '
-                    . 'it is assigned to Edition '
-                    . $ed->Edition_ID . '.';
+                $ed = $result[0];
+                $msg = 'You cannot delete this publisher; it is assigned to Edition ' . $ed->getId() . '.';
                 return $this->jsonDie($msg);
             }
         }
@@ -363,8 +357,7 @@ class EditSeriesController extends AbstractBase
                 return $ok;
             }
             try {
-                $this->getDbTable('edition')
-                    ->safeDelete($this->params()->fromRoute('extra'));
+                $this->getDbService(EditionService::class)->safeDelete($this->params()->fromRoute('extra'));
             } catch (\Exception $e) {
                 return $this->jsonDie($e->getMessage());
             }
