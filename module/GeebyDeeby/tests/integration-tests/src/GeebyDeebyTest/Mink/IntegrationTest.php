@@ -46,6 +46,7 @@ use function in_array;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
  * @todo Add tests for edition preferred titles.
+ * @todo Add test for edition copying.
  * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
  * @todo Add test to set citation on creator relationship
  * @todo Add tests for series relationships/translations
