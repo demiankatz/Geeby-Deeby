@@ -29,9 +29,8 @@
 
 namespace GeebyDeeby\Authentication;
 
+use GeebyDeeby\Db\Service\UserService;
 use Laminas\Authentication\Result;
-
-use function is_object;
 
 /**
  * GeebyDeeby Authentication Adapter
@@ -45,38 +44,14 @@ use function is_object;
 class Adapter implements \Laminas\Authentication\Adapter\AdapterInterface
 {
     /**
-     * Database table gateway
-     *
-     * @var \GeebyDeeby\Db\Table\User
-     */
-    protected $table;
-
-    /**
-     * Username
-     *
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * Password
-     *
-     * @var string
-     */
-    protected $password;
-
-    /**
      * Constructor
      *
-     * @param \GeebyDeeby\Db\Table\User $table Database table gateway
-     * @param string                    $user  Username
-     * @param string                    $pass  Password
+     * @param UserService $service  Database service
+     * @param string      $username Username
+     * @param string      $password Password
      */
-    public function __construct(\GeebyDeeby\Db\Table\User $table, $user, $pass)
+    public function __construct(protected UserService $service, protected string $username, protected string $password)
     {
-        $this->table = $table;
-        $this->username = $user;
-        $this->password = $pass;
     }
 
     /**
@@ -87,13 +62,13 @@ class Adapter implements \Laminas\Authentication\Adapter\AdapterInterface
      */
     public function authenticate()
     {
-        $user = $this->table->passwordLogin($this->username, $this->password);
-        if (is_object($user) && $user->Approved === 'n') {
+        $user = $this->service->passwordLogin($this->username, $this->password);
+        if ($user && !$user->isApproved()) {
             throw new UnapprovedUserException('Unapproved User');
         }
         return new Result(
-            is_object($user) ? Result::SUCCESS : Result::FAILURE,
-            is_object($user) ? $user->User_ID : null
+            $user ? Result::SUCCESS : Result::FAILURE,
+            $user ? $user->getId() : null
         );
     }
 }

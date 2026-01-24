@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Entity\EntityInterface;
 use GeebyDeeby\Db\Entity\UserEntityInterface;
 use GeebyDeeby\Db\Service\DbServiceInterface;
+use GeebyDeeby\Db\Service\UserService;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
@@ -757,8 +758,7 @@ class AbstractBase extends AbstractActionController
     {
         if ($this->getAuth()->hasIdentity()) {
             $id = $this->getAuth()->getIdentity();
-            $user = $this->getDbTable('user')->getByPrimaryKey($id);
-            if (is_object($user)) {
+            if ($user = $this->getDbService(UserService::class)->getByPrimaryKey($id)) {
                 return $user;
             }
         }
@@ -831,7 +831,7 @@ class AbstractBase extends AbstractActionController
     protected function getAuthenticationAdapter($username, $password)
     {
         return new \GeebyDeeby\Authentication\Adapter(
-            $this->getDbTable('user'),
+            $this->getDbService(UserService::class),
             $username,
             $password
         );

@@ -142,6 +142,29 @@ class User extends TableAwareGateway implements UserEntityInterface
     }
 
     /**
+     * Get address.
+     *
+     * @return string
+     */
+    public function getAddress(): string
+    {
+        return $this->Address;
+    }
+
+    /**
+     * Set address.
+     *
+     * @param string $address Address
+     *
+     * @return static
+     */
+    public function setAddress(string $address): static
+    {
+        $this->Address = $address;
+        return $this;
+    }
+
+    /**
      * Get associated person (if any).
      *
      * @return PersonEntityInterface

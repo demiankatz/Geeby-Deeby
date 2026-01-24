@@ -98,6 +98,22 @@ interface UserEntityInterface extends EntityInterface
     public function setName(string $name): static;
 
     /**
+     * Get address.
+     *
+     * @return string
+     */
+    public function getAddress(): string;
+
+    /**
+     * Set address.
+     *
+     * @param string $address Address
+     *
+     * @return static
+     */
+    public function setAddress(string $address): static;
+
+    /**
      * Get associated person (if any).
      *
      * @return PersonEntityInterface

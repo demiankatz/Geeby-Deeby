@@ -30,6 +30,7 @@
 namespace GeebyDeebyTest\Mink;
 
 use Behat\Mink\Element\TraversableElement;
+use GeebyDeeby\Db\Service\UserService;
 use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -178,12 +179,15 @@ class IntegrationTest extends MinkTestCase
         ?int $groupId = null,
         ?int $personId = null
     ): void {
-        $userTable = $this->getServiceLocator()->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
-        $changes = ['Person_ID' => $personId, 'Approved' => 'y'];
+        $userService = $this->getServiceLocator()->get(\GeebyDeeby\Db\Service\PluginManager::class)
+            ->get(UserService::class);
+        $user = $userService->getByUsername($username)
+            ->setPerson($personId)
+            ->setIsApproved(true);
         if ($groupId) {
-            $changes['User_Group_ID'] = $groupId;
+            $user->setUserGroup($groupId);
         }
-        $userTable->update($changes, ['Username' => $username]);
+        $userService->persistEntity($user);
     }
 
     /**

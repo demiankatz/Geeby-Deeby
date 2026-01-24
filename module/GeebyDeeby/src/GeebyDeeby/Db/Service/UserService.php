@@ -78,6 +78,21 @@ class UserService extends AbstractDbService
     }
 
     /**
+     * Retrieve a user entity by username.
+     *
+     * @param string $username Username
+     *
+     * @return ?UserEntityInterface
+     */
+    public function getByUsername(string $username): ?UserEntityInterface
+    {
+        foreach ($this->userTable->select(['Username' => $username]) as $user) {
+            return $user;
+        }
+        return null;
+    }
+
+    /**
      * Validate a populated entity -- return error message if problem found, null otherwise.
      *
      * @param UserEntityInterface $entity Entity to validate
@@ -93,10 +108,26 @@ class UserService extends AbstractDbService
     /**
      * Get a list of users.
      *
+     * @param ?bool $approvedFilter Limit to a specific approval status? (Null for no filter)
+     *
      * @return UserEntityInterface[]
      */
-    public function getList(): array
+    public function getList(?bool $approvedFilter = null): array
     {
-        return iterator_to_array($this->userTable->getList());
+        return iterator_to_array($this->userTable->getList($approvedFilter));
+    }
+
+    /**
+     * Attempt to log in using the specified username and password.  On successful
+     * login, the specified user's row will be returned.
+     *
+     * @param string $username Username for login.
+     * @param string $password Password for login.
+     *
+     * @return ?UserEntityInterface User on successful login, null otherwise.
+     */
+    public function passwordLogin(string $username, string $password): ?UserEntityInterface
+    {
+        return $this->userTable->passwordLogin($username, $password);
     }
 }
