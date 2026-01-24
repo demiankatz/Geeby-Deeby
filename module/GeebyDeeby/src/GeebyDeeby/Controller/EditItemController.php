@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CitationService;
+use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemService;
@@ -167,39 +168,35 @@ class EditItemController extends AbstractBase
                 ->getRelationshipsForItem($itemId);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($itemId);
-            $view->editions = $this->getDbTable('edition')
-                ->getEditionsForItem($itemId);
+            $view->editions = $this->getDbService(EditionService::class)->getEditionsForItem($itemId);
             $view->setTemplate('geeby-deeby/edit-item/edit-full');
         }
 
         // Process series ID linkage if necessary:
         if ($this->getRequest()->isPost()) {
             if ($editionID = $this->params()->fromPost('edition_id', false)) {
-                $parentEdition = $this->getDbTable('edition')
-                    ->getByPrimaryKey($editionID);
-                $this->getDbTable('edition')->insert(
-                    [
-                        'Edition_Name' => $parentEdition->Edition_Name,
-                        'Item_ID' => $itemId,
-                        'Series_ID' => $parentEdition->Series_ID,
-                        'Edition_Length' => $this->params()->fromPost('len'),
-                        'Edition_Endings' => $this->params()->fromPost('endings'),
-                        'Parent_Edition_ID' => $editionID,
-                    ]
-                );
+                $editionService = $this->getDbService(EditionService::class);
+                $parentEdition = $editionService->getByPrimaryKey($editionID);
+                $newEdition = $editionService->createEntity()
+                    ->setEditionName($parentEdition->getEditionName())
+                    ->setItem($itemId)
+                    ->setSeries($parentEdition->getSeries())
+                    ->setLength($this->params()->fromPost('len'))
+                    ->setEndings($this->params()->fromPost('endings'))
+                    ->setParentEdition($parentEdition);
+                $editionService->persistEntity($newEdition);
             } elseif ($seriesID = $this->params()->fromPost('series_id', false)) {
                 $series = $this->getDbService(SeriesService::class)->getByPrimaryKey($seriesID);
                 $edName = $this->serviceLocator->get('GeebyDeeby\Articles')
                     ->articleAwareAppend($series->getSeriesName(), ' edition');
-                $this->getDbTable('edition')->insert(
-                    [
-                        'Edition_Name' => $edName,
-                        'Item_ID' => $itemId,
-                        'Series_ID' => $seriesID,
-                        'Edition_Length' => $this->params()->fromPost('len'),
-                        'Edition_Endings' => $this->params()->fromPost('endings'),
-                    ]
-                );
+                $editionService = $this->getDbService(EditionService::class);
+                $newEdition = $editionService->createEntity()
+                    ->setEditionName($edName)
+                    ->setItem($itemId)
+                    ->setSeries($series)
+                    ->setLength($this->params()->fromPost('len'))
+                    ->setEndings($this->params()->fromPost('endings'));
+                $editionService->persistEntity($newEdition);
             }
         }
 
@@ -316,13 +313,10 @@ class EditItemController extends AbstractBase
         // Prevent deletion of alttitles that are linked up:
         if ($this->getRequest()->isDelete()) {
             $extra = $this->params()->fromRoute('extra');
-            $result = $this->getDbTable('edition')->select(
-                ['Preferred_Item_AltName_ID' => $extra]
-            );
+            $result = $this->getDbService(EditionService::class)->getByItemAltTitleId($extra);
             if (count($result) > 0) {
-                $ed = $result->current();
-                $msg = 'You cannot delete this title; it is assigned to Edition '
-                    . $ed->Edition_ID . '.';
+                $ed = $result[0];
+                $msg = 'You cannot delete this title; it is assigned to Edition ' . $ed->getId() . '.';
                 return $this->jsonDie($msg);
             }
         }
@@ -626,10 +620,10 @@ class EditItemController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
-            $this->getDbTable('edition')->update(
-                ['Item_Display_Order' => intval($pos)],
-                ['Edition_ID' => $edition]
-            );
+            $entityService = $this->getDbService(EditionService::class);
+            $entity = $entityService->getByPrimaryKey($edition);
+            $entity->setItemDisplayOrder(intval($pos));
+            $entityService->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');

@@ -475,4 +475,16 @@ class EditionService extends AbstractDbService
             }
         }
     }
+
+    /**
+     * Get editions with the specified preferred item title ID.
+     *
+     * @param int $altId Item alt title ID.
+     *
+     * @return EditionEntityInterface[]
+     */
+    public function getByItemAltTitleId(int $altId): array
+    {
+        return iterator_to_array($this->editionsTable->select(['Preferred_Item_AltName_ID' => $altId]));
+    }
 }

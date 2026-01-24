@@ -29,10 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
-use GeebyDeeby\Db\Service\ItemsAltTitleService;
-use GeebyDeeby\Db\Service\ItemService;
-use GeebyDeeby\Db\Service\SeriesAltTitleService;
-use GeebyDeeby\Db\Service\SeriesService;
+use GeebyDeeby\Db\Service\EditionService;
 
 use function is_object;
 
@@ -113,27 +110,20 @@ class EditionController extends AbstractBase
     {
         $id = ($overrideId === null)
             ? $this->params()->fromRoute('id') : $overrideId;
-        $table = $this->getDbTable('edition');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $service = $this->getDbService(EditionService::class);
+        $entity = (null === $id) ? null : $service->getByPrimaryKey($id);
+        if (!$entity) {
             return false;
         }
-        if (!empty($rowObj->Item_ID)) {
-            $item = $this->getDbService(ItemService::class)->getByPrimaryKey($rowObj->Item_ID)->toArray();
-            if (!empty($rowObj->Preferred_Item_AltName_ID)) {
-                $ian = $this->getDbService(ItemsAltTitleService::class)
-                    ->getByPrimaryKey($rowObj->Preferred_Item_AltName_ID);
-                $item['Item_AltName'] = $ian?->getAltName();
-            }
-        } else {
-            $item = [];
+        $itemEntity = $entity->getItem();
+        $item = $itemEntity->toArray();
+        if ($ian = $entity->getPreferredItemAlternateTitle()) {
+            $item['Item_AltName'] = $ian->getAltName();
         }
-        if (!empty($rowObj->Series_ID)) {
-            $series = $this->getDbService(SeriesService::class)->getByPrimaryKey($rowObj->Series_ID)->toArray();
-            if (!empty($rowObj->Preferred_Series_AltName_ID)) {
-                $san = $this->getDbService(SeriesAltTitleService::class)
-                    ->getByPrimaryKey($rowObj->Preferred_Series_AltName_ID);
-                $series['Series_AltName'] = $san?->getAltName();
+        if ($seriesEntity = $entity->getSeries()) {
+            $series = $seriesEntity->toArray();
+            if ($san = $entity->getPreferredSeriesAlternateTitle()) {
+                $series['Series_AltName'] = $san->getAltName();
             }
         } else {
             $series = [];
@@ -141,7 +131,7 @@ class EditionController extends AbstractBase
         $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
             ->getAttributesForEdition($id);
         return $this->createViewModel(
-            ['edition' => $rowObj->toArray(), 'item' => $item, 'series' => $series]
+            ['edition' => $entity->toArray(), 'item' => $item, 'series' => $series]
             + $extras
         );
     }
@@ -289,10 +279,10 @@ class EditionController extends AbstractBase
         $view->fullText = $this->getDbTable('editionsfulltext')
             ->getFullTextForEditionOrParentEdition($id);
         $this->addFullTextAttributesToView($view);
-        $edTable = $this->getDbTable('edition');
-        $view->publishers = $edTable->getPublishersForEdition($id);
-        $view->parent = $edTable->getParentItemForEdition($id);
-        $view->children = $edTable->getItemsForEdition($id);
+        $editionService = $this->getDbService(EditionService::class);
+        $view->publishers = $editionService->getPublishersForEdition($id);
+        $view->parent = $editionService->getParentItemForEdition($id);
+        $view->children = $editionService->getItemsForEdition($id);
         return $view;
     }
 

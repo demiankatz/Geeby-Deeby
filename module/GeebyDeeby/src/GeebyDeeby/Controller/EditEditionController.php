@@ -979,12 +979,11 @@ class EditEditionController extends AbstractBase
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
-            $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
-            $this->getDbTable('edition')->update(
-                ['Position_in_Parent' => $pos],
-                ['Edition_ID' => $edition]
-            );
+            $editionService = $this->getDbService(EditionService::class);
+            $edition = $editionService->getByPrimaryKey($this->params()->fromPost('edition_id'))
+                ->setPositionInParent((int)$pos);
+            $editionService->persistEntity($edition);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
