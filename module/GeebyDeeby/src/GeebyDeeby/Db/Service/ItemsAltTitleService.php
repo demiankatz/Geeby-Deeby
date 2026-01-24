@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsAltTitleEntityInterface;
 use GeebyDeeby\Db\Table\ItemsAltTitles;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
@@ -120,13 +121,14 @@ class ItemsAltTitleService extends AbstractDbService
     /**
      * Retrieve an existing entry using an item ID and title (null if not found).
      *
-     * @param int    $itemId Item ID
-     * @param string $title  Alt title
+     * @param int|ItemEntityInterface $item  Item entity or ID
+     * @param string                  $title Alt title
      *
      * @return ?ItemsAltTitleEntityInterface
      */
-    public function getByItemAndTitle(int $itemId, string $title): ?ItemsAltTitleEntityInterface
+    public function getByItemAndTitle(int|ItemEntityInterface $item, string $title): ?ItemsAltTitleEntityInterface
     {
+        $itemId = $item instanceof ItemEntityInterface ? $item->getId() : $item;
         foreach ($this->itemsAltTitlesTable->select(['Item_ID' => $itemId, 'Item_AltName' => $title]) as $row) {
             return $row;
         }

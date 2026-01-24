@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\SeriesAltTitleEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Table\SeriesAltTitles;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -120,13 +121,16 @@ class SeriesAltTitleService extends AbstractDbService
     /**
      * Retrieve an existing entry using an series ID and title (null if not found).
      *
-     * @param int    $seriesId Series ID
-     * @param string $title    Alt title
+     * @param int|SeriesEntityInterface $series Series ID or entity
+     * @param string                    $title  Alt title
      *
      * @return ?SeriesAltTitleEntityInterface
      */
-    public function getBySeriesAndTitle(int $seriesId, string $title): ?SeriesAltTitleEntityInterface
-    {
+    public function getBySeriesAndTitle(
+        int|SeriesEntityInterface $series,
+        string $title
+    ): ?SeriesAltTitleEntityInterface {
+        $seriesId = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
         foreach ($this->seriesAltTitlesTable->select(['Series_ID' => $seriesId, 'Series_AltName' => $title]) as $row) {
             return $row;
         }

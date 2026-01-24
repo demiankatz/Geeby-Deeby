@@ -238,8 +238,9 @@ class EditEditionController extends AbstractBase
             return $this->setPreferredPublisher();
         }
         $view = $this->createViewModel();
-        $view->edition = $this->getDbTable('edition')
-            ->getByPrimaryKey($this->params()->fromRoute('id'));
+        $view->edition = $this->getDbService(EditionService::class)
+            ->getByPrimaryKey($this->params()->fromRoute('id'))
+            ->toArray();
         $view->publishers = $this->getDbService(SeriesPublisherService::class)
             ->getPublishersForSeries($view->edition['Series_ID']);
         $view->selected = $view->edition['Preferred_Series_Publisher_ID'];
@@ -256,10 +257,11 @@ class EditEditionController extends AbstractBase
     protected function setPreferredPublisher()
     {
         $editionId = $this->params()->fromRoute('id');
-        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $editionService = $this->getDbService(EditionService::class);
         $pubId = $this->params()->fromPost('pub_id');
-        $edition->Preferred_Series_Publisher_ID = empty($pubId) ? null : $pubId;
-        $edition->save();
+        $edition = $editionService->getByPrimaryKey($editionId);
+        $edition->setPreferredPublisher(empty($pubId) ? null : (int)$pubId);
+        $editionService->persistEntity($edition);
         return $this->jsonReportSuccess();
     }
 
@@ -281,8 +283,9 @@ class EditEditionController extends AbstractBase
             return $this->clearPreferredItemTitle();
         }
         $view = $this->createViewModel();
-        $view->edition = $this->getDbTable('edition')
-            ->getByPrimaryKey($this->params()->fromRoute('id'));
+        $view->edition = $this->getDbService(EditionService::class)
+            ->getByPrimaryKey($this->params()->fromRoute('id'))
+            ->toArray();
         $view->itemAltTitles = $this->getDbService(ItemsAltTitleService::class)
             ->getAltTitles($view->edition['Item_ID']);
         $view->selected = $view->edition['Preferred_Item_AltName_ID'];
@@ -298,36 +301,33 @@ class EditEditionController extends AbstractBase
      */
     protected function setPreferredItemTitle()
     {
+        $editionService = $this->getDbService(EditionService::class);
         $editionId = $this->params()->fromRoute('id');
-        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
-        $title = $this->params()->fromPost('title_id', 'NEW');
+        $edition = $editionService->getByPrimaryKey($editionId);
+        $titleId = $this->params()->fromPost('title_id', 'NEW');
         $titleText = trim($this->params()->fromPost('title_text'));
 
-        if ($title == 'NEW') {
+        if ($titleId == 'NEW') {
             if (empty($titleText)) {
                 return $this->jsonDie('Title cannot be empty.');
             } else {
                 $service = $this->getDbService(ItemsAltTitleService::class);
-                $result = $service->getByItemAndTitle($edition->Item_ID, $titleText);
+                $item = $edition->getItem();
+                $result = $service->getByItemAndTitle($item, $titleText);
                 if (!$result) {
-                    if (empty($edition->Item_ID)) {
-                        return $this->jsonDie(
-                            'Edition must be attached to an Item.'
-                        );
-                    }
                     $result = $service->createEntity()
-                        ->setItem($edition->Item_ID)
+                        ->setItem($item)
                         ->setAltName($titleText);
                     $service->persistEntity($result);
                 }
-                $title = $result->getId();
-                if (!$title) {
+                $titleId = $result->getId();
+                if (!$titleId) {
                     return $this->jsonDie('Problem inserting title.');
                 }
             }
         }
-        $edition->Preferred_Item_AltName_ID = $title;
-        $edition->save();
+        $edition->setPreferredItemAlternateTitle($titleId);
+        $editionService->persistEntity($edition);
         return $this->jsonReportSuccess();
     }
 
@@ -338,10 +338,11 @@ class EditEditionController extends AbstractBase
      */
     protected function clearPreferredItemTitle()
     {
+        $editionService = $this->getDbService(EditionService::class);
         $editionId = $this->params()->fromRoute('id');
-        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
-        $edition->Preferred_Item_AltName_ID = null;
-        $edition->save();
+        $edition = $editionService->getByPrimaryKey($editionId);
+        $edition->setPreferredItemAlternateTitle(null);
+        $editionService->persistEntity($edition);
         return $this->jsonReportSuccess();
     }
 
@@ -363,8 +364,9 @@ class EditEditionController extends AbstractBase
             return $this->clearPreferredSeriesTitle();
         }
         $view = $this->createViewModel();
-        $view->edition = $this->getDbTable('edition')
-            ->getByPrimaryKey($this->params()->fromRoute('id'));
+        $view->edition = $this->getDbService(EditionService::class)
+            ->getByPrimaryKey($this->params()->fromRoute('id'))
+            ->toArray();
         $view->seriesAltTitles = $this->getDbService(SeriesAltTitleService::class)
             ->getAltTitles($view->edition['Series_ID']);
         $view->selected = $view->edition['Preferred_Series_AltName_ID'];
@@ -380,36 +382,38 @@ class EditEditionController extends AbstractBase
      */
     protected function setPreferredSeriesTitle()
     {
+        $editionService = $this->getDbService(EditionService::class);
         $editionId = $this->params()->fromRoute('id');
-        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
-        $title = $this->params()->fromPost('title_id', 'NEW');
+        $edition = $editionService->getByPrimaryKey($editionId);
+        $titleId = $this->params()->fromPost('title_id', 'NEW');
         $titleText = trim($this->params()->fromPost('title_text'));
 
-        if ($title == 'NEW') {
+        if ($titleId == 'NEW') {
             if (empty($titleText)) {
                 return $this->jsonDie('Title cannot be empty.');
             } else {
                 $service = $this->getDbService(SeriesAltTitleService::class);
-                $entity  = $service->getBySeriesAndTitle($edition->Series_ID, $titleText);
+                $series = $edition->getSeries();
+                if (!$series) {
+                    return $this->jsonDie(
+                        'Edition must be attached to a Series.'
+                    );
+                }
+                $entity  = $service->getBySeriesAndTitle($series, $titleText);
                 if (!$entity) {
-                    if (empty($edition->Series_ID)) {
-                        return $this->jsonDie(
-                            'Edition must be attached to a Series.'
-                        );
-                    }
                     $entity = $service->createEntity()
                         ->setSeries($edition->Series_ID)
                         ->setAltName($titleText);
                     $service->persistEntity($entity);
                 }
-                $title = $entity->getId();
-                if (empty($title)) {
+                $titleId = $entity->getId();
+                if (empty($titleId)) {
                     return $this->jsonDie('Problem inserting title.');
                 }
             }
         }
-        $edition->Preferred_Series_AltName_ID = $title;
-        $edition->save();
+        $edition->setPreferredSeriesAlternateTitle($titleId);
+        $editionService->persistEntity($edition);
         return $this->jsonReportSuccess();
     }
 
@@ -420,10 +424,11 @@ class EditEditionController extends AbstractBase
      */
     protected function clearPreferredSeriesTitle()
     {
+        $editionService = $this->getDbService(EditionService::class);
         $editionId = $this->params()->fromRoute('id');
-        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
-        $edition->Preferred_Series_AltName_ID = null;
-        $edition->save();
+        $edition = $editionService->getByPrimaryKey($editionId);
+        $edition->setPreferredSeriesAlternateTitle(null);
+        $editionService->persistEntity($edition);
         return $this->jsonReportSuccess();
     }
 
@@ -440,16 +445,14 @@ class EditEditionController extends AbstractBase
         }
         if ($this->getRequest()->isPost()) {
             $editionId = $this->params()->fromRoute('id');
-            $table = $this->getDbTable('edition');
-            $old = $table->getByPrimaryKey($editionId);
+            $service = $this->getDbService(EditionService::class);
+            $old = $service->getByPrimaryKey($editionId);
             if (!$old) {
                 return $this->jsonDie('Cannot load edition ' . $editionId);
             }
-            if ($table->copyEdition($old)) {
-                return $this->jsonReportSuccess();
-            } else {
-                return $this->jsonDie('Copy operation failed.');
-            }
+            return $service->copyEdition($old)
+                ? $this->jsonReportSuccess()
+                : $this->jsonDie('Copy operation failed.');
         }
         return $this->jsonDie('Unexpected method');
     }
@@ -933,6 +936,8 @@ class EditEditionController extends AbstractBase
      */
     public function itemAction()
     {
+        $editionService = $this->getDbService(EditionService::class);
+
         // Special case: delete editions differently from other links:
         if ($this->getRequest()->isDelete()) {
             $ok = $this->checkPermission('Content_Editor');
@@ -940,47 +945,25 @@ class EditEditionController extends AbstractBase
                 return $ok;
             }
             try {
-                $this->getDbTable('edition')
-                    ->safeDelete($this->params()->fromRoute('extra'));
+                $editionService->safeDelete($this->params()->fromRoute('extra'));
             } catch (\Exception $e) {
                 return $this->jsonDie($e->getMessage());
             }
             return $this->jsonReportSuccess();
         }
 
-        $parentEdition = $this->getDbTable('edition')->getByPrimaryKey(
-            $this->params()->fromRoute('id')
-        );
-        $edName = $parentEdition->Edition_Name;
-        $seriesID = $parentEdition->Series_ID;
-        $insertCallback = function ($new, $row, $sm): void {
-            $edsTable = $sm->get('GeebyDeeby\Db\Table\PluginManager')
-                ->get('edition');
-            $newObj = $edsTable->getByPrimaryKey($new);
-            if ($error = $newObj->validate()) {
-                $newObj->delete();
-                throw new \Exception($error);
-            }
-            $rows = $edsTable->select(['Item_ID' => $row['Item_ID']]);
-            foreach ($rows as $row) {
-                $row = $row->toArray();
-                if ($row['Edition_ID'] != $new) {
-                    break;
-                }
-            }
-            if (isset($row['Edition_ID']) && $row['Edition_ID'] != $new) {
-                $edsTable->copyCredits($row['Edition_ID'], $new);
-            }
-        };
+        $parentEdition = $editionService->getByPrimaryKey($this->params()->fromRoute('id'));
+        $edName = $parentEdition->getEditionName();
+        $series = $parentEdition->getSeries();
         return $this->handleGenericLink(
-            'edition',
-            'Parent_Edition_ID',
-            'Item_ID',
+            EditionService::class,
+            'setParentEdition',
+            'setItem',
             'item_list',
             'getItemsForEdition',
             'geeby-deeby/edit-edition/item-list.phtml',
-            ['Edition_Name' => $edName, 'Series_ID' => $seriesID],
-            $insertCallback
+            ['setEditionName' => $edName, 'setSeries' => $series],
+            [$editionService, 'insertEditionCallback']
         );
     }
 

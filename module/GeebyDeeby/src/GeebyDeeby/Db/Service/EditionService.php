@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -427,12 +428,13 @@ class EditionService extends AbstractDbService
     /**
      * Look up editions by item.
      *
-     * @param int $itemId Item ID
+     * @param int $item Item ID or entity
      *
      * @return EditionEntityInterface[]
      */
-    public function getByItem(int $itemId): array
+    public function getByItem(int|ItemEntityInterface $item): array
     {
+        $itemId = $item instanceof ItemEntityInterface ? $item->getId() : $item;
         $itemEditions = $this->editionsTable->select(['Item_ID' => $itemId]);
         return iterator_to_array($itemEditions);
     }
@@ -451,5 +453,26 @@ class EditionService extends AbstractDbService
             ['Item_ID' => $itemId, 'Series_ID' => $seriesId]
         );
         return iterator_to_array($seriesEditions);
+    }
+
+    /**
+     * Insert edition callback (used by handleGenericLink).
+     *
+     * @param EditionEntityInterface $new Newly created edition.
+     *
+     * @return void
+     */
+    public function insertEditionCallback(EditionEntityInterface $new): void
+    {
+        if ($error = $this->getValidationError($new)) {
+            $this->deleteEntity($new);
+            throw new \Exception($error);
+        }
+        foreach ($this->getByItem($new->getItem()) as $edition) {
+            if ($edition->getId() != $new->getId()) {
+                $this->copyCredits($edition->getId(), $new->getId());
+                break;
+            }
+        }
     }
 }

@@ -593,7 +593,7 @@ class AbstractBase extends AbstractActionController
                     }
                     $service->persistEntity($entity);
                     if (is_callable($insertCallback)) {
-                        return $this->jsonDie('TODO: callback not supported yet!');
+                        $insertCallback($entity);
                     }
                 } elseif ($this->getRequest()->isDelete()) {
                     if (!empty($extraFields)) {
