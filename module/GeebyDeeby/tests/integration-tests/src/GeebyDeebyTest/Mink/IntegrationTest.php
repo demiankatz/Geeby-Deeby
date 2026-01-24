@@ -2059,4 +2059,58 @@ class IntegrationTest extends MinkTestCase
     ): void {
         $this->assertPageContent($expectedMessage, '', $linkText, $containerIndex, $regExMatch);
     }
+
+    /**
+     * Data provider for testSeriesCheckPage.
+     *
+     * @return Generator<string, array>
+     */
+    public static function seriesCheckPageProvider(): Generator
+    {
+        yield 'series 1' => [
+            1,
+            'Missing Credits '
+            . 'None. '
+            . 'Unspecified Creators '
+            . 'None. '
+            . 'Missing Dates '
+            . 'None. '
+            . 'Statistics '
+            . 'Series contains dates from 1952. '
+            . 'Series contains 1 total items representing 1 different positions. '
+            . 'Series does not use volume numbering. '
+            . '1 item(s) numbered from 0 to 0.',
+        ];
+        yield 'series 2' => [
+            2,
+            'Missing Credits '
+            . 'example article 1, example article 2, [v. 1, no. 1], [v. 1, no. 2] '
+            . 'Unspecified Creators '
+            . 'example article 1, example article 2, [v. 1, no. 1], [v. 1, no. 2] '
+            . 'Missing Dates '
+            . '[v. 1, no. 1], [v. 1, no. 2] '
+            . 'Statistics '
+            . 'No date information. '
+            . 'Series contains 2 total items representing 2 different positions. '
+            . 'Series contains volume numbers from 1 to 1. '
+            . 'Volume 1 '
+            . '2 item(s) numbered from 1 to 2.',
+        ];
+    }
+
+    /**
+     * Test the "check series" page.
+     *
+     * @param int    $seriesId Series to check
+     * @param string $expected Expected page content
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('seriesCheckPageProvider')]
+    #[\PHPUnit\Framework\Attributes\Depends('testBuildingArticles')]
+    public function testSeriesCheckPage(int $seriesId, string $expected): void
+    {
+        $page = $this->goToPage('/Series/' . $seriesId . '/Check');
+        $this->assertSame($expected, $this->findCssAndGetText($page, '.content'));
+    }
 }

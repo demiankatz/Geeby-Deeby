@@ -638,10 +638,10 @@
         <tr>
           <th scope="row"><?=$this->escapeHtml($current['Items_Attribute_Name'])?>:</th>
           <td>
-            <?php if ($current->Allow_HTML == 1): ?>
-              <?=$current->Items_Attribute_Value?><br />
+            <?php if ($current['Allow_HTML'] == 1): ?>
+              <?=$current['Items_Attribute_Value']?><br />
             <?php else: ?>
-              <?=$this->escapeHtml($current->Items_Attribute_Value)?><br />
+              <?=$this->escapeHtml($current['Items_Attribute_Value'])?><br />
             <?php endif; ?>
           </td>
         </tr>
@@ -664,7 +664,7 @@
           <th scope="row"><?=$this->escapeHtml($label)?>:</th>
           <td>
             <?php foreach ($current['values'] as $value => $note): ?>
-              <?php if ($current['details']->Allow_HTML == 1): ?>
+              <?php if ($current['details']['Allow_HTML'] == 1): ?>
                 <?php if (!empty($note)): ?><i><?=$this->escapeHtml($note)?>:</i><br /><?php endif; ?>
                 <?=$value?><br />
               <?php else: ?>
