@@ -349,20 +349,20 @@ class AbstractBase extends AbstractActionController
         $id = $id == 'NEW' ? false : intval($id);
         $service = $this->getDbService($serviceName);
         if ($id) {
-            $rowObj = $service->getByPrimaryKey($id);
-            if (is_object($rowObj)) {
-                $row = $rowObj->toArray();
+            $entity = $service->getByPrimaryKey($id);
+            if ($entity) {
+                $row = $entity->toArray();
             } else {
                 $id = false;
             }
         }
         if (!$id) {
-            $rowObj = $service->createEntity();
-            $key = $rowObj->getPrimaryKeyColumn();
+            $entity = $service->createEntity();
+            $key = $entity->getPrimaryKeyColumn();
             $row = [$key[0] => 'NEW'];
         }
         return $this->createViewModel(
-            [$assignTo => $row ?? null, $assignTo . 'Obj' => $rowObj ?? null]
+            [$assignTo => $row ?? null, $assignTo . 'Obj' => $entity ?? null]
         );
     }
 
