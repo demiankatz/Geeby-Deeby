@@ -7,13 +7,13 @@
 <table class="item">
   <?php foreach ($tagAttributes as $current): ?>
     <tr>
-      <th scope="row"><?=$this->escapeHtml($current->Tags_Attribute_Name)?>:</th>
+      <th scope="row"><?=$this->escapeHtml($current['Tags_Attribute_Name'])?>:</th>
       <td>
         <?php $displayedSomething = true; ?>
-        <?php if ($current->Allow_HTML == 1): ?>
-          <?=$current->Tags_Attribute_Value?>
+        <?php if ($current['Allow_HTML'] == 1): ?>
+          <?=$current['Tags_Attribute_Value']?>
         <?php else: ?>
-          <?=$this->escapeHtml($current->Tags_Attribute_Value)?>
+          <?=$this->escapeHtml($current['Tags_Attribute_Value'])?>
         <?php endif; ?>
       </td>
     </tr>
