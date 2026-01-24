@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Entity\EntityInterface;
+use GeebyDeeby\Db\Entity\UserEntityInterface;
 use GeebyDeeby\Db\Service\DbServiceInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -765,6 +766,20 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Check if the user has the specified permission.
+     *
+     * @param UserEntityInterface $user       The user to check.
+     * @param string              $permission The name of the permission to check.
+     *
+     * @return bool              True if action permitted, false otherwise.
+     */
+    public function userHasPermission(UserEntityInterface $user, string $permission): bool
+    {
+        $permissions = $user->getUserGroup()?->toArray();
+        return !empty($permissions[$permission]);
+    }
+
+    /**
      * Check that a user is logged in and has appropriate permissions.
      * Returns boolean true if user has permission; otherwise returns a
      * response object to redirect appropriately.
@@ -778,7 +793,7 @@ class AbstractBase extends AbstractActionController
         if (!($user = $this->getCurrentUser())) {
             return $this->forceLogin();
         }
-        if (!$user->hasPermission($permission)) {
+        if (!$this->userHasPermission($user, $permission)) {
             return $this->forwardTo('GeebyDeeby\Controller\Edit', 'Denied');
         }
         return true;

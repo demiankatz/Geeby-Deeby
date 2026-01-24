@@ -103,6 +103,6 @@ class ToggleLink
         $user = $this->auth->hasIdentity()
             ? $this->userTable->getByPrimaryKey($this->auth->getIdentity())
             : null;
-        return $user && $user->hasPermission($permission);
+        return $user && !empty($user->getUserGroup()?->toArray()[$permission]);
     }
 }

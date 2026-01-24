@@ -53,13 +53,6 @@ class User extends TableAwareGateway implements UserEntityInterface
     protected static $doNotLog = true;
 
     /**
-     * Permissions
-     *
-     * @var \GeebyDeeby\Db\Row\UserGroup
-     */
-    protected $permissions = null;
-
-    /**
      * Constructor
      *
      * @param \Laminas\Db\Adapter\Adapter $adapter Database adapter
@@ -178,7 +171,8 @@ class User extends TableAwareGateway implements UserEntityInterface
      */
     public function getUserGroup(): ?UserGroupEntityInterface
     {
-        return $this->getTableManager()->get('usergroup')->getByPrimaryKey($this->User_Group_ID);
+        return $this->User_Group_ID
+            ? $this->getTableManager()->get('usergroup')->getByPrimaryKey($this->User_Group_ID) : null;
     }
 
     /**
@@ -261,46 +255,5 @@ class User extends TableAwareGateway implements UserEntityInterface
     {
         $this->Approved = $approved ? 'y' : 'n';
         return $this;
-    }
-
-    /**
-     * Check if the user has the specified permission.
-     *
-     * @param string $permission The name of the permission to check.
-     *
-     * @return bool              True if action permitted, false otherwise.
-     */
-    public function hasPermission($permission)
-    {
-        // Make sure we have permissions available:
-        $this->loadPermissions();
-
-        // Check the permission:
-        return isset($this->permissions->$permission)
-            && !empty($this->permissions->$permission);
-    }
-
-    /**
-     * Load permission data if not already available.
-     *
-     * @return void
-     */
-    public function loadPermissions()
-    {
-        // If permissions are already loaded, we're done here:
-        if ($this->permissions !== null) {
-            return;
-        } elseif (isset($this->User_Group_ID) && !empty($this->User_Group_ID)) {
-            $table = $this->getDbTable('usergroup');
-            $this->permissions = $table->getByPrimaryKey($this->User_Group_ID);
-            // Unset non-permission related fields:
-            unset($this->permissions->User_Group_ID);
-            unset($this->permissions->Group_Name);
-            return;
-        }
-
-        // If we got this far, we were unable to find permissions -- default to
-        // "no permissions."
-        $this->permissions = new \ArrayObject();
     }
 }
