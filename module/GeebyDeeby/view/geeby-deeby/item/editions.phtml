@@ -220,10 +220,10 @@
         <tr>
           <th scope="row"><?=$this->escapeHtml($current['Items_Attribute_Name'])?>:</th>
           <td>
-            <?php if ($current->Allow_HTML == 1): ?>
-              <?=$current->Items_Attribute_Value?><br />
+            <?php if ($current['Allow_HTML'] == 1): ?>
+              <?=$current['Items_Attribute_Value']?><br />
             <?php else: ?>
-              <?=$this->escapeHtml($current->Items_Attribute_Value)?><br />
+              <?=$this->escapeHtml($current['Items_Attribute_Value'])?><br />
             <?php endif; ?>
           </td>
         </tr>
