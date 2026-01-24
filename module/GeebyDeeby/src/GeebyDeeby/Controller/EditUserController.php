@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Crypt\PasswordHasher;
 use GeebyDeeby\Db\Service\PersonService;
 use GeebyDeeby\Db\Service\UserGroupService;
+use GeebyDeeby\Db\Service\UserService;
 
 /**
  * Edit user controller
@@ -52,7 +53,7 @@ class EditUserController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'user',
+            UserService::class,
             'users',
             'geeby-deeby/edit-user/render-users',
             'User_Editor'
@@ -79,15 +80,15 @@ class EditUserController extends AbstractBase
 
         // Process standard values:
         $assignMap = [
-            'username' => 'Username',
-            'name' => 'Name',
-            'address' => 'Address',
-            'approved' => 'Approved',
-            'person_id' => 'Person_ID',
-            'group_id' => 'User_Group_ID',
+            'username' => 'setUsername',
+            'name' => 'setName',
+            'address' => 'setAddress',
+            'approved' => 'setIsApproved',
+            'person_id' => 'setPerson',
+            'group_id' => 'setUserGroup',
         ];
         [$view, $ok]
-            = $this->handleGenericItem('user', $assignMap, 'user', 'User_Editor');
+            = $this->handleGenericItem(UserService::class, $assignMap, 'user', 'User_Editor');
         if (!$ok) {
             return $view;
         }
@@ -101,10 +102,10 @@ class EditUserController extends AbstractBase
         }
 
         // Change password, if necessary:
-        if ($password && isset($view->affectedRow)) {
+        if ($password && isset($view->affectedEntity)) {
             $hasher = new PasswordHasher();
-            $view->affectedRow->Password_Hash = $hasher->create($password);
-            $view->affectedRow->save();
+            $view->affectedEntity->setPasswordHash($hasher->create($password));
+            $this->getDbService(UserService::class)->persistEntity($view->affectedEntity);
         }
 
         // Load group list:

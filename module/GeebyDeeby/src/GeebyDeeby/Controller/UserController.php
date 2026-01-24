@@ -30,8 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Crypt\PasswordHasher;
-
-use function is_object;
+use GeebyDeeby\Db\Service\UserService;
 
 /**
  * User controller
@@ -52,14 +51,12 @@ class UserController extends AbstractBase
     protected function getViewModelWithUser()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('user');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $service = $this->getDbService(UserService::class);
+        $entity = (null === $id) ? null : $service->getByPrimaryKey($id);
+        if (!$entity) {
             return false;
         }
-        return $this->createViewModel(
-            ['user' => $rowObj->toArray()]
-        );
+        return $this->createViewModel(['user' => $entity->toArray()]);
     }
 
     /**
@@ -168,18 +165,15 @@ class UserController extends AbstractBase
                 if (!empty($password1) && !($passwordCheck?->isValid())) {
                     $view->error = 'The existing password you provided is incorrect.';
                 } else {
-                    $table = $this->getDbTable('user');
-                    $update = [
-                        'Name' => $view->fullname, 'Address' => $view->address,
-                    ];
+                    $service = $this->getDbService(UserService::class);
+                    $user = $service->getByPrimaryKey($view->user['User_ID']);
+                    $user->setName($view->fullname)
+                        ->setAddress($view->address);
                     if (!empty($password1)) {
                         $hasher = new PasswordHasher();
-                        $update['Password_Hash'] = $hasher->create($password1);
+                        $user->setPasswordHash($hasher->create($password1));
                     }
-                    $table->update(
-                        $update,
-                        ['User_ID' => $view->user['User_ID']]
-                    );
+                    $service->persistEntity($user);
                     return $this->redirect()->toRoute(
                         'user',
                         ['id' => $view->user['User_ID']]
@@ -237,7 +231,7 @@ class UserController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['users' => $this->getDbTable('user')->getList(true)]
+            ['users' => $this->getDbService(UserService::class)->getList(true)]
         );
     }
 
