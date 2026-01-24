@@ -90,32 +90,32 @@
 
   <?php for ($v = 0; $v <= $itemStats['EndVol']; $v++): ?>
     <?php
-      if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol'])) {
+      if (in_array($v, $itemStats['MissingVol']) || ($v > 0 && $v < $itemStats['StartVol']) || empty($itemStats['TotalByVol'][$v])) {
         continue;
       }
     ?>
     <?php if ($v > 0): ?><h3>Volume <?=$this->escapeHtml($v)?></h3><?php endif; ?>
     <?php if ($v == 0 && $itemStats['EndVol'] > $v): ?><h3>No Volume Specified</h3><?php endif; ?>
-    <?=$this->escapeHtml($itemStats['TotalByVol'][$v])?> item(s) numbered from <?=$this->escapeHtml($itemStats['Start'][$v])?> to <?=$this->escapeHtml($itemStats['End'][$v])?>.</p>
-      <?php if (!empty($itemStats['Dupes'][$v])): ?>
-        <p>
-          Duplicate numbers:
-          <?php $dupeList = []; ?>
-          <?php foreach ($itemStats['Dupes'][$v] as $no => $repArr): ?>
-            <?php $currentDupe = $this->escapeHtml($no); ?>
-            <?php foreach ($repArr as $rep): ?>
-              <?php if ($rep > 0): ?>
-                <?php $currentDupe .= ' (replacement no. ' . $this->escapeHtml($rep) . ')'; ?>
-              <?php endif; ?>
-            <?php endforeach; ?>
-            <?php $dupeList[] = $currentDupe; ?>
+    <p><?=$this->escapeHtml($itemStats['TotalByVol'][$v])?> item(s) numbered from <?=$this->escapeHtml($itemStats['Start'][$v])?> to <?=$this->escapeHtml($itemStats['End'][$v])?>.</p>
+    <?php if (!empty($itemStats['Dupes'][$v])): ?>
+      <p>
+        Duplicate numbers:
+        <?php $dupeList = []; ?>
+        <?php foreach ($itemStats['Dupes'][$v] as $no => $repArr): ?>
+          <?php $currentDupe = $this->escapeHtml($no); ?>
+          <?php foreach ($repArr as $rep): ?>
+            <?php if ($rep > 0): ?>
+              <?php $currentDupe .= ' (replacement no. ' . $this->escapeHtml($rep) . ')'; ?>
+            <?php endif; ?>
           <?php endforeach; ?>
-          <?=implode(', ', $dupeList)?>
-        </p>
-      <?php endif; ?>
-      <?php if (!empty($itemStats['Missing'][$v])): ?>
-        <p>Missing numbers: <?=$formatRanges($itemStats['Missing'][$v])?></p>
-      <?php endif; ?>
+          <?php $dupeList[] = $currentDupe; ?>
+        <?php endforeach; ?>
+        <?=implode(', ', $dupeList)?>
+      </p>
+    <?php endif; ?>
+    <?php if (!empty($itemStats['Missing'][$v])): ?>
+      <p>Missing numbers: <?=$formatRanges($itemStats['Missing'][$v])?></p>
+    <?php endif; ?>
   <?php endfor; ?>
 <?php else: ?>
   <p>No item information.</p>

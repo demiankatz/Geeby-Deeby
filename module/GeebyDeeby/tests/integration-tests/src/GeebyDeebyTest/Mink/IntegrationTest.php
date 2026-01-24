@@ -2093,8 +2093,6 @@ class IntegrationTest extends MinkTestCase
             . 'No date information. '
             . 'Series contains 2 total items representing 2 different positions. '
             . 'Series contains volume numbers from 1 to 1. '
-            . 'No Volume Specified '
-            . 'item(s) numbered from to . '
             . 'Volume 1 '
             . '2 item(s) numbered from 1 to 2.',
         ];
