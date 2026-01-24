@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
@@ -303,8 +304,7 @@ class ItemController extends AbstractBase
         $view->children = $itemService->getItemChildren($id);
         $view->parents = $itemService->getItemParents($id);
 
-        $edTable = $this->getDbTable('edition');
-        $view->publishers = $edTable->getPublishersForItem($id);
+        $view->publishers = $this->getDbService(EditionService::class)->getPublishersForItem($id);
         $view->dates = $this->getDbTable('editionsreleasedates')
             ->getDatesForItem($id);
         $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
@@ -360,8 +360,7 @@ class ItemController extends AbstractBase
         $view->bibliography = $this->getDbTable('itemsbibliography')
             ->getItemsDescribingItem($id);
         $view->links = $this->getDbTable('itemslinks')->getLinksForItem($id);
-        $edTable = $this->getDbTable('edition');
-        $view->editions = $edTable->getEditionsForItem($id, true);
+        $view->editions = $this->getDbService(EditionService::class)->getEditionsForItem($id, true);
     }
 
     /**

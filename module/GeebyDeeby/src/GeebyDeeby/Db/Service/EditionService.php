@@ -33,6 +33,8 @@ use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Select;
 
 use function count;
 use function in_array;
@@ -456,13 +458,13 @@ class EditionService extends AbstractDbService
     }
 
     /**
-     * Insert edition callback (used by handleGenericLink).
+     * Insert edition callback (used by handleGenericLink for adding children to editions).
      *
      * @param EditionEntityInterface $new Newly created edition.
      *
      * @return void
      */
-    public function insertEditionCallback(EditionEntityInterface $new): void
+    public function insertChildEditionCallback(EditionEntityInterface $new): void
     {
         if ($error = $this->getValidationError($new)) {
             $this->deleteEntity($new);
@@ -471,6 +473,23 @@ class EditionService extends AbstractDbService
         foreach ($this->getByItem($new->getItem()) as $edition) {
             if ($edition->getId() != $new->getId()) {
                 $this->copyCredits($edition->getId(), $new->getId());
+                break;
+            }
+        }
+    }
+
+    /**
+     * Insert edition callback (used by handleGenericLink for adding top-level editions to series).
+     *
+     * @param EditionEntityInterface $new Newly created edition.
+     *
+     * @return void
+     */
+    public function insertSeriesEditionCallback(EditionEntityInterface $new): void
+    {
+        foreach ($this->getByItem($new->getItem()) as $edition) {
+            if ($edition->getId() != $new->getId()) {
+                $this->copyAssociatedInfo($edition->getId(), $new->getId());
                 break;
             }
         }
@@ -510,5 +529,188 @@ class EditionService extends AbstractDbService
     public function getByPreferredPublisherId(int $id): array
     {
         return iterator_to_array($this->editionsTable->select(['Preferred_Series_Publisher_ID' => $id]));
+    }
+
+    /**
+     * Check for missing creators in a series.
+     *
+     * @param int $seriesId Series to check
+     *
+     * @return array
+     */
+    public function getMissingCreators(int $seriesId): array
+    {
+        $callback = function ($select) use ($seriesId): void {
+            $select->join(
+                ['ic' => 'Items_Creators'],
+                'Editions.Item_ID = ic.Item_ID',
+                [],
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                ['i' => 'Items'],
+                'Editions.Item_ID = i.Item_ID',
+                ['Item_Name'],
+                Select::JOIN_LEFT
+            );
+            $select->where->isNull('ic.Person_ID');
+            $select->where(['Series_ID' => $seriesId]);
+            $select->order(
+                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
+            );
+        };
+        return $this->editionsTable->select($callback)->toArray();
+    }
+
+    /**
+     * Check for missing credits in a series.
+     *
+     * @param int $seriesId Series to check
+     *
+     * @return array
+     */
+    public function getMissingCredits(int $seriesId): array
+    {
+        $callback = function ($select) use ($seriesId): void {
+            $select->join(
+                ['ec' => 'Editions_Credits'],
+                'Editions.Edition_ID = ec.Edition_ID',
+                [],
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                ['i' => 'Items'],
+                'Editions.Item_ID = i.Item_ID',
+                ['Item_Name'],
+                Select::JOIN_LEFT
+            );
+            $select->where->isNull('ec.Person_ID');
+            $select->where(['Series_ID' => $seriesId]);
+            $select->order(
+                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
+            );
+        };
+        return $this->editionsTable->select($callback)->toArray();
+    }
+
+    /**
+     * Check for missing dates in a series.
+     *
+     * @param int $seriesId Series to check
+     *
+     * @return array
+     */
+    public function getMissingDates(int $seriesId): array
+    {
+        $callback = function ($select) use ($seriesId): void {
+            $select->join(
+                ['d' => 'Editions_Release_Dates'],
+                'Editions.Edition_ID = d.Edition_ID',
+                [],
+                Select::JOIN_LEFT
+            );
+            $select->join(
+                ['i' => 'Items'],
+                'Editions.Item_ID = i.Item_ID',
+                ['Item_Name'],
+                Select::JOIN_LEFT
+            );
+            $select->where->isNull('d.Year');
+            $select->where->isNull('Editions.Parent_Edition_ID');
+            $select->where(['Series_ID' => $seriesId]);
+            $select->order(
+                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
+            );
+        };
+        return $this->editionsTable->select($callback)->toArray();
+    }
+
+    /**
+     * Get date statistics for a series.
+     *
+     * @param int $seriesId Series to check
+     *
+     * @return array
+     */
+    public function getSeriesDateStats(int $seriesId): array
+    {
+        $callback = function ($select) use ($seriesId): void {
+            $select->where(['Series_ID' => $seriesId]);
+            $select->columns(
+                [
+                    'Edition_ID' => new Expression(
+                        'min(?)',
+                        ['Editions.Edition_ID'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                ]
+            );
+            $select->join(
+                ['d' => 'Editions_Release_Dates'],
+                'Editions.Edition_ID = d.Edition_ID',
+                [
+                    'Start' => new Expression(
+                        'min(?)',
+                        ['Year'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'End' => new Expression(
+                        'max(?)',
+                        ['Year'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                ],
+                Select::JOIN_LEFT
+            );
+            $select->group('Series_ID');
+        };
+        return current($this->editionsTable->select($callback)->toArray());
+    }
+
+    /**
+     * Get item statistics for a series.
+     *
+     * @param int $seriesId Series to check
+     *
+     * @return array
+     */
+    public function getSeriesItemStats(int $seriesId): array
+    {
+        $callback = function ($select) use ($seriesId): void {
+            $select->where(['Series_ID' => $seriesId]);
+            $select->columns(
+                [
+                    'Edition_ID' => new Expression(
+                        'min(?)',
+                        ['Edition_ID'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'Vol' => new Expression(
+                        'min(?)',
+                        ['Volume'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'Pos' => new Expression(
+                        'min(?)',
+                        ['Position'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'Rep' => new Expression(
+                        'min(?)',
+                        ['Replacement_Number'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                    'Total' => new Expression(
+                        'count(?)',
+                        ['Position'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                ]
+            );
+            $select->where->isNull('Parent_Edition_ID');
+            $select->group(['Volume', 'Position', 'Replacement_Number']);
+            $select->order(['Volume', 'Position', 'Replacement_Number']);
+        };
+        return $this->editionsTable->select($callback)->toArray();
     }
 }

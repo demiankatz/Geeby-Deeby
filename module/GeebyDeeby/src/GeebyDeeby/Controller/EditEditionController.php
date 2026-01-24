@@ -963,7 +963,7 @@ class EditEditionController extends AbstractBase
             'getItemsForEdition',
             'geeby-deeby/edit-edition/item-list.phtml',
             ['setEditionName' => $edName, 'setSeries' => $series],
-            [$editionService, 'insertEditionCallback']
+            [$editionService, 'insertChildEditionCallback']
         );
     }
 

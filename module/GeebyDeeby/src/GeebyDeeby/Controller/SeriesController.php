@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
@@ -37,8 +38,6 @@ use GeebyDeeby\Db\Service\SeriesCategoryService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Select;
 use Laminas\View\Model\ViewModel;
 
 use function count;
@@ -80,154 +79,14 @@ class SeriesController extends AbstractBase
     }
 
     /**
-     * "Check for missing data" page
+     * Process the raw item stats retrieved from the database.
      *
-     * @return mixed
+     * @param array $results Raw stats
+     *
+     * @return array
      */
-    public function checkAction()
+    protected function analyzeItemStats(array $results): array
     {
-        $view = $this->getViewModelWithSeries();
-        $seriesId = $view->series['Series_ID'];
-
-        // Check for missing creators
-        $editions = $this->getDbTable('edition');
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['ic' => 'Items_Creators'],
-                'Editions.Item_ID = ic.Item_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('ic.Person_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        $view->missingCreators = $editions->select($callback)->toArray();
-
-        // Check for missing credits
-        $editions = $this->getDbTable('edition');
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['ec' => 'Editions_Credits'],
-                'Editions.Edition_ID = ec.Edition_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('ec.Person_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        $view->missingCredits = $editions->select($callback)->toArray();
-
-        // Check for missing dates
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['d' => 'Editions_Release_Dates'],
-                'Editions.Edition_ID = d.Edition_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('d.Year');
-            $select->where->isNull('Editions.Parent_Edition_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        $view->missingDates = $editions->select($callback)->toArray();
-
-        // Get date range stats
-        $callback = function ($select) use ($seriesId): void {
-            $select->where(['Series_ID' => $seriesId]);
-            $select->columns(
-                [
-                    'Edition_ID' => new Expression(
-                        'min(?)',
-                        ['Editions.Edition_ID'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ]
-            );
-            $select->join(
-                ['d' => 'Editions_Release_Dates'],
-                'Editions.Edition_ID = d.Edition_ID',
-                [
-                    'Start' => new Expression(
-                        'min(?)',
-                        ['Year'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'End' => new Expression(
-                        'max(?)',
-                        ['Year'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ],
-                Select::JOIN_LEFT
-            );
-            $select->group('Series_ID');
-        };
-        $view->dateStats = current($editions->select($callback)->toArray());
-
-        // Check for missing items
-        $callback = function ($select) use ($seriesId): void {
-            $select->where(['Series_ID' => $seriesId]);
-            $select->columns(
-                [
-                    'Edition_ID' => new Expression(
-                        'min(?)',
-                        ['Edition_ID'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Vol' => new Expression(
-                        'min(?)',
-                        ['Volume'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Pos' => new Expression(
-                        'min(?)',
-                        ['Position'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Rep' => new Expression(
-                        'min(?)',
-                        ['Replacement_Number'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Total' => new Expression(
-                        'count(?)',
-                        ['Position'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ]
-            );
-            $select->where->isNull('Parent_Edition_ID');
-            $select->group(['Volume', 'Position', 'Replacement_Number']);
-            $select->order(['Volume', 'Position', 'Replacement_Number']);
-        };
-        $results = $editions->select($callback)->toArray();
         $vol = $lastVol = $minVol = $maxVol = $lastPos = $overallTotal = 0;
         $dupes = $missing = $missingVol = $min = $max = $total = [];
         foreach ($results as $current) {
@@ -267,7 +126,7 @@ class SeriesController extends AbstractBase
             $lastPos = $pos;
             $lastVol = $vol;
         }
-        $view->itemStats = [
+        return [
             'Different' =>  count($results),
             'Start' => $min,
             'End' => $max,
@@ -279,7 +138,23 @@ class SeriesController extends AbstractBase
             'Missing' => $missing,
             'MissingVol' => $missingVol,
         ];
+    }
 
+    /**
+     * "Check for missing data" page
+     *
+     * @return mixed
+     */
+    public function checkAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        $seriesId = $view->series['Series_ID'];
+        $editionService = $this->getDbService(EditionService::class);
+        $view->missingCreators = $editionService->getMissingCreators($seriesId);
+        $view->missingCredits = $editionService->getMissingCredits($seriesId);
+        $view->missingDates = $editionService->getMissingDates($seriesId);
+        $view->dateStats = $editionService->getSeriesDateStats($seriesId);
+        $view->itemStats = $this->analyzeItemStats($editionService->getSeriesItemStats($seriesId));
         return $view;
     }
 

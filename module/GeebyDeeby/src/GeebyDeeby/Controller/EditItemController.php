@@ -310,7 +310,7 @@ class EditItemController extends AbstractBase
             $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
-        // Prevent deletion of alttitles that are linked up:
+        // Prevent deletion of alt titles that are linked up:
         if ($this->getRequest()->isDelete()) {
             $extra = $this->params()->fromRoute('extra');
             $result = $this->getDbService(EditionService::class)->getByItemAltTitleId($extra);
@@ -360,9 +360,9 @@ class EditItemController extends AbstractBase
     public function editionsAction()
     {
         return $this->handleGenericLink(
-            'edition',
-            'Item_ID',
-            'Edition_ID',
+            EditionService::class,
+            null,
+            null,
             'editions',
             'getEditionsForItem',
             'geeby-deeby/edit-item/edition-list.phtml'

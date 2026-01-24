@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Articles;
 use GeebyDeeby\Db\Service\CategoryService;
 use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\EditionService;
@@ -350,6 +351,8 @@ class EditSeriesController extends AbstractBase
      */
     public function itemAction()
     {
+        $editionService = $this->getDbService(EditionService::class);
+
         // Special case: delete editions differently from other links:
         if ($this->getRequest()->isDelete()) {
             $ok = $this->checkPermission('Content_Editor');
@@ -357,7 +360,7 @@ class EditSeriesController extends AbstractBase
                 return $ok;
             }
             try {
-                $this->getDbService(EditionService::class)->safeDelete($this->params()->fromRoute('extra'));
+                $editionService->safeDelete($this->params()->fromRoute('extra'));
             } catch (\Exception $e) {
                 return $this->jsonDie($e->getMessage());
             }
@@ -367,36 +370,20 @@ class EditSeriesController extends AbstractBase
         $series = $this->getDbService(SeriesService::class)->getByPrimaryKey(
             $this->params()->fromRoute('id')
         );
-        $edName = $this->serviceLocator->get('GeebyDeeby\Articles')
-            ->articleAwareAppend($series->Series_Name, ' edition');
-        $insertCallback = function ($new, $row, $sm): void {
-            $edsTable = $sm->get('GeebyDeeby\Db\Table\PluginManager')
-                ->get('edition');
-            $rows = $edsTable->select(['Item_ID' => $row['Item_ID']]);
-            foreach ($rows as $row) {
-                $row = $row->toArray();
-                if ($row['Edition_ID'] != $new) {
-                    break;
-                }
-            }
-            if (isset($row['Edition_ID']) && $row['Edition_ID'] != $new) {
-                $edsTable->copyAssociatedInfo($row['Edition_ID'], $new);
-            }
-        };
+        $edName = $this->serviceLocator->get(Articles::class)
+            ->articleAwareAppend($series->getSeriesName(), ' edition');
         $config = $this->serviceLocator->get('config');
-        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
-            ?? true;
-        $listCallback = $groupByMaterial
-            ? 'getItemsForSeriesGroupedByMaterial' : 'getItemsForSeries';
+        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
+        $listCallback = $groupByMaterial ? 'getItemsForSeriesGroupedByMaterial' : 'getItemsForSeries';
         return $this->handleGenericLink(
-            'edition',
-            'Series_ID',
-            'Item_ID',
+            EditionService::class,
+            'setSeries',
+            'setItem',
             'item_list',
             $listCallback,
             'geeby-deeby/edit-series/item-list.phtml',
-            ['Edition_Name' => $edName],
-            $insertCallback
+            ['setEditionName' => $edName],
+            [$editionService, 'insertSeriesEditionCallback']
         );
     }
 
@@ -421,10 +408,11 @@ class EditSeriesController extends AbstractBase
             } else {
                 [$vol, $pos] = $parts;
             }
-            $this->getDbTable('edition')->update(
-                ['Position' => intval($pos), 'Volume' => intval($vol)],
-                ['Edition_ID' => $edition]
-            );
+            $service = $this->getDbService(EditionService::class);
+            $entity = $service->getByPrimaryKey($edition)
+                ->setPosition(intval($pos))
+                ->setVolume(intval($vol));
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
