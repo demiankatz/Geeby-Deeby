@@ -29,6 +29,7 @@
 
 namespace GeebyDeebyTest\Mink;
 
+use Behat\Mink\Element\Element;
 use Behat\Mink\Element\TraversableElement;
 use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
@@ -50,7 +51,6 @@ use function in_array;
  * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
  * @todo Add test to set citation on creator relationship
  * @todo Add tests for series relationships/translations
- * @todo Add tests for deleting links/relationships
  * @todo Add tests for self-serve account editing (password change, etc.)
  */
 class IntegrationTest extends MinkTestCase
@@ -1435,6 +1435,52 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Assert that the page contains a container whose text matches a regular expression (but skip if the
+     * regular expression is null).
+     *
+     * @param Element $page     Page containing container
+     * @param string  $selector Selector containing text to check
+     * @param ?string $regex    Regular expression to match (or null to skip check)
+     *
+     * @return void
+     */
+    protected function assertOptionalRegexInContainer(Element $page, string $selector, ?string $regex): void
+    {
+        if ($regex) {
+            $this->assertMatchesRegularExpression($regex, $this->findCssAndGetText($page, $selector));
+        }
+    }
+
+    /**
+     * Add a link to a container and make assertions to confirm its success.
+     *
+     * @param Element $page                 Active page
+     * @param array   $valuesToSet          Array of selector => value (data to link)
+     * @param string  $containerSelector    Selector for container listing links
+     * @param ?string $beforeContainerRegex Regular expression to check in container before linking data (null to skip)
+     * @param ?string $afterContainerRegex  Regular expression to check in container after linking data (null to skip)
+     * @param string  $submitSelector       Selector for submit button
+     *
+     * @return void
+     */
+    protected function addLinkToEmptyContainerAndAssertSuccess(
+        Element $page,
+        array $valuesToSet,
+        string $containerSelector,
+        ?string $beforeContainerRegex = null,
+        ?string $afterContainerRegex = null,
+        string $submitSelector = '.active .edit_container input[type="submit"]'
+    ) {
+        $this->assertOptionalRegexInContainer($page, $containerSelector, $beforeContainerRegex);
+        foreach ($valuesToSet as $selector => $value) {
+            $this->findCssAndSetValue($page, $selector, $value);
+        }
+        $this->clickCss($page, $submitSelector);
+        $this->waitForPageLoad($page);
+        $this->assertOptionalRegexInContainer($page, $containerSelector, $afterContainerRegex);
+    }
+
+    /**
      * Test linking additional data to records.
      *
      * @param string  $url                  Path relative to Geeby-Deeby base URL for entering data
@@ -1463,21 +1509,27 @@ class IntegrationTest extends MinkTestCase
         if ($tabToClick) {
             $page->clickLink($tabToClick);
         }
-        if ($beforeContainerRegex) {
-            $this->assertMatchesRegularExpression(
+        $this->addLinkToEmptyContainerAndAssertSuccess(
+            $page,
+            $valuesToSet,
+            $containerSelector,
+            $beforeContainerRegex,
+            $afterContainerRegex,
+            $submitSelector
+        );
+        // If this is the first element added to the container, delete it and re-add it
+        // to exercise delete functionality.
+        if ($beforeContainerRegex && $afterContainerRegex && str_starts_with($beforeContainerRegex, '/^No ')) {
+            $this->clickCss($page, $containerSelector . ' .ui-icon-trash');
+            $this->getMinkSession()->getDriver()->acceptAlert();
+            $this->waitForPageLoad($page);
+            $this->addLinkToEmptyContainerAndAssertSuccess(
+                $page,
+                $valuesToSet,
+                $containerSelector,
                 $beforeContainerRegex,
-                $this->findCssAndGetText($page, $containerSelector)
-            );
-        }
-        foreach ($valuesToSet as $selector => $value) {
-            $this->findCssAndSetValue($page, $selector, $value);
-        }
-        $this->clickCss($page, $submitSelector);
-        $this->waitForPageLoad($page);
-        if ($afterContainerRegex) {
-            $this->assertMatchesRegularExpression(
                 $afterContainerRegex,
-                $this->findCssAndGetText($page, $containerSelector)
+                $submitSelector
             );
         }
     }
@@ -1759,8 +1811,8 @@ class IntegrationTest extends MinkTestCase
         $page->clickLink('Publishers');
         $this->clickCss($page, '#publisher_list .ui-icon-gear');
         $this->waitForPageLoad($page);
-        $this->findCssAndSetValue($page, '#Address_ID', '1');
-        $this->findCssAndSetValue($page, '#Imprint_ID', '1');
+        $this->findCssAndSetValue($page, '#Address_ID', '2');
+        $this->findCssAndSetValue($page, '#Imprint_ID', '2');
         $this->clickCss($page, '.modal-body input[type="submit"]');
         $this->waitForPageLoad($page);
         $this->assertSame(
@@ -1780,7 +1832,7 @@ class IntegrationTest extends MinkTestCase
         $page = $this->goToPage('/edit/Edition/1');
         $this->logIn($page, 'admin');
         $page->clickLink('Preferred Publisher');
-        $this->findCssAndSetValue($page, '#Series_Publisher_ID', '1');
+        $this->findCssAndSetValue($page, '#Series_Publisher_ID', '2');
         $this->clickCss($page, '.tab-pane.active input[type="submit"]');
     }
 
