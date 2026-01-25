@@ -48,7 +48,6 @@ use function in_array;
  *
  * @todo Add tests for edition preferred titles.
  * @todo Add test for edition copying.
- * @todo Add test to set citation on creator relationship
  * @todo Add tests for series relationships/translations
  * @todo Add tests for self-serve account editing (password change, etc.)
  */
