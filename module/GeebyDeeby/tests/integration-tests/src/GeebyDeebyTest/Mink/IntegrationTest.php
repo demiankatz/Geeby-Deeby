@@ -1375,14 +1375,6 @@ class IntegrationTest extends MinkTestCase
             '/^No alternate titles set.$/',
             '/test alternate title \\(test note\\)/',
         ];
-        yield 'item creator' => [
-            '/edit/Item/1',
-            'Creators',
-            ['#creator_person' => '2'],
-            '#creator_list',
-            '/No creators.$/',
-            '/test person role: last, test-second-edited/',
-        ];
         yield 'item description' => [
             '/edit/Item/1',
             'Descriptions',
@@ -1409,13 +1401,29 @@ class IntegrationTest extends MinkTestCase
             '/^' . $attachmentNote . ' No items.$/',
             '/example article 1 \\(second test material \\(edited\\), test note\\)/',
         ];
-        yield 'item creators' => [
+        yield 'item creator (to satisfy series 1 check)' => [
+            '/edit/Item/1',
+            'Creators',
+            ['#creator_person' => '2'],
+            '#creator_list',
+            '/No creators.$/',
+            '/test person role: last, test-second-edited/',
+        ];
+        yield 'item creator 1 (for citation test)' => [
             '/edit/Item/5',
             'Creators',
-            ['#creator_person' => '1'],
+            ['#creator_person' => '2'],
             '#creator_list',
             '/^No creators.$/',
-            '/test person role: test-last, test-first, extra/',
+            '/test person role:  last, test-second-edited/',
+        ];
+        yield 'item creator 2 (for citation test)' => [
+            '/edit/Item/5',
+            'Creators',
+            ['#creator_person' => '3'],
+            '#creator_list',
+            '/test person role:  last, test-second-edited/',
+            '/test person role: lastname, test-third/',
         ];
         yield 'item credits' => [
             '/edit/Item/5',
@@ -1627,6 +1635,23 @@ class IntegrationTest extends MinkTestCase
         $input = $this->findCss($page, '#FullText_Attribute_1');
         $this->assertTrue($input->isVisible());
         $input->setValue('attribute value for full text link');
+        $this->clickCss($page, '#modal input[type="submit"]');
+    }
+
+    /**
+     * Test setting a creator citation.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testSetCreatorCitation(): void
+    {
+        $page = $this->goToPage('/edit/Item/5');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Creators');
+        $this->clickCss($page, '#creator_list .ui-icon-gear');
+        $this->waitForPageLoad($page);
+        $this->findCssAndSetValue($page, '#Citation_ID', '1');
         $this->clickCss($page, '#modal input[type="submit"]');
     }
 
@@ -2049,7 +2074,10 @@ class IntegrationTest extends MinkTestCase
             . ' Translated From: example article 1 (test language 1)'
             . ' Adapted From: example article 1 (second test material (edited))'
             . ' test item relationship 1: example article 1'
-            . ' test person role: last, test-second-edited (test note 2 (edited))'
+            . ' test person role (according to test citation): last, test-second-edited (test note 2 (edited))'
+            . ' Incorrectly Attributed test person role (according to an uncited source):'
+            . ' last, test-second-edited (test note 2 (edited))'
+            . ' test person role (according to an uncited source): lastname, test-third (uncredited)'
             . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
             . ' Please log in to manage your collection or post a review.',
         ];
