@@ -93,8 +93,7 @@ class AnalyzeCredits
         // First group and associate the credits:
         foreach ($credits as $credit) {
             $personId = $credit['Person_ID'];
-            $prefix = $this->isMatchingPerson($personId, array_keys($creators))
-                ? '' : 'Incorrectly Attributed ';
+            $prefix = $this->isMatchingPerson($personId, array_keys($creators)) ? '' : 'Incorrectly Attributed ';
             $role = $prefix . $credit['Role_Name'];
             if (!isset($groupedCredits[$role])) {
                 $groupedCredits[$role] = [];
@@ -112,12 +111,8 @@ class AnalyzeCredits
             $creditedIds = array_keys(
                 $groupedCredits[$role] ?? []
             );
-            if (
-                empty($creditedIds)
-                || !$this->isMatchingPerson($personId, $creditedIds)
-            ) {
-                $groupedCredits[$role][$personId][]
-                    = $creator->getArrayCopy() + ['Note' => 'uncredited'];
+            if (empty($creditedIds) || !$this->isMatchingPerson($personId, $creditedIds)) {
+                $groupedCredits[$role][$personId][] = $creator->getArrayCopy() + ['Note' => 'uncredited'];
             }
         }
         return $groupedCredits;
@@ -223,36 +218,33 @@ class AnalyzeCredits
         $final = [];
         foreach ($details as $person => $credits) {
             $notes = [];
-            foreach ($credits as $current) {
-                // If credit count doesn't match edition count, then different
-                // editions have different attributions.
-                if (count($credits) != count($editions)) {
-                    foreach ($credits as $credit) {
-                        $note = ($this->fixTitleHelper)($credit['Edition_Name']);
-                        if (!empty($credit['Note'])) {
-                            if (!empty($note)) {
-                                $note .= ' - ';
-                            }
-                            $note .= $credit['Note'];
+            // If credit count doesn't match edition count, then different
+            // editions have different attributions.
+            $creditCountMismatch = count($credits) != count($editions);
+            foreach ($credits as $credit) {
+                if ($creditCountMismatch) {
+                    $note = ($this->fixTitleHelper)($credit['Edition_Name']);
+                    if (!empty($credit['Note'])) {
+                        if (!empty($note)) {
+                            $note .= ' - ';
                         }
-                        $notes[] = $note;
+                        $note .= $credit['Note'];
                     }
                 } else {
-                    foreach ($credits as $credit) {
-                        if (!empty($credit['Note'])) {
-                            $notes[] = $credit['Note'];
-                        }
-                    }
+                    $note = $credit['Note'];
+                }
+                if (!empty($note)) {
+                    $notes[] = $note;
                 }
             }
             if (isset($credit)) {
                 $final[$person] = [
                     'person' => $credit,
-                    'realPerson' => $this
-                        ->getRealPersonDetails($person, array_keys($creators)),
+                    'realPerson' => $this->getRealPersonDetails($person, array_keys($creators)),
                     'notes' => implode('; ', array_unique($notes)),
                 ];
             }
+            unset($credit);
         }
         return $final;
     }
@@ -280,11 +272,10 @@ class AnalyzeCredits
      * Group creators by citation. Return an array of arrays keyed by Person_ID
      *
      * @param array $creators Creators to group
-     * @param int   $itemId   Item ID creators belong to
      *
      * @return array
      */
-    protected function groupCreators($creators, $itemId)
+    protected function groupCreators($creators)
     {
         $groups = [];
         foreach ($creators as $creator) {
@@ -308,8 +299,7 @@ class AnalyzeCredits
     {
         $final = [];
         $currentEdition = current($editions);
-        $itemId = $currentEdition['Item_ID'] ?? null;
-        $groupedCreators = $this->groupCreators($creators, $itemId);
+        $groupedCreators = $this->groupCreators($creators);
         if (empty($groupedCreators)) {
             $groupedCreators = ['an uncited source' => []];
         }
