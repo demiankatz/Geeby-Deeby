@@ -2546,7 +2546,8 @@ class IntegrationTest extends MinkTestCase
         $this->logIn($page, 'user', 'foo');
         // Confirm that everything changed
         $this->assertStringStartsWith(
-            'Edit Account Details [List All Users] Full Name: test user (self-edited) Email Address: user-edited@example.com',
+            'Edit Account Details [List All Users] Full Name: test user (self-edited)'
+            . ' Email Address: user-edited@example.com',
             $this->findCssAndGetText($page, '.content')
         );
     }
