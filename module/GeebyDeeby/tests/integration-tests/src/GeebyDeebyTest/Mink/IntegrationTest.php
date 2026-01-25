@@ -50,7 +50,6 @@ use function in_array;
  * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
  * @todo Add test to set citation on creator relationship
  * @todo Add tests for series relationships/translations
- * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
  * @todo Add tests for deleting links/relationships
  */
 class IntegrationTest extends MinkTestCase
@@ -1046,6 +1045,47 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Data provider for testSetAttributes().
+     *
+     * @return Generator<string, array>
+     */
+    public static function setAttributesProvider(): Generator
+    {
+        yield 'item' => ['Item'];
+        yield 'series' => ['Series'];
+        yield 'edition' => ['Edition'];
+        yield 'tag' => ['Tag'];
+    }
+
+    /**
+     * Test setting custom attributes.
+     *
+     * @param string $type Type of item to set attributes on
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('setAttributesProvider')]
+    public function testSetAttributes(string $type): void
+    {
+        $page = $this->goToPage('/edit/' . $type . '/1');
+        $this->logIn($page, 'admin');
+        // Search for the appropriate button:
+        for ($i = 0; $i < 2; $i++) {
+            $toggleButton = $this->findCss($page, 'button[data-toggle="collapse"]', index: $i);
+            if ('Toggle Additional Attributes' === $toggleButton->getText()) {
+                break;
+            }
+        }
+        $this->assertSame('Toggle Additional Attributes', $toggleButton->getText());
+        $toggleButton->click();
+        $input = $this->findCss($page, '#' . $type . '_Attribute_1');
+        $this->assertTrue($input->isVisible());
+        $input->setValue('attribute value for ' . $type);
+        $this->clickCss($page, '.edit_container input[type="submit"]');
+    }
+
+    /**
      * Assert the current default material type.
      *
      * @param int  $type  Expected default material type ID.
@@ -1442,6 +1482,25 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Test setting custom full text link attributes.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testSetFullTextAttributes(): void
+    {
+        $page = $this->goToPage('/edit/Edition/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Full Text Links');
+        $this->clickCss($page, '#fulltext_list .ui-icon-gear');
+        $this->waitForPageLoad($page);
+        $input = $this->findCss($page, '#FullText_Attribute_1');
+        $this->assertTrue($input->isVisible());
+        $input->setValue('attribute value for full text link');
+        $this->clickCss($page, '#modal input[type="submit"]');
+    }
+
+    /**
      * Data provider for testSuggestions().
      *
      * @return Generator<string, array>
@@ -1671,8 +1730,7 @@ class IntegrationTest extends MinkTestCase
         $page = $this->goToPage('/edit/Series/1');
         $this->logIn($page, 'admin');
         $page->clickLink('Publishers');
-        $editButton = $this->findCss($page, '#publisher_list .ui-icon-gear');
-        $editButton->click();
+        $this->clickCss($page, '#publisher_list .ui-icon-gear');
         $this->waitForPageLoad($page);
         $this->findCssAndSetValue($page, '#Address_ID', '1');
         $this->findCssAndSetValue($page, '#Imprint_ID', '1');
@@ -1716,6 +1774,7 @@ class IntegrationTest extends MinkTestCase
             . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' Category: test category'
             . ' Translated From: test series 2 (edited) (test language 1)'
+            . ' test series attribute: attribute value for Series'
             . ' test series relationship: test series 2 (edited)'
             . ' second test materials (edited)'
             . ' test item (1952)'
@@ -1770,6 +1829,7 @@ class IntegrationTest extends MinkTestCase
             '/Item/1',
             'Please log in to manage your collection or post a review.'
             . ' (test note) View: Combined By Edition Online Full Text: test full text source 1'
+            . ' (test full text attribute 1: attribute value for full text link)'
             . ' Series: test series 1'
             . ' Alternate Title: test alternate title (test note)'
             . ' Platform: test platform'
@@ -1780,6 +1840,8 @@ class IntegrationTest extends MinkTestCase
             . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)'
+            . ' test item attribute 1: attribute value for Item'
+            . ' test edition attribute 1: attribute value for Edition'
             . ' User Summary: Test description'
             . ' user\'s Thoughts: this is my review More reviews by user'
             . ' Please log in to manage your collection or post a review.'
@@ -1809,6 +1871,7 @@ class IntegrationTest extends MinkTestCase
         yield 'fully populated edition' => [
             '/Edition/1',
             '(test note) Online Full Text: test full text source 1'
+            . ' (test full text attribute 1: attribute value for full text link)'
             . ' Series: test series 1'
             . ' Item: test item'
             . ' Platform: test platform'
@@ -1817,7 +1880,8 @@ class IntegrationTest extends MinkTestCase
             . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
             . ' OCLC Number: 12345 (test note)'
-            . ' Product Code: pc-test (test note)',
+            . ' Product Code: pc-test (test note)'
+            . ' test edition attribute 1: attribute value for Edition',
         ];
         yield 'parent edition' => [
             '/Edition/2',
@@ -1835,7 +1899,8 @@ class IntegrationTest extends MinkTestCase
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
         yield 'tag' => [
             '/Tag/1',
-            'test tag relationship: test tag 2 (edited)'
+            'test tag attribute: attribute value for Tag'
+            . ' test tag relationship: test tag 2 (edited)'
             . ' External Identifier: http://tag/1'
             . ' Sort by: Series Title'
             . ' test series 1'
@@ -2049,7 +2114,8 @@ class IntegrationTest extends MinkTestCase
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedDatabaseProvider')]
     #[\PHPUnit\Framework\Attributes\Depends('testBuildingArticles')]
-    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSetAttributes')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSetFullTextAttributes')]
     #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     public function testPopulatedDatabase(
         string $linkText,
