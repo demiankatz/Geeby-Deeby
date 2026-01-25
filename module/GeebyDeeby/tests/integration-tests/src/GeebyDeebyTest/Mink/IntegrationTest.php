@@ -1628,6 +1628,7 @@ class IntegrationTest extends MinkTestCase
         $this->logIn($page, 'admin');
         $this->clickCss($page, '.selectedEdition');
         $this->clickCss($page, '#editions-tab button');
+        $this->waitForPageLoad($page);
         $this->assertStringContainsString(
             'Copy of test series 2 edition',
             $this->findCssAndGetText($page, '#editions_list')
@@ -2059,7 +2060,7 @@ class IntegrationTest extends MinkTestCase
         yield 'item (with children)' => [
             '/Item/2',
             'Please log in to manage your collection or post a review.'
-            . ' View: Combined By Edition'
+            . ' View: Combined By Edition Combined Summary'
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contents: example article 1 (second test material (edited))'
             . ' example article 2 (second test material (edited))'
@@ -2067,10 +2068,27 @@ class IntegrationTest extends MinkTestCase
             . ' Known Editions Copy of test series 2 edition test series 2 edition'
             . ' Please log in to manage your collection or post a review.',
         ];
+        yield 'item (with children, in edition mode)' => [
+            '/Item/2/Editions',
+            'Please log in to manage your collection or post a review.'
+            . ' View: Combined By Edition Item-Level Details'
+            . ' Errata: none -- perfection! Special Thanks: for nothing'
+            . ' Copy of test series 2 edition'
+            . ' Series: test series 2 (edited) — v. 1 no. 1'
+            . ' Contents: example article 1 (second test material (edited))'
+            . ' example article 2 (second test material (edited))'
+            . ' Length: 32 pages Number of Endings: 1'
+            . ' test series 2 edition'
+            . ' Series: test series 2 (edited) — v. 1 no. 1'
+            . ' Contents: example article 1 (second test material (edited))'
+            . ' example article 2 (second test material (edited))'
+            . ' Length: 32 pages Number of Endings: 1'
+            . ' Please log in to manage your collection or post a review.',
+        ];
         yield 'item (with parents and relationships)' => [
             '/Item/4',
             'Please log in to manage your collection or post a review.'
-            . ' View: Combined By Edition'
+            . ' View: Combined By Edition Combined Summary'
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contained In: example article 2 (second test material (edited), test note)'
             . ' Part of: example issue 1 (second test material (edited))'
@@ -2084,7 +2102,7 @@ class IntegrationTest extends MinkTestCase
         yield 'item (also with parents and relationships)' => [
             '/Item/5',
             'Please log in to manage your collection or post a review.'
-            . ' View: Combined By Edition'
+            . ' View: Combined By Edition Combined Summary'
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contains: example article 1 (second test material (edited), test note)'
             . ' Part of: example issue 1 (second test material (edited))'
