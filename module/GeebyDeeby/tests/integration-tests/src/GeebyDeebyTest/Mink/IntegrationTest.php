@@ -47,8 +47,6 @@ use function in_array;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
  * @todo Add tests for edition preferred titles.
- * @todo Add test for edition copying.
- * @todo Add tests for series relationships/translations
  * @todo Add tests for self-serve account editing (password change, etc.)
  */
 class IntegrationTest extends MinkTestCase
@@ -1619,6 +1617,24 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Test copying an addition (including children for completeness).
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testCopyEdition(): void
+    {
+        $page = $this->goToPage('/edit/Item/2');
+        $this->logIn($page, 'admin');
+        $this->clickCss($page, '.selectedEdition');
+        $this->clickCss($page, '#editions-tab button');
+        $this->assertStringContainsString(
+            'Copy of test series 2 edition',
+            $this->findCssAndGetText($page, '#editions_list')
+        );
+    }
+
+    /**
      * Test setting custom full text link attributes.
      *
      * @return void
@@ -2048,6 +2064,7 @@ class IntegrationTest extends MinkTestCase
             . ' Contents: example article 1 (second test material (edited))'
             . ' example article 2 (second test material (edited))'
             . ' Length: 32 pages Number of Endings: 1 Errata: none -- perfection! Special Thanks: for nothing'
+            . ' Known Editions Copy of test series 2 edition test series 2 edition'
             . ' Please log in to manage your collection or post a review.',
         ];
         yield 'item (with parents and relationships)' => [
@@ -2060,6 +2077,8 @@ class IntegrationTest extends MinkTestCase
             . ' Translated Into: example article 2 (test language 1)'
             . ' Adapted Into: example article 2 (second test material (edited))'
             . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
+            . ' Known Editions'
+            . ' Copy of test series 2 edition (in example issue 1) test series 2 edition (in example issue 1)'
             . ' Please log in to manage your collection or post a review.',
         ];
         yield 'item (also with parents and relationships)' => [
@@ -2077,6 +2096,8 @@ class IntegrationTest extends MinkTestCase
             . ' last, test-second-edited (test note 2 (edited))'
             . ' test person role (according to an uncited source): lastname, test-third (uncredited)'
             . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
+            . ' Known Editions'
+            . ' Copy of test series 2 edition (in example issue 1) test series 2 edition (in example issue 1)'
             . ' Please log in to manage your collection or post a review.',
         ];
         yield 'fully populated edition' => [
@@ -2202,6 +2223,7 @@ class IntegrationTest extends MinkTestCase
     #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCommentApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCategoryLinking')]
+    #[\PHPUnit\Framework\Attributes\Depends('testCopyEdition')]
     #[\PHPUnit\Framework\Attributes\Depends('testSettingUpPotentialTrade')]
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsProvider')]
     public function testPopulatedRecords(
