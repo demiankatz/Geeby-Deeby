@@ -51,6 +51,7 @@ use function in_array;
  * @todo Add test to set citation on creator relationship
  * @todo Add tests for series relationships/translations
  * @todo Add tests for deleting links/relationships
+ * @todo Add tests for self-serve account editing (password change, etc.)
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -1616,6 +1617,32 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Test setting up collections for two different users to facilitate a potential trade.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testSettingUpPotentialTrade(): void
+    {
+        // Now set up test scenario with buyer/seller:
+        $page = $this->goToPage('/Item/1');
+        $controlsSelector = '.controls.top';
+        $this->assertControls($page, 'Please log in to manage your collection or post a review.');
+        $this->logIn($page, 'user');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Have List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Sale/Trade List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Modify Sale/Trade List');
+        $page->clickLink('Log Out');
+        $this->logIn($page, 'admin');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Want List');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Add to Have List Modify Want List Add to Sale/Trade List');
+    }
+
+    /**
      * Test submitting an item review.
      *
      * @return void
@@ -1844,6 +1871,7 @@ class IntegrationTest extends MinkTestCase
             . ' test edition attribute 1: attribute value for Edition'
             . ' User Summary: Test description'
             . ' user\'s Thoughts: this is my review More reviews by user'
+            . ' Users Who Own This Item: user Users Who Want This Item: admin Users with Extra Copies: user'
             . ' Please log in to manage your collection or post a review.'
             . ' Related Documents test file type 1 test file 1'
             . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
@@ -1906,6 +1934,76 @@ class IntegrationTest extends MinkTestCase
             . ' test series 1'
             . ' test item',
         ];
+        yield 'user 1'  => [
+            '/User/1',
+            '[List All Users]'
+            . ' Full Name: test admin'
+            . ' Email Address: Please log in to see this user\'s email address.'
+            . ' Collections: View Have/Want Lists (0 items owned, 1 items wanted) [List Potential Sellers]'
+            . ' View Sale/Trade Lists (0 items for sale/trade) [List Potential Buyers]'
+            . ' Reviews and Comments: 0 item reviews. 0 series comments.',
+        ];
+        yield 'user 1 collection'  => [
+            '/User/1/Collection',
+            'Get more information on this user. Items in test language 1 test series 1 Wants: test item Has: None.',
+        ];
+        yield 'user 1 extras'  => [
+            '/User/1/Extras',
+            'Get more information on this user. No items listed.',
+        ];
+        $disclaimer = 'DISCLAIMER: Items offered for sale or trade on this site are submitted'
+            . ' by users and are not verified in any way. My Gamebook Web Page makes no guarantees about the accuracy'
+            . ' of these listings and cannot be held responsible for dishonest users. Please be cautious!';
+        yield 'user 1 sellers'  => [
+            '/User/1/Sellers',
+            'Get more information on this user. ' . $disclaimer
+            . ' user test series 1 test item',
+        ];
+        yield 'user 1 buyers'  => [
+            '/User/1/Buyers',
+            'Get more information on this user. No buyers available.',
+        ];
+        yield 'user 1 reviews'  => [
+            '/User/1/Reviews',
+            'Get more information on this user. No reviews listed.',
+        ];
+        yield 'user 1 comments'  => [
+            '/User/1/Comments',
+            'Get more information on this user. No comments listed.',
+        ];
+        yield 'user 2'  => [
+            '/User/2',
+            '[List All Users]'
+            . ' Full Name: test user'
+            . ' Email Address: Please log in to see this user\'s email address.'
+            . ' Collections: View Have/Want Lists (1 items owned, 0 items wanted) [List Potential Sellers]'
+            . ' View Sale/Trade Lists (1 items for sale/trade) [List Potential Buyers]'
+            . ' Reviews and Comments: 1 item review. 1 series comment.',
+        ];
+        yield 'user 2 collection'  => [
+            '/User/2/Collection',
+            'Get more information on this user. Items in test language 1 test series 1 Wants: None. Has: test item',
+        ];
+        yield 'user 2 extras'  => [
+            '/User/2/Extras',
+            'Get more information on this user. ' . $disclaimer . ' test series 1 test item',
+        ];
+        yield 'user 2 sellers'  => [
+            '/User/2/Sellers',
+            'Get more information on this user. No sellers available.',
+        ];
+        yield 'user 2 buyers'  => [
+            '/User/2/Buyers',
+            'Get more information on this user. admin test series 1 test item',
+        ];
+        yield 'user 2 reviews'  => [
+            '/User/2/Reviews',
+            'Get more information on this user. test series 1 test item',
+        ];
+        yield 'user 2 comments'  => [
+            '/User/2/Comments',
+            'Get more information on this user. T test series 1',
+        ];
     }
 
     /**
@@ -1921,6 +2019,7 @@ class IntegrationTest extends MinkTestCase
     #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCommentApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCategoryLinking')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSettingUpPotentialTrade')]
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsProvider')]
     public function testPopulatedRecords(
         string $path,
