@@ -1415,14 +1415,14 @@ class IntegrationTest extends MinkTestCase
             ['#creator_person' => '2'],
             '#creator_list',
             '/^No creators.$/',
-            '/test person role:  last, test-second-edited/',
+            '/test person role: last, test-second-edited/',
         ];
         yield 'item creator 2 (for citation test)' => [
             '/edit/Item/5',
             'Creators',
             ['#creator_person' => '3'],
             '#creator_list',
-            '/test person role:  last, test-second-edited/',
+            '/test person role: last, test-second-edited/',
             '/test person role: lastname, test-third/',
         ];
         yield 'item credits' => [
