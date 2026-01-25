@@ -1990,9 +1990,6 @@ class IntegrationTest extends MinkTestCase
             . ' Pseudonym For: last, test-second-edited'
             . ' External Identifier: http://person/1'
             . ' Sort by: Series Title Year'
-            . ' Items with "test-last, test-first, extra" as Cited test person role'
-            . ' test series 2 (edited)'
-            . ' example article 2'
             . ' Items with "test-last, test-first, extra" as Credited test person role'
             . ' test series 1'
             . ' test item (test note)'
@@ -2011,6 +2008,8 @@ class IntegrationTest extends MinkTestCase
             . ' Items with "last, test-second-edited" as Cited test person role'
             . ' test series 1'
             . ' test item'
+            . ' test series 2 (edited)'
+            . ' example article 2'
             . ' Items with "last, test-second-edited" as Credited test person role'
             . ' test series 2 (edited)'
             . ' example article 2 (test note 2 (edited))',
