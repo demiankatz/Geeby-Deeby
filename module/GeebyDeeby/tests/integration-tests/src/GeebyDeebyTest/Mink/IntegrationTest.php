@@ -47,7 +47,6 @@ use function in_array;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
  * @todo Add tests for edition preferred titles.
- * @todo Add tests for self-serve account editing (password change, etc.)
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -2499,5 +2498,57 @@ class IntegrationTest extends MinkTestCase
     {
         $page = $this->goToPage('/Series/' . $seriesId . '/Check');
         $this->assertSame($expected, $this->findCssAndGetText($page, '.content'));
+    }
+
+    /**
+     * Test self-service account editing.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testUserApproval')]
+    public function testUserAccountManipulation(): void
+    {
+        $page = $this->goToPage('/User/2');
+        $this->assertStringContainsString(
+            'Please log in to see this user\'s email address',
+            $this->findCssAndGetText($page, '.content')
+        );
+        $this->logIn($page, 'user');
+        $this->assertStringNotContainsString(
+            'Please log in to see this user\'s email address',
+            $this->findCssAndGetText($page, '.content')
+        );
+        $page->clickLink('Edit Account Details');
+        // Mismatched passwords
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertEquals(
+            'Your passwords did not match. Please try again.',
+            $this->findCssAndGetText($page, '.error')
+        );
+        // Bad existing password
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->findCssAndSetValue($page, '#edit_password2', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertEquals(
+            'The existing password you provided is incorrect.',
+            $this->findCssAndGetText($page, '.error')
+        );
+        // Actually change the password
+        $this->findCssAndSetValue($page, '#edit_fullname', 'test user (self-edited)');
+        $this->findCssAndSetValue($page, '#edit_email', 'user-edited@example.com');
+        $this->findCssAndSetValue($page, '#existing_password', 'password');
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->findCssAndSetValue($page, '#edit_password2', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        // Confirm that the password change worked by logging out and back in:
+        $page->clickLink('Log Out');
+        $this->logIn($page, 'user', 'foo');
+        // Confirm that everything changed
+        $this->assertStringStartsWith(
+            'Edit Account Details [List All Users] Full Name: test user (self-edited)'
+            . ' Email Address: user-edited@example.com',
+            $this->findCssAndGetText($page, '.content')
+        );
     }
 }
