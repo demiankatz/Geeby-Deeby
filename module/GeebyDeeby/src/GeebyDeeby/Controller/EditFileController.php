@@ -82,12 +82,10 @@ class EditFileController extends AbstractBase
         $view->fileTypes = $this->typelistAction()->fileTypes;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->itemsFiles = $this->getDbTable('itemsfiles')
-                ->getItemsForFile($view->fileObj->File_ID);
-            $view->peopleFiles = $this->getDbTable('peoplefiles')
-                ->getPeopleForFile($view->fileObj->File_ID);
-            $view->seriesFiles = $this->getDbTable('seriesfiles')
-                ->getSeriesForFile($view->fileObj->File_ID);
+            $fileId = $view->affectedEntity->getId();
+            $view->itemsFiles = $this->getDbTable('itemsfiles')->getItemsForFile($fileId);
+            $view->peopleFiles = $this->getDbTable('peoplefiles')->getPeopleForFile($fileId);
+            $view->seriesFiles = $this->getDbTable('seriesfiles')->getSeriesForFile($fileId);
             $view->setTemplate('geeby-deeby/edit-file/edit-full');
         }
         return $view;

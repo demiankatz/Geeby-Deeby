@@ -112,7 +112,7 @@ class EditTagController extends AbstractBase
         $view->tagTypes = $this->typelistAction()->tagTypes;
 
         // Get tag ID
-        $tagId = $view->tag['Tag_ID'] ?? $view->affectedEntity?->getId();
+        $tagId = $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if (

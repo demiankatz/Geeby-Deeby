@@ -116,7 +116,7 @@ class EditSeriesController extends AbstractBase
         if (!$ok) {
             return $view;
         }
-        $seriesId = $view->seriesObj?->getId() ?? $view->affectedEntity?->getId();
+        $seriesId = $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost() && $this->params()->fromPost('attribs')) {

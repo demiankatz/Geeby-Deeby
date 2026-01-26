@@ -83,12 +83,10 @@ class EditLinkController extends AbstractBase
         $view->linkTypes = $this->typelistAction()->linkTypes;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->itemsLinks = $this->getDbTable('itemslinks')
-                ->getItemsForLink($view->linkObj->Link_ID);
-            $view->peopleLinks = $this->getDbTable('peoplelinks')
-                ->getPeopleForLink($view->linkObj->Link_ID);
-            $view->seriesLinks = $this->getDbTable('serieslinks')
-                ->getSeriesForLink($view->linkObj->Link_ID);
+            $linkId = $view->affectedEntity->getId();
+            $view->itemsLinks = $this->getDbTable('itemslinks')->getItemsForLink($linkId);
+            $view->peopleLinks = $this->getDbTable('peoplelinks')->getPeopleForLink($linkId);
+            $view->seriesLinks = $this->getDbTable('serieslinks')->getSeriesForLink($linkId);
             $view->setTemplate('geeby-deeby/edit-link/edit-full');
         }
         return $view;

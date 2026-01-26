@@ -149,7 +149,7 @@ class EditEditionController extends AbstractBase
         if (!$ok) {
             return $view;
         }
-        $editionId = $view->edition['Edition_ID'] ?? $view->affectedEntity?->getId();
+        $editionId = $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if (
@@ -213,10 +213,10 @@ class EditEditionController extends AbstractBase
             $view->fullText = $this->getDbTable('editionsfulltext')
                 ->getFullTextForEdition($editionId);
             $view->fullTextSources = $this->getDbService(FullTextSourceService::class)->getList();
-            if (is_object($view->editionObj)) {
+            if (is_object($view->affectedEntity)) {
                 $editionService = $this->getDbService(EditionService::class);
-                $view->next = $editionService->getNextInSeries($view->editionObj);
-                $view->previous = $editionService->getPreviousInSeries($view->editionObj);
+                $view->next = $editionService->getNextInSeries($view->affectedEntity);
+                $view->previous = $editionService->getPreviousInSeries($view->affectedEntity);
             }
             $view->item_list = $ItemService->getItemsForEdition($editionId);
         }

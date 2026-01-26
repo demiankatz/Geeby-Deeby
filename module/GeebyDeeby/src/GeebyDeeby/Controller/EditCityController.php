@@ -68,7 +68,7 @@ class EditCityController extends AbstractBase
         $assignMap = ['city' => 'setCityName'];
         [$view, $ok] = $this->handleGenericItem(CityService::class, $assignMap, 'city');
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbService(CitiesUriService::class)->getURIsForCity($view->cityObj);
+            $view->uris = $this->getDbService(CitiesUriService::class)->getURIsForCity($view->affectedEntity);
             $view->setTemplate('geeby-deeby/edit-city/edit-full');
             $view->predicates = $this->getDbService(PredicateService::class)->getList();
         }

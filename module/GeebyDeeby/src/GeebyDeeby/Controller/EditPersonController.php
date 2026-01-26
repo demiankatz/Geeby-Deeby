@@ -88,11 +88,10 @@ class EditPersonController extends AbstractBase
         $view->authorities = $this->authoritylistAction()->authorities;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->pseudonyms = $this->getDbTable('pseudonyms')
-                ->getPseudonyms($view->personObj->Person_ID);
-            $view->realnames = $this->getDbTable('pseudonyms')
-                ->getRealNames($view->personObj->Person_ID);
-            $view->uris = $this->getDbService(PeopleUriService::class)->getURIsForPerson($view->personObj);
+            $personId = $view->affectedEntity->getId();
+            $view->pseudonyms = $this->getDbTable('pseudonyms')->getPseudonyms($personId);
+            $view->realnames = $this->getDbTable('pseudonyms')->getRealNames($personId);
+            $view->uris = $this->getDbService(PeopleUriService::class)->getURIsForPerson($view->affectedEntity);
             $view->setTemplate('geeby-deeby/edit-person/edit-full');
             $view->predicates = $this->getDbService(PredicateService::class)->getList();
         }

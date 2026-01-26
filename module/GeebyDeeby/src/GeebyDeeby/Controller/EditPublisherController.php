@@ -76,15 +76,15 @@ class EditPublisherController extends AbstractBase
         [$view, $ok] = $this->handleGenericItem(PublisherService::class, $assignMap, 'publisher');
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
+            $publisherId = $view->affectedEntity->getId();
             $view->cities = $this->getDbService(CityService::class)->getList();
             $view->countries = $this->getDbService(CountryService::class)->getList();
             $view->addresses = $this->getDbService(PublishersAddressService::class)
-                ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
+                ->getAddressesForPublisher($publisherId);
             $view->imprints = $this->getDbService(PublishersImprintService::class)
-                ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
+                ->getImprintsForPublisher($publisherId);
             $view->predicates = $this->getDbService(PredicateService::class)->getList();
-            $view->uris = $this->getDbService(PublishersUriService::class)
-                ->getURIsForPublisher($view->publisherObj);
+            $view->uris = $this->getDbService(PublishersUriService::class)->getURIsForPublisher($publisherId);
             $view->setTemplate('geeby-deeby/edit-publisher/edit-full');
         }
         return $view;

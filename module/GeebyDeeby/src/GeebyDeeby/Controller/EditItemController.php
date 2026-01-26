@@ -112,7 +112,7 @@ class EditItemController extends AbstractBase
         if (!$ok) {
             return $view;
         }
-        $itemId = $view->itemObj?->getId() ?? $view->affectedEntity?->getId();
+        $itemId = $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if (

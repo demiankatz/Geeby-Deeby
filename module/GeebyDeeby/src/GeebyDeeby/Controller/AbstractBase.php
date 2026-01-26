@@ -332,7 +332,9 @@ class AbstractBase extends AbstractActionController
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
         }
-        return $this->jsonReportSuccess();
+        $view = $this->jsonReportSuccess();
+        $view->affectedEntity = $entity;
+        return $view;
     }
 
     /**
@@ -362,7 +364,7 @@ class AbstractBase extends AbstractActionController
             $row = [$key[0] => 'NEW'];
         }
         return $this->createViewModel(
-            [$assignTo => $row ?? null, $assignTo . 'Obj' => $entity ?? null]
+            [$assignTo => $row ?? null, 'affectedEntity' => $entity ?? null]
         );
     }
 
