@@ -48,7 +48,6 @@ use function in_array;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
  * @todo Add tests for edition preferred titles.
- * @todo Add tests for self-serve account editing (password change, etc.)
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -1805,14 +1804,17 @@ class IntegrationTest extends MinkTestCase
         $this->assertControls($page, 'Please log in to manage your collection or post a review.');
         $this->logIn($page, 'user');
         $this->findCss($page, $controlsSelector)->clickLink('Add to Have List');
+        $this->findCssAndSetValue($page, 'input[name="comment"]', 'good shape');
         $this->clickCss($page, '.content input[type="submit"]');
         $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Add to Sale/Trade List');
         $this->findCss($page, $controlsSelector)->clickLink('Add to Sale/Trade List');
+        $this->findCssAndSetValue($page, 'input[name="comment"]', 'bad shape');
         $this->clickCss($page, '.content input[type="submit"]');
         $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Modify Sale/Trade List');
         $page->clickLink('Log Out');
         $this->logIn($page, 'admin');
         $this->findCss($page, $controlsSelector)->clickLink('Add to Want List');
+        $this->findCssAndSetValue($page, 'input[name="comment"]', 'any shape');
         $this->clickCss($page, '.content input[type="submit"]');
         $this->assertControls($page, 'Submit Review Add to Have List Modify Want List Add to Sale/Trade List');
     }
@@ -2054,7 +2056,9 @@ class IntegrationTest extends MinkTestCase
             . ' test edition attribute 1: attribute value for Edition'
             . ' User Summary: Test description'
             . ' user\'s Thoughts: this is my review More reviews by user'
-            . ' Users Who Own This Item: user Users Who Want This Item: admin Users with Extra Copies: user'
+            . ' Users Who Own This Item: user (good shape)'
+            . ' Users Who Want This Item: admin (any shape)'
+            . ' Users with Extra Copies: user - bad shape'
             . ' Please log in to manage your collection or post a review.'
             . ' Related Documents test file type 1 test file 1'
             . ' Bibliography of Items About "test item" second test materials (edited) example article 2'
@@ -2171,7 +2175,8 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'user 1 collection'  => [
             '/User/1/Collection',
-            'Get more information on this user. Items in test language 1 test series 1 Wants: test item Has: None.',
+            'Get more information on this user.'
+            . ' Items in test language 1 test series 1 Wants: test item (any shape) Has: None.',
         ];
         yield 'user 1 extras'  => [
             '/User/1/Extras',
@@ -2183,7 +2188,7 @@ class IntegrationTest extends MinkTestCase
         yield 'user 1 sellers'  => [
             '/User/1/Sellers',
             'Get more information on this user. ' . $disclaimer
-            . ' user test series 1 test item',
+            . ' user test series 1 test item Seller\'s Note: bad shape Buyer\'s Note: any shape',
         ];
         yield 'user 1 buyers'  => [
             '/User/1/Buyers',
@@ -2208,11 +2213,12 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'user 2 collection'  => [
             '/User/2/Collection',
-            'Get more information on this user. Items in test language 1 test series 1 Wants: None. Has: test item',
+            'Get more information on this user.'
+            . ' Items in test language 1 test series 1 Wants: None. Has: test item (good shape)',
         ];
         yield 'user 2 extras'  => [
             '/User/2/Extras',
-            'Get more information on this user. ' . $disclaimer . ' test series 1 test item',
+            'Get more information on this user. ' . $disclaimer . ' test series 1 test item bad shape',
         ];
         yield 'user 2 sellers'  => [
             '/User/2/Sellers',
@@ -2220,7 +2226,8 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'user 2 buyers'  => [
             '/User/2/Buyers',
-            'Get more information on this user. admin test series 1 test item',
+            'Get more information on this user. admin test series 1 test item'
+            . ' Buyer\'s Note: any shape Seller\'s Note: bad shape',
         ];
         yield 'user 2 reviews'  => [
             '/User/2/Reviews',
@@ -2503,5 +2510,57 @@ class IntegrationTest extends MinkTestCase
     {
         $page = $this->goToPage('/Series/' . $seriesId . '/Check');
         $this->assertSame($expected, $this->findCssAndGetText($page, '.content'));
+    }
+
+    /**
+     * Test self-service account editing.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testUserApproval')]
+    public function testUserAccountManipulation(): void
+    {
+        $page = $this->goToPage('/User/2');
+        $this->assertStringContainsString(
+            'Please log in to see this user\'s email address',
+            $this->findCssAndGetText($page, '.content')
+        );
+        $this->logIn($page, 'user');
+        $this->assertStringNotContainsString(
+            'Please log in to see this user\'s email address',
+            $this->findCssAndGetText($page, '.content')
+        );
+        $page->clickLink('Edit Account Details');
+        // Mismatched passwords
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertEquals(
+            'Your passwords did not match. Please try again.',
+            $this->findCssAndGetText($page, '.error')
+        );
+        // Bad existing password
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->findCssAndSetValue($page, '#edit_password2', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertEquals(
+            'The existing password you provided is incorrect.',
+            $this->findCssAndGetText($page, '.error')
+        );
+        // Actually change the password
+        $this->findCssAndSetValue($page, '#edit_fullname', 'test user (self-edited)');
+        $this->findCssAndSetValue($page, '#edit_email', 'user-edited@example.com');
+        $this->findCssAndSetValue($page, '#existing_password', 'password');
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->findCssAndSetValue($page, '#edit_password2', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        // Confirm that the password change worked by logging out and back in:
+        $page->clickLink('Log Out');
+        $this->logIn($page, 'user', 'foo');
+        // Confirm that everything changed
+        $this->assertStringStartsWith(
+            'Edit Account Details [List All Users] Full Name: test user (self-edited)'
+            . ' Email Address: user-edited@example.com',
+            $this->findCssAndGetText($page, '.content')
+        );
     }
 }
