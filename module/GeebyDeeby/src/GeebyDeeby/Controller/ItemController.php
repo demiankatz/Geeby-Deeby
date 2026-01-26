@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CollectionService;
+use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -99,7 +100,7 @@ class ItemController extends AbstractBase
         if (!is_object($entity)) {
             return false;
         }
-        $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
+        $extras['editionAttributes'] = $this->getDbService(EditionsAttributesValueService::class)
             ->getAttributesForItem($id);
         $extras['itemAttributes'] = $this->getDbTable('itemsattributesvalues')
             ->getAttributesForItem($id);

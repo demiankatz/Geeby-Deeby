@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
 
 use function is_object;
@@ -128,7 +129,7 @@ class EditionController extends AbstractBase
         } else {
             $series = [];
         }
-        $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
+        $extras['editionAttributes'] = $this->getDbService(EditionsAttributesValueService::class)
             ->getAttributesForEdition($id);
         return $this->createViewModel(
             ['edition' => $entity->toArray(), 'item' => $item, 'series' => $series]

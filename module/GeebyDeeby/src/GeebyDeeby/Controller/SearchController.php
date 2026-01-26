@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PersonService;
@@ -98,7 +99,9 @@ class SearchController extends AbstractBase
         $attributeId = $post['attribute_id'];
         $ids = explode(',', $post['ids']);
         $result = [];
-        foreach ($this->getDbTable('editionsattributesvalues')->getAttributesForItem($ids, $attributeId) as $row) {
+        $attributes = $this->getDbService(EditionsAttributesValueService::class)
+            ->getAttributesForItem($ids, $attributeId);
+        foreach ($attributes as $row) {
             // We only want to display one value per item, so it doesn't matter if we overwrite existing data here:
             $result[$row['Item_ID']] = '<b>' . htmlspecialchars($row['Editions_Attribute_Name']) . '</b>: '
                 . htmlspecialchars($row['Editions_Attribute_Value']);

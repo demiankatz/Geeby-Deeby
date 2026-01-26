@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributeService;
+use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
@@ -79,19 +80,17 @@ class EditEditionController extends AbstractBase
      */
     protected function saveAttributes($editionId, $attribs)
     {
-        $table = $this->getDbTable('editionsattributesvalues');
+        $service = $this->getDbService(EditionsAttributesValueService::class);
         // Delete old values:
-        $table->delete(['Edition_ID' => $editionId]);
+        $service->deleteByEdition($editionId);
         // Save new values:
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
-                $table->insert(
-                    [
-                        'Edition_ID' => $editionId,
-                        'Editions_Attribute_ID' => $id,
-                        'Editions_Attribute_Value' => $val,
-                    ]
-                );
+                $entity = $service->createEntity()
+                    ->setEdition((int)$editionId)
+                    ->setAttribute((int)$id)
+                    ->setValue($val);
+                $service->persistEntity($entity);
             }
         }
     }
@@ -163,11 +162,9 @@ class EditEditionController extends AbstractBase
         if ($editionId) {
             $view->attributes = $this->getDbService(EditionsAttributeService::class)->getList();
             $attributeValues = [];
-            $values = $this->getDbTable('editionsattributesvalues')
-                ->getAttributesForEdition($editionId);
+            $values = $this->getDbService(EditionsAttributesValueService::class)->getAttributesForEdition($editionId);
             foreach ($values as $current) {
-                $attributeValues[$current->Editions_Attribute_ID]
-                    = $current->Editions_Attribute_Value;
+                $attributeValues[$current['Editions_Attribute_ID']] = $current['Editions_Attribute_Value'];
             }
             $view->attributeValues = $attributeValues;
         }
