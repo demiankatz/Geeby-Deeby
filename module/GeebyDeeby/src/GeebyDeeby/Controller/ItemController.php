@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CollectionService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -352,7 +353,7 @@ class ItemController extends AbstractBase
                 ['User_ID' => $user->User_ID, 'Item_ID' => $id]
             )
         ) : false;
-        $collections = $this->getDbTable('collections');
+        $collections = $this->getDbService(CollectionService::class);
         $view->buyers = $collections->getForItem($id, 'want');
         $view->owners = $collections->getForItem($id, 'have');
         $view->sellers = $collections->getForItem($id, 'extra');
@@ -602,32 +603,23 @@ class ItemController extends AbstractBase
         }
 
         // Check for an existing entry:
-        $table = $this->getDbTable('collections');
-        $where = [
-            'User_ID' => $user->User_ID, 'Item_ID' => $item,
-            'Series_ID' => $series, 'Collection_Status' => $list,
-        ];
-        $existing = $table->select($where)->toArray();
-        $existing = count($existing) > 0 ? $existing[0] : false;
+        $service = $this->getDbService(CollectionService::class);
 
         // Has a comment been posted?  If so, process the request:
         $comment = $this->params()->fromPost('comment');
         if (null !== $comment) {
             if (null !== $this->params()->fromPost('delete')) {
-                $table->delete($where);
+                $service->deleteEntry($user, $item, $series, $list);
             } else {
-                if ($existing) {
-                    $table->update(['Collection_Note' => $comment], $where);
-                } else {
-                    $table->insert(['Collection_Note' => $comment] + $where);
-                }
+                $service->updateEntry($user, $item, $series, $list, $comment);
             }
             return $this->redirect()->toRoute('item', ['id' => $item]);
         }
 
         // If we go this far, we need to prompt the user for more information:
+        $existing = $service->getExistingEntry($user, $item, $series, $list);
         $view = $this->createViewModel(
-            ['list' => $list, 'existing' => $existing, 'series' => $series]
+            ['list' => $list, 'existing' => $existing?->toArray(), 'series' => $series]
         );
         $view->setTemplate('geeby-deeby/item/collection-add');
         return $view;

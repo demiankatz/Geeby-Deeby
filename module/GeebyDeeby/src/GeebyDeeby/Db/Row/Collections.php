@@ -43,7 +43,7 @@ use GeebyDeeby\Db\Entity\UserEntityInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class CitiesURIs extends TableAwareGateway implements CollectionEntityInterface
+class Collections extends TableAwareGateway implements CollectionEntityInterface
 {
     /**
      * Constructor
@@ -52,7 +52,7 @@ class CitiesURIs extends TableAwareGateway implements CollectionEntityInterface
      */
     public function __construct($adapter)
     {
-        parent::__construct(['Series_ID', 'Item_ID', 'User_ID', 'Collection_Status'], 'Cities_URIs', $adapter);
+        parent::__construct(['Series_ID', 'Item_ID', 'User_ID', 'Collection_Status'], 'Collections', $adapter);
     }
 
     /**

@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Crypt\PasswordHasher;
+use GeebyDeeby\Db\Service\CollectionService;
 use GeebyDeeby\Db\Service\UserService;
 
 /**
@@ -70,7 +71,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $collection = $this->getDbTable('collections')
+        $collection = $this->getDbService(CollectionService::class)
             ->getForUser($view->user['User_ID'], ['have', 'want'], true);
         // Format the data for more convenient display:
         $formatted = [];
@@ -98,7 +99,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->buyers = $this->getDbTable('collections')->compareCollections(
+        $view->buyers = $this->getDbService(CollectionService::class)->compareCollections(
             $view->user['User_ID'],
             'extra',
             'want'
@@ -198,7 +199,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->extras = $this->getDbTable('collections')
+        $view->extras = $this->getDbService(CollectionService::class)
             ->getForUser($view->user['User_ID'], 'extra');
         return $view;
     }
@@ -214,7 +215,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->stats = $this->getDbTable('collections')
+        $view->stats = $this->getDbService(CollectionService::class)
             ->getUserStatistics($view->user['User_ID']);
         $view->comments = $this->getDbTable('seriesreviews')
             ->getReviewsByUser($view->user['User_ID']);
@@ -272,7 +273,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->sellers = $this->getDbTable('collections')->compareCollections(
+        $view->sellers = $this->getDbService(CollectionService::class)->compareCollections(
             $view->user['User_ID'],
             'want',
             'extra'
