@@ -223,7 +223,7 @@ class AnalyzeCredits
             $creditCountMismatch = count($credits) != count($editions);
             foreach ($credits as $credit) {
                 if ($creditCountMismatch) {
-                    $note = ($this->fixTitleHelper)($credit['Edition_Name']);
+                    $note = ($this->fixTitleHelper)($credit['Edition_Name'] ?? '');
                     if (!empty($credit['Note'])) {
                         if (!empty($note)) {
                             $note .= ' - ';

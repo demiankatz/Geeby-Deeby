@@ -491,7 +491,7 @@ class ItemController extends AbstractBase
             );
             $params['Approved'] = 'n';
             $params['Review'] = $this->params()->fromPost('Review');
-            if ($params['Review'] == $existing['Review']) {
+            if ($existing && $params['Review'] == $existing['Review']) {
                 $view->noChange = true;
             } else {
                 if ($existing) {
