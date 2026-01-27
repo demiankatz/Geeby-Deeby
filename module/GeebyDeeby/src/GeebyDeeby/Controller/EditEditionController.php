@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
+use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
@@ -195,8 +196,7 @@ class EditEditionController extends AbstractBase
                 ->getCreditsForEdition($editionId);
             $view->images = $this->getDbTable('editionsimages')
                 ->getImagesForEdition($editionId);
-            $view->ISBNs = $this->getDbTable('editionsisbns')
-                ->getISBNsForEdition($editionId);
+            $view->ISBNs = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($editionId);
             $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
                 ->getOCLCNumbersForEdition($editionId);
             $view->editionPlatforms = $this->getDbTable('editionsplatforms')
@@ -729,29 +729,29 @@ class EditEditionController extends AbstractBase
             if (!$isbn->isValid()) {
                 return $this->jsonDie('Invalid ISBN -- cannot save.');
             }
-            $table = $this->getDbTable('editionsisbns');
-            $row = $table->createRow();
-            $row->Edition_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
+            $service = $this->getDbService(EditionsIsbnService::class);
+            $note = $this->params()->fromPost('note_id');
+            $entity = $service->createEntity()
+                ->setEdition($this->params()->fromRoute('id'))
+                ->setNote(empty($note) ? null : (int)$note);
             $isbn10 = $isbn->get10();
             if (!empty($isbn10)) {
-                $row->ISBN = $isbn10;
+                $entity->setIsbn10($isbn10);
             }
-            $row->ISBN13 = $isbn->get13();
-            $table->insert((array)$row);
+            $entity->setIsbn13($isbn->get13());
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsisbns',
-                'Edition_ID',
-                'Sequence_ID',
+                EditionsIsbnService::class,
+                null,
+                null,
                 'ISBNs',
                 'getISBNsForEdition',
-                'geeby-deeby/edit-edition/isbn-list.phtml'
+                'geeby-deeby/edit-edition/isbn-list.phtml',
+                retrieveLinkMethod: 'getByPrimaryKey',
+                invertRetrieveLinkParams: true
             );
         }
     }

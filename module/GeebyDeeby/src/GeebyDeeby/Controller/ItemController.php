@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\CollectionService;
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
@@ -309,7 +310,7 @@ class ItemController extends AbstractBase
         $view->publishers = $this->getDbService(EditionService::class)->getPublishersForItem($id);
         $view->dates = $this->getDbTable('editionsreleasedates')
             ->getDatesForItem($id);
-        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
+        $view->isbns = $this->getDbService(EditionsIsbnService::class)->getISBNsForItem($id);
         $view->codes = $this->getDbTable('editionsproductcodes')
             ->getProductCodesForItem($id);
         $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')

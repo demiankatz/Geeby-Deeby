@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
+use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PersonService;
@@ -171,7 +172,7 @@ class SearchController extends AbstractBase
     {
         $q = $this->layout()->query;
         $view = $this->createViewModel();
-        $view->results = $this->getDbTable('editionsisbns')->searchForItems($q);
+        $view->results = $this->getDbService(EditionsIsbnService::class)->searchForItems($q);
         return $view;
     }
 

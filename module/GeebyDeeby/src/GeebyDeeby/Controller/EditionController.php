@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsIsbnService;
 
 use function is_object;
 
@@ -272,7 +273,7 @@ class EditionController extends AbstractBase
             ->getPlatformsForEdition($id);
         $view->dates = $this->getDbTable('editionsreleasedates')
             ->getDatesForEditionOrParentEdition($id);
-        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForEdition($id);
+        $view->isbns = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($id);
         $view->codes = $this->getDbTable('editionsproductcodes')
             ->getProductCodesForEdition($id);
         $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
