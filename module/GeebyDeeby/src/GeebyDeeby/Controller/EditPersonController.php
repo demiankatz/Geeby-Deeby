@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\AuthorityService;
 use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Service\PersonService;
 use GeebyDeeby\Db\Service\PredicateService;
+use GeebyDeeby\Db\Service\PseudonymService;
 use GeebyDeeby\Db\Service\RoleService;
 
 /**
@@ -89,8 +90,9 @@ class EditPersonController extends AbstractBase
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $personId = $view->affectedEntity->getId();
-            $view->pseudonyms = $this->getDbTable('pseudonyms')->getPseudonyms($personId);
-            $view->realnames = $this->getDbTable('pseudonyms')->getRealNames($personId);
+            $pseudoService = $this->getDbService(PseudonymService::class);
+            $view->pseudonyms = $pseudoService->getPseudonyms($personId);
+            $view->realnames = $pseudoService->getRealNames($personId);
             $view->uris = $this->getDbService(PeopleUriService::class)->getURIsForPerson($view->affectedEntity);
             $view->setTemplate('geeby-deeby/edit-person/edit-full');
             $view->predicates = $this->getDbService(PredicateService::class)->getList();
@@ -126,12 +128,13 @@ class EditPersonController extends AbstractBase
     public function aliaspseudonymAction()
     {
         return $this->handleGenericLink(
-            'pseudonyms',
-            'Real_Person_ID',
-            'Pseudo_Person_ID',
+            PseudonymService::class,
+            'setRealPerson',
+            'setPseudoPerson',
             'pseudonyms',
             'getPseudonyms',
-            'geeby-deeby/edit-person/pseudonym-list.phtml'
+            'geeby-deeby/edit-person/pseudonym-list.phtml',
+            retrieveLinkMethod: 'getByRealPersonAndPseudonym'
         );
     }
 
@@ -143,12 +146,14 @@ class EditPersonController extends AbstractBase
     public function aliasrealnameAction()
     {
         return $this->handleGenericLink(
-            'pseudonyms',
-            'Pseudo_Person_ID',
-            'Real_Person_ID',
+            PseudonymService::class,
+            'setPseudoPerson',
+            'setRealPerson',
             'realnames',
             'getRealNames',
-            'geeby-deeby/edit-person/realname-list.phtml'
+            'geeby-deeby/edit-person/realname-list.phtml',
+            retrieveLinkMethod: 'getByRealPersonAndPseudonym',
+            invertRetrieveLinkParams: true
         );
     }
 

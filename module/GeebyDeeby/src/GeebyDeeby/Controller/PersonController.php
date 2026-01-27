@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\PseudonymService;
 use Laminas\View\Model\ViewModel;
 
 use function is_object;
@@ -223,7 +224,7 @@ class PersonController extends AbstractBase
             ->getCitationsForPerson($id, $view->sort);
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForPerson($id, $view->sort);
-        $pseudo = $this->getDbTable('pseudonyms');
+        $pseudo = $this->getDbService(PseudonymService::class);
         $view->pseudonyms = $pseudo->getPseudonyms($id);
         $view->realNames = $pseudo->getRealNames($id);
         $view->files = $this->getDbTable('peoplefiles')->getFilesForPerson($id);
