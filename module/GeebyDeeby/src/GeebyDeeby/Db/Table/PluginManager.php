@@ -80,7 +80,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
         'itemscreators' => 'GeebyDeeby\Db\Table\ItemsCreators',
         'itemscreatorscitations' => 'GeebyDeeby\Db\Table\ItemsCreatorsCitations',
-        'itemscredits' => 'GeebyDeeby\Db\Table\ItemsCredits',
         'itemsdescriptions' => 'GeebyDeeby\Db\Table\ItemsDescriptions',
         'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
         'itemsimages' => 'GeebyDeeby\Db\Table\ItemsImages',
