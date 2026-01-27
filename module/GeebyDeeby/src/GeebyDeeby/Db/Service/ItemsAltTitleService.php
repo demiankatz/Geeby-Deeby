@@ -57,7 +57,7 @@ class ItemsAltTitleService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return ItemsAltTitleEntityInterface
      */

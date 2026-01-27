@@ -56,7 +56,7 @@ class SeriesAttributeService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return SeriesAttributeEntityInterface
      */

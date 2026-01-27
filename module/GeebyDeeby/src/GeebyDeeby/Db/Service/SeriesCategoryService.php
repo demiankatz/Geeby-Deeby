@@ -56,7 +56,7 @@ class SeriesCategoryService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return SeriesCategoryEntityInterface
      */

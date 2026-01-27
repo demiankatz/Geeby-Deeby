@@ -57,7 +57,7 @@ class PersonService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return PersonEntityInterface
      */

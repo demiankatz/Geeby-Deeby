@@ -57,7 +57,7 @@ class LinkService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return LinkEntityInterface
      */

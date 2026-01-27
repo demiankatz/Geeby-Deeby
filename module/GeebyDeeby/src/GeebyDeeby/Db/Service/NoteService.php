@@ -56,7 +56,7 @@ class NoteService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return NoteEntityInterface
      */

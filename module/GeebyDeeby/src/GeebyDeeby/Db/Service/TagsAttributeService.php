@@ -56,7 +56,7 @@ class TagsAttributeService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return TagsAttributeEntityInterface
      */

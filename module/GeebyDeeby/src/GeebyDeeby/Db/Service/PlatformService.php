@@ -56,7 +56,7 @@ class PlatformService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return PlatformEntityInterface
      */

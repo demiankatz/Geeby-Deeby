@@ -56,7 +56,7 @@ class TagTypeService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return TagTypeEntityInterface
      */

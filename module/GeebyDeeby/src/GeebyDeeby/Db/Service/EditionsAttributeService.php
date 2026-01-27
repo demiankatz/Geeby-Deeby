@@ -56,7 +56,7 @@ class EditionsAttributeService extends AbstractDbService
     }
 
     /**
-     * Create an empty entity
+     * Create an empty entity.
      *
      * @return EditionsAttributeEntityInterface
      */
