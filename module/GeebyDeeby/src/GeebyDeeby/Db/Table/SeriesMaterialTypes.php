@@ -87,18 +87,18 @@ class SeriesMaterialTypes extends Gateway
      */
     public function getMaterials($seriesID = null)
     {
-        $callback = function ($select) use ($seriesID): void {
-            $select->join(
-                ['mt' => 'Material_Types'],
-                'Series_Material_Types.Material_Type_ID = mt.Material_Type_ID'
-            );
-            $select->columns([]);
-            $select->quantifier(\Laminas\Db\Sql\Select::QUANTIFIER_DISTINCT);
-            $select->order('mt.Material_Type_Name');
-            if (null !== $seriesID) {
-                $select->where->equalTo('Series_ID', $seriesID);
-            }
-        };
-        return $this->select($callback);
+        $select = $this->getSql()->select();
+        $select->join(
+            ['mt' => 'Material_Types'],
+            'Series_Material_Types.Material_Type_ID = mt.Material_Type_ID'
+        );
+        $select->columns([]);
+        $select->quantifier(\Laminas\Db\Sql\Select::QUANTIFIER_DISTINCT);
+        $select->order('mt.Material_Type_Name');
+        if (null !== $seriesID) {
+            $select->where->equalTo('Series_ID', $seriesID);
+        }
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        return array_values(iterator_to_array($statement->execute()));
     }
 }

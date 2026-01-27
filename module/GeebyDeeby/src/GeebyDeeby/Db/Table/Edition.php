@@ -467,7 +467,7 @@ class Edition extends Gateway
         };
         $attribs = $attrTable->select($callback);
         foreach ($attribs as $attr) {
-            $arr = (array)$attr;
+            $arr = $attr->toArray();
             $arr['Edition_ID'] = $to;
             $attrTable->insert($arr);
         }
@@ -488,7 +488,7 @@ class Edition extends Gateway
             ['Edition_ID' => $from]
         );
         foreach ($credits as $credit) {
-            $arr = (array)$credit;
+            $arr = $credit->toArray();
             $arr['Edition_ID'] = $to;
             $creditTable->insert($arr);
         }

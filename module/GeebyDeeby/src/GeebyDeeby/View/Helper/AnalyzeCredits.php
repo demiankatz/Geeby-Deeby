@@ -112,7 +112,7 @@ class AnalyzeCredits
                 $groupedCredits[$role] ?? []
             );
             if (empty($creditedIds) || !$this->isMatchingPerson($personId, $creditedIds)) {
-                $groupedCredits[$role][$personId][] = $creator->getArrayCopy() + ['Note' => 'uncredited'];
+                $groupedCredits[$role][$personId][] = $creator->toArray() + ['Note' => 'uncredited'];
             }
         }
         return $groupedCredits;

@@ -520,7 +520,7 @@ class EditEditionController extends AbstractBase
             $row->Note_ID = null;
         }
         try {
-            $table->insert((array)$row);
+            $table->insert($row->toArray());
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
         }
@@ -570,7 +570,7 @@ class EditEditionController extends AbstractBase
             if (empty($row->Note_ID)) {
                 $row->Note_ID = null;
             }
-            $table->insert((array)$row);
+            $table->insert($row->toArray());
             return $this->jsonReportSuccess();
         }
         // DELETE action:
@@ -780,7 +780,7 @@ class EditEditionController extends AbstractBase
             if (empty($row->OCLC_Number)) {
                 return $this->jsonDie('OCLC number must not be empty.');
             }
-            $table->insert((array)$row);
+            $table->insert($row->toArray());
             return $this->jsonReportSuccess();
         } else {
             // Otherwise, treat this as a generic link:
@@ -819,7 +819,7 @@ class EditEditionController extends AbstractBase
             if (empty($row->Product_Code)) {
                 return $this->jsonDie('Product code must not be empty.');
             }
-            $table->insert((array)$row);
+            $table->insert($row->toArray());
             return $this->jsonReportSuccess();
         } else {
             // Otherwise, treat this as a generic link:
@@ -871,7 +871,7 @@ class EditEditionController extends AbstractBase
                 $row->Thumb_Path = implode('.', $parts);
             }
             $row->Position = $this->params()->fromPost('pos');
-            $table->insert((array)$row);
+            $table->insert($row->toArray());
             return $this->jsonReportSuccess();
         } else {
             // Otherwise, treat this as a generic link:

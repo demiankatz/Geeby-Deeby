@@ -66,16 +66,16 @@ class ItemsInCollections extends Gateway
      */
     public function getAllCollections()
     {
-        $callback = function ($select): void {
-            $select->columns([]);
-            $select->join(
-                ['i' => 'Items'],
-                'Items_In_Collections.Collection_Item_ID = i.Item_ID'
-            );
-            $select->order('Item_Name');
-            $select->group('Item_ID');
-        };
-        return $this->select($callback);
+        $select = $this->getSql()->select();
+        $select->columns([]);
+        $select->join(
+            ['i' => 'Items'],
+            'Items_In_Collections.Collection_Item_ID = i.Item_ID'
+        );
+        $select->order('Item_Name');
+        $select->group('Item_ID');
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        return $statement->execute();
     }
 
     /**

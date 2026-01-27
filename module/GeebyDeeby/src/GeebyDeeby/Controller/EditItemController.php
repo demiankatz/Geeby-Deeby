@@ -588,7 +588,7 @@ class EditItemController extends AbstractBase
             $row->Source = $this->params()->fromPost('type');
             $row->Description = $this->params()->fromPost('desc');
             try {
-                $table->insert((array)$row);
+                $table->insert($row->toArray());
             } catch (\Exception $e) {
                 return $this->jsonDie($e->getMessage());
             }

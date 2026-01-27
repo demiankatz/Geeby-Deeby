@@ -67,17 +67,17 @@ class EditionsImages extends Gateway
      */
     public function getDuplicateThumbs()
     {
-        $callback = function ($select): void {
-            $count = new Expression(
-                'count(?)',
-                ['Thumb_Path'],
-                [Expression::TYPE_IDENTIFIER]
-            );
-            $select->columns(['Thumb_Path', 'c' => $count]);
-            $select->group(['Thumb_Path']);
-            $select->having('c > 1');
-        };
-        return $this->select($callback);
+        $select = $this->getSql()->select();
+        $count = new Expression(
+            'count(?)',
+            ['Thumb_Path'],
+            [Expression::TYPE_IDENTIFIER]
+        );
+        $select->columns(['Thumb_Path', 'c' => $count]);
+        $select->group(['Thumb_Path']);
+        $select->having('c > 1');
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        return $statement->execute();
     }
 
     /**
@@ -159,52 +159,52 @@ class EditionsImages extends Gateway
      */
     public function getImagesForItem($itemID)
     {
-        $callback = function ($select) use ($itemID): void {
-            $select->quantifier('DISTINCT');
-            $fields = [
-                'Edition_ID',
-                'Image_Path',
-                'Thumb_Path',
-                'IIIF_URI',
-                'Position',
-                'Note_ID',
-            ];
-            $select->columns($fields);
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Images.Edition_ID = eds.Edition_ID'
-                . ' OR eds.Parent_Edition_ID = Editions_Images.Edition_ID',
-                ['Edition_Name']
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'eds.Item_ID = i.Item_ID',
-                ['Item_ID']
-            );
-            $year = new Expression(
-                'min(?)',
-                ['erd.Year'],
-                [Expression::TYPE_IDENTIFIER]
-            );
-            $select->join(
-                ['erd' => 'Editions_Release_Dates'],
-                'eds.Edition_ID = erd.Edition_ID '
-                . 'OR eds.Parent_Edition_ID = erd.Edition_ID',
-                ['Earliest_Year' => $year],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_Images.Note_ID = n.Note_ID',
-                ['Note'],
-                Select::JOIN_LEFT
-            );
-            $fields = array_merge($fields, ['Edition_Name', 'Item_ID', 'Note']);
-            $select->group($fields);
-            $select->order(['Item_Display_Order', 'Position', 'Earliest_Year']);
-            $select->where->equalTo('i.Item_ID', $itemID);
-        };
-        return $this->select($callback);
+        $select = $this->getSql()->select();
+        $select->quantifier('DISTINCT');
+        $fields = [
+            'Edition_ID',
+            'Image_Path',
+            'Thumb_Path',
+            'IIIF_URI',
+            'Position',
+            'Note_ID',
+        ];
+        $select->columns($fields);
+        $select->join(
+            ['eds' => 'Editions'],
+            'Editions_Images.Edition_ID = eds.Edition_ID'
+            . ' OR eds.Parent_Edition_ID = Editions_Images.Edition_ID',
+            ['Edition_Name']
+        );
+        $select->join(
+            ['i' => 'Items'],
+            'eds.Item_ID = i.Item_ID',
+            ['Item_ID']
+        );
+        $year = new Expression(
+            'min(?)',
+            ['erd.Year'],
+            [Expression::TYPE_IDENTIFIER]
+        );
+        $select->join(
+            ['erd' => 'Editions_Release_Dates'],
+            'eds.Edition_ID = erd.Edition_ID '
+            . 'OR eds.Parent_Edition_ID = erd.Edition_ID',
+            ['Earliest_Year' => $year],
+            Select::JOIN_LEFT
+        );
+        $select->join(
+            ['n' => 'Notes'],
+            'Editions_Images.Note_ID = n.Note_ID',
+            ['Note'],
+            Select::JOIN_LEFT
+        );
+        $fields = array_merge($fields, ['Edition_Name', 'Item_ID', 'Note']);
+        $select->group($fields);
+        $select->order(['Item_Display_Order', 'Position', 'Earliest_Year']);
+        $select->where->equalTo('i.Item_ID', $itemID);
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        return $statement->execute();
     }
 
     /**
@@ -217,48 +217,48 @@ class EditionsImages extends Gateway
      */
     public function getImagesForSeries($seriesID, $groupByMaterial = true)
     {
-        $callback = function ($select) use ($seriesID, $groupByMaterial): void {
-            $select->columns(['Thumb_Path', 'IIIF_URI']);
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Images.Edition_ID = eds.Edition_ID'
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'eds.Item_ID = i.Item_ID'
-            );
-            $select->join(
-                ['mt' => 'Material_Types'],
-                'i.Material_Type_ID = mt.Material_Type_ID',
-                []
-            );
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_Images.Note_ID = n.Note_ID',
-                ['Note'],
-                Select::JOIN_LEFT
-            );
-            $select->order(
-                $groupByMaterial
-                    ? [
-                        'mt.Material_Type_Name', 'eds.Volume', 'eds.Position',
-                        'eds.Replacement_Number', 'eds.Item_Display_Order',
-                        'i.Item_Name', 'Editions_Images.Position',
-                    ] : [
-                        'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
-                        'eds.Item_Display_Order', 'i.Item_Name',
-                        'Editions_Images.Position',
-                    ]
-            );
-            $select->group(
-                [
-                    'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position',
-                    'eds.Replacement_Number', 'Editions_Images.Position',
-                    'i.Item_ID', 'Note',
+        $select = $this->getSql()->select();
+        $select->columns(['Thumb_Path', 'IIIF_URI']);
+        $select->join(
+            ['eds' => 'Editions'],
+            'Editions_Images.Edition_ID = eds.Edition_ID'
+        );
+        $select->join(
+            ['i' => 'Items'],
+            'eds.Item_ID = i.Item_ID'
+        );
+        $select->join(
+            ['mt' => 'Material_Types'],
+            'i.Material_Type_ID = mt.Material_Type_ID',
+            []
+        );
+        $select->join(
+            ['n' => 'Notes'],
+            'Editions_Images.Note_ID = n.Note_ID',
+            ['Note'],
+            Select::JOIN_LEFT
+        );
+        $select->order(
+            $groupByMaterial
+                ? [
+                    'mt.Material_Type_Name', 'eds.Volume', 'eds.Position',
+                    'eds.Replacement_Number', 'eds.Item_Display_Order',
+                    'i.Item_Name', 'Editions_Images.Position',
+                ] : [
+                    'eds.Volume', 'eds.Position', 'eds.Replacement_Number',
+                    'eds.Item_Display_Order', 'i.Item_Name',
+                    'Editions_Images.Position',
                 ]
-            );
-            $select->where->equalTo('Series_ID', $seriesID);
-        };
-        return $this->select($callback);
+        );
+        $select->group(
+            [
+                'Thumb_Path', 'IIIF_URI', 'eds.Volume', 'eds.Position',
+                'eds.Replacement_Number', 'Editions_Images.Position',
+                'i.Item_ID', 'Note',
+            ]
+        );
+        $select->where->equalTo('Series_ID', $seriesID);
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        return $statement->execute();
     }
 }
