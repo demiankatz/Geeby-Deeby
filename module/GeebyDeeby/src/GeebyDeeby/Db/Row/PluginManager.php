@@ -74,7 +74,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'itemsbibliography' => 'GeebyDeeby\Db\Row\ItemsBibliography',
         'itemscreators' => 'GeebyDeeby\Db\Row\ItemsCreators',
         'itemscreatorscitations' => 'GeebyDeeby\Db\Row\ItemsCreatorsCitations',
-        'itemscredits' => 'GeebyDeeby\Db\Row\ItemsCredits',
         'itemsdescriptions' => 'GeebyDeeby\Db\Row\ItemsDescriptions',
         'itemsfiles' => 'GeebyDeeby\Db\Row\ItemsFiles',
         'itemsimages' => 'GeebyDeeby\Db\Row\ItemsImages',
