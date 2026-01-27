@@ -77,7 +77,7 @@ interface ItemsAltTitleEntityInterface extends EntityInterface
      *
      * @return static
      */
-    public function setNote(int|ItemEntityInterface|null $note): static;
+    public function setNote(int|NoteEntityInterface|null $note): static;
 
     /**
      * Get the alternate name associated with the item.

@@ -106,9 +106,9 @@ class ItemsAltTitles extends TableAwareGateway implements ItemsAltTitleEntityInt
      *
      * @return static
      */
-    public function setNote(int|ItemEntityInterface|null $note): static
+    public function setNote(int|NoteEntityInterface|null $note): static
     {
-        $this->Note_ID = $note instanceof ItemEntityInterface ? $note->getId() : $note;
+        $this->Note_ID = $note instanceof NoteEntityInterface ? $note->getId() : $note;
         return $this;
     }
 
