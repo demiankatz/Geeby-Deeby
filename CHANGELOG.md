@@ -21,7 +21,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Removed
 
 - FAQ-related database tables and FAQ functionality (underdeveloped and little-used; will be replaced with static pages where needed).
-- Obsolete data migration methods.
+- Obsolete data migration methods and ItemsCredits table class.
 - View helper factories.
 
 ### Fixed
