@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsFileEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface;
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get associated file.
+     *
+     * @return FileEntityInterface
+     */
+    public function getFile(): FileEntityInterface;
+
+    /**
+     * Set associated file.
+     *
+     * @param int|FileEntityInterface $file Associated file entity or ID
+     *
+     * @return static
+     */
+    public function setFile(int|FileEntityInterface $file): static;
 }

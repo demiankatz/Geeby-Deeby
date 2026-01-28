@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\FileEntityInterface;
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsFileEntityInterface;
 
 /**
@@ -50,5 +52,51 @@ class ItemsFiles extends TableAwareGateway implements ItemsFileEntityInterface
     public function __construct($adapter)
     {
         parent::__construct(['Item_ID', 'File_ID'], 'Items_Files', $adapter);
+    }
+
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Item_ID);
+    }
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static
+    {
+        $this->Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
+    }
+
+    /**
+     * Get associated file.
+     *
+     * @return FileEntityInterface
+     */
+    public function getFile(): FileEntityInterface
+    {
+        return $this->getTableManager()->get('file')->getByPrimaryKey($this->File_ID);
+    }
+
+    /**
+     * Set associated file.
+     *
+     * @param int|FileEntityInterface $file Associated file entity or ID
+     *
+     * @return static
+     */
+    public function setFile(int|FileEntityInterface $file): static
+    {
+        $this->File_ID = $file instanceof FileEntityInterface ? $file->getId() : $file;
+        return $this;
     }
 }

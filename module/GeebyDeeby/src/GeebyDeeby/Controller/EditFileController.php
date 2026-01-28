@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\FileService;
 use GeebyDeeby\Db\Service\FileTypeService;
+use GeebyDeeby\Db\Service\ItemsFileService;
 
 /**
  * Edit file controller
@@ -83,7 +84,7 @@ class EditFileController extends AbstractBase
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $fileId = $view->affectedEntity->getId();
-            $view->itemsFiles = $this->getDbTable('itemsfiles')->getItemsForFile($fileId);
+            $view->itemsFiles = $this->getDbService(ItemsFileService::class)->getItemsForFile($fileId);
             $view->peopleFiles = $this->getDbTable('peoplefiles')->getPeopleForFile($fileId);
             $view->seriesFiles = $this->getDbTable('seriesfiles')->getSeriesForFile($fileId);
             $view->setTemplate('geeby-deeby/edit-file/edit-full');
@@ -125,12 +126,13 @@ class EditFileController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemsfiles',
-            'File_ID',
-            'Item_ID',
+            ItemsFileService::class,
+            'setFile',
+            'setItem',
             'itemsFiles',
             'getItemsForFile',
-            'geeby-deeby/edit-file/item-list.phtml'
+            'geeby-deeby/edit-file/item-list.phtml',
+            retrieveLinkMethod: 'getForFileAndItem'
         );
     }
 
