@@ -35,6 +35,7 @@ use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesCategoryService;
+use GeebyDeeby\Db\Service\SeriesFileService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
@@ -492,7 +493,7 @@ class SeriesController extends AbstractBase
         // us a list of books that $id was translated from.
         $view->translatedInto = $trans->getTranslatedFrom($id, true);
         $view->translatedFrom = $trans->getTranslatedInto($id, true);
-        $view->files = $this->getDbTable('seriesfiles')->getFilesForSeries($id);
+        $view->files = $this->getDbService(SeriesFileService::class)->getFilesForSeries($id);
         $view->bibliography = $this->getDbTable('seriesbibliography')
             ->getItemsDescribingSeries($id);
         $view->links = $this->getDbTable('serieslinks')->getLinksForSeries($id);

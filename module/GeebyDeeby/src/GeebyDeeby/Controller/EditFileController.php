@@ -32,6 +32,8 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\FileService;
 use GeebyDeeby\Db\Service\FileTypeService;
 use GeebyDeeby\Db\Service\ItemsFileService;
+use GeebyDeeby\Db\Service\PeopleFileService;
+use GeebyDeeby\Db\Service\SeriesFileService;
 
 /**
  * Edit file controller
@@ -85,8 +87,8 @@ class EditFileController extends AbstractBase
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $fileId = $view->affectedEntity->getId();
             $view->itemsFiles = $this->getDbService(ItemsFileService::class)->getItemsForFile($fileId);
-            $view->peopleFiles = $this->getDbTable('peoplefiles')->getPeopleForFile($fileId);
-            $view->seriesFiles = $this->getDbTable('seriesfiles')->getSeriesForFile($fileId);
+            $view->peopleFiles = $this->getDbService(PeopleFileService::class)->getPeopleForFile($fileId);
+            $view->seriesFiles = $this->getDbService(SeriesFileService::class)->getSeriesForFile($fileId);
             $view->setTemplate('geeby-deeby/edit-file/edit-full');
         }
         return $view;
@@ -144,12 +146,13 @@ class EditFileController extends AbstractBase
     public function personAction()
     {
         return $this->handleGenericLink(
-            'peoplefiles',
-            'File_ID',
-            'Person_ID',
+            PeopleFileService::class,
+            'setFile',
+            'setPerson',
             'peopleFiles',
             'getPeopleForFile',
-            'geeby-deeby/edit-file/person-list.phtml'
+            'geeby-deeby/edit-file/person-list.phtml',
+            retrieveLinkMethod: 'getForFileAndPerson'
         );
     }
 
@@ -161,12 +164,13 @@ class EditFileController extends AbstractBase
     public function seriesAction()
     {
         return $this->handleGenericLink(
-            'seriesfiles',
-            'File_ID',
-            'Series_ID',
+            SeriesFileService::class,
+            'setFile',
+            'setSeries',
             'seriesFiles',
             'getSeriesForFile',
-            'geeby-deeby/edit-file/series-list.phtml'
+            'geeby-deeby/edit-file/series-list.phtml',
+            retrieveLinkMethod: 'getForFileAndSeries'
         );
     }
 }

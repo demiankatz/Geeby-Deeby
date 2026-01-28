@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\FileEntityInterface;
 use GeebyDeeby\Db\Entity\PeopleFileEntityInterface;
+use GeebyDeeby\Db\Entity\PersonEntityInterface;
 
 /**
  * Row Definition for People_Files
@@ -50,5 +52,51 @@ class PeopleFiles extends TableAwareGateway implements PeopleFileEntityInterface
     public function __construct($adapter)
     {
         parent::__construct(['Person_ID', 'File_ID'], 'People_Files', $adapter);
+    }
+
+    /**
+     * Get associated person.
+     *
+     * @return PersonEntityInterface
+     */
+    public function getPerson(): PersonEntityInterface
+    {
+        return $this->getTableManager()->get('person')->getByPrimaryKey($this->Person_ID);
+    }
+
+    /**
+     * Set associated person.
+     *
+     * @param int|PersonEntityInterface $person Associated person entity or ID
+     *
+     * @return static
+     */
+    public function setPerson(int|PersonEntityInterface $person): static
+    {
+        $this->Person_ID = $person instanceof PersonEntityInterface ? $person->getId() : $person;
+        return $this;
+    }
+
+    /**
+     * Get associated file.
+     *
+     * @return FileEntityInterface
+     */
+    public function getFile(): FileEntityInterface
+    {
+        return $this->getTableManager()->get('file')->getByPrimaryKey($this->File_ID);
+    }
+
+    /**
+     * Set associated file.
+     *
+     * @param int|FileEntityInterface $file Associated file entity or ID
+     *
+     * @return static
+     */
+    public function setFile(int|FileEntityInterface $file): static
+    {
+        $this->File_ID = $file instanceof FileEntityInterface ? $file->getId() : $file;
+        return $this;
     }
 }

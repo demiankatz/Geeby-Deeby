@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface PeopleFileEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated person.
+     *
+     * @return PersonEntityInterface
+     */
+    public function getPerson(): PersonEntityInterface;
+
+    /**
+     * Set associated person.
+     *
+     * @param int|PersonEntityInterface $person Associated person entity or ID
+     *
+     * @return static
+     */
+    public function setPerson(int|PersonEntityInterface $person): static;
+
+    /**
+     * Get associated file.
+     *
+     * @return FileEntityInterface
+     */
+    public function getFile(): FileEntityInterface;
+
+    /**
+     * Set associated file.
+     *
+     * @param int|FileEntityInterface $file Associated file entity or ID
+     *
+     * @return static
+     */
+    public function setFile(int|FileEntityInterface $file): static;
 }

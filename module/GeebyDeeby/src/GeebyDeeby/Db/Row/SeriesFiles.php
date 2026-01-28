@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\FileEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesFileEntityInterface;
 
 /**
@@ -50,5 +52,51 @@ class SeriesFiles extends TableAwareGateway implements SeriesFileEntityInterface
     public function __construct($adapter)
     {
         parent::__construct(['Series_ID', 'File_ID'], 'Series_Files', $adapter);
+    }
+
+    /**
+     * Get associated series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface
+    {
+        return $this->getTableManager()->get('series')->getByPrimaryKey($this->Series_ID);
+    }
+
+    /**
+     * Set associated series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static
+    {
+        $this->Series_ID = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
+        return $this;
+    }
+
+    /**
+     * Get associated file.
+     *
+     * @return FileEntityInterface
+     */
+    public function getFile(): FileEntityInterface
+    {
+        return $this->getTableManager()->get('file')->getByPrimaryKey($this->File_ID);
+    }
+
+    /**
+     * Set associated file.
+     *
+     * @param int|FileEntityInterface $file Associated file entity or ID
+     *
+     * @return static
+     */
+    public function setFile(int|FileEntityInterface $file): static
+    {
+        $this->File_ID = $file instanceof FileEntityInterface ? $file->getId() : $file;
+        return $this;
     }
 }

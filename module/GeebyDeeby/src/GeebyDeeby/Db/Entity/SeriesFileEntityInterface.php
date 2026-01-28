@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface SeriesFileEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface;
+
+    /**
+     * Set associated series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static;
+
+    /**
+     * Get associated file.
+     *
+     * @return FileEntityInterface
+     */
+    public function getFile(): FileEntityInterface;
+
+    /**
+     * Set associated file.
+     *
+     * @param int|FileEntityInterface $file Associated file entity or ID
+     *
+     * @return static
+     */
+    public function setFile(int|FileEntityInterface $file): static;
 }

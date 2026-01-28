@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\PeopleFileService;
 use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Service\PersonService;
 use GeebyDeeby\Db\Service\PseudonymService;
@@ -227,7 +228,7 @@ class PersonController extends AbstractBase
         $pseudo = $this->getDbService(PseudonymService::class);
         $view->pseudonyms = $pseudo->getPseudonyms($id);
         $view->realNames = $pseudo->getRealNames($id);
-        $view->files = $this->getDbTable('peoplefiles')->getFilesForPerson($id);
+        $view->files = $this->getDbService(PeopleFileService::class)->getFilesForPerson($id);
         $view->bibliography = $this->getDbTable('peoplebibliography')
             ->getItemsDescribingPerson($id);
         $view->links = $this->getDbTable('peoplelinks')->getLinksForPerson($id);
