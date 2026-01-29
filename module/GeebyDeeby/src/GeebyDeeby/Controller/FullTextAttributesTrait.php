@@ -58,7 +58,7 @@ trait FullTextAttributesTrait
                 function ($current) {
                     return $current['Sequence_ID'];
                 },
-                $view->fullText->toArray()
+                $view->fullText
             );
             foreach ($attrTable->getAttributesForFullTextIDs($ids) as $attr) {
                 $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;
