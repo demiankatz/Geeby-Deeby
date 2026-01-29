@@ -41,6 +41,7 @@ use GeebyDeeby\Db\Service\PublishersImprintService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
 use GeebyDeeby\Db\Service\SeriesCategoryService;
+use GeebyDeeby\Db\Service\SeriesMaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -153,8 +154,8 @@ class EditSeriesController extends AbstractBase
             $view->item_list = $this->getDbService(ItemService::class)
                 ->getItemsForSeries($seriesId, true, $groupByMaterial);
             $view->series_alt_titles = $this->getDbService(SeriesAltTitleService::class)->getAltTitles($seriesId);
-            $view->series_materials = $this->getDbTable('seriesmaterialtypes')
-                ->getMaterials($seriesId);
+            $view->series_materials = $this->getDbService(SeriesMaterialTypeService::class)
+                ->getMaterialTypesForSeries($seriesId);
             $view->series_publishers = $this->getDbService(SeriesPublisherService::class)
                 ->getPublishersForSeries($seriesId);
             $view->relationships = $this->getDbService(SeriesRelationshipService::class)->getOptionList();
@@ -199,12 +200,13 @@ class EditSeriesController extends AbstractBase
     public function materialAction()
     {
         return $this->handleGenericLink(
-            'seriesmaterialtypes',
-            'Series_ID',
-            'Material_Type_ID',
+            SeriesMaterialTypeService::class,
+            'setSeries',
+            'setMaterialType',
             'series_materials',
-            'getMaterials',
-            'geeby-deeby/edit-series/material-type-list'
+            'getMaterialTypesForSeries',
+            'geeby-deeby/edit-series/material-type-list',
+            retrieveLinkMethod: 'getBySeriesAndMaterialType'
         );
     }
 

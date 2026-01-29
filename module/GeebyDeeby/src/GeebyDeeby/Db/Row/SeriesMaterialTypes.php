@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\MaterialTypeEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesMaterialTypeEntityInterface;
 
 /**
@@ -50,5 +52,52 @@ class SeriesMaterialTypes extends TableAwareGateway implements SeriesMaterialTyp
     public function __construct($adapter)
     {
         parent::__construct(['Series_ID', 'Material_Type_ID'], 'Series_Material_Types', $adapter);
+    }
+
+    /**
+     * Get associated series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface
+    {
+        return $this->Series_ID ? $this->getTableManager()->get('series')->getByPrimaryKey($this->Series_ID) : null;
+    }
+
+    /**
+     * Set associated series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static
+    {
+        $this->Series_ID = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
+        return $this;
+    }
+
+    /**
+     * Get associated material type.
+     *
+     * @return MaterialTypeEntityInterface
+     */
+    public function getMaterialType(): MaterialTypeEntityInterface
+    {
+        return $this->getTableManager()->get('materialtype')->getByPrimaryKey($this->Material_Type_ID);
+    }
+
+    /**
+     * Set associated material type.
+     *
+     * @param int|MaterialTypeEntityInterface $materialType Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setMaterialType(int|MaterialTypeEntityInterface $materialType): static
+    {
+        $this->Material_Type_ID = $materialType instanceof MaterialTypeEntityInterface
+            ? $materialType->getId() : $materialType;
+        return $this;
     }
 }

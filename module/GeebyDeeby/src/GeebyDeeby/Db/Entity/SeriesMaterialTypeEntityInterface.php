@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface SeriesMaterialTypeEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface;
+
+    /**
+     * Set associated series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static;
+
+    /**
+     * Get associated material type.
+     *
+     * @return MaterialTypeEntityInterface
+     */
+    public function getMaterialType(): MaterialTypeEntityInterface;
+
+    /**
+     * Set associated material type.
+     *
+     * @param int|MaterialTypeEntityInterface $materialType Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setMaterialType(int|MaterialTypeEntityInterface $materialType): static;
 }

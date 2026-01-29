@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\SeriesMaterialTypeService;
 
 /**
  * Material type controller
@@ -57,7 +58,7 @@ class MaterialTypeController extends AbstractBase
         $view = $this->createViewModel(
             ['materialType' => $entity->toArray()]
         );
-        $view->series = $this->getDbTable('seriesmaterialtypes')
+        $view->series = $this->getDbService(SeriesMaterialTypeService::class)
             ->getSeriesForMaterialType($id);
         return $view;
     }
@@ -72,7 +73,7 @@ class MaterialTypeController extends AbstractBase
         return $this->createViewModel(
             [
                 'materialTypes' =>
-                    $this->getDbTable('seriesmaterialtypes')->getMaterials(),
+                    $this->getDbService(SeriesMaterialTypeService::class)->getMaterialTypesForSeries(),
             ]
         );
     }
