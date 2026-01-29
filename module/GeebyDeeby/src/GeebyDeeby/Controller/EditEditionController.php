@@ -36,6 +36,7 @@ use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
+use GeebyDeeby\Db\Service\EditionsOclcNumberService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
@@ -199,7 +200,7 @@ class EditEditionController extends AbstractBase
             $view->images = $this->getDbTable('editionsimages')
                 ->getImagesForEdition($editionId);
             $view->ISBNs = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($editionId);
-            $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
+            $view->oclcNumbers = $this->getDbService(EditionsOclcNumberService::class)
                 ->getOCLCNumbersForEdition($editionId);
             $view->editionPlatforms = $this->getDbTable('editionsplatforms')
                 ->getPlatformsForEdition($editionId);
@@ -773,28 +774,28 @@ class EditEditionController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $table = $this->getDbTable('editionsoclcnumbers');
-            $row = $table->createRow();
-            $row->Edition_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->OCLC_Number = $this->params()->fromPost('oclc_number');
-            if (empty($row->OCLC_Number)) {
+            $service = $this->getDbService(EditionsOclcNumberService::class);
+            $note = $this->params()->fromPost('note_id');
+            $entity = $service->createEntity()
+                ->setEdition($this->params()->fromRoute('id'))
+                ->setNote(empty($note) ? null : (int)$note)
+                ->setOclcNumber(trim($this->params()->fromPost('oclc_number')));
+            if (!$entity->getOclcNumber()) {
                 return $this->jsonDie('OCLC number must not be empty.');
             }
-            $table->insert($row->toArray());
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsoclcnumbers',
-                'Edition_ID',
-                'Sequence_ID',
+                EditionsOclcNumberService::class,
+                null,
+                null,
                 'oclcNumbers',
                 'getOCLCNumbersForEdition',
-                'geeby-deeby/edit-edition/oclc-number-list.phtml'
+                'geeby-deeby/edit-edition/oclc-number-list.phtml',
+                retrieveLinkMethod: 'getByPrimaryKey',
+                invertRetrieveLinkParams: true
             );
         }
     }

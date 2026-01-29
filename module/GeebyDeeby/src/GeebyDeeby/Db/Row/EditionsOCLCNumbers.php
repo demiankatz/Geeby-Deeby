@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsOclcNumberEntityInterface;
+use GeebyDeeby\Db\Entity\NoteEntityInterface;
 
 /**
  * Row Definition for Editions_OCLC_Numbers
@@ -50,5 +52,86 @@ class EditionsOCLCNumbers extends TableAwareGateway implements EditionsOclcNumbe
     public function __construct($adapter)
     {
         parent::__construct('Sequence_ID', 'Editions_OCLC_Numbers', $adapter);
+    }
+
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->Sequence_ID ?? null;
+    }
+
+    /**
+     * Get associated edition.
+     *
+     * @return EditionEntityInterface
+     */
+    public function getEdition(): EditionEntityInterface
+    {
+        return $this->getTableManager()->get('edition')->getByPrimaryKey($this->Edition_ID);
+    }
+
+    /**
+     * Set associated edition.
+     *
+     * @param int|EditionEntityInterface $edition Associated edition entity or ID
+     *
+     * @return static
+     */
+    public function setEdition(int|EditionEntityInterface $edition): static
+    {
+        $this->Edition_ID = $edition instanceof EditionEntityInterface ? $edition->getId() : $edition;
+        return $this;
+    }
+
+    /**
+     * Get the value of the OCLC number.
+     *
+     * @return ?string
+     */
+    public function getOclcNumber(): ?string
+    {
+        return $this->OCLC_Number;
+    }
+
+    /**
+     * Set the value of the OCLC number.
+     *
+     * @param ?string $oclcNumber New OCLC number
+     *
+     * @return static
+     */
+    public function setOclcNumber(?string $oclcNumber): static
+    {
+        $this->OCLC_Number = $oclcNumber;
+        return $this;
+    }
+
+    /**
+     * Get associated note (if any).
+     *
+     * @return ?NoteEntityInterface
+     */
+    public function getNote(): ?NoteEntityInterface
+    {
+        return $this->Note_ID
+            ? $this->getTableManager()->get('note')->getByPrimaryKey($this->Note_ID)
+            : null;
+    }
+
+    /**
+     * Set associated note (if any).
+     *
+     * @param int|NoteEntityInterface|null $note Associated note entity or ID (null for none)
+     *
+     * @return static
+     */
+    public function setNote(int|NoteEntityInterface|null $note): static
+    {
+        $this->Note_ID = $note instanceof NoteEntityInterface ? $note->getId() : $note;
+        return $this;
     }
 }
