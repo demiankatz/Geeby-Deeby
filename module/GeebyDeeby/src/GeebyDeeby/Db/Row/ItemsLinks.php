@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsLinkEntityInterface;
+use GeebyDeeby\Db\Entity\LinkEntityInterface;
 
 /**
  * Row Definition for Items_Links
@@ -50,5 +52,51 @@ class ItemsLinks extends TableAwareGateway implements ItemsLinkEntityInterface
     public function __construct($adapter)
     {
         parent::__construct(['Item_ID', 'Link_ID'], 'Items_Links', $adapter);
+    }
+
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Item_ID);
+    }
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static
+    {
+        $this->Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
+    }
+
+    /**
+     * Get associated link.
+     *
+     * @return LinkEntityInterface
+     */
+    public function getLink(): LinkEntityInterface
+    {
+        return $this->getTableManager()->get('link')->getByPrimaryKey($this->Link_ID);
+    }
+
+    /**
+     * Set associated link.
+     *
+     * @param int|LinkEntityInterface $link Associated link entity or ID
+     *
+     * @return static
+     */
+    public function setLink(int|LinkEntityInterface $link): static
+    {
+        $this->Link_ID = $link instanceof LinkEntityInterface ? $link->getId() : $link;
+        return $this;
     }
 }

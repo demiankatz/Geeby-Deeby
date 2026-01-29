@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface SeriesLinkEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface;
+
+    /**
+     * Set associated series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static;
+
+    /**
+     * Get associated Link.
+     *
+     * @return LinkEntityInterface
+     */
+    public function getLink(): LinkEntityInterface;
+
+    /**
+     * Set associated Link.
+     *
+     * @param int|LinkEntityInterface $Link Associated Link entity or ID
+     *
+     * @return static
+     */
+    public function setLink(int|LinkEntityInterface $Link): static;
 }

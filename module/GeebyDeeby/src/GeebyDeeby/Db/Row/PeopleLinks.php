@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\LinkEntityInterface;
 use GeebyDeeby\Db\Entity\PeopleLinkEntityInterface;
+use GeebyDeeby\Db\Entity\PersonEntityInterface;
 
 /**
  * Row Definition for People_Links
@@ -50,5 +52,51 @@ class PeopleLinks extends TableAwareGateway implements PeopleLinkEntityInterface
     public function __construct($adapter)
     {
         parent::__construct(['Person_ID', 'Link_ID'], 'People_Links', $adapter);
+    }
+
+    /**
+     * Get associated person.
+     *
+     * @return PersonEntityInterface
+     */
+    public function getPerson(): PersonEntityInterface
+    {
+        return $this->getTableManager()->get('person')->getByPrimaryKey($this->Person_ID);
+    }
+
+    /**
+     * Set associated person.
+     *
+     * @param int|PersonEntityInterface $person Associated person entity or ID
+     *
+     * @return static
+     */
+    public function setPerson(int|PersonEntityInterface $person): static
+    {
+        $this->Person_ID = $person instanceof PersonEntityInterface ? $person->getId() : $person;
+        return $this;
+    }
+
+    /**
+     * Get associated link.
+     *
+     * @return LinkEntityInterface
+     */
+    public function getLink(): LinkEntityInterface
+    {
+        return $this->getTableManager()->get('link')->getByPrimaryKey($this->Link_ID);
+    }
+
+    /**
+     * Set associated link.
+     *
+     * @param int|LinkEntityInterface $link Associated link entity or ID
+     *
+     * @return static
+     */
+    public function setLink(int|LinkEntityInterface $link): static
+    {
+        $this->Link_ID = $link instanceof LinkEntityInterface ? $link->getId() : $link;
+        return $this;
     }
 }

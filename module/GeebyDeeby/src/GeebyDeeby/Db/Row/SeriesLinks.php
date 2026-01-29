@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\LinkEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesLinkEntityInterface;
 
 /**
@@ -50,5 +52,51 @@ class SeriesLinks extends TableAwareGateway implements SeriesLinkEntityInterface
     public function __construct($adapter)
     {
         parent::__construct(['Series_ID', 'Link_ID'], 'Series_Links', $adapter);
+    }
+
+    /**
+     * Get associated series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface
+    {
+        return $this->getTableManager()->get('series')->getByPrimaryKey($this->Series_ID);
+    }
+
+    /**
+     * Set associated series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static
+    {
+        $this->Series_ID = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
+        return $this;
+    }
+
+    /**
+     * Get associated link.
+     *
+     * @return LinkEntityInterface
+     */
+    public function getLink(): LinkEntityInterface
+    {
+        return $this->getTableManager()->get('link')->getByPrimaryKey($this->Link_ID);
+    }
+
+    /**
+     * Set associated link.
+     *
+     * @param int|LinkEntityInterface $link Associated link entity or ID
+     *
+     * @return static
+     */
+    public function setLink(int|LinkEntityInterface $link): static
+    {
+        $this->Link_ID = $link instanceof LinkEntityInterface ? $link->getId() : $link;
+        return $this;
     }
 }

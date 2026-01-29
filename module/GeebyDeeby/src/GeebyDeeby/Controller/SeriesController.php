@@ -37,6 +37,7 @@ use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesBibliographyService;
 use GeebyDeeby\Db\Service\SeriesCategoryService;
 use GeebyDeeby\Db\Service\SeriesFileService;
+use GeebyDeeby\Db\Service\SeriesLinkService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
@@ -497,7 +498,7 @@ class SeriesController extends AbstractBase
         $view->files = $this->getDbService(SeriesFileService::class)->getFilesForSeries($id);
         $view->bibliography = $this->getDbService(SeriesBibliographyService::class)
             ->getItemsDescribingSeries($id);
-        $view->links = $this->getDbTable('serieslinks')->getLinksForSeries($id);
+        $view->links = $this->getDbService(SeriesLinkService::class)->getLinksForSeries($id);
         $reviews = $this->getDbTable('seriesreviews');
         $view->comments = $reviews->getReviewsForSeries($id);
         $user = $this->getCurrentUser();

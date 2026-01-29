@@ -29,8 +29,11 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemsLinkService;
 use GeebyDeeby\Db\Service\LinkService;
 use GeebyDeeby\Db\Service\LinkTypeService;
+use GeebyDeeby\Db\Service\PeopleLinkService;
+use GeebyDeeby\Db\Service\SeriesLinkService;
 
 /**
  * Edit link controller
@@ -84,9 +87,9 @@ class EditLinkController extends AbstractBase
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $linkId = $view->affectedEntity->getId();
-            $view->itemsLinks = $this->getDbTable('itemslinks')->getItemsForLink($linkId);
-            $view->peopleLinks = $this->getDbTable('peoplelinks')->getPeopleForLink($linkId);
-            $view->seriesLinks = $this->getDbTable('serieslinks')->getSeriesForLink($linkId);
+            $view->itemsLinks = $this->getDbService(ItemsLinkService::class)->getItemsForLink($linkId);
+            $view->peopleLinks = $this->getDbService(PeopleLinkService::class)->getPeopleForLink($linkId);
+            $view->seriesLinks = $this->getDbService(SeriesLinkService::class)->getSeriesForLink($linkId);
             $view->setTemplate('geeby-deeby/edit-link/edit-full');
         }
         return $view;
@@ -126,12 +129,13 @@ class EditLinkController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemslinks',
-            'Link_ID',
-            'Item_ID',
+            ItemsLinkService::class,
+            'setLink',
+            'setItem',
             'itemsLinks',
             'getItemsForLink',
-            'geeby-deeby/edit-link/item-list.phtml'
+            'geeby-deeby/edit-link/item-list.phtml',
+            retrieveLinkMethod: 'getForLinkAndItem'
         );
     }
 
@@ -143,12 +147,13 @@ class EditLinkController extends AbstractBase
     public function personAction()
     {
         return $this->handleGenericLink(
-            'peoplelinks',
-            'Link_ID',
-            'Person_ID',
+            PeopleLinkService::class,
+            'setLink',
+            'setPerson',
             'peopleLinks',
             'getPeopleForLink',
-            'geeby-deeby/edit-link/person-list.phtml'
+            'geeby-deeby/edit-link/person-list.phtml',
+            retrieveLinkMethod: 'getForLinkAndPerson'
         );
     }
 
@@ -160,12 +165,13 @@ class EditLinkController extends AbstractBase
     public function seriesAction()
     {
         return $this->handleGenericLink(
-            'serieslinks',
-            'Link_ID',
-            'Series_ID',
+            SeriesLinkService::class,
+            'setLink',
+            'setSeries',
             'seriesLinks',
             'getSeriesForLink',
-            'geeby-deeby/edit-link/series-list.phtml'
+            'geeby-deeby/edit-link/series-list.phtml',
+            retrieveLinkMethod: 'getForLinkAndSeries'
         );
     }
 }

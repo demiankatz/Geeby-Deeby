@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsLinkEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface;
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get associated Link.
+     *
+     * @return LinkEntityInterface
+     */
+    public function getLink(): LinkEntityInterface;
+
+    /**
+     * Set associated Link.
+     *
+     * @param int|LinkEntityInterface $Link Associated Link entity or ID
+     *
+     * @return static
+     */
+    public function setLink(int|LinkEntityInterface $Link): static;
 }
