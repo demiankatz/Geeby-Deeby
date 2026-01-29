@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsFullTextEntityInterface;
+use GeebyDeeby\Db\Entity\FullTextSourceEntityInterface;
 
 /**
  * Row Definition for Editions_Full_Text
@@ -50,5 +52,84 @@ class EditionsFullText extends TableAwareGateway implements EditionsFullTextEnti
     public function __construct($adapter)
     {
         parent::__construct('Sequence_ID', 'Editions_Full_Text', $adapter);
+    }
+
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->Sequence_ID ?? null;
+    }
+
+    /**
+     * Get associated edition.
+     *
+     * @return EditionEntityInterface
+     */
+    public function getEdition(): EditionEntityInterface
+    {
+        return $this->getTableManager()->get('edition')->getByPrimaryKey($this->Edition_ID);
+    }
+
+    /**
+     * Set associated edition.
+     *
+     * @param int|EditionEntityInterface $edition Associated edition entity or ID
+     *
+     * @return static
+     */
+    public function setEdition(int|EditionEntityInterface $edition): static
+    {
+        $this->Edition_ID = $edition instanceof EditionEntityInterface ? $edition->getId() : $edition;
+        return $this;
+    }
+
+    /**
+     * Get associated full text source id.
+     *
+     * @return FullTextSourceEntityInterface
+     */
+    public function getFullTextSource(): FullTextSourceEntityInterface
+    {
+        return $this->getTableManager()->get('fulltextsource')->getByPrimaryKey($this->Full_Text_Source_ID);
+    }
+
+    /**
+     * Set associated full text source id.
+     *
+     * @param int|FullTextSourceEntityInterface $fts Associated full text source entity or ID
+     *
+     * @return static
+     */
+    public function setFullTextSource(int|FullTextSourceEntityInterface $fts): static
+    {
+        $this->Full_Text_Source_ID = $fts instanceof FullTextSourceEntityInterface ? $fts->getId() : $fts;
+        return $this;
+    }
+
+    /**
+     * Get the URL of the full text resource.
+     *
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->Full_Text_URL;
+    }
+
+    /**
+     * Set the URL of the full text resource.
+     *
+     * @param string $url New url.
+     *
+     * @return static
+     */
+    public function setUrl(string $url): static
+    {
+        $this->Full_Text_URL = $url;
+        return $this;
     }
 }

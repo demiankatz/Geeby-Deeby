@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\CollectionService;
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -318,7 +319,7 @@ class ItemController extends AbstractBase
             ->getProductCodesForItem($id);
         $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
             ->getOCLCNumbersForItem($id);
-        $view->fullText = $this->getDbTable('editionsfulltext')
+        $view->fullText = $this->getDbService(EditionsFullTextService::class)
             ->getFullTextForItem($id);
         $this->addFullTextAttributesToView($view);
     }
@@ -531,7 +532,7 @@ class ItemController extends AbstractBase
         $source = empty($rawSource) ? null : $rawSource;
         $view = $this->createViewModel(compact('fuzzy', 'source'));
         $view->sources = $this->getDbService(FullTextSourceService::class)->getList();
-        $view->fulltext = $this->getDbTable('editionsfulltext')
+        $view->fulltext = $this->getDbService(EditionsFullTextService::class)
             ->getItemsWithFullText(null, $fuzzy, $source);
         return $view;
     }

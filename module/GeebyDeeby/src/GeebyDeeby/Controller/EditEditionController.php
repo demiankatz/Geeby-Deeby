@@ -29,10 +29,12 @@
 
 namespace GeebyDeeby\Controller;
 
+use Exception;
 use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
+use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -207,7 +209,7 @@ class EditEditionController extends AbstractBase
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
                 ->getDatesForEdition($editionId);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
-            $view->fullText = $this->getDbTable('editionsfulltext')
+            $view->fullText = $this->getDbService(EditionsFullTextService::class)
                 ->getFullTextForEdition($editionId);
             $view->fullTextSources = $this->getDbService(FullTextSourceService::class)->getList();
             if (is_object($view->affectedEntity)) {
@@ -628,13 +630,15 @@ class EditEditionController extends AbstractBase
     protected function modifyFullText()
     {
         $rowId = $this->params()->fromRoute('extra');
-        $table = $this->getDbTable('editionsfulltext');
+        $service = $this->getDbService(EditionsFullTextService::class);
+        $entity = $service->getByPrimaryKey($rowId);
         if ($this->getRequest()->isPost()) {
-            $fields = [
-                'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
-                'Full_Text_URL' => trim($this->params()->fromPost('url')),
-            ];
-            $table->update($fields, ['Sequence_ID' => $rowId]);
+            $entity->setFullTextSource($this->params()->fromPost('source_id'))
+                ->setUrl(trim($this->params()->fromPost('url')));
+            if (!$entity->getUrl()) {
+                return $this->jsonDie('URL must not be empty.');
+            }
+            $service->persistEntity($entity);
             if ($attribs = $this->params()->fromPost('attribs')) {
                 $this->saveFullTextAttributes($rowId, $attribs);
             }
@@ -642,9 +646,7 @@ class EditEditionController extends AbstractBase
         }
         $view = $this->createViewModel();
         $view->fullTextSources = $this->getDbService(FullTextSourceService::class)->getList();
-        foreach ($table->select(['Sequence_ID' => $rowId]) as $current) {
-            $view->row = $current;
-        }
+        $view->row = $entity->toArray();
         $view->attributes = $this->getDbService(EditionsFullTextAttributeService::class)->getList();
         $attributeValues = [];
         $values = $this->getDbTable('editionsfulltextattributesvalues')
@@ -685,28 +687,30 @@ class EditEditionController extends AbstractBase
             return $this->modifyFullText();
         }
 
-        $table = $this->getDbTable('editionsfulltext');
+        $service = $this->getDbService(EditionsFullTextService::class);
         if ($this->getRequest()->isPost()) {
-            $insert = [
-                'Full_Text_Source_ID' => $this->params()->fromPost('source_id'),
-                'Edition_ID' => $this->params()->fromRoute('id'),
-                'Full_Text_URL' => trim($this->params()->fromPost('url')),
-            ];
-            if (empty($insert['Full_Text_URL'])) {
+            $entity = $service->createEntity()
+                ->setFullTextSource($this->params()->fromPost('source_id'))
+                ->setEdition($this->params()->fromRoute('id'))
+                ->setUrl(trim($this->params()->fromPost('url')));
+            if (!$entity->getUrl()) {
                 return $this->jsonDie('URL must not be empty.');
             }
-            $table->insert($insert);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         } elseif ($this->getRequest()->isDelete()) {
             $delete = $this->params()->fromRoute('extra');
-            $table->delete(['Sequence_ID' => $delete]);
+            try {
+                $service->deleteEntity($service->getByPrimaryKey($delete));
+            } catch (Exception $e) {
+                return $this->jsonDie($e->getMessage());
+            }
             return $this->jsonReportSuccess();
         }
         // Default behavior: display list:
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->fullText = $this->getDbTable('editionsfulltext')
-            ->getFullTextForEdition($primary);
+        $view->fullText = $service->getFullTextForEdition($primary);
         $view->setTemplate('geeby-deeby/edit-edition/fulltext-list.phtml');
         $view->setTerminal(true);
         return $view;
