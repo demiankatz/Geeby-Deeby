@@ -33,11 +33,14 @@ use GeebyDeeby\Db\Service\CitationService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
+use GeebyDeeby\Db\Service\ItemsBibliographyService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\PeopleBibliographyService;
 use GeebyDeeby\Db\Service\RoleService;
+use GeebyDeeby\Db\Service\SeriesBibliographyService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
@@ -148,11 +151,11 @@ class EditItemController extends AbstractBase
                 ->getCreatorsForItem($itemId);
             $view->credits = $this->getDbTable('editionscredits')
                 ->getCreditsForItem($itemId, true);
-            $view->itemsBib = $this->getDbTable('itemsbibliography')
+            $view->itemsBib = $this->getDbService(ItemsBibliographyService::class)
                 ->getItemsDescribedByItem($itemId);
-            $view->peopleBib = $this->getDbTable('peoplebibliography')
+            $view->peopleBib = $this->getDbService(PeopleBibliographyService::class)
                 ->getPeopleDescribedByItem($itemId);
-            $view->seriesBib = $this->getDbTable('seriesbibliography')
+            $view->seriesBib = $this->getDbService(SeriesBibliographyService::class)
                 ->getSeriesDescribedByItem($itemId);
             $view->item_list = $this->getDbTable('itemsincollections')
                 ->getItemsForCollection($itemId);
@@ -211,12 +214,13 @@ class EditItemController extends AbstractBase
     public function aboutitemAction()
     {
         return $this->handleGenericLink(
-            'itemsbibliography',
-            'Bib_Item_ID',
-            'Item_ID',
+            ItemsBibliographyService::class,
+            'setBibliographyItem',
+            'setItem',
             'itemsBib',
             'getItemsDescribedByItem',
-            'geeby-deeby/edit-item/item-ref-list.phtml'
+            'geeby-deeby/edit-item/item-ref-list.phtml',
+            retrieveLinkMethod: 'getByBibliographyItemAndItem',
         );
     }
 
@@ -228,12 +232,13 @@ class EditItemController extends AbstractBase
     public function aboutseriesAction()
     {
         return $this->handleGenericLink(
-            'seriesbibliography',
-            'Item_ID',
-            'Series_ID',
+            SeriesBibliographyService::class,
+            'setItem',
+            'setSeries',
             'seriesBib',
             'getSeriesDescribedByItem',
-            'geeby-deeby/edit-item/series-ref-list.phtml'
+            'geeby-deeby/edit-item/series-ref-list.phtml',
+            retrieveLinkMethod: 'getByItemAndSeries'
         );
     }
 
@@ -245,12 +250,13 @@ class EditItemController extends AbstractBase
     public function aboutpersonAction()
     {
         return $this->handleGenericLink(
-            'peoplebibliography',
-            'Item_ID',
-            'Person_ID',
+            PeopleBibliographyService::class,
+            'setItem',
+            'setPerson',
             'peopleBib',
             'getPeopleDescribedByItem',
-            'geeby-deeby/edit-item/person-ref-list.phtml'
+            'geeby-deeby/edit-item/person-ref-list.phtml',
+            retrieveLinkMethod: 'getByItemAndPerson'
         );
     }
 

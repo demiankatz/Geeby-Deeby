@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\PeopleBibliographyEntityInterface;
+use GeebyDeeby\Db\Entity\PersonEntityInterface;
 
 /**
  * Row Definition for People_Bibliography
@@ -50,5 +52,51 @@ class PeopleBibliography extends TableAwareGateway implements PeopleBibliography
     public function __construct($adapter)
     {
         parent::__construct(['Person_ID', 'Item_ID'], 'People_Bibliography', $adapter);
+    }
+
+    /**
+     * Get subject person.
+     *
+     * @return PersonEntityInterface
+     */
+    public function getPerson(): PersonEntityInterface
+    {
+        return $this->getTableManager()->get('person')->getByPrimaryKey($this->Person_ID);
+    }
+
+    /**
+     * Set subject person.
+     *
+     * @param int|PersonEntityInterface $person Associated person entity or ID
+     *
+     * @return static
+     */
+    public function setPerson(int|PersonEntityInterface $person): static
+    {
+        $this->Person_ID = $person instanceof PersonEntityInterface ? $person->getId() : $person;
+        return $this;
+    }
+
+    /**
+     * Get item about the subject person.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Item_ID);
+    }
+
+    /**
+     * Set item about the subject person.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static
+    {
+        $this->Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
     }
 }

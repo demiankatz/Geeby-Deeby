@@ -35,6 +35,7 @@ use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
+use GeebyDeeby\Db\Service\ItemsBibliographyService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsFileService;
 use GeebyDeeby\Db\Service\ItemsTagService;
@@ -361,7 +362,7 @@ class ItemController extends AbstractBase
         $view->owners = $collections->getForItem($id, 'have');
         $view->sellers = $collections->getForItem($id, 'extra');
         $view->files = $this->getDbService(ItemsFileService::class)->getFilesForItem($id);
-        $view->bibliography = $this->getDbTable('itemsbibliography')
+        $view->bibliography = $this->getDbService(ItemsBibliographyService::class)
             ->getItemsDescribingItem($id);
         $view->links = $this->getDbTable('itemslinks')->getLinksForItem($id);
         $view->editions = $this->getDbService(EditionService::class)->getEditionsForItem($id, true);

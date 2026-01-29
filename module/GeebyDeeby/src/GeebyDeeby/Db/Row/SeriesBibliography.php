@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesBibliographyEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 
 /**
  * Row Definition for Series_Bibliography
@@ -50,5 +52,51 @@ class SeriesBibliography extends TableAwareGateway implements SeriesBibliography
     public function __construct($adapter)
     {
         parent::__construct(['Series_ID', 'Item_ID'], 'Series_Bibliography', $adapter);
+    }
+
+    /**
+     * Get subject series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface
+    {
+        return $this->getTableManager()->get('series')->getByPrimaryKey($this->Series_ID);
+    }
+
+    /**
+     * Set subject series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static
+    {
+        $this->Series_ID = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
+        return $this;
+    }
+
+    /**
+     * Get item about the subject series.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Item_ID);
+    }
+
+    /**
+     * Set item about the subject series.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static
+    {
+        $this->Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
     }
 }

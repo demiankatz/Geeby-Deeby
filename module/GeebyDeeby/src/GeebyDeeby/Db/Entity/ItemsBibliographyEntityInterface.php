@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsBibliographyEntityInterface extends EntityInterface
 {
+    /**
+     * Get the subject item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface;
+
+    /**
+     * Set the subject item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get item about the subject item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getBibliographyItem(): ItemEntityInterface;
+
+    /**
+     * Set item about the subject item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setBibliographyItem(int|ItemEntityInterface $item): static;
 }

@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsBibliographyEntityInterface;
 
 /**
@@ -50,5 +51,51 @@ class ItemsBibliography extends TableAwareGateway implements ItemsBibliographyEn
     public function __construct($adapter)
     {
         parent::__construct(['Item_ID', 'Bib_Item_ID'], 'Items_Bibliography', $adapter);
+    }
+
+    /**
+     * Get the subject item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Item_ID);
+    }
+
+    /**
+     * Set the subject item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static
+    {
+        $this->Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
+    }
+
+    /**
+     * Get item about the subject item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getBibliographyItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Bib_Item_ID);
+    }
+
+    /**
+     * Set item about the subject item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setBibliographyItem(int|ItemEntityInterface $item): static
+    {
+        $this->Bib_Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
     }
 }
