@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CitationService;
+use GeebyDeeby\Db\Service\EditionsCreditService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\ItemsAdaptationService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -146,8 +147,7 @@ class EditItemController extends AbstractBase
             $view->adaptedFrom = $this->getDbService(ItemsAdaptationService::class)->getAdaptedInto($itemId);
             $view->roles = $this->getDbService(RoleService::class)->getList();
             $view->creators = $this->getDbService(ItemsCreatorService::class)->getCreatorsForItem($itemId);
-            $view->credits = $this->getDbTable('editionscredits')
-                ->getCreditsForItem($itemId, true);
+            $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForItem($itemId, true);
             $view->itemsBib = $this->getDbService(ItemsBibliographyService::class)
                 ->getItemsDescribedByItem($itemId);
             $view->peopleBib = $this->getDbService(PeopleBibliographyService::class)
@@ -504,10 +504,9 @@ class EditItemController extends AbstractBase
             return $this->deleteCredit();
         }
         // Default action: display list:
-        $table = $this->getDbTable('editionscredits');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->credits = $table->getCreditsForItem($primary, true);
+        $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForItem($primary, true);
         $view->setTemplate('geeby-deeby/edit-item/credits.phtml');
         $view->setTerminal(true);
         return $view;
@@ -520,18 +519,21 @@ class EditItemController extends AbstractBase
      */
     protected function addCredit()
     {
-        $table = $this->getDbTable('editionscredits');
+        $editionService = $this->getDbService(EditionService::class);
+        $creditService = $this->getDbService(EditionsCreditService::class);
         $item = $this->params()->fromRoute('id');
-        $row = [
-            'Person_ID' => $this->params()->fromPost('person_id'),
-            'Role_ID' => $this->params()->fromPost('role_id'),
-            'Position' => $this->params()->fromPost('pos'),
-            'Note_ID' => $this->params()->fromPost('note_id'),
-        ];
-        if (empty($row['Note_ID'])) {
-            $row['Note_ID'] = null;
+        $note = $this->params()->fromPost('note_id');
+        $editions = $editionService->getEditionsForItem($item);
+        foreach ($editions as $current) {
+            $editionId = $current['Edition_ID'];
+            $credit = $creditService->createEntity()
+                ->setEdition($editionId)
+                ->setPerson((int)$this->params()->fromPost('person_id'))
+                ->setRole((int)$this->params()->fromPost('role_id'))
+                ->setPosition((int)$this->params()->fromPost('pos'))
+                ->setNote($note ? (int)$note : null);
+            $creditService->persistEntity($credit);
         }
-        $table->insertForItem($item, $row);
         return $this->jsonReportSuccess();
     }
 
@@ -542,11 +544,15 @@ class EditItemController extends AbstractBase
      */
     protected function deleteCredit()
     {
+        $editionService = $this->getDbService(EditionService::class);
+        $creditService = $this->getDbService(EditionsCreditService::class);
         [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
-        $this->getDbTable('editionscredits')->deleteForItem(
-            $this->params()->fromRoute('id'),
-            ['Person_ID' => $person, 'Role_ID' => $role]
-        );
+        $editions = $editionService->getEditionsForItem($this->params()->fromRoute('id'));
+        foreach ($editions as $current) {
+            if ($credit = $creditService->getByEditionAndPersonAndRole($current['Edition_ID'], $person, $role)) {
+                $creditService->deleteEntity($credit);
+            }
+        }
         return $this->jsonReportSuccess();
     }
 
@@ -557,18 +563,24 @@ class EditItemController extends AbstractBase
      */
     public function creditorderAction()
     {
-        if ($this->getRequest()->isPost()) {
-            $this->getDbTable('editionscredits')->updateForItem(
-                $this->params()->fromRoute('id'),
-                ['Position' => $this->params()->fromPost('pos')],
-                [
-                    'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id'),
-                ]
-            );
-            return $this->jsonReportSuccess();
+        if (!$this->getRequest()->isPost()) {
+            return $this->jsonDie('Unexpected method');
         }
-        return $this->jsonDie('Unexpected method');
+        $editionService = $this->getDbService(EditionService::class);
+        $creditService = $this->getDbService(EditionsCreditService::class);
+        $editions = $editionService->getEditionsForItem($this->params()->fromRoute('id'));
+        foreach ($editions as $current) {
+            $credit = $creditService->getByEditionAndPersonAndRole(
+                $current['Edition_ID'],
+                $this->params()->fromPost('person_id'),
+                $this->params()->fromPost('role_id')
+            );
+            if ($credit) {
+                $credit->setPosition((int)$this->params()->fromPost('pos'));
+                $creditService->persistEntity($credit);
+            }
+        }
+        return $this->jsonReportSuccess();
     }
 
     /**

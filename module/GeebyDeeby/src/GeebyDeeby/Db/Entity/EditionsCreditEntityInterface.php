@@ -40,4 +40,83 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface EditionsCreditEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated edition.
+     *
+     * @return EditionEntityInterface
+     */
+    public function getEdition(): EditionEntityInterface;
+
+    /**
+     * Set associated edition.
+     *
+     * @param int|EditionEntityInterface $edition Associated edition entity or ID
+     *
+     * @return static
+     */
+    public function setEdition(int|EditionEntityInterface $edition): static;
+
+    /**
+     * Get associated person.
+     *
+     * @return PersonEntityInterface
+     */
+    public function getPerson(): PersonEntityInterface;
+
+    /**
+     * Set associated person.
+     *
+     * @param int|PersonEntityInterface $person Associated person entity or ID
+     *
+     * @return static
+     */
+    public function setPerson(int|PersonEntityInterface $person): static;
+
+    /**
+     * Get associated role.
+     *
+     * @return RoleEntityInterface
+     */
+    public function getRole(): RoleEntityInterface;
+
+    /**
+     * Set associated role.
+     *
+     * @param int|RoleEntityInterface $role Associated role entity or ID
+     *
+     * @return static
+     */
+    public function setRole(int|RoleEntityInterface $role): static;
+
+    /**
+     * Get position in credits.
+     *
+     * @return ?int
+     */
+    public function getPosition(): ?int;
+
+    /**
+     * Set position in credits.
+     *
+     * @param ?int $position Position in credits
+     *
+     * @return static
+     */
+    public function setPosition(?int $position): static;
+
+    /**
+     * Get associated note (if any).
+     *
+     * @return ?NoteEntityInterface
+     */
+    public function getNote(): ?NoteEntityInterface;
+
+    /**
+     * Set associated note (if any).
+     *
+     * @param int|NoteEntityInterface|null $note Associated note entity or ID (null for none)
+     *
+     * @return static
+     */
+    public function setNote(int|NoteEntityInterface|null $note): static;
 }

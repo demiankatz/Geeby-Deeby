@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use Exception;
 use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
+use GeebyDeeby\Db\Service\EditionsCreditService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributesValueService;
@@ -194,8 +195,7 @@ class EditEditionController extends AbstractBase
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->roles = $this->getDbService(RoleService::class)->getList();
-            $view->credits = $this->getDbTable('editionscredits')
-                ->getCreditsForEdition($editionId);
+            $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForEdition($editionId);
             $view->images = $this->getDbTable('editionsimages')
                 ->getImagesForEdition($editionId);
             $view->ISBNs = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($editionId);
@@ -560,38 +560,35 @@ class EditEditionController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
+        $service = $this->getDbService(EditionsCreditService::class);
         // POST action:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('editionscredits');
-            $row = $table->createRow();
-            $row->Edition_ID = $this->params()->fromRoute('id');
-            $row->Person_ID = $this->params()->fromPost('person_id');
-            $row->Role_ID = $this->params()->fromPost('role_id');
-            $row->Position = $this->params()->fromPost('pos');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
+            $note = $this->params()->fromPost('note_id');
+            $entity = $service->createEntity()
+                ->setEdition((int)$this->params()->fromRoute('id'))
+                ->setPerson((int)$this->params()->fromPost('person_id'))
+                ->setRole((int)$this->params()->fromPost('role_id'))
+                ->setPosition((int)$this->params()->fromPost('pos'))
+                ->setNote($note ? (int)$note : null);
+            try {
+                $service->persistEntity($entity);
+            } catch (Exception $e) {
+                return $this->jsonDie($e->getMessage());
             }
-            $table->insert($row->toArray());
             return $this->jsonReportSuccess();
         }
         // DELETE action:
         if ($this->getRequest()->isDelete()) {
             [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
-            $this->getDbTable('editionscredits')->delete(
-                [
-                    'Edition_ID' => $this->params()->fromRoute('id'),
-                    'Person_ID' => $person,
-                    'Role_ID' => $role,
-                ]
-            );
+            if ($entity = $service->getByEditionAndPersonAndRole($this->params()->fromRoute('id'), $person, $role)) {
+                $service->deleteEntity($entity);
+            }
             return $this->jsonReportSuccess();
         }
         // Default behavior: show list:
-        $table = $this->getDbTable('editionscredits');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->credits = $table->getCreditsForEdition($primary);
+        $view->credits = $service->getCreditsForEdition($primary);
         $view->setTemplate('geeby-deeby/edit-edition/credits.phtml');
         $view->setTerminal(true);
         return $view;
@@ -609,14 +606,16 @@ class EditEditionController extends AbstractBase
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
-            $this->getDbTable('editionscredits')->update(
-                ['Position' => $this->params()->fromPost('pos')],
-                [
-                    'Edition_ID' => $this->params()->fromRoute('id'),
-                    'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id'),
-                ]
+            $service = $this->getDbService(EditionsCreditService::class);
+            $entity = $service->getByEditionAndPersonAndRole(
+                $this->params()->fromRoute('id'),
+                $this->params()->fromPost('person_id'),
+                $this->params()->fromPost('role_id')
             );
+            if ($entity) {
+                $entity->setPosition($this->params()->fromPost('pos'));
+                $service->persistEntity($entity);
+            }
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');

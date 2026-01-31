@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsCreditService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
@@ -316,7 +317,7 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        $view->people = $this->getDbTable('editionscredits')
+        $view->people = $this->getDbService(EditionsCreditService::class)
             ->getPeopleForSeries($view->series['Series_ID']);
         return $view;
     }

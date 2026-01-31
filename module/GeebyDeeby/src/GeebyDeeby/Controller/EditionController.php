@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
+use GeebyDeeby\Db\Service\EditionsCreditService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
@@ -268,8 +269,7 @@ class EditionController extends AbstractBase
         $id = $view->edition['Edition_ID'];
         $view->creators = $this->getDbService(ItemsCreatorService::class)
             ->getCreatorsForItem($view->edition['Item_ID']);
-        $view->credits = $this->getDbTable('editionscredits')
-            ->getCreditsForEdition($id);
+        $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForEdition($id);
         $view->images = $this->getDbTable('editionsimages')
             ->getImagesForEditionOrParentEdition($id);
         $view->platforms = $this->getDbTable('editionsplatforms')

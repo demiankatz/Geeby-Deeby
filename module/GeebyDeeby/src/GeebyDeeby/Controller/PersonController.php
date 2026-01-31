@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsCreditService;
 use GeebyDeeby\Db\Service\ItemsCreatorService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PeopleBibliographyService;
@@ -225,8 +226,7 @@ class PersonController extends AbstractBase
         $view = $this->createViewModel(['person' => $entity->toArray()]);
         $view->sort = $sort;
         $view->citations = $this->getDbService(ItemsCreatorService::class)->getCitationsForPerson($id, $view->sort);
-        $view->credits = $this->getDbTable('editionscredits')
-            ->getCreditsForPerson($id, $view->sort);
+        $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForPerson($id, $view->sort);
         $pseudo = $this->getDbService(PseudonymService::class);
         $view->pseudonyms = $pseudo->getPseudonyms($id);
         $view->realNames = $pseudo->getRealNames($id);

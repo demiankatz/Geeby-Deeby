@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CollectionService;
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
+use GeebyDeeby\Db\Service\EditionsCreditService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
@@ -300,8 +301,7 @@ class ItemController extends AbstractBase
     protected function addEditionRelationships($id, $view)
     {
         $view->creators = $this->getDbService(ItemsCreatorService::class)->getCreatorsForItem($id);
-        $view->credits = $this->getDbTable('editionscredits')
-            ->getCreditsForItem($id);
+        $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForItem($id);
         $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
         $view->series = $this->getDbService(SeriesService::class)->getSeriesForItem($id, true, true);
         $view->platforms = $this->getDbTable('editionsplatforms')
