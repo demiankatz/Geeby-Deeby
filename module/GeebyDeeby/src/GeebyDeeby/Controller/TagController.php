@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\TagsAttributesValueService;
 use GeebyDeeby\Db\Service\TagService;
 use GeebyDeeby\Db\Service\TagsUriService;
 
@@ -162,8 +163,7 @@ class TagController extends AbstractBase
             $extras + ['tag' => $entity->toArray()]
         );
         $view->items = $this->getDbService(ItemsTagService::class)->getItemsForTag($id, $extras['sort'] ?? 'series');
-        $view->tagAttributes = $this->getDbTable('tagsattributesvalues')
-            ->getAttributesForTag($id);
+        $view->tagAttributes = $this->getDbService(TagsAttributesValueService::class)->getAttributesForTag($id);
         $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
             ->getRelationshipsForTag($id);
         $view->uris = $this->getDbService(TagsUriService::class)->getURIsForTag($id);

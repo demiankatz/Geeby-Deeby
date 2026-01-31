@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\PredicateService;
 use GeebyDeeby\Db\Service\TagsAttributeService;
+use GeebyDeeby\Db\Service\TagsAttributesValueService;
 use GeebyDeeby\Db\Service\TagService;
 use GeebyDeeby\Db\Service\TagsRelationshipService;
 use GeebyDeeby\Db\Service\TagsUriService;
@@ -77,19 +78,18 @@ class EditTagController extends AbstractBase
      */
     protected function saveAttributes($tagId, $attribs)
     {
-        $table = $this->getDbTable('tagsattributesvalues');
+        $service = $this->getDbService(TagsAttributesValueService::class);
         // Delete old values:
-        $table->delete(['Tag_ID' => $tagId]);
+        $service->deleteByTag($tagId);
+
         // Save new values:
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
-                $table->insert(
-                    [
-                        'Tag_ID' => $tagId,
-                        'Tags_Attribute_ID' => $id,
-                        'Tags_Attribute_Value' => $val,
-                    ]
-                );
+                $entity = $service->createEntity()
+                    ->setTag($tagId)
+                    ->setAttribute($id)
+                    ->setValue($val);
+                $service->persistEntity($entity);
             }
         }
     }
@@ -126,11 +126,9 @@ class EditTagController extends AbstractBase
         if ($tagId) {
             $view->attributes = $this->getDbService(TagsAttributeService::class)->getList();
             $attributeValues = [];
-            $values = $this->getDbTable('tagsattributesvalues')
-                ->getAttributesForTag($tagId);
+            $values = $this->getDbService(TagsAttributesValueService::class)->getAttributesForTag($tagId);
             foreach ($values as $current) {
-                $attributeValues[$current->Tags_Attribute_ID]
-                    = $current->Tags_Attribute_Value;
+                $attributeValues[$current['Tags_Attribute_ID']] = $current['Tags_Attribute_Value'];
             }
             $view->attributeValues = $attributeValues;
         }

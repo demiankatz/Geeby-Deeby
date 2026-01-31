@@ -40,4 +40,51 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface SeriesAttributesValueEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface;
+
+    /**
+     * Set associated series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static;
+
+    /**
+     * Get associated attribute.
+     *
+     * @return SeriesAttributeEntityInterface
+     */
+    public function getAttribute(): SeriesAttributeEntityInterface;
+
+    /**
+     * Set associated attribute.
+     *
+     * @param int|SeriesAttributeEntityInterface $attribute Associated attribute entity or ID
+     *
+     * @return static
+     */
+    public function setAttribute(int|SeriesAttributeEntityInterface $attribute): static;
+
+    /**
+     * Get the value of the attribute.
+     *
+     * @return string
+     */
+    public function getValue(): string;
+
+    /**
+     * Set the value of the attribute.
+     *
+     * @param string $value New value
+     *
+     * @return static
+     */
+    public function setValue(string $value): static;
 }

@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\TagEntityInterface;
+use GeebyDeeby\Db\Entity\TagsAttributeEntityInterface;
 use GeebyDeeby\Db\Entity\TagsAttributesValueEntityInterface;
 
 /**
@@ -50,5 +52,75 @@ class TagsAttributesValues extends TableAwareGateway implements TagsAttributesVa
     public function __construct($adapter)
     {
         parent::__construct(['Tag_ID', 'Tags_Attribute_ID'], 'Tags_Attributes_Values', $adapter);
+    }
+
+    /**
+     * Get associated tag.
+     *
+     * @return TagEntityInterface
+     */
+    public function getTag(): TagEntityInterface
+    {
+        return $this->getTableManager()->get('tag')->getByPrimaryKey($this->Tag_ID);
+    }
+
+    /**
+     * Set associated tag.
+     *
+     * @param int|TagEntityInterface $tag Associated tag entity or ID
+     *
+     * @return static
+     */
+    public function setTag(int|TagEntityInterface $tag): static
+    {
+        $this->Tag_ID = $tag instanceof TagEntityInterface ? $tag->getId() : $tag;
+        return $this;
+    }
+
+    /**
+     * Get associated attribute.
+     *
+     * @return TagsAttributeEntityInterface
+     */
+    public function getAttribute(): TagsAttributeEntityInterface
+    {
+        return $this->getTableManager()->get('tagsattributes')->getByPrimaryKey($this->Tags_Attribute_ID);
+    }
+
+    /**
+     * Set associated attribute.
+     *
+     * @param int|TagsAttributeEntityInterface $attribute Associated attribute entity or ID
+     *
+     * @return static
+     */
+    public function setAttribute(int|TagsAttributeEntityInterface $attribute): static
+    {
+        $this->Tags_Attribute_ID = $attribute instanceof TagsAttributeEntityInterface
+            ? $attribute->getId() : $attribute;
+        return $this;
+    }
+
+    /**
+     * Get the value of the attribute.
+     *
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->Tags_Attribute_Value;
+    }
+
+    /**
+     * Set the value of the attribute.
+     *
+     * @param string $value New value
+     *
+     * @return static
+     */
+    public function setValue(string $value): static
+    {
+        $this->Tags_Attribute_Value = $value;
+        return $this;
     }
 }

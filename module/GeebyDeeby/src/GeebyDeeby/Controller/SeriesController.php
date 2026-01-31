@@ -35,6 +35,7 @@ use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesAttributesValueService;
 use GeebyDeeby\Db\Service\SeriesBibliographyService;
 use GeebyDeeby\Db\Service\SeriesCategoryService;
 use GeebyDeeby\Db\Service\SeriesFileService;
@@ -72,7 +73,7 @@ class SeriesController extends AbstractBase
         if (!is_object($entity)) {
             return false;
         }
-        $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
+        $extras['seriesAttributes'] = $this->getDbService(SeriesAttributesValueService::class)
             ->getAttributesForSeries($id);
         $extras['relationshipsValues']
             = $this->getDbTable('seriesrelationshipsvalues')

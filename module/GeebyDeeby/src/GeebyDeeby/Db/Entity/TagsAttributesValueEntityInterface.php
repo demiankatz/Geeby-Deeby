@@ -40,4 +40,51 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface TagsAttributesValueEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated tag.
+     *
+     * @return TagEntityInterface
+     */
+    public function getTag(): TagEntityInterface;
+
+    /**
+     * Set associated tag.
+     *
+     * @param int|TagEntityInterface $tag Associated tag entity or ID
+     *
+     * @return static
+     */
+    public function setTag(int|TagEntityInterface $tag): static;
+
+    /**
+     * Get associated attribute.
+     *
+     * @return TagsAttributeEntityInterface
+     */
+    public function getAttribute(): TagsAttributeEntityInterface;
+
+    /**
+     * Set associated attribute.
+     *
+     * @param int|TagsAttributeEntityInterface $attribute Associated attribute entity or ID
+     *
+     * @return static
+     */
+    public function setAttribute(int|TagsAttributeEntityInterface $attribute): static;
+
+    /**
+     * Get the value of the attribute.
+     *
+     * @return string
+     */
+    public function getValue(): string;
+
+    /**
+     * Set the value of the attribute.
+     *
+     * @param string $value New value
+     *
+     * @return static
+     */
+    public function setValue(string $value): static;
 }

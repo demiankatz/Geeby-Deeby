@@ -40,6 +40,7 @@ use GeebyDeeby\Db\Service\PublishersAddressService;
 use GeebyDeeby\Db\Service\PublishersImprintService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesAttributeService;
+use GeebyDeeby\Db\Service\SeriesAttributesValueService;
 use GeebyDeeby\Db\Service\SeriesCategoryService;
 use GeebyDeeby\Db\Service\SeriesMaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
@@ -84,19 +85,17 @@ class EditSeriesController extends AbstractBase
      */
     protected function saveAttributes($seriesId, $attribs)
     {
-        $table = $this->getDbTable('seriesattributesvalues');
+        $service = $this->getDbService(SeriesAttributesValueService::class);
         // Delete old values:
-        $table->delete(['Series_ID' => $seriesId]);
+        $service->deleteBySeries($seriesId);
         // Save new values:
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
-                $table->insert(
-                    [
-                        'Series_ID' => $seriesId,
-                        'Series_Attribute_ID' => $id,
-                        'Series_Attribute_Value' => $val,
-                    ]
-                );
+                $entity = $service->createEntity()
+                    ->setSeries($seriesId)
+                    ->setAttribute($id)
+                    ->setValue($val);
+                $service->persistEntity($entity);
             }
         }
     }
@@ -130,11 +129,9 @@ class EditSeriesController extends AbstractBase
         $view->languages = $this->getDbService(LanguageService::class)->getList();
         $view->attributes = $this->getDbService(SeriesAttributeService::class)->getList();
         $attributeValues = [];
-        $values = $this->getDbTable('seriesattributesvalues')
-            ->getAttributesForSeries($seriesId);
+        $values = $this->getDbService(SeriesAttributesValueService::class)->getAttributesForSeries($seriesId);
         foreach ($values as $current) {
-            $attributeValues[$current->Series_Attribute_ID]
-                = $current->Series_Attribute_Value;
+            $attributeValues[$current['Series_Attribute_ID']] = $current['Series_Attribute_Value'];
         }
         $view->attributeValues = $attributeValues;
 
