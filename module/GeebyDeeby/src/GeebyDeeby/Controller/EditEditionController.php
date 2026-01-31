@@ -34,6 +34,7 @@ use GeebyDeeby\Db\Service\EditionsAttributeService;
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
+use GeebyDeeby\Db\Service\EditionsFullTextAttributesValueService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
@@ -109,19 +110,17 @@ class EditEditionController extends AbstractBase
      */
     protected function saveFullTextAttributes($rowId, $attribs)
     {
-        $table = $this->getDbTable('editionsfulltextattributesvalues');
+        $service = $this->getDbService(EditionsFullTextAttributesValueService::class);
         // Delete old values:
-        $table->delete(['Editions_Full_Text_ID' => $rowId]);
+        $service->deleteByEditionFullText($rowId);
         // Save new values:
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
-                $table->insert(
-                    [
-                        'Editions_Full_Text_ID' => $rowId,
-                        'Editions_Full_Text_Attribute_ID' => $id,
-                        'Editions_Full_Text_Attribute_Value' => $val,
-                    ]
-                );
+                $entity = $service->createEntity()
+                    ->setEditionFullText($rowId)
+                    ->setAttribute($id)
+                    ->setValue($val);
+                $service->persistEntity($entity);
             }
         }
     }
@@ -650,8 +649,8 @@ class EditEditionController extends AbstractBase
         $view->row = $entity->toArray();
         $view->attributes = $this->getDbService(EditionsFullTextAttributeService::class)->getList();
         $attributeValues = [];
-        $values = $this->getDbTable('editionsfulltextattributesvalues')
-            ->getAttributesForFullTextIDs([$rowId]);
+        $values = $this->getDbService(EditionsFullTextAttributesValueService::class)
+            ->getAttributesForFullTextIDs($rowId);
         foreach ($values as $current) {
             $attributeValues[$current->Editions_Full_Text_Attribute_ID]
                 = $current->Editions_Full_Text_Attribute_Value;

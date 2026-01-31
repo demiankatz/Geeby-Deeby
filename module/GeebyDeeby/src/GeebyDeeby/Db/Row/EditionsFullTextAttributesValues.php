@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\EditionsFullTextAttributeEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsFullTextAttributesValueEntityInterface as EFTAVEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsFullTextEntityInterface;
 
 /**
  * Row Definition for Editions_Full_Text_Attributes_Values
@@ -54,5 +56,76 @@ class EditionsFullTextAttributesValues extends TableAwareGateway implements EFTA
             'Editions_Full_Text_Attributes_Values',
             $adapter
         );
+    }
+
+    /**
+     * Get associated edition full text.
+     *
+     * @return EditionsFullTextEntityInterface
+     */
+    public function getEditionFullText(): EditionsFullTextEntityInterface
+    {
+        return $this->getTableManager()->get('editionsfulltext')->getByPrimaryKey($this->Editions_Full_Text_ID);
+    }
+
+    /**
+     * Set associated edition full text.
+     *
+     * @param int|EditionsFullTextEntityInterface $eft Associated edition full text entity or ID
+     *
+     * @return static
+     */
+    public function setEditionFullText(int|EditionsFullTextEntityInterface $eft): static
+    {
+        $this->Editions_Full_Text_ID = $eft instanceof EditionsFullTextEntityInterface ? $eft->getId() : $eft;
+        return $this;
+    }
+
+    /**
+     * Get associated attribute.
+     *
+     * @return EditionsFullTextAttributeEntityInterface
+     */
+    public function getAttribute(): EditionsFullTextAttributeEntityInterface
+    {
+        return $this->getTableManager()->get('editionsfulltextattributes')
+            ->getByPrimaryKey($this->Editions_Full_Text_Attribute_ID);
+    }
+
+    /**
+     * Set associated attribute.
+     *
+     * @param int|EditionsFullTextAttributeEntityInterface $attribute Associated attribute entity or ID
+     *
+     * @return static
+     */
+    public function setAttribute(int|EditionsFullTextAttributeEntityInterface $attribute): static
+    {
+        $this->Editions_Full_Text_Attribute_ID = $attribute instanceof EditionsFullTextAttributeEntityInterface
+            ? $attribute->getId() : $attribute;
+        return $this;
+    }
+
+    /**
+     * Get the value of the attribute.
+     *
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->Editions_Full_Text_Attribute_Value;
+    }
+
+    /**
+     * Set the value of the attribute.
+     *
+     * @param string $value New value
+     *
+     * @return static
+     */
+    public function setValue(string $value): static
+    {
+        $this->Editions_Full_Text_Attribute_Value = $value;
+        return $this;
     }
 }

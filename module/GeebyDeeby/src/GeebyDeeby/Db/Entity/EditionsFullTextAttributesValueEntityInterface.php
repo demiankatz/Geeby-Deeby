@@ -40,4 +40,51 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface EditionsFullTextAttributesValueEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated edition full text.
+     *
+     * @return EditionsFullTextEntityInterface
+     */
+    public function getEditionFullText(): EditionsFullTextEntityInterface;
+
+    /**
+     * Set associated edition full text.
+     *
+     * @param int|EditionsFullTextEntityInterface $eft Associated edition full text entity or ID
+     *
+     * @return static
+     */
+    public function setEditionFullText(int|EditionsFullTextEntityInterface $eft): static;
+
+    /**
+     * Get associated attribute.
+     *
+     * @return EditionsFullTextAttributeEntityInterface
+     */
+    public function getAttribute(): EditionsFullTextAttributeEntityInterface;
+
+    /**
+     * Set associated attribute.
+     *
+     * @param int|EditionsFullTextAttributeEntityInterface $attribute Associated attribute entity or ID
+     *
+     * @return static
+     */
+    public function setAttribute(int|EditionsFullTextAttributeEntityInterface $attribute): static;
+
+    /**
+     * Get the value of the attribute.
+     *
+     * @return string
+     */
+    public function getValue(): string;
+
+    /**
+     * Set the value of the attribute.
+     *
+     * @param string $value New value
+     *
+     * @return static
+     */
+    public function setValue(string $value): static;
 }
