@@ -39,6 +39,7 @@ use GeebyDeeby\Db\Service\EditionsFullTextAttributesValueService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\EditionsProductCodeService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
@@ -50,6 +51,7 @@ use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
 use function is_object;
+use function strlen;
 
 /**
  * Edit edition controller
@@ -204,7 +206,7 @@ class EditEditionController extends AbstractBase
             $view->editionPlatforms = $this->getDbTable('editionsplatforms')
                 ->getPlatformsForEdition($editionId);
             $view->platforms = $this->getDbService(PlatformService::class)->getList();
-            $view->productCodes = $this->getDbTable('editionsproductcodes')
+            $view->productCodes = $this->getDbService(EditionsProductCodeService::class)
                 ->getProductCodesForEdition($editionId);
             $view->releaseDates = $this->getDbTable('editionsreleasedates')
                 ->getDatesForEdition($editionId);
@@ -811,28 +813,33 @@ class EditEditionController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $table = $this->getDbTable('editionsproductcodes');
-            $row = $table->createRow();
-            $row->Edition_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->Product_Code = $this->params()->fromPost('code');
-            if (empty($row->Product_Code)) {
+            $code = trim($this->params()->fromPost('code'));
+            if (!strlen($code)) {
                 return $this->jsonDie('Product code must not be empty.');
             }
-            $table->insert($row->toArray());
+            $note = $this->params()->fromPost('note_id');
+            $service = $this->getDbService(EditionsProductCodeService::class);
+            $entity = $service->createEntity()
+                ->setEdition((int)$this->params()->fromRoute('id'))
+                ->setNote($note ? (int)$note : null)
+                ->setProductCode($code);
+            try {
+                $service->persistEntity($entity);
+            } catch (Exception $e) {
+                return $this->jsonDie($e->getMessage());
+            }
             return $this->jsonReportSuccess();
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsproductcodes',
-                'Edition_ID',
-                'Sequence_ID',
+                EditionsProductCodeService::class,
+                null,
+                null,
                 'productCodes',
                 'getProductCodesForEdition',
-                'geeby-deeby/edit-edition/product-code-list.phtml'
+                'geeby-deeby/edit-edition/product-code-list.phtml',
+                retrieveLinkMethod: 'getByPrimaryKey',
+                invertRetrieveLinkParams: true
             );
         }
     }

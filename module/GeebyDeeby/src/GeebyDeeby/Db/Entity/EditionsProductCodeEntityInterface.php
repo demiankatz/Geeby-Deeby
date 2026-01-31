@@ -40,4 +40,58 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface EditionsProductCodeEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get associated edition.
+     *
+     * @return EditionEntityInterface
+     */
+    public function getEdition(): EditionEntityInterface;
+
+    /**
+     * Set associated edition.
+     *
+     * @param int|EditionEntityInterface $edition Associated edition entity or ID
+     *
+     * @return static
+     */
+    public function setEdition(int|EditionEntityInterface $edition): static;
+
+    /**
+     * Get the value of the product code.
+     *
+     * @return ?string
+     */
+    public function getProductCode(): ?string;
+
+    /**
+     * Set the value of the product code.
+     *
+     * @param ?string $code New product code
+     *
+     * @return static
+     */
+    public function setProductCode(?string $code): static;
+
+    /**
+     * Get associated note (if any).
+     *
+     * @return ?NoteEntityInterface
+     */
+    public function getNote(): ?NoteEntityInterface;
+
+    /**
+     * Set associated note (if any).
+     *
+     * @param int|NoteEntityInterface|null $note Associated note entity or ID (null for none)
+     *
+     * @return static
+     */
+    public function setNote(int|NoteEntityInterface|null $note): static;
 }

@@ -36,6 +36,7 @@ use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\EditionsProductCodeService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAdaptationService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -318,8 +319,7 @@ class ItemController extends AbstractBase
         $view->dates = $this->getDbTable('editionsreleasedates')
             ->getDatesForItem($id);
         $view->isbns = $this->getDbService(EditionsIsbnService::class)->getISBNsForItem($id);
-        $view->codes = $this->getDbTable('editionsproductcodes')
-            ->getProductCodesForItem($id);
+        $view->codes = $this->getDbService(EditionsProductCodeService::class)->getProductCodesForItem($id);
         $view->oclcNumbers = $this->getDbService(EditionsOclcNumberService::class)
             ->getOCLCNumbersForItem($id);
         $view->fullText = $this->getDbService(EditionsFullTextService::class)
