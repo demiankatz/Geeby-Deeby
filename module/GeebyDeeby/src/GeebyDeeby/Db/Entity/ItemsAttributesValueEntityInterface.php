@@ -40,4 +40,51 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsAttributesValueEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface;
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get associated attribute.
+     *
+     * @return ItemsAttributeEntityInterface
+     */
+    public function getAttribute(): ItemsAttributeEntityInterface;
+
+    /**
+     * Set associated attribute.
+     *
+     * @param int|ItemsAttributeEntityInterface $attribute Associated attribute entity or ID
+     *
+     * @return static
+     */
+    public function setAttribute(int|ItemsAttributeEntityInterface $attribute): static;
+
+    /**
+     * Get the value of the attribute.
+     *
+     * @return string
+     */
+    public function getValue(): string;
+
+    /**
+     * Set the value of the attribute.
+     *
+     * @param string $value New value
+     *
+     * @return static
+     */
+    public function setValue(string $value): static;
 }

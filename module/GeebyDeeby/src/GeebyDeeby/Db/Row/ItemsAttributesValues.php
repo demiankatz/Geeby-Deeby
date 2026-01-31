@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAttributeEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsAttributesValueEntityInterface;
 
 /**
@@ -50,5 +52,75 @@ class ItemsAttributesValues extends TableAwareGateway implements ItemsAttributes
     public function __construct($adapter)
     {
         parent::__construct(['Item_ID', 'Items_Attribute_ID'], 'Items_Attributes_Values', $adapter);
+    }
+
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Item_ID);
+    }
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static
+    {
+        $this->Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
+    }
+
+    /**
+     * Get associated attribute.
+     *
+     * @return ItemsAttributeEntityInterface
+     */
+    public function getAttribute(): ItemsAttributeEntityInterface
+    {
+        return $this->getTableManager()->get('itemsattributes')->getByPrimaryKey($this->Items_Attribute_ID);
+    }
+
+    /**
+     * Set associated attribute.
+     *
+     * @param int|ItemsAttributeEntityInterface $attribute Associated attribute entity or ID
+     *
+     * @return static
+     */
+    public function setAttribute(int|ItemsAttributeEntityInterface $attribute): static
+    {
+        $this->Items_Attribute_ID = $attribute instanceof ItemsAttributeEntityInterface
+            ? $attribute->getId() : $attribute;
+        return $this;
+    }
+
+    /**
+     * Get the value of the attribute.
+     *
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->Items_Attribute_Value;
+    }
+
+    /**
+     * Set the value of the attribute.
+     *
+     * @param string $value New value
+     *
+     * @return static
+     */
+    public function setValue(string $value): static
+    {
+        $this->Items_Attribute_Value = $value;
+        return $this;
     }
 }

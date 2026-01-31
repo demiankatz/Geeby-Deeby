@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\CitationService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
+use GeebyDeeby\Db\Service\ItemsAttributesValueService;
 use GeebyDeeby\Db\Service\ItemsBibliographyService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
@@ -81,19 +82,17 @@ class EditItemController extends AbstractBase
      */
     protected function saveAttributes($itemId, $attribs)
     {
-        $table = $this->getDbTable('itemsattributesvalues');
+        $service = $this->getDbService(ItemsAttributesValueService::class);
         // Delete old values:
-        $table->delete(['Item_ID' => $itemId]);
+        $service->deleteByItem($itemId);
         // Save new values:
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
-                $table->insert(
-                    [
-                         'Item_ID' => $itemId,
-                         'Items_Attribute_ID' => $id,
-                         'Items_Attribute_Value' => $val,
-                     ]
-                );
+                $entity = $service->createEntity()
+                    ->setItem($itemId)
+                    ->setAttribute($id)
+                    ->setValue($val);
+                $service->persistEntity($entity);
             }
         }
     }
@@ -129,11 +128,9 @@ class EditItemController extends AbstractBase
         if ($itemId) {
             $view->attributes = $this->getDbService(ItemsAttributeService::class)->getList();
             $attributeValues = [];
-            $values = $this->getDbTable('itemsattributesvalues')
-                ->getAttributesForItem($itemId);
+            $values = $this->getDbService(ItemsAttributesValueService::class)->getAttributesForItem($itemId);
             foreach ($values as $current) {
-                $attributeValues[$current->Items_Attribute_ID]
-                    = $current->Items_Attribute_Value;
+                $attributeValues[$current['Items_Attribute_ID']] = $current['Items_Attribute_Value'];
             }
             $view->attributeValues = $attributeValues;
         }
