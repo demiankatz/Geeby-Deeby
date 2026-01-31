@@ -40,4 +40,51 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsDescriptionEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface;
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get the description source.
+     *
+     * @return string
+     */
+    public function getSource(): string;
+
+    /**
+     * Set the description source.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setSource(string $name): static;
+
+    /**
+     * Get a description of the item.
+     *
+     * @return string
+     */
+    public function getDescription(): string;
+
+    /**
+     * Set the description.
+     *
+     * @param string $description New description
+     *
+     * @return static
+     */
+    public function setDescription(string $description): static;
 }

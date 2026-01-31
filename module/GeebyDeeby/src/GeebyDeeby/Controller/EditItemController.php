@@ -36,6 +36,7 @@ use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemsAttributesValueService;
 use GeebyDeeby\Db\Service\ItemsBibliographyService;
+use GeebyDeeby\Db\Service\ItemsDescriptionService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
 use GeebyDeeby\Db\Service\ItemsTagService;
@@ -157,8 +158,7 @@ class EditItemController extends AbstractBase
                 ->getItemsForCollection($itemId);
             $view->translatedInto = $this->getDbTable('itemstranslations')
                 ->getTranslatedFrom($itemId);
-            $view->descriptions = $this->getDbTable('itemsdescriptions')
-                ->getDescriptions($itemId);
+            $view->descriptions = $this->getDbService(ItemsDescriptionService::class)->getDescriptions($itemId);
             $view->tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($itemId);
             $view->item_alt_titles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($itemId);
             $view->relationships = $this->getDbService(ItemsRelationshipService::class)->getOptionList();
@@ -587,13 +587,13 @@ class EditItemController extends AbstractBase
     {
         // Special case: new description:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemsdescriptions');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Source = $this->params()->fromPost('type');
-            $row->Description = $this->params()->fromPost('desc');
+            $service = $this->getDbService(ItemsDescriptionService::class);
+            $entity = $service->createEntity()
+                ->setItem($this->params()->fromRoute('id'))
+                ->setSource($this->params()->fromPost('type'))
+                ->setDescription($this->params()->fromPost('desc'));
             try {
-                $table->insert($row->toArray());
+                $service->persistEntity($entity);
             } catch (\Exception $e) {
                 return $this->jsonDie($e->getMessage());
             }
@@ -601,12 +601,13 @@ class EditItemController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'itemsdescriptions',
-                'Item_ID',
-                'Source',
+                ItemsDescriptionService::class,
+                null,
+                null,
                 'descriptions',
                 'getDescriptions',
-                'geeby-deeby/edit-item/description-list.phtml'
+                'geeby-deeby/edit-item/description-list.phtml',
+                retrieveLinkMethod: 'getByItemAndSource'
             );
         }
     }

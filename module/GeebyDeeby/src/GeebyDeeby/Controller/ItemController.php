@@ -40,6 +40,7 @@ use GeebyDeeby\Db\Service\ItemsAdaptationService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributesValueService;
 use GeebyDeeby\Db\Service\ItemsBibliographyService;
+use GeebyDeeby\Db\Service\ItemsDescriptionService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsFileService;
 use GeebyDeeby\Db\Service\ItemsLinkService;
@@ -351,8 +352,7 @@ class ItemController extends AbstractBase
         $view->translatedFrom = $trans->getTranslatedInto($id, true);
         $view->adaptedInto = $adapt->getAdaptedFrom($id);
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
-        $view->descriptions = $this->getDbTable('itemsdescriptions')
-            ->getDescriptions($id);
+        $view->descriptions = $this->getDbService(ItemsDescriptionService::class)->getDescriptions($id);
         $reviews = $this->getDbTable('itemsreviews');
         $view->reviews = $reviews->getReviewsForItem($id);
         $user = $this->getCurrentUser();

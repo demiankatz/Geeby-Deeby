@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsDescriptionEntityInterface;
 
 /**
@@ -50,5 +51,74 @@ class ItemsDescriptions extends TableAwareGateway implements ItemsDescriptionEnt
     public function __construct($adapter)
     {
         parent::__construct(['Item_ID', 'Source'], 'Items_Descriptions', $adapter);
+    }
+
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Item_ID);
+    }
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static
+    {
+        $this->Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
+    }
+
+    /**
+     * Get the description source.
+     *
+     * @return string
+     */
+    public function getSource(): string
+    {
+        return $this->Source;
+    }
+
+    /**
+     * Set the description source.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setSource(string $name): static
+    {
+        $this->Source = $name;
+        return $this;
+    }
+
+    /**
+     * Get a description of the item.
+     *
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->Description;
+    }
+
+    /**
+     * Set the description.
+     *
+     * @param string $description New description
+     *
+     * @return static
+     */
+    public function setDescription(string $description): static
+    {
+        $this->Description = $description;
+        return $this;
     }
 }
