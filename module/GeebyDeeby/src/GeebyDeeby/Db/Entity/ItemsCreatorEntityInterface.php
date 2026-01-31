@@ -40,4 +40,58 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsCreatorEntityInterface extends EntityInterface
 {
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int;
+
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface;
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get associated person.
+     *
+     * @return PersonEntityInterface
+     */
+    public function getPerson(): PersonEntityInterface;
+
+    /**
+     * Set associated person.
+     *
+     * @param int|PersonEntityInterface $person Associated person entity or ID
+     *
+     * @return static
+     */
+    public function setPerson(int|PersonEntityInterface $person): static;
+
+    /**
+     * Get associated role.
+     *
+     * @return RoleEntityInterface
+     */
+    public function getRole(): RoleEntityInterface;
+
+    /**
+     * Set associated role.
+     *
+     * @param int|RoleEntityInterface $role Associated role entity or ID
+     *
+     * @return static
+     */
+    public function setRole(int|RoleEntityInterface $role): static;
 }

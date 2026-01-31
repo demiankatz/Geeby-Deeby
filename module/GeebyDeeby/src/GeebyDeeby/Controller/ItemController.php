@@ -40,6 +40,7 @@ use GeebyDeeby\Db\Service\ItemsAdaptationService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributesValueService;
 use GeebyDeeby\Db\Service\ItemsBibliographyService;
+use GeebyDeeby\Db\Service\ItemsCreatorService;
 use GeebyDeeby\Db\Service\ItemsDescriptionService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsFileService;
@@ -298,8 +299,7 @@ class ItemController extends AbstractBase
      */
     protected function addEditionRelationships($id, $view)
     {
-        $view->creators = $this->getDbTable('itemscreators')
-            ->getCreatorsForItem($id);
+        $view->creators = $this->getDbService(ItemsCreatorService::class)->getCreatorsForItem($id);
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForItem($id);
         $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);

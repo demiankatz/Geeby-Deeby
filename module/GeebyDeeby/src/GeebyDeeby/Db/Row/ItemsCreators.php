@@ -29,7 +29,10 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsCreatorEntityInterface;
+use GeebyDeeby\Db\Entity\PersonEntityInterface;
+use GeebyDeeby\Db\Entity\RoleEntityInterface;
 
 /**
  * Row Definition for Items_Creators
@@ -50,5 +53,84 @@ class ItemsCreators extends TableAwareGateway implements ItemsCreatorEntityInter
     public function __construct($adapter)
     {
         parent::__construct('Item_Creator_ID', 'Items_Creators', $adapter);
+    }
+
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->Item_Creator_ID ?? null;
+    }
+
+    /**
+     * Get associated item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Item_ID);
+    }
+
+    /**
+     * Set associated item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static
+    {
+        $this->Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
+    }
+
+    /**
+     * Get associated person.
+     *
+     * @return PersonEntityInterface
+     */
+    public function getPerson(): PersonEntityInterface
+    {
+        return $this->getTableManager()->get('person')->getByPrimaryKey($this->Person_ID);
+    }
+
+    /**
+     * Set associated person.
+     *
+     * @param int|PersonEntityInterface $person Associated person entity or ID
+     *
+     * @return static
+     */
+    public function setPerson(int|PersonEntityInterface $person): static
+    {
+        $this->Person_ID = $person instanceof PersonEntityInterface ? $person->getId() : $person;
+        return $this;
+    }
+
+    /**
+     * Get associated role.
+     *
+     * @return RoleEntityInterface
+     */
+    public function getRole(): RoleEntityInterface
+    {
+        return $this->getTableManager()->get('role')->getByPrimaryKey($this->Role_ID);
+    }
+
+    /**
+     * Set associated role.
+     *
+     * @param int|RoleEntityInterface $role Associated role entity or ID
+     *
+     * @return static
+     */
+    public function setRole(int|RoleEntityInterface $role): static
+    {
+        $this->Role_ID = $role instanceof RoleEntityInterface ? $role->getId() : $role;
+        return $this;
     }
 }

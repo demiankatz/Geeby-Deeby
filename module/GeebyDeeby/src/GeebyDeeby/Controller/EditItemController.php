@@ -36,6 +36,7 @@ use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemsAttributesValueService;
 use GeebyDeeby\Db\Service\ItemsBibliographyService;
+use GeebyDeeby\Db\Service\ItemsCreatorService;
 use GeebyDeeby\Db\Service\ItemsDescriptionService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
@@ -144,8 +145,7 @@ class EditItemController extends AbstractBase
             $view->adaptedInto = $this->getDbService(ItemsAdaptationService::class)->getAdaptedFrom($itemId);
             $view->adaptedFrom = $this->getDbService(ItemsAdaptationService::class)->getAdaptedInto($itemId);
             $view->roles = $this->getDbService(RoleService::class)->getList();
-            $view->creators = $this->getDbTable('itemscreators')
-                ->getCreatorsForItem($itemId);
+            $view->creators = $this->getDbService(ItemsCreatorService::class)->getCreatorsForItem($itemId);
             $view->credits = $this->getDbTable('editionscredits')
                 ->getCreditsForItem($itemId, true);
             $view->itemsBib = $this->getDbService(ItemsBibliographyService::class)
@@ -420,10 +420,9 @@ class EditItemController extends AbstractBase
             return $this->deleteCreator();
         }
         // Default action: display list:
-        $table = $this->getDbTable('itemscreators');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->creators = $table->getCreatorsForItem($primary);
+        $view->creators = $this->getDbService(ItemsCreatorService::class)->getCreatorsForItem($primary);
         $view->setTemplate('geeby-deeby/edit-item/creators.phtml');
         $view->setTerminal(true);
         return $view;
@@ -437,9 +436,8 @@ class EditItemController extends AbstractBase
     protected function modifyCreator()
     {
         $rowId = $this->params()->fromRoute('extra');
-        $table = $this->getDbTable('itemscreators');
         $view = $this->createViewModel();
-        $view->row = $table->select(['Item_Creator_ID' => $rowId])->current();
+        $view->row = $this->getDbService(ItemsCreatorService::class)->getByPrimaryKey($rowId);
         $view->citations = $this->getDbService(CitationService::class)->getList();
         $view->selectedCitations = $this->getDbTable('itemscreatorscitations')
             ->getCitations($rowId);
@@ -461,13 +459,12 @@ class EditItemController extends AbstractBase
      */
     protected function addCreator()
     {
-        $table = $this->getDbTable('itemscreators');
-        $row = [
-            'Item_ID' => $this->params()->fromRoute('id'),
-            'Person_ID' => $this->params()->fromPost('person_id'),
-            'Role_ID' => $this->params()->fromPost('role_id'),
-        ];
-        $table->insert($row);
+        $service = $this->getDbService(ItemsCreatorService::class);
+        $entity = $service->createEntity()
+            ->setItem($this->params()->fromRoute('id'))
+            ->setPerson($this->params()->fromPost('person_id'))
+            ->setRole($this->params()->fromPost('role_id'));
+        $service->persistEntity($entity);
         return $this->jsonReportSuccess();
     }
 
@@ -478,15 +475,11 @@ class EditItemController extends AbstractBase
      */
     protected function deleteCreator()
     {
+        $service = $this->getDbService(ItemsCreatorService::class);
         [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
         try {
-            $this->getDbTable('itemscreators')->delete(
-                [
-                    'Item_ID' => $this->params()->fromRoute('id'),
-                    'Person_ID' => $person,
-                    'Role_ID' => $role,
-                ]
-            );
+            $entity = $service->getByItemAndPersonAndRole($this->params()->fromRoute('id'), $person, $role);
+            $service->deleteEntity($entity);
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
         }

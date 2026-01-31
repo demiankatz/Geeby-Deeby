@@ -34,6 +34,7 @@ use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\ItemsCreatorService;
 
 use function is_object;
 
@@ -265,7 +266,7 @@ class EditionController extends AbstractBase
             return false;
         }
         $id = $view->edition['Edition_ID'];
-        $view->creators = $this->getDbTable('itemscreators')
+        $view->creators = $this->getDbService(ItemsCreatorService::class)
             ->getCreatorsForItem($view->edition['Item_ID']);
         $view->credits = $this->getDbTable('editionscredits')
             ->getCreditsForEdition($id);
