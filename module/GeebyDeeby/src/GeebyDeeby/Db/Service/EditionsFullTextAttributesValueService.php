@@ -69,7 +69,7 @@ class EditionsFullTextAttributesValueService extends AbstractDbService
     /**
      * Get a list of attributes for the specified full text ID(s).
      *
-     * @param int|int[] $fullTextID Full text ID
+     * @param int|int[] $fullTextID Full text ID (or array of IDs)
      *
      * @return mixed
      */

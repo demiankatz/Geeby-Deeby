@@ -129,7 +129,9 @@ class EditSeriesController extends AbstractBase
         $view->languages = $this->getDbService(LanguageService::class)->getList();
         $view->attributes = $this->getDbService(SeriesAttributeService::class)->getList();
         $attributeValues = [];
-        $values = $this->getDbService(SeriesAttributesValueService::class)->getAttributesForSeries($seriesId);
+        $values = $seriesId
+            ? $this->getDbService(SeriesAttributesValueService::class)->getAttributesForSeries($seriesId)
+            : [];
         foreach ($values as $current) {
             $attributeValues[$current['Series_Attribute_ID']] = $current['Series_Attribute_Value'];
         }

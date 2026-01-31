@@ -69,11 +69,11 @@ class TagsAttributesValueService extends AbstractDbService
     /**
      * Get a list of attributes for the specified tag.
      *
-     * @param int|int[] $tagID Tag ID (or array of IDs)
+     * @param int $tagID Tag ID
      *
      * @return array
      */
-    public function getAttributesForTag(int|array $tagID): array
+    public function getAttributesForTag(int $tagID): array
     {
         return iterator_to_array($this->valuesTable->getAttributesForTag($tagID));
     }

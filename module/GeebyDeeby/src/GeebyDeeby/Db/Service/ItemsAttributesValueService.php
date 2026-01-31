@@ -69,11 +69,11 @@ class ItemsAttributesValueService extends AbstractDbService
     /**
      * Get a list of attributes for the specified item.
      *
-     * @param int|int[] $itemID Item ID (or array of IDs)
+     * @param int $itemID Item ID
      *
      * @return array
      */
-    public function getAttributesForItem(int|array $itemID): array
+    public function getAttributesForItem(int $itemID): array
     {
         return iterator_to_array($this->valuesTable->getAttributesForItem($itemID));
     }

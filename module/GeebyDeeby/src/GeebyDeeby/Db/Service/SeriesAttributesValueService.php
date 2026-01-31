@@ -69,11 +69,11 @@ class SeriesAttributesValueService extends AbstractDbService
     /**
      * Get a list of attributes for the specified series.
      *
-     * @param int|int[] $seriesID Series ID (or array of IDs)
+     * @param int $seriesID Series ID
      *
      * @return array
      */
-    public function getAttributesForSeries(int|array $seriesID): array
+    public function getAttributesForSeries(int $seriesID): array
     {
         return iterator_to_array($this->valuesTable->getAttributesForSeries($seriesID));
     }
