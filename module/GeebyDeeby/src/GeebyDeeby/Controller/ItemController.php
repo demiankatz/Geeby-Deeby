@@ -36,6 +36,7 @@ use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
+use GeebyDeeby\Db\Service\ItemsAdaptationService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributesValueService;
 use GeebyDeeby\Db\Service\ItemsBibliographyService;
@@ -341,7 +342,7 @@ class ItemController extends AbstractBase
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);
         $trans = $this->getDbTable('itemstranslations');
-        $adapt = $this->getDbTable('itemsadaptations');
+        $adapt = $this->getDbService(ItemsAdaptationService::class);
         // The variable/function names are a bit unintuitive here --
         // $view->translatedInto is a list of books that $id was translated into;
         // we obtain these by calling $trans->getTranslatedFrom(), which gives

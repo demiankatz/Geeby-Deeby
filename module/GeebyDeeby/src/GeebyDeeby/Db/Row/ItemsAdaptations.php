@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsAdaptationEntityInterface;
 
 /**
@@ -50,5 +51,51 @@ class ItemsAdaptations extends TableAwareGateway implements ItemsAdaptationEntit
     public function __construct($adapter)
     {
         parent::__construct(['Source_Item_ID', 'Adapted_Item_ID'], 'Items_Adaptations', $adapter);
+    }
+
+    /**
+     * Get source item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getSourceItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Source_Item_ID);
+    }
+
+    /**
+     * Set source item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setSourceItem(int|ItemEntityInterface $item): static
+    {
+        $this->Source_Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
+    }
+
+    /**
+     * Get adapted item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getAdaptedItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Adapted_Item_ID);
+    }
+
+    /**
+     * Set adapted item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setAdaptedItem(int|ItemEntityInterface $item): static
+    {
+        $this->Adapted_Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
     }
 }

@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\CitationService;
 use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\ItemsAdaptationService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemsAttributesValueService;
@@ -139,10 +140,8 @@ class EditItemController extends AbstractBase
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->adaptedInto = $this->getDbTable('itemsadaptations')
-                ->getAdaptedFrom($itemId);
-            $view->adaptedFrom = $this->getDbTable('itemsadaptations')
-                ->getAdaptedInto($itemId);
+            $view->adaptedInto = $this->getDbService(ItemsAdaptationService::class)->getAdaptedFrom($itemId);
+            $view->adaptedFrom = $this->getDbService(ItemsAdaptationService::class)->getAdaptedInto($itemId);
             $view->roles = $this->getDbService(RoleService::class)->getList();
             $view->creators = $this->getDbTable('itemscreators')
                 ->getCreatorsForItem($itemId);
@@ -265,12 +264,13 @@ class EditItemController extends AbstractBase
     public function adaptationintoAction()
     {
         return $this->handleGenericLink(
-            'itemsadaptations',
-            'Source_Item_ID',
-            'Adapted_Item_ID',
+            ItemsAdaptationService::class,
+            'setSourceItem',
+            'setAdaptedItem',
             'adaptedInto',
             'getAdaptedFrom',
-            'geeby-deeby/edit-item/adapted-into-list.phtml'
+            'geeby-deeby/edit-item/adapted-into-list.phtml',
+            retrieveLinkMethod: 'getBySourceItemAndAdaptedItem'
         );
     }
 
@@ -282,12 +282,14 @@ class EditItemController extends AbstractBase
     public function adaptationfromAction()
     {
         return $this->handleGenericLink(
-            'itemsadaptations',
-            'Adapted_Item_ID',
-            'Source_Item_ID',
+            ItemsAdaptationService::class,
+            'setAdaptedItem',
+            'setSourceItem',
             'adaptedFrom',
             'getAdaptedInto',
-            'geeby-deeby/edit-item/adapted-from-list.phtml'
+            'geeby-deeby/edit-item/adapted-from-list.phtml',
+            retrieveLinkMethod: 'getBySourceItemAndAdaptedItem',
+            invertRetrieveLinkParams: true
         );
     }
 

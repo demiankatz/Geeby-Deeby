@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsAdaptationEntityInterface extends EntityInterface
 {
+    /**
+     * Get source item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getSourceItem(): ItemEntityInterface;
+
+    /**
+     * Set source item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setSourceItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get adapted item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getAdaptedItem(): ItemEntityInterface;
+
+    /**
+     * Set adapted item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setAdaptedItem(int|ItemEntityInterface $item): static;
 }
