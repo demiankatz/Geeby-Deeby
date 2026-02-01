@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsImageService;
 
 use function is_object;
 
@@ -165,12 +166,11 @@ class CleanupController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
-        $table = $this->getDbTable('editionsimages');
-        $thumbs = $table->getDuplicateThumbs();
+        $service = $this->getDbService(EditionsImageService::class);
+        $thumbs = $service->getDuplicateThumbs();
         $details = [];
         foreach ($thumbs as $current) {
-            $details[$current['Thumb_Path']]
-                = $table->getEditionsForThumb($current['Thumb_Path']);
+            $details[$current['Thumb_Path']] = $service->getEditionsForThumb($current['Thumb_Path']);
         }
         return $this->createViewModel(['details' => $details]);
     }

@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsImageEntityInterface;
+use GeebyDeeby\Db\Entity\NoteEntityInterface;
 
 /**
  * Row Definition for Editions_Images
@@ -50,5 +52,155 @@ class EditionsImages extends TableAwareGateway implements EditionsImageEntityInt
     public function __construct($adapter)
     {
         parent::__construct('Sequence_ID', 'Editions_Images', $adapter);
+    }
+
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->Sequence_ID ?? null;
+    }
+
+    /**
+     * Get associated edition.
+     *
+     * @return EditionEntityInterface
+     */
+    public function getEdition(): EditionEntityInterface
+    {
+        return $this->getTableManager()->get('edition')->getByPrimaryKey($this->Edition_ID);
+    }
+
+    /**
+     * Set associated edition.
+     *
+     * @param int|EditionEntityInterface $edition Associated edition entity or ID
+     *
+     * @return static
+     */
+    public function setEdition(int|EditionEntityInterface $edition): static
+    {
+        $this->Edition_ID = $edition instanceof EditionEntityInterface ? $edition->getId() : $edition;
+        return $this;
+    }
+
+    /**
+     * Get image path.
+     *
+     * @return ?string
+     */
+    public function getImagePath(): ?string
+    {
+        return $this->Image_Path;
+    }
+
+    /**
+     * Set image path.
+     *
+     * @param ?string $path New path
+     *
+     * @return static
+     */
+    public function setImagePath(?string $path): static
+    {
+        $this->Image_Path = $path;
+        return $this;
+    }
+
+    /**
+     * Get thumb path.
+     *
+     * @return ?string
+     */
+    public function getThumbPath(): ?string
+    {
+        return $this->Thumb_Path;
+    }
+
+    /**
+     * Set thumb path.
+     *
+     * @param ?string $path New path
+     *
+     * @return static
+     */
+    public function setThumbPath(?string $path): static
+    {
+        $this->Thumb_Path = $path;
+        return $this;
+    }
+
+    /**
+     * Get IIIF URI.
+     *
+     * @return ?string
+     */
+    public function getIiifUri(): ?string
+    {
+        return $this->IIIF_URI;
+    }
+
+    /**
+     * Set IIIF URI.
+     *
+     * @param ?string $uri New URI
+     *
+     * @return static
+     */
+    public function setIiifUri(?string $uri): static
+    {
+        $this->IIIF_URI = $uri;
+        return $this;
+    }
+
+    /**
+     * Get position in credits.
+     *
+     * @return ?int
+     */
+    public function getPosition(): ?int
+    {
+        return $this->Position;
+    }
+
+    /**
+     * Set position in credits.
+     *
+     * @param ?int $position Position in credits
+     *
+     * @return static
+     */
+    public function setPosition(?int $position): static
+    {
+        $this->Position = $position;
+        return $this;
+    }
+
+    /**
+     * Get associated note (if any).
+     *
+     * @return ?NoteEntityInterface
+     */
+    public function getNote(): ?NoteEntityInterface
+    {
+        return $this->Note_ID
+            ? $this->getTableManager()->get('note')->getByPrimaryKey($this->Note_ID)
+            : null;
+    }
+
+    /**
+     * Set associated note (if any).
+     *
+     * @param int|NoteEntityInterface|null $note Associated note entity or ID (null for none)
+     *
+     * @return static
+     */
+    public function setNote(int|NoteEntityInterface|null $note): static
+    {
+        $this->Note_ID = $note instanceof NoteEntityInterface ? $note->getId() : $note;
+        return $this;
     }
 }

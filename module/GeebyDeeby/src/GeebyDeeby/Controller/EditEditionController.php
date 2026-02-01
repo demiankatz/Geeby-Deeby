@@ -37,6 +37,7 @@ use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
 use GeebyDeeby\Db\Service\EditionsFullTextAttributesValueService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
+use GeebyDeeby\Db\Service\EditionsImageService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
 use GeebyDeeby\Db\Service\EditionsProductCodeService;
@@ -198,8 +199,7 @@ class EditEditionController extends AbstractBase
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $view->roles = $this->getDbService(RoleService::class)->getList();
             $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForEdition($editionId);
-            $view->images = $this->getDbTable('editionsimages')
-                ->getImagesForEdition($editionId);
+            $view->images = $this->getDbService(EditionsImageService::class)->getImagesForEdition($editionId);
             $view->ISBNs = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($editionId);
             $view->oclcNumbers = $this->getDbService(EditionsOclcNumberService::class)
                 ->getOCLCNumbersForEdition($editionId);
@@ -857,41 +857,45 @@ class EditEditionController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $table = $this->getDbTable('editionsimages');
-            $row = $table->createRow();
-            $row->Edition_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->Image_Path = $this->params()->fromPost('image');
-            $row->IIIF_URI = $this->params()->fromPost('iiif');
-            if (empty($row->Image_Path) && empty($row->IIIF_URI)) {
+            $note = $this->params()->fromPost('note_id');
+            $image = trim($this->params()->fromPost('image', ''));
+            $iiif = trim($this->params()->fromPost('iiif', ''));
+            $thumb = trim($this->params()->fromPost('thumb', ''));
+            if (empty($image) && empty($iiif)) {
                 return $this->jsonDie('Image path or IIIF URI must be set.');
             }
-            $row->Thumb_Path = $this->params()->fromPost('thumb');
             // Build thumb path if none was provided:
-            if (
-                empty($row->Thumb_Path) && empty($row->IIIF_URI)
-                && !empty($row->Image_Path)
-            ) {
-                $parts = explode('.', $row->Image_Path);
+            if (empty($thumb) && empty($iiif) && !empty($image)) {
+                $parts = explode('.', $image);
                 $nextToLast = count($parts) - 2;
                 $parts[$nextToLast] .= 'thumb';
-                $row->Thumb_Path = implode('.', $parts);
+                $thumb = implode('.', $parts);
             }
-            $row->Position = $this->params()->fromPost('pos');
-            $table->insert($row->toArray());
+            $service = $this->getDbService(EditionsImageService::class);
+            $entity = $service->createEntity()
+                ->setEdition((int)$this->params()->fromRoute('id'))
+                ->setNote($note ? (int)$note : null)
+                ->setImagePath(empty($image) ? null : $image)
+                ->setIiifUri(empty($iiif) ? null : $iiif)
+                ->setThumbPath(empty($thumb) ? null : $thumb)
+                ->setPosition((int)$this->params()->fromPost('pos'));
+            try {
+                $service->persistEntity($entity);
+            } catch (\Exception $e) {
+                return $this->jsonDie($e->getMessage());
+            }
             return $this->jsonReportSuccess();
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'editionsimages',
-                'Edition_ID',
-                'Sequence_ID',
+                EditionsImageService::class,
+                null,
+                null,
                 'images',
                 'getImagesForEdition',
-                'geeby-deeby/edit-edition/image-list.phtml'
+                'geeby-deeby/edit-edition/image-list.phtml',
+                retrieveLinkMethod: 'getByPrimaryKey',
+                invertRetrieveLinkParams: true
             );
         }
     }
@@ -910,10 +914,10 @@ class EditEditionController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             $image = $this->params()->fromPost('sequence_id');
             $pos = $this->params()->fromPost('pos');
-            $this->getDbTable('editionsimages')->update(
-                ['Position' => $pos],
-                ['Sequence_ID' => $image]
-            );
+            $service = $this->getDbService(EditionsImageService::class);
+            $entity = $service->getByPrimaryKey($image);
+            $entity->setPosition($pos);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
