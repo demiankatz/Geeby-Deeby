@@ -36,6 +36,7 @@ use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsImageService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\EditionsPlatformService;
 use GeebyDeeby\Db\Service\EditionsProductCodeService;
 use GeebyDeeby\Db\Service\ItemsCreatorService;
 
@@ -273,8 +274,7 @@ class EditionController extends AbstractBase
             ->getCreatorsForItem($view->edition['Item_ID']);
         $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForEdition($id);
         $view->images = $this->getDbService(EditionsImageService::class)->getImagesForEditionOrParentEdition($id);
-        $view->platforms = $this->getDbTable('editionsplatforms')
-            ->getPlatformsForEdition($id);
+        $view->platforms = $this->getDbService(EditionsPlatformService::class)->getPlatformsForEdition($id);
         $view->dates = $this->getDbTable('editionsreleasedates')
             ->getDatesForEditionOrParentEdition($id);
         $view->isbns = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($id);

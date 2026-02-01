@@ -29,7 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsPlatformEntityInterface;
+use GeebyDeeby\Db\Entity\PlatformEntityInterface;
 
 /**
  * Row Definition for Editions_Platforms
@@ -50,5 +52,51 @@ class EditionsPlatforms extends TableAwareGateway implements EditionsPlatformEnt
     public function __construct($adapter)
     {
         parent::__construct(['Edition_ID', 'Platform_ID'], 'Editions_Platforms', $adapter);
+    }
+
+    /**
+     * Get associated edition.
+     *
+     * @return EditionEntityInterface
+     */
+    public function getEdition(): EditionEntityInterface
+    {
+        return $this->getTableManager()->get('edition')->getByPrimaryKey($this->Edition_ID);
+    }
+
+    /**
+     * Set associated edition.
+     *
+     * @param int|EditionEntityInterface $edition Associated edition entity or ID
+     *
+     * @return static
+     */
+    public function setEdition(int|EditionEntityInterface $edition): static
+    {
+        $this->Edition_ID = $edition instanceof EditionEntityInterface ? $edition->getId() : $edition;
+        return $this;
+    }
+
+    /**
+     * Get associated platform.
+     *
+     * @return PlatformEntityInterface
+     */
+    public function getPlatform(): PlatformEntityInterface
+    {
+        return $this->getTableManager()->get('platform')->getByPrimaryKey($this->Platform_ID);
+    }
+
+    /**
+     * Set associated platform.
+     *
+     * @param int|PlatformEntityInterface $platform Associated platform entity or ID
+     *
+     * @return static
+     */
+    public function setPlatform(int|PlatformEntityInterface $platform): static
+    {
+        $this->Platform_ID = $platform instanceof PlatformEntityInterface ? $platform->getId() : $platform;
+        return $this;
     }
 }

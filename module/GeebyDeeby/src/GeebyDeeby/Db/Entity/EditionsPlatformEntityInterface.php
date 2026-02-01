@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface EditionsPlatformEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated edition.
+     *
+     * @return EditionEntityInterface
+     */
+    public function getEdition(): EditionEntityInterface;
+
+    /**
+     * Set associated edition.
+     *
+     * @param int|EditionEntityInterface $edition Associated edition entity or ID
+     *
+     * @return static
+     */
+    public function setEdition(int|EditionEntityInterface $edition): static;
+
+    /**
+     * Get associated platform.
+     *
+     * @return PlatformEntityInterface
+     */
+    public function getPlatform(): PlatformEntityInterface;
+
+    /**
+     * Set associated platform.
+     *
+     * @param int|PlatformEntityInterface $platform Associated platform entity or ID
+     *
+     * @return static
+     */
+    public function setPlatform(int|PlatformEntityInterface $platform): static;
 }

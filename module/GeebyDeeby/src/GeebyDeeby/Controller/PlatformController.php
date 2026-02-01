@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsPlatformService;
 use GeebyDeeby\Db\Service\PlatformService;
 
 use function is_object;
@@ -59,8 +60,7 @@ class PlatformController extends AbstractBase
         $view = $this->createViewModel(
             ['platform' => $entity->toArray()]
         );
-        $view->items = $this->getDbTable('editionsplatforms')
-            ->getItemsForPlatform($id);
+        $view->items = $this->getDbService(EditionsPlatformService::class)->getItemsForPlatform($id);
         return $view;
     }
 

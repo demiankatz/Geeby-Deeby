@@ -37,6 +37,7 @@ use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsImageService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\EditionsPlatformService;
 use GeebyDeeby\Db\Service\EditionsProductCodeService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAdaptationService;
@@ -306,8 +307,7 @@ class ItemController extends AbstractBase
         $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForItem($id);
         $view->images = $this->getDbService(EditionsImageService::class)->getImagesForItem($id);
         $view->series = $this->getDbService(SeriesService::class)->getSeriesForItem($id, true, true);
-        $view->platforms = $this->getDbTable('editionsplatforms')
-            ->getPlatformsForItem($id);
+        $view->platforms = $this->getDbService(EditionsPlatformService::class)->getPlatformsForItem($id);
         // Contains/containedIn are item-level relationships (see
         // addItemRelationships below), while children/parents are edition-level
         // relationships. These are very similar, but the edition relationships

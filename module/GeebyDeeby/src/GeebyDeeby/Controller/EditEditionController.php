@@ -40,6 +40,7 @@ use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsImageService;
 use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\EditionsPlatformService;
 use GeebyDeeby\Db\Service\EditionsProductCodeService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -203,7 +204,7 @@ class EditEditionController extends AbstractBase
             $view->ISBNs = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($editionId);
             $view->oclcNumbers = $this->getDbService(EditionsOclcNumberService::class)
                 ->getOCLCNumbersForEdition($editionId);
-            $view->editionPlatforms = $this->getDbTable('editionsplatforms')
+            $view->editionPlatforms = $this->getDbService(EditionsPlatformService::class)
                 ->getPlatformsForEdition($editionId);
             $view->platforms = $this->getDbService(PlatformService::class)->getList();
             $view->productCodes = $this->getDbService(EditionsProductCodeService::class)
@@ -931,12 +932,13 @@ class EditEditionController extends AbstractBase
     public function platformAction()
     {
         return $this->handleGenericLink(
-            'editionsplatforms',
-            'Edition_ID',
-            'Platform_ID',
+            EditionsPlatformService::class,
+            'setEdition',
+            'setPlatform',
             'editionPlatforms',
             'getPlatformsForEdition',
-            'geeby-deeby/edit-edition/platform-list.phtml'
+            'geeby-deeby/edit-edition/platform-list.phtml',
+            retrieveLinkMethod: 'getByEditionAndPlatform'
         );
     }
 
