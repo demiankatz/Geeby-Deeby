@@ -450,10 +450,11 @@ class AbstractBase extends AbstractActionController
      * @param string    $listVariable             Name of view variable for list used when displaying existing links
      * @param string    $listMethod               Name of method on table class to call for list assignment
      * @param string    $listTemplate             Name of template to use for displaying list
-     * @param array     $extraFields              Extra fields to insert with the link (optional)
+     * @param array     $extraFields              Extra fields to insert with the link (optional). Values will also be
+     * passed to retrieveLinkMethod as params 3+.
      * @param ?callable $insertCallback           Callback function when inserting a new row
      * @param string    $retrieveLinkMethod       Name of service method to fetch a link using primary/secondary values
-     * @param bool      $invertRetrieveLinkParams Should we invert the parameter order on retrieveLinkMethod?
+     * @param bool      $invertRetrieveLinkParams Should we invert the order of params 1-2 on retrieveLinkMethod?
      *
      * @return mixed
      */
@@ -489,15 +490,12 @@ class AbstractBase extends AbstractActionController
                         $insertCallback($entity);
                     }
                 } elseif ($this->getRequest()->isDelete()) {
-                    if (!empty($extraFields)) {
-                        return $this->jsonDie('TODO: support extra fields when deleting!');
-                    }
                     if (!is_callable([$service, $retrieveLinkMethod])) {
                         return $this->jsonDie("$serviceName lacks $retrieveLinkMethod method");
                     }
                     $link = $invertRetrieveLinkParams
-                        ? $service->$retrieveLinkMethod($secondary, $primary)
-                        : $service->$retrieveLinkMethod($primary, $secondary);
+                        ? $service->$retrieveLinkMethod($secondary, $primary, ...array_values($extraFields))
+                        : $service->$retrieveLinkMethod($primary, $secondary, ...array_values($extraFields));
                     if (!$link) {
                         return $this->jsonDie("Could not retrieve $serviceName link using $primary / $secondary");
                     }

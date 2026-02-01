@@ -43,6 +43,7 @@ use GeebyDeeby\Db\Service\ItemsDescriptionService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsInCollectionService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
+use GeebyDeeby\Db\Service\ItemsRelationshipsValueService;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\PeopleBibliographyService;
@@ -164,8 +165,7 @@ class EditItemController extends AbstractBase
             $view->tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($itemId);
             $view->item_alt_titles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($itemId);
             $view->relationships = $this->getDbService(ItemsRelationshipService::class)->getOptionList();
-            $view->relationshipsValues = $this
-                ->getDbTable('itemsrelationshipsvalues')
+            $view->relationshipsValues = $this->getDbService(ItemsRelationshipsValueService::class)
                 ->getRelationshipsForItem($itemId);
             $view->translatedFrom = $this->getDbTable('itemstranslations')
                 ->getTranslatedInto($itemId);
@@ -690,22 +690,26 @@ class EditItemController extends AbstractBase
         // the standard behavior consistent.
         $rid = $this->params()->fromRoute('relationship_id');
         if (substr($rid, 0, 1) === 'i') {
-            $linkFrom = 'Object_Item_ID';
-            $linkTo = 'Subject_Item_ID';
+            $linkFrom = 'setObject';
+            $linkTo = 'setSubject';
             $rid = substr($rid, 1);
+            $invertRetrieve = true;
         } else {
-            $linkFrom = 'Subject_Item_ID';
-            $linkTo = 'Object_Item_ID';
+            $linkFrom = 'setSubject';
+            $linkTo = 'setObject';
+            $invertRetrieve = false;
         }
-        $extras = ['Items_Relationship_ID' => $rid];
+        $extras = ['setRelationship' => $rid];
         return $this->handleGenericLink(
-            'itemsrelationshipsvalues',
+            ItemsRelationshipsValueService::class,
             $linkFrom,
             $linkTo,
             'relationshipsValues',
             'getRelationshipsForItem',
             'geeby-deeby/edit-item/relationship-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getBySubjectAndObjectAndRelationship',
+            invertRetrieveLinkParams: $invertRetrieve
         );
     }
 

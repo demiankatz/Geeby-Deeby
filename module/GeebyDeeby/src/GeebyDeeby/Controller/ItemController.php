@@ -51,6 +51,7 @@ use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsFileService;
 use GeebyDeeby\Db\Service\ItemsInCollectionService;
 use GeebyDeeby\Db\Service\ItemsLinkService;
+use GeebyDeeby\Db\Service\ItemsRelationshipsValueService;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -119,8 +120,7 @@ class ItemController extends AbstractBase
         $extras['editionAttributes'] = $this->getDbService(EditionsAttributesValueService::class)
             ->getAttributesForItem($id);
         $extras['itemAttributes'] = $this->getDbService(ItemsAttributesValueService::class)->getAttributesForItem($id);
-        $extras['relationshipsValues'] = $this
-            ->getDbTable('itemsrelationshipsvalues')
+        $extras['relationshipsValues'] = $this->getDbService(ItemsRelationshipsValueService::class)
             ->getRelationshipsForItem($id);
         return $this->createViewModel(
             ['item' => $entity->toArray()] + $extras

@@ -40,4 +40,51 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsRelationshipsValueEntityInterface extends EntityInterface
 {
+    /**
+     * Get subject item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getSubject(): ItemEntityInterface;
+
+    /**
+     * Set subject item.
+     *
+     * @param int|ItemEntityInterface $item Subject item entity or ID
+     *
+     * @return static
+     */
+    public function setSubject(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get relationship.
+     *
+     * @return ItemsRelationshipEntityInterface
+     */
+    public function getRelationship(): ItemsRelationshipEntityInterface;
+
+    /**
+     * Set relationship.
+     *
+     * @param int|ItemsRelationshipEntityInterface $relationship Relationship entity or ID
+     *
+     * @return static
+     */
+    public function setRelationship(int|ItemsRelationshipEntityInterface $relationship): static;
+
+    /**
+     * Get object item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getObject(): ItemEntityInterface;
+
+    /**
+     * Set object item.
+     *
+     * @param int|ItemEntityInterface $item Object item entity or ID
+     *
+     * @return static
+     */
+    public function setObject(int|ItemEntityInterface $item): static;
 }
