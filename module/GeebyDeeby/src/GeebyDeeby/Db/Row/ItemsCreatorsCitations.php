@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\CitationEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsCreatorEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsCreatorsCitationEntityInterface;
 
 /**
@@ -50,5 +52,51 @@ class ItemsCreatorsCitations extends TableAwareGateway implements ItemsCreatorsC
     public function __construct($adapter)
     {
         parent::__construct(['Item_Creator_ID', 'Citation_ID'], 'Items_Creators_Citations', $adapter);
+    }
+
+    /**
+     * Get associated creator.
+     *
+     * @return ItemsCreatorEntityInterface
+     */
+    public function getCreator(): ItemsCreatorEntityInterface
+    {
+        return $this->getTableManager()->get('itemscreators')->getByPrimaryKey($this->Item_Creator_ID);
+    }
+
+    /**
+     * Set associated creator.
+     *
+     * @param int|ItemsCreatorEntityInterface $creator Associated creator entity or ID
+     *
+     * @return static
+     */
+    public function setCreator(int|ItemsCreatorEntityInterface $creator): static
+    {
+        $this->Item_Creator_ID = $creator instanceof ItemsCreatorEntityInterface ? $creator->getId() : $creator;
+        return $this;
+    }
+
+    /**
+     * Get associated citation.
+     *
+     * @return CitationEntityInterface
+     */
+    public function getCitation(): CitationEntityInterface
+    {
+        return $this->getTableManager()->get('citation')->getByPrimaryKey($this->Citation_ID);
+    }
+
+    /**
+     * Set associated citation.
+     *
+     * @param int|CitationEntityInterface $citation Associated citation entity or ID
+     *
+     * @return static
+     */
+    public function setCitation(int|CitationEntityInterface $citation): static
+    {
+        $this->Citation_ID = $citation instanceof CitationEntityInterface ? $citation->getId() : $citation;
+        return $this;
     }
 }

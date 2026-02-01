@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsCreatorsCitationEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated creator.
+     *
+     * @return ItemsCreatorEntityInterface
+     */
+    public function getCreator(): ItemsCreatorEntityInterface;
+
+    /**
+     * Set associated creator.
+     *
+     * @param int|ItemsCreatorEntityInterface $creator Associated creator entity or ID
+     *
+     * @return static
+     */
+    public function setCreator(int|ItemsCreatorEntityInterface $creator): static;
+
+    /**
+     * Get associated citation.
+     *
+     * @return CitationEntityInterface
+     */
+    public function getCitation(): CitationEntityInterface;
+
+    /**
+     * Set associated citation.
+     *
+     * @param int|CitationEntityInterface $citation Associated citation entity or ID
+     *
+     * @return static
+     */
+    public function setCitation(int|CitationEntityInterface $citation): static;
 }

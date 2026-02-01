@@ -37,6 +37,7 @@ use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemsAttributeService;
 use GeebyDeeby\Db\Service\ItemsAttributesValueService;
 use GeebyDeeby\Db\Service\ItemsBibliographyService;
+use GeebyDeeby\Db\Service\ItemsCreatorsCitationService;
 use GeebyDeeby\Db\Service\ItemsCreatorService;
 use GeebyDeeby\Db\Service\ItemsDescriptionService;
 use GeebyDeeby\Db\Service\ItemService;
@@ -439,8 +440,7 @@ class EditItemController extends AbstractBase
         $view = $this->createViewModel();
         $view->row = $this->getDbService(ItemsCreatorService::class)->getByPrimaryKey($rowId);
         $view->citations = $this->getDbService(CitationService::class)->getList();
-        $view->selectedCitations = $this->getDbTable('itemscreatorscitations')
-            ->getCitations($rowId);
+        $view->selectedCitations = $this->getDbService(ItemsCreatorsCitationService::class)->getCitations($rowId);
         $view->setTemplate('geeby-deeby/edit-item/modify-creator');
 
         // If this is an AJAX request, render the core list only, not the

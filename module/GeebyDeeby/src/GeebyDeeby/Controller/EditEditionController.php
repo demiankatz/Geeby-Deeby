@@ -859,7 +859,7 @@ class EditEditionController extends AbstractBase
                 return $this->jsonDie('Image path or IIIF URI must be set.');
             }
             // Build thumb path if none was provided:
-            if (empty($thumb) && empty($iiif) && !empty($image)) {
+            if (empty($thumb) && empty($iiif) && strlen($image)) {
                 $parts = explode('.', $image);
                 $nextToLast = count($parts) - 2;
                 $parts[$nextToLast] .= 'thumb';
