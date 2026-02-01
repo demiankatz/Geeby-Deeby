@@ -47,11 +47,11 @@ class EditionsProductCodeService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param EditionsProductCodes $oclcNumbersTable EditionsProductCodes table
+     * @param EditionsProductCodes $productCodesTable EditionsProductCodes table
      */
     public function __construct(
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsProductCodes $oclcNumbersTable
+        protected EditionsProductCodes $productCodesTable
     ) {
     }
 
@@ -62,7 +62,7 @@ class EditionsProductCodeService extends AbstractDbService
      */
     public function createEntity(): EditionsProductCodeEntityInterface
     {
-        return $this->oclcNumbersTable->createRow();
+        return $this->productCodesTable->createRow();
     }
 
     /**
@@ -74,7 +74,7 @@ class EditionsProductCodeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsProductCodeEntityInterface
     {
-        return $this->oclcNumbersTable->getByPrimaryKey($id) ?: null;
+        return $this->productCodesTable->getByPrimaryKey($id) ?: null;
     }
 
     /**
@@ -86,7 +86,7 @@ class EditionsProductCodeService extends AbstractDbService
      */
     public function getProductCodesForEdition(int $editionID): array
     {
-        return iterator_to_array($this->oclcNumbersTable->getProductCodesForEdition($editionID));
+        return iterator_to_array($this->productCodesTable->getProductCodesForEdition($editionID));
     }
 
     /**
@@ -98,6 +98,6 @@ class EditionsProductCodeService extends AbstractDbService
      */
     public function getProductCodesForItem(int $itemID): array
     {
-        return iterator_to_array($this->oclcNumbersTable->getProductCodesForItem($itemID));
+        return iterator_to_array($this->productCodesTable->getProductCodesForItem($itemID));
     }
 }
