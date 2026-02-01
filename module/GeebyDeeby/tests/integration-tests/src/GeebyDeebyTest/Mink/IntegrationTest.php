@@ -47,6 +47,9 @@ use function in_array;
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
  * @todo Add tests for edition preferred titles.
+ * @todo Add tests for reversable relationships.
+ * @todo Add tests for HTML in custom attributes.
+ * @todo Add tests for data cleanup controller.
  */
 class IntegrationTest extends MinkTestCase
 {
