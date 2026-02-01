@@ -42,6 +42,7 @@ use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
 use GeebyDeeby\Db\Service\EditionsPlatformService;
 use GeebyDeeby\Db\Service\EditionsProductCodeService;
+use GeebyDeeby\Db\Service\EditionsReleaseDateService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
@@ -209,7 +210,7 @@ class EditEditionController extends AbstractBase
             $view->platforms = $this->getDbService(PlatformService::class)->getList();
             $view->productCodes = $this->getDbService(EditionsProductCodeService::class)
                 ->getProductCodesForEdition($editionId);
-            $view->releaseDates = $this->getDbTable('editionsreleasedates')
+            $view->releaseDates = $this->getDbService(EditionsReleaseDateService::class)
                 ->getDatesForEdition($editionId);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
             $view->fullText = $this->getDbService(EditionsFullTextService::class)
@@ -480,10 +481,10 @@ class EditEditionController extends AbstractBase
             return $this->deleteDate();
         }
         // Default action: list dates:
-        $table = $this->getDbTable('editionsreleasedates');
+        $service = $this->getDbService(EditionsReleaseDateService::class);
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->releaseDates = $table->getDatesForEdition($primary);
+        $view->releaseDates = $service->getDatesForEdition($primary);
         $view->setTemplate('geeby-deeby/edit-edition/date-list.phtml');
         $view->setTerminal(true);
         return $view;
@@ -514,18 +515,16 @@ class EditEditionController extends AbstractBase
      */
     protected function addDate()
     {
-        $table = $this->getDbTable('editionsreleasedates');
-        $row = $table->createRow();
-        $row->Edition_ID = $this->params()->fromRoute('id');
-        $row->Year = $this->params()->fromPost('year');
-        $row->Month = $this->params()->fromPost('month');
-        $row->Day = $this->params()->fromPost('day');
-        $row->Note_ID = $this->params()->fromPost('note_id');
-        if (empty($row->Note_ID)) {
-            $row->Note_ID = null;
-        }
+        $service = $this->getDbService(EditionsReleaseDateService::class);
+        $note = $this->params()->fromPost('note_id');
+        $entity = $service->createEntity()
+            ->setEdition((int)$this->params()->fromRoute('id'))
+            ->setYear((int)$this->params()->fromPost('year'))
+            ->setMonth((int)$this->params()->fromPost('month'))
+            ->setDay((int)$this->params()->fromPost('day'))
+            ->setNote(empty($note) ? null : (int)$note);
         try {
-            $table->insert($row->toArray());
+            $service->persistEntity($entity);
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
         }
@@ -539,16 +538,10 @@ class EditEditionController extends AbstractBase
      */
     protected function deleteDate()
     {
-        [$year, $month, $day]
-            = explode(',', $this->params()->fromRoute('extra'));
-        $this->getDbTable('editionsreleasedates')->delete(
-            [
-                'Edition_ID' => $this->params()->fromRoute('id'),
-                'Year' => $year,
-                'Month' => $month,
-                'Day' => $day,
-            ]
-        );
+        $service = $this->getDbService(EditionsReleaseDateService::class);
+        [$year, $month, $day] = explode(',', $this->params()->fromRoute('extra'));
+        $entity = $service->getByEditionAndYearAndMonthAndDay($this->params()->fromRoute('id'), $year, $month, $day);
+        $service->deleteEntity($entity);
         return $this->jsonReportSuccess();
     }
 

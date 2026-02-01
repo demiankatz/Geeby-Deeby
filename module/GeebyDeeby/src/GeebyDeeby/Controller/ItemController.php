@@ -39,6 +39,7 @@ use GeebyDeeby\Db\Service\EditionsIsbnService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
 use GeebyDeeby\Db\Service\EditionsPlatformService;
 use GeebyDeeby\Db\Service\EditionsProductCodeService;
+use GeebyDeeby\Db\Service\EditionsReleaseDateService;
 use GeebyDeeby\Db\Service\FullTextSourceService;
 use GeebyDeeby\Db\Service\ItemsAdaptationService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
@@ -132,7 +133,7 @@ class ItemController extends AbstractBase
      */
     public function byyearAction()
     {
-        $raw = $this->getDbTable('editionsreleasedates')->getItemsByYear();
+        $raw = $this->getDbService(EditionsReleaseDateService::class)->getItemsByYear();
 
         // Sort out information about editions:
         $editionsByItem = [];
@@ -317,8 +318,7 @@ class ItemController extends AbstractBase
         $view->parents = $itemService->getItemParents($id);
 
         $view->publishers = $this->getDbService(EditionService::class)->getPublishersForItem($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')
-            ->getDatesForItem($id);
+        $view->dates = $this->getDbService(EditionsReleaseDateService::class)->getDatesForItem($id);
         $view->isbns = $this->getDbService(EditionsIsbnService::class)->getISBNsForItem($id);
         $view->codes = $this->getDbService(EditionsProductCodeService::class)->getProductCodesForItem($id);
         $view->oclcNumbers = $this->getDbService(EditionsOclcNumberService::class)

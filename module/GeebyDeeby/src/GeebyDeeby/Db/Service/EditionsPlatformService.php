@@ -106,7 +106,7 @@ class EditionsPlatformService extends AbstractDbService
     /**
      * Get an entity by edition and platform.
      *
-     * @param int|EditionEntityInterface $edition Edition entity or ID
+     * @param int|EditionEntityInterface  $edition  Edition entity or ID
      * @param int|PlatformEntityInterface $platform Platform entity or ID
      *
      * @return ?EditionsPlatformEntityInterface
