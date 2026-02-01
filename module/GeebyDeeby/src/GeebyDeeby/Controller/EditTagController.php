@@ -35,6 +35,7 @@ use GeebyDeeby\Db\Service\TagsAttributeService;
 use GeebyDeeby\Db\Service\TagsAttributesValueService;
 use GeebyDeeby\Db\Service\TagService;
 use GeebyDeeby\Db\Service\TagsRelationshipService;
+use GeebyDeeby\Db\Service\TagsRelationshipsValueService;
 use GeebyDeeby\Db\Service\TagsUriService;
 use GeebyDeeby\Db\Service\TagTypeService;
 
@@ -140,7 +141,7 @@ class EditTagController extends AbstractBase
             $view->items = $this->getDbService(ItemsTagService::class)->getItemsForTag($tagId);
             $view->predicates = $this->getDbService(PredicateService::class)->getList();
             $view->relationships = $this->getDbService(TagsRelationshipService::class)->getOptionList();
-            $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
+            $view->relationshipsValues = $this->getDbService(TagsRelationshipsValueService::class)
                 ->getRelationshipsForTag($tagId);
         }
         return $view;
@@ -191,22 +192,26 @@ class EditTagController extends AbstractBase
         // the standard behavior consistent.
         $rid = $this->params()->fromRoute('relationship_id');
         if (substr($rid, 0, 1) === 'i') {
-            $linkFrom = 'Object_Tag_ID';
-            $linkTo = 'Subject_Tag_ID';
+            $linkFrom = 'setObject';
+            $linkTo = 'setSubject';
             $rid = substr($rid, 1);
+            $invertRetrieve = true;
         } else {
-            $linkFrom = 'Subject_Tag_ID';
-            $linkTo = 'Object_Tag_ID';
+            $linkFrom = 'setSubject';
+            $linkTo = 'setObject';
+            $invertRetrieve = false;
         }
-        $extras = ['Tags_Relationship_ID' => $rid];
+        $extras = ['setRelationship' => $rid];
         return $this->handleGenericLink(
-            'tagsrelationshipsvalues',
+            TagsRelationshipsValueService::class,
             $linkFrom,
             $linkTo,
             'relationshipsValues',
             'getRelationshipsForTag',
             'geeby-deeby/edit-tag/relationship-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getBySubjectAndObjectAndRelationship',
+            invertRetrieveLinkParams: $invertRetrieve
         );
     }
 

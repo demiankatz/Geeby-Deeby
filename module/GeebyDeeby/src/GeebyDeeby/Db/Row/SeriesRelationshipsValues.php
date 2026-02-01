@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesRelationshipEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesRelationshipsValueEntityInterface;
 
 /**
@@ -54,5 +56,75 @@ class SeriesRelationshipsValues extends TableAwareGateway implements SeriesRelat
             'Series_Relationships_Values',
             $adapter
         );
+    }
+
+    /**
+     * Get subject series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSubject(): SeriesEntityInterface
+    {
+        return $this->getTableManager()->get('series')->getByPrimaryKey($this->Subject_Series_ID);
+    }
+
+    /**
+     * Set subject series.
+     *
+     * @param int|SeriesEntityInterface $series Subject series entity or ID
+     *
+     * @return static
+     */
+    public function setSubject(int|SeriesEntityInterface $series): static
+    {
+        $this->Subject_Series_ID = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
+        return $this;
+    }
+
+    /**
+     * Get relationship.
+     *
+     * @return SeriesRelationshipEntityInterface
+     */
+    public function getRelationship(): SeriesRelationshipEntityInterface
+    {
+        return $this->getTableManager()->get('seriesrelationship')->getByPrimaryKey($this->Series_Relationship_ID);
+    }
+
+    /**
+     * Set relationship.
+     *
+     * @param int|SeriesRelationshipEntityInterface $relationship Relationship entity or ID
+     *
+     * @return static
+     */
+    public function setRelationship(int|SeriesRelationshipEntityInterface $relationship): static
+    {
+        $this->Series_Relationship_ID = $relationship instanceof SeriesRelationshipEntityInterface
+            ? $relationship->getId() : $relationship;
+        return $this;
+    }
+
+    /**
+     * Get object series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getObject(): SeriesEntityInterface
+    {
+        return $this->getTableManager()->get('series')->getByPrimaryKey($this->Object_Series_ID);
+    }
+
+    /**
+     * Set object series.
+     *
+     * @param int|SeriesEntityInterface $series Object series entity or ID
+     *
+     * @return static
+     */
+    public function setObject(int|SeriesEntityInterface $series): static
+    {
+        $this->Object_Series_ID = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
+        return $this;
     }
 }

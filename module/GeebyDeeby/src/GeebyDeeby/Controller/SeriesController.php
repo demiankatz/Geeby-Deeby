@@ -43,6 +43,7 @@ use GeebyDeeby\Db\Service\SeriesCategoryService;
 use GeebyDeeby\Db\Service\SeriesFileService;
 use GeebyDeeby\Db\Service\SeriesLinkService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
+use GeebyDeeby\Db\Service\SeriesRelationshipsValueService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
 use Laminas\View\Model\ViewModel;
@@ -77,8 +78,7 @@ class SeriesController extends AbstractBase
         }
         $extras['seriesAttributes'] = $this->getDbService(SeriesAttributesValueService::class)
             ->getAttributesForSeries($id);
-        $extras['relationshipsValues']
-            = $this->getDbTable('seriesrelationshipsvalues')
+        $extras['relationshipsValues'] = $this->getDbService(SeriesRelationshipsValueService::class)
             ->getRelationshipsForSeries($id);
         return $this->createViewModel(
             ['series' => $entity->toArray()] + $extras

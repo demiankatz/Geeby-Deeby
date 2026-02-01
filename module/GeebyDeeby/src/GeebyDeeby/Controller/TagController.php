@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\TagsAttributesValueService;
 use GeebyDeeby\Db\Service\TagService;
+use GeebyDeeby\Db\Service\TagsRelationshipsValueService;
 use GeebyDeeby\Db\Service\TagsUriService;
 
 use function is_object;
@@ -164,7 +165,7 @@ class TagController extends AbstractBase
         );
         $view->items = $this->getDbService(ItemsTagService::class)->getItemsForTag($id, $extras['sort'] ?? 'series');
         $view->tagAttributes = $this->getDbService(TagsAttributesValueService::class)->getAttributesForTag($id);
-        $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
+        $view->relationshipsValues = $this->getDbService(TagsRelationshipsValueService::class)
             ->getRelationshipsForTag($id);
         $view->uris = $this->getDbService(TagsUriService::class)->getURIsForTag($id);
         return $view;

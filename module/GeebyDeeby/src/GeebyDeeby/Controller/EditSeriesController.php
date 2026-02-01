@@ -45,6 +45,7 @@ use GeebyDeeby\Db\Service\SeriesCategoryService;
 use GeebyDeeby\Db\Service\SeriesMaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
+use GeebyDeeby\Db\Service\SeriesRelationshipsValueService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
@@ -158,8 +159,7 @@ class EditSeriesController extends AbstractBase
             $view->series_publishers = $this->getDbService(SeriesPublisherService::class)
                 ->getPublishersForSeries($seriesId);
             $view->relationships = $this->getDbService(SeriesRelationshipService::class)->getOptionList();
-            $view->relationshipsValues = $this
-                ->getDbTable('seriesrelationshipsvalues')
+            $view->relationshipsValues = $this->getDbService(SeriesRelationshipsValueService::class)
                 ->getRelationshipsForSeries($seriesId);
             $view->translatedInto = $this->getDbTable('seriestranslations')
                 ->getTranslatedFrom($seriesId);
@@ -431,22 +431,26 @@ class EditSeriesController extends AbstractBase
         // the standard behavior consistent.
         $rid = $this->params()->fromRoute('relationship_id');
         if (substr($rid, 0, 1) === 'i') {
-            $linkFrom = 'Object_Series_ID';
-            $linkTo = 'Subject_Series_ID';
+            $linkFrom = 'setObject';
+            $linkTo = 'setSubject';
             $rid = substr($rid, 1);
+            $invertRetrieve = true;
         } else {
-            $linkFrom = 'Subject_Series_ID';
-            $linkTo = 'Object_Series_ID';
+            $linkFrom = 'setSubject';
+            $linkTo = 'setObject';
+            $invertRetrieve = false;
         }
-        $extras = ['Series_Relationship_ID' => $rid];
+        $extras = ['setRelationship' => $rid];
         return $this->handleGenericLink(
-            'seriesrelationshipsvalues',
+            SeriesRelationshipsValueService::class,
             $linkFrom,
             $linkTo,
             'relationshipsValues',
             'getRelationshipsForSeries',
             'geeby-deeby/edit-series/relationship-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getBySubjectAndObjectAndRelationship',
+            invertRetrieveLinkParams: $invertRetrieve
         );
     }
 

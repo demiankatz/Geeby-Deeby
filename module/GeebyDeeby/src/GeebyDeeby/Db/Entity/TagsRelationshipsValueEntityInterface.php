@@ -40,4 +40,51 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface TagsRelationshipsValueEntityInterface extends EntityInterface
 {
+    /**
+     * Get subject tag.
+     *
+     * @return TagEntityInterface
+     */
+    public function getSubject(): TagEntityInterface;
+
+    /**
+     * Set subject tag.
+     *
+     * @param int|TagEntityInterface $tag Subject tag entity or ID
+     *
+     * @return static
+     */
+    public function setSubject(int|TagEntityInterface $tag): static;
+
+    /**
+     * Get relationship.
+     *
+     * @return TagsRelationshipEntityInterface
+     */
+    public function getRelationship(): TagsRelationshipEntityInterface;
+
+    /**
+     * Set relationship.
+     *
+     * @param int|TagsRelationshipEntityInterface $relationship Relationship entity or ID
+     *
+     * @return static
+     */
+    public function setRelationship(int|TagsRelationshipEntityInterface $relationship): static;
+
+    /**
+     * Get object tag.
+     *
+     * @return TagEntityInterface
+     */
+    public function getObject(): TagEntityInterface;
+
+    /**
+     * Set object tag.
+     *
+     * @param int|TagEntityInterface $tag Object tag entity or ID
+     *
+     * @return static
+     */
+    public function setObject(int|TagEntityInterface $tag): static;
 }
