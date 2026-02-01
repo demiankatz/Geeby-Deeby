@@ -41,6 +41,7 @@ use GeebyDeeby\Db\Service\ItemsCreatorsCitationService;
 use GeebyDeeby\Db\Service\ItemsCreatorService;
 use GeebyDeeby\Db\Service\ItemsDescriptionService;
 use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\ItemsInCollectionService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
@@ -48,6 +49,7 @@ use GeebyDeeby\Db\Service\PeopleBibliographyService;
 use GeebyDeeby\Db\Service\RoleService;
 use GeebyDeeby\Db\Service\SeriesBibliographyService;
 use GeebyDeeby\Db\Service\SeriesService;
+use Throwable;
 
 use function count;
 use function intval;
@@ -155,8 +157,7 @@ class EditItemController extends AbstractBase
                 ->getPeopleDescribedByItem($itemId);
             $view->seriesBib = $this->getDbService(SeriesBibliographyService::class)
                 ->getSeriesDescribedByItem($itemId);
-            $view->item_list = $this->getDbTable('itemsincollections')
-                ->getItemsForCollection($itemId);
+            $view->item_list = $this->getDbService(ItemsInCollectionService::class)->getItemsForCollection($itemId);
             $view->translatedInto = $this->getDbTable('itemstranslations')
                 ->getTranslatedFrom($itemId);
             $view->descriptions = $this->getDbService(ItemsDescriptionService::class)->getDescriptions($itemId);
@@ -345,16 +346,26 @@ class EditItemController extends AbstractBase
      */
     public function attachmentAction()
     {
+        if ($this->getRequest()->isDelete()) {
+            $collection = $this->params()->fromRoute('id');
+            [$item, $pos] = explode(',', $this->params()->fromRoute('extra'));
+            $service = $this->getDbService(ItemsInCollectionService::class);
+            if ($entity = $service->getByCollectionItemAndItemAndPosition($collection, $item, $pos)) {
+                $service->deleteEntity($entity);
+            }
+            return $this->jsonReportSuccess();
+        }
         $note = intval($this->params()->fromPost('note_id'));
-        $extras = $note > 0 ? ['Note_ID' => $note] : [];
+        $extras = ['setPosition' => 0, 'setNote' => $note];
         return $this->handleGenericLink(
-            'itemsincollections',
-            'Collection_Item_ID',
-            'Item_ID',
+            ItemsInCollectionService::class,
+            'setCollectionItem',
+            'setItem',
             'item_list',
             'getItemsForCollection',
             'geeby-deeby/edit-item/list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByCollectionItemAndItemAndPosition'
         );
     }
 
@@ -382,17 +393,26 @@ class EditItemController extends AbstractBase
      */
     public function attachmentorderAction()
     {
-        if ($this->getRequest()->isPost()) {
-            $collection = $this->params()->fromRoute('id');
-            $item = $this->params()->fromPost('item_id');
-            $pos = $this->params()->fromPost('pos');
-            $this->getDbTable('itemsincollections')->update(
-                ['Position' => $pos],
-                ['Item_ID' => $item, 'Collection_Item_ID' => $collection]
-            );
-            return $this->jsonReportSuccess();
+        if (!$this->getRequest()->isPost()) {
+            return $this->jsonDie('Unexpected method');
         }
-        return $this->jsonDie('Unexpected method');
+        $collection = $this->params()->fromRoute('id');
+        $item = $this->params()->fromPost('item_id');
+        $pos = $this->params()->fromPost('pos');
+        $service = $this->getDbService(ItemsInCollectionService::class);
+        if ($entity = $service->getByCollectionItemAndItemAndPosition($collection, $item)) {
+            $entity->setPosition(intval($pos));
+            try {
+                $service->persistEntity($entity);
+            } catch (Throwable $e) {
+                // Laminas throws a strange error sometimes; let's ignore it as long as the
+                // data updated successfully...
+                if (!$service->getByCollectionItemAndItemAndPosition($collection, $item, $pos)) {
+                    return $this->jsonDie($e->getMessage());
+                }
+            }
+        }
+        return $this->jsonReportSuccess();
     }
 
     /**

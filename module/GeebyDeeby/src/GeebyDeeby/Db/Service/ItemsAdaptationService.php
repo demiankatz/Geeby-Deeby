@@ -31,7 +31,6 @@ namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsAdaptationEntityInterface;
-use GeebyDeeby\Db\Row\Item;
 use GeebyDeeby\Db\Table\ItemsAdaptations;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 

@@ -31,6 +31,7 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsImageService;
+use GeebyDeeby\Db\Service\ItemsInCollectionService;
 
 use function is_object;
 
@@ -123,15 +124,15 @@ class CleanupController extends AbstractBase
      */
     protected function processHierarchy($item)
     {
-        $table = $this->getDbTable('itemsincollections');
-        $targets = $table->getItemsForCollection($item);
+        $service = $this->getDbService(ItemsInCollectionService::class);
+        $targets = $service->getItemsForCollection($item);
         $editions = $this->getDbService(EditionService::class)->getByItem($item);
         foreach ($editions as $edition) {
             foreach ($targets as $target) {
-                $this->processHierarchyItem($edition->toArray(), $target);
+                $this->processHierarchyItem($edition->toArray(), $target->toArray());
             }
         }
-        $table->delete(['Collection_Item_ID' => $item]);
+        $service->deleteCollection($item);
     }
 
     /**
@@ -151,8 +152,9 @@ class CleanupController extends AbstractBase
                 $this->processHierarchy($id);
             }
         }
-        $table = $this->getDbTable('itemsincollections');
-        return $this->createViewModel(['details' => $table->getAllCollections()]);
+        return $this->createViewModel(
+            ['details' => $this->getDbService(ItemsInCollectionService::class)->getAllCollections()]
+        );
     }
 
     /**

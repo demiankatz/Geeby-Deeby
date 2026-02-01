@@ -40,4 +40,67 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface ItemsInCollectionEntityInterface extends EntityInterface
 {
+    /**
+     * Get collected item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getItem(): ItemEntityInterface;
+
+    /**
+     * Set collected item.
+     *
+     * @param int|ItemEntityInterface $item Collected item entity or ID
+     *
+     * @return static
+     */
+    public function setItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get collection (container) item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getCollectionItem(): ItemEntityInterface;
+
+    /**
+     * Set collection (container) item.
+     *
+     * @param int|ItemEntityInterface $item Collection (container) item entity or ID
+     *
+     * @return static
+     */
+    public function setCollectionItem(int|ItemEntityInterface $item): static;
+
+    /**
+     * Get position in credits.
+     *
+     * @return int
+     */
+    public function getPosition(): int;
+
+    /**
+     * Set position in credits.
+     *
+     * @param int $position Position in credits
+     *
+     * @return static
+     */
+    public function setPosition(int $position): static;
+
+    /**
+     * Get associated note (if any).
+     *
+     * @return ?NoteEntityInterface
+     */
+    public function getNote(): ?NoteEntityInterface;
+
+    /**
+     * Set associated note (if any).
+     *
+     * @param int|NoteEntityInterface|null $note Associated note entity or ID (null for none)
+     *
+     * @return static
+     */
+    public function setNote(int|NoteEntityInterface|null $note): static;
 }

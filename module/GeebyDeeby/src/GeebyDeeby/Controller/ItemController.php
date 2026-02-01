@@ -49,6 +49,7 @@ use GeebyDeeby\Db\Service\ItemsCreatorService;
 use GeebyDeeby\Db\Service\ItemsDescriptionService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsFileService;
+use GeebyDeeby\Db\Service\ItemsInCollectionService;
 use GeebyDeeby\Db\Service\ItemsLinkService;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
@@ -340,7 +341,7 @@ class ItemController extends AbstractBase
     {
         $view->altTitles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($id);
         $view->tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($id);
-        $collections = $this->getDbTable('itemsincollections');
+        $collections = $this->getDbService(ItemsInCollectionService::class);
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);
         $trans = $this->getDbTable('itemstranslations');
