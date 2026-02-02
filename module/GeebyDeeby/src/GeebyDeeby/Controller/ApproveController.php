@@ -29,7 +29,10 @@
 
 namespace GeebyDeeby\Controller;
 
+use DateTime;
 use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\ItemsReviewService;
+use GeebyDeeby\Db\Service\SeriesReviewService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\UserService;
 
@@ -120,8 +123,8 @@ class ApproveController extends AbstractBase
         }
         $view = $this->createViewModel();
         $view->newUsers = $this->getDbService(UserService::class)->getList(false);
-        $view->pendingReviews = $this->getDbTable('itemsreviews')->getReviewsByUser(null, 'n', false);
-        $view->pendingComments = $this->getDbTable('seriesreviews')->getReviewsByUser(null, 'n');
+        $view->pendingReviews = $this->getDbService(ItemsReviewService::class)->getReviewsByUser(null, 'n', false);
+        $view->pendingComments = $this->getDbService(SeriesReviewService::class)->getReviewsByUser(null, 'n');
         return $view;
     }
 
@@ -209,13 +212,16 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Problem loading item data.');
         }
 
-        $table = $this->getDbTable(
-            $type == 'item' ? 'itemsreviews' : 'seriesreviews'
+        $service = $this->getDbService(
+            $type == 'item' ? ItemsReviewService::class : SeriesReviewService::class
         );
-        $userWhere = ['User_ID' => $userId];
-        $itemWhere = [ucwords($type) . '_ID' => $itemId];
-        $value = ['Review' => $text, 'Approved' => 'y', 'Added' => date('Y-m-d')];
-        $table->update($value, $itemWhere + $userWhere + ['Approved' => 'n']);
+        $lookupMethod = $type == 'item' ? 'getByUserAndItem' : 'getByUserAndSeries';
+        $entity = $service->$lookupMethod($userId, $itemId);
+        if ($entity->isApproved()) {
+            return $this->jsonDie('Already approved!');
+        }
+        $entity->setReview($text)->setIsApproved(true)->setAddedDate(new DateTime());
+        $service->persistEntity($entity);
         return $this->jsonReportSuccess();
     }
 
@@ -252,12 +258,15 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Problem loading item data.');
         }
 
-        $table = $this->getDbTable(
-            $type == 'item' ? 'itemsreviews' : 'seriesreviews'
+        $service = $this->getDbService(
+            $type == 'item' ? ItemsReviewService::class : SeriesReviewService::class
         );
-        $userWhere = ['User_ID' => $userId];
-        $itemWhere = [ucwords($type) . '_ID' => $itemId];
-        $table->delete($itemWhere + $userWhere + ['Approved' => 'n']);
+        $lookupMethod = $type == 'item' ? 'getByUserAndItem' : 'getByUserAndSeries';
+        $entity = $service->$lookupMethod($userId, $itemId);
+        if ($entity->isApproved()) {
+            return $this->jsonDie('Already approved!');
+        }
+        $service->deleteEntity($entity);
         return $this->jsonReportSuccess();
     }
 

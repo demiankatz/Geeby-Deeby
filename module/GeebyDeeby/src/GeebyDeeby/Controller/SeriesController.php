@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use DateTime;
 use GeebyDeeby\Db\Service\EditionsCreditService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
@@ -44,6 +45,7 @@ use GeebyDeeby\Db\Service\SeriesFileService;
 use GeebyDeeby\Db\Service\SeriesLinkService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesRelationshipsValueService;
+use GeebyDeeby\Db\Service\SeriesReviewService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\TagService;
 use Laminas\View\Model\ViewModel;
@@ -178,41 +180,34 @@ class SeriesController extends AbstractBase
         }
 
         // Check for existing review.
-        $table = $this->getDbTable('seriesreviews');
-        $params = [
-            'Series_ID' => $this->params()->fromRoute('id'),
-            'User_ID' => $user->User_ID,
-        ];
-
-        $existing = $table->select($params)->toArray();
-        $existing = count($existing) > 0 ? $existing[0] : false;
+        $service = $this->getDbService(SeriesReviewService::class);
+        $seriesId = $this->params()->fromRoute('id');
+        $existing = $service->getByUserAndSeries($user, $seriesId);
 
         // Save comment if found.
         if ($this->getRequest()->isPost()) {
             $view = $this->createViewModel(
-                ['noChange' => false, 'series' => $params['Series_ID']]
+                ['noChange' => false, 'series' => $seriesId]
             );
-            $params['Approved'] = 'n';
-            $params['Review'] = $this->params()->fromPost('Review');
-            if ($existing && $params['Review'] == $existing['Review']) {
+            $review = $this->params()->fromPost('Review');
+            if ($existing && $review == $existing->getReview()) {
                 $view->noChange = true;
             } else {
-                if ($existing) {
-                    $table->delete(
-                        [
-                            'Series_ID' => $params['Series_ID'],
-                            'User_ID' => $params['User_ID'],
-                        ]
-                    );
+                if (!$existing) {
+                    $existing = $service->createEntity()
+                        ->setUser($user)
+                        ->setSeries($seriesId)
+                        ->setAddedDate(new DateTime());
                 }
-                $table->insert($params);
+                $existing->setIsApproved(false)->setReview($review);
+                $service->persistEntity($existing);
             }
             $view->setTemplate('geeby-deeby/series/comment-submitted');
             return $view;
         }
 
         // Send review to the view.
-        $review = $existing ? $existing['Review'] : '';
+        $review = $existing ? $existing->getReview() : '';
 
         $view = $this->getViewModelWithSeries(['review' => $review]);
         if (!$view) {
@@ -229,7 +224,7 @@ class SeriesController extends AbstractBase
     public function commentsAction()
     {
         $view = $this->createViewModel();
-        $view->comments = $this->getDbTable('seriesreviews')->getReviewsByUser(null);
+        $view->comments = $this->getDbService(SeriesReviewService::class)->getReviewsByUser(null);
         return $view;
     }
 
@@ -502,18 +497,10 @@ class SeriesController extends AbstractBase
         $view->bibliography = $this->getDbService(SeriesBibliographyService::class)
             ->getItemsDescribingSeries($id);
         $view->links = $this->getDbService(SeriesLinkService::class)->getLinksForSeries($id);
-        $reviews = $this->getDbTable('seriesreviews');
+        $reviews = $this->getDbService(SeriesReviewService::class);
         $view->comments = $reviews->getReviewsForSeries($id);
         $user = $this->getCurrentUser();
-        if ($user) {
-            $view->userHasComment = (bool)count(
-                $reviews->select(
-                    ['User_ID' => $user->User_ID, 'Series_ID' => $id]
-                )
-            );
-        } else {
-            $view->userHasComment = false;
-        }
+        $view->userHasComment = $user ? (bool)$reviews->getByUserAndSeries($user, $id) : false;
         return $view;
     }
 

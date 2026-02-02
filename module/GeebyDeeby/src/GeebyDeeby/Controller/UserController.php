@@ -31,6 +31,8 @@ namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Crypt\PasswordHasher;
 use GeebyDeeby\Db\Service\CollectionService;
+use GeebyDeeby\Db\Service\ItemsReviewService;
+use GeebyDeeby\Db\Service\SeriesReviewService;
 use GeebyDeeby\Db\Service\UserService;
 
 /**
@@ -118,8 +120,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->comments = $this->getDbTable('seriesreviews')
-            ->getReviewsByUser($view->user['User_ID']);
+        $view->comments = $this->getDbService(SeriesReviewService::class)->getReviewsByUser($view->user['User_ID']);
         return $view;
     }
 
@@ -215,12 +216,9 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->stats = $this->getDbService(CollectionService::class)
-            ->getUserStatistics($view->user['User_ID']);
-        $view->comments = $this->getDbTable('seriesreviews')
-            ->getReviewsByUser($view->user['User_ID']);
-        $view->reviews = $this->getDbTable('itemsreviews')
-            ->getReviewIDsByUser($view->user['User_ID']);
+        $view->stats = $this->getDbService(CollectionService::class)->getUserStatistics($view->user['User_ID']);
+        $view->comments = $this->getDbService(SeriesReviewService::class)->getReviewsByUser($view->user['User_ID']);
+        $view->reviews = $this->getDbService(ItemsReviewService::class)->getReviewIDsByUser($view->user['User_ID']);
         return $view;
     }
 
@@ -257,8 +255,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->reviews = $this->getDbTable('itemsreviews')
-            ->getReviewsByUser($view->user['User_ID']);
+        $view->reviews = $this->getDbService(ItemsReviewService::class)->getReviewsByUser($view->user['User_ID']);
         return $view;
     }
 

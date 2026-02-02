@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Entity;
 
+use DateTime;
+
 /**
  * Interface for series review entity models.
  *
@@ -40,4 +42,83 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface SeriesReviewEntityInterface extends EntityInterface
 {
+    /**
+     * Get associated series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSeries(): SeriesEntityInterface;
+
+    /**
+     * Set associated series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSeries(int|SeriesEntityInterface $series): static;
+
+    /**
+     * Get associated user.
+     *
+     * @return UserEntityInterface
+     */
+    public function getUser(): UserEntityInterface;
+
+    /**
+     * Set associated user.
+     *
+     * @param int|UserEntityInterface $user Associated user entity or ID
+     *
+     * @return static
+     */
+    public function setUser(int|UserEntityInterface $user): static;
+
+    /**
+     * Get the text of the review.
+     *
+     * @return string
+     */
+    public function getReview(): string;
+
+    /**
+     * Set the text of the review.
+     *
+     * @param string $review Review text
+     *
+     * @return static
+     */
+    public function setReview(string $review): static;
+
+    /**
+     * Is the user approved?
+     *
+     * @return bool
+     */
+    public function isApproved(): bool;
+
+    /**
+     * Set whether the user is approved.
+     *
+     * @param bool $approved Is the user approved?
+     *
+     * @return static
+     */
+    public function setIsApproved(bool $approved): static;
+
+    /**
+     * Get the date the review was added.
+     *
+     * @return DateTime
+     */
+    public function getAddedDate(): DateTime;
+
+    /**
+     * Set the date the review was added.
+     *
+     * @param string|DateTime $date Last login date
+     *
+     * @return static
+     */
+    public function setAddedDate(string|DateTime $date): static;
 }

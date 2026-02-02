@@ -33,7 +33,6 @@ use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsCreatorEntityInterface;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
-use GeebyDeeby\Db\Row\Item;
 use GeebyDeeby\Db\Table\ItemsCreators;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 

@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemsReviewService;
+use GeebyDeeby\Db\Service\SeriesReviewService;
+
 /**
  * Reviews controller
  *
@@ -49,8 +52,8 @@ class ReviewsController extends AbstractBase
     {
         return $this->createViewModel(
             [
-                'reviews' => $this->getDbTable('itemsreviews')->getRecentItemReviews(),
-                'comments' => $this->getDbTable('seriesreviews')->getRecentSeriesComments(),
+                'reviews' => $this->getDbService(ItemsReviewService::class)->getRecentItemReviews(),
+                'comments' => $this->getDbService(SeriesReviewService::class)->getRecentSeriesComments(),
             ]
         );
     }

@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use DateTime;
 use GeebyDeeby\Db\Service\CollectionService;
 use GeebyDeeby\Db\Service\EditionsAttributesValueService;
 use GeebyDeeby\Db\Service\EditionsCreditService;
@@ -52,6 +53,7 @@ use GeebyDeeby\Db\Service\ItemsFileService;
 use GeebyDeeby\Db\Service\ItemsInCollectionService;
 use GeebyDeeby\Db\Service\ItemsLinkService;
 use GeebyDeeby\Db\Service\ItemsRelationshipsValueService;
+use GeebyDeeby\Db\Service\ItemsReviewService;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
@@ -355,14 +357,10 @@ class ItemController extends AbstractBase
         $view->adaptedInto = $adapt->getAdaptedFrom($id);
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
         $view->descriptions = $this->getDbService(ItemsDescriptionService::class)->getDescriptions($id);
-        $reviews = $this->getDbTable('itemsreviews');
+        $reviews = $this->getDbService(ItemsReviewService::class);
         $view->reviews = $reviews->getReviewsForItem($id);
         $user = $this->getCurrentUser();
-        $view->userHasReview = $user ? (bool)count(
-            $reviews->select(
-                ['User_ID' => $user->User_ID, 'Item_ID' => $id]
-            )
-        ) : false;
+        $view->userHasReview = $user ? (bool)$reviews->getByUserAndItem($user, $id) : false;
         $collections = $this->getDbService(CollectionService::class);
         $view->buyers = $collections->getForItem($id, 'want');
         $view->owners = $collections->getForItem($id, 'have');
@@ -481,41 +479,34 @@ class ItemController extends AbstractBase
         }
 
         // Check for existing review.
-        $table = $this->getDbTable('itemsreviews');
-        $params = [
-            'Item_ID' => $this->params()->fromRoute('id'),
-            'User_ID' => $user->User_ID,
-        ];
-
-        $existing = $table->select($params)->toArray();
-        $existing = count($existing) > 0 ? $existing[0] : false;
+        $service = $this->getDbService(ItemsReviewService::class);
+        $itemId = $this->params()->fromRoute('id');
+        $existing = $service->getByUserAndItem($user, $itemId);
 
         // Save comment if found.
         if ($this->getRequest()->isPost()) {
             $view = $this->createViewModel(
-                ['noChange' => false, 'item' => $params['Item_ID']]
+                ['noChange' => false, 'item' => $itemId]
             );
-            $params['Approved'] = 'n';
-            $params['Review'] = $this->params()->fromPost('Review');
-            if ($existing && $params['Review'] == $existing['Review']) {
+            $review = $this->params()->fromPost('Review');
+            if ($existing && $review == $existing->getReview()) {
                 $view->noChange = true;
             } else {
-                if ($existing) {
-                    $table->delete(
-                        [
-                            'Item_ID' => $params['Item_ID'],
-                            'User_ID' => $params['User_ID'],
-                        ]
-                    );
+                if (!$existing) {
+                    $existing = $service->createEntity()
+                        ->setUser($user)
+                        ->setItem($itemId)
+                        ->setAddedDate(new DateTime());
                 }
-                $table->insert($params);
+                $existing->setReview($review)->setIsApproved(false);
+                $service->persistEntity($existing);
             }
             $view->setTemplate('geeby-deeby/item/review-submitted');
             return $view;
         }
 
         // Send review to the view.
-        $review = $existing ? $existing['Review'] : '';
+        $review = $existing ? $existing->getReview() : '';
 
         $view = $this->getViewModelWithItem(['review' => $review]);
         if (!$view) {
@@ -549,7 +540,7 @@ class ItemController extends AbstractBase
     public function reviewsAction()
     {
         $view = $this->createViewModel();
-        $view->reviews = $this->getDbTable('itemsreviews')->getReviewsByUser(null);
+        $view->reviews = $this->getDbService(ItemsReviewService::class)->getReviewsByUser(null);
         return $view;
     }
 
