@@ -45,6 +45,7 @@ use GeebyDeeby\Db\Service\ItemsInCollectionService;
 use GeebyDeeby\Db\Service\ItemsRelationshipService;
 use GeebyDeeby\Db\Service\ItemsRelationshipsValueService;
 use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\ItemsTranslationService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\PeopleBibliographyService;
 use GeebyDeeby\Db\Service\RoleService;
@@ -159,16 +160,14 @@ class EditItemController extends AbstractBase
             $view->seriesBib = $this->getDbService(SeriesBibliographyService::class)
                 ->getSeriesDescribedByItem($itemId);
             $view->item_list = $this->getDbService(ItemsInCollectionService::class)->getItemsForCollection($itemId);
-            $view->translatedInto = $this->getDbTable('itemstranslations')
-                ->getTranslatedFrom($itemId);
+            $view->translatedInto = $this->getDbService(ItemsTranslationService::class)->getTranslatedFrom($itemId);
             $view->descriptions = $this->getDbService(ItemsDescriptionService::class)->getDescriptions($itemId);
             $view->tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($itemId);
             $view->item_alt_titles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($itemId);
             $view->relationships = $this->getDbService(ItemsRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this->getDbService(ItemsRelationshipsValueService::class)
                 ->getRelationshipsForItem($itemId);
-            $view->translatedFrom = $this->getDbTable('itemstranslations')
-                ->getTranslatedInto($itemId);
+            $view->translatedFrom = $this->getDbService(ItemsTranslationService::class)->getTranslatedInto($itemId);
             $view->editions = $this->getDbService(EditionService::class)->getEditionsForItem($itemId);
             $view->setTemplate('geeby-deeby/edit-item/edit-full');
         }
@@ -739,12 +738,13 @@ class EditItemController extends AbstractBase
     public function translationintoAction()
     {
         return $this->handleGenericLink(
-            'itemstranslations',
-            'Source_Item_ID',
-            'Trans_Item_ID',
+            ItemsTranslationService::class,
+            'setSourceItem',
+            'setTranslatedItem',
             'translatedInto',
             'getTranslatedFrom',
-            'geeby-deeby/edit-item/trans-into-list.phtml'
+            'geeby-deeby/edit-item/trans-into-list.phtml',
+            retrieveLinkMethod: 'getBySourceItemAndTranslatedItem'
         );
     }
 
@@ -756,12 +756,14 @@ class EditItemController extends AbstractBase
     public function translationfromAction()
     {
         return $this->handleGenericLink(
-            'itemstranslations',
-            'Trans_Item_ID',
-            'Source_Item_ID',
+            ItemsTranslationService::class,
+            'setTranslatedItem',
+            'setSourceItem',
             'translatedFrom',
             'getTranslatedInto',
-            'geeby-deeby/edit-item/trans-from-list.phtml'
+            'geeby-deeby/edit-item/trans-from-list.phtml',
+            retrieveLinkMethod: 'getBySourceItemAndTranslatedItem',
+            invertRetrieveLinkParams: true
         );
     }
 }

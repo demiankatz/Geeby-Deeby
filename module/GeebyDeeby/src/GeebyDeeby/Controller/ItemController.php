@@ -55,6 +55,7 @@ use GeebyDeeby\Db\Service\ItemsLinkService;
 use GeebyDeeby\Db\Service\ItemsRelationshipsValueService;
 use GeebyDeeby\Db\Service\ItemsReviewService;
 use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\ItemsTranslationService;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
 
@@ -346,7 +347,7 @@ class ItemController extends AbstractBase
         $collections = $this->getDbService(ItemsInCollectionService::class);
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);
-        $trans = $this->getDbTable('itemstranslations');
+        $trans = $this->getDbService(ItemsTranslationService::class);
         $adapt = $this->getDbService(ItemsAdaptationService::class);
         // The variable/function names are a bit unintuitive here --
         // $view->translatedInto is a list of books that $id was translated into;

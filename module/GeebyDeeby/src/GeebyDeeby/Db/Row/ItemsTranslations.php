@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsTranslationEntityInterface;
 
 /**
@@ -50,5 +51,51 @@ class ItemsTranslations extends TableAwareGateway implements ItemsTranslationEnt
     public function __construct($adapter)
     {
         parent::__construct(['Source_Item_ID', 'Trans_Item_ID'], 'Items_Translations', $adapter);
+    }
+
+    /**
+     * Get source item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getSourceItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Source_Item_ID);
+    }
+
+    /**
+     * Set source item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setSourceItem(int|ItemEntityInterface $item): static
+    {
+        $this->Source_Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
+    }
+
+    /**
+     * Get adapted item.
+     *
+     * @return ItemEntityInterface
+     */
+    public function getTranslatedItem(): ItemEntityInterface
+    {
+        return $this->getTableManager()->get('item')->getByPrimaryKey($this->Trans_Item_ID);
+    }
+
+    /**
+     * Set adapted item.
+     *
+     * @param int|ItemEntityInterface $item Associated item entity or ID
+     *
+     * @return static
+     */
+    public function setTranslatedItem(int|ItemEntityInterface $item): static
+    {
+        $this->Trans_Item_ID = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        return $this;
     }
 }
