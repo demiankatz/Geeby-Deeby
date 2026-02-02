@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesTranslationEntityInterface;
 
 /**
@@ -50,5 +51,51 @@ class SeriesTranslations extends TableAwareGateway implements SeriesTranslationE
     public function __construct($adapter)
     {
         parent::__construct(['Source_Series_ID', 'Trans_Series_ID'], 'Series_Translations', $adapter);
+    }
+
+    /**
+     * Get source series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSourceSeries(): SeriesEntityInterface
+    {
+        return $this->getTableManager()->get('series')->getByPrimaryKey($this->Source_Series_ID);
+    }
+
+    /**
+     * Set source series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSourceSeries(int|SeriesEntityInterface $series): static
+    {
+        $this->Source_Series_ID = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
+        return $this;
+    }
+
+    /**
+     * Get adapted series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getTranslatedSeries(): SeriesEntityInterface
+    {
+        return $this->getTableManager()->get('series')->getByPrimaryKey($this->Trans_Series_ID);
+    }
+
+    /**
+     * Set adapted series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setTranslatedSeries(int|SeriesEntityInterface $series): static
+    {
+        $this->Trans_Series_ID = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
+        return $this;
     }
 }

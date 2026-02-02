@@ -47,6 +47,7 @@ use GeebyDeeby\Db\Service\SeriesPublisherService;
 use GeebyDeeby\Db\Service\SeriesRelationshipService;
 use GeebyDeeby\Db\Service\SeriesRelationshipsValueService;
 use GeebyDeeby\Db\Service\SeriesService;
+use GeebyDeeby\Db\Service\SeriesTranslationService;
 
 use function count;
 use function intval;
@@ -161,10 +162,9 @@ class EditSeriesController extends AbstractBase
             $view->relationships = $this->getDbService(SeriesRelationshipService::class)->getOptionList();
             $view->relationshipsValues = $this->getDbService(SeriesRelationshipsValueService::class)
                 ->getRelationshipsForSeries($seriesId);
-            $view->translatedInto = $this->getDbTable('seriestranslations')
-                ->getTranslatedFrom($seriesId);
-            $view->translatedFrom = $this->getDbTable('seriestranslations')
-                ->getTranslatedInto($seriesId);
+            $seriesTranslationService = $this->getDbService(SeriesTranslationService::class);
+            $view->translatedInto = $seriesTranslationService->getTranslatedFrom($seriesId);
+            $view->translatedFrom = $seriesTranslationService->getTranslatedInto($seriesId);
             $view->setTemplate('geeby-deeby/edit-series/edit-full');
         }
 
@@ -480,12 +480,13 @@ class EditSeriesController extends AbstractBase
     public function translationintoAction()
     {
         return $this->handleGenericLink(
-            'seriestranslations',
-            'Source_Series_ID',
-            'Trans_Series_ID',
+            SeriesTranslationService::class,
+            'setSourceSeries',
+            'setTranslatedSeries',
             'translatedInto',
             'getTranslatedFrom',
-            'geeby-deeby/edit-series/trans-into-list.phtml'
+            'geeby-deeby/edit-series/trans-into-list.phtml',
+            retrieveLinkMethod: 'getBySourceSeriesAndTranslatedSeries'
         );
     }
 
@@ -497,12 +498,14 @@ class EditSeriesController extends AbstractBase
     public function translationfromAction()
     {
         return $this->handleGenericLink(
-            'seriestranslations',
-            'Trans_Series_ID',
-            'Source_Series_ID',
+            SeriesTranslationService::class,
+            'setTranslatedSeries',
+            'setSourceSeries',
             'translatedFrom',
             'getTranslatedInto',
-            'geeby-deeby/edit-series/trans-from-list.phtml'
+            'geeby-deeby/edit-series/trans-from-list.phtml',
+            retrieveLinkMethod: 'getBySourceSeriesAndTranslatedSeries',
+            invertRetrieveLinkParams: true
         );
     }
 }

@@ -40,4 +40,35 @@ namespace GeebyDeeby\Db\Entity;
  */
 interface SeriesTranslationEntityInterface extends EntityInterface
 {
+    /**
+     * Get source series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getSourceSeries(): SeriesEntityInterface;
+
+    /**
+     * Set source series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setSourceSeries(int|SeriesEntityInterface $series): static;
+
+    /**
+     * Get adapted series.
+     *
+     * @return SeriesEntityInterface
+     */
+    public function getTranslatedSeries(): SeriesEntityInterface;
+
+    /**
+     * Set adapted series.
+     *
+     * @param int|SeriesEntityInterface $series Associated series entity or ID
+     *
+     * @return static
+     */
+    public function setTranslatedSeries(int|SeriesEntityInterface $series): static;
 }
