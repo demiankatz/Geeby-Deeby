@@ -99,4 +99,16 @@ class CategoryService extends AbstractDbService
     {
         return iterator_to_array($this->categoryTable->getList());
     }
+
+    /**
+     * Perform a keyword search.
+     *
+     * @param array $tokens Keywords.
+     *
+     * @return array
+     */
+    public function keywordSearch(array $tokens): array
+    {
+        return iterator_to_array($this->categoryTable->keywordSearch($tokens));
+    }
 }

@@ -41,7 +41,6 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 
-use function func_get_args;
 use function intval;
 use function is_callable;
 use function is_object;
@@ -109,31 +108,6 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Get a database table gateway.
-     *
-     * @param string $table Name of table service to pull
-     *
-     * @return \Laminas\Db\TableGateway\AbstractTableGateway
-     */
-    protected function getDbTable($table)
-    {
-        return $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager')
-            ->get(strtolower($table));
-    }
-
-    /**
-     * Is the provided service name a database service?
-     *
-     * @param string $name Service name to check
-     *
-     * @return bool
-     */
-    protected function isDatabaseService(string $name): bool
-    {
-        return str_starts_with($name, 'GeebyDeeby\Db\Service');
-    }
-
-    /**
      * Die with a JSON-encoded message.
      *
      * @param string $msg     The message to send back.
@@ -192,9 +166,7 @@ class AbstractBase extends AbstractActionController
         if ($ok !== true) {
             return $ok;
         }
-        $service = $this->isDatabaseService($serviceName)
-            ? $this->getDbService($serviceName)
-            : $this->getDbTable($serviceName);
+        $service = $this->getDbService($serviceName);
         $view = $this->createViewModel([$assignTo => $service->getList()]);
 
         // If this is an AJAX request, render the core list only, not the
@@ -390,7 +362,6 @@ class AbstractBase extends AbstractActionController
         if ($ok !== true) {
             return [$ok, false];
         }
-        $useService = $this->isDatabaseService($serviceName);
         if ($this->getRequest()->isPost()) {
             $view = $this->saveGenericItem($serviceName, $assignMap);
         } elseif ($this->getRequest()->isDelete()) {
@@ -400,43 +371,6 @@ class AbstractBase extends AbstractActionController
             $view->setTerminal($this->getRequest()->isXmlHttpRequest());
         }
         return [$view, true];
-    }
-
-    /**
-     * Handle generic linking between two items.
-     *
-     * @param string    $tableName                Name of database table to modify
-     * @param string    $primaryColumn            Name of database column whose value is in 'id' route parameter
-     * @param string    $secondaryColumn          Name of database column whose value is in 'extra' route parameter
-     * @param string    $listVariable             Name of view variable for list used when displaying existing links
-     * @param string    $listMethod               Name of method on table class to call for list assignment
-     * @param string    $listTemplate             Name of template to use for displaying list
-     * @param array     $extraFields              Extra fields to insert with the link (optional)
-     * @param ?callable $insertCallback           Callback function when inserting a new row
-     * @param string    $retrieveLinkMethod       Name of service method to fetch a link using primary/secondary values
-     * @param bool      $invertRetrieveLinkParams Should we invert the parameter order on retrieveLinkMethod?
-     *
-     * @return mixed
-     */
-    public function handleGenericLink(
-        $tableName,
-        $primaryColumn,
-        $secondaryColumn,
-        $listVariable,
-        $listMethod,
-        $listTemplate,
-        $extraFields = [],
-        $insertCallback = null,
-        string $retrieveLinkMethod = 'retrieveLink',
-        bool $invertRetrieveLinkParams = false
-    ) {
-        $ok = $this->checkPermission('Content_Editor');
-        if ($ok !== true) {
-            return $ok;
-        }
-        return $this->isDatabaseService($tableName)
-            ? $this->handleGenericLinkForService(...func_get_args())
-            : $this->handleGenericLinkForTable(...func_get_args());
     }
 
     /**
@@ -458,7 +392,7 @@ class AbstractBase extends AbstractActionController
      *
      * @return mixed
      */
-    public function handleGenericLinkForService(
+    public function handleGenericLink(
         string $serviceName,
         ?string $primarySetter,
         ?string $secondarySetter,
@@ -470,6 +404,10 @@ class AbstractBase extends AbstractActionController
         string $retrieveLinkMethod = 'retrieveLink',
         bool $invertRetrieveLinkParams = false
     ) {
+        $ok = $this->checkPermission('Content_Editor');
+        if ($ok !== true) {
+            return $ok;
+        }
         $primary = $this->params()->fromRoute('id');
         $secondary = $this->params()->fromRoute('extra');
         $service = $this->getDbService($serviceName);
@@ -511,72 +449,6 @@ class AbstractBase extends AbstractActionController
 
         // If we got this far, display a list:
         $view = $this->createViewModel([$listVariable => $service->$listMethod($primary)]);
-        $view->setTemplate($listTemplate);
-        $view->setTerminal(true);
-        return $view;
-    }
-
-    /**
-     * Handle generic linking between two items using a legacy table object.
-     *
-     * @param string   $tableName       Name of database table to modify
-     * @param string   $primaryColumn   Name of database column whose value is in
-     * 'id' route parameter
-     * @param string   $secondaryColumn Name of database column whose value is in
-     * 'extra' route parameter
-     * @param string   $listVariable    Name of view variable to assign list to
-     * when displaying existing links
-     * @param string   $listMethod      Name of method on table class to call for
-     * list assignment
-     * @param string   $listTemplate    Name of template to use for displaying list
-     * @param array    $extraFields     Extra fields to insert with the link
-     * (optional)
-     * @param Callback $insertCallback  Callback function when inserting a new row
-     *
-     * @return mixed
-     *
-     * @deprecated use handleGenericLinkForService()
-     */
-    public function handleGenericLinkForTable(
-        $tableName,
-        $primaryColumn,
-        $secondaryColumn,
-        $listVariable,
-        $listMethod,
-        $listTemplate,
-        $extraFields = [],
-        $insertCallback = null
-    ) {
-        $primary = $this->params()->fromRoute('id');
-        $secondary = $this->params()->fromRoute('extra');
-        $table = $this->getDbTable($tableName);
-        if (!empty($primary) && !empty($secondary)) {
-            $row = [$primaryColumn => $primary, $secondaryColumn => $secondary];
-            $row += $extraFields;
-            try {
-                if ($this->getRequest()->isPut() || $this->getRequest()->isPost()) {
-                    $table->insert($row);
-                    if (is_callable($insertCallback)) {
-                        $insertCallback(
-                            $table->getLastInsertValue(),
-                            $row,
-                            $this->serviceLocator
-                        );
-                    }
-                } elseif ($this->getRequest()->isDelete()) {
-                    $table->delete($row);
-                } else {
-                    return $this->jsonDie('Unexpected method');
-                }
-                return $this->jsonReportSuccess();
-            } catch (\Exception $e) {
-                return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
-            }
-        }
-
-        // If we got this far, display a list:
-        $view = $this->createViewModel();
-        $view->$listVariable = $table->$listMethod($primary);
         $view->setTemplate($listTemplate);
         $view->setTerminal(true);
         return $view;

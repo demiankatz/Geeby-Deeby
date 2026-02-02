@@ -102,4 +102,17 @@ class PredicateService extends AbstractDbService
     {
         return iterator_to_array($this->predicateTable->getList());
     }
+
+    /**
+     * Get autocomplete suggestions.
+     *
+     * @param string $query The user query.
+     * @param ?int   $limit Limit on returned rows (null for no limit).
+     *
+     * @return array
+     */
+    public function getSuggestions(string $query, ?int $limit = null): array
+    {
+        return iterator_to_array($this->predicateTable->getSuggestions($query, $limit));
+    }
 }
