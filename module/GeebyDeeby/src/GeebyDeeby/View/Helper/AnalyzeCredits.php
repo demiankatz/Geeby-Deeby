@@ -29,8 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
-use GeebyDeeby\Db\Table\ItemsCreatorsCitations;
-use GeebyDeeby\Db\Table\Pseudonyms;
+use GeebyDeeby\Db\Service\ItemsCreatorsCitationService;
+use GeebyDeeby\Db\Service\PseudonymService;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 use function count;
@@ -64,15 +64,15 @@ class AnalyzeCredits
     /**
      * Constructor
      *
-     * @param Pseudonyms             $pseudonymsTable Pseudonyms table.
-     * @param ItemsCreatorsCitations $citationsTable  Items_Creators_Citations table.
-     * @param FixTitle               $fixTitleHelper  FixTitle view helper.
+     * @param Pseudonyms             $pseudonymService Pseudonyms service.
+     * @param ItemsCreatorsCitations $citationService  Items_Creators_Citations service.
+     * @param FixTitle               $fixTitleHelper   FixTitle view helper.
      */
     public function __construct(
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Pseudonyms $pseudonymsTable,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsCreatorsCitations $citationsTable,
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected PseudonymService $pseudonymService,
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected ItemsCreatorsCitationService $citationService,
         #[Autowire(container: 'ViewHelperManager')]
         protected FixTitle $fixTitleHelper
     ) {
@@ -181,8 +181,7 @@ class AnalyzeCredits
     protected function getPseudonymDetails($person, $filter = [])
     {
         if (!isset($this->pseudonyms[$person])) {
-            $this->pseudonyms[$person] = $this->pseudonymsTable
-                ->getPseudonyms($person)->toArray();
+            $this->pseudonyms[$person] = $this->pseudonymService->getPseudonyms($person);
         }
         return $this->filterNames($this->pseudonyms[$person], $filter);
     }
@@ -198,8 +197,7 @@ class AnalyzeCredits
     protected function getRealPersonDetails($person, $filter = [])
     {
         if (!isset($this->realNames[$person])) {
-            $this->realNames[$person] = $this->pseudonymsTable
-                ->getRealNames($person)->toArray();
+            $this->realNames[$person] = $this->pseudonymService->getRealNames($person);
         }
         return $this->filterNames($this->realNames[$person], $filter);
     }
@@ -259,7 +257,7 @@ class AnalyzeCredits
     protected function getCitationGroup($id)
     {
         $citations = [];
-        foreach ($this->citationsTable->getCitations($id) as $citation) {
+        foreach ($this->citationService->getCitations($id) as $citation) {
             $citations[] = $citation['Citation'];
         }
         if (empty($citations)) {

@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\Db\Service\UserService;
 use GeebyDeeby\Db\Table\User;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Authentication\AuthenticationService;
@@ -48,13 +49,13 @@ class ToggleLink
     /**
      * Constructor.
      *
-     * @param User                  $userTable User database table object
-     * @param Url                   $urlHelper Url view helper
-     * @param AuthenticationService $auth      Authentication service
+     * @param User                  $userService User database table object
+     * @param Url                   $urlHelper   Url view helper
+     * @param AuthenticationService $auth        Authentication service
      */
     public function __construct(
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected User $userTable,
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected UserService $userService,
         #[Autowire(container: 'ViewHelperManager')]
         protected Url $urlHelper,
         protected AuthenticationService $auth
@@ -101,7 +102,7 @@ class ToggleLink
     protected function checkPermission($permission)
     {
         $user = $this->auth->hasIdentity()
-            ? $this->userTable->getByPrimaryKey($this->auth->getIdentity())
+            ? $this->userService->getByPrimaryKey($this->auth->getIdentity())
             : null;
         return $user && !empty($user->getUserGroup()?->toArray()[$permission]);
     }
