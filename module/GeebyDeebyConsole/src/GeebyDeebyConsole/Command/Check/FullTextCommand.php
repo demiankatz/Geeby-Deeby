@@ -145,14 +145,14 @@ class FullTextCommand extends Command
         $updateRedirects = $input->getOption('updateRedirects');
         $items = $this->fullTextService->getItemsWithFullText($series, false, $provider);
         foreach ($items as $current) {
-            $url = $current->Full_Text_URL;
+            $url = $current['Full_Text_URL'];
             $request = new \Laminas\Http\Request();
             $response = $this->client->send($request->setUri($url));
             $rewritten = 0;
             if ($updateRedirects && $this->client->getRedirectionsCount() > 0) {
                 $rewritten = 1;
                 $url = $this->client->getUri();
-                $this->updateUrl($current->Sequence_ID, $url);
+                $this->updateUrl($current['Sequence_ID'], $url);
             }
             $responseLine = [$url, $response->getStatusCode()];
             if ($updateRedirects) {

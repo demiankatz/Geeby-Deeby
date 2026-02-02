@@ -405,7 +405,7 @@ class EditEditionController extends AbstractBase
                 $entity  = $service->getBySeriesAndTitle($series, $titleText);
                 if (!$entity) {
                     $entity = $service->createEntity()
-                        ->setSeries($edition->Series_ID)
+                        ->setSeries($series)
                         ->setAltName($titleText);
                     $service->persistEntity($entity);
                 }
@@ -647,8 +647,8 @@ class EditEditionController extends AbstractBase
         $values = $this->getDbService(EditionsFullTextAttributesValueService::class)
             ->getAttributesForFullTextIDs($rowId);
         foreach ($values as $current) {
-            $attributeValues[$current->Editions_Full_Text_Attribute_ID]
-                = $current->Editions_Full_Text_Attribute_Value;
+            $attributeValues[$current['Editions_Full_Text_Attribute_ID']]
+                = $current['Editions_Full_Text_Attribute_Value'];
         }
         $view->attributeValues = $attributeValues;
         $view->setTemplate('geeby-deeby/edit-edition/modify-full-text');

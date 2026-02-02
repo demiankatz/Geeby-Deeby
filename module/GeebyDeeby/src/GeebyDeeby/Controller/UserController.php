@@ -138,7 +138,7 @@ class UserController extends AbstractBase
         // Make sure user is logged in.
         if (
             !($user = $this->getCurrentUser())
-            || $view->user['User_ID'] != $user->User_ID
+            || $view->user['User_ID'] != $user->getId()
         ) {
             return $this->forceLogin();
         }

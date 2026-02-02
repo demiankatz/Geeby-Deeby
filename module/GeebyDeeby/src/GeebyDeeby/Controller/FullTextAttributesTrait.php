@@ -63,7 +63,7 @@ trait FullTextAttributesTrait
                 $view->fullText
             );
             foreach ($service->getAttributesForFullTextIDs($ids) as $attr) {
-                $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;
+                $fullTextAttributes[$attr['Editions_Full_Text_ID']][] = $attr;
             }
         }
         $view->fullTextAttributes = $fullTextAttributes;

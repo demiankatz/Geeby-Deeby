@@ -77,7 +77,7 @@ class CityController extends AbstractBase
         $city = $graph->resource($uri, $class);
         $city->set('rdf:label', $view->city['City_Name']);
         foreach ($view->uris as $uri) {
-            $city->add($uri->Predicate, $graph->resource($uri->URI));
+            $city->add($uri['Predicate'], $graph->resource($uri['URI']));
         }
         return $city;
     }

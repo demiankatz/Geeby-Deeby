@@ -143,12 +143,11 @@ class ItemController extends AbstractBase
         $editionsByItem = [];
         $sortedData = [];
         foreach ($raw as $current) {
-            if (!isset($editionsByItem[$current->Item_ID])) {
-                $editionsByItem[$current->Item_ID] = [];
+            if (!isset($editionsByItem[$current['Item_ID']])) {
+                $editionsByItem[$current['Item_ID']] = [];
             }
-            $editionsByItem[$current->Item_ID][$current->Edition_ID] = 1;
-            $dateKey = $current->Year . '|' . $current->Month . '|' . $current->Day
-                . '|' . $current->Item_ID;
+            $editionsByItem[$current['Item_ID']][$current['Edition_ID']] = 1;
+            $dateKey = $current['Year'] . '|' . $current['Month'] . '|' . $current['Day'] . '|' . $current['Item_ID'];
             if (!isset($sortedData[$dateKey])) {
                 $sortedData[$dateKey] = [];
             }
@@ -217,9 +216,9 @@ class ItemController extends AbstractBase
         $uri = $this->getServerUrl('item', ['id' => $id]);
         $type = $this->getDbService(MaterialTypeService::class)
             ->getByPrimaryKey($view->item['Material_Type_ID']);
-        if (!empty($type->Material_Type_RDF_Class)) {
+        if (!empty($type['Material_Type_RDF_Class'])) {
             $class = (array)$class;
-            $class[] = $type->Material_Type_RDF_Class;
+            $class[] = $type['Material_Type_RDF_Class'];
         }
         $item = $graph->resource($uri, $class);
         $name = $view->item['Item_Name'];

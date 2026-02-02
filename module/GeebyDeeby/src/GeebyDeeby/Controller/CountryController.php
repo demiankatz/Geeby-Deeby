@@ -77,7 +77,7 @@ class CountryController extends AbstractBase
         $country = $graph->resource($uri, $class);
         $country->set('rdf:label', $view->country['Country_Name']);
         foreach ($view->uris as $uri) {
-            $country->add($uri->Predicate, $graph->resource($uri->URI));
+            $country->add($uri['Predicate'], $graph->resource($uri['URI']));
         }
         return $country;
     }

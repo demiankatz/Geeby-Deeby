@@ -93,7 +93,7 @@ class TagController extends AbstractBase
             }
         }
         foreach ($view->uris as $uri) {
-            $tag->add($uri->Predicate, $graph->resource($uri->URI));
+            $tag->add($uri['Predicate'], $graph->resource($uri['URI']));
         }
         return $tag;
     }
