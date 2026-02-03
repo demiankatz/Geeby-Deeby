@@ -354,10 +354,10 @@ class SeriesController extends AbstractBase
     protected function addSeriesToGraph($graph, $series)
     {
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
-        $id = $series->Series_ID;
+        $id = $series['Series_ID'];
         $uri = $this->getServerUrl('series', ['id' => $id]);
         $seriesResource = $graph->resource($uri, $this->getSeriesRdfClass());
-        $name = $series->Series_Name;
+        $name = $series['Series_Name'];
         $seriesResource->set(
             'dcterms:title',
             $articleHelper->formatTrailingArticles($name)
