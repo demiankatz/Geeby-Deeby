@@ -44,13 +44,6 @@ use Laminas\Db\RowGateway\RowGateway;
 class SeriesReviews extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter

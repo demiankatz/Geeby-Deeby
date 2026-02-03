@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Abstract row factory
+ * Persistence manager factory.
  *
  * PHP version 8
  *
- * Copyright (C) Demian Katz 2019.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,61 +21,50 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Db
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
 
-namespace GeebyDeeby\Db\Row;
+namespace GeebyDeeby\Db;
 
 use Psr\Container\ContainerInterface;
 
 /**
- * Abstract row factory
+ * Persistence manager factory.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Db
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AbstractFactory implements \Laminas\ServiceManager\Factory\AbstractFactoryInterface
+class PersistenceManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
-     * Does the factory have a way to create an instance for the service?
+     * Create service
      *
-     * @param ContainerInterface $container     Service container
-     * @param string             $requestedName Name of service
+     * @param ContainerInterface $container Service manager
+     * @param string             $name      Requested service name
+     * @param ?array             $options   Extra options
      *
-     * @return bool
-     */
-    public function canCreate(ContainerInterface $container, $requestedName)
-    {
-        return class_exists($requestedName);
-    }
-
-    /**
-     * Create a service for the specified name.
-     *
-     * @param ContainerInterface $container     Service container
-     * @param string             $requestedName Name of service
-     * @param ?array             $options       Options (unused)
-     *
-     * @return object
+     * @return mixed
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(
         ContainerInterface $container,
-        $requestedName,
+        $name,
         ?array $options = null
     ) {
-        $adapter = $container->get('Laminas\Db\Adapter\Adapter');
-        $row = new $requestedName($adapter);
-        return ($row instanceof TableAwareGateway)
-            ? $row->setTableManager(
-                $container->get('GeebyDeeby\Db\Table\PluginManager')
-            ) : $row;
+        $config = $container->get('Config');
+        if (!empty($config['geeby-deeby']['activity_log_dir'])) {
+            $user = $container->get('GeebyDeeby\Authentication')->getIdentity();
+            $logDir = $config['geeby-deeby']['activity_log_dir'];
+        } else {
+            $user = $logDir = null;
+        }
+        return new $name($user, $logDir);
     }
 }

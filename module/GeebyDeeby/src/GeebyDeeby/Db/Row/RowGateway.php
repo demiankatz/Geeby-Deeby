@@ -42,8 +42,6 @@ use function count;
  */
 class RowGateway extends \Laminas\Db\RowGateway\RowGateway
 {
-    use \GeebyDeeby\Db\ActivityLoggerTrait;
-
     /**
      * Get primary key for the table.
      *
@@ -66,16 +64,5 @@ class RowGateway extends \Laminas\Db\RowGateway\RowGateway
         }
         $key = $this->primaryKeyColumn[0];
         return $this->$key;
-    }
-
-    /**
-     * Save
-     *
-     * @return void
-     */
-    public function save()
-    {
-        $this->logActivity();
-        parent::save();
     }
 }

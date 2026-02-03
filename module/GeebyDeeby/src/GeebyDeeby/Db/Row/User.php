@@ -46,13 +46,6 @@ use GeebyDeeby\Db\Entity\UserGroupEntityInterface;
 class User extends TableAwareGateway implements UserEntityInterface
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param \Laminas\Db\Adapter\Adapter $adapter Database adapter

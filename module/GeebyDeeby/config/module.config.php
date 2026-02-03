@@ -1307,7 +1307,7 @@ return [
     'service_manager' => [
         'factories' => [
             \GeebyDeeby\Articles::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
-            \GeebyDeeby\Db\PersistenceManager::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+            \GeebyDeeby\Db\PersistenceManager::class => \GeebyDeeby\Db\PersistenceManagerFactory::class,
             \GeebyDeeby\Db\Row\PluginManager::class => \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
             \GeebyDeeby\Db\Service\PluginManager::class =>
                 \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,

@@ -46,13 +46,6 @@ use Laminas\Db\Sql\Select;
 class ItemsReviews extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
