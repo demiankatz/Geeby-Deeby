@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\ItemsRelationshipEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\ItemsRelationship;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -47,12 +48,15 @@ class ItemsRelationshipService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param ItemsRelationship $itemsRelationshipTable ItemsRelationship table
+     * @param PersistenceManager $persistenceManager     Persistence manager
+     * @param ItemsRelationship  $itemsRelationshipTable ItemsRelationship table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected ItemsRelationship $itemsRelationshipTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

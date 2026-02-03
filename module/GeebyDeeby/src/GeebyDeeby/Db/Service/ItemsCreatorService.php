@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsCreatorEntityInterface;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\ItemsCreators;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -50,12 +51,15 @@ class ItemsCreatorService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param ItemsCreators $itemsCreatorsTable ItemsCreators table
+     * @param PersistenceManager $persistenceManager Persistence manager
+     * @param ItemsCreators      $itemsCreatorsTable ItemsCreators table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected ItemsCreators $itemsCreatorsTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

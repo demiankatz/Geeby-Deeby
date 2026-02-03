@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,6 +31,7 @@ namespace GeebyDeeby\Db\Service;
 
 use DateTime;
 use GeebyDeeby\Db\Entity\LinkEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Link;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -48,12 +49,15 @@ class LinkService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param Link $linkTable Link table
+     * @param PersistenceManager $persistenceManager Persistence manager
+     * @param Link               $linkTable          Link table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected Link $linkTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

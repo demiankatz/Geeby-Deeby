@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\AuthorityEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Authority;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -47,12 +48,15 @@ class AuthorityService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param Authority $authorityTable Authority table
+     * @param PersistenceManager $persistenceManager Persistence manager
+     * @param Authority          $authorityTable     Authority table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected Authority $authorityTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

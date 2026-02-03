@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,6 +32,7 @@ namespace GeebyDeeby\Db\Service;
 use GeebyDeeby\Db\Entity\FileEntityInterface;
 use GeebyDeeby\Db\Entity\PeopleFileEntityInterface;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\PeopleFiles;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -49,12 +50,15 @@ class PeopleFileService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param PeopleFiles $peopleFilesTable PeopleFiles table
+     * @param PersistenceManager $persistenceManager Persistence manager
+     * @param PeopleFiles        $peopleFilesTable   PeopleFiles table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected PeopleFiles $peopleFilesTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

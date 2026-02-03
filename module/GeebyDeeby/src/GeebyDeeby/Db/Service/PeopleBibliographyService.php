@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,6 +32,7 @@ namespace GeebyDeeby\Db\Service;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\PeopleBibliographyEntityInterface;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\PeopleBibliography;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -49,12 +50,15 @@ class PeopleBibliographyService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param PersistenceManager $persistenceManager      Persistence manager
      * @param PeopleBibliography $peopleBibliographyTable PeopleBibliography table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected PeopleBibliography $peopleBibliographyTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,6 +31,7 @@ namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Db\Sql\Expression;
@@ -53,15 +54,18 @@ class EditionService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param Editions    $editionsTable Editions table
-     * @param ItemService $itemService   Item database service
+     * @param PersistenceManager $persistenceManager Persistence manager
+     * @param Editions           $editionsTable      Editions table
+     * @param ItemService        $itemService        Item database service
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected Edition $editionsTable,
         #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
         protected ItemService $itemService
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

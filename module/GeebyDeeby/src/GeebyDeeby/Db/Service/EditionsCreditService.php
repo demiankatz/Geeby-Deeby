@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsCreditEntityInterface;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\EditionsCredits;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -50,12 +51,15 @@ class EditionsCreditService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param EditionsCredits $editionsCreditsTable EditionsCredits table
+     * @param PersistenceManager $persistenceManager   Persistence manager
+     * @param EditionsCredits    $editionsCreditsTable EditionsCredits table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected EditionsCredits $editionsCreditsTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

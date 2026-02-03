@@ -45,8 +45,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
     /**
      * Constructor
      *
-     * Make sure table gateways are properly initialized.
-     *
      * @param mixed $configOrContainerInstance Config or container (for backward compatibility)
      * @param array $v3config                  Configuration settings (optional)
      */

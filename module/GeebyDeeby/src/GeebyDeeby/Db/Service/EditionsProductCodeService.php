@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\EditionsProductCodeEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\EditionsProductCodes;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -47,12 +48,15 @@ class EditionsProductCodeService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param EditionsProductCodes $productCodesTable EditionsProductCodes table
+     * @param PersistenceManager   $persistenceManager Persistence manager
+     * @param EditionsProductCodes $productCodesTable  EditionsProductCodes table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected EditionsProductCodes $productCodesTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

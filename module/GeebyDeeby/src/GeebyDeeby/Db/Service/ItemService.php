@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Item;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
@@ -48,12 +49,15 @@ class ItemService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param Item $itemTable Item table
+     * @param PersistenceManager $persistenceManager Persistence manager
+     * @param Item               $itemTable          Item table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected Item $itemTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**

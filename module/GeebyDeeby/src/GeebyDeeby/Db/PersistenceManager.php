@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database service abstract base class
+ * Class to manage database persistence operations.
  *
  * PHP version 8
  *
@@ -21,37 +21,28 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Database
+ * @package  Db
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
+ * @link     https://vufind.org Main Site
  */
 
-namespace GeebyDeeby\Db\Service;
+namespace GeebyDeeby\Db;
 
 use GeebyDeeby\Db\Entity\EntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
+use Laminas\Db\RowGateway\AbstractRowGateway;
 
 /**
- * Database service abstract base class
+ * Class to manage database persistence operations.
  *
  * @category GeebyDeeby
- * @package  Database
+ * @package  Db
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
+ * @link     https://vufind.org Main Site
  */
-abstract class AbstractDbService implements DbServiceInterface
+class PersistenceManager
 {
-    /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     */
-    public function __construct(protected PersistenceManager $persistenceManager)
-    {
-    }
-
     /**
      * Persist an entity.
      *
@@ -61,7 +52,10 @@ abstract class AbstractDbService implements DbServiceInterface
      */
     public function persistEntity(EntityInterface $entity): void
     {
-        $this->persistenceManager->persistEntity($entity);
+        if (!$entity instanceof AbstractRowGateway) {
+            throw new \Exception('Unexpected entity type');
+        }
+        $entity->save();
     }
 
     /**
@@ -73,6 +67,9 @@ abstract class AbstractDbService implements DbServiceInterface
      */
     public function deleteEntity(EntityInterface $entity): void
     {
-        $this->persistenceManager->deleteEntity($entity);
+        if (!$entity instanceof AbstractRowGateway) {
+            throw new \Exception('Unexpected entity type');
+        }
+        $entity->delete();
     }
 }

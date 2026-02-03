@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2026.
+ * Copyright (C) Demian Katz 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,6 +31,7 @@ namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\SeriesAttributesValueEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\SeriesAttributesValues;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
@@ -48,12 +49,15 @@ class SeriesAttributesValueService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param SeriesAttributesValues $valuesTable SeriesAttribute table
+     * @param PersistenceManager     $persistenceManager Persistence manager
+     * @param SeriesAttributesValues $valuesTable        SeriesAttribute table
      */
     public function __construct(
+        PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected SeriesAttributesValues $valuesTable
     ) {
+        parent::__construct($persistenceManager);
     }
 
     /**
