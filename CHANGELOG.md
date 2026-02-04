@@ -30,6 +30,7 @@ All notable changes to this project will be documented in this file, in reverse 
 - Collection-related buttons now display appropriate add/modify labels, reflecting actual collection status.
 - Duplicate output on series check page.
 - Empty list messages for people/series have been corrected (they previously said "items" instead of appropriate entity types).
+- Error caused by accessing RDF URL without an HTTP Accept header.
 - Outdated references to the Interop\Container namespace.
 - Publisher imprint display on item/edition screens.
 

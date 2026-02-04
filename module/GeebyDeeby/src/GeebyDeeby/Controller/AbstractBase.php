@@ -639,7 +639,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function rdfRequested($force = false)
     {
-        $accept = $this->getRequest()->getHeaders()->get('accept');
+        $accept = $this->getRequest()->getHeaders()->get('accept') ?: null;
         // Order of preference: earlier items in list are preferred; later
         // items will only be chosen if they're explicitly given a higher
         // priority in the accept headers.
@@ -648,12 +648,11 @@ class AbstractBase extends AbstractActionController
             'text/plain', 'application/n-triples',  // N-Triples
             'application/rdf+xml',                  // RDF-XML
         ];
-        $bestMatch = $force ? -1 : $accept->match('text/html')->getPriority();
+        $bestMatch = $force ? -1 : ($accept?->match('text/html')->getPriority() ?? -1);
         $bestFormat = false;            // HTML by default
         foreach ($rdfForms as $current) {
-            $currentMatchObject = $accept->match($current);
-            $currentMatch = is_object($currentMatchObject)
-                ? $currentMatchObject->getPriority() : -1;
+            $currentMatchObject = $accept?->match($current);
+            $currentMatch = is_object($currentMatchObject) ? $currentMatchObject->getPriority() : -1;
             if ($currentMatch > $bestMatch) {
                 $bestMatch = $currentMatch;
                 $bestFormat = $current;
