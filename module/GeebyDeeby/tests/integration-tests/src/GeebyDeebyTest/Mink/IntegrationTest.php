@@ -50,7 +50,6 @@ use function in_array;
  * @todo Add tests for reversable relationships.
  * @todo Add tests for HTML in custom attributes.
  * @todo Add tests for data cleanup controller.
- * @todo Add tests for RDF representations.
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -86,6 +85,26 @@ class IntegrationTest extends MinkTestCase
         }
         $assertion = $regExMatch ? 'assertMatchesRegularExpression' : 'assertEquals';
         $this->$assertion($expectedMessage, $this->findCssAndGetText($page, '.content'));
+    }
+
+    /**
+     * Do a basic RDF content comparison.
+     *
+     * @param string $expectedMessage Expected RDF content
+     * @param string $path            URL path to visit initially.
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    protected function assertRdfContent(
+        string $expectedMessage,
+        string $path = '',
+        bool $regExMatch = false
+    ): void {
+        $url = $this->getGeebyDeebyUrl($path);
+        $content = trim(file_get_contents($url));
+        $assertion = $regExMatch ? 'assertMatchesRegularExpression' : 'assertEquals';
+        $this->$assertion($expectedMessage, $content);
     }
 
     /**
@@ -2240,7 +2259,7 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Test that appropriate empty messages are provided before content is linked up.
+     * Test that appropriate content is provided after content is linked up.
      *
      * @param string $path            URL path to check
      * @param string $expectedMessage Content expected on page
@@ -2261,6 +2280,79 @@ class IntegrationTest extends MinkTestCase
         bool $regExMatch = false
     ): void {
         $this->assertPageContent($expectedMessage, $path, regExMatch: $regExMatch);
+    }
+
+    /**
+     * Data provider for testPopulatedRecords().
+     *
+     * @return Generator<string, array>
+     */
+    public static function populatedRecordsRdfProvider(): Generator
+    {
+        yield 'series' => [
+            '/Series/1/RDF',
+            '<http://localhost/Series/1> <http://purl.org/dc/terms/title> "test series 1" .',
+        ];
+        yield 'city' => [
+            '/City/1/RDF',
+            '<http://localhost/City/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://www.w3.org/2004/02/skos/core#Concept> .\n"
+            . '<http://localhost/City/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> "test city" .',
+        ];
+        yield 'country' => [
+            '/Country/1/RDF',
+            '<http://localhost/Country/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://www.w3.org/2004/02/skos/core#Concept> .\n"
+            . '<http://localhost/Country/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> "test country" .',
+        ];
+        yield 'publisher' => [
+            '/Publisher/1/RDF',
+            '<http://localhost/Publisher/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://xmlns.com/foaf/0.1/Organization> .\n"
+            . '<http://localhost/Publisher/1> <http://edit-pred/> <http://publisher/1> .',
+        ];
+        yield 'person' => [
+            '/Person/1/RDF',
+            '<http://localhost/Person/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://xmlns.com/foaf/0.1/Person> .\n"
+            . "<http://localhost/Person/1> <http://xmlns.com/foaf/0.1/name> \"test-first test-last\" .\n"
+            . '<http://localhost/Person/1> <http://edit-pred/> <http://person/1> .',
+        ];
+        yield 'item' => [
+            '/Item/1/RDF',
+            '<http://localhost/Item/1> <http://purl.org/dc/terms/title> "test item" .',
+        ];
+        yield 'edition' => [
+            '/Edition/1/RDF',
+            '<http://localhost/Edition/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> '
+            . "\"test series 1 edition\" .\n"
+            . '<http://localhost/Edition/1> <http://www.w3.org/2002/07/owl#sameAs> '
+            . '"http://www.worldcat.org/oclc/12345" .',
+        ];
+        yield 'tag' => [
+            '/Tag/1/RDF',
+            "<http://localhost/Tag/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> \"test tag\" .\n"
+            . '<http://localhost/Tag/1> <http://edit-pred/> <http://tag/1> .',
+        ];
+    }
+
+    /**
+     * Test that RDF representations are correctly generated.
+     *
+     * @param string $path            URL path to check
+     * @param string $expectedContent Expected RDF content
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulatedRecords')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsRdfProvider')]
+    public function testPopulatedRecordsRdf(
+        string $path,
+        string $expectedContent,
+        bool $regExMatch = false
+    ): void {
+        $this->assertRdfContent($expectedContent, $path, regExMatch: $regExMatch);
     }
 
     /**
