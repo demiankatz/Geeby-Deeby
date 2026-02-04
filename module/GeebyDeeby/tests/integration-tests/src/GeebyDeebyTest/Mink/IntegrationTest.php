@@ -48,7 +48,6 @@ use function in_array;
  *
  * @todo Add tests for reversable relationships.
  * @todo Add tests for HTML in custom attributes.
- * @todo Add tests for data cleanup controller.
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -2713,5 +2712,36 @@ class IntegrationTest extends MinkTestCase
             'Series: test series 1 Item: test item',
             $this->findCssAndGetText($page, 'table.item')
         );
+    }
+
+    /**
+     * Data provider for testCleanupTasks().
+     *
+     * @return Generator<string, array>
+     */
+    public static function cleanupTaskProvider(): Generator
+    {
+        yield 'menu' => ['/edit/Cleanup', 'Duplicate Images Item --> Edition Hierarchies'];
+        yield 'duplicate images' => ['/edit/Cleanup/ImageDupes', 'No dupes found.'];
+        yield 'hierarchy migration' => ['/edit/Cleanup/Hierarchies', 'example article 2'];
+    }
+
+    /**
+     * Test that cleanup tasks run.
+     *
+     * @param string $path            URL path to check
+     * @param string $expectedMessage Content expected on page
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulatedRecords')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('cleanupTaskProvider')]
+    public function testCleanupTasks(
+        string $path,
+        string $expectedMessage
+    ): void {
+        $page = $this->goToPage($path);
+        $this->logIn($page, 'admin');
+        $this->assertSame($expectedMessage, $this->findCssAndGetText($page, '.content'));
     }
 }
