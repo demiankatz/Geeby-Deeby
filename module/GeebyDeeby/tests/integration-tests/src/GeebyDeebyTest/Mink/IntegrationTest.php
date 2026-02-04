@@ -46,7 +46,6 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
- * @todo Add tests for edition preferred titles.
  * @todo Add tests for reversable relationships.
  * @todo Add tests for HTML in custom attributes.
  * @todo Add tests for data cleanup controller.
@@ -2653,6 +2652,66 @@ class IntegrationTest extends MinkTestCase
             'Edit Account Details [List All Users] Full Name: test user (self-edited)'
             . ' Email Address: user-edited@example.com',
             $this->findCssAndGetText($page, '.content')
+        );
+    }
+
+    /**
+     * Test preferred title behavior.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testPreferredTitles(): void
+    {
+        $page = $this->goToPage('/edit/Edition/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Preferred Titles');
+        // Create new alternate titles:
+        $this->findCssAndSetValue($page, '#Preferred_Item_Title_Text', 'new item alt');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+        $this->findCssAndSetValue($page, '#Preferred_Series_Title_Text', 'new series alt');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]', index: 1);
+        $page->clickLink('[switch to public view]');
+        $this->assertStringContainsString(
+            'Series: new series alt Item: new item alt',
+            $this->findCssAndGetText($page, 'table.item')
+        );
+        $page->clickLink('[edit]');
+        $page->clickLink('Preferred Titles');
+        // Apply existing alternate titles by typing them into the inputs:
+        $this->findCssAndSetValue($page, '#Preferred_Item_Title_Text', 'test alternate title');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+        $this->findCssAndSetValue($page, '#Preferred_Series_Title_Text', 'test alternate series title');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]', index: 1);
+        $page->clickLink('[switch to public view]');
+        $this->assertStringContainsString(
+            'Series: test alternate series title Item: test alternate title',
+            $this->findCssAndGetText($page, 'table.item')
+        );
+        $page->clickLink('[edit]');
+        $page->clickLink('Preferred Titles');
+        // Revert to default titles by clicking "clear" buttons:
+        for ($i = 0; $i < 2; $i++) {
+            $clearButton = $this->findCss($page, '.tab-pane.active button', index: $i);
+            $this->assertSame('Clear', $clearButton->getText());
+            $clearButton->click();
+            $this->getMinkSession()->getDriver()->acceptAlert();
+        }
+        // Confirm that no titles have been double-added by reading the select options:
+        $this->assertSame(
+            'Choose a title from the drop-down or enter a new one in the box below. new item alt test alternate title',
+            $this->findCssAndGetText($page, '#Preferred_Item_Title_ID')
+        );
+        $this->assertSame(
+            'Choose a title from the drop-down or enter a new one in the box below. '
+            . 'new series alt test alternate series title',
+            $this->findCssAndGetText($page, '#Preferred_Series_Title_ID')
+        );
+        // Confirm that we're back to our starting position:
+        $page->clickLink('[switch to public view]');
+        $this->assertStringContainsString(
+            'Series: test series 1 Item: test item',
+            $this->findCssAndGetText($page, 'table.item')
         );
     }
 }
