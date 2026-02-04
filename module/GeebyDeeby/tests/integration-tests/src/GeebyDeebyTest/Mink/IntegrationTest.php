@@ -46,7 +46,6 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  *
- * @todo Add tests for reversable relationships.
  * @todo Add tests for HTML in custom attributes.
  */
 class IntegrationTest extends MinkTestCase
@@ -725,7 +724,10 @@ class IntegrationTest extends MinkTestCase
         yield 'tag relationship 2' => [
             'TagsAttributeList',
             '#add_tag_relationship',
-            ['#Tags_Relationship_Name' => 'test tag relationship 2'],
+            [
+                '#Tags_Relationship_Name' => 'test tag relationship 2',
+                '#Tags_Inverse_Relationship_Name' => '2 relationship tag test',
+            ],
             '#tags_relationship_list',
             null,
             2,
@@ -1367,6 +1369,14 @@ class IntegrationTest extends MinkTestCase
             '#relationship_list',
             '/^No relationships defined.$/',
             '/test tag relationship: test tag 2 \\(edited\\)/',
+        ];
+        yield 'bidirectional tag relationship' => [
+            '/edit/Tag/1',
+            'Relationships',
+            ['#relationship_type' => '/2', '#target_tag' => '2'],
+            '#relationship_list',
+            '/^test tag relationship: test tag 2 \\(edited\\)/',
+            '/test tag relationship 2 \\(edited\\): test tag 2 \\(edited\\)/',
         ];
         yield 'tag to item link' => [
             '/edit/Tag/1',
@@ -2176,7 +2186,15 @@ class IntegrationTest extends MinkTestCase
             '/Tag/1',
             'test tag attribute: attribute value for Tag'
             . ' test tag relationship: test tag 2 (edited)'
+            . ' test tag relationship 2 (edited): test tag 2 (edited)'
             . ' External Identifier: http://tag/1'
+            . ' Sort by: Series Title'
+            . ' test series 1'
+            . ' test item',
+        ];
+        yield 'tag 2' => [
+            '/Tag/2',
+            '2 relationship tag test (edited): test tag'
             . ' Sort by: Series Title'
             . ' test series 1'
             . ' test item',
