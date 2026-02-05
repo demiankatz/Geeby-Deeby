@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLegacy\Controller;
 
+use GeebyDeeby\Db\Service\SeriesService;
+
 /**
  * Legacy controller (for compatibility with old gamebooks.org filenames)
  *
@@ -130,18 +132,16 @@ class LegacyController extends \GeebyDeeby\Controller\AbstractBase
                 );
             case 'show_series.php':
                 $id = $this->params()->fromQuery('id');
-                if (!$id) {
-                    $name = $this->params()->fromQuery('name');
-                    $table = $this->getDbTable('series');
-                    $record = $table->select(['Series_Name' => $name])->toArray();
-                    if (isset($record[0]['Series_ID'])) {
-                        $id = $record[0]['Series_ID'];
+                if (!$id && $name = $this->params()->fromQuery('name')) {
+                    $service = $this->getDbService(SeriesService::class);
+                    $records = $service->getSeriesByName($name);
+                    if ($records) {
+                        $id = $records[0]->getId();
                     } else {
                         break;
                     }
                 }
-                return $this->redirect()
-                ->toRoute('series', ['id' => $id]);
+                return $this->redirect()->toRoute('series', ['id' => $id]);
             case 'show_series_images.php':
                 return $this->redirect()->toRoute(
                     'series',
