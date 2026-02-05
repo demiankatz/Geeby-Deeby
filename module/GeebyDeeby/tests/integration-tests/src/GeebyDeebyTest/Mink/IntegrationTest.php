@@ -45,8 +45,6 @@ use function in_array;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
- *
- * @todo Add tests for HTML in custom attributes.
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -392,7 +390,7 @@ class IntegrationTest extends MinkTestCase
         yield 'edition attribute 2' => [
             'EditionsAttributeList',
             '#add_edition_attribute',
-            ['#Editions_Attribute_Name' => 'test edition attribute 2'],
+            ['#Editions_Attribute_Name' => 'test edition attribute 2', '#Allow_HTML' => true],
             '#editions_attribute_list',
             null,
             2,
@@ -434,7 +432,7 @@ class IntegrationTest extends MinkTestCase
         yield 'full text attribute 2' => [
             'EditionFullTextAttributeList',
             '#add_edition_full_text_attribute',
-            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute 2'],
+            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute 2', '#Allow_HTML' => true],
             '#edition_full_text_attribute_list',
             null,
             2,
@@ -462,7 +460,7 @@ class IntegrationTest extends MinkTestCase
         yield 'item attribute 2' => [
             'ItemsAttributeList',
             '#add_item_attribute',
-            ['#Items_Attribute_Name' => 'test item attribute 2'],
+            ['#Items_Attribute_Name' => 'test item attribute 2', '#Allow_HTML' => true],
             '#items_attribute_list',
             null,
             2,
@@ -682,7 +680,7 @@ class IntegrationTest extends MinkTestCase
         yield 'series attribute 2' => [
             'SeriesAttributeList',
             '#add_series_attribute',
-            ['#Series_Attribute_Name' => 'test series attribute 2'],
+            ['#Series_Attribute_Name' => 'test series attribute 2', '#Allow_HTML' => true],
             '#series_attribute_list',
             null,
             2,
@@ -710,7 +708,7 @@ class IntegrationTest extends MinkTestCase
         yield 'tag attribute 2' => [
             'TagsAttributeList',
             '#add_tag_attribute',
-            ['#Tags_Attribute_Name' => 'test tag attribute 2'],
+            ['#Tags_Attribute_Name' => 'test tag attribute 2', '#Allow_HTML' => true],
             '#tags_attribute_list',
             null,
             2,
@@ -1100,7 +1098,10 @@ class IntegrationTest extends MinkTestCase
         $toggleButton->click();
         $input = $this->findCss($page, '#' . $type . '_Attribute_1');
         $this->assertTrue($input->isVisible());
-        $input->setValue('attribute value for ' . $type);
+        $input->setValue('<non-html> attribute value for ' . $type);
+        $input2 = $this->findCss($page, '#' . $type . '_Attribute_2');
+        $this->assertTrue($input->isVisible());
+        $input2->setValue('<b>html<b> attribute value for ' . $type);
         $this->clickCss($page, '.edit_container input[type="submit"]');
     }
 
@@ -2005,7 +2006,8 @@ class IntegrationTest extends MinkTestCase
             . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' Category: test category'
             . ' Translated From: test series 2 (edited) (test language 1)'
-            . ' test series attribute: attribute value for Series'
+            . ' test series attribute: <non-html> attribute value for Series'
+            . ' test series attribute 2 (edited): html attribute value for Series'
             . ' test series relationship: test series 2 (edited)'
             . ' second test materials (edited)'
             . ' test item (1952)'
@@ -2079,8 +2081,10 @@ class IntegrationTest extends MinkTestCase
             . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)'
-            . ' test item attribute 1: attribute value for Item'
-            . ' test edition attribute 1: attribute value for Edition'
+            . ' test item attribute 1: <non-html> attribute value for Item'
+            . ' test item attribute 2 (edited): html attribute value for Item'
+            . ' test edition attribute 1: <non-html> attribute value for Edition'
+            . ' test edition attribute 2 (edited): html attribute value for Edition'
             . ' User Summary: Test description'
             . ' user\'s Thoughts: this is my review More reviews by user'
             . ' Users Who Own This Item: user (good shape)'
@@ -2166,7 +2170,8 @@ class IntegrationTest extends MinkTestCase
             . ' ISBN: 0123456789 / 9780123456786 (test note)'
             . ' OCLC Number: 12345 (test note)'
             . ' Product Code: pc-test (test note)'
-            . ' test edition attribute 1: attribute value for Edition',
+            . ' test edition attribute 1: <non-html> attribute value for Edition'
+            . ' test edition attribute 2 (edited): html attribute value for Edition',
         ];
         yield 'parent edition' => [
             '/Edition/2',
@@ -2184,7 +2189,8 @@ class IntegrationTest extends MinkTestCase
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
         yield 'tag' => [
             '/Tag/1',
-            'test tag attribute: attribute value for Tag'
+            'test tag attribute: <non-html> attribute value for Tag'
+            . 'test tag attribute 2 (edited): html attribute value for Tag'
             . ' test tag relationship: test tag 2 (edited)'
             . ' test tag relationship 2 (edited): test tag 2 (edited)'
             . ' External Identifier: http://tag/1'
