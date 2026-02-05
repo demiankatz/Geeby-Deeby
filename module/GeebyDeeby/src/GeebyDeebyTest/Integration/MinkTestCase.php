@@ -358,6 +358,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
                 if (
                     !$verifyValue
                     || $field->getValue() === $value
+                    || $field->getAttribute('type') === 'checkbox' && $field->isChecked() === $value
                 ) {
                     if ($reFocus) {
                         $field->focus();
