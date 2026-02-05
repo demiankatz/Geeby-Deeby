@@ -90,14 +90,6 @@ class AbstractFactory implements \Laminas\ServiceManager\Factory\AbstractFactory
         $adapter = $container->get('Laminas\Db\Adapter\Adapter');
         $tm = $container->get('GeebyDeeby\Db\Table\PluginManager');
         $rowPrototype = $this->getRowPrototype($container, $requestedName);
-        $table = new $requestedName($adapter, $tm, $rowPrototype);
-        $config = $container->get('Config');
-        if (!empty($config['geeby-deeby']['activity_log_dir'])) {
-            $table->activateLogging(
-                $container->get('GeebyDeeby\Authentication')->getIdentity(),
-                $config['geeby-deeby']['activity_log_dir']
-            );
-        }
-        return $table;
+        return new $requestedName($adapter, $tm, $rowPrototype);
     }
 }

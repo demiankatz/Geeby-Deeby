@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsPlatformService;
+use GeebyDeeby\Db\Service\PlatformService;
+
 use function is_object;
 
 /**
@@ -50,16 +53,14 @@ class PlatformController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('platform');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(PlatformService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Platform', 'notfound');
         }
         $view = $this->createViewModel(
-            ['platform' => $rowObj->toArray()]
+            ['platform' => $entity->toArray()]
         );
-        $view->items = $this->getDbTable('editionsplatforms')
-            ->getItemsForPlatform($id);
+        $view->items = $this->getDbService(EditionsPlatformService::class)->getItemsForPlatform($id);
         return $view;
     }
 
@@ -71,7 +72,7 @@ class PlatformController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['platforms' => $this->getDbTable('platform')->getList()]
+            ['platforms' => $this->getDbService(PlatformService::class)->getList()]
         );
     }
 

@@ -29,8 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
-use GeebyDeeby\Db\Table\ItemsCreatorsCitations;
-use GeebyDeeby\Db\Table\Pseudonyms;
+use GeebyDeeby\Db\Service\ItemsCreatorsCitationService;
+use GeebyDeeby\Db\Service\PseudonymService;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 use function count;
@@ -64,15 +64,15 @@ class AnalyzeCredits
     /**
      * Constructor
      *
-     * @param Pseudonyms             $pseudonymsTable Pseudonyms table.
-     * @param ItemsCreatorsCitations $citationsTable  Items_Creators_Citations table.
-     * @param FixTitle               $fixTitleHelper  FixTitle view helper.
+     * @param Pseudonyms             $pseudonymService Pseudonyms service.
+     * @param ItemsCreatorsCitations $citationService  Items_Creators_Citations service.
+     * @param FixTitle               $fixTitleHelper   FixTitle view helper.
      */
     public function __construct(
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Pseudonyms $pseudonymsTable,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsCreatorsCitations $citationsTable,
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected PseudonymService $pseudonymService,
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected ItemsCreatorsCitationService $citationService,
         #[Autowire(container: 'ViewHelperManager')]
         protected FixTitle $fixTitleHelper
     ) {
@@ -93,8 +93,7 @@ class AnalyzeCredits
         // First group and associate the credits:
         foreach ($credits as $credit) {
             $personId = $credit['Person_ID'];
-            $prefix = $this->isMatchingPerson($personId, array_keys($creators))
-                ? '' : 'Incorrectly Attributed ';
+            $prefix = $this->isMatchingPerson($personId, array_keys($creators)) ? '' : 'Incorrectly Attributed ';
             $role = $prefix . $credit['Role_Name'];
             if (!isset($groupedCredits[$role])) {
                 $groupedCredits[$role] = [];
@@ -112,12 +111,8 @@ class AnalyzeCredits
             $creditedIds = array_keys(
                 $groupedCredits[$role] ?? []
             );
-            if (
-                empty($creditedIds)
-                || !$this->isMatchingPerson($personId, $creditedIds)
-            ) {
-                $groupedCredits[$role][$personId][]
-                    = $creator->getArrayCopy() + ['Note' => 'uncredited'];
+            if (empty($creditedIds) || !$this->isMatchingPerson($personId, $creditedIds)) {
+                $groupedCredits[$role][$personId][] = $creator->toArray() + ['Note' => 'uncredited'];
             }
         }
         return $groupedCredits;
@@ -186,8 +181,7 @@ class AnalyzeCredits
     protected function getPseudonymDetails($person, $filter = [])
     {
         if (!isset($this->pseudonyms[$person])) {
-            $this->pseudonyms[$person] = $this->pseudonymsTable
-                ->getPseudonyms($person)->toArray();
+            $this->pseudonyms[$person] = $this->pseudonymService->getPseudonyms($person);
         }
         return $this->filterNames($this->pseudonyms[$person], $filter);
     }
@@ -203,8 +197,7 @@ class AnalyzeCredits
     protected function getRealPersonDetails($person, $filter = [])
     {
         if (!isset($this->realNames[$person])) {
-            $this->realNames[$person] = $this->pseudonymsTable
-                ->getRealNames($person)->toArray();
+            $this->realNames[$person] = $this->pseudonymService->getRealNames($person);
         }
         return $this->filterNames($this->realNames[$person], $filter);
     }
@@ -223,36 +216,33 @@ class AnalyzeCredits
         $final = [];
         foreach ($details as $person => $credits) {
             $notes = [];
-            foreach ($credits as $current) {
-                // If credit count doesn't match edition count, then different
-                // editions have different attributions.
-                if (count($credits) != count($editions)) {
-                    foreach ($credits as $credit) {
-                        $note = ($this->fixTitleHelper)($credit['Edition_Name']);
-                        if (!empty($credit['Note'])) {
-                            if (!empty($note)) {
-                                $note .= ' - ';
-                            }
-                            $note .= $credit['Note'];
+            // If credit count doesn't match edition count, then different
+            // editions have different attributions.
+            $creditCountMismatch = count($credits) != count($editions);
+            foreach ($credits as $credit) {
+                if ($creditCountMismatch) {
+                    $note = ($this->fixTitleHelper)($credit['Edition_Name'] ?? '');
+                    if (!empty($credit['Note'])) {
+                        if (!empty($note)) {
+                            $note .= ' - ';
                         }
-                        $notes[] = $note;
+                        $note .= $credit['Note'];
                     }
                 } else {
-                    foreach ($credits as $credit) {
-                        if (!empty($credit['Note'])) {
-                            $notes[] = $credit['Note'];
-                        }
-                    }
+                    $note = $credit['Note'];
+                }
+                if (!empty($note)) {
+                    $notes[] = $note;
                 }
             }
             if (isset($credit)) {
                 $final[$person] = [
                     'person' => $credit,
-                    'realPerson' => $this
-                        ->getRealPersonDetails($person, array_keys($creators)),
+                    'realPerson' => $this->getRealPersonDetails($person, array_keys($creators)),
                     'notes' => implode('; ', array_unique($notes)),
                 ];
             }
+            unset($credit);
         }
         return $final;
     }
@@ -267,7 +257,7 @@ class AnalyzeCredits
     protected function getCitationGroup($id)
     {
         $citations = [];
-        foreach ($this->citationsTable->getCitations($id) as $citation) {
+        foreach ($this->citationService->getCitations($id) as $citation) {
             $citations[] = $citation['Citation'];
         }
         if (empty($citations)) {
@@ -280,11 +270,10 @@ class AnalyzeCredits
      * Group creators by citation. Return an array of arrays keyed by Person_ID
      *
      * @param array $creators Creators to group
-     * @param int   $itemId   Item ID creators belong to
      *
      * @return array
      */
-    protected function groupCreators($creators, $itemId)
+    protected function groupCreators($creators)
     {
         $groups = [];
         foreach ($creators as $creator) {
@@ -308,8 +297,7 @@ class AnalyzeCredits
     {
         $final = [];
         $currentEdition = current($editions);
-        $itemId = $currentEdition['Item_ID'] ?? null;
-        $groupedCreators = $this->groupCreators($creators, $itemId);
+        $groupedCreators = $this->groupCreators($creators);
         if (empty($groupedCreators)) {
             $groupedCreators = ['an uncited source' => []];
         }

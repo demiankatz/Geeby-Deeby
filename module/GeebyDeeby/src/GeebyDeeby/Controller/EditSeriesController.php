@@ -29,6 +29,26 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Articles;
+use GeebyDeeby\Db\Service\CategoryService;
+use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\LanguageService;
+use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\PublishersAddressService;
+use GeebyDeeby\Db\Service\PublishersImprintService;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesAttributeService;
+use GeebyDeeby\Db\Service\SeriesAttributesValueService;
+use GeebyDeeby\Db\Service\SeriesCategoryService;
+use GeebyDeeby\Db\Service\SeriesMaterialTypeService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
+use GeebyDeeby\Db\Service\SeriesRelationshipService;
+use GeebyDeeby\Db\Service\SeriesRelationshipsValueService;
+use GeebyDeeby\Db\Service\SeriesService;
+use GeebyDeeby\Db\Service\SeriesTranslationService;
+
 use function count;
 use function intval;
 
@@ -51,7 +71,7 @@ class EditSeriesController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'series',
+            SeriesService::class,
             'series',
             'geeby-deeby/edit-series/render-series'
         );
@@ -67,19 +87,17 @@ class EditSeriesController extends AbstractBase
      */
     protected function saveAttributes($seriesId, $attribs)
     {
-        $table = $this->getDbTable('seriesattributesvalues');
+        $service = $this->getDbService(SeriesAttributesValueService::class);
         // Delete old values:
-        $table->delete(['Series_ID' => $seriesId]);
+        $service->deleteBySeries($seriesId);
         // Save new values:
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
-                $table->insert(
-                    [
-                        'Series_ID' => $seriesId,
-                        'Series_Attribute_ID' => $id,
-                        'Series_Attribute_Value' => $val,
-                    ]
-                );
+                $entity = $service->createEntity()
+                    ->setSeries($seriesId)
+                    ->setAttribute($id)
+                    ->setValue($val);
+                $service->persistEntity($entity);
             }
         }
     }
@@ -92,17 +110,15 @@ class EditSeriesController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'name' => 'Series_Name',
-            'desc' => 'Series_Description',
-            'lang' => 'Language_ID',
+            'name' => 'setSeriesName',
+            'desc' => 'setDescription',
+            'lang' => 'setLanguage',
         ];
-        [$view, $ok] = $this->handleGenericItem('series', $assignMap, 'series');
+        [$view, $ok] = $this->handleGenericItem(SeriesService::class, $assignMap, 'series');
         if (!$ok) {
             return $view;
         }
-        $seriesId = $view->seriesObj->Series_ID
-            ?? $view->affectedRow->Series_ID
-            ?? null;
+        $seriesId = $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if ($this->getRequest()->isPost() && $this->params()->fromPost('attribs')) {
@@ -112,43 +128,43 @@ class EditSeriesController extends AbstractBase
             );
         }
 
-        $languages = $this->getDbTable('language');
-        $view->languages = $languages->getList();
-        $view->attributes = $this->getDbTable('seriesattribute')->getList();
+        $view->languages = $this->getDbService(LanguageService::class)->getList();
+        $view->attributes = $this->getDbService(SeriesAttributeService::class)->getList();
         $attributeValues = [];
-        $values = $this->getDbTable('seriesattributesvalues')
-            ->getAttributesForSeries($seriesId);
+        $values = $seriesId
+            ? $this->getDbService(SeriesAttributesValueService::class)->getAttributesForSeries($seriesId)
+            : [];
         foreach ($values as $current) {
-            $attributeValues[$current->Series_Attribute_ID]
-                = $current->Series_Attribute_Value;
+            $attributeValues[$current['Series_Attribute_ID']] = $current['Series_Attribute_Value'];
         }
         $view->attributeValues = $attributeValues;
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->materials = $this->getDbTable('materialtype')->getList();
-            $view->countries = $this->getDbTable('country')->getList();
-            $view->categories = $this->getDbTable('category')->getList();
+            $view->materials = $this->getDbService(MaterialTypeService::class)->getList();
+            $view->countries = $this->getDbService(CountryService::class)->getList();
+            $view->categories = $this->getDbService(CategoryService::class)->getList();
+            $view->selectedCategories = array_map(
+                fn ($category) => $category['Category_ID'],
+                $this->getDbService(SeriesCategoryService::class)->getCategoriesForSeries($seriesId)
+            );
+
             $config = $this->serviceLocator->get('config');
             $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
                 ?? true;
-            $view->item_list = $this->getDbTable('item')
+            $view->item_list = $this->getDbService(ItemService::class)
                 ->getItemsForSeries($seriesId, true, $groupByMaterial);
-            $view->series_alt_titles = $this->getDbTable('seriesalttitles')
-                ->getAltTitles($seriesId);
-            $view->series_materials = $this->getDbTable('seriesmaterialtypes')
-                ->getMaterials($seriesId);
-            $view->series_publishers = $this->getDbTable('seriespublishers')
-                ->getPublishers($seriesId);
-            $view->relationships = $this->getDbTable('seriesrelationship')
-                ->getOptionList();
-            $view->relationshipsValues = $this
-                ->getDbTable('seriesrelationshipsvalues')
+            $view->series_alt_titles = $this->getDbService(SeriesAltTitleService::class)->getAltTitles($seriesId);
+            $view->series_materials = $this->getDbService(SeriesMaterialTypeService::class)
+                ->getMaterialTypesForSeries($seriesId);
+            $view->series_publishers = $this->getDbService(SeriesPublisherService::class)
+                ->getPublishersForSeries($seriesId);
+            $view->relationships = $this->getDbService(SeriesRelationshipService::class)->getOptionList();
+            $view->relationshipsValues = $this->getDbService(SeriesRelationshipsValueService::class)
                 ->getRelationshipsForSeries($seriesId);
-            $view->translatedInto = $this->getDbTable('seriestranslations')
-                ->getTranslatedFrom($seriesId);
-            $view->translatedFrom = $this->getDbTable('seriestranslations')
-                ->getTranslatedInto($seriesId);
+            $seriesTranslationService = $this->getDbService(SeriesTranslationService::class);
+            $view->translatedInto = $seriesTranslationService->getTranslatedFrom($seriesId);
+            $view->translatedFrom = $seriesTranslationService->getTranslatedInto($seriesId);
             $view->setTemplate('geeby-deeby/edit-series/edit-full');
         }
 
@@ -167,13 +183,9 @@ class EditSeriesController extends AbstractBase
             return $ok;
         }
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('seriescategories');
             $series = $this->params()->fromRoute('id');
             $categories = $this->params()->fromPost('categories', []);
-            $table->delete(['Series_ID' => $series]);
-            foreach ($categories as $cat) {
-                $table->insert(['Series_ID' => $series, 'Category_ID' => $cat]);
-            }
+            $this->getDbService(SeriesCategoryService::class)->setCategoriesForSeries($series, $categories);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected action');
@@ -187,12 +199,13 @@ class EditSeriesController extends AbstractBase
     public function materialAction()
     {
         return $this->handleGenericLink(
-            'seriesmaterialtypes',
-            'Series_ID',
-            'Material_Type_ID',
+            SeriesMaterialTypeService::class,
+            'setSeries',
+            'setMaterialType',
             'series_materials',
-            'getMaterials',
-            'geeby-deeby/edit-series/material-type-list'
+            'getMaterialTypesForSeries',
+            'geeby-deeby/edit-series/material-type-list',
+            retrieveLinkMethod: 'getBySeriesAndMaterialType'
         );
     }
 
@@ -209,43 +222,39 @@ class EditSeriesController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $table = $this->getDbTable('seriesalttitles');
-            $row = $table->createRow();
-            $row->Series_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->Series_AltName = trim($this->params()->fromPost('title'));
-            if (empty($row->Series_AltName)) {
+            $service = $this->getDbService(SeriesAltTitleService::class);
+            $note = $this->params()->fromPost('note_id');
+            $title = trim((string)$this->params()->fromPost('title'));
+            if (empty($title)) {
                 return $this->jsonDie('Title must not be empty.');
             }
-            $table->insert((array)$row);
+            $entity = $service->createEntity()
+                ->setSeries($this->params()->fromRoute('id'))
+                ->setNote(empty($note) ? null : $note)
+                ->setAltName($title);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            // Prevent deletion of alttitles that are linked up:
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('edition')->select(
-                    ['Preferred_Series_AltName_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $ed = $result->current();
-                    $msg = 'You cannot delete this title; it is assigned to Edition '
-                        . $ed->Edition_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'seriesalttitles',
-                'Series_ID',
-                'Sequence_ID',
-                'series_alt_titles',
-                'getAltTitles',
-                'geeby-deeby/edit-series/alt-title-list.phtml'
-            );
         }
+        // Prevent deletion of alt titles that are linked up:
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbService(EditionService::class)->getBySeriesAltTitleId($extra);
+            if (count($result) > 0) {
+                $ed = $result[0];
+                $msg = 'You cannot delete this title; it is assigned to Edition ' . $ed->getId() . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            SeriesAltTitleService::class,
+            null,
+            null,
+            'series_alt_titles',
+            'getAltTitles',
+            'geeby-deeby/edit-series/alt-title-list.phtml',
+            retrieveLinkMethod: 'getBySeriesAndId'
+        );
     }
 
     /**
@@ -256,28 +265,22 @@ class EditSeriesController extends AbstractBase
     protected function modifyPublisher()
     {
         $rowId = $this->params()->fromRoute('extra');
-        $table = $this->getDbTable('seriespublishers');
+        $service = $this->getDbService(SeriesPublisherService::class);
         if ($this->getRequest()->isPost()) {
             $imprint = $this->params()->fromPost('imprint');
-            if (empty($imprint)) {
-                $imprint = null;
-            }
             $address = $this->params()->fromPost('address');
-            if (empty($address)) {
-                $address = null;
-            }
-            $fields = [
-                'Imprint_ID' => $imprint, 'Address_ID' => $address,
-            ];
-            $table->update($fields, ['Series_Publisher_ID' => $rowId]);
+            $entity = $service->getByPrimaryKey($rowId);
+            $entity->setImprint(empty($imprint) ? null : $imprint)
+                ->setAddress(empty($address) ? null : $address);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
         $view = $this->createViewModel();
-        $view->row = $table->getByPrimaryKey($rowId);
-        $view->addresses = $this->getDbTable('publishersaddresses')
-            ->getAddressesForPublisher($view->row->Publisher_ID);
-        $view->imprints = $this->getDbTable('publishersimprints')
-            ->getImprintsForPublisher($view->row->Publisher_ID);
+        $view->row = $service->getByPrimaryKey($rowId)->toArray();
+        $view->addresses = $this->getDbService(PublishersAddressService::class)
+            ->getAddressesForPublisher($view->row['Publisher_ID']);
+        $view->imprints = $this->getDbService(PublishersImprintService::class)
+            ->getImprintsForPublisher($view->row['Publisher_ID']);
         $view->setTemplate('geeby-deeby/edit-series/modify-publisher');
 
         // If this is an AJAX request, render the core list only, not the
@@ -311,40 +314,35 @@ class EditSeriesController extends AbstractBase
             if ($ok !== true) {
                 return $ok;
             }
-            $table = $this->getDbTable('seriespublishers');
-            $row = $table->createRow();
-            $row->Series_ID = $this->params()->fromRoute('id');
-            $row->Publisher_ID = $this->params()->fromPost('publisher_id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->save();
+            $service = $this->getDbService(SeriesPublisherService::class);
+            $note = $this->params()->fromPost('note_id');
+            $entity = $service->createEntity()
+                ->setSeries($this->params()->fromRoute('id'))
+                ->setPublisher($this->params()->fromPost('publisher_id'))
+                ->setNote($note ? $note : null);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('edition')->select(
-                    ['Preferred_Series_Publisher_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $ed = $result->current();
-                    $msg = 'You cannot delete this publisher; '
-                        . 'it is assigned to Edition '
-                        . $ed->Edition_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'seriespublishers',
-                'Series_ID',
-                'Series_Publisher_ID',
-                'series_publishers',
-                'getPublishers',
-                'geeby-deeby/edit-series/publisher-list.phtml'
-            );
         }
+
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbService(EditionService::class)->getByPreferredPublisherId($extra);
+            if (count($result) > 0) {
+                $ed = $result[0];
+                $msg = 'You cannot delete this publisher; it is assigned to Edition ' . $ed->getId() . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            SeriesPublisherService::class,
+            null,
+            null,
+            'series_publishers',
+            'getPublishersForSeries',
+            'geeby-deeby/edit-series/publisher-list.phtml',
+            retrieveLinkMethod: 'getBySeriesAndId'
+        );
     }
 
     /**
@@ -354,6 +352,8 @@ class EditSeriesController extends AbstractBase
      */
     public function itemAction()
     {
+        $editionService = $this->getDbService(EditionService::class);
+
         // Special case: delete editions differently from other links:
         if ($this->getRequest()->isDelete()) {
             $ok = $this->checkPermission('Content_Editor');
@@ -361,47 +361,30 @@ class EditSeriesController extends AbstractBase
                 return $ok;
             }
             try {
-                $this->getDbTable('edition')
-                    ->safeDelete($this->params()->fromRoute('extra'));
+                $editionService->safeDelete($this->params()->fromRoute('extra'));
             } catch (\Exception $e) {
                 return $this->jsonDie($e->getMessage());
             }
             return $this->jsonReportSuccess();
         }
 
-        $series = $this->getDbTable('series')->getByPrimaryKey(
+        $series = $this->getDbService(SeriesService::class)->getByPrimaryKey(
             $this->params()->fromRoute('id')
         );
-        $edName = $this->serviceLocator->get('GeebyDeeby\Articles')
-            ->articleAwareAppend($series->Series_Name, ' edition');
-        $insertCallback = function ($new, $row, $sm): void {
-            $edsTable = $sm->get('GeebyDeeby\Db\Table\PluginManager')
-                ->get('edition');
-            $rows = $edsTable->select(['Item_ID' => $row['Item_ID']]);
-            foreach ($rows as $row) {
-                $row = $row->toArray();
-                if ($row['Edition_ID'] != $new) {
-                    break;
-                }
-            }
-            if (isset($row['Edition_ID']) && $row['Edition_ID'] != $new) {
-                $edsTable->copyAssociatedInfo($row['Edition_ID'], $new);
-            }
-        };
+        $edName = $this->serviceLocator->get(Articles::class)
+            ->articleAwareAppend($series->getSeriesName(), ' edition');
         $config = $this->serviceLocator->get('config');
-        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
-            ?? true;
-        $listCallback = $groupByMaterial
-            ? 'getItemsForSeriesGroupedByMaterial' : 'getItemsForSeries';
+        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
+        $listCallback = $groupByMaterial ? 'getItemsForSeriesGroupedByMaterial' : 'getItemsForSeries';
         return $this->handleGenericLink(
-            'edition',
-            'Series_ID',
-            'Item_ID',
+            EditionService::class,
+            'setSeries',
+            'setItem',
             'item_list',
             $listCallback,
             'geeby-deeby/edit-series/item-list.phtml',
-            ['Edition_Name' => $edName],
-            $insertCallback
+            ['setEditionName' => $edName],
+            [$editionService, 'insertSeriesEditionCallback']
         );
     }
 
@@ -426,10 +409,11 @@ class EditSeriesController extends AbstractBase
             } else {
                 [$vol, $pos] = $parts;
             }
-            $this->getDbTable('edition')->update(
-                ['Position' => intval($pos), 'Volume' => intval($vol)],
-                ['Edition_ID' => $edition]
-            );
+            $service = $this->getDbService(EditionService::class);
+            $entity = $service->getByPrimaryKey($edition)
+                ->setPosition(intval($pos))
+                ->setVolume(intval($vol));
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
@@ -447,22 +431,26 @@ class EditSeriesController extends AbstractBase
         // the standard behavior consistent.
         $rid = $this->params()->fromRoute('relationship_id');
         if (substr($rid, 0, 1) === 'i') {
-            $linkFrom = 'Object_Series_ID';
-            $linkTo = 'Subject_Series_ID';
+            $linkFrom = 'setObject';
+            $linkTo = 'setSubject';
             $rid = substr($rid, 1);
+            $invertRetrieve = true;
         } else {
-            $linkFrom = 'Subject_Series_ID';
-            $linkTo = 'Object_Series_ID';
+            $linkFrom = 'setSubject';
+            $linkTo = 'setObject';
+            $invertRetrieve = false;
         }
-        $extras = ['Series_Relationship_ID' => $rid];
+        $extras = ['setRelationship' => $rid];
         return $this->handleGenericLink(
-            'seriesrelationshipsvalues',
+            SeriesRelationshipsValueService::class,
             $linkFrom,
             $linkTo,
             'relationshipsValues',
             'getRelationshipsForSeries',
             'geeby-deeby/edit-series/relationship-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getBySubjectAndObjectAndRelationship',
+            invertRetrieveLinkParams: $invertRetrieve
         );
     }
 
@@ -492,12 +480,13 @@ class EditSeriesController extends AbstractBase
     public function translationintoAction()
     {
         return $this->handleGenericLink(
-            'seriestranslations',
-            'Source_Series_ID',
-            'Trans_Series_ID',
+            SeriesTranslationService::class,
+            'setSourceSeries',
+            'setTranslatedSeries',
             'translatedInto',
             'getTranslatedFrom',
-            'geeby-deeby/edit-series/trans-into-list.phtml'
+            'geeby-deeby/edit-series/trans-into-list.phtml',
+            retrieveLinkMethod: 'getBySourceSeriesAndTranslatedSeries'
         );
     }
 
@@ -509,12 +498,14 @@ class EditSeriesController extends AbstractBase
     public function translationfromAction()
     {
         return $this->handleGenericLink(
-            'seriestranslations',
-            'Trans_Series_ID',
-            'Source_Series_ID',
+            SeriesTranslationService::class,
+            'setTranslatedSeries',
+            'setSourceSeries',
             'translatedFrom',
             'getTranslatedInto',
-            'geeby-deeby/edit-series/trans-from-list.phtml'
+            'geeby-deeby/edit-series/trans-from-list.phtml',
+            retrieveLinkMethod: 'getBySourceSeriesAndTranslatedSeries',
+            invertRetrieveLinkParams: true
         );
     }
 }

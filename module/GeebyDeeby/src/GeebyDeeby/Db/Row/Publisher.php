@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\PublisherEntityInterface;
+
 /**
  * Row Definition for Publishers
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Publisher extends RowGateway
+class Publisher extends RowGateway implements PublisherEntityInterface
 {
     /**
      * Constructor
@@ -51,17 +53,36 @@ class Publisher extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Publisher_Name)) {
-            return 'Publisher name cannot be blank.';
-        }
-        return false;
+        return $this->Publisher_ID ?? null;
+    }
+
+    /**
+     * Get the publisher name.
+     *
+     * @return string
+     */
+    public function getPublisherName(): string
+    {
+        return $this->Publisher_Name;
+    }
+
+    /**
+     * Set the publisher name.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setPublisherName(string $name): static
+    {
+        $this->Publisher_Name = $name;
+        return $this;
     }
 
     /**
@@ -69,7 +90,7 @@ class Publisher extends RowGateway
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->Publisher_Name;
     }

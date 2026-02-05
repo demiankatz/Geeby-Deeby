@@ -29,6 +29,17 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsCreditService;
+use GeebyDeeby\Db\Service\ItemsCreatorService;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\PeopleBibliographyService;
+use GeebyDeeby\Db\Service\PeopleFileService;
+use GeebyDeeby\Db\Service\PeopleLinkService;
+use GeebyDeeby\Db\Service\PeopleUriService;
+use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\PseudonymService;
+use Laminas\View\Model\ViewModel;
+
 use function is_object;
 
 /**
@@ -73,7 +84,7 @@ class PersonController extends AbstractBase
             . ' ' . $view->person['Last_Name'];
         $person->set('foaf:name', trim(preg_replace('/\s+/', ' ', $name)));
         foreach ($view->uris as $uri) {
-            $person->add($uri->Predicate, $graph->resource($uri->URI));
+            $person->add($uri['Predicate'], $graph->resource($uri['URI']));
         }
         return $person;
     }
@@ -142,15 +153,14 @@ class PersonController extends AbstractBase
     {
         $personId = (int)$this->params()->fromRoute('id');
 
-        $person = $this->getDbTable('person')->getByPrimaryKey($personId);
+        $person = $this->getDbService(PersonService::class)->getByPrimaryKey($personId);
         if (!is_object($person)) {
             return $this->forwardTo(__NAMESPACE__ . '\Person', 'notfound');
         }
 
         $view = $this->createViewModel();
         $view->person = $person->toArray();
-        $view->items  = $this->getDbTable('item')
-            ->getItemsWithFullTextByPerson($personId);
+        $view->items  = $this->getDbService(ItemService::class)->getItemsWithFullTextByPerson($personId);
 
         return $view;
     }
@@ -170,7 +180,7 @@ class PersonController extends AbstractBase
         return $this->createViewModel(
             [
                 'bioMode' => $bios,
-                'people' => $this->getDbTable('person')->getList($bios),
+                'people' => $this->getDbService(PersonService::class)->getList($bios),
             ]
         );
     }
@@ -178,22 +188,13 @@ class PersonController extends AbstractBase
     /**
      * New people action
      *
-     * @return mixed
+     * @return ViewModel
      */
-    public function newAction()
+    public function newAction(): ViewModel
     {
-        $table = $this->getDbTable('person');
-        $adapter = $table->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($table->getTable());
-        $query->order('Person_ID DESC');
-        $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+        $paginator = $this->getDbService(PersonService::class)->getNewPeoplePaginator(
+            $this->params()->fromQuery('page', 1)
         );
-        $paginator->setItemCountPerPage(50);
-        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
         return $this->createViewModel(compact('paginator'));
     }
 
@@ -218,27 +219,22 @@ class PersonController extends AbstractBase
      */
     protected function getPersonViewModel($id, $sort = 'title')
     {
-        $table = $this->getDbTable('person');
-        $rowObj = $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = $this->getDbService(PersonService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
-        $view = $this->createViewModel(
-            ['person' => $rowObj->toArray()]
-        );
+        $view = $this->createViewModel(['person' => $entity->toArray()]);
         $view->sort = $sort;
-        $view->citations = $this->getDbTable('itemscreators')
-            ->getCitationsForPerson($id, $view->sort);
-        $view->credits = $this->getDbTable('editionscredits')
-            ->getCreditsForPerson($id, $view->sort);
-        $pseudo = $this->getDbTable('pseudonyms');
+        $view->citations = $this->getDbService(ItemsCreatorService::class)->getCitationsForPerson($id, $view->sort);
+        $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForPerson($id, $view->sort);
+        $pseudo = $this->getDbService(PseudonymService::class);
         $view->pseudonyms = $pseudo->getPseudonyms($id);
         $view->realNames = $pseudo->getRealNames($id);
-        $view->files = $this->getDbTable('peoplefiles')->getFilesForPerson($id);
-        $view->bibliography = $this->getDbTable('peoplebibliography')
+        $view->files = $this->getDbService(PeopleFileService::class)->getFilesForPerson($id);
+        $view->bibliography = $this->getDbService(PeopleBibliographyService::class)
             ->getItemsDescribingPerson($id);
-        $view->links = $this->getDbTable('peoplelinks')->getLinksForPerson($id);
-        $view->uris = $this->getDbTable('peopleuris')->getURIsForPerson($id);
+        $view->links = $this->getDbService(PeopleLinkService::class)->getLinksForPerson($id);
+        $view->uris = $this->getDbService(PeopleUriService::class)->getURIsForPerson($id);
         return $view;
     }
 }

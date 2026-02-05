@@ -29,7 +29,13 @@
 
 namespace GeebyDeeby\Controller;
 
-use function count;
+use DateTime;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\ItemsReviewService;
+use GeebyDeeby\Db\Service\SeriesReviewService;
+use GeebyDeeby\Db\Service\SeriesService;
+use GeebyDeeby\Db\Service\UserService;
+
 use function intval;
 
 /**
@@ -78,27 +84,23 @@ class ApproveController extends AbstractBase
         if (null === $id) {
             return $this->jsonDie('Missing ID value.');
         }
-        $table = $this->getDbTable('user');
-        $where = ['User_ID' => $id];
-        $user = $table->select($where);
-        if (count($user) < 1) {
+        $service = $this->getDbService(UserService::class);
+        $user = $service->getByPrimaryKey($id);
+        if (!$user) {
             return $this->jsonDie('Problem loading user data.');
         }
-        $row = current($user->toArray());
-        if ($row['Person_ID'] != 0) {
+        if ($user->isApproved()) {
             return $this->jsonDie('User already approved.');
         }
         $person_id = intval($this->params()->fromPost('person_id'));
-        if ($person_id === 0) {
-            return $this->jsonDie('Invalid Person ID.');
-        }
-        $row['Person_ID'] = $person_id;
-        $row['Username'] = $this->params()->fromPost('username');
-        $row['Name'] = $this->params()->fromPost('fullname');
-        $row['Address'] = $this->params()->fromPost('address');
-        $table->update($row, $where);
+        $user->setPerson($person_id ? $person_id : null)
+            ->setUsername($this->params()->fromPost('username'))
+            ->setName($this->params()->fromPost('fullname'))
+            ->setAddress($this->params()->fromPost('address'))
+            ->setIsApproved(true);
+        $service->persistEntity($user);
         try {
-            $this->sendApprovalEmail($row['Address']);
+            $this->sendApprovalEmail($user->getAddress());
         } catch (\Exception $e) {
             return $this->jsonDie(
                 'Problem sending email; user approved anyway. Details: '
@@ -120,11 +122,9 @@ class ApproveController extends AbstractBase
             return $ok;
         }
         $view = $this->createViewModel();
-        $view->newUsers = $this->getDbTable('user')->getUnapproved();
-        $view->pendingReviews = $this->getDbTable('itemsreviews')
-            ->getReviewsByUser(null, 'n', false);
-        $view->pendingComments = $this->getDbTable('seriesreviews')
-            ->getReviewsByUser(null, 'n');
+        $view->newUsers = $this->getDbService(UserService::class)->getList(false);
+        $view->pendingReviews = $this->getDbService(ItemsReviewService::class)->getReviewsByUser(null, 'n', false);
+        $view->pendingComments = $this->getDbService(SeriesReviewService::class)->getReviewsByUser(null, 'n');
         return $view;
     }
 
@@ -163,17 +163,15 @@ class ApproveController extends AbstractBase
         if (null === $id) {
             return $this->jsonDie('Missing ID value.');
         }
-        $table = $this->getDbTable('user');
-        $where = ['User_ID' => $id];
-        $user = $table->select($where);
-        if (count($user) < 1) {
+        $service = $this->getDbService(UserService::class);
+        $user = $service->getByPrimaryKey($id);
+        if (!$user) {
             return $this->jsonDie('Problem loading user data.');
         }
-        $row = current($user->toArray());
-        if ($row['Person_ID'] != 0) {
+        if ($user->isApproved()) {
             return $this->jsonDie('User already approved.');
         }
-        $table->delete($where);
+        $service->deleteEntity($user);
         return $this->jsonReportSuccess();
     }
 
@@ -203,39 +201,27 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Text must not be blank.');
         }
 
-        $userWhere = ['User_ID' => $userId];
-        $user = $this->getDbTable('user')->select($userWhere);
-        if (count($user) < 1) {
+        $user = $this->getDbService(UserService::class)->getByPrimaryKey($userId);
+        if (!$user) {
             return $this->jsonDie('Problem loading user data.');
         }
 
-        $itemWhere = [ucwords($type) . '_ID' => $itemId];
-        $item = $this->getDbTable($type)->select($itemWhere);
-        if (count($item) < 1) {
+        $serviceName = $type == 'item' ? ItemService::class : SeriesService::class;
+        $itemOrSeries = $this->getDbService($serviceName)->getByPrimaryKey($itemId);
+        if (!$itemOrSeries) {
             return $this->jsonDie('Problem loading item data.');
         }
 
-        $table = $this->getDbTable(
-            $type == 'item' ? 'itemsreviews' : 'seriesreviews'
+        $service = $this->getDbService(
+            $type == 'item' ? ItemsReviewService::class : SeriesReviewService::class
         );
-        $value = ['Review' => $text, 'Approved' => 'y'];
-        $table->update($value, $itemWhere + $userWhere + ['Approved' => 'n']);
-        $recentTable = $this->getDbTable('recentreviews');
-        try {
-            $recentTable->insert(
-                [
-                    'User_ID' => $userId,
-                    'Item_ID' => $itemId,
-                    'Type' => $type,
-                    'Added' => date('Y-m-d'),
-                ]
-            );
-        } catch (\Laminas\Db\Adapter\Exception\RuntimeException $e) {
-            // Ignore duplicate insert errors, but rethrow others....
-            if (!str_starts_with($e->getMessage(), 'Duplicate entry')) {
-                throw $e;
-            }
+        $lookupMethod = $type == 'item' ? 'getByUserAndItem' : 'getByUserAndSeries';
+        $entity = $service->$lookupMethod($userId, $itemId);
+        if ($entity->isApproved()) {
+            return $this->jsonDie('Already approved!');
         }
+        $entity->setReview($text)->setIsApproved(true)->setAddedDate(new DateTime());
+        $service->persistEntity($entity);
         return $this->jsonReportSuccess();
     }
 
@@ -261,22 +247,26 @@ class ApproveController extends AbstractBase
             return $this->jsonDie('Missing ' . ucwords($type) . ' ID value.');
         }
 
-        $userWhere = ['User_ID' => $userId];
-        $user = $this->getDbTable('user')->select($userWhere);
-        if (count($user) < 1) {
+        $user = $this->getDbService(UserService::class)->getByPrimaryKey($userId);
+        if (!$user) {
             return $this->jsonDie('Problem loading user data.');
         }
 
-        $itemWhere = [ucwords($type) . '_ID' => $itemId];
-        $item = $this->getDbTable($type)->select($itemWhere);
-        if (count($item) < 1) {
+        $serviceName = $type == 'item' ? ItemService::class : SeriesService::class;
+        $itemOrSeries = $this->getDbService($serviceName)->getByPrimaryKey($itemId);
+        if (!$itemOrSeries) {
             return $this->jsonDie('Problem loading item data.');
         }
 
-        $table = $this->getDbTable(
-            $type == 'item' ? 'itemsreviews' : 'seriesreviews'
+        $service = $this->getDbService(
+            $type == 'item' ? ItemsReviewService::class : SeriesReviewService::class
         );
-        $table->delete($itemWhere + $userWhere + ['Approved' => 'n']);
+        $lookupMethod = $type == 'item' ? 'getByUserAndItem' : 'getByUserAndSeries';
+        $entity = $service->$lookupMethod($userId, $itemId);
+        if ($entity->isApproved()) {
+            return $this->jsonDie('Already approved!');
+        }
+        $service->deleteEntity($entity);
         return $this->jsonReportSuccess();
     }
 

@@ -29,6 +29,10 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CountriesUriService;
+use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
+
 use function is_object;
 
 /**
@@ -73,7 +77,7 @@ class CountryController extends AbstractBase
         $country = $graph->resource($uri, $class);
         $country->set('rdf:label', $view->country['Country_Name']);
         foreach ($view->uris as $uri) {
-            $country->add($uri->Predicate, $graph->resource($uri->URI));
+            $country->add($uri['Predicate'], $graph->resource($uri['URI']));
         }
         return $country;
     }
@@ -129,17 +133,15 @@ class CountryController extends AbstractBase
     public function getCountryViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('country');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(CountryService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $view = $this->createViewModel(
-            ['country' => $rowObj->toArray()]
+            ['country' => $entity->toArray()]
         );
-        $view->series = $this->getDbTable('seriespublishers')
-            ->getSeriesForCountry($id);
-        $view->uris = $this->getDbTable('countriesuris')->getURIsForCountry($id);
+        $view->series = $this->getDbService(SeriesPublisherService::class)->getSeriesForCountry($id);
+        $view->uris = $this->getDbService(CountriesUriService::class)->getURIsForCountry($id);
         return $view;
     }
 
@@ -151,7 +153,7 @@ class CountryController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['countries' => $this->getDbTable('country')->getList()]
+            ['countries' => $this->getDbService(CountryService::class)->getList()]
         );
     }
 

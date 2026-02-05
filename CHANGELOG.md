@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next Release - TBD
+## 3.0.0 - TBD
 
 ### Added
 
@@ -13,20 +13,26 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
+- The database system has been refactored to abstract Laminas Row and Table classes behind generalized services and entity interfaces.
 - The getSuggestions() methods of various Row classes now accept null as well as false to indicate no limit.
-- View helpers have been modernized.
+- The Recent_Reviews table has been removed and replaced with an Added column in the Items_Reviews and Series_Reviews tables.
+- Search result displays have been made more consistent.
+- View helpers have been modernized (including significant simplification of AnalyzeCredits helper).
 
 ### Removed
 
 - FAQ-related database tables and FAQ functionality (underdeveloped and little-used; will be replaced with static pages where needed).
-- Obsolete data migration methods.
+- Obsolete data migration methods and table classes (ItemsCredits, ItemsImages, ItemsInSeries, ItemsISBNs, ItemsPlatforms, ItemsProductCodes and ItemsReleaseDates).
 - View helper factories.
 
 ### Fixed
 
 - Collection-related buttons now display appropriate add/modify labels, reflecting actual collection status.
+- Duplicate output on series check page.
 - Empty list messages for people/series have been corrected (they previously said "items" instead of appropriate entity types).
+- Error caused by accessing RDF URL without an HTTP Accept header.
 - Outdated references to the Interop\Container namespace.
+- Publisher imprint display on item/edition screens.
 
 ## 2.10.0 - 2025-12-28
 

@@ -272,12 +272,12 @@
 
       <?php foreach ($editionAttributes as $current): ?>
         <tr>
-          <th scope="row"><?=$this->escapeHtml($current->Editions_Attribute_Name)?>:</th>
+          <th scope="row"><?=$this->escapeHtml($current['Editions_Attribute_Name'])?>:</th>
           <td>
-            <?php if ($current->Allow_HTML == 1): ?>
-              <?=$current->Editions_Attribute_Value?>
+            <?php if ($current['Allow_HTML'] == 1): ?>
+              <?=$current['Editions_Attribute_Value']?>
             <?php else: ?>
-              <?=$this->escapeHtml($current->Editions_Attribute_Value)?>
+              <?=$this->escapeHtml($current['Editions_Attribute_Value'])?>
             <?php endif; ?>
           </td>
         </tr>

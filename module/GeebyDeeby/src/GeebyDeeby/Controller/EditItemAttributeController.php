@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\ItemsAttributeService;
+
 /**
  * Edit item attribute controller
  *
@@ -48,7 +50,7 @@ class EditItemAttributeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'itemsattribute',
+            ItemsAttributeService::class,
             'attributes',
             'geeby-deeby/edit-item-attribute/render-item-attributes'
         );
@@ -62,14 +64,13 @@ class EditItemAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'attribute_name' => 'Items_Attribute_Name',
-            'rdf_property' => 'Items_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority',
+            'attribute_name' => 'setAttributeName',
+            'rdf_property' => 'setRdfProperty',
+            'allow_html' => 'setAllowsHTML',
+            'priority' => 'setDisplayPriority',
 
         ];
-        [$response] = $this
-            ->handleGenericItem('itemsattribute', $assignMap, 'attribute');
+        [$response] = $this->handleGenericItem(ItemsAttributeService::class, $assignMap, 'attribute');
 
         return $response;
     }

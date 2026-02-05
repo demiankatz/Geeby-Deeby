@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CitationService;
+
 /**
  * Edit citation controller
  *
@@ -48,7 +50,7 @@ class EditCitationController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'citation',
+            CitationService::class,
             'citations',
             'geeby-deeby/edit-citation/render-citations'
         );
@@ -61,8 +63,8 @@ class EditCitationController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['citation' => 'Citation'];
-        [$response] = $this->handleGenericItem('citation', $assignMap, 'citation');
+        $assignMap = ['citation' => 'setCitationName'];
+        [$response] = $this->handleGenericItem(CitationService::class, $assignMap, 'citation');
         return $response;
     }
 }

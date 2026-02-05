@@ -45,13 +45,6 @@ use Laminas\Db\RowGateway\RowGateway;
 class User extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
@@ -67,38 +60,22 @@ class User extends Gateway
     }
 
     /**
-     * Get a list of unapproved users.
-     *
-     * @return mixed
-     */
-    public function getUnapproved()
-    {
-        $callback = function ($select): void {
-            // Don't select all fields -- no need to risk exposing password data!
-            $select->columns(
-                [
-                    'User_ID', 'Username', 'Name', 'Address', 'Person_ID',
-                    'Join_Reason',
-                ]
-            );
-            $select->where->equalTo('Person_ID', 0);
-            $select->order('Username');
-        };
-        return $this->select($callback);
-    }
-
-    /**
      * Get a list of users.
      *
+     * @param ?bool $approvedFilter Limit to a specific approval status? (Null for no filter)
+     *
      * @return mixed
      */
-    public function getList()
+    public function getList($approvedFilter = null)
     {
-        $callback = function ($select): void {
+        $callback = function ($select) use ($approvedFilter): void {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
-                ['User_ID', 'Username', 'Name', 'Address', 'Person_ID']
+                ['User_ID', 'Username', 'Name', 'Address', 'Person_ID', 'Join_Reason']
             );
+            if ($approvedFilter !== null) {
+                $select->where->equalTo('Approved', $approvedFilter ? 'y' : 'n');
+            }
             $select->order('Username');
         };
         return $this->select($callback);

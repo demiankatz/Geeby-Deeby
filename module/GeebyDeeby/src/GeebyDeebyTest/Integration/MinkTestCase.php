@@ -358,6 +358,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
                 if (
                     !$verifyValue
                     || $field->getValue() === $value
+                    || $field->getAttribute('type') === 'checkbox' && $field->isChecked() === $value
                 ) {
                     if ($reFocus) {
                         $field->focus();
@@ -401,6 +402,27 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
         $retries = 6
     ) {
         return $this->findCssAndCallMethod($page, $selector, 'getText', $timeout, $index, $retries);
+    }
+
+    /**
+     * Get the current value of a <select> control (or null if not found).
+     *
+     * @param Element $page     Page containing element
+     * @param string  $selector Selector targeting element
+     *
+     * @return ?string
+     */
+    protected function getSelectedOption(Element $page, string $selector): ?string
+    {
+        $options = $page->findAll('css', $selector . ' option');
+        $selected = $options[0] ?? null;
+        foreach ($options as $next) {
+            if ($next->isSelected()) {
+                $selected = $next;
+                break;
+            }
+        }
+        return $selected?->getValue();
     }
 
     /**
@@ -714,6 +736,41 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
         if ($logMsg) {
             error_log($logMsg);
         }
+    }
+
+    /**
+     * Log in as a user.
+     *
+     * @param TraversableElement $page     Page element
+     * @param string             $username Username
+     * @param string             $password Password
+     *
+     * @return void
+     */
+    protected function logIn(TraversableElement $page, string $username, string $password = 'password'): void
+    {
+        $page->clickLink('Log In');
+        $this->findCssAndSetValue($page, '#username', $username);
+        $this->findCssAndSetValue($page, '#password', $password);
+        $this->clickCss($page, '.content input[type="submit"]');
+    }
+
+    /**
+     * Populate a form and return the first value entered (or empty string if no data provided).
+     *
+     * @param TraversableElement $page Page containing form
+     * @param array              $data Data to enter into the form (indexed by selector)
+     *
+     * @return string
+     */
+    protected function populateForm(TraversableElement $page, array $data): string
+    {
+        $firstValue = null;
+        foreach ($data as $selector => $value) {
+            $firstValue ??= $value;
+            $this->findCssAndSetValue($page, $selector, $value);
+        }
+        return $firstValue ?? '';
     }
 
     /**

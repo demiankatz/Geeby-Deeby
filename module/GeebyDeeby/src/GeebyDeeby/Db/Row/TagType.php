@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\TagTypeEntityInterface;
+
 /**
  * Row Definition for Tag_Types
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class TagType extends RowGateway
+class TagType extends RowGateway implements TagTypeEntityInterface
 {
     /**
      * Constructor
@@ -51,16 +53,35 @@ class TagType extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Tag_Type)) {
-            return 'Type cannot be blank.';
-        }
-        return false;
+        return $this->Tag_Type_ID ?? null;
+    }
+
+    /**
+     * Get the name of the tag type.
+     *
+     * @return string
+     */
+    public function getTagTypeName(): string
+    {
+        return $this->Tag_Type;
+    }
+
+    /**
+     * Set the name of the tag type.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setTagTypeName(string $name): static
+    {
+        $this->Tag_Type = $name;
+        return $this;
     }
 }

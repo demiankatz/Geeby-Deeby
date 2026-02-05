@@ -278,52 +278,52 @@ class EditionsCredits extends Gateway
      */
     public function getPeopleForSeries($seriesID)
     {
-        $callback = function ($select) use ($seriesID): void {
-            $select->quantifier('DISTINCT');
-            $select->columns([]);
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Credits.Edition_ID = eds.Edition_ID',
-                [],
-                Select::JOIN_RIGHT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'eds.Item_ID = i.Item_ID',
-                ['Item_ID', 'Item_Name']
-            );
-            $select->join(
-                ['ic' => 'Items_Creators'],
-                'eds.Item_ID = ic.Item_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['p' => 'People'],
-                'Editions_Credits.Person_ID = p.Person_ID '
-                . 'OR ic.Person_ID = p.Person_ID'
-            );
-            $select->join(
-                ['iat' => 'Items_AltTitles'],
-                'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
-                ['Item_AltName'],
-                Select::JOIN_LEFT
-            );
-            $bestTitle = new Expression(
-                'COALESCE(?, ?)',
-                ['Item_AltName', 'Item_Name'],
-                [
-                    Expression::TYPE_IDENTIFIER,
-                    Expression::TYPE_IDENTIFIER,
-                ]
-            );
-            $fields = [
-                'Last_Name', 'First_Name', 'Extra_Details', $bestTitle,
-            ];
-            $select->order($fields);
-            $select->where->equalTo('Series_ID', $seriesID);
-        };
-        return $this->select($callback);
+        $select = $this->getSql()->select();
+        $select->quantifier('DISTINCT');
+        $select->columns([]);
+        $select->join(
+            ['eds' => 'Editions'],
+            'Editions_Credits.Edition_ID = eds.Edition_ID',
+            [],
+            Select::JOIN_RIGHT
+        );
+        $select->join(
+            ['i' => 'Items'],
+            'eds.Item_ID = i.Item_ID',
+            ['Item_ID', 'Item_Name']
+        );
+        $select->join(
+            ['ic' => 'Items_Creators'],
+            'eds.Item_ID = ic.Item_ID',
+            [],
+            Select::JOIN_LEFT
+        );
+        $select->join(
+            ['p' => 'People'],
+            'Editions_Credits.Person_ID = p.Person_ID '
+            . 'OR ic.Person_ID = p.Person_ID'
+        );
+        $select->join(
+            ['iat' => 'Items_AltTitles'],
+            'eds.Preferred_Item_AltName_ID = iat.Sequence_ID',
+            ['Item_AltName'],
+            Select::JOIN_LEFT
+        );
+        $bestTitle = new Expression(
+            'COALESCE(?, ?)',
+            ['Item_AltName', 'Item_Name'],
+            [
+                Expression::TYPE_IDENTIFIER,
+                Expression::TYPE_IDENTIFIER,
+            ]
+        );
+        $fields = [
+            'Last_Name', 'First_Name', 'Extra_Details', $bestTitle,
+        ];
+        $select->order($fields);
+        $select->where->equalTo('Series_ID', $seriesID);
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        return $statement->execute();
     }
 
     /**

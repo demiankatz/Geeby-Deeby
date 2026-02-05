@@ -29,12 +29,15 @@
 
 namespace GeebyDeebyTest\Mink;
 
+use Behat\Mink\Element\Element;
 use Behat\Mink\Element\TraversableElement;
+use GeebyDeeby\Db\Service\UserService;
 use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
 use function in_array;
+use function is_string;
 
 /**
  * Mink integration test for the platform.
@@ -44,16 +47,6 @@ use function in_array;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
- *
- * @todo Add tests for edition contents and preferred publisher/titles.
- * @todo Add test to set imprint and address on a series/publisher link
- * @todo Add tests for item adaptations/attached items/credits/references/relationships/translations
- * @todo Add test to set citation on creator relationship
- * @todo Add tests for series attached items/categories/relationships/translations
- * @todo Add tests for setting custom attributes on items/series/editions/full-text/tags
- * @todo Add tests for deleting links/relationships
- * @todo Add tests for creating/approving comments/reviews
- * @todo Add tests for searches
  */
 class IntegrationTest extends MinkTestCase
 {
@@ -89,6 +82,26 @@ class IntegrationTest extends MinkTestCase
         }
         $assertion = $regExMatch ? 'assertMatchesRegularExpression' : 'assertEquals';
         $this->$assertion($expectedMessage, $this->findCssAndGetText($page, '.content'));
+    }
+
+    /**
+     * Do a basic RDF content comparison.
+     *
+     * @param string $expectedMessage Expected RDF content
+     * @param string $path            URL path to visit initially.
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    protected function assertRdfContent(
+        string $expectedMessage,
+        string $path = '',
+        bool $regExMatch = false
+    ): void {
+        $url = $this->getGeebyDeebyUrl($path);
+        $content = trim(file_get_contents($url));
+        $assertion = $regExMatch ? 'assertMatchesRegularExpression' : 'assertEquals';
+        $this->$assertion($expectedMessage, $content);
     }
 
     /**
@@ -153,23 +166,6 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Log in as a user.
-     *
-     * @param TraversableElement $page     Page element
-     * @param string             $username Username
-     * @param string             $password Password
-     *
-     * @return void
-     */
-    protected function logIn(TraversableElement $page, string $username, string $password = 'password'): void
-    {
-        $page->clickLink('Log In');
-        $this->findCssAndSetValue($page, '#username', $username);
-        $this->findCssAndSetValue($page, '#password', $password);
-        $this->clickCss($page, '.content input[type="submit"]');
-    }
-
-    /**
      * Get the service locator.
      *
      * @return ServiceLocatorInterface
@@ -188,21 +184,24 @@ class IntegrationTest extends MinkTestCase
      *
      * @param string $username User to approve
      * @param ?int   $groupId  Group to apply (null for no group)
-     * @param int    $personId Person ID to link (-1 for none)
+     * @param ?int   $personId Person ID to link
      *
      * @return void
      */
     protected function approveUserWithDirectDatabaseAccess(
         string $username,
         ?int $groupId = null,
-        int $personId = -1
+        ?int $personId = null
     ): void {
-        $userTable = $this->getServiceLocator()->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('user');
-        $changes = ['Person_ID' => $personId];
+        $userService = $this->getServiceLocator()->get(\GeebyDeeby\Db\Service\PluginManager::class)
+            ->get(UserService::class);
+        $user = $userService->getByUsername($username)
+            ->setPerson($personId)
+            ->setIsApproved(true);
         if ($groupId) {
-            $changes['User_Group_ID'] = $groupId;
+            $user->setUserGroup($groupId);
         }
-        $userTable->update($changes, ['Username' => $username]);
+        $userService->persistEntity($user);
     }
 
     /**
@@ -396,7 +395,7 @@ class IntegrationTest extends MinkTestCase
         yield 'edition attribute 2' => [
             'EditionsAttributeList',
             '#add_edition_attribute',
-            ['#Editions_Attribute_Name' => 'test edition attribute 2'],
+            ['#Editions_Attribute_Name' => 'test edition attribute 2', '#Allow_HTML' => true],
             '#editions_attribute_list',
             null,
             2,
@@ -438,7 +437,7 @@ class IntegrationTest extends MinkTestCase
         yield 'full text attribute 2' => [
             'EditionFullTextAttributeList',
             '#add_edition_full_text_attribute',
-            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute 2'],
+            ['#Editions_Full_Text_Attribute_Name' => 'test full text attribute 2', '#Allow_HTML' => true],
             '#edition_full_text_attribute_list',
             null,
             2,
@@ -466,7 +465,7 @@ class IntegrationTest extends MinkTestCase
         yield 'item attribute 2' => [
             'ItemsAttributeList',
             '#add_item_attribute',
-            ['#Items_Attribute_Name' => 'test item attribute 2'],
+            ['#Items_Attribute_Name' => 'test item attribute 2', '#Allow_HTML' => true],
             '#items_attribute_list',
             null,
             2,
@@ -686,7 +685,7 @@ class IntegrationTest extends MinkTestCase
         yield 'series attribute 2' => [
             'SeriesAttributeList',
             '#add_series_attribute',
-            ['#Series_Attribute_Name' => 'test series attribute 2'],
+            ['#Series_Attribute_Name' => 'test series attribute 2', '#Allow_HTML' => true],
             '#series_attribute_list',
             null,
             2,
@@ -714,7 +713,7 @@ class IntegrationTest extends MinkTestCase
         yield 'tag attribute 2' => [
             'TagsAttributeList',
             '#add_tag_attribute',
-            ['#Tags_Attribute_Name' => 'test tag attribute 2'],
+            ['#Tags_Attribute_Name' => 'test tag attribute 2', '#Allow_HTML' => true],
             '#tags_attribute_list',
             null,
             2,
@@ -728,7 +727,10 @@ class IntegrationTest extends MinkTestCase
         yield 'tag relationship 2' => [
             'TagsAttributeList',
             '#add_tag_relationship',
-            ['#Tags_Relationship_Name' => 'test tag relationship 2'],
+            [
+                '#Tags_Relationship_Name' => 'test tag relationship 2',
+                '#Tags_Inverse_Relationship_Name' => '2 relationship tag test',
+            ],
             '#tags_relationship_list',
             null,
             2,
@@ -794,24 +796,6 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Populate a form and return the first value entered (or empty string if no data provided).
-     *
-     * @param TraversableElement $page Page containing form
-     * @param array              $data Data to enter into the form (indexed by selector)
-     *
-     * @return string
-     */
-    protected function populateForm(TraversableElement $page, array $data): string
-    {
-        $firstValue = null;
-        foreach ($data as $selector => $value) {
-            $firstValue ??= $value;
-            $this->findCssAndSetValue($page, $selector, $value);
-        }
-        return $firstValue ?? '';
-    }
-
-    /**
      * Assert that a list of links contains the expected value (and, if provided, matches the expected count)
      *
      * @param TraversableElement $page              Page containing list
@@ -868,6 +852,86 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Test linking categories to a series.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testCategoryLinking(): void
+    {
+        $page = $this->goToPage('/edit/Series/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Categories');
+        $this->clickCss($page, '#Category_ID_1');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+    }
+
+    /**
+     * Test creating container items using volume/number numbering.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testBuildingIssues(): void
+    {
+        $page = $this->goToPage('/edit/Series/2');
+        $this->logIn($page, 'admin');
+
+        // Build two issues:
+        foreach ([1, 2] as $issue) {
+            $this->clickCss($page, '#add_item');
+            $issueData = [
+                '#Item_Name' => 'example issue ' . $issue,
+                '#Item_Length' => '32 pages',
+                '#Item_Endings' => '1',
+                '#Item_Errata' => 'none -- perfection!',
+                '#Item_Thanks' => 'for nothing',
+            ];
+            $this->populateForm($page, $issueData);
+            $this->clickCss($page, '.modal-body input[type="submit"]');
+            $this->waitForPageLoad($page);
+            // We only created one item prior to this test, so IDs will start at 2;
+            // take advantage of that fact to identify the relevant order control.
+            $this->findCssAndSetValue($page, '#order' . ($issue + 1), '1,' . $issue);
+            // Order defaults to zero, so the submit button we want will always be
+            // the first one on the page:
+            $this->clickCss($page, '.list_item input[type="submit"]');
+        }
+    }
+
+    /**
+     * Test inserting articles into container items.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testBuildingIssues')]
+    public function testBuildingArticles(): void
+    {
+        // Now add articles to one of the editions:
+        $page = $this->goToPage('/edit/Edition/2');
+        $this->logIn($page, 'admin');
+        $this->assertSame('2: example issue 1', $this->findCssAndGetValue($page, '#Edition_Item_ID'));
+        $page->clickLink('Contents (Attached Items)');
+        $button = $this->findCss($page, '.tab-pane.active button');
+        $this->assertSame('Add New Item', $button->getText());
+        foreach ([1, 2] as $article) {
+            $button->click();
+            $articleData = [
+                '#Item_Name' => 'example article ' . $article,
+                '#Item_Length' => '16 pages',
+                '#Item_Endings' => '0',
+                '#Item_Errata' => 'undetermined',
+                '#Item_Thanks' => 'to test suites',
+            ];
+            $this->populateForm($page, $articleData);
+            $this->clickCss($page, '.modal-body input[type="submit"]');
+            $this->waitForPageLoad($page);
+            $this->findCssAndSetValue($page, '#item_order_' . ($article + 3), (string)$article);
+            $this->clickCss($page, '.list_item input[type="submit"]');
+        }
+    }
+
+    /**
      * Data provider for testEditExistingData().
      *
      * @return Generator<string, array>
@@ -898,7 +962,8 @@ class IntegrationTest extends MinkTestCase
             [$url, , $data, $listSelector] = $testCase;
             $linkToClick = $testCase[4] ?? reset($data);
             foreach ($fieldsToEdit ?? array_merge(array_keys($fieldOverrides), array_keys($data)) as $key) {
-                $data[$key] = $fieldOverrides[$key] ?? ($data[$key] . ' (edited)');
+                $data[$key] = $fieldOverrides[$key]
+                    ?? (is_string($data[$key]) ? $data[$key] . ' (edited)' : $data[$key]);
             }
             $expectedDisplay ??= $linkToClick . ' (edited)';
             return [$url, $linkToClick, $data, $listSelector, $expectedDisplay, $inModal];
@@ -1003,6 +1068,50 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Data provider for testSetAttributes().
+     *
+     * @return Generator<string, array>
+     */
+    public static function setAttributesProvider(): Generator
+    {
+        yield 'item' => ['Item'];
+        yield 'series' => ['Series'];
+        yield 'edition' => ['Edition'];
+        yield 'tag' => ['Tag'];
+    }
+
+    /**
+     * Test setting custom attributes.
+     *
+     * @param string $type Type of item to set attributes on
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('setAttributesProvider')]
+    public function testSetAttributes(string $type): void
+    {
+        $page = $this->goToPage('/edit/' . $type . '/1');
+        $this->logIn($page, 'admin');
+        // Search for the appropriate button:
+        for ($i = 0; $i < 2; $i++) {
+            $toggleButton = $this->findCss($page, 'button[data-toggle="collapse"]', index: $i);
+            if ('Toggle Additional Attributes' === $toggleButton->getText()) {
+                break;
+            }
+        }
+        $this->assertSame('Toggle Additional Attributes', $toggleButton->getText());
+        $toggleButton->click();
+        $input = $this->findCss($page, '#' . $type . '_Attribute_1');
+        $this->assertTrue($input->isVisible());
+        $input->setValue('<non-html> attribute value for ' . $type);
+        $input2 = $this->findCss($page, '#' . $type . '_Attribute_2');
+        $this->assertTrue($input->isVisible());
+        $input2->setValue('<b>html</b> attribute value for ' . $type);
+        $this->clickCss($page, '.edit_container input[type="submit"]');
+    }
+
+    /**
      * Assert the current default material type.
      *
      * @param int  $type  Expected default material type ID.
@@ -1017,15 +1126,7 @@ class IntegrationTest extends MinkTestCase
             $this->logIn($page, 'admin');
         }
         $this->clickCss($page, '#add_item');
-        $options = $page->findAll('css', '#Material_Type_ID option');
-        $selected = $options[0];
-        foreach ($options as $next) {
-            if ($next->isSelected()) {
-                $selected = $next;
-                break;
-            }
-        }
-        $this->assertSame((string)$type, $selected->getValue());
+        $this->assertSame((string)$type, $this->getSelectedOption($page, '#Material_Type_ID'));
     }
 
     /**
@@ -1239,10 +1340,10 @@ class IntegrationTest extends MinkTestCase
         yield 'publisher address' => [
             '/edit/Publisher/1',
             null,
-            ['#Street' => 'fake st.'],
+            ['#Country_ID' => '1', '#City_ID' => '1', '#Street' => 'fake st.'],
             '#address_list',
             '/^No addresses set.$/',
-            '/test country -- fake st./',
+            '/test country -- test city -- fake st./',
         ];
         yield 'publisher imprint' => [
             '/edit/Publisher/1',
@@ -1276,6 +1377,14 @@ class IntegrationTest extends MinkTestCase
             '/^No relationships defined.$/',
             '/test tag relationship: test tag 2 \\(edited\\)/',
         ];
+        yield 'bidirectional tag relationship' => [
+            '/edit/Tag/1',
+            'Relationships',
+            ['#relationship_type' => '/2', '#target_tag' => '2'],
+            '#relationship_list',
+            '/^test tag relationship: test tag 2 \\(edited\\)/',
+            '/test tag relationship 2 \\(edited\\): test tag 2 \\(edited\\)/',
+        ];
         yield 'tag to item link' => [
             '/edit/Tag/1',
             'Linked Items',
@@ -1300,14 +1409,6 @@ class IntegrationTest extends MinkTestCase
             '/^No alternate titles set.$/',
             '/test alternate title \\(test note\\)/',
         ];
-        yield 'item creator' => [
-            '/edit/Item/1',
-            'Creators',
-            ['#creator_person' => '2'],
-            '#creator_list',
-            '/No creators.$/',
-            '/test person role: last, test-second-edited/',
-        ];
         yield 'item description' => [
             '/edit/Item/1',
             'Descriptions',
@@ -1315,6 +1416,99 @@ class IntegrationTest extends MinkTestCase
             '#description_list',
             '/^No descriptions set.$/',
             '/Test description \\(Source: User Summary\\)/',
+        ];
+        yield 'item adaptation' => [
+            '/edit/Item/5',
+            'Adaptations',
+            ['#adapt_name' => '4'],
+            '#adaptationfrom_list',
+            '/^No relevant items.$/',
+            '/example article 1/',
+        ];
+        $attachmentNote = 'IMPORTANT: In the vast majority of cases, items should be attached at the individual'
+            . ' EDITION level, not here at the ITEM level.';
+        yield 'item attachments' => [
+            '/edit/Item/5',
+            'Attached Items',
+            ['#attachment_name' => '4', '#Attachment_Note' => '1'],
+            '#attachment_list',
+            '/^' . $attachmentNote . ' No items.$/',
+            '/example article 1 \\(second test material \\(edited\\), test note\\)/',
+        ];
+        yield 'item creator (to satisfy series 1 check)' => [
+            '/edit/Item/1',
+            'Creators',
+            ['#creator_person' => '2'],
+            '#creator_list',
+            '/No creators.$/',
+            '/test person role: last, test-second-edited/',
+        ];
+        yield 'item creator 1 (for citation test)' => [
+            '/edit/Item/5',
+            'Creators',
+            ['#creator_person' => '2'],
+            '#creator_list',
+            '/^No creators.$/',
+            '/test person role: last, test-second-edited/',
+        ];
+        yield 'item creator 2 (for citation test)' => [
+            '/edit/Item/5',
+            'Creators',
+            ['#creator_person' => '3'],
+            '#creator_list',
+            '/test person role: last, test-second-edited/',
+            '/test person role: lastname, test-third/',
+        ];
+        yield 'item credits' => [
+            '/edit/Item/5',
+            'Credits',
+            ['#credit_person' => '2', '#credit_note' => '2'],
+            '#credit_list',
+            '/^No credits.$/',
+            '/test person role: last, test-second-edited \\(test note 2 \\(edited\\)\\)/',
+        ];
+        yield 'item to item reference' => [
+            '/edit/Item/5',
+            'References',
+            ['#item_bib_id' => '1'],
+            '#aboutitem_list',
+            '/^No relevant items.$/',
+            '/test item/',
+            '#add_item_reference',
+        ];
+        yield 'item to series reference' => [
+            '/edit/Item/5',
+            'References',
+            ['#series_bib_id' => '1'],
+            '#aboutseries_list',
+            '/^No relevant series.$/',
+            '/test series 1/',
+            '#add_series_reference',
+        ];
+        yield 'item to person reference' => [
+            '/edit/Item/5',
+            'References',
+            ['#person_bib_id' => '1'],
+            '#aboutperson_list',
+            '/^No relevant people.$/',
+            '/test-last, test-first, extra/',
+            '#add_person_reference',
+        ];
+        yield 'item relationship' => [
+            '/edit/Item/5',
+            'Relationships',
+            ['#target_item' => '4'],
+            '#relationship_list',
+            '/^No relationships defined.$/',
+            '/test item relationship 1: example article 1/',
+        ];
+        yield 'item translation' => [
+            '/edit/Item/5',
+            'Translations',
+            ['#trans_name' => '4'],
+            '#translationfrom_list',
+            '/^No relevant items.$/',
+            '/example article 1/',
         ];
         yield 'series alternate title' => [
             '/edit/Series/1',
@@ -1359,6 +1553,52 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Assert that the page contains a container whose text matches a regular expression (but skip if the
+     * regular expression is null).
+     *
+     * @param Element $page     Page containing container
+     * @param string  $selector Selector containing text to check
+     * @param ?string $regex    Regular expression to match (or null to skip check)
+     *
+     * @return void
+     */
+    protected function assertOptionalRegexInContainer(Element $page, string $selector, ?string $regex): void
+    {
+        if ($regex) {
+            $this->assertMatchesRegularExpression($regex, $this->findCssAndGetText($page, $selector));
+        }
+    }
+
+    /**
+     * Add a link to a container and make assertions to confirm its success.
+     *
+     * @param Element $page                 Active page
+     * @param array   $valuesToSet          Array of selector => value (data to link)
+     * @param string  $containerSelector    Selector for container listing links
+     * @param ?string $beforeContainerRegex Regular expression to check in container before linking data (null to skip)
+     * @param ?string $afterContainerRegex  Regular expression to check in container after linking data (null to skip)
+     * @param string  $submitSelector       Selector for submit button
+     *
+     * @return void
+     */
+    protected function addLinkToEmptyContainerAndAssertSuccess(
+        Element $page,
+        array $valuesToSet,
+        string $containerSelector,
+        ?string $beforeContainerRegex = null,
+        ?string $afterContainerRegex = null,
+        string $submitSelector = '.active .edit_container input[type="submit"]'
+    ) {
+        $this->assertOptionalRegexInContainer($page, $containerSelector, $beforeContainerRegex);
+        foreach ($valuesToSet as $selector => $value) {
+            $this->findCssAndSetValue($page, $selector, $value);
+        }
+        $this->clickCss($page, $submitSelector);
+        $this->waitForPageLoad($page);
+        $this->assertOptionalRegexInContainer($page, $containerSelector, $afterContainerRegex);
+    }
+
+    /**
      * Test linking additional data to records.
      *
      * @param string  $url                  Path relative to Geeby-Deeby base URL for entering data
@@ -1371,6 +1611,7 @@ class IntegrationTest extends MinkTestCase
      *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\Depends('testBuildingArticles')]
     #[\PHPUnit\Framework\Attributes\Depends('testSetDefaultMaterialType')]
     #[\PHPUnit\Framework\Attributes\DataProvider('linkCreationProvider')]
     public function testLinkCreation(
@@ -1387,23 +1628,84 @@ class IntegrationTest extends MinkTestCase
         if ($tabToClick) {
             $page->clickLink($tabToClick);
         }
-        if ($beforeContainerRegex) {
-            $this->assertMatchesRegularExpression(
+        $this->addLinkToEmptyContainerAndAssertSuccess(
+            $page,
+            $valuesToSet,
+            $containerSelector,
+            $beforeContainerRegex,
+            $afterContainerRegex,
+            $submitSelector
+        );
+        // If this is the first element added to the container, delete it and re-add it
+        // to exercise delete functionality.
+        if ($beforeContainerRegex && $afterContainerRegex && str_starts_with($beforeContainerRegex, '/^No ')) {
+            $this->clickCss($page, $containerSelector . ' .ui-icon-trash');
+            $this->getMinkSession()->getDriver()->acceptAlert();
+            $this->waitForPageLoad($page);
+            $this->addLinkToEmptyContainerAndAssertSuccess(
+                $page,
+                $valuesToSet,
+                $containerSelector,
                 $beforeContainerRegex,
-                $this->findCssAndGetText($page, $containerSelector)
-            );
-        }
-        foreach ($valuesToSet as $selector => $value) {
-            $this->findCssAndSetValue($page, $selector, $value);
-        }
-        $this->clickCss($page, $submitSelector);
-        $this->waitForPageLoad($page);
-        if ($afterContainerRegex) {
-            $this->assertMatchesRegularExpression(
                 $afterContainerRegex,
-                $this->findCssAndGetText($page, $containerSelector)
+                $submitSelector
             );
         }
+    }
+
+    /**
+     * Test copying an addition (including children for completeness).
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testCopyEdition(): void
+    {
+        $page = $this->goToPage('/edit/Item/2');
+        $this->logIn($page, 'admin');
+        $this->clickCss($page, '.selectedEdition');
+        $this->clickCss($page, '#editions-tab button');
+        $this->waitForPageLoad($page);
+        $this->assertStringContainsString(
+            'Copy of test series 2 edition',
+            $this->findCssAndGetText($page, '#editions_list')
+        );
+    }
+
+    /**
+     * Test setting custom full text link attributes.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testSetFullTextAttributes(): void
+    {
+        $page = $this->goToPage('/edit/Edition/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Full Text Links');
+        $this->clickCss($page, '#fulltext_list .ui-icon-gear');
+        $this->waitForPageLoad($page);
+        $input = $this->findCss($page, '#FullText_Attribute_1');
+        $this->assertTrue($input->isVisible());
+        $input->setValue('attribute value for full text link');
+        $this->clickCss($page, '#modal input[type="submit"]');
+    }
+
+    /**
+     * Test setting a creator citation.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testSetCreatorCitation(): void
+    {
+        $page = $this->goToPage('/edit/Item/5');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Creators');
+        $this->clickCss($page, '#creator_list .ui-icon-gear');
+        $this->waitForPageLoad($page);
+        $this->findCssAndSetValue($page, '#Citation_ID', '1');
+        $this->clickCss($page, '#modal input[type="submit"]');
     }
 
     /**
@@ -1413,7 +1715,11 @@ class IntegrationTest extends MinkTestCase
      */
     public static function suggestionsProvider(): Generator
     {
-        yield 'edition' => ['Edition', 'test', '1: test series 1 edition'];
+        $expectedEditions = '1: test series 1 edition';
+        for ($i = 2; $i <= 5; $i++) {
+            $expectedEditions .= "\n$i: test series 2 edition";
+        }
+        yield 'edition' => ['Edition', 'test', $expectedEditions];
         yield 'item' => ['Item', 'test', "1: test alternate title [alt. title for test item]\n1: test item"];
         yield 'note' => ['Note', 'test', "1: test note\n2: test note 2 (edited)"];
         yield 'person' => [
@@ -1452,109 +1758,6 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Data provider for testPopulatedRecords().
-     *
-     * @return Generator<string, array>
-     */
-    public static function populatedRecordsProvider(): Generator
-    {
-        yield 'series' => [
-            '/Series/1',
-            'Please log in to leave a comment.'
-            . ' [List All Series] [List Series Full Text] [List Series Images] [List Series People]'
-            . ' [List Series Subjects/Tags]'
-            . ' Language: test language 1'
-            . ' Alternate Title: test alternate series title (test note)'
-            . ' Publisher: test publisher (test note)'
-            . ' Translated From: test series 2 (edited) (test language 1)'
-            . ' test series relationship: test series 2 (edited)'
-            . ' second test materials (edited)'
-            . ' test item (1952)'
-            . ' Related Documents test file type 1 test file 1'
-            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
-            . ' (last verified: 2025-12-01)'
-            . ' User Comments No comments available. Please log in to leave a comment.',
-        ];
-        // TODO: add data so the following commented-out tests will be non-empty
-        //yield 'category' => ['/Category/1', 'test description No series are listed in this category.'];
-        //yield 'city' => ['/City/1', 'No information is available about this city.'];
-        //yield 'country' => ['/Country/1', 'No information is available about this country.'];
-        yield 'language' => ['/Language/1', 'T test series 1 test series 2 (edited)'];
-        yield 'material type' => ['/Material/1', 'T test series 1'];
-        yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1 T test series 1'];
-        yield 'person' => [
-            '/Person/1',
-            '[List All People] [List Person Full Text]'
-            . ' Pseudonym For: last, test-second-edited'
-            . ' External Identifier: http://person/1'
-            . ' Sort by: Series Title Year'
-            . ' Items with "test-last, test-first, extra" as Credited test person role'
-            . ' test series 1'
-            . ' test item (test note)'
-            . ' Related Documents test file type 1 test file 1'
-            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
-            . ' (last verified: 2025-12-01)',
-        ];
-        yield 'person 2' => [
-            '/Person/2',
-            '[List All People] [List Person Full Text]'
-            . ' Pseudonym: test-last, test-first, extra'
-            . ' bio'
-            . ' Sort by: Series Title Year'
-            . ' Items with "last, test-second-edited" as Cited test person role'
-            . ' test series 1'
-            . ' test item',
-        ];
-        yield 'item' => [
-            '/Item/1',
-            'Please log in to manage your collection or post a review.'
-            . ' (test note) View: Combined By Edition Online Full Text: test full text source 1'
-            . ' Series: test series 1'
-            . ' Alternate Title: test alternate title (test note)'
-            . ' Platform: test platform'
-            . ' Subjects / Tags: test tag test tag 2 (edited)'
-            . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
-            . ' Date: February 3, 1952 (test note)'
-            . ' ISBN: 0123456789 / 9780123456786 (test note)'
-            . ' OCLC Number: 12345 (test note)'
-            . ' Product Code: pc-test (test note)'
-            . ' User Summary: Test description'
-            . ' Please log in to manage your collection or post a review.'
-            . ' Related Documents test file type 1 test file 1'
-            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
-            . ' (last verified: 2025-12-01)',
-        ];
-        yield 'platform' => ['/Platform/1', 'test series 1 test item'];
-        yield 'tag' => [
-            '/Tag/1',
-            'test tag relationship: test tag 2 (edited)'
-            . ' External Identifier: http://tag/1'
-            . ' Sort by: Series Title'
-            . ' test series 1'
-            . ' test item',
-        ];
-    }
-
-    /**
-     * Test that appropriate empty messages are provided before content is linked up.
-     *
-     * @param string $path            URL path to check
-     * @param string $expectedMessage Content expected on page
-     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
-     *
-     * @return void
-     */
-    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
-    #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsProvider')]
-    public function testPopulatedRecords(
-        string $path,
-        string $expectedMessage,
-        bool $regExMatch = false
-    ): void {
-        $this->assertPageContent($expectedMessage, $path, regExMatch: $regExMatch);
-    }
-
-    /**
      * Assert the contents of the top and bottom controls.
      *
      * @param TraversableElement $page     Page being examined
@@ -1570,7 +1773,7 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Data provider for testCollectionBehavior().
+     * Data provider for testCollectionAddAndRemoveControls().
      *
      * @return Generator<string, array>
      */
@@ -1583,7 +1786,7 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Test collection management functionality.
+     * Test collection management add/remove/control label functionality.
      *
      * @param string $subPage          Subpage of item page to test.
      * @param string $controlsSelector Selector for button bar to use for testing.
@@ -1592,11 +1795,12 @@ class IntegrationTest extends MinkTestCase
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('collectionBehaviorProvider')]
     #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
-    public function testCollectionBehavior(string $subPage, string $controlsSelector): void
+    public function testCollectionAddAndRemoveControls(string $subPage, string $controlsSelector): void
     {
         $page = $this->goToPage('/Item/1' . $subPage);
         $this->assertControls($page, 'Please log in to manage your collection or post a review.');
         $this->logIn($page, 'user');
+        $this->waitForPageLoad($page);
         // Add to all lists:
         $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
         $this->findCss($page, $controlsSelector)->clickLink('Add to Have List');
@@ -1618,6 +1822,632 @@ class IntegrationTest extends MinkTestCase
         $this->findCss($page, $controlsSelector)->clickLink('Modify Sale/Trade List');
         $this->clickCss($page, '.content input[type="submit"]', index: 1);
         $this->assertControls($page, 'Submit Review Add to Have List Add to Want List Add to Sale/Trade List');
+    }
+
+    /**
+     * Test setting up collections for two different users to facilitate a potential trade.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testSettingUpPotentialTrade(): void
+    {
+        // Now set up test scenario with buyer/seller:
+        $page = $this->goToPage('/Item/1');
+        $controlsSelector = '.controls.top';
+        $this->assertControls($page, 'Please log in to manage your collection or post a review.');
+        $this->logIn($page, 'user');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Have List');
+        $this->findCssAndSetValue($page, 'input[name="comment"]', 'good shape');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Add to Sale/Trade List');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Sale/Trade List');
+        $this->findCssAndSetValue($page, 'input[name="comment"]', 'bad shape');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Modify Have List Add to Want List Modify Sale/Trade List');
+        $page->clickLink('Log Out');
+        $this->logIn($page, 'admin');
+        $this->findCss($page, $controlsSelector)->clickLink('Add to Want List');
+        $this->findCssAndSetValue($page, 'input[name="comment"]', 'any shape');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertControls($page, 'Submit Review Add to Have List Modify Want List Add to Sale/Trade List');
+    }
+
+    /**
+     * Test submitting an item review.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testReviewSubmission(): void
+    {
+        $page = $this->goToPage('/Item/1');
+        $this->logIn($page, 'user');
+        $page->clickLink('Submit Review');
+        $this->findCssAndSetValue($page, '#review', 'this is my review');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertSame(
+            'Your review has been saved. It will appear on the site once it has been approved by an administrator.',
+            $this->findCssAndGetText($page, '.content p')
+        );
+        $page->clickLink('Back to Item');
+        $page->clickLink('Edit Review');
+        $this->assertStringStartsWith(
+            'You have already reviewed this item.',
+            $this->findCssAndGetText($page, '.disclaimer')
+        );
+        $this->assertSame(
+            'this is my review',
+            $this->findCssAndGetValue($page, '#review')
+        );
+    }
+
+    /**
+     * Test approving an item review.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testReviewSubmission')]
+    public function testReviewApproval(): void
+    {
+        $page = $this->goToPage('/edit/Approve');
+        $this->logIn($page, 'admin');
+        $this->assertSame(
+            'test item user Approve Reject',
+            $this->findCssAndGetText($page, '#PendingReview_2_1')
+        );
+        $this->assertSame(
+            'this is my review',
+            $this->findCssAndGetValue($page, '#ReviewText_2_1')
+        );
+        $button = $this->findCss($page, '#ReviewButtons_2_1 button');
+        $this->assertSame('Approve', $button->getText());
+        $button->click();
+    }
+
+    /**
+     * Test submitting a series comment.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulateData')]
+    public function testCommentSubmission(): void
+    {
+        $page = $this->goToPage('/Series/1');
+        $this->logIn($page, 'user');
+        $page->clickLink('Submit Comment');
+        $this->findCssAndSetValue($page, '#review', 'this is my comment');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertSame(
+            'Your comment has been saved. It will appear on the site once it has been approved by an administrator.',
+            $this->findCssAndGetText($page, '.content p')
+        );
+        $page->clickLink('Back to Series');
+        $page->clickLink('Edit Comment');
+        $this->assertStringStartsWith(
+            'You have already commented on this series.',
+            $this->findCssAndGetText($page, '.disclaimer')
+        );
+        $this->assertSame(
+            'this is my comment',
+            $this->findCssAndGetValue($page, '#review')
+        );
+    }
+
+    /**
+     * Test approving a series comment.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testCommentSubmission')]
+    public function testCommentApproval(): void
+    {
+        $page = $this->goToPage('/edit/Approve');
+        $this->logIn($page, 'admin');
+        $this->assertSame(
+            'test series 1 user Approve Reject',
+            $this->findCssAndGetText($page, '#PendingComment_2_1')
+        );
+        $this->assertSame(
+            'this is my comment',
+            $this->findCssAndGetValue($page, '#CommentText_2_1')
+        );
+        $button = $this->findCss($page, '#CommentButtons_2_1 button');
+        $this->assertSame('Approve', $button->getText());
+        $button->click();
+    }
+
+    /**
+     * Test setting the advanced publisher controls.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testSetPublisherDetails(): void
+    {
+        $page = $this->goToPage('/edit/Series/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Publishers');
+        $this->clickCss($page, '#publisher_list .ui-icon-gear');
+        $this->waitForPageLoad($page);
+        $this->findCssAndSetValue($page, '#Address_ID', '2');
+        $this->findCssAndSetValue($page, '#Imprint_ID', '2');
+        $this->clickCss($page, '.modal-body input[type="submit"]');
+        $this->waitForPageLoad($page);
+        $this->assertSame(
+            'test publisher (test imprint: test country -- test city -- fake st. - test note)',
+            $this->findCssAndGetText($page, '#publisher_list td')
+        );
+    }
+
+    /**
+     * Test setting a preferred publisher on an edition.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testSetPublisherDetails')]
+    public function testSetPreferredPublisher(): void
+    {
+        $page = $this->goToPage('/edit/Edition/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Preferred Publisher');
+        $this->findCssAndSetValue($page, '#Series_Publisher_ID', '2');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+    }
+
+    /**
+     * Data provider for testPopulatedRecords().
+     *
+     * @return Generator<string, array>
+     */
+    public static function populatedRecordsProvider(): Generator
+    {
+        yield 'series 1' => [
+            '/Series/1',
+            'Please log in to leave a comment.'
+            . ' [List All Series] [List Series Full Text] [List Series Images] [List Series People]'
+            . ' [List Series Subjects/Tags]'
+            . ' Language: test language 1'
+            . ' Alternate Title: test alternate series title (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
+            . ' Category: test category'
+            . ' Translated From: test series 2 (edited) (test language 1)'
+            . ' test series attribute: <non-html> attribute value for Series'
+            . ' test series attribute 2 (edited): html attribute value for Series'
+            . ' test series relationship: test series 2 (edited)'
+            . ' second test materials (edited)'
+            . ' test item (1952)'
+            . ' Related Documents test file type 1 test file 1'
+            . ' Bibliography of Items About "test series 1" second test materials (edited) example article 2'
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
+            . ' (last verified: 2025-12-01)'
+            . ' User Comments this is my comment --user Please log in to leave a comment.',
+        ];
+        yield 'series 2 (with volume/issue numbering)' => [
+            '/Series/2',
+            'Please log in to leave a comment.'
+            . ' [List All Series] [List Series Full Text] [List Series Images] [List Series People]'
+            . ' [List Series Subjects/Tags]'
+            . ' Language: test language 1'
+            . ' Translated Into: test series 1 (test language 1)'
+            . ' This has been edited.'
+            . ' second test materials (edited)'
+            . ' v. 1, no. 1. example issue 1 (example article 1 and 1 more item)'
+            . ' v. 1, no. 2. example issue 2'
+            . ' User Comments No comments available. Please log in to leave a comment.',
+        ];
+        yield 'category' => ['/Category/1', 'test description T test series 1'];
+        yield 'city' => ['/City/1', 'T test series 1'];
+        yield 'country' => ['/Country/1', 'T test series 1'];
+        yield 'language' => ['/Language/1', 'T test series 1 test series 2 (edited)'];
+        yield 'material type' => ['/Material/1', 'T test series 1'];
+        yield 'publisher' => ['/Publisher/1', 'External Identifier: http://publisher/1 T test series 1'];
+        yield 'person' => [
+            '/Person/1',
+            '[List All People] [List Person Full Text]'
+            . ' Pseudonym For: last, test-second-edited'
+            . ' External Identifier: http://person/1'
+            . ' Sort by: Series Title Year'
+            . ' Items with "test-last, test-first, extra" as Credited test person role'
+            . ' test series 1'
+            . ' test item (test note)'
+            . ' Related Documents test file type 1 test file 1'
+            . ' Bibliography of Items About "test-last, test-first, extra"'
+            . ' second test materials (edited) example article 2'
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
+            . ' (last verified: 2025-12-01)',
+        ];
+        yield 'person 2' => [
+            '/Person/2',
+            '[List All People] [List Person Full Text]'
+            . ' Pseudonym: test-last, test-first, extra'
+            . ' bio'
+            . ' Sort by: Series Title Year'
+            . ' Items with "last, test-second-edited" as Cited test person role'
+            . ' test series 1'
+            . ' test item'
+            . ' test series 2 (edited)'
+            . ' example article 2'
+            . ' Items with "last, test-second-edited" as Credited test person role'
+            . ' test series 2 (edited)'
+            . ' example article 2 (test note 2 (edited))',
+        ];
+        yield 'item (self-contained)' => [
+            '/Item/1',
+            'Please log in to manage your collection or post a review.'
+            . ' (test note) View: Combined By Edition Online Full Text: test full text source 1'
+            . ' (test full text attribute 1: attribute value for full text link)'
+            . ' Series: test series 1'
+            . ' Alternate Title: test alternate title (test note)'
+            . ' Platform: test platform'
+            . ' Subjects / Tags: test tag test tag 2 (edited)'
+            . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
+            . ' Date: February 3, 1952 (test note)'
+            . ' ISBN: 0123456789 / 9780123456786 (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
+            . ' OCLC Number: 12345 (test note)'
+            . ' Product Code: pc-test (test note)'
+            . ' test item attribute 1: <non-html> attribute value for Item'
+            . ' test item attribute 2 (edited): html attribute value for Item'
+            . ' test edition attribute 1: <non-html> attribute value for Edition'
+            . ' test edition attribute 2 (edited): html attribute value for Edition'
+            . ' User Summary: Test description'
+            . ' user\'s Thoughts: this is my review More reviews by user'
+            . ' Users Who Own This Item: user (good shape)'
+            . ' Users Who Want This Item: admin (any shape)'
+            . ' Users with Extra Copies: user - bad shape'
+            . ' Please log in to manage your collection or post a review.'
+            . ' Related Documents test file type 1 test file 1'
+            . ' Bibliography of Items About "test item" second test materials (edited) example article 2'
+            . ' Related Links test link 2 (edited) This has been edited. https://dimenovels.org'
+            . ' (last verified: 2025-12-01)',
+        ];
+        yield 'item (with children)' => [
+            '/Item/2',
+            'Please log in to manage your collection or post a review.'
+            . ' View: Combined By Edition Combined Summary'
+            . ' Series: test series 2 (edited) — v. 1 no. 1'
+            . ' Contents: example article 1 (second test material (edited))'
+            . ' example article 2 (second test material (edited))'
+            . ' Length: 32 pages Number of Endings: 1 Errata: none -- perfection! Special Thanks: for nothing'
+            . ' Known Editions Copy of test series 2 edition test series 2 edition'
+            . ' Please log in to manage your collection or post a review.',
+        ];
+        yield 'item (with children, in edition mode)' => [
+            '/Item/2/Editions',
+            'Please log in to manage your collection or post a review.'
+            . ' View: Combined By Edition Item-Level Details'
+            . ' Errata: none -- perfection! Special Thanks: for nothing'
+            . ' Copy of test series 2 edition'
+            . ' Series: test series 2 (edited) v. 1 no. 1'
+            . ' Item: example issue 1'
+            . ' Contents: example article 1'
+            . ' example article 2'
+            . ' Length: 32 pages Number of Endings: 1'
+            . ' test series 2 edition'
+            . ' Series: test series 2 (edited) v. 1 no. 1'
+            . ' Item: example issue 1'
+            . ' Contents: example article 1'
+            . ' example article 2'
+            . ' Length: 32 pages Number of Endings: 1'
+            . ' Please log in to manage your collection or post a review.',
+        ];
+        yield 'item (with parents and relationships)' => [
+            '/Item/4',
+            'Please log in to manage your collection or post a review.'
+            . ' View: Combined By Edition Combined Summary'
+            . ' Series: test series 2 (edited) — v. 1 no. 1'
+            . ' Contained In: example article 2 (second test material (edited), test note)'
+            . ' Translated Into: example article 2 (test language 1)'
+            . ' Adapted Into: example article 2 (second test material (edited))'
+            . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
+            . ' Known Editions'
+            . ' Copy of test series 2 edition (in example issue 1) test series 2 edition (in example issue 1)'
+            . ' Please log in to manage your collection or post a review.',
+        ];
+        yield 'item (also with parents and relationships)' => [
+            '/Item/5',
+            'Please log in to manage your collection or post a review.'
+            . ' View: Combined By Edition Combined Summary'
+            . ' Series: test series 2 (edited) — v. 1 no. 1'
+            . ' Contains: example article 1 (second test material (edited), test note)'
+            . ' Translated From: example article 1 (test language 1)'
+            . ' Adapted From: example article 1 (second test material (edited))'
+            . ' test item relationship 1: example article 1'
+            . ' test person role (according to test citation): last, test-second-edited (test note 2 (edited))'
+            . ' Incorrectly Attributed test person role (according to an uncited source):'
+            . ' last, test-second-edited (test note 2 (edited))'
+            . ' test person role (according to an uncited source): lastname, test-third (uncredited)'
+            . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
+            . ' Known Editions'
+            . ' Copy of test series 2 edition (in example issue 1) test series 2 edition (in example issue 1)'
+            . ' Please log in to manage your collection or post a review.',
+        ];
+        yield 'fully populated edition' => [
+            '/Edition/1',
+            '(test note) Online Full Text: test full text source 1'
+            . ' (test full text attribute 1: attribute value for full text link)'
+            . ' Series: test series 1'
+            . ' Item: test item'
+            . ' Platform: test platform'
+            . ' test person role: test-last, test-first, extra (pseudonym used by last, test-second-edited) (test note)'
+            . ' Date: February 3, 1952 (test note)'
+            . ' Publisher: test publisher (test city: fake st.) (test imprint imprint) -- test country (test note)'
+            . ' ISBN: 0123456789 / 9780123456786 (test note)'
+            . ' OCLC Number: 12345 (test note)'
+            . ' Product Code: pc-test (test note)'
+            . ' test edition attribute 1: <non-html> attribute value for Edition'
+            . ' test edition attribute 2 (edited): html attribute value for Edition',
+        ];
+        yield 'parent edition' => [
+            '/Edition/2',
+            'Series: test series 2 (edited) v. 1 no. 1'
+            . ' Item: example issue 1'
+            . ' Contents: example article 1 example article 2'
+            . ' Length: 32 pages Number of Endings: 1',
+        ];
+        yield 'child edition' => [
+            '/Edition/4',
+            'Series: test series 2 (edited) v. 1 no. 1'
+            . ' Item: example article 1'
+            . ' Length: 16 pages',
+        ];
+        yield 'platform' => ['/Platform/1', 'test series 1 test item'];
+        yield 'tag' => [
+            '/Tag/1',
+            'test tag attribute: <non-html> attribute value for Tag'
+            . ' test tag attribute 2 (edited): html attribute value for Tag'
+            . ' test tag relationship: test tag 2 (edited)'
+            . ' test tag relationship 2 (edited): test tag 2 (edited)'
+            . ' External Identifier: http://tag/1'
+            . ' Sort by: Series Title'
+            . ' test series 1'
+            . ' test item',
+        ];
+        yield 'tag 2' => [
+            '/Tag/2',
+            '2 relationship tag test (edited): test tag'
+            . ' Sort by: Series Title'
+            . ' test series 1'
+            . ' test item',
+        ];
+        yield 'user 1'  => [
+            '/User/1',
+            '[List All Users]'
+            . ' Full Name: test admin'
+            . ' Email Address: Please log in to see this user\'s email address.'
+            . ' Collections: View Have/Want Lists (0 items owned, 1 items wanted) [List Potential Sellers]'
+            . ' View Sale/Trade Lists (0 items for sale/trade) [List Potential Buyers]'
+            . ' Reviews and Comments: 0 item reviews. 0 series comments.',
+        ];
+        yield 'user 1 collection'  => [
+            '/User/1/Collection',
+            'Get more information on this user.'
+            . ' Items in test language 1 test series 1 Wants: test item (any shape) Has: None.',
+        ];
+        yield 'user 1 extras'  => [
+            '/User/1/Extras',
+            'Get more information on this user. No items listed.',
+        ];
+        $disclaimer = 'DISCLAIMER: Items offered for sale or trade on this site are submitted'
+            . ' by users and are not verified in any way. My Gamebook Web Page makes no guarantees about the accuracy'
+            . ' of these listings and cannot be held responsible for dishonest users. Please be cautious!';
+        yield 'user 1 sellers'  => [
+            '/User/1/Sellers',
+            'Get more information on this user. ' . $disclaimer
+            . ' user test series 1 test item Seller\'s Note: bad shape Buyer\'s Note: any shape',
+        ];
+        yield 'user 1 buyers'  => [
+            '/User/1/Buyers',
+            'Get more information on this user. No buyers available.',
+        ];
+        yield 'user 1 reviews'  => [
+            '/User/1/Reviews',
+            'Get more information on this user. No reviews listed.',
+        ];
+        yield 'user 1 comments'  => [
+            '/User/1/Comments',
+            'Get more information on this user. No comments listed.',
+        ];
+        yield 'user 2'  => [
+            '/User/2',
+            '[List All Users]'
+            . ' Full Name: test user'
+            . ' Email Address: Please log in to see this user\'s email address.'
+            . ' Collections: View Have/Want Lists (1 items owned, 0 items wanted) [List Potential Sellers]'
+            . ' View Sale/Trade Lists (1 items for sale/trade) [List Potential Buyers]'
+            . ' Reviews and Comments: 1 item review. 1 series comment.',
+        ];
+        yield 'user 2 collection'  => [
+            '/User/2/Collection',
+            'Get more information on this user.'
+            . ' Items in test language 1 test series 1 Wants: None. Has: test item (good shape)',
+        ];
+        yield 'user 2 extras'  => [
+            '/User/2/Extras',
+            'Get more information on this user. ' . $disclaimer . ' test series 1 test item bad shape',
+        ];
+        yield 'user 2 sellers'  => [
+            '/User/2/Sellers',
+            'Get more information on this user. No sellers available.',
+        ];
+        yield 'user 2 buyers'  => [
+            '/User/2/Buyers',
+            'Get more information on this user. admin test series 1 test item'
+            . ' Buyer\'s Note: any shape Seller\'s Note: bad shape',
+        ];
+        yield 'user 2 reviews'  => [
+            '/User/2/Reviews',
+            'Get more information on this user. test series 1 test item',
+        ];
+        yield 'user 2 comments'  => [
+            '/User/2/Comments',
+            'Get more information on this user. T test series 1',
+        ];
+    }
+
+    /**
+     * Test that appropriate content is provided after content is linked up.
+     *
+     * @param string $path            URL path to check
+     * @param string $expectedMessage Content expected on page
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testSetPreferredPublisher')]
+    #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
+    #[\PHPUnit\Framework\Attributes\Depends('testCommentApproval')]
+    #[\PHPUnit\Framework\Attributes\Depends('testCategoryLinking')]
+    #[\PHPUnit\Framework\Attributes\Depends('testCopyEdition')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSettingUpPotentialTrade')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsProvider')]
+    public function testPopulatedRecords(
+        string $path,
+        string $expectedMessage,
+        bool $regExMatch = false
+    ): void {
+        $this->assertPageContent($expectedMessage, $path, regExMatch: $regExMatch);
+    }
+
+    /**
+     * Data provider for testPopulatedRecords().
+     *
+     * @return Generator<string, array>
+     */
+    public static function populatedRecordsRdfProvider(): Generator
+    {
+        yield 'series' => [
+            '/Series/1/RDF',
+            '<http://localhost/Series/1> <http://purl.org/dc/terms/title> "test series 1" .',
+        ];
+        yield 'city' => [
+            '/City/1/RDF',
+            '<http://localhost/City/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://www.w3.org/2004/02/skos/core#Concept> .\n"
+            . '<http://localhost/City/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> "test city" .',
+        ];
+        yield 'country' => [
+            '/Country/1/RDF',
+            '<http://localhost/Country/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://www.w3.org/2004/02/skos/core#Concept> .\n"
+            . '<http://localhost/Country/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> "test country" .',
+        ];
+        yield 'publisher' => [
+            '/Publisher/1/RDF',
+            '<http://localhost/Publisher/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://xmlns.com/foaf/0.1/Organization> .\n"
+            . '<http://localhost/Publisher/1> <http://edit-pred/> <http://publisher/1> .',
+        ];
+        yield 'person' => [
+            '/Person/1/RDF',
+            '<http://localhost/Person/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://xmlns.com/foaf/0.1/Person> .\n"
+            . "<http://localhost/Person/1> <http://xmlns.com/foaf/0.1/name> \"test-first test-last\" .\n"
+            . '<http://localhost/Person/1> <http://edit-pred/> <http://person/1> .',
+        ];
+        yield 'item' => [
+            '/Item/1/RDF',
+            '<http://localhost/Item/1> <http://purl.org/dc/terms/title> "test item" .',
+        ];
+        yield 'edition' => [
+            '/Edition/1/RDF',
+            '<http://localhost/Edition/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> '
+            . "\"test series 1 edition\" .\n"
+            . '<http://localhost/Edition/1> <http://www.w3.org/2002/07/owl#sameAs> '
+            . '"http://www.worldcat.org/oclc/12345" .',
+        ];
+        yield 'tag' => [
+            '/Tag/1/RDF',
+            "<http://localhost/Tag/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> \"test tag\" .\n"
+            . '<http://localhost/Tag/1> <http://edit-pred/> <http://tag/1> .',
+        ];
+    }
+
+    /**
+     * Test that RDF representations are correctly generated.
+     *
+     * @param string $path            URL path to check
+     * @param string $expectedContent Expected RDF content
+     * @param bool   $regExMatch      Should we do a string match (false), or a regex match (true)?
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulatedRecords')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsRdfProvider')]
+    public function testPopulatedRecordsRdf(
+        string $path,
+        string $expectedContent,
+        bool $regExMatch = false
+    ): void {
+        $this->assertRdfContent($expectedContent, $path, regExMatch: $regExMatch);
+    }
+
+    /**
+     * Data provider for testSearch().
+     *
+     * @return Generator<string, array>
+     */
+    public static function searchProvider(): Generator
+    {
+        $expectedTitleResults = 'Show credits Series test series 1 test series 2 (edited) '
+            . 'Series Alternate Titles test alternate series title '
+            . 'Items test item '
+            . 'Item Alternate Titles test alternate title';
+        $expectedTitleResultsWithCredits = 'Show credits Series test series 1 test series 2 (edited) '
+            . 'Series Alternate Titles test alternate series title '
+            . 'Items test item test-last, test-first, extra '
+            . 'Item Alternate Titles test alternate title test-last, test-first, extra';
+        yield 'title' => ['Title', 'test', $expectedTitleResults, $expectedTitleResultsWithCredits];
+        yield 'bad title' => ['Title', 'xyzzy', 'No results found for xyzzy.'];
+        $expectedPeopleResults = 'People last, test-second-edited lastname, test-third test-last, test-first, extra';
+        yield 'person' => ['Person', 'test', $expectedPeopleResults];
+        yield 'bad person' => ['Person', 'xyzzy', 'No results found for xyzzy.'];
+        $extendedKeywordResults = ' Categories second test category (edited) test category '
+            . $expectedPeopleResults
+            . ' Subjects/Tags test tag test tag 2 (edited)';
+        yield 'keyword' => [
+            'Keyword',
+            'test',
+            $expectedTitleResults . $extendedKeywordResults,
+            str_replace( // add separator in front of credits for this view:
+                'test-last, test-first, extra',
+                '/ test-last, test-first, extra',
+                $expectedTitleResultsWithCredits
+            ) . $extendedKeywordResults,
+        ];
+        yield 'bad keyword' => ['Keyword', 'xyzzy', 'No results found for xyzzy.'];
+        yield 'isbn-10' => ['ISBN', '0123456789', 'ISBNs test item (0123456789 / 9780123456786)'];
+        yield 'isbn-13' => ['ISBN', '9780123456786', 'ISBNs test item (0123456789 / 9780123456786)'];
+        yield 'bad isbn' => ['ISBN', 'bad', 'No results found for bad.'];
+    }
+
+    /**
+     * Test search functionality.
+     *
+     * @param string $type                Search type
+     * @param string $query               Search query
+     * @param string $expected            Expected results
+     * @param string $expectedWithCredits Expected results with credits enabled (null to skip credit check)
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('searchProvider')]
+    public function testSearch(
+        string $type,
+        string $query,
+        string $expected,
+        ?string $expectedWithCredits = null
+    ): void {
+        [$safeQuery, $safeType] = [urlencode($query), urlencode($type)];
+        $page = $this->goToPage("/Search?SearchQuery=$safeQuery&SearchType=$safeType");
+        $this->assertEquals($expected, $this->findCssAndGetText($page, '.content'));
+        if ($expectedWithCredits) {
+            $this->clickCss($page, '.creator-toggle');
+            $this->waitForPageLoad($page);
+            $this->assertEquals($expectedWithCredits, $this->findCssAndGetText($page, '.content'));
+        }
     }
 
     /**
@@ -1674,8 +2504,7 @@ class IntegrationTest extends MinkTestCase
         yield 'series by language' => ['by language', 'T test language 1 test language 2 (edited)', 0];
         yield 'series by material type' => ['by material type', 'T test material', 0];
         yield 'series by publisher' => ['by publisher', 'T test publisher test publisher 2 (edited)', 0];
-        // TODO: add a comment test so this will have content:
-        //yield 'series with comments' => ['with comments', 'No comments listed.', 0];
+        yield 'series with comments' => ['with comments', 'T test series 1', 0];
         yield 'recently added series' => [
             'recently added',
             'Viewing page 1 of 1 test series 2 (edited) test series 1 First | Previous | 1 | Next | Last',
@@ -1693,16 +2522,20 @@ class IntegrationTest extends MinkTestCase
             . 'First | Previous | 1 | Next | Last',
             1,
         ];
-        yield 'items by name' => ['by name', 'T test item', 2];
+        yield 'items by name' => [
+            'by name',
+            'E T example article 1 example article 2 example issue 1 example issue 2 T Back to Top ↑ test item',
+            2,
+        ];
         yield 'items by platform' => ['by platform', 'T test platform test platform 2 (edited)', 2];
         yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
         yield 'items by year' => ['by year', '1952 test item (test note)', 2];
         yield 'items with full text' => ['with full text', '/.*test series 1 test item \\(1952\\)$/', 2, true];
-        // TODO: add review so this will have content:
-        //yield 'items with reviews' => ['with reviews', 'No reviews listed.', 2];
+        yield 'items with reviews' => ['with reviews', 'test series 1 test item', 2];
         yield 'recently added items' => [
             'recently added',
-            'Viewing page 1 of 1 test item First | Previous | 1 | Next | Last',
+            'Viewing page 1 of 1 example article 2 example article 1 example issue 2 example issue 1 test item'
+            . ' First | Previous | 1 | Next | Last',
             2,
         ];
         yield 'file list' => [
@@ -1719,8 +2552,7 @@ class IntegrationTest extends MinkTestCase
             true,
         ];
         yield 'user list' => ['List Registered Users', 'A U admin U Back to Top ↑ user'];
-        // TODO: add reviews/comments so this will have content:
-        //yield 'recent reviews' => ['Browse Recent Reviews', 'No reviews available. No comments available.'];
+        yield 'recent reviews' => ['Browse Recent Reviews', '/.*test item user.*test series 1 user.*/', null, true];
     }
 
     /**
@@ -1734,7 +2566,9 @@ class IntegrationTest extends MinkTestCase
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedDatabaseProvider')]
-    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSetAttributes')]
+    #[\PHPUnit\Framework\Attributes\Depends('testSetFullTextAttributes')]
+    #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     public function testPopulatedDatabase(
         string $linkText,
         string $expectedMessage,
@@ -1742,5 +2576,202 @@ class IntegrationTest extends MinkTestCase
         bool $regExMatch = false
     ): void {
         $this->assertPageContent($expectedMessage, '', $linkText, $containerIndex, $regExMatch);
+    }
+
+    /**
+     * Data provider for testSeriesCheckPage.
+     *
+     * @return Generator<string, array>
+     */
+    public static function seriesCheckPageProvider(): Generator
+    {
+        yield 'series 1' => [
+            1,
+            'Missing Credits '
+            . 'None. '
+            . 'Unspecified Creators '
+            . 'None. '
+            . 'Missing Dates '
+            . 'None. '
+            . 'Statistics '
+            . 'Series contains dates from 1952. '
+            . 'Series contains 1 total items representing 1 different positions. '
+            . 'Series does not use volume numbering. '
+            . '1 item(s) numbered from 0 to 0.',
+        ];
+        yield 'series 2' => [
+            2,
+            'Missing Credits '
+            . 'example article 1, [v. 1, no. 1], [v. 1, no. 2] '
+            . 'Unspecified Creators '
+            . 'example article 1, [v. 1, no. 1], [v. 1, no. 2] '
+            . 'Missing Dates '
+            . '[v. 1, no. 1], [v. 1, no. 2] '
+            . 'Statistics '
+            . 'No date information. '
+            . 'Series contains 3 total items representing 2 different positions. '
+            . 'Series contains volume numbers from 1 to 1. '
+            . 'Volume 1 '
+            . '3 item(s) numbered from 1 to 2. Duplicate numbers: 1',
+        ];
+    }
+
+    /**
+     * Test the "check series" page.
+     *
+     * @param int    $seriesId Series to check
+     * @param string $expected Expected page content
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('seriesCheckPageProvider')]
+    #[\PHPUnit\Framework\Attributes\Depends('testBuildingArticles')]
+    public function testSeriesCheckPage(int $seriesId, string $expected): void
+    {
+        $page = $this->goToPage('/Series/' . $seriesId . '/Check');
+        $this->assertSame($expected, $this->findCssAndGetText($page, '.content'));
+    }
+
+    /**
+     * Test self-service account editing.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testUserApproval')]
+    public function testUserAccountManipulation(): void
+    {
+        $page = $this->goToPage('/User/2');
+        $this->assertStringContainsString(
+            'Please log in to see this user\'s email address',
+            $this->findCssAndGetText($page, '.content')
+        );
+        $this->logIn($page, 'user');
+        $this->assertStringNotContainsString(
+            'Please log in to see this user\'s email address',
+            $this->findCssAndGetText($page, '.content')
+        );
+        $page->clickLink('Edit Account Details');
+        // Mismatched passwords
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertEquals(
+            'Your passwords did not match. Please try again.',
+            $this->findCssAndGetText($page, '.error')
+        );
+        // Bad existing password
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->findCssAndSetValue($page, '#edit_password2', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        $this->assertEquals(
+            'The existing password you provided is incorrect.',
+            $this->findCssAndGetText($page, '.error')
+        );
+        // Actually change the password
+        $this->findCssAndSetValue($page, '#edit_fullname', 'test user (self-edited)');
+        $this->findCssAndSetValue($page, '#edit_email', 'user-edited@example.com');
+        $this->findCssAndSetValue($page, '#existing_password', 'password');
+        $this->findCssAndSetValue($page, '#edit_password1', 'foo');
+        $this->findCssAndSetValue($page, '#edit_password2', 'foo');
+        $this->clickCss($page, '.content input[type="submit"]');
+        // Confirm that the password change worked by logging out and back in:
+        $page->clickLink('Log Out');
+        $this->logIn($page, 'user', 'foo');
+        // Confirm that everything changed
+        $this->assertStringStartsWith(
+            'Edit Account Details [List All Users] Full Name: test user (self-edited)'
+            . ' Email Address: user-edited@example.com',
+            $this->findCssAndGetText($page, '.content')
+        );
+    }
+
+    /**
+     * Test preferred title behavior.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testLinkCreation')]
+    public function testPreferredTitles(): void
+    {
+        $page = $this->goToPage('/edit/Edition/1');
+        $this->logIn($page, 'admin');
+        $page->clickLink('Preferred Titles');
+        // Create new alternate titles:
+        $this->findCssAndSetValue($page, '#Preferred_Item_Title_Text', 'new item alt');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+        $this->findCssAndSetValue($page, '#Preferred_Series_Title_Text', 'new series alt');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]', index: 1);
+        $page->clickLink('[switch to public view]');
+        $this->assertStringContainsString(
+            'Series: new series alt Item: new item alt',
+            $this->findCssAndGetText($page, 'table.item')
+        );
+        $page->clickLink('[edit]');
+        $page->clickLink('Preferred Titles');
+        // Apply existing alternate titles by typing them into the inputs:
+        $this->findCssAndSetValue($page, '#Preferred_Item_Title_Text', 'test alternate title');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]');
+        $this->findCssAndSetValue($page, '#Preferred_Series_Title_Text', 'test alternate series title');
+        $this->clickCss($page, '.tab-pane.active input[type="submit"]', index: 1);
+        $page->clickLink('[switch to public view]');
+        $this->assertStringContainsString(
+            'Series: test alternate series title Item: test alternate title',
+            $this->findCssAndGetText($page, 'table.item')
+        );
+        $page->clickLink('[edit]');
+        $page->clickLink('Preferred Titles');
+        // Revert to default titles by clicking "clear" buttons:
+        for ($i = 0; $i < 2; $i++) {
+            $clearButton = $this->findCss($page, '.tab-pane.active button', index: $i);
+            $this->assertSame('Clear', $clearButton->getText());
+            $clearButton->click();
+            $this->getMinkSession()->getDriver()->acceptAlert();
+        }
+        // Confirm that no titles have been double-added by reading the select options:
+        $this->assertSame(
+            'Choose a title from the drop-down or enter a new one in the box below. new item alt test alternate title',
+            $this->findCssAndGetText($page, '#Preferred_Item_Title_ID')
+        );
+        $this->assertSame(
+            'Choose a title from the drop-down or enter a new one in the box below. '
+            . 'new series alt test alternate series title',
+            $this->findCssAndGetText($page, '#Preferred_Series_Title_ID')
+        );
+        // Confirm that we're back to our starting position:
+        $page->clickLink('[switch to public view]');
+        $this->assertStringContainsString(
+            'Series: test series 1 Item: test item',
+            $this->findCssAndGetText($page, 'table.item')
+        );
+    }
+
+    /**
+     * Data provider for testCleanupTasks().
+     *
+     * @return Generator<string, array>
+     */
+    public static function cleanupTaskProvider(): Generator
+    {
+        yield 'menu' => ['/edit/Cleanup', 'Duplicate Images Item --> Edition Hierarchies'];
+        yield 'duplicate images' => ['/edit/Cleanup/ImageDupes', 'No dupes found.'];
+        yield 'hierarchy migration' => ['/edit/Cleanup/Hierarchies', 'example article 2'];
+    }
+
+    /**
+     * Test that cleanup tasks run.
+     *
+     * @param string $path            URL path to check
+     * @param string $expectedMessage Content expected on page
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testPopulatedRecords')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('cleanupTaskProvider')]
+    public function testCleanupTasks(
+        string $path,
+        string $expectedMessage
+    ): void {
+        $page = $this->goToPage($path);
+        $this->logIn($page, 'admin');
+        $this->assertSame($expectedMessage, $this->findCssAndGetText($page, '.content'));
     }
 }

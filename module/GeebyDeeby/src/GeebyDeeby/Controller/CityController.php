@@ -29,6 +29,10 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CitiesUriService;
+use GeebyDeeby\Db\Service\CityService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
+
 use function is_object;
 
 /**
@@ -73,7 +77,7 @@ class CityController extends AbstractBase
         $city = $graph->resource($uri, $class);
         $city->set('rdf:label', $view->city['City_Name']);
         foreach ($view->uris as $uri) {
-            $city->add($uri->Predicate, $graph->resource($uri->URI));
+            $city->add($uri['Predicate'], $graph->resource($uri['URI']));
         }
         return $city;
     }
@@ -128,17 +132,15 @@ class CityController extends AbstractBase
     public function getCityViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('city');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(CityService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $view = $this->createViewModel(
-            ['city' => $rowObj->toArray()]
+            ['city' => $entity->toArray()]
         );
-        $view->series = $this->getDbTable('seriespublishers')
-            ->getSeriesForCity($id);
-        $view->uris = $this->getDbTable('citiesuris')->getURIsForCity($id);
+        $view->series = $this->getDbService(SeriesPublisherService::class)->getSeriesForCity($id);
+        $view->uris = $this->getDbService(CitiesUriService::class)->getURIsForCity($id);
         return $view;
     }
 
@@ -150,7 +152,7 @@ class CityController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['cities' => $this->getDbTable('city')->getList()]
+            ['cities' => $this->getDbService(CityService::class)->getList()]
         );
     }
 

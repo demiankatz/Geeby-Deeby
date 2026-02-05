@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\NoteService;
+
 /**
  * Edit note controller
  *
@@ -48,7 +50,7 @@ class EditNoteController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'note',
+            NoteService::class,
             'notes',
             'geeby-deeby/edit-note/render-notes'
         );
@@ -61,8 +63,8 @@ class EditNoteController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['note' => 'Note'];
-        [$response] = $this->handleGenericItem('note', $assignMap, 'note');
+        $assignMap = ['note' => 'setNote'];
+        [$response] = $this->handleGenericItem(NoteService::class, $assignMap, 'note');
         return $response;
     }
 }

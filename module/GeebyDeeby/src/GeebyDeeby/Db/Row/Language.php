@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\LanguageEntityInterface;
+
 /**
  * Row Definition for Languages
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Language extends RowGateway
+class Language extends RowGateway implements LanguageEntityInterface
 {
     /**
      * Constructor
@@ -51,16 +53,35 @@ class Language extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Language_Name)) {
-            return 'Language name cannot be blank.';
-        }
-        return false;
+        return $this->Language_ID ?? null;
+    }
+
+    /**
+     * Get the name of the language.
+     *
+     * @return string
+     */
+    public function getLanguageName(): string
+    {
+        return $this->Language_Name;
+    }
+
+    /**
+     * Set the name of the language.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setLanguageName(string $name): static
+    {
+        $this->Language_Name = $name;
+        return $this;
     }
 }
