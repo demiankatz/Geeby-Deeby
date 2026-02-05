@@ -36,6 +36,7 @@ use Generator;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
 use function in_array;
+use function is_string;
 
 /**
  * Mink integration test for the platform.
@@ -957,7 +958,8 @@ class IntegrationTest extends MinkTestCase
             [$url, , $data, $listSelector] = $testCase;
             $linkToClick = $testCase[4] ?? reset($data);
             foreach ($fieldsToEdit ?? array_merge(array_keys($fieldOverrides), array_keys($data)) as $key) {
-                $data[$key] = $fieldOverrides[$key] ?? ($data[$key] . ' (edited)');
+                $data[$key] = $fieldOverrides[$key]
+                    ?? (is_string($data[$key]) ? $data[$key] . ' (edited)' : $data[$key]);
             }
             $expectedDisplay ??= $linkToClick . ' (edited)';
             return [$url, $linkToClick, $data, $listSelector, $expectedDisplay, $inModal];
@@ -1101,7 +1103,7 @@ class IntegrationTest extends MinkTestCase
         $input->setValue('<non-html> attribute value for ' . $type);
         $input2 = $this->findCss($page, '#' . $type . '_Attribute_2');
         $this->assertTrue($input->isVisible());
-        $input2->setValue('<b>html<b> attribute value for ' . $type);
+        $input2->setValue('<b>html</b> attribute value for ' . $type);
         $this->clickCss($page, '.edit_container input[type="submit"]');
     }
 
@@ -2190,7 +2192,7 @@ class IntegrationTest extends MinkTestCase
         yield 'tag' => [
             '/Tag/1',
             'test tag attribute: <non-html> attribute value for Tag'
-            . 'test tag attribute 2 (edited): html attribute value for Tag'
+            . ' test tag attribute 2 (edited): html attribute value for Tag'
             . ' test tag relationship: test tag 2 (edited)'
             . ' test tag relationship 2 (edited): test tag 2 (edited)'
             . ' External Identifier: http://tag/1'
