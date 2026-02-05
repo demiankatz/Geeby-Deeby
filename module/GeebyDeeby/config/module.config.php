@@ -1306,19 +1306,20 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-            'GeebyDeeby\Articles' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'GeebyDeeby\Db\Row\PluginManager' =>
-                'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
-            'GeebyDeeby\Db\Table\PluginManager' =>
-                'GeebyDeeby\ServiceManager\AbstractPluginManagerFactory',
-            'GeebyDeeby\EmailService' => 'GeebyDeeby\EmailServiceFactory',
-            'Laminas\Authentication\AuthenticationService' =>
-                'Laminas\ServiceManager\Factory\InvokableFactory',
-            'Laminas\Db\Adapter\Adapter' => 'GeebyDeeby\Db\AdapterFactory',
+            \GeebyDeeby\Articles::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+            \GeebyDeeby\Db\PersistenceManager::class => \GeebyDeeby\Db\PersistenceManagerFactory::class,
+            \GeebyDeeby\Db\Row\PluginManager::class => \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
+            \GeebyDeeby\Db\Service\PluginManager::class =>
+                \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
+            \GeebyDeeby\Db\Table\PluginManager::class =>
+                \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
+            \GeebyDeeby\EmailService::class => \GeebyDeeby\EmailServiceFactory::class,
+            \Laminas\Authentication\AuthenticationService::class =>
+                \Laminas\ServiceManager\Factory\InvokableFactory::class,
+            \Laminas\Db\Adapter\Adapter::class => \GeebyDeeby\Db\AdapterFactory::class,
         ],
         'aliases' => [
-            'GeebyDeeby\Authentication' => 'Laminas\Authentication\AuthenticationService',
+            'GeebyDeeby\Authentication' => \Laminas\Authentication\AuthenticationService::class,
         ],
     ],
     'controllers' => [

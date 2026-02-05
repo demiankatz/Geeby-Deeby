@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\MaterialTypeEntityInterface;
+
 /**
  * Row Definition for Items
  *
@@ -38,7 +41,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Item extends RowGateway
+class Item extends TableAwareGateway implements ItemEntityInterface
 {
     /**
      * Constructor
@@ -51,17 +54,106 @@ class Item extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Item_Name)) {
-            return 'Item name cannot be blank.';
-        }
-        return false;
+        return $this->Item_ID ?? null;
+    }
+
+    /**
+     * Get the name of the item.
+     *
+     * @return string
+     */
+    public function getItemName(): string
+    {
+        return $this->Item_Name;
+    }
+
+    /**
+     * Set the name of the item.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setItemName(string $name): static
+    {
+        $this->Item_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get errata for the item.
+     *
+     * @return ?string
+     */
+    public function getErrata(): ?string
+    {
+        return $this->Item_Errata;
+    }
+
+    /**
+     * Set errata for the item.
+     *
+     * @param string $errata New errata
+     *
+     * @return static
+     */
+    public function setErrata(?string $errata): static
+    {
+        $this->Item_Errata = $errata;
+        return $this;
+    }
+
+    /**
+     * Get thanks for the item.
+     *
+     * @return ?string
+     */
+    public function getThanks(): ?string
+    {
+        return $this->Item_Thanks;
+    }
+
+    /**
+     * Set thanks for the item.
+     *
+     * @param ?string $thanks New thanks
+     *
+     * @return static
+     */
+    public function setThanks(?string $thanks): static
+    {
+        $this->Item_Thanks = $thanks;
+        return $this;
+    }
+
+    /**
+     * Get associated material type.
+     *
+     * @return MaterialTypeEntityInterface
+     */
+    public function getMaterialType(): MaterialTypeEntityInterface
+    {
+        return $this->getTableManager()->get('materialtype')->getByPrimaryKey($this->Material_Type_ID);
+    }
+
+    /**
+     * Set associated material type.
+     *
+     * @param int|MaterialTypeEntityInterface $materialType Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setMaterialType(int|MaterialTypeEntityInterface $materialType): static
+    {
+        $this->Material_Type_ID = $materialType instanceof MaterialTypeEntityInterface
+            ? $materialType->getId() : $materialType;
+        return $this;
     }
 
     /**
@@ -69,7 +161,7 @@ class Item extends RowGateway
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->Item_Name;
     }

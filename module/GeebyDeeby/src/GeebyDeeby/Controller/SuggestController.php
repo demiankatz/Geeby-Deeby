@@ -29,6 +29,15 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\NoteService;
+use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\PredicateService;
+use GeebyDeeby\Db\Service\PublisherService;
+use GeebyDeeby\Db\Service\SeriesService;
+use GeebyDeeby\Db\Service\TagService;
+
 use function is_callable;
 
 /**
@@ -49,13 +58,24 @@ class SuggestController extends AbstractBase
      */
     public function indexAction()
     {
-        $table = $this->getDbTable($this->params()->fromRoute('table'));
-        if (!is_callable([$table, 'getSuggestions'])) {
+        $serviceMap = [
+            'edition' => EditionService::class,
+            'item' => ItemService::class,
+            'note' => NoteService::class,
+            'person' => PersonService::class,
+            'predicate' => PredicateService::class,
+            'publisher' => PublisherService::class,
+            'series' => SeriesService::class,
+            'tag' => TagService::class,
+        ];
+        $serviceName = strtolower($this->params()->fromRoute('table'));
+        $service = $this->getDbService($serviceMap[$serviceName] ?? 'undefined');
+        if (!$service || !is_callable([$service, 'getSuggestions'])) {
             throw new \Exception('Suggestions not supported.');
         }
-        $suggestions = $table->getSuggestions(
+        $suggestions = $service->getSuggestions(
             $this->params()->fromQuery('q'),
-            $this->params()->fromQuery('limit', false)
+            $this->params()->fromQuery('limit')
         );
         $headers = $this->getResponse()->getHeaders();
         $headers->addHeaderLine(

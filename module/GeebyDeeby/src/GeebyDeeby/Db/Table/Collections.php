@@ -48,13 +48,6 @@ use function is_array;
 class Collections extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
@@ -219,17 +212,18 @@ class Collections extends Gateway
      */
     public function getUserStatistics($userID)
     {
-        $callback = function ($select) use ($userID): void {
-            $count = new Expression(
-                'count(?)',
-                ['Item_ID'],
-                [Expression::TYPE_IDENTIFIER]
-            );
-            $select->columns(['Collection_Status', 'Count' => $count]);
-            $select->group('Collection_Status');
-            $select->where->equalTo('User_ID', $userID);
-        };
-        $result = $this->select($callback);
+        $select = $this->getSql()->select();
+        $count = new Expression(
+            'count(?)',
+            ['Item_ID'],
+            [Expression::TYPE_IDENTIFIER]
+        );
+        $select->columns(['Collection_Status', 'Count' => $count]);
+        $select->group('Collection_Status');
+        $select->where->equalTo('User_ID', $userID);
+
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute();
         $retVal = ['have' => 0, 'want' => 0, 'extra' => 0];
         foreach ($result as $current) {
             $retVal[$current['Collection_Status']] = $current['Count'];

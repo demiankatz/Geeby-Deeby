@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsFullTextAttributeService;
+
 /**
  * Edit full text attribute controller
  *
@@ -48,7 +50,7 @@ class EditEditionFullTextAttributeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'editionsfulltextattribute',
+            EditionsFullTextAttributeService::class,
             'attributes',
             'geeby-deeby/edit-edition-full-text-attribute/'
             . 'render-edition-full-text-attributes'
@@ -63,14 +65,13 @@ class EditEditionFullTextAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'attribute_name' => 'Editions_Full_Text_Attribute_Name',
-            'rdf_property' => 'Editions_Full_Text_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority',
-
+            'attribute_name' => 'setAttributeName',
+            'rdf_property' => 'setRdfProperty',
+            'allow_html' => 'setAllowsHTML',
+            'priority' => 'setDisplayPriority',
         ];
         [$response] = $this->handleGenericItem(
-            'editionsfulltextattribute',
+            EditionsFullTextAttributeService::class,
             $assignMap,
             'attribute'
         );

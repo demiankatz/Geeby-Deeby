@@ -53,10 +53,10 @@ class EditController extends AbstractBase
 
         return $this->createViewModel(
             [
-                'contentEditor' => $user->hasPermission('Content_Editor'),
-                'approver' => $user->hasPermission('Approver'),
-                'userEditor' => $user->hasPermission('User_Editor'),
-                'dataManager' => $user->hasPermission('Data_Manager'),
+                'contentEditor' => $this->userHasPermission($user, 'Content_Editor'),
+                'approver' => $this->userHasPermission($user, 'Approver'),
+                'userEditor' => $this->userHasPermission($user, 'User_Editor'),
+                'dataManager' => $this->userHasPermission($user, 'Data_Manager'),
             ]
         );
     }

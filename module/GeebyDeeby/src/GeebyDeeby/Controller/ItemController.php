@@ -29,6 +29,36 @@
 
 namespace GeebyDeeby\Controller;
 
+use DateTime;
+use GeebyDeeby\Db\Service\CollectionService;
+use GeebyDeeby\Db\Service\EditionsAttributesValueService;
+use GeebyDeeby\Db\Service\EditionsCreditService;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsFullTextService;
+use GeebyDeeby\Db\Service\EditionsImageService;
+use GeebyDeeby\Db\Service\EditionsIsbnService;
+use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\EditionsPlatformService;
+use GeebyDeeby\Db\Service\EditionsProductCodeService;
+use GeebyDeeby\Db\Service\EditionsReleaseDateService;
+use GeebyDeeby\Db\Service\FullTextSourceService;
+use GeebyDeeby\Db\Service\ItemsAdaptationService;
+use GeebyDeeby\Db\Service\ItemsAltTitleService;
+use GeebyDeeby\Db\Service\ItemsAttributesValueService;
+use GeebyDeeby\Db\Service\ItemsBibliographyService;
+use GeebyDeeby\Db\Service\ItemsCreatorService;
+use GeebyDeeby\Db\Service\ItemsDescriptionService;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\ItemsFileService;
+use GeebyDeeby\Db\Service\ItemsInCollectionService;
+use GeebyDeeby\Db\Service\ItemsLinkService;
+use GeebyDeeby\Db\Service\ItemsRelationshipsValueService;
+use GeebyDeeby\Db\Service\ItemsReviewService;
+use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\ItemsTranslationService;
+use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\SeriesService;
+
 use function count;
 use function is_object;
 
@@ -86,20 +116,17 @@ class ItemController extends AbstractBase
     protected function getViewModelWithItem($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('item');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(ItemService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
-        $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
+        $extras['editionAttributes'] = $this->getDbService(EditionsAttributesValueService::class)
             ->getAttributesForItem($id);
-        $extras['itemAttributes'] = $this->getDbTable('itemsattributesvalues')
-            ->getAttributesForItem($id);
-        $extras['relationshipsValues'] = $this
-            ->getDbTable('itemsrelationshipsvalues')
+        $extras['itemAttributes'] = $this->getDbService(ItemsAttributesValueService::class)->getAttributesForItem($id);
+        $extras['relationshipsValues'] = $this->getDbService(ItemsRelationshipsValueService::class)
             ->getRelationshipsForItem($id);
         return $this->createViewModel(
-            ['item' => $rowObj->toArray()] + $extras
+            ['item' => $entity->toArray()] + $extras
         );
     }
 
@@ -110,18 +137,17 @@ class ItemController extends AbstractBase
      */
     public function byyearAction()
     {
-        $raw = $this->getDbTable('editionsreleasedates')->getItemsByYear();
+        $raw = $this->getDbService(EditionsReleaseDateService::class)->getItemsByYear();
 
         // Sort out information about editions:
         $editionsByItem = [];
         $sortedData = [];
         foreach ($raw as $current) {
-            if (!isset($editionsByItem[$current->Item_ID])) {
-                $editionsByItem[$current->Item_ID] = [];
+            if (!isset($editionsByItem[$current['Item_ID']])) {
+                $editionsByItem[$current['Item_ID']] = [];
             }
-            $editionsByItem[$current->Item_ID][$current->Edition_ID] = 1;
-            $dateKey = $current->Year . '|' . $current->Month . '|' . $current->Day
-                . '|' . $current->Item_ID;
+            $editionsByItem[$current['Item_ID']][$current['Edition_ID']] = 1;
+            $dateKey = $current['Year'] . '|' . $current['Month'] . '|' . $current['Day'] . '|' . $current['Item_ID'];
             if (!isset($sortedData[$dateKey])) {
                 $sortedData[$dateKey] = [];
             }
@@ -188,11 +214,11 @@ class ItemController extends AbstractBase
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
         $id = $view->item['Item_ID'];
         $uri = $this->getServerUrl('item', ['id' => $id]);
-        $type = $this->getDbTable('materialtype')
+        $type = $this->getDbService(MaterialTypeService::class)
             ->getByPrimaryKey($view->item['Material_Type_ID']);
-        if (!empty($type->Material_Type_RDF_Class)) {
+        if (!empty($type['Material_Type_RDF_Class'])) {
             $class = (array)$class;
-            $class[] = $type->Material_Type_RDF_Class;
+            $class[] = $type['Material_Type_RDF_Class'];
         }
         $item = $graph->resource($uri, $class);
         $name = $view->item['Item_Name'];
@@ -281,33 +307,26 @@ class ItemController extends AbstractBase
      */
     protected function addEditionRelationships($id, $view)
     {
-        $view->creators = $this->getDbTable('itemscreators')
-            ->getCreatorsForItem($id);
-        $view->credits = $this->getDbTable('editionscredits')
-            ->getCreditsForItem($id);
-        $view->images = $this->getDbTable('editionsimages')->getImagesForItem($id);
-        $view->series = $this->getDbTable('series')
-            ->getSeriesForItem($id, true, true);
-        $view->platforms = $this->getDbTable('editionsplatforms')
-            ->getPlatformsForItem($id);
+        $view->creators = $this->getDbService(ItemsCreatorService::class)->getCreatorsForItem($id);
+        $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForItem($id);
+        $view->images = $this->getDbService(EditionsImageService::class)->getImagesForItem($id);
+        $view->series = $this->getDbService(SeriesService::class)->getSeriesForItem($id, true, true);
+        $view->platforms = $this->getDbService(EditionsPlatformService::class)->getPlatformsForItem($id);
         // Contains/containedIn are item-level relationships (see
         // addItemRelationships below), while children/parents are edition-level
         // relationships. These are very similar, but the edition relationships
         // are preferred and more valuable.
-        $itemTable = $this->getDbTable('item');
-        $view->children = $itemTable->getItemChildren($id);
-        $view->parents = $itemTable->getItemParents($id);
+        $itemService = $this->getDbService(ItemService::class);
+        $view->children = $itemService->getItemChildren($id);
+        $view->parents = $itemService->getItemParents($id);
 
-        $edTable = $this->getDbTable('edition');
-        $view->publishers = $edTable->getPublishersForItem($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')
-            ->getDatesForItem($id);
-        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForItem($id);
-        $view->codes = $this->getDbTable('editionsproductcodes')
-            ->getProductCodesForItem($id);
-        $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
+        $view->publishers = $this->getDbService(EditionService::class)->getPublishersForItem($id);
+        $view->dates = $this->getDbService(EditionsReleaseDateService::class)->getDatesForItem($id);
+        $view->isbns = $this->getDbService(EditionsIsbnService::class)->getISBNsForItem($id);
+        $view->codes = $this->getDbService(EditionsProductCodeService::class)->getProductCodesForItem($id);
+        $view->oclcNumbers = $this->getDbService(EditionsOclcNumberService::class)
             ->getOCLCNumbersForItem($id);
-        $view->fullText = $this->getDbTable('editionsfulltext')
+        $view->fullText = $this->getDbService(EditionsFullTextService::class)
             ->getFullTextForItem($id);
         $this->addFullTextAttributesToView($view);
     }
@@ -322,13 +341,13 @@ class ItemController extends AbstractBase
      */
     protected function addItemRelationships($id, $view)
     {
-        $view->altTitles = $this->getDbTable('itemsalttitles')->getAltTitles($id);
-        $view->tags = $this->getDbTable('itemstags')->getTags($id);
-        $collections = $this->getDbTable('itemsincollections');
+        $view->altTitles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($id);
+        $view->tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($id);
+        $collections = $this->getDbService(ItemsInCollectionService::class);
         $view->contains = $collections->getItemsForCollection($id);
         $view->containedIn = $collections->getCollectionsForItem($id);
-        $trans = $this->getDbTable('itemstranslations');
-        $adapt = $this->getDbTable('itemsadaptations');
+        $trans = $this->getDbService(ItemsTranslationService::class);
+        $adapt = $this->getDbService(ItemsAdaptationService::class);
         // The variable/function names are a bit unintuitive here --
         // $view->translatedInto is a list of books that $id was translated into;
         // we obtain these by calling $trans->getTranslatedFrom(), which gives
@@ -337,26 +356,20 @@ class ItemController extends AbstractBase
         $view->translatedFrom = $trans->getTranslatedInto($id, true);
         $view->adaptedInto = $adapt->getAdaptedFrom($id);
         $view->adaptedFrom = $adapt->getAdaptedInto($id);
-        $view->descriptions = $this->getDbTable('itemsdescriptions')
-            ->getDescriptions($id);
-        $reviews = $this->getDbTable('itemsreviews');
+        $view->descriptions = $this->getDbService(ItemsDescriptionService::class)->getDescriptions($id);
+        $reviews = $this->getDbService(ItemsReviewService::class);
         $view->reviews = $reviews->getReviewsForItem($id);
         $user = $this->getCurrentUser();
-        $view->userHasReview = $user ? (bool)count(
-            $reviews->select(
-                ['User_ID' => $user->User_ID, 'Item_ID' => $id]
-            )
-        ) : false;
-        $collections = $this->getDbTable('collections');
+        $view->userHasReview = $user ? (bool)$reviews->getByUserAndItem($user, $id) : false;
+        $collections = $this->getDbService(CollectionService::class);
         $view->buyers = $collections->getForItem($id, 'want');
         $view->owners = $collections->getForItem($id, 'have');
         $view->sellers = $collections->getForItem($id, 'extra');
-        $view->files = $this->getDbTable('itemsfiles')->getFilesForItem($id);
-        $view->bibliography = $this->getDbTable('itemsbibliography')
+        $view->files = $this->getDbService(ItemsFileService::class)->getFilesForItem($id);
+        $view->bibliography = $this->getDbService(ItemsBibliographyService::class)
             ->getItemsDescribingItem($id);
-        $view->links = $this->getDbTable('itemslinks')->getLinksForItem($id);
-        $edTable = $this->getDbTable('edition');
-        $view->editions = $edTable->getEditionsForItem($id, true);
+        $view->links = $this->getDbService(ItemsLinkService::class)->getLinksForItem($id);
+        $view->editions = $this->getDbService(EditionService::class)->getEditionsForItem($id, true);
     }
 
     /**
@@ -426,7 +439,7 @@ class ItemController extends AbstractBase
 
         // Standard case: all items:
         return $this->createViewModel(
-            ['items' => $this->getDbTable('item')->getList()]
+            ['items' => $this->getDbService(ItemService::class)->getList()]
         );
     }
 
@@ -447,18 +460,9 @@ class ItemController extends AbstractBase
      */
     public function newAction()
     {
-        $table = $this->getDbTable('item');
-        $adapter = $table->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($table->getTable());
-        $query->order('Item_ID DESC');
-        $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+        $paginator = $this->getDbService(ItemService::class)->getNewItemsPaginator(
+            $this->params()->fromQuery('page', 1)
         );
-        $paginator->setItemCountPerPage(50);
-        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
         return $this->createViewModel(compact('paginator'));
     }
 
@@ -475,41 +479,34 @@ class ItemController extends AbstractBase
         }
 
         // Check for existing review.
-        $table = $this->getDbTable('itemsreviews');
-        $params = [
-            'Item_ID' => $this->params()->fromRoute('id'),
-            'User_ID' => $user->User_ID,
-        ];
-
-        $existing = $table->select($params)->toArray();
-        $existing = count($existing) > 0 ? $existing[0] : false;
+        $service = $this->getDbService(ItemsReviewService::class);
+        $itemId = $this->params()->fromRoute('id');
+        $existing = $service->getByUserAndItem($user, $itemId);
 
         // Save comment if found.
         if ($this->getRequest()->isPost()) {
             $view = $this->createViewModel(
-                ['noChange' => false, 'item' => $params['Item_ID']]
+                ['noChange' => false, 'item' => $itemId]
             );
-            $params['Approved'] = 'n';
-            $params['Review'] = $this->params()->fromPost('Review');
-            if ($existing && $params['Review'] == $existing['Review']) {
+            $review = $this->params()->fromPost('Review');
+            if ($existing && $review == $existing->getReview()) {
                 $view->noChange = true;
             } else {
-                if ($existing) {
-                    $table->delete(
-                        [
-                            'Item_ID' => $params['Item_ID'],
-                            'User_ID' => $params['User_ID'],
-                        ]
-                    );
+                if (!$existing) {
+                    $existing = $service->createEntity()
+                        ->setUser($user)
+                        ->setItem($itemId)
+                        ->setAddedDate(new DateTime());
                 }
-                $table->insert($params);
+                $existing->setReview($review)->setIsApproved(false);
+                $service->persistEntity($existing);
             }
             $view->setTemplate('geeby-deeby/item/review-submitted');
             return $view;
         }
 
         // Send review to the view.
-        $review = $existing ? $existing['Review'] : '';
+        $review = $existing ? $existing->getReview() : '';
 
         $view = $this->getViewModelWithItem(['review' => $review]);
         if (!$view) {
@@ -529,8 +526,8 @@ class ItemController extends AbstractBase
         $rawSource = $this->params()->fromQuery('source');
         $source = empty($rawSource) ? null : $rawSource;
         $view = $this->createViewModel(compact('fuzzy', 'source'));
-        $view->sources = $this->getDbTable('fulltextsource')->getList();
-        $view->fulltext = $this->getDbTable('editionsfulltext')
+        $view->sources = $this->getDbService(FullTextSourceService::class)->getList();
+        $view->fulltext = $this->getDbService(EditionsFullTextService::class)
             ->getItemsWithFullText(null, $fuzzy, $source);
         return $view;
     }
@@ -543,7 +540,7 @@ class ItemController extends AbstractBase
     public function reviewsAction()
     {
         $view = $this->createViewModel();
-        $view->reviews = $this->getDbTable('itemsreviews')->getReviewsByUser(null);
+        $view->reviews = $this->getDbService(ItemsReviewService::class)->getReviewsByUser(null);
         return $view;
     }
 
@@ -597,8 +594,7 @@ class ItemController extends AbstractBase
         // Do we have a series ID?  If not, the user may need to pick one:
         $series = $this->params()->fromPost('series');
         if (null === $series) {
-            $seriesOptions = $this->getDbTable('series')
-                ->getSeriesForItem($item, false)->toArray();
+            $seriesOptions = $this->getDbService(SeriesService::class)->getSeriesForItem($item, false);
             if (count($seriesOptions) > 1) {
                 $view = $this->createViewModel(['series' => $seriesOptions]);
                 $view->setTemplate('geeby-deeby/item/collection-pick-series');
@@ -608,32 +604,23 @@ class ItemController extends AbstractBase
         }
 
         // Check for an existing entry:
-        $table = $this->getDbTable('collections');
-        $where = [
-            'User_ID' => $user->User_ID, 'Item_ID' => $item,
-            'Series_ID' => $series, 'Collection_Status' => $list,
-        ];
-        $existing = $table->select($where)->toArray();
-        $existing = count($existing) > 0 ? $existing[0] : false;
+        $service = $this->getDbService(CollectionService::class);
 
         // Has a comment been posted?  If so, process the request:
         $comment = $this->params()->fromPost('comment');
         if (null !== $comment) {
             if (null !== $this->params()->fromPost('delete')) {
-                $table->delete($where);
+                $service->deleteEntry($user, $item, $series, $list);
             } else {
-                if ($existing) {
-                    $table->update(['Collection_Note' => $comment], $where);
-                } else {
-                    $table->insert(['Collection_Note' => $comment] + $where);
-                }
+                $service->updateEntry($user, $item, $series, $list, $comment);
             }
             return $this->redirect()->toRoute('item', ['id' => $item]);
         }
 
         // If we go this far, we need to prompt the user for more information:
+        $existing = $service->getExistingEntry($user, $item, $series, $list);
         $view = $this->createViewModel(
-            ['list' => $list, 'existing' => $existing, 'series' => $series]
+            ['list' => $list, 'existing' => $existing?->toArray(), 'series' => $series]
         );
         $view->setTemplate('geeby-deeby/item/collection-add');
         return $view;

@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\TagEntityInterface;
+use GeebyDeeby\Db\Entity\TagTypeEntityInterface;
+
 /**
  * Row Definition for Tags
  *
@@ -38,7 +41,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Tag extends RowGateway
+class Tag extends TableAwareGateway implements TagEntityInterface
 {
     /**
      * Constructor
@@ -51,17 +54,62 @@ class Tag extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Tag)) {
-            return 'Name cannot be blank.';
+        return $this->Tag_ID ?? null;
+    }
+
+    /**
+     * Get the tag text.
+     *
+     * @return string
+     */
+    public function getTag(): string
+    {
+        return $this->Tag;
+    }
+
+    /**
+     * Set the tag text.
+     *
+     * @param string $name New name
+     *
+     * @return static
+     */
+    public function setTag(string $name): static
+    {
+        $this->Tag = $name;
+        return $this;
+    }
+
+    /**
+     * Get associated tag type.
+     *
+     * @return TagTypeEntityInterface
+     */
+    public function getTagType(): TagTypeEntityInterface
+    {
+        return $this->getTableManager()->get('tagtype')->getByPrimaryKey($this->Tag_Type_ID);
+    }
+
+    /**
+     * Set associated tag type.
+     *
+     * @param int|TagTypeEntityInterface $type Associated tag type entity or ID, or null
+     *
+     * @return static
+     */
+    public function setTagType(int|TagTypeEntityInterface $type): static
+    {
+        if ($type instanceof TagTypeEntityInterface) {
+            $type = $type->getId();
         }
-        return false;
+        $this->Tag_Type_ID = $type;
+        return $this;
     }
 
     /**
@@ -69,7 +117,7 @@ class Tag extends RowGateway
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->Tag;
     }

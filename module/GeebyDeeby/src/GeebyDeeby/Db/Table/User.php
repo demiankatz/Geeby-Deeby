@@ -45,13 +45,6 @@ use Laminas\Db\RowGateway\RowGateway;
 class User extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
@@ -80,8 +73,8 @@ class User extends Gateway
             $select->columns(
                 ['User_ID', 'Username', 'Name', 'Address', 'Person_ID', 'Join_Reason']
             );
-            if ($approvedFilter) {
-                $select->where->equalTo('Approved', $approvedFilter);
+            if ($approvedFilter !== null) {
+                $select->where->equalTo('Approved', $approvedFilter ? 'y' : 'n');
             }
             $select->order('Username');
         };

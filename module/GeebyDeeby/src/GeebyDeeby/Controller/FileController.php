@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\FileService;
+
 use function count;
 
 /**
@@ -55,11 +57,11 @@ class FileController extends AbstractBase
 
         // Initialize values:
         $files = $excludes = [];
-        $table = $this->getDbTable('file');
+        $service = $this->getDbService(FileService::class);
 
         // Build custom groups:
         foreach ($groups as $name => $includes) {
-            $files[$name] = $table->getFilesByType($includes);
+            $files[$name] = $service->getFilesByType($includes);
             if (count($files[$name]) == 0) {
                 unset($files[$name]);
             }
@@ -67,7 +69,7 @@ class FileController extends AbstractBase
         }
 
         // Build standard groups:
-        $list = $table->getFilesByType(null, empty($excludes) ? null : $excludes);
+        $list = $service->getFilesByType(null, empty($excludes) ? null : $excludes);
         foreach ($list as $current) {
             if (!isset($files[$current['File_Type']])) {
                 $files[$current['File_Type']] = [];

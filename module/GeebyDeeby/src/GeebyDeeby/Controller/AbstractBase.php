@@ -29,9 +29,17 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Entity\EntityInterface;
+use GeebyDeeby\Db\Entity\UserEntityInterface;
+use GeebyDeeby\Db\Service\DbServiceInterface;
+use GeebyDeeby\Db\Service\UserService;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
+use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionUnionType;
 
 use function intval;
 use function is_callable;
@@ -86,16 +94,17 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
-     * Get a database table gateway.
+     * Get a database service.
      *
-     * @param string $table Name of table service to pull
+     * @param class-string<T> $name Name of service to retrieve
      *
-     * @return \Laminas\Db\TableGateway\AbstractTableGateway
+     * @template T
+     *
+     * @return T
      */
-    protected function getDbTable($table)
+    protected function getDbService(string $name): DbServiceInterface
     {
-        return $this->serviceLocator->get('GeebyDeeby\Db\Table\PluginManager')
-            ->get(strtolower($table));
+        return $this->serviceLocator->get(\GeebyDeeby\Db\Service\PluginManager::class)->get($name);
     }
 
     /**
@@ -140,25 +149,25 @@ class AbstractBase extends AbstractActionController
     /**
      * Generic method for displaying a list of items.
      *
-     * @param string $table      Table to load list from
-     * @param string $assignTo   View variable to assign list to
-     * @param string $tpl        Template to use in AJAX mode
-     * @param string $permission Permission to check
+     * @param string $serviceName Service name to load list from
+     * @param string $assignTo    View variable to assign list to
+     * @param string $tpl         Template to use in AJAX mode
+     * @param string $permission  Permission to check
      *
-     * @return mixed
+     * @return ViewModel
      */
     protected function getGenericList(
-        $table,
-        $assignTo,
-        $tpl,
-        $permission = 'Content_Editor'
-    ) {
+        string $serviceName,
+        string $assignTo,
+        string $tpl,
+        string $permission = 'Content_Editor'
+    ): ViewModel {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return $ok;
         }
-        $table = $this->getDbTable($table);
-        $view = $this->createViewModel([$assignTo => $table->getList()]);
+        $service = $this->getDbService($serviceName);
+        $view = $this->createViewModel([$assignTo => $service->getList()]);
 
         // If this is an AJAX request, render the core list only, not the
         // framing layout and buttons.
@@ -171,15 +180,73 @@ class AbstractBase extends AbstractActionController
     }
 
     /**
+     * Is the type a database entity?
+     *
+     * @param ReflectionParameter $param Parameter to check
+     *
+     * @return bool
+     */
+    protected function isEntityType(ReflectionParameter $param): bool
+    {
+        $paramType = $param->getType();
+        if ($paramType instanceof ReflectionUnionType) {
+            $types = $paramType->getTypes();
+            foreach ($types as $type) {
+                if (is_subclass_of($type->getName(), EntityInterface::class)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Is the type a nullable int?
+     *
+     * @param ReflectionParameter $param Parameter to check
+     *
+     * @return bool
+     */
+    protected function isNullableIntType(ReflectionParameter $param): bool
+    {
+        $paramType = $param->getType();
+        return $paramType instanceof ReflectionNamedType
+            && $paramType->getName() === 'int'
+            && $paramType->allowsNull();
+    }
+
+    /**
+     * Cast input value to an appropriate type based on examination of the setter method.
+     *
+     * @param string          $value           Value to format
+     * @param ReflectionClass $reflectionClass Reflection of entity class
+     * @param string          $method          Method to check
+     *
+     * @return bool
+     */
+    protected function autocastType(string $value, ReflectionClass $reflectionClass, string $method): string|int|null
+    {
+        $reflectionMethod = $reflectionClass->getMethod($method);
+        $firstParam = $reflectionMethod->getParameters()[0];
+
+        // Handle IDs and nullable ints intelligently: empty value should be treated as null and
+        // other values should be converted to integers!
+        if ($this->isEntityType($firstParam) || $this->isNullableIntType($firstParam)) {
+            return empty($value) ? null : intval($value);
+        }
+        return $value;
+    }
+
+    /**
      * Support method for handleGenericItem() -- save.
      *
-     * @param string $table     Table to load item from
-     * @param array  $assignMap Map of POST fields => object properties for saving
-     * @param string $idField   POST/Route field for unique ID
+     * @param string $serviceName Service name to load list from
+     * @param array  $assignMap   Map of POST fields => object properties for saving
+     * @param string $idField     POST/Route field for unique ID
      *
      * @return mixed
      */
-    protected function saveGenericItem($table, $assignMap, $idField = 'id')
+    protected function saveGenericItem(string $serviceName, array $assignMap, string $idField = 'id')
     {
         // Extract values from the POST fields:
         $id = $this->params()->fromRoute(
@@ -189,83 +256,87 @@ class AbstractBase extends AbstractActionController
         $id = $id == 'NEW' ? false : intval($id);
 
         // Attempt to save changes:
-        $table = $this->getDbTable($table);
-        $row = $id === false ? $table->createRow() : $table->getByPrimaryKey($id);
-        if (!is_object($row)) {
+        $service = $this->getDbService($serviceName);
+        $entity = $id === false ? $service->createEntity() : $service->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return $this->jsonDie('Problem loading row');
         }
-        foreach ($assignMap as $post => $attr) {
-            $row->$attr = trim($this->params()->fromPost($post));
-            // Handle IDs intelligently: empty value should be treated as null and
-            // other values should be converted to integers!
-            if (substr($attr, -3) == '_ID') {
-                $row->$attr = empty($row->$attr) ? null : intval($row->$attr);
-            }
+        $reflectionClass = new ReflectionClass($entity);
+        foreach ($assignMap as $post => $method) {
+            $value = trim($this->params()->fromPost($post));
+            $entity->$method($this->autocastType($value, $reflectionClass, $method));
         }
-        $problem = $row->validate();
-        if ($problem !== false) {
+        $problem = is_callable([$service, 'getValidationError'])
+            ? $service->getValidationError($entity)
+            : "$serviceName is missing getValidationError implementation.";
+        if ($problem) {
             return $this->jsonDie($problem);
         }
         try {
-            $row->save();
+            $service->persistEntity($entity);
         } catch (\Exception $e) {
             return $this->jsonDie('Problem saving changes: ' . $e->getMessage());
         }
 
         // If we made it this far, we can report success:
         $view = $this->jsonReportSuccess();
-        $view->affectedRow = $row;
+        $view->affectedEntity = $entity;
         return $view;
     }
 
     /**
      * Support method for handleGenericItem() -- delete record.
      *
-     * @param string $table Table to delete item from.
+     * @param string $serviceName Database service to delete item from.
      *
      * @return mixed
      */
-    protected function deleteGenericItem($table)
+    protected function deleteGenericItem($serviceName)
     {
         try {
             $id = $this->params()->fromRoute('id');
-            $table = $this->getDbTable($table);
-            $rowObj = $table->getByPrimaryKey($id);
-            $rowObj->delete();
+            $service = $this->getDbService($serviceName);
+            if (!is_callable([$service, 'getByPrimaryKey'])) {
+                throw new \Exception('Cannot retrieve entities from ' . $service);
+            }
+            $entity = $service->getByPrimaryKey($id);
+            $service->deleteEntity($entity);
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
         }
-        return $this->jsonReportSuccess();
+        $view = $this->jsonReportSuccess();
+        $view->affectedEntity = $entity;
+        return $view;
     }
 
     /**
      * Support method for handleGenericItem() -- show form.
      *
-     * @param string $table    Table to load item from
-     * @param string $assignTo Variable to assign form data to
+     * @param string $serviceName Database service to load item from
+     * @param string $assignTo    Variable to assign form data to
      *
-     * @return mixed
+     * @return ViewModel
      */
-    protected function showGenericItem($table, $assignTo)
+    protected function showGenericItem(string $serviceName, string $assignTo): ViewModel
     {
         $id = $this->params()->fromRoute('id', 'NEW');
         $id = $id == 'NEW' ? false : intval($id);
-        $table = $this->getDbTable($table);
+        $service = $this->getDbService($serviceName);
         if ($id) {
-            $rowObj = $table->getByPrimaryKey($id);
-            if (is_object($rowObj)) {
-                $row = $rowObj->toArray();
+            $entity = $service->getByPrimaryKey($id);
+            if ($entity) {
+                $row = $entity->toArray();
             } else {
                 $id = false;
             }
         }
         if (!$id) {
-            $rowObj = $table->createRow();
-            $key = $rowObj->getPrimaryKeyColumn();
+            $entity = $service->createEntity();
+            $key = $entity->getPrimaryKeyColumn();
             $row = [$key[0] => 'NEW'];
         }
         return $this->createViewModel(
-            [$assignTo => $row ?? null, $assignTo . 'Obj' => $rowObj ?? null]
+            [$assignTo => $row ?? null, 'affectedEntity' => $entity ?? null]
         );
     }
 
@@ -274,62 +345,64 @@ class AbstractBase extends AbstractActionController
      * two elements: the view object or response, and a boolean indicating whether
      * or not the user has permission to proceed.
      *
-     * @param string $table      Table to load item from
-     * @param array  $assignMap  Map of POST fields => object properties for saving
-     * @param string $assignTo   Variable to assign form data to (for showing form)
-     * @param string $permission Permission to check
+     * @param string $serviceName Service name to load item from
+     * @param array  $assignMap   Map of POST fields => object properties for saving
+     * @param string $assignTo    Variable to assign form data to (for showing form)
+     * @param string $permission  Permission to check
      *
      * @return array
      */
     protected function handleGenericItem(
-        $table,
-        $assignMap,
-        $assignTo,
-        $permission = 'Content_Editor'
-    ) {
+        string $serviceName,
+        array $assignMap,
+        string $assignTo,
+        string $permission = 'Content_Editor'
+    ): array {
         $ok = $this->checkPermission($permission);
         if ($ok !== true) {
             return [$ok, false];
         }
         if ($this->getRequest()->isPost()) {
-            $view = $this->saveGenericItem($table, $assignMap);
+            $view = $this->saveGenericItem($serviceName, $assignMap);
         } elseif ($this->getRequest()->isDelete()) {
-            $view = $this->deleteGenericItem($table);
+            $view = $this->deleteGenericItem($serviceName);
         } else {
-            $view = $this->showGenericItem($table, $assignTo);
+            $view = $this->showGenericItem($serviceName, $assignTo);
             $view->setTerminal($this->getRequest()->isXmlHttpRequest());
         }
         return [$view, true];
     }
 
     /**
-     * Handle generic linking between two items.
+     * Handle generic linking between two items using a database service.
      *
-     * @param string   $tableName       Name of database table to modify
-     * @param string   $primaryColumn   Name of database column whose value is in
-     * 'id' route parameter
-     * @param string   $secondaryColumn Name of database column whose value is in
-     * 'extra' route parameter
-     * @param string   $listVariable    Name of view variable to assign list to
-     * when displaying existing links
-     * @param string   $listMethod      Name of method on table class to call for
-     * list assignment
-     * @param string   $listTemplate    Name of template to use for displaying list
-     * @param array    $extraFields     Extra fields to insert with the link
-     * (optional)
-     * @param Callback $insertCallback  Callback function when inserting a new row
+     * @param string    $serviceName              Name of database service to leverage
+     * @param ?string   $primarySetter            Name of entity setter whose value is in 'id' route parameter
+     * (null to disable creation)
+     * @param ?string   $secondarySetter          Name of entity setter whose value is in 'extra' route parameter
+     * (null to disable creation)
+     * @param string    $listVariable             Name of view variable for list used when displaying existing links
+     * @param string    $listMethod               Name of method on table class to call for list assignment
+     * @param string    $listTemplate             Name of template to use for displaying list
+     * @param array     $extraFields              Extra fields to insert with the link (optional). Values will also be
+     * passed to retrieveLinkMethod as params 3+.
+     * @param ?callable $insertCallback           Callback function when inserting a new row
+     * @param string    $retrieveLinkMethod       Name of service method to fetch a link using primary/secondary values
+     * @param bool      $invertRetrieveLinkParams Should we invert the order of params 1-2 on retrieveLinkMethod?
      *
      * @return mixed
      */
     public function handleGenericLink(
-        $tableName,
-        $primaryColumn,
-        $secondaryColumn,
-        $listVariable,
-        $listMethod,
-        $listTemplate,
-        $extraFields = [],
-        $insertCallback = null
+        string $serviceName,
+        ?string $primarySetter,
+        ?string $secondarySetter,
+        string $listVariable,
+        string $listMethod,
+        string $listTemplate,
+        array $extraFields = [],
+        ?callable $insertCallback = null,
+        string $retrieveLinkMethod = 'retrieveLink',
+        bool $invertRetrieveLinkParams = false
     ) {
         $ok = $this->checkPermission('Content_Editor');
         if ($ok !== true) {
@@ -337,22 +410,34 @@ class AbstractBase extends AbstractActionController
         }
         $primary = $this->params()->fromRoute('id');
         $secondary = $this->params()->fromRoute('extra');
-        $table = $this->getDbTable($tableName);
+        $service = $this->getDbService($serviceName);
         if (!empty($primary) && !empty($secondary)) {
-            $row = [$primaryColumn => $primary, $secondaryColumn => $secondary];
-            $row += $extraFields;
             try {
                 if ($this->getRequest()->isPut() || $this->getRequest()->isPost()) {
-                    $table->insert($row);
+                    if (!$primarySetter || !$secondarySetter) {
+                        return $this->jsonDie('Primary and secondary setters must be configured to support PUT/POST');
+                    }
+                    $entity = $service->createEntity();
+                    $entity->$primarySetter($primary);
+                    $entity->$secondarySetter($secondary);
+                    foreach ($extraFields as $extraSetter => $extraValue) {
+                        $entity->$extraSetter($extraValue);
+                    }
+                    $service->persistEntity($entity);
                     if (is_callable($insertCallback)) {
-                        $insertCallback(
-                            $table->getLastInsertValue(),
-                            $row,
-                            $this->serviceLocator
-                        );
+                        $insertCallback($entity);
                     }
                 } elseif ($this->getRequest()->isDelete()) {
-                    $table->delete($row);
+                    if (!is_callable([$service, $retrieveLinkMethod])) {
+                        return $this->jsonDie("$serviceName lacks $retrieveLinkMethod method");
+                    }
+                    $link = $invertRetrieveLinkParams
+                        ? $service->$retrieveLinkMethod($secondary, $primary, ...array_values($extraFields))
+                        : $service->$retrieveLinkMethod($primary, $secondary, ...array_values($extraFields));
+                    if (!$link) {
+                        return $this->jsonDie("Could not retrieve $serviceName link using $primary / $secondary");
+                    }
+                    $service->deleteEntity($link);
                 } else {
                     return $this->jsonDie('Unexpected method');
                 }
@@ -363,8 +448,7 @@ class AbstractBase extends AbstractActionController
         }
 
         // If we got this far, display a list:
-        $view = $this->createViewModel();
-        $view->$listVariable = $table->$listMethod($primary);
+        $view = $this->createViewModel([$listVariable => $service->$listMethod($primary)]);
         $view->setTemplate($listTemplate);
         $view->setTerminal(true);
         return $view;
@@ -435,12 +519,25 @@ class AbstractBase extends AbstractActionController
     {
         if ($this->getAuth()->hasIdentity()) {
             $id = $this->getAuth()->getIdentity();
-            $user = $this->getDbTable('user')->getByPrimaryKey($id);
-            if (is_object($user)) {
+            if ($user = $this->getDbService(UserService::class)->getByPrimaryKey($id)) {
                 return $user;
             }
         }
         return false;
+    }
+
+    /**
+     * Check if the user has the specified permission.
+     *
+     * @param UserEntityInterface $user       The user to check.
+     * @param string              $permission The name of the permission to check.
+     *
+     * @return bool              True if action permitted, false otherwise.
+     */
+    public function userHasPermission(UserEntityInterface $user, string $permission): bool
+    {
+        $permissions = $user->getUserGroup()?->toArray();
+        return !empty($permissions[$permission]);
     }
 
     /**
@@ -457,7 +554,7 @@ class AbstractBase extends AbstractActionController
         if (!($user = $this->getCurrentUser())) {
             return $this->forceLogin();
         }
-        if (!$user->hasPermission($permission)) {
+        if (!$this->userHasPermission($user, $permission)) {
             return $this->forwardTo('GeebyDeeby\Controller\Edit', 'Denied');
         }
         return true;
@@ -495,7 +592,7 @@ class AbstractBase extends AbstractActionController
     protected function getAuthenticationAdapter($username, $password)
     {
         return new \GeebyDeeby\Authentication\Adapter(
-            $this->getDbTable('user'),
+            $this->getDbService(UserService::class),
             $username,
             $password
         );

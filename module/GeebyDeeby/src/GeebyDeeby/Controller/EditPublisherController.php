@@ -29,6 +29,15 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\CityService;
+use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\PredicateService;
+use GeebyDeeby\Db\Service\PublishersAddressService;
+use GeebyDeeby\Db\Service\PublisherService;
+use GeebyDeeby\Db\Service\PublishersImprintService;
+use GeebyDeeby\Db\Service\PublishersUriService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
+
 use function count;
 
 /**
@@ -50,7 +59,7 @@ class EditPublisherController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'publisher',
+            PublisherService::class,
             'publishers',
             'geeby-deeby/edit-publisher/render-publishers'
         );
@@ -63,20 +72,19 @@ class EditPublisherController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['publisher' => 'Publisher_Name'];
-        [$view, $ok]
-            = $this->handleGenericItem('publisher', $assignMap, 'publisher');
+        $assignMap = ['publisher' => 'setPublisherName'];
+        [$view, $ok] = $this->handleGenericItem(PublisherService::class, $assignMap, 'publisher');
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $view->cities = $this->getDbTable('city')->getList();
-            $view->countries = $this->getDbTable('country')->getList();
-            $view->addresses = $this->getDbTable('publishersaddresses')
-                ->getAddressesForPublisher($view->publisherObj->Publisher_ID);
-            $view->imprints = $this->getDbTable('publishersimprints')
-                ->getImprintsForPublisher($view->publisherObj->Publisher_ID);
-            $view->predicates = $this->getDbTable('predicate')->getList();
-            $view->uris = $this->getDbTable('publishersuris')
-                ->getURIsForPublisher($view->publisherObj->Publisher_ID);
+            $publisherId = $view->affectedEntity->getId();
+            $view->cities = $this->getDbService(CityService::class)->getList();
+            $view->countries = $this->getDbService(CountryService::class)->getList();
+            $view->addresses = $this->getDbService(PublishersAddressService::class)
+                ->getAddressesForPublisher($publisherId);
+            $view->imprints = $this->getDbService(PublishersImprintService::class)
+                ->getImprintsForPublisher($publisherId);
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
+            $view->uris = $this->getDbService(PublishersUriService::class)->getURIsForPublisher($publisherId);
             $view->setTemplate('geeby-deeby/edit-publisher/edit-full');
         }
         return $view;
@@ -91,44 +99,39 @@ class EditPublisherController extends AbstractBase
     {
         // Special case: new address:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('publishersaddresses');
-            $row = $table->createRow();
-            $row->Publisher_ID = $this->params()->fromRoute('id');
-            $row->Country_ID = $this->params()->fromPost('country');
-            $row->City_ID = $this->params()->fromPost('city');
-            if (empty($row->City_ID)) {
-                $row->City_ID = null;
-            }
-            $row->Street = $this->params()->fromPost('street');
-            if (empty($row->Country_ID)) {
+            $countryId = $this->params()->fromPost('country');
+            if (!$countryId) {
                 return $this->jsonDie('Country must be specified.');
             }
-            $table->insert((array)$row);
+            $cityId = $this->params()->fromPost('city');
+            $addressService = $this->getDbService(PublishersAddressService::class);
+            $entity = $addressService->createEntity()
+                ->setPublisher($this->params()->fromRoute('id'))
+                ->setCountry((int)$countryId)
+                ->setCity($cityId ? (int)$cityId : null)
+                ->setStreet($this->params()->fromPost('street'));
+            $addressService->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            // Prevent deletion of imprints that are linked up:
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('seriespublishers')->select(
-                    ['Address_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $row = $result->current();
-                    $msg = 'You cannot delete this address; it is used by Series '
-                        . $row->Series_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'publishersaddresses',
-                'Publisher_ID',
-                'Address_ID',
-                'addresses',
-                'getAddressesForPublisher',
-                'geeby-deeby/edit-publisher/address-list.phtml'
-            );
         }
+        // Prevent deletion of addresses that are linked up:
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbService(SeriesPublisherService::class)->getSeriesForAddress($extra);
+            if (count($result) > 0) {
+                $msg = 'You cannot delete this address; it is used by Series ' . $result[0]['Series_ID'] . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            PublishersAddressService::class,
+            null,
+            null,
+            'addresses',
+            'getAddressesForPublisher',
+            'geeby-deeby/edit-publisher/address-list.phtml',
+            retrieveLinkMethod: 'getAddressesForPublisherPublisherAddress'
+        );
     }
 
     /**
@@ -140,39 +143,36 @@ class EditPublisherController extends AbstractBase
     {
         // Special case: new imprint:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('publishersimprints');
-            $row = $table->createRow();
-            $row->Publisher_ID = $this->params()->fromRoute('id');
-            $row->Imprint_Name = $this->params()->fromPost('imprint');
-            if (empty($row->Imprint_Name)) {
+            $name = trim((string)$this->params()->fromPost('imprint'));
+            if (empty($name)) {
                 return $this->jsonDie('Name must not be empty.');
             }
-            $table->insert((array)$row);
+            $service = $this->getDbService(PublishersImprintService::class);
+            $entity = $service->createEntity()
+                ->setPublisher($this->params()->fromRoute('id'))
+                ->setImprintName($name);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            // Prevent deletion of imprints that are linked up:
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('seriespublishers')->select(
-                    ['Imprint_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $row = $result->current();
-                    $msg = 'You cannot delete this imprint; it is used by Series '
-                        . $row->Series_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'publishersimprints',
-                'Publisher_ID',
-                'Imprint_ID',
-                'imprints',
-                'getImprintsForPublisher',
-                'geeby-deeby/edit-publisher/imprint-list.phtml'
-            );
         }
+        // Prevent deletion of imprints that are linked up:
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbService(SeriesPublisherService::class)->getSeriesForImprint($extra);
+            if (count($result) > 0) {
+                $msg = 'You cannot delete this imprint; it is used by Series ' . $result[0]['Series_ID'] . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            PublishersImprintService::class,
+            null,
+            null,
+            'imprints',
+            'getImprintsForPublisher',
+            'geeby-deeby/edit-publisher/imprint-list.phtml',
+            retrieveLinkMethod: 'getLinkByPublisherAndImprint'
+        );
     }
 
     /**
@@ -182,16 +182,16 @@ class EditPublisherController extends AbstractBase
      */
     public function uriAction()
     {
-        $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+        $extras = ($pid = $this->params()->fromPost('predicate_id')) ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'publishersuris',
-            'Publisher_ID',
-            'URI',
+            PublishersUriService::class,
+            'setPublisher',
+            'setUri',
             'uris',
             'getURIsForPublisher',
             'geeby-deeby/edit-publisher/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByPublisherAndUri'
         );
     }
 }

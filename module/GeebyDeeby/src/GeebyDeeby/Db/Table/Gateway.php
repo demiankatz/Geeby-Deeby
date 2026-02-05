@@ -47,8 +47,6 @@ use function count;
  */
 class Gateway extends AbstractTableGateway
 {
-    use \GeebyDeeby\Db\ActivityLoggerTrait;
-
     /**
      * Table manager
      *
@@ -168,7 +166,6 @@ class Gateway extends AbstractTableGateway
      */
     public function delete($where)
     {
-        $this->logActivity('DELETE');
         return parent::delete($where);
     }
 
@@ -181,7 +178,6 @@ class Gateway extends AbstractTableGateway
      */
     public function insert($set)
     {
-        $this->logActivity('INSERT');
         return parent::insert($set);
     }
 
@@ -196,7 +192,6 @@ class Gateway extends AbstractTableGateway
      */
     public function update($set, $where = null, array $joins = null)
     {
-        $this->logActivity('UPDATE');
         return parent::update($set, $where, $joins);
     }
 }

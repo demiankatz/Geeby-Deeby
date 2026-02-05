@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\PlatformService;
+
 /**
  * Edit platform controller
  *
@@ -48,7 +50,7 @@ class EditPlatformController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'platform',
+            PlatformService::class,
             'platforms',
             'geeby-deeby/edit-platform/render-platforms'
         );
@@ -61,8 +63,8 @@ class EditPlatformController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['platform' => 'Platform'];
-        [$response] = $this->handleGenericItem('platform', $assignMap, 'platform');
+        $assignMap = ['platform' => 'setPlatformName'];
+        [$response] = $this->handleGenericItem(PlatformService::class, $assignMap, 'platform');
         return $response;
     }
 }

@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\EditionsFullTextAttributesValueService;
+
 use function count;
 
 /**
@@ -53,15 +55,15 @@ trait FullTextAttributesTrait
     {
         $fullTextAttributes = [];
         if (count($view->fullText ?? []) > 0) {
-            $attrTable = $this->getDbTable('editionsfulltextattributesvalues');
+            $service = $this->getDbService(EditionsFullTextAttributesValueService::class);
             $ids = array_map(
                 function ($current) {
                     return $current['Sequence_ID'];
                 },
-                $view->fullText->toArray()
+                $view->fullText
             );
-            foreach ($attrTable->getAttributesForFullTextIDs($ids) as $attr) {
-                $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;
+            foreach ($service->getAttributesForFullTextIDs($ids) as $attr) {
+                $fullTextAttributes[$attr['Editions_Full_Text_ID']][] = $attr;
             }
         }
         $view->fullTextAttributes = $fullTextAttributes;

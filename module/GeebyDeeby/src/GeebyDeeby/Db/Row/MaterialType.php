@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\MaterialTypeEntityInterface;
+
 /**
  * Row Definition for Material Types
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class MaterialType extends RowGateway
+class MaterialType extends RowGateway implements MaterialTypeEntityInterface
 {
     /**
      * Constructor
@@ -51,16 +53,104 @@ class MaterialType extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Material_Type_Name)) {
-            return 'Material type name cannot be blank.';
-        }
-        return false;
+        return $this->Material_Type_ID ?? null;
+    }
+
+    /**
+     * Get the singular name of the material type.
+     *
+     * @return string
+     */
+    public function getSingularName(): string
+    {
+        return $this->Material_Type_Name;
+    }
+
+    /**
+     * Set the singular name of the material type.
+     *
+     * @param string $name Name
+     *
+     * @return static
+     */
+    public function setSingularName(string $name): static
+    {
+        $this->Material_Type_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get the plural name of the material type.
+     *
+     * @return string
+     */
+    public function getPluralName(): string
+    {
+        return $this->Material_Type_Plural_Name;
+    }
+
+    /**
+     * Set the plural name of the material type.
+     *
+     * @param string $name Name
+     *
+     * @return static
+     */
+    public function setPluralName(string $name): static
+    {
+        $this->Material_Type_Plural_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Is this flagged as the default material type?
+     *
+     * @return bool
+     */
+    public function isDefault(): bool
+    {
+        return (bool)$this->Default;
+    }
+
+    /**
+     * Set the default status of the material type.
+     *
+     * @param string $state New state
+     *
+     * @return static
+     */
+    public function setIsDefault(bool $state): static
+    {
+        $this->Default = $state ? 1 : 0;
+        return $this;
+    }
+
+    /**
+     * Get the RDF class (or null if none).
+     *
+     * @return ?string
+     */
+    public function getRdfClass(): ?string
+    {
+        return $this->Material_Type_RDF_Class;
+    }
+
+    /**
+     * Set the RDF class (or null if none).
+     *
+     * @param ?string $class New RDF class (or null to clear)
+     *
+     * @return static
+     */
+    public function setRdfClass(?string $class): static
+    {
+        $this->Material_Type_RDF_Class = $class;
+        return $this;
     }
 }

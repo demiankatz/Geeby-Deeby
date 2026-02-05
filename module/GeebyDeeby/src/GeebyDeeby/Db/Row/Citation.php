@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\CitationEntityInterface;
+
 /**
  * Row Definition for Citations
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Citation extends RowGateway
+class Citation extends RowGateway implements CitationEntityInterface
 {
     /**
      * Constructor
@@ -51,16 +53,35 @@ class Citation extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Citation)) {
-            return 'Citation cannot be blank.';
-        }
-        return false;
+        return $this->Citation_ID ?? null;
+    }
+
+    /**
+     * Get the name of the citation.
+     *
+     * @return string
+     */
+    public function getCitationName(): string
+    {
+        return $this->Citation;
+    }
+
+    /**
+     * Set the name of the citation.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setCitationName(string $name): static
+    {
+        $this->Citation = $name;
+        return $this;
     }
 }

@@ -29,8 +29,27 @@
 
 namespace GeebyDeeby\Controller;
 
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Select;
+use DateTime;
+use GeebyDeeby\Db\Service\EditionsCreditService;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsFullTextService;
+use GeebyDeeby\Db\Service\EditionsImageService;
+use GeebyDeeby\Db\Service\FullTextSourceService;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\LanguageService;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesAttributesValueService;
+use GeebyDeeby\Db\Service\SeriesBibliographyService;
+use GeebyDeeby\Db\Service\SeriesCategoryService;
+use GeebyDeeby\Db\Service\SeriesFileService;
+use GeebyDeeby\Db\Service\SeriesLinkService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
+use GeebyDeeby\Db\Service\SeriesRelationshipsValueService;
+use GeebyDeeby\Db\Service\SeriesReviewService;
+use GeebyDeeby\Db\Service\SeriesService;
+use GeebyDeeby\Db\Service\SeriesTranslationService;
+use GeebyDeeby\Db\Service\TagService;
+use Laminas\View\Model\ViewModel;
 
 use function count;
 use function is_object;
@@ -56,170 +75,28 @@ class SeriesController extends AbstractBase
     protected function getViewModelWithSeries($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('series');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(SeriesService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
-        $extras['seriesAttributes'] = $this->getDbTable('seriesattributesvalues')
+        $extras['seriesAttributes'] = $this->getDbService(SeriesAttributesValueService::class)
             ->getAttributesForSeries($id);
-        $extras['relationshipsValues']
-            = $this->getDbTable('seriesrelationshipsvalues')
+        $extras['relationshipsValues'] = $this->getDbService(SeriesRelationshipsValueService::class)
             ->getRelationshipsForSeries($id);
         return $this->createViewModel(
-            ['series' => $rowObj->toArray()] + $extras
+            ['series' => $entity->toArray()] + $extras
         );
     }
 
     /**
-     * "Check for missing data" page
+     * Process the raw item stats retrieved from the database.
      *
-     * @return mixed
+     * @param array $results Raw stats
+     *
+     * @return array
      */
-    public function checkAction()
+    protected function analyzeItemStats(array $results): array
     {
-        $view = $this->getViewModelWithSeries();
-        $seriesId = $view->series['Series_ID'];
-
-        // Check for missing creators
-        $editions = $this->getDbTable('edition');
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['ic' => 'Items_Creators'],
-                'Editions.Item_ID = ic.Item_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('ic.Person_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        $view->missingCreators = $editions->select($callback)->toArray();
-
-        // Check for missing credits
-        $editions = $this->getDbTable('edition');
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['ec' => 'Editions_Credits'],
-                'Editions.Edition_ID = ec.Edition_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('ec.Person_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        $view->missingCredits = $editions->select($callback)->toArray();
-
-        // Check for missing dates
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['d' => 'Editions_Release_Dates'],
-                'Editions.Edition_ID = d.Edition_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('d.Year');
-            $select->where->isNull('Editions.Parent_Edition_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        $view->missingDates = $editions->select($callback)->toArray();
-
-        // Get date range stats
-        $callback = function ($select) use ($seriesId): void {
-            $select->where(['Series_ID' => $seriesId]);
-            $select->columns(
-                [
-                    'Edition_ID' => new Expression(
-                        'min(?)',
-                        ['Editions.Edition_ID'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ]
-            );
-            $select->join(
-                ['d' => 'Editions_Release_Dates'],
-                'Editions.Edition_ID = d.Edition_ID',
-                [
-                    'Start' => new Expression(
-                        'min(?)',
-                        ['Year'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'End' => new Expression(
-                        'max(?)',
-                        ['Year'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ],
-                Select::JOIN_LEFT
-            );
-            $select->group('Series_ID');
-        };
-        $view->dateStats = current($editions->select($callback)->toArray());
-
-        // Check for missing items
-        $callback = function ($select) use ($seriesId): void {
-            $select->where(['Series_ID' => $seriesId]);
-            $select->columns(
-                [
-                    'Edition_ID' => new Expression(
-                        'min(?)',
-                        ['Edition_ID'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Vol' => new Expression(
-                        'min(?)',
-                        ['Volume'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Pos' => new Expression(
-                        'min(?)',
-                        ['Position'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Rep' => new Expression(
-                        'min(?)',
-                        ['Replacement_Number'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Total' => new Expression(
-                        'count(?)',
-                        ['Position'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ]
-            );
-            $select->where->isNull('Parent_Edition_ID');
-            $select->group(['Volume', 'Position', 'Replacement_Number']);
-            $select->order(['Volume', 'Position', 'Replacement_Number']);
-        };
-        $results = $editions->select($callback)->toArray();
         $vol = $lastVol = $minVol = $maxVol = $lastPos = $overallTotal = 0;
         $dupes = $missing = $missingVol = $min = $max = $total = [];
         foreach ($results as $current) {
@@ -259,7 +136,7 @@ class SeriesController extends AbstractBase
             $lastPos = $pos;
             $lastVol = $vol;
         }
-        $view->itemStats = [
+        return [
             'Different' =>  count($results),
             'Start' => $min,
             'End' => $max,
@@ -271,7 +148,23 @@ class SeriesController extends AbstractBase
             'Missing' => $missing,
             'MissingVol' => $missingVol,
         ];
+    }
 
+    /**
+     * "Check for missing data" page
+     *
+     * @return mixed
+     */
+    public function checkAction()
+    {
+        $view = $this->getViewModelWithSeries();
+        $seriesId = $view->series['Series_ID'];
+        $editionService = $this->getDbService(EditionService::class);
+        $view->missingCreators = $editionService->getMissingCreators($seriesId);
+        $view->missingCredits = $editionService->getMissingCredits($seriesId);
+        $view->missingDates = $editionService->getMissingDates($seriesId);
+        $view->dateStats = $editionService->getSeriesDateStats($seriesId);
+        $view->itemStats = $this->analyzeItemStats($editionService->getSeriesItemStats($seriesId));
         return $view;
     }
 
@@ -288,41 +181,34 @@ class SeriesController extends AbstractBase
         }
 
         // Check for existing review.
-        $table = $this->getDbTable('seriesreviews');
-        $params = [
-            'Series_ID' => $this->params()->fromRoute('id'),
-            'User_ID' => $user->User_ID,
-        ];
-
-        $existing = $table->select($params)->toArray();
-        $existing = count($existing) > 0 ? $existing[0] : false;
+        $service = $this->getDbService(SeriesReviewService::class);
+        $seriesId = $this->params()->fromRoute('id');
+        $existing = $service->getByUserAndSeries($user, $seriesId);
 
         // Save comment if found.
         if ($this->getRequest()->isPost()) {
             $view = $this->createViewModel(
-                ['noChange' => false, 'series' => $params['Series_ID']]
+                ['noChange' => false, 'series' => $seriesId]
             );
-            $params['Approved'] = 'n';
-            $params['Review'] = $this->params()->fromPost('Review');
-            if ($existing && $params['Review'] == $existing['Review']) {
+            $review = $this->params()->fromPost('Review');
+            if ($existing && $review == $existing->getReview()) {
                 $view->noChange = true;
             } else {
-                if ($existing) {
-                    $table->delete(
-                        [
-                            'Series_ID' => $params['Series_ID'],
-                            'User_ID' => $params['User_ID'],
-                        ]
-                    );
+                if (!$existing) {
+                    $existing = $service->createEntity()
+                        ->setUser($user)
+                        ->setSeries($seriesId)
+                        ->setAddedDate(new DateTime());
                 }
-                $table->insert($params);
+                $existing->setIsApproved(false)->setReview($review);
+                $service->persistEntity($existing);
             }
             $view->setTemplate('geeby-deeby/series/comment-submitted');
             return $view;
         }
 
         // Send review to the view.
-        $review = $existing ? $existing['Review'] : '';
+        $review = $existing ? $existing->getReview() : '';
 
         $view = $this->getViewModelWithSeries(['review' => $review]);
         if (!$view) {
@@ -339,7 +225,7 @@ class SeriesController extends AbstractBase
     public function commentsAction()
     {
         $view = $this->createViewModel();
-        $view->comments = $this->getDbTable('seriesreviews')->getReviewsByUser(null);
+        $view->comments = $this->getDbService(SeriesReviewService::class)->getReviewsByUser(null);
         return $view;
     }
 
@@ -358,9 +244,8 @@ class SeriesController extends AbstractBase
         $view->fuzzy = $fuzzy;
         $rawSource = $this->params()->fromQuery('source');
         $view->source = $source = empty($rawSource) ? null : $rawSource;
-        $view->sources = $this->getDbTable('fulltextsource')
-            ->getList($view->series['Series_ID']);
-        $view->fulltext = $this->getDbTable('editionsfulltext')
+        $view->sources = $this->getDbService(FullTextSourceService::class)->getList($view->series['Series_ID']);
+        $view->fulltext = $this->getDbService(EditionsFullTextService::class)
             ->getItemsWithFullText($view->series['Series_ID'], $fuzzy, $source);
         $view->setTemplate('geeby-deeby/item/fulltext');
         return $view;
@@ -378,9 +263,8 @@ class SeriesController extends AbstractBase
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
         $config = $this->serviceLocator->get('config');
-        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
-            ?? true;
-        $view->images = $this->getDbTable('editionsimages')
+        $groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType'] ?? true;
+        $view->images = $this->getDbService(EditionsImageService::class)
             ->getImagesForSeries($view->series['Series_ID'], $groupByMaterial);
         return $view;
     }
@@ -429,7 +313,7 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        $view->people = $this->getDbTable('editionscredits')
+        $view->people = $this->getDbService(EditionsCreditService::class)
             ->getPeopleForSeries($view->series['Series_ID']);
         return $view;
     }
@@ -445,8 +329,7 @@ class SeriesController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\Series', 'notfound');
         }
-        $view->tags = $this->getDbTable('tag')
-            ->getTagsForSeries($view->series['Series_ID']);
+        $view->tags = $this->getDbService(TagService::class)->getTagsForSeries($view->series['Series_ID']);
         return $view;
     }
 
@@ -471,10 +354,10 @@ class SeriesController extends AbstractBase
     protected function addSeriesToGraph($graph, $series)
     {
         $articleHelper = $this->serviceLocator->get('GeebyDeeby\Articles');
-        $id = $series->Series_ID;
+        $id = $series['Series_ID'];
         $uri = $this->getServerUrl('series', ['id' => $id]);
         $seriesResource = $graph->resource($uri, $this->getSeriesRdfClass());
-        $name = $series->Series_Name;
+        $name = $series['Series_Name'];
         $seriesResource->set(
             'dcterms:title',
             $articleHelper->formatTrailingArticles($name)
@@ -489,7 +372,7 @@ class SeriesController extends AbstractBase
      */
     protected function getRdfList()
     {
-        $list = $this->getDbTable('series')->getList();
+        $list = $this->getDbService(SeriesService::class)->getList();
         $graph = new \EasyRdf\Graph();
         foreach ($list as $series) {
             $this->addSeriesToGraph($graph, $series);
@@ -594,41 +477,31 @@ class SeriesController extends AbstractBase
             return false;
         }
         $id = $view->series['Series_ID'];
-        $view->altTitles = $this->getDbTable('seriesalttitles')->getAltTitles($id);
-        $view->categories = $this->getDbTable('seriescategories')
-            ->getCategories($id);
+        $view->altTitles = $this->getDbService(SeriesAltTitleService::class)->getAltTitles($id);
+        $view->categories = $this->getDbService(SeriesCategoryService::class)->getCategoriesForSeries($id);
         $config = $this->serviceLocator->get('config');
         $view->groupByMaterial = $config['geeby-deeby']['groupSeriesByMaterialType']
             ?? true;
-        $view->items = $this->getDbTable('item')
+        $view->items = $this->getDbService(ItemService::class)
             ->getItemsForSeries($id, true, $view->groupByMaterial);
-        $view->language = $this->getDbTable('language')
+        $view->language = $this->getDbService(LanguageService::class)
             ->getByPrimaryKey($view->series['Language_ID']);
-        $view->publishers = $this->getDbTable('seriespublishers')
-            ->getPublishers($id);
-        $trans = $this->getDbTable('seriestranslations');
+        $view->publishers = $this->getDbService(SeriesPublisherService::class)->getPublishersForSeries($id);
+        $trans = $this->getDbService(SeriesTranslationService::class);
         // The variable/function names are a bit unintuitive here --
         // $view->translatedInto is a list of books that $id was translated into;
         // we obtain these by calling $trans->getTranslatedFrom(), which gives
         // us a list of books that $id was translated from.
         $view->translatedInto = $trans->getTranslatedFrom($id, true);
         $view->translatedFrom = $trans->getTranslatedInto($id, true);
-        $view->files = $this->getDbTable('seriesfiles')->getFilesForSeries($id);
-        $view->bibliography = $this->getDbTable('seriesbibliography')
+        $view->files = $this->getDbService(SeriesFileService::class)->getFilesForSeries($id);
+        $view->bibliography = $this->getDbService(SeriesBibliographyService::class)
             ->getItemsDescribingSeries($id);
-        $view->links = $this->getDbTable('serieslinks')->getLinksForSeries($id);
-        $reviews = $this->getDbTable('seriesreviews');
+        $view->links = $this->getDbService(SeriesLinkService::class)->getLinksForSeries($id);
+        $reviews = $this->getDbService(SeriesReviewService::class);
         $view->comments = $reviews->getReviewsForSeries($id);
         $user = $this->getCurrentUser();
-        if ($user) {
-            $view->userHasComment = (bool)count(
-                $reviews->select(
-                    ['User_ID' => $user->User_ID, 'Series_ID' => $id]
-                )
-            );
-        } else {
-            $view->userHasComment = false;
-        }
+        $view->userHasComment = $user ? (bool)$reviews->getByUserAndSeries($user, $id) : false;
         return $view;
     }
 
@@ -641,7 +514,7 @@ class SeriesController extends AbstractBase
     {
         return $this->createViewModel(
             [
-                'series' => $this->getDbTable('series')->getList(),
+                'series' => $this->getDbService(SeriesService::class)->getList(),
             ]
         );
     }
@@ -649,22 +522,13 @@ class SeriesController extends AbstractBase
     /**
      * New series action
      *
-     * @return mixed
+     * @return ViewModel
      */
-    public function newAction()
+    public function newAction(): ViewModel
     {
-        $table = $this->getDbTable('series');
-        $adapter = $table->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($table->getTable());
-        $query->order('Series_ID DESC');
-        $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+        $paginator = $this->getDbService(SeriesService::class)->getNewSeriesPaginator(
+            $this->params()->fromQuery('page', 1)
         );
-        $paginator->setItemCountPerPage(50);
-        $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
         return $this->createViewModel(compact('paginator'));
     }
 

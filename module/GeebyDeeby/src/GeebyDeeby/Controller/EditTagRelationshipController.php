@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\TagsRelationshipService;
+
 /**
  * Edit tag relationship controller
  *
@@ -48,7 +50,7 @@ class EditTagRelationshipController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'tagsrelationship',
+            TagsRelationshipService::class,
             'relationships',
             'geeby-deeby/edit-tag-relationship/render-tag-relationships'
         );
@@ -62,15 +64,14 @@ class EditTagRelationshipController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'relationship_name' => 'Tags_Relationship_Name',
-            'rdf_property' => 'Tags_Relationship_RDF_Property',
-            'priority' => 'Display_Priority',
-            'inverse_relationship_name' => 'Tags_Inverse_Relationship_Name',
-            'inverse_rdf_property' => 'Tags_Inverse_Relationship_RDF_Property',
-            'inverse_priority' => 'Inverse_Display_Priority',
+            'relationship_name' => 'setRelationshipName',
+            'rdf_property' => 'setRDFProperty',
+            'priority' => 'setDisplayPriority',
+            'inverse_relationship_name' => 'setInverseRelationshipName',
+            'inverse_rdf_property' => 'setInverseRDFProperty',
+            'inverse_priority' => 'setInverseDisplayPriority',
         ];
-        [$response] = $this
-            ->handleGenericItem('tagsrelationship', $assignMap, 'relationship');
+        [$response] = $this->handleGenericItem(TagsRelationshipService::class, $assignMap, 'relationship');
 
         return $response;
     }

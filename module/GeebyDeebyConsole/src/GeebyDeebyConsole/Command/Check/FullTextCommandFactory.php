@@ -29,6 +29,7 @@
 
 namespace GeebyDeebyConsole\Command\Check;
 
+use GeebyDeeby\Db\Service\EditionsFullTextService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
@@ -65,8 +66,7 @@ class FullTextCommandFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $table = $container->get('GeebyDeeby\Db\Table\PluginManager')
-            ->get('editionsfulltext');
-        return new $requestedName($table);
+        $service = $container->get(\GeebyDeeby\Db\Service\PluginManager::class)->get(EditionsFullTextService::class);
+        return new $requestedName($service);
     }
 }

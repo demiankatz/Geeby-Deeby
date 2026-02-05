@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\AuthorityEntityInterface;
+
 /**
  * Row Definition for Authorities
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Authority extends RowGateway
+class Authority extends RowGateway implements AuthorityEntityInterface
 {
     /**
      * Constructor
@@ -51,16 +53,35 @@ class Authority extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Authority_Name)) {
-            return 'Name cannot be blank.';
-        }
-        return false;
+        return $this->Authority_ID ?? null;
+    }
+
+    /**
+     * Get the name of the authority.
+     *
+     * @return string
+     */
+    public function getAuthorityName(): string
+    {
+        return $this->Authority_Name;
+    }
+
+    /**
+     * Set the name of the authority.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setAuthorityName(string $name): static
+    {
+        $this->Authority_Name = $name;
+        return $this;
     }
 }

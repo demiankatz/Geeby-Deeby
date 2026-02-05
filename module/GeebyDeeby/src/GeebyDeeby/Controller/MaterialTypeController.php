@@ -29,7 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
-use function is_object;
+use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\SeriesMaterialTypeService;
 
 /**
  * Material type controller
@@ -50,15 +51,14 @@ class MaterialTypeController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('materialtype');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(MaterialTypeService::class)->getByPrimaryKey($id);
+        if (!$entity) {
             return $this->forwardTo(__NAMESPACE__ . '\MaterialType', 'notfound');
         }
         $view = $this->createViewModel(
-            ['materialType' => $rowObj->toArray()]
+            ['materialType' => $entity->toArray()]
         );
-        $view->series = $this->getDbTable('seriesmaterialtypes')
+        $view->series = $this->getDbService(SeriesMaterialTypeService::class)
             ->getSeriesForMaterialType($id);
         return $view;
     }
@@ -73,7 +73,7 @@ class MaterialTypeController extends AbstractBase
         return $this->createViewModel(
             [
                 'materialTypes' =>
-                    $this->getDbTable('seriesmaterialtypes')->getMaterials(),
+                    $this->getDbService(SeriesMaterialTypeService::class)->getMaterialTypesForSeries(),
             ]
         );
     }

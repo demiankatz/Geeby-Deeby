@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Controller;
 
+use DateTime;
+use GeebyDeeby\Db\Service\UserService;
+
 /**
  * Index controller
  *
@@ -71,10 +74,9 @@ class IndexController extends AbstractBase
                 return $view;
             }
             if ($result->isValid()) {
-                $user = $this->getDbTable('user')
-                    ->getByPrimaryKey($result->getIdentity());
-                $user->Last_Login = gmdate('Y-m-d h:i:s');
-                $user->save();
+                $userService = $this->getDbService(UserService::class);
+                $user = $userService->getByPrimaryKey($result->getIdentity())->setLastLoginDate(new DateTime());
+                $userService->persistEntity($user);
                 $followup = $this->followup()->retrieve();
                 if (isset($followup->url)) {
                     $url = $followup->url;

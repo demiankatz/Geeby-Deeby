@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Service\SeriesAttributeService;
+
 /**
  * Edit series attribute controller
  *
@@ -48,7 +50,7 @@ class EditSeriesAttributeController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'seriesattribute',
+            SeriesAttributeService::class,
             'attributes',
             'geeby-deeby/edit-series-attribute/render-series-attributes'
         );
@@ -69,14 +71,13 @@ class EditSeriesAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'attribute_name' => 'Series_Attribute_Name',
-            'rdf_property' => 'Series_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'value_link' => 'Value_Link',
-            'priority' => 'Display_Priority',
+            'attribute_name' => 'setAttributeName',
+            'rdf_property' => 'setRdfProperty',
+            'allow_html' => 'setAllowsHTML',
+            'value_link' => 'setValueLink',
+            'priority' => 'setDisplayPriority',
         ];
-        [$response] = $this
-            ->handleGenericItem('seriesattribute', $assignMap, 'attribute');
+        [$response] = $this->handleGenericItem(SeriesAttributeService::class, $assignMap, 'attribute');
 
         return $response;
     }
