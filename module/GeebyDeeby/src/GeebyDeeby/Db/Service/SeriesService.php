@@ -184,4 +184,16 @@ class SeriesService extends AbstractDbService
             $this->seriesTable->getSeriesForItem($itemID, $includePosition, $includeParentPosition)
         );
     }
+
+    /**
+     * Get a list of series matching the specified name.
+     *
+     * @param string $name Series name
+     *
+     * @return SeriesEntityInterface[]
+     */
+    public function getSeriesByName(string $name): array
+    {
+        return iterator_to_array($this->seriesTable->select(['Series_Name' => $name]));
+    }
 }
