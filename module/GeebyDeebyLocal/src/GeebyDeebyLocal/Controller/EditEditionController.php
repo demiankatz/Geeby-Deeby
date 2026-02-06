@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Controller;
 
+use GeebyDeeby\Db\Service\EditionService;
+
 /**
  * Edit Edition controller
  *
@@ -53,7 +55,7 @@ class EditEditionController extends \GeebyDeeby\Controller\EditEditionController
         }
         $view = $this->createViewModel();
         $editionId = $this->params()->fromRoute('id');
-        $edition = $this->getDbTable('edition')->getByPrimaryKey($editionId);
+        $edition = $this->getDbService(EditionService::class)->getByPrimaryKey($editionId);
 
         if ($this->params()->fromPost('convert')) {
             $prefix = $this->params()->fromPost('prefix');
@@ -68,11 +70,11 @@ class EditEditionController extends \GeebyDeeby\Controller\EditEditionController
                 $view->result = 'Conversion unsuccessful: ' . $issueMaker->getLastMessage();
             }
         } else {
-            $series = $this->getDbTable('series')->getByPrimaryKey($edition->Series_ID);
-            $view->prefix = $series->Series_Name . ', no. ';
+            $series = $edition->getSeries();
+            $view->prefix = $series->getSeriesName() . ', no. ';
         }
 
-        $view->parent = $edition->Parent_Edition_ID;
+        $view->parent = $edition->getParentEdition()?->getId();
         return $view;
     }
 }
