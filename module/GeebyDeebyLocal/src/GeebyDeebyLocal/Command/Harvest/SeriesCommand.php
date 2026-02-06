@@ -31,7 +31,6 @@ namespace GeebyDeebyLocal\Command\Harvest;
 
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesService;
-use GeebyDeeby\Db\Table\Series;
 use GeebyDeebyLocal\Ingest\FedoraHarvester;
 use GeebyDeebyLocal\Ingest\SolrHarvester;
 use Symfony\Component\Console\Attribute\AsCommand;

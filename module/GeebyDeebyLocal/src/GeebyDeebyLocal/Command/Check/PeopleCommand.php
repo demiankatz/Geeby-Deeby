@@ -30,7 +30,6 @@
 namespace GeebyDeebyLocal\Command\Check;
 
 use GeebyDeeby\Db\Service\PeopleUriService;
-use GeebyDeeby\Db\Table\PeopleURIs;
 use GeebyDeeby\View\Helper\ShowPerson;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -56,8 +55,8 @@ class PeopleCommand extends Command
     /**
      * Constructor
      *
-     * @param PeopleURIs  $service The PeopleURIs database service
-     * @param string|null $name    The name of the command; passing null means it
+     * @param PeopleUriService $service The PeopleURIs database service
+     * @param string|null      $name    The name of the command; passing null means it
      * must be set in configure()
      */
     public function __construct(protected PeopleUriService $service, $name = null)
