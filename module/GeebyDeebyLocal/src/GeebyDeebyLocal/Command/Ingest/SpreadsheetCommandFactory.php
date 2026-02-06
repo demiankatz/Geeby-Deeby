@@ -32,7 +32,7 @@ namespace GeebyDeebyLocal\Command\Ingest;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Psr\Container\ContainerInterface as ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for ingest/spreadsheet command.
