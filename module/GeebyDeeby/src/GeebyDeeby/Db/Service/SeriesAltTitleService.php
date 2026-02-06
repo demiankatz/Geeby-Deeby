@@ -140,4 +140,16 @@ class SeriesAltTitleService extends AbstractDbService
         }
         return null;
     }
+
+    /**
+     * Get entities by alt title.
+     *
+     * @param string $title Title to look up
+     *
+     * @return SeriesAltTitleEntityInterface[]
+     */
+    public function getByAltTitle(string $title): array
+    {
+        return iterator_to_array($this->seriesAltTitlesTable->select(['Series_AltName' => $title]));
+    }
 }
