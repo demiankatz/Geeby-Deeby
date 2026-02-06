@@ -3,7 +3,7 @@
 /**
  * Class to load Stanford thumbnails into the database.
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2021.
  *

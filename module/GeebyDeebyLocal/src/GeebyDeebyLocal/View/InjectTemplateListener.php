@@ -3,7 +3,7 @@
 /**
  * Custom template listener for GeebyDeebyLocal.
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *

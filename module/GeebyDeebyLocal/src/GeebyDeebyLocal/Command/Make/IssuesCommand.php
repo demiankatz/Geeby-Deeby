@@ -3,7 +3,7 @@
 /**
  * Console command: make issues
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2020.
  *

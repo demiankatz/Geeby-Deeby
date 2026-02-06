@@ -4,7 +4,7 @@
  * Adds getSeriesByTitle method to Command classes; assumes the presence of
  * $this->series and $this->seriesAltTitles database table classes.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2020.
  *

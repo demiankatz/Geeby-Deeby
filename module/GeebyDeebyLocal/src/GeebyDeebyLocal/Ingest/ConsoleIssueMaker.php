@@ -3,7 +3,7 @@
 /**
  * Class to move Works into Issues within a Series (console version).
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2025.
  *
