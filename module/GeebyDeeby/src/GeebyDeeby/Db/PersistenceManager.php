@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\AbstractEntity;
 use GeebyDeeby\Db\Entity\CollectionEntityInterface;
 use GeebyDeeby\Db\Entity\EntityInterface;
 use GeebyDeeby\Db\Entity\ItemsReviewEntityInterface;
@@ -62,11 +64,15 @@ class PersistenceManager
     /**
      * Constructor
      *
-     * @param ?int    $activeUserId ID of current logged in user (or null if none)
-     * @param ?string $logDir       Directory to store logs in (null to disable logging)
+     * @param EntityManager $entityManager Entity manager
+     * @param ?int          $activeUserId  ID of current logged in user (or null if none)
+     * @param ?string       $logDir        Directory to store logs in (null to disable logging)
      */
-    public function __construct(protected ?int $activeUserId, protected ?string $logDir)
-    {
+    public function __construct(
+        protected EntityManager $entityManager,
+        protected ?int $activeUserId,
+        protected ?string $logDir
+    ) {
     }
 
     /**
@@ -78,11 +84,15 @@ class PersistenceManager
      */
     public function persistEntity(EntityInterface $entity): void
     {
-        if (!$entity instanceof AbstractRowGateway) {
+        $this->logActivity($entity, 'PERSIST');
+        if ($entity instanceof AbstractRowGateway) {
+            $entity->save();
+        } elseif ($entity instanceof AbstractEntity) {
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+        } else {
             throw new \Exception('Unexpected entity type');
         }
-        $this->logActivity($entity, 'PERSIST');
-        $entity->save();
     }
 
     /**
@@ -94,11 +104,15 @@ class PersistenceManager
      */
     public function deleteEntity(EntityInterface $entity): void
     {
-        if (!$entity instanceof AbstractRowGateway) {
+        $this->logActivity($entity, 'DELETE');
+        if ($entity instanceof AbstractRowGateway) {
+            $entity->delete();
+        } elseif ($entity instanceof AbstractEntity) {
+            $this->entityManager->remove($entity);
+            $this->entityManager->flush();
+        } else {
             throw new \Exception('Unexpected entity type');
         }
-        $this->logActivity($entity, 'DELETE');
-        $entity->delete();
     }
 
     /**
@@ -113,7 +127,7 @@ class PersistenceManager
     {
         $keys = [];
         // Add key details if applicable:
-        if ($entity instanceof \Laminas\Db\RowGateway\RowGateway) {
+        if ($entity instanceof EntityInterface) {
             $entityArray = $entity->toArray();
             foreach ($entity->getPrimaryKeyColumn() as $key) {
                 $keys[] = $key . ':' . ($entityArray[$key] ?? 'NEW');

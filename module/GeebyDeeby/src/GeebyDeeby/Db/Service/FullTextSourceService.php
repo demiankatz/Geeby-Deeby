@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\FullTextSourceEntity;
 use GeebyDeeby\Db\Entity\FullTextSourceEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\FullTextSource;
@@ -48,10 +50,12 @@ class FullTextSourceService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager       Entity manager
      * @param PersistenceManager $persistenceManager  Persistence manager
      * @param FullTextSource     $fullTextSourceTable FullTextSource table
      */
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected FullTextSource $fullTextSourceTable
@@ -66,7 +70,7 @@ class FullTextSourceService extends AbstractDbService
      */
     public function createEntity(): FullTextSourceEntityInterface
     {
-        return $this->fullTextSourceTable->createRow();
+        return new FullTextSourceEntity();
     }
 
     /**
@@ -78,7 +82,7 @@ class FullTextSourceService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?FullTextSourceEntityInterface
     {
-        return $this->fullTextSourceTable->getByPrimaryKey($id);
+        return $this->entityManager->find(FullTextSourceEntity::class, $id);
     }
 
     /**
@@ -103,6 +107,12 @@ class FullTextSourceService extends AbstractDbService
      */
     public function getList(?int $seriesID = null): array
     {
-        return iterator_to_array($this->fullTextSourceTable->getList($seriesID));
+        $dql = 'SELECT fts FROM ' . FullTextSourceEntity::class . ' fts';
+        if ($seriesID) {
+            throw new \Exception('TODO: implement series filtering');
+        }
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
+        //return iterator_to_array($this->fullTextSourceTable->getList($seriesID));
     }
 }

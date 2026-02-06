@@ -1306,6 +1306,7 @@ return [
     ],
     'service_manager' => [
         'factories' => [
+            \Doctrine\ORM\EntityManager::class => \GeebyDeeby\Db\EntityManagerFactory::class,
             \GeebyDeeby\Articles::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
             \GeebyDeeby\Db\PersistenceManager::class => \GeebyDeeby\Db\PersistenceManagerFactory::class,
             \GeebyDeeby\Db\Row\PluginManager::class => \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,

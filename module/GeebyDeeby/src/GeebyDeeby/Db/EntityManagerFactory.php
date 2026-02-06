@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Persistence manager factory.
+ * Database adapter factory.
  *
  * PHP version 8
  *
- * Copyright (C) Demian Katz 2026.
+ * Copyright (C) Demian Katz 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,7 +21,7 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
@@ -29,19 +29,21 @@
 
 namespace GeebyDeeby\Db;
 
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
 use Psr\Container\ContainerInterface;
 
 /**
- * Persistence manager factory.
+ * Database adapter factory.
  *
  * @category GeebyDeeby
- * @package  Db
+ * @package  Db_Row
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class PersistenceManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class EntityManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create service
@@ -59,13 +61,19 @@ class PersistenceManagerFactory implements \Laminas\ServiceManager\Factory\Facto
         $name,
         ?array $options = null
     ) {
+        $paths = [__DIR__ . '/Entity'];
+        $isDevMode = false;
         $config = $container->get('Config');
-        if (!empty($config['geeby-deeby']['activity_log_dir'])) {
-            $user = $container->get('GeebyDeeby\Authentication')->getIdentity();
-            $logDir = $config['geeby-deeby']['activity_log_dir'];
-        } else {
-            $user = $logDir = null;
-        }
-        return new $name($container->get(EntityManager::class), $user, $logDir);
+        $dbParams = [
+                'driver' => 'pdo_mysql',
+                'charset' => 'utf8mb4',
+                'host' => $config['geeby-deeby']['dbHost'],
+                'user' => $config['geeby-deeby']['dbUser'],
+                'password' => $config['geeby-deeby']['dbPass'],
+                'dbname' => $config['geeby-deeby']['dbName'],
+        ];
+        $doctrineConfig = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
+        $connection = DriverManager::getConnection($dbParams, $doctrineConfig);
+        return new EntityManager($connection, $doctrineConfig);
     }
 }
