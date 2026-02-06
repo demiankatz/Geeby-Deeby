@@ -29,6 +29,7 @@
 
 namespace GeebyDeebyLocal\Command\Make;
 
+use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeebyLocal\Ingest\ConsoleIssueMaker;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -66,11 +67,9 @@ class IssueCommandFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $dbManager = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
         return new $requestedName(
             $container->get(ConsoleIssueMaker::class),
-            $dbManager->get('edition'),
-            $dbManager->get('series')
+            $container->get(\GeebyDeeby\Db\Service\PluginManager::class)->get(EditionService::class)
         );
     }
 }

@@ -29,9 +29,8 @@
 
 namespace GeebyDeebyLocal\Command\Make;
 
-use GeebyDeeby\Db\Table\Edition;
-use GeebyDeeby\Db\Table\Series;
-use GeebyDeebyLocal\Ingest\IssueMaker;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeebyLocal\Ingest\ConsoleIssueMaker;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -54,44 +53,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 class IssueCommand extends Command
 {
     /**
-     * Issue maker
-     *
-     * @var IssueMaker
-     */
-    protected $issueMaker;
-
-    /**
-     * Edition table
-     *
-     * @var Edition
-     */
-    protected $editionTable;
-
-    /**
-     * Series table
-     *
-     * @var Series
-     */
-    protected $seriesTable;
-
-    /**
      * Constructor
      *
-     * @param IssueMaker  $issueMaker Issue maker
-     * @param Edition     $edition    Edition table
-     * @param Series      $series     Series table
-     * @param string|null $name       The name of the command; passing null means it
-     * must be set in configure()
+     * @param ConsoleIssueMaker $issueMaker     Issue maker
+     * @param EditionService    $editionService Edition service
+     * @param string|null       $name           The name of the command; passing null means it must be set in
+     * configure()
      */
     public function __construct(
-        IssueMaker $issueMaker,
-        Edition $edition,
-        Series $series,
+        protected ConsoleIssueMaker $issueMaker,
+        protected EditionService $editionService,
         $name = null
     ) {
-        $this->issueMaker = $issueMaker;
-        $this->editionTable = $edition;
-        $this->seriesTable = $series;
         parent::__construct($name);
     }
 
@@ -130,16 +103,16 @@ class IssueCommand extends Command
     {
         $edition = $input->getArgument('edition');
         $prefix = $input->getArgument('prefix');
-        $editionObj = $this->editionTable->getByPrimaryKey($edition);
+        $editionObj = $this->editionService->getByPrimaryKey($edition);
         if (!$editionObj) {
             $output->writeln("Cannot find edition match for $edition");
             return 1;
         }
-        $seriesObj = $this->seriesTable->getByPrimaryKey($editionObj->Series_ID);
+        $seriesObj = $editionObj->getSeries();
         $this->issueMaker->setOutputInterface($output);
         $this->issueMaker->createIssueForWork(
             $editionObj,
-            empty($prefix) ? $seriesObj->Series_Name . ' #' : $prefix
+            empty($prefix) ? $seriesObj->getSeriesName() . ' #' : $prefix
         );
         return 0;
     }

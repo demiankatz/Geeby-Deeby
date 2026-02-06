@@ -29,8 +29,8 @@
 
 namespace GeebyDeebyLocal\Command\Make;
 
-use GeebyDeeby\Db\Table\Series;
-use GeebyDeebyLocal\Ingest\IssueMaker;
+use GeebyDeeby\Db\Service\SeriesService;
+use GeebyDeebyLocal\Ingest\ConsoleIssueMaker;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -53,31 +53,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 class IssuesCommand extends Command
 {
     /**
-     * Issue maker
-     *
-     * @var IssueMaker
-     */
-    protected $issueMaker;
-
-    /**
-     * Series table
-     *
-     * @var Series
-     */
-    protected $seriesTable;
-
-    /**
      * Constructor
      *
-     * @param IssueMaker  $issueMaker Issue maker
-     * @param Series      $series     Series table
-     * @param string|null $name       The name of the command; passing null means it
+     * @param ConsoleIssueMaker $issueMaker    Issue maker
+     * @param SeriesService     $seriesService Series table
+     * @param string|null       $name          The name of the command; passing null means it
      * must be set in configure()
      */
-    public function __construct(IssueMaker $issueMaker, Series $series, $name = null)
-    {
-        $this->issueMaker = $issueMaker;
-        $this->seriesTable = $series;
+    public function __construct(
+        protected ConsoleIssueMaker $issueMaker,
+        protected SeriesService $seriesService,
+        $name = null
+    ) {
         parent::__construct($name);
     }
 
@@ -116,7 +103,7 @@ class IssuesCommand extends Command
     {
         $series = $input->getArgument('series');
         $prefix = $input->getArgument('prefix');
-        $seriesObj = $this->seriesTable->getByPrimaryKey($series);
+        $seriesObj = $this->seriesService->getByPrimaryKey($series);
         if (!$seriesObj) {
             $output->writeln("Cannot find series match for $series");
             return 1;
@@ -124,7 +111,7 @@ class IssuesCommand extends Command
         $this->issueMaker->setOutputInterface($output);
         $this->issueMaker->makeIssues(
             $seriesObj,
-            empty($prefix) ? $seriesObj->Series_Name . ' #' : $prefix
+            empty($prefix) ? $seriesObj->getSeriesName() . ' #' : $prefix
         );
         return 0;
     }
