@@ -67,12 +67,10 @@ class SpreadsheetCommandFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $tables = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
         $services = $container->get(\GeebyDeeby\Db\Service\PluginManager::class);
         return new $requestedName(
             $services->get(SeriesService::class),
             $services->get(SeriesAltTitleService::class),
-            $tables->get('edition'),
             $container->get(\GeebyDeebyLocal\Ingest\DatabaseIngester::class)
         );
     }
