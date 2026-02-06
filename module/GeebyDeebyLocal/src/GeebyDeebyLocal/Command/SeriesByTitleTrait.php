@@ -30,10 +30,9 @@
 
 namespace GeebyDeebyLocal\Command;
 
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesService;
-use GeebyDeeby\Db\Table\Series;
-use GeebyDeeby\Db\Table\SeriesAltTitles;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function count;
@@ -70,9 +69,9 @@ trait SeriesByTitleTrait
      * @param string          $title  Title
      * @param OutputInterface $output Output interface
      *
-     * @return \GeebyDeeby\Db\Row\Series|bool
+     * @return ?SeriesEntityInterface
      */
-    protected function getSeriesByTitle($title, OutputInterface $output)
+    protected function getSeriesByTitle($title, OutputInterface $output): ?SeriesEntityInterface
     {
         $result = $this->series->getSeriesByName($title);
         if (count($result) != 1) {
@@ -85,12 +84,9 @@ trait SeriesByTitleTrait
             }
             if (count($result) != 1) {
                 $output->writeln('Unexpected result count: ' . count($result));
-                return false;
+                return null;
             }
         }
-        foreach ($result as $current) {
-            return $current;
-        }
-        return false;
+        return $result[0] ?? null;
     }
 }
