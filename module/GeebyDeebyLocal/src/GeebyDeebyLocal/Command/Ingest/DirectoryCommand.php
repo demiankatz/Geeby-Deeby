@@ -29,8 +29,8 @@
 
 namespace GeebyDeebyLocal\Command\Ingest;
 
-use GeebyDeeby\Db\Table\Edition;
-use GeebyDeeby\Db\Table\Series;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeebyLocal\Ingest\DatabaseIngester;
 use GeebyDeebyLocal\Ingest\ModsExtractor;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -57,54 +57,22 @@ use function is_object;
 class DirectoryCommand extends Command
 {
     /**
-     * Series table
-     *
-     * @var Series
-     */
-    protected $series;
-
-    /**
-     * Editions table
-     *
-     * @var Edition
-     */
-    protected $editions;
-
-    /**
-     * MODS extractor
-     *
-     * @var ModsExtractor
-     */
-    protected $extractor;
-
-    /**
-     * Database ingester
-     *
-     * @var DatabaseIngester
-     */
-    protected $ingester;
-
-    /**
      * Constructor
      *
-     * @param Series           $series    Series table
-     * @param Edition          $editions  Edition table
-     * @param ModsExtractor    $extractor MODS extractor
-     * @param DatabaseIngester $ingester  Database ingester
-     * @param string|null      $name      The name of the command; passing null means
+     * @param SeriesService    $seriesService  Series database service
+     * @param EditionService   $editionService Edition database service
+     * @param ModsExtractor    $extractor      MODS extractor
+     * @param DatabaseIngester $ingester       Database ingester
+     * @param string|null      $name           The name of the command; passing null means
      * it must be set in configure()
      */
     public function __construct(
-        Series $series,
-        Edition $editions,
-        ModsExtractor $extractor,
-        DatabaseIngester $ingester,
+        protected SeriesService $seriesService,
+        protected EditionService $editionService,
+        protected ModsExtractor $extractor,
+        protected DatabaseIngester $ingester,
         $name = null
     ) {
-        $this->series = $series;
-        $this->editions = $editions;
-        $this->extractor = $extractor;
-        $this->ingester = $ingester;
         parent::__construct($name);
     }
 
@@ -145,7 +113,7 @@ class DirectoryCommand extends Command
         switch ($job->type) {
             case 'series':
                 // for series, extra is series object, loaded once...
-                $extra = $this->series->getByPrimaryKey($job->id);
+                $extra = $this->seriesService->getByPrimaryKey($job->id);
                 break;
             case 'existing':
                 break;
@@ -169,7 +137,7 @@ class DirectoryCommand extends Command
                     $output->writeln("Missing edition data in $i.json");
                     return 1;
                 }
-                $extra = $this->editions->getByPrimaryKey($extras->edition);
+                $extra = $this->editionService->getByPrimaryKey($extras->edition);
             }
             if (!$this->ingester->ingest($details, $job->type, $extra ?? null)) {
                 $prompt = 'Continue with next item anyway?';
@@ -181,8 +149,7 @@ class DirectoryCommand extends Command
             $output->writeln('---');
             $success++;
         }
-        $output
-            ->writeln("Successfully processed $success of {$job->count} editions.");
+        $output->writeln("Successfully processed $success of {$job->count} editions.");
         return 0;
     }
 }

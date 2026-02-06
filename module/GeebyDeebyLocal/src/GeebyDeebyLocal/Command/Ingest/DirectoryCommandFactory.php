@@ -29,8 +29,10 @@
 
 namespace GeebyDeebyLocal\Command\Ingest;
 
-use Interop\Container\ContainerInterface;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\SeriesService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for ingest/directory command.
@@ -60,15 +62,15 @@ class DirectoryCommandFactory implements FactoryInterface
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $tables = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
+        $services = $container->get(\GeebyDeeby\Db\Service\PluginManager::class);
         return new $requestedName(
-            $tables->get('series'),
-            $tables->get('edition'),
+            $services->get(SeriesService::class),
+            $services->get(EditionService::class),
             new \GeebyDeebyLocal\Ingest\ModsExtractor(),
             $container->get(\GeebyDeebyLocal\Ingest\DatabaseIngester::class)
         );
