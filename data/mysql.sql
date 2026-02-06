@@ -397,37 +397,6 @@ CREATE TABLE `Editions_Release_Dates` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `FAQ_Categories`
---
-
-DROP TABLE IF EXISTS `FAQ_Categories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FAQ_Categories` (
-  `FAQ_Category_ID` int(11) NOT NULL DEFAULT '0',
-  `FAQ_Category_Name` tinytext,
-  PRIMARY KEY (`FAQ_Category_ID`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `FAQs`
---
-
-DROP TABLE IF EXISTS `FAQs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FAQs` (
-  `FAQ_Category_ID` int(11) NOT NULL DEFAULT '0',
-  `FAQ_ID` int(11) NOT NULL DEFAULT '0',
-  `FAQ_Name` tinytext,
-  `FAQ_Body` text,
-  PRIMARY KEY (`FAQ_Category_ID`,`FAQ_ID`),
-  FOREIGN KEY (`FAQ_Category_ID`) REFERENCES `FAQ_Categories` (`FAQ_Category_ID`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `File_Types`
 --
 
@@ -728,6 +697,7 @@ CREATE TABLE `Items_Reviews` (
   `User_ID` int(11) NOT NULL DEFAULT '0',
   `Review` text NOT NULL,
   `Approved` enum('y','n') NOT NULL DEFAULT 'y',
+  `Added` date NOT NULL DEFAULT '2004-09-23',
   PRIMARY KEY (`Item_ID`,`User_ID`),
   FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
   FOREIGN KEY (`User_ID`) REFERENCES `Users` (`User_ID`),
@@ -1044,23 +1014,6 @@ CREATE TABLE `Publishers_URIs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Recent_Reviews`
---
-
-DROP TABLE IF EXISTS `Recent_Reviews`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Recent_Reviews` (
-  `Added` date NOT NULL DEFAULT '0000-00-00',
-  `User_ID` int(11) NOT NULL DEFAULT '0',
-  `Item_ID` int(11) NOT NULL DEFAULT '0',
-  `Type` enum('item','series') NOT NULL DEFAULT 'item',
-  PRIMARY KEY (`User_ID`,`Item_ID`),
-  FOREIGN KEY (`User_ID`) REFERENCES `Users`(`User_ID`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Roles`
 --
 
@@ -1303,6 +1256,7 @@ CREATE TABLE `Series_Reviews` (
   `User_ID` int(11) NOT NULL DEFAULT '0',
   `Review` text NOT NULL,
   `Approved` enum('y','n') NOT NULL DEFAULT 'y',
+  `Added` date NOT NULL DEFAULT '2004-09-23',
   PRIMARY KEY (`Series_ID`,`User_ID`),
   FOREIGN KEY (`Series_ID`) REFERENCES `Series`(`Series_ID`),
   FOREIGN KEY (`User_ID`) REFERENCES `Users`(`User_ID`)
@@ -1484,8 +1438,10 @@ CREATE TABLE `Users` (
   `User_Group_ID` int(11) DEFAULT NULL,
   `Join_Reason` text DEFAULT NULL,
   `Last_Login` datetime DEFAULT NULL,
+  `Approved` enum('y','n') NOT NULL DEFAULT 'n',
   PRIMARY KEY (`User_ID`),
-  FOREIGN KEY (`User_Group_ID`) REFERENCES `User_Groups` (`User_Group_ID`)
+  FOREIGN KEY (`User_Group_ID`) REFERENCES `User_Groups` (`User_Group_ID`),
+  FOREIGN KEY (`Person_ID`) REFERENCES `People` (`Person_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

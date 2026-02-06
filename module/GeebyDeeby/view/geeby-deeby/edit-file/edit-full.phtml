@@ -7,7 +7,7 @@
 <b>Related Items:</b>
 <form onsubmit="File.link('Item'); return false;">
   <label>Item: <input id="file_item_id" class="Item_ID" /></label>
-  <input type="submit" value="Link" />
+  <input id="link_item" type="submit" value="Link" />
 </form>
 <div id="item_list">
   <?=$this->render('geeby-deeby/edit-file/item-list.phtml')?>
@@ -16,7 +16,7 @@
 <b>Related Series:</b>
 <form onsubmit="File.link('Series'); return false;">
   <label>Series: <input id="file_series_id" class="Series_ID" /></label>
-  <input type="submit" value="Link" />
+  <input id="link_series" type="submit" value="Link" />
 </form>
 <div id="series_list">
   <?=$this->render('geeby-deeby/edit-file/series-list.phtml')?>
@@ -25,7 +25,7 @@
 <b>Related People:</b>
 <form onsubmit="File.link('Person'); return false;">
   <label>Person: <input id="file_person_id" class="Person_ID" /></label>
-  <input type="submit" value="Link" />
+  <input id="link_person" type="submit" value="Link" />
 </form>
 <div id="person_list">
   <?=$this->render('geeby-deeby/edit-file/person-list.phtml')?>

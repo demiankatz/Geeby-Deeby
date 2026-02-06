@@ -3,7 +3,7 @@
 /**
  * Edit material type controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,9 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Entity\MaterialTypeEntityInterface;
+use GeebyDeeby\Db\Service\MaterialTypeService;
 
 /**
  * Edit material type controller
@@ -48,7 +51,7 @@ class EditMaterialTypeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'materialtype',
+            MaterialTypeService::class,
             'materials',
             'geeby-deeby/edit-material-type/render-material-types'
         );
@@ -61,20 +64,14 @@ class EditMaterialTypeController extends AbstractBase
      *
      * @return void
      */
-    protected function setDefaultMaterialType($row)
+    protected function setDefaultMaterialType(MaterialTypeEntityInterface $row)
     {
         // If row is already set as default, no further action is needed:
-        if ($row->Default) {
+        if ($row->isDefault()) {
             return;
         }
 
-        // First clear existing default:
-        $table = $this->getDbTable('materialtype');
-        $table->update(['Default' => 0]);
-
-        // Now set new default:
-        $row->Default = 1;
-        $row->save();
+        $this->getDbService(MaterialTypeService::class)->setDefaultMaterialType($row);
     }
 
     /**
@@ -85,19 +82,18 @@ class EditMaterialTypeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'material' => 'Material_Type_Name',
-            'material_plural' => 'Material_Type_Plural_Name',
-            'material_rdf' => 'Material_Type_RDF_Class',
+            'material' => 'setSingularName',
+            'material_plural' => 'setPluralName',
+            'material_rdf' => 'setRdfClass',
         ];
-        [$response, $ok]
-            = $this->handleGenericItem('materialtype', $assignMap, 'material');
+        [$response, $ok] = $this->handleGenericItem(MaterialTypeService::class, $assignMap, 'material');
 
         // Special handling for "set as default" checkbox:
         if (
             $ok && $this->getRequest()->isPost()
             && $this->params()->fromPost('default')
         ) {
-            $this->setDefaultMaterialType($response->affectedRow);
+            $this->setDefaultMaterialType($response->affectedEntity);
         }
 
         return $response;

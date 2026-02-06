@@ -3,7 +3,7 @@
 /**
  * Row Definition for Files
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\FileEntityInterface;
+use GeebyDeeby\Db\Entity\FileTypeEntityInterface;
+
 /**
  * Row Definition for Files
  *
@@ -38,7 +41,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class File extends RowGateway
+class File extends TableAwareGateway implements FileEntityInterface
 {
     /**
      * Constructor
@@ -51,19 +54,105 @@ class File extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->File_Name)) {
-            return 'Name cannot be blank.';
-        }
-        if (empty($this->File_Path)) {
-            return 'Path cannot be blank.';
-        }
-        return false;
+        return $this->File_ID ?? null;
+    }
+
+    /**
+     * Get the name of the file.
+     *
+     * @return string
+     */
+    public function getFileName(): string
+    {
+        return $this->File_Name;
+    }
+
+    /**
+     * Set the name of the file.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setFileName(string $name): static
+    {
+        $this->File_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get the path of the file.
+     *
+     * @return string
+     */
+    public function getFilePath(): string
+    {
+        return $this->File_Path;
+    }
+
+    /**
+     * Set the path of the file.
+     *
+     * @param string $path New path.
+     *
+     * @return static
+     */
+    public function setFilePath(string $path): static
+    {
+        $this->File_Path = $path;
+        return $this;
+    }
+
+    /**
+     * Get a description of the file.
+     *
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->Description;
+    }
+
+    /**
+     * Set the file.
+     *
+     * @param string $description New description
+     *
+     * @return static
+     */
+    public function setDescription(string $description): static
+    {
+        $this->Description = $description;
+        return $this;
+    }
+
+    /**
+     * Get associated file type.
+     *
+     * @return FileTypeEntityInterface
+     */
+    public function getFileType(): FileTypeEntityInterface
+    {
+        return $this->getTableManager()->get('filetype')->getByPrimaryKey($this->File_Type_ID);
+    }
+
+    /**
+     * Set associated file type.
+     *
+     * @param int|FileTypeEntityInterface $fileType Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setFileType(int|FileTypeEntityInterface $fileType): static
+    {
+        $this->File_Type_ID = $fileType instanceof FileTypeEntityInterface
+            ? $fileType->getId() : $fileType;
+        return $this;
     }
 }

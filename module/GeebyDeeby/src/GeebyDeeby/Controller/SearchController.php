@@ -3,7 +3,7 @@
 /**
  * Search controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,16 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\CategoryService;
+use GeebyDeeby\Db\Service\EditionsAttributesValueService;
+use GeebyDeeby\Db\Service\EditionsIsbnService;
+use GeebyDeeby\Db\Service\ItemsAltTitleService;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesService;
+use GeebyDeeby\Db\Service\TagService;
 
 use function strlen;
 
@@ -66,7 +76,7 @@ class SearchController extends AbstractBase
         $post = $this->params()->fromPost();
         $ids = explode(',', $post['ids']);
         $index = [];
-        foreach ($this->getDbTable('person')->getListForItemIds($ids) as $row) {
+        foreach ($this->getDbService(PersonService::class)->getListForItemIds($ids) as $row) {
             $index[$row['Item_ID']] ??= [];
             $index[$row['Item_ID']][] = $row;
         }
@@ -91,7 +101,9 @@ class SearchController extends AbstractBase
         $attributeId = $post['attribute_id'];
         $ids = explode(',', $post['ids']);
         $result = [];
-        foreach ($this->getDbTable('editionsattributesvalues')->getAttributesForItem($ids, $attributeId) as $row) {
+        $attributes = $this->getDbService(EditionsAttributesValueService::class)
+            ->getAttributesForItem($ids, $attributeId);
+        foreach ($attributes as $row) {
             // We only want to display one value per item, so it doesn't matter if we overwrite existing data here:
             $result[$row['Item_ID']] = '<b>' . htmlspecialchars($row['Editions_Attribute_Name']) . '</b>: '
                 . htmlspecialchars($row['Editions_Attribute_Value']);
@@ -108,15 +120,13 @@ class SearchController extends AbstractBase
     {
         $tokens = $this->tokenize($this->layout()->query);
         $view = $this->createViewModel();
-        $view->series = $this->getDbTable('series')->keywordSearch($tokens);
-        $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
-            ->keywordSearch($tokens);
-        $view->items = $this->getDbTable('item')->keywordSearch($tokens);
-        $view->itemsAltTitles = $this->getDbTable('itemsalttitles')
-            ->keywordSearch($tokens);
-        $view->categories = $this->getDbTable('category')->keywordSearch($tokens);
-        $view->people = $this->getDbTable('person')->keywordSearch($tokens);
-        $view->tags = $this->getDbTable('tag')->keywordSearch($tokens);
+        $view->series = $this->getDbService(SeriesService::class)->keywordSearch($tokens);
+        $view->seriesAltTitles = $this->getDbService(SeriesAltTitleService::class)->keywordSearch($tokens);
+        $view->items = $this->getDbService(ItemService::class)->keywordSearch($tokens);
+        $view->itemsAltTitles = $this->getDbService(ItemsAltTitleService::class)->keywordSearch($tokens);
+        $view->categories = $this->getDbService(CategoryService::class)->keywordSearch($tokens);
+        $view->people = $this->getDbService(PersonService::class)->keywordSearch($tokens);
+        $view->tags = $this->getDbService(TagService::class)->keywordSearch($tokens);
         return $view;
     }
 
@@ -163,7 +173,7 @@ class SearchController extends AbstractBase
     {
         $q = $this->layout()->query;
         $view = $this->createViewModel();
-        $view->results = $this->getDbTable('editionsisbns')->searchForItems($q);
+        $view->results = $this->getDbService(EditionsIsbnService::class)->searchForItems($q);
         return $view;
     }
 
@@ -178,7 +188,7 @@ class SearchController extends AbstractBase
         $q = str_replace(',', ' ', $this->layout()->query);
         $tokens = $this->tokenize($q);
         $view = $this->createViewModel();
-        $view->people = $this->getDbTable('person')->keywordSearch($tokens);
+        $view->people = $this->getDbService(PersonService::class)->keywordSearch($tokens);
         return $view;
     }
 
@@ -195,12 +205,10 @@ class SearchController extends AbstractBase
             ->stripLeadingArticles($this->layout()->query);
         $tokens = [$q];
         $view = $this->createViewModel();
-        $view->series = $this->getDbTable('series')->keywordSearch($tokens);
-        $view->seriesAltTitles = $this->getDbTable('seriesalttitles')
-            ->keywordSearch($tokens);
-        $view->items = $this->getDbTable('item')->keywordSearch($tokens);
-        $view->itemsAltTitles = $this->getDbTable('itemsalttitles')
-            ->keywordSearch($tokens);
+        $view->series = $this->getDbService(SeriesService::class)->keywordSearch($tokens);
+        $view->seriesAltTitles = $this->getDbService(SeriesAltTitleService::class)->keywordSearch($tokens);
+        $view->items = $this->getDbService(ItemService::class)->keywordSearch($tokens);
+        $view->itemsAltTitles = $this->getDbService(ItemsAltTitleService::class)->keywordSearch($tokens);
         return $view;
     }
 }

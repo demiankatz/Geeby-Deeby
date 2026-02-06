@@ -3,7 +3,7 @@
 /**
  * Edit platform controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\PlatformService;
 
 /**
  * Edit platform controller
@@ -48,7 +50,7 @@ class EditPlatformController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'platform',
+            PlatformService::class,
             'platforms',
             'geeby-deeby/edit-platform/render-platforms'
         );
@@ -61,8 +63,8 @@ class EditPlatformController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['platform' => 'Platform'];
-        [$response] = $this->handleGenericItem('platform', $assignMap, 'platform');
+        $assignMap = ['platform' => 'setPlatformName'];
+        [$response] = $this->handleGenericItem(PlatformService::class, $assignMap, 'platform');
         return $response;
     }
 }

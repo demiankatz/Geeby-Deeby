@@ -3,7 +3,7 @@
 /**
  * Category controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,9 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\CategoryService;
+use GeebyDeeby\Db\Service\SeriesCategoryService;
 
 use function is_object;
 
@@ -50,16 +53,14 @@ class CategoryController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('category');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(CategoryService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Category', 'notfound');
         }
         $view = $this->createViewModel(
-            ['category' => $rowObj->toArray()]
+            ['category' => $entity->toArray()]
         );
-        $view->series = $this->getDbTable('seriescategories')
-            ->getSeriesForCategory($id);
+        $view->series = $this->getDbService(SeriesCategoryService::class)->getSeriesForCategory($id);
         return $view;
     }
 
@@ -71,7 +72,7 @@ class CategoryController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['categories' => $this->getDbTable('category')->getList()]
+            ['categories' => $this->getDbService(CategoryService::class)->getList()]
         );
     }
 

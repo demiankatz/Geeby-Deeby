@@ -3,7 +3,7 @@
 /**
  * Edit citation controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2018.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\CitationService;
 
 /**
  * Edit citation controller
@@ -48,7 +50,7 @@ class EditCitationController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'citation',
+            CitationService::class,
             'citations',
             'geeby-deeby/edit-citation/render-citations'
         );
@@ -61,8 +63,8 @@ class EditCitationController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['citation' => 'Citation'];
-        [$response] = $this->handleGenericItem('citation', $assignMap, 'citation');
+        $assignMap = ['citation' => 'setCitationName'];
+        [$response] = $this->handleGenericItem(CitationService::class, $assignMap, 'citation');
         return $response;
     }
 }

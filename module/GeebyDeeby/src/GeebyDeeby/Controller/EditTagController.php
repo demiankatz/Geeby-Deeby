@@ -3,7 +3,7 @@
 /**
  * Edit tag controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,16 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\PredicateService;
+use GeebyDeeby\Db\Service\TagsAttributeService;
+use GeebyDeeby\Db\Service\TagsAttributesValueService;
+use GeebyDeeby\Db\Service\TagService;
+use GeebyDeeby\Db\Service\TagsRelationshipService;
+use GeebyDeeby\Db\Service\TagsRelationshipsValueService;
+use GeebyDeeby\Db\Service\TagsUriService;
+use GeebyDeeby\Db\Service\TagTypeService;
 
 /**
  * Edit tag controller
@@ -48,7 +58,7 @@ class EditTagController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'tag',
+            TagService::class,
             'tags',
             'geeby-deeby/edit-tag/render-tags'
         );
@@ -69,19 +79,18 @@ class EditTagController extends AbstractBase
      */
     protected function saveAttributes($tagId, $attribs)
     {
-        $table = $this->getDbTable('tagsattributesvalues');
+        $service = $this->getDbService(TagsAttributesValueService::class);
         // Delete old values:
-        $table->delete(['Tag_ID' => $tagId]);
+        $service->deleteByTag($tagId);
+
         // Save new values:
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
-                $table->insert(
-                    [
-                        'Tag_ID' => $tagId,
-                        'Tags_Attribute_ID' => $id,
-                        'Tags_Attribute_Value' => $val,
-                    ]
-                );
+                $entity = $service->createEntity()
+                    ->setTag($tagId)
+                    ->setAttribute($id)
+                    ->setValue($val);
+                $service->persistEntity($entity);
             }
         }
     }
@@ -94,17 +103,17 @@ class EditTagController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'tag' => 'Tag',
-            'type_id' => 'Tag_Type_ID',
+            'tag' => 'setTag',
+            'type_id' => 'setTagType',
         ];
-        [$view, $ok] = $this->handleGenericItem('tag', $assignMap, 'tag');
+        [$view, $ok] = $this->handleGenericItem(TagService::class, $assignMap, 'tag');
         if (!$ok) {
             return $view;
         }
         $view->tagTypes = $this->typelistAction()->tagTypes;
 
         // Get tag ID
-        $tagId = $view->tag['Tag_ID'] ?? $view->affectedRow->Tag_ID ?? null;
+        $tagId = $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if (
@@ -116,28 +125,23 @@ class EditTagController extends AbstractBase
 
         // Add attribute details if we have a Tag_ID.
         if ($tagId) {
-            $view->attributes = $this->getDbTable('tagsattribute')->getList();
+            $view->attributes = $this->getDbService(TagsAttributeService::class)->getList();
             $attributeValues = [];
-            $values = $this->getDbTable('tagsattributesvalues')
-                ->getAttributesForTag($tagId);
+            $values = $this->getDbService(TagsAttributesValueService::class)->getAttributesForTag($tagId);
             foreach ($values as $current) {
-                $attributeValues[$current->Tags_Attribute_ID]
-                    = $current->Tags_Attribute_Value;
+                $attributeValues[$current['Tags_Attribute_ID']] = $current['Tags_Attribute_Value'];
             }
             $view->attributeValues = $attributeValues;
         }
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbTable('tagsuris')
-                ->getURIsForTag($view->tagObj->Tag_ID);
+            $view->uris = $this->getDbService(TagsUriService::class)->getURIsForTag($tagId);
             $view->setTemplate('geeby-deeby/edit-tag/edit-full');
-            $view->items = $this->getDbTable('itemstags')
-                ->getItemsForTag($view->tagObj->Tag_ID);
-            $view->predicates = $this->getDbTable('predicate')->getList();
-            $view->relationships = $this->getDbTable('tagsrelationship')
-                ->getOptionList();
-            $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
+            $view->items = $this->getDbService(ItemsTagService::class)->getItemsForTag($tagId);
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
+            $view->relationships = $this->getDbService(TagsRelationshipService::class)->getOptionList();
+            $view->relationshipsValues = $this->getDbService(TagsRelationshipsValueService::class)
                 ->getRelationshipsForTag($tagId);
         }
         return $view;
@@ -151,7 +155,7 @@ class EditTagController extends AbstractBase
     public function typelistAction()
     {
         return $this->getGenericList(
-            'tagType',
+            TagTypeService::class,
             'tagTypes',
             'geeby-deeby/edit-tag/render-types'
         );
@@ -165,12 +169,14 @@ class EditTagController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemstags',
-            'Tag_ID',
-            'Item_ID',
+            ItemsTagService::class,
+            'setTag',
+            'setItem',
             'items',
             'getItemsForTag',
-            'geeby-deeby/edit-tag/item-list.phtml'
+            'geeby-deeby/edit-tag/item-list.phtml',
+            retrieveLinkMethod: 'getByItemAndTag',
+            invertRetrieveLinkParams: true
         );
     }
 
@@ -186,22 +192,26 @@ class EditTagController extends AbstractBase
         // the standard behavior consistent.
         $rid = $this->params()->fromRoute('relationship_id');
         if (substr($rid, 0, 1) === 'i') {
-            $linkFrom = 'Object_Tag_ID';
-            $linkTo = 'Subject_Tag_ID';
+            $linkFrom = 'setObject';
+            $linkTo = 'setSubject';
             $rid = substr($rid, 1);
+            $invertRetrieve = true;
         } else {
-            $linkFrom = 'Subject_Tag_ID';
-            $linkTo = 'Object_Tag_ID';
+            $linkFrom = 'setSubject';
+            $linkTo = 'setObject';
+            $invertRetrieve = false;
         }
-        $extras = ['Tags_Relationship_ID' => $rid];
+        $extras = ['setRelationship' => $rid];
         return $this->handleGenericLink(
-            'tagsrelationshipsvalues',
+            TagsRelationshipsValueService::class,
             $linkFrom,
             $linkTo,
             'relationshipsValues',
             'getRelationshipsForTag',
             'geeby-deeby/edit-tag/relationship-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getBySubjectAndObjectAndRelationship',
+            invertRetrieveLinkParams: $invertRetrieve
         );
     }
 
@@ -230,8 +240,8 @@ class EditTagController extends AbstractBase
      */
     public function typeAction()
     {
-        $assignMap = ['tagType' => 'Tag_Type'];
-        [$response] = $this->handleGenericItem('tagType', $assignMap, 'tagType');
+        $assignMap = ['tagType' => 'setTagTypeName'];
+        [$response] = $this->handleGenericItem(TagTypeService::class, $assignMap, 'tagType');
         return $response;
     }
 
@@ -242,16 +252,16 @@ class EditTagController extends AbstractBase
      */
     public function uriAction()
     {
-        $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+        $extras = ($pid = $this->params()->fromPost('predicate_id')) ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'tagsuris',
-            'Tag_ID',
-            'URI',
+            TagsUriService::class,
+            'setTag',
+            'setUri',
             'uris',
             'getURIsForTag',
             'geeby-deeby/edit-tag/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByTagAndUri'
         );
     }
 }

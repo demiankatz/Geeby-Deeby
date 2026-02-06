@@ -3,7 +3,7 @@
 /**
  * Edit controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -53,10 +53,10 @@ class EditController extends AbstractBase
 
         return $this->createViewModel(
             [
-                'contentEditor' => $user->hasPermission('Content_Editor'),
-                'approver' => $user->hasPermission('Approver'),
-                'userEditor' => $user->hasPermission('User_Editor'),
-                'dataManager' => $user->hasPermission('Data_Manager'),
+                'contentEditor' => $this->userHasPermission($user, 'Content_Editor'),
+                'approver' => $this->userHasPermission($user, 'Approver'),
+                'userEditor' => $this->userHasPermission($user, 'User_Editor'),
+                'dataManager' => $this->userHasPermission($user, 'Data_Manager'),
             ]
         );
     }

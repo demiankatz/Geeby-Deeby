@@ -3,7 +3,7 @@
 /**
  * Publisher controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,10 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\PublisherService;
+use GeebyDeeby\Db\Service\PublishersUriService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
 
 use function is_object;
 
@@ -72,7 +76,7 @@ class PublisherController extends AbstractBase
         );
         $pub = $graph->resource($uri, $class);
         foreach ($view->uris as $uri) {
-            $pub->add($uri->Predicate, $graph->resource($uri->URI));
+            $pub->add($uri['Predicate'], $graph->resource($uri['URI']));
         }
         return $pub;
     }
@@ -130,17 +134,15 @@ class PublisherController extends AbstractBase
     protected function getPublisherViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('publisher');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(PublisherService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $view = $this->createViewModel(
-            ['publisher' => $rowObj->toArray()]
+            ['publisher' => $entity->toArray()]
         );
-        $view->series = $this->getDbTable('seriespublishers')
-            ->getSeriesForPublisher($id);
-        $view->uris = $this->getDbTable('publishersuris')->getURIsForPublisher($id);
+        $view->series = $this->getDbService(SeriesPublisherService::class)->getSeriesForPublisher($id);
+        $view->uris = $this->getDbService(PublishersUriService::class)->getURIsForPublisher($id);
         return $view;
     }
 
@@ -152,7 +154,7 @@ class PublisherController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['publishers' => $this->getDbTable('publisher')->getList()]
+            ['publishers' => $this->getDbService(PublisherService::class)->getList()]
         );
     }
 

@@ -3,7 +3,7 @@
 /**
  * Edit item controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,30 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\CitationService;
+use GeebyDeeby\Db\Service\EditionsCreditService;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\ItemsAdaptationService;
+use GeebyDeeby\Db\Service\ItemsAltTitleService;
+use GeebyDeeby\Db\Service\ItemsAttributeService;
+use GeebyDeeby\Db\Service\ItemsAttributesValueService;
+use GeebyDeeby\Db\Service\ItemsBibliographyService;
+use GeebyDeeby\Db\Service\ItemsCreatorsCitationService;
+use GeebyDeeby\Db\Service\ItemsCreatorService;
+use GeebyDeeby\Db\Service\ItemsDescriptionService;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\ItemsInCollectionService;
+use GeebyDeeby\Db\Service\ItemsRelationshipService;
+use GeebyDeeby\Db\Service\ItemsRelationshipsValueService;
+use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\ItemsTranslationService;
+use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\PeopleBibliographyService;
+use GeebyDeeby\Db\Service\RoleService;
+use GeebyDeeby\Db\Service\SeriesBibliographyService;
+use GeebyDeeby\Db\Service\SeriesService;
+use Throwable;
 
 use function count;
 use function intval;
@@ -51,7 +75,7 @@ class EditItemController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'item',
+            ItemService::class,
             'items',
             'geeby-deeby/edit-item/render-items'
         );
@@ -67,19 +91,17 @@ class EditItemController extends AbstractBase
      */
     protected function saveAttributes($itemId, $attribs)
     {
-        $table = $this->getDbTable('itemsattributesvalues');
+        $service = $this->getDbService(ItemsAttributesValueService::class);
         // Delete old values:
-        $table->delete(['Item_ID' => $itemId]);
+        $service->deleteByItem($itemId);
         // Save new values:
         foreach ($attribs as $id => $val) {
             if (!empty($val)) {
-                $table->insert(
-                    [
-                         'Item_ID' => $itemId,
-                         'Items_Attribute_ID' => $id,
-                         'Items_Attribute_Value' => $val,
-                     ]
-                );
+                $entity = $service->createEntity()
+                    ->setItem($itemId)
+                    ->setAttribute($id)
+                    ->setValue($val);
+                $service->persistEntity($entity);
             }
         }
     }
@@ -92,18 +114,16 @@ class EditItemController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'name' => 'Item_Name',
-            'errata' => 'Item_Errata',
-            'thanks' => 'Item_Thanks',
-            'material' => 'Material_Type_ID',
+            'name' => 'setItemName',
+            'errata' => 'setErrata',
+            'thanks' => 'setThanks',
+            'material' => 'setMaterialType',
         ];
-        [$view, $ok] = $this->handleGenericItem('item', $assignMap, 'item');
+        [$view, $ok] = $this->handleGenericItem(ItemService::class, $assignMap, 'item');
         if (!$ok) {
             return $view;
         }
-        $itemId = $view->itemObj->Item_ID
-            ?? $view->affectedRow->Item_ID
-            ?? null;
+        $itemId = $view->affectedEntity?->getId();
 
         // Special handling for saving attributes:
         if (
@@ -115,86 +135,68 @@ class EditItemController extends AbstractBase
 
         // Add attribute details if we have an Item_ID.
         if ($itemId) {
-            $view->attributes = $this->getDbTable('itemsattribute')->getList();
+            $view->attributes = $this->getDbService(ItemsAttributeService::class)->getList();
             $attributeValues = [];
-            $values = $this->getDbTable('itemsattributesvalues')
-                ->getAttributesForItem($itemId);
+            $values = $this->getDbService(ItemsAttributesValueService::class)->getAttributesForItem($itemId);
             foreach ($values as $current) {
-                $attributeValues[$current->Items_Attribute_ID]
-                    = $current->Items_Attribute_Value;
+                $attributeValues[$current['Items_Attribute_ID']] = $current['Items_Attribute_Value'];
             }
             $view->attributeValues = $attributeValues;
         }
 
-        $view->materials = $this->getDbTable('materialtype')->getList();
+        $view->materials = $this->getDbService(MaterialTypeService::class)->getList();
 
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->adaptedInto = $this->getDbTable('itemsadaptations')
-                ->getAdaptedFrom($itemId);
-            $view->adaptedFrom = $this->getDbTable('itemsadaptations')
-                ->getAdaptedInto($itemId);
-            $view->roles = $this->getDbTable('role')->getList();
-            $view->creators = $this->getDbTable('itemscreators')
-                ->getCreatorsForItem($itemId);
-            $view->credits = $this->getDbTable('editionscredits')
-                ->getCreditsForItem($itemId, true);
-            $view->itemsBib = $this->getDbTable('itemsbibliography')
+            $view->adaptedInto = $this->getDbService(ItemsAdaptationService::class)->getAdaptedFrom($itemId);
+            $view->adaptedFrom = $this->getDbService(ItemsAdaptationService::class)->getAdaptedInto($itemId);
+            $view->roles = $this->getDbService(RoleService::class)->getList();
+            $view->creators = $this->getDbService(ItemsCreatorService::class)->getCreatorsForItem($itemId);
+            $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForItem($itemId, true);
+            $view->itemsBib = $this->getDbService(ItemsBibliographyService::class)
                 ->getItemsDescribedByItem($itemId);
-            $view->peopleBib = $this->getDbTable('peoplebibliography')
+            $view->peopleBib = $this->getDbService(PeopleBibliographyService::class)
                 ->getPeopleDescribedByItem($itemId);
-            $view->seriesBib = $this->getDbTable('seriesbibliography')
+            $view->seriesBib = $this->getDbService(SeriesBibliographyService::class)
                 ->getSeriesDescribedByItem($itemId);
-            $view->item_list = $this->getDbTable('itemsincollections')
-                ->getItemsForCollection($itemId);
-            $view->translatedInto = $this->getDbTable('itemstranslations')
-                ->getTranslatedFrom($itemId);
-            $view->descriptions = $this->getDbTable('itemsdescriptions')
-                ->getDescriptions($itemId);
-            $view->tags = $this->getDbTable('itemstags')
-                ->getTags($itemId);
-            $view->item_alt_titles = $this->getDbTable('itemsalttitles')
-                ->getAltTitles($itemId);
-            $view->relationships = $this->getDbTable('itemsrelationship')
-                ->getOptionList();
-            $view->relationshipsValues = $this
-                ->getDbTable('itemsrelationshipsvalues')
+            $view->item_list = $this->getDbService(ItemsInCollectionService::class)->getItemsForCollection($itemId);
+            $view->translatedInto = $this->getDbService(ItemsTranslationService::class)->getTranslatedFrom($itemId);
+            $view->descriptions = $this->getDbService(ItemsDescriptionService::class)->getDescriptions($itemId);
+            $view->tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($itemId);
+            $view->item_alt_titles = $this->getDbService(ItemsAltTitleService::class)->getAltTitles($itemId);
+            $view->relationships = $this->getDbService(ItemsRelationshipService::class)->getOptionList();
+            $view->relationshipsValues = $this->getDbService(ItemsRelationshipsValueService::class)
                 ->getRelationshipsForItem($itemId);
-            $view->translatedFrom = $this->getDbTable('itemstranslations')
-                ->getTranslatedInto($itemId);
-            $view->editions = $this->getDbTable('edition')
-                ->getEditionsForItem($itemId);
+            $view->translatedFrom = $this->getDbService(ItemsTranslationService::class)->getTranslatedInto($itemId);
+            $view->editions = $this->getDbService(EditionService::class)->getEditionsForItem($itemId);
             $view->setTemplate('geeby-deeby/edit-item/edit-full');
         }
 
         // Process series ID linkage if necessary:
         if ($this->getRequest()->isPost()) {
             if ($editionID = $this->params()->fromPost('edition_id', false)) {
-                $parentEdition = $this->getDbTable('edition')
-                    ->getByPrimaryKey($editionID);
-                $this->getDbTable('edition')->insert(
-                    [
-                        'Edition_Name' => $parentEdition->Edition_Name,
-                        'Item_ID' => $view->affectedRow->Item_ID,
-                        'Series_ID' => $parentEdition->Series_ID,
-                        'Edition_Length' => $this->params()->fromPost('len'),
-                        'Edition_Endings' => $this->params()->fromPost('endings'),
-                        'Parent_Edition_ID' => $editionID,
-                    ]
-                );
+                $editionService = $this->getDbService(EditionService::class);
+                $parentEdition = $editionService->getByPrimaryKey($editionID);
+                $newEdition = $editionService->createEntity()
+                    ->setEditionName($parentEdition->getEditionName())
+                    ->setItem($itemId)
+                    ->setSeries($parentEdition->getSeries())
+                    ->setLength($this->params()->fromPost('len'))
+                    ->setEndings($this->params()->fromPost('endings'))
+                    ->setParentEdition($parentEdition);
+                $editionService->persistEntity($newEdition);
             } elseif ($seriesID = $this->params()->fromPost('series_id', false)) {
-                $series = $this->getDbTable('series')->getByPrimaryKey($seriesID);
+                $series = $this->getDbService(SeriesService::class)->getByPrimaryKey($seriesID);
                 $edName = $this->serviceLocator->get('GeebyDeeby\Articles')
-                    ->articleAwareAppend($series->Series_Name, ' edition');
-                $this->getDbTable('edition')->insert(
-                    [
-                        'Edition_Name' => $edName,
-                        'Item_ID' => $view->affectedRow->Item_ID,
-                        'Series_ID' => $seriesID,
-                        'Edition_Length' => $this->params()->fromPost('len'),
-                        'Edition_Endings' => $this->params()->fromPost('endings'),
-                    ]
-                );
+                    ->articleAwareAppend($series->getSeriesName(), ' edition');
+                $editionService = $this->getDbService(EditionService::class);
+                $newEdition = $editionService->createEntity()
+                    ->setEditionName($edName)
+                    ->setItem($itemId)
+                    ->setSeries($series)
+                    ->setLength($this->params()->fromPost('len'))
+                    ->setEndings($this->params()->fromPost('endings'));
+                $editionService->persistEntity($newEdition);
             }
         }
 
@@ -209,12 +211,13 @@ class EditItemController extends AbstractBase
     public function aboutitemAction()
     {
         return $this->handleGenericLink(
-            'itemsbibliography',
-            'Bib_Item_ID',
-            'Item_ID',
+            ItemsBibliographyService::class,
+            'setBibliographyItem',
+            'setItem',
             'itemsBib',
             'getItemsDescribedByItem',
-            'geeby-deeby/edit-item/item-ref-list.phtml'
+            'geeby-deeby/edit-item/item-ref-list.phtml',
+            retrieveLinkMethod: 'getByBibliographyItemAndItem',
         );
     }
 
@@ -226,12 +229,13 @@ class EditItemController extends AbstractBase
     public function aboutseriesAction()
     {
         return $this->handleGenericLink(
-            'seriesbibliography',
-            'Item_ID',
-            'Series_ID',
+            SeriesBibliographyService::class,
+            'setItem',
+            'setSeries',
             'seriesBib',
             'getSeriesDescribedByItem',
-            'geeby-deeby/edit-item/series-ref-list.phtml'
+            'geeby-deeby/edit-item/series-ref-list.phtml',
+            retrieveLinkMethod: 'getByItemAndSeries'
         );
     }
 
@@ -243,12 +247,13 @@ class EditItemController extends AbstractBase
     public function aboutpersonAction()
     {
         return $this->handleGenericLink(
-            'peoplebibliography',
-            'Item_ID',
-            'Person_ID',
+            PeopleBibliographyService::class,
+            'setItem',
+            'setPerson',
             'peopleBib',
             'getPeopleDescribedByItem',
-            'geeby-deeby/edit-item/person-ref-list.phtml'
+            'geeby-deeby/edit-item/person-ref-list.phtml',
+            retrieveLinkMethod: 'getByItemAndPerson'
         );
     }
 
@@ -260,12 +265,13 @@ class EditItemController extends AbstractBase
     public function adaptationintoAction()
     {
         return $this->handleGenericLink(
-            'itemsadaptations',
-            'Source_Item_ID',
-            'Adapted_Item_ID',
+            ItemsAdaptationService::class,
+            'setSourceItem',
+            'setAdaptedItem',
             'adaptedInto',
             'getAdaptedFrom',
-            'geeby-deeby/edit-item/adapted-into-list.phtml'
+            'geeby-deeby/edit-item/adapted-into-list.phtml',
+            retrieveLinkMethod: 'getBySourceItemAndAdaptedItem'
         );
     }
 
@@ -277,12 +283,14 @@ class EditItemController extends AbstractBase
     public function adaptationfromAction()
     {
         return $this->handleGenericLink(
-            'itemsadaptations',
-            'Adapted_Item_ID',
-            'Source_Item_ID',
+            ItemsAdaptationService::class,
+            'setAdaptedItem',
+            'setSourceItem',
             'adaptedFrom',
             'getAdaptedInto',
-            'geeby-deeby/edit-item/adapted-from-list.phtml'
+            'geeby-deeby/edit-item/adapted-from-list.phtml',
+            retrieveLinkMethod: 'getBySourceItemAndAdaptedItem',
+            invertRetrieveLinkParams: true
         );
     }
 
@@ -295,43 +303,39 @@ class EditItemController extends AbstractBase
     {
         // Special case: new title:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemsalttitles');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Note_ID = $this->params()->fromPost('note_id');
-            if (empty($row->Note_ID)) {
-                $row->Note_ID = null;
-            }
-            $row->Item_AltName = trim($this->params()->fromPost('title'));
-            if (empty($row->Item_AltName)) {
+            $service = $this->getDbService(ItemsAltTitleService::class);
+            $note = $this->params()->fromPost('note_id');
+            $title = trim((string)$this->params()->fromPost('title'));
+            if (empty($title)) {
                 return $this->jsonDie('Title must not be empty.');
             }
-            $table->insert((array)$row);
+            $entity = $service->createEntity()
+                ->setItem($this->params()->fromRoute('id'))
+                ->setNote(empty($note) ? null : $note)
+                ->setAltName($title);
+            $service->persistEntity($entity);
             return $this->jsonReportSuccess();
-        } else {
-            // Prevent deletion of alttitles that are linked up:
-            if ($this->getRequest()->isDelete()) {
-                $extra = $this->params()->fromRoute('extra');
-                $result = $this->getDbTable('edition')->select(
-                    ['Preferred_Item_AltName_ID' => $extra]
-                );
-                if (count($result) > 0) {
-                    $ed = $result->current();
-                    $msg = 'You cannot delete this title; it is assigned to Edition '
-                        . $ed->Edition_ID . '.';
-                    return $this->jsonDie($msg);
-                }
-            }
-            // Otherwise, treat this as a generic link:
-            return $this->handleGenericLink(
-                'itemsalttitles',
-                'Item_ID',
-                'Sequence_ID',
-                'item_alt_titles',
-                'getAltTitles',
-                'geeby-deeby/edit-item/alt-title-list.phtml'
-            );
         }
+        // Prevent deletion of alt titles that are linked up:
+        if ($this->getRequest()->isDelete()) {
+            $extra = $this->params()->fromRoute('extra');
+            $result = $this->getDbService(EditionService::class)->getByItemAltTitleId($extra);
+            if (count($result) > 0) {
+                $ed = $result[0];
+                $msg = 'You cannot delete this title; it is assigned to Edition ' . $ed->getId() . '.';
+                return $this->jsonDie($msg);
+            }
+        }
+        // Otherwise, treat this as a generic link:
+        return $this->handleGenericLink(
+            ItemsAltTitleService::class,
+            null,
+            null,
+            'item_alt_titles',
+            'getAltTitles',
+            'geeby-deeby/edit-item/alt-title-list.phtml',
+            retrieveLinkMethod: 'getByItemAndId'
+        );
     }
 
     /**
@@ -341,16 +345,26 @@ class EditItemController extends AbstractBase
      */
     public function attachmentAction()
     {
+        if ($this->getRequest()->isDelete()) {
+            $collection = $this->params()->fromRoute('id');
+            [$item, $pos] = explode(',', $this->params()->fromRoute('extra'));
+            $service = $this->getDbService(ItemsInCollectionService::class);
+            if ($entity = $service->getByCollectionItemAndItemAndPosition($collection, $item, $pos)) {
+                $service->deleteEntity($entity);
+            }
+            return $this->jsonReportSuccess();
+        }
         $note = intval($this->params()->fromPost('note_id'));
-        $extras = $note > 0 ? ['Note_ID' => $note] : [];
+        $extras = ['setPosition' => 0, 'setNote' => $note];
         return $this->handleGenericLink(
-            'itemsincollections',
-            'Collection_Item_ID',
-            'Item_ID',
+            ItemsInCollectionService::class,
+            'setCollectionItem',
+            'setItem',
             'item_list',
             'getItemsForCollection',
             'geeby-deeby/edit-item/list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByCollectionItemAndItemAndPosition'
         );
     }
 
@@ -362,9 +376,9 @@ class EditItemController extends AbstractBase
     public function editionsAction()
     {
         return $this->handleGenericLink(
-            'edition',
-            'Item_ID',
-            'Edition_ID',
+            EditionService::class,
+            null,
+            null,
             'editions',
             'getEditionsForItem',
             'geeby-deeby/edit-item/edition-list.phtml'
@@ -378,17 +392,26 @@ class EditItemController extends AbstractBase
      */
     public function attachmentorderAction()
     {
-        if ($this->getRequest()->isPost()) {
-            $collection = $this->params()->fromRoute('id');
-            $item = $this->params()->fromPost('item_id');
-            $pos = $this->params()->fromPost('pos');
-            $this->getDbTable('itemsincollections')->update(
-                ['Position' => $pos],
-                ['Item_ID' => $item, 'Collection_Item_ID' => $collection]
-            );
-            return $this->jsonReportSuccess();
+        if (!$this->getRequest()->isPost()) {
+            return $this->jsonDie('Unexpected method');
         }
-        return $this->jsonDie('Unexpected method');
+        $collection = $this->params()->fromRoute('id');
+        $item = $this->params()->fromPost('item_id');
+        $pos = $this->params()->fromPost('pos');
+        $service = $this->getDbService(ItemsInCollectionService::class);
+        if ($entity = $service->getByCollectionItemAndItemAndPosition($collection, $item)) {
+            $entity->setPosition(intval($pos));
+            try {
+                $service->persistEntity($entity);
+            } catch (Throwable $e) {
+                // Laminas throws a strange error sometimes; let's ignore it as long as the
+                // data updated successfully...
+                if (!$service->getByCollectionItemAndItemAndPosition($collection, $item, $pos)) {
+                    return $this->jsonDie($e->getMessage());
+                }
+            }
+        }
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -417,10 +440,9 @@ class EditItemController extends AbstractBase
             return $this->deleteCreator();
         }
         // Default action: display list:
-        $table = $this->getDbTable('itemscreators');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->creators = $table->getCreatorsForItem($primary);
+        $view->creators = $this->getDbService(ItemsCreatorService::class)->getCreatorsForItem($primary);
         $view->setTemplate('geeby-deeby/edit-item/creators.phtml');
         $view->setTerminal(true);
         return $view;
@@ -434,12 +456,10 @@ class EditItemController extends AbstractBase
     protected function modifyCreator()
     {
         $rowId = $this->params()->fromRoute('extra');
-        $table = $this->getDbTable('itemscreators');
         $view = $this->createViewModel();
-        $view->row = $table->select(['Item_Creator_ID' => $rowId])->current();
-        $view->citations = $this->getDbTable('citation')->select();
-        $view->selectedCitations = $this->getDbTable('itemscreatorscitations')
-            ->getCitations($rowId);
+        $view->row = $this->getDbService(ItemsCreatorService::class)->getByPrimaryKey($rowId);
+        $view->citations = $this->getDbService(CitationService::class)->getList();
+        $view->selectedCitations = $this->getDbService(ItemsCreatorsCitationService::class)->getCitations($rowId);
         $view->setTemplate('geeby-deeby/edit-item/modify-creator');
 
         // If this is an AJAX request, render the core list only, not the
@@ -458,13 +478,12 @@ class EditItemController extends AbstractBase
      */
     protected function addCreator()
     {
-        $table = $this->getDbTable('itemscreators');
-        $row = [
-            'Item_ID' => $this->params()->fromRoute('id'),
-            'Person_ID' => $this->params()->fromPost('person_id'),
-            'Role_ID' => $this->params()->fromPost('role_id'),
-        ];
-        $table->insert($row);
+        $service = $this->getDbService(ItemsCreatorService::class);
+        $entity = $service->createEntity()
+            ->setItem($this->params()->fromRoute('id'))
+            ->setPerson($this->params()->fromPost('person_id'))
+            ->setRole($this->params()->fromPost('role_id'));
+        $service->persistEntity($entity);
         return $this->jsonReportSuccess();
     }
 
@@ -475,15 +494,11 @@ class EditItemController extends AbstractBase
      */
     protected function deleteCreator()
     {
+        $service = $this->getDbService(ItemsCreatorService::class);
         [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
         try {
-            $this->getDbTable('itemscreators')->delete(
-                [
-                    'Item_ID' => $this->params()->fromRoute('id'),
-                    'Person_ID' => $person,
-                    'Role_ID' => $role,
-                ]
-            );
+            $entity = $service->getByItemAndPersonAndRole($this->params()->fromRoute('id'), $person, $role);
+            $service->deleteEntity($entity);
         } catch (\Exception $e) {
             return $this->jsonDie($e->getMessage());
         }
@@ -508,10 +523,9 @@ class EditItemController extends AbstractBase
             return $this->deleteCredit();
         }
         // Default action: display list:
-        $table = $this->getDbTable('editionscredits');
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->credits = $table->getCreditsForItem($primary, true);
+        $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForItem($primary, true);
         $view->setTemplate('geeby-deeby/edit-item/credits.phtml');
         $view->setTerminal(true);
         return $view;
@@ -524,18 +538,21 @@ class EditItemController extends AbstractBase
      */
     protected function addCredit()
     {
-        $table = $this->getDbTable('editionscredits');
+        $editionService = $this->getDbService(EditionService::class);
+        $creditService = $this->getDbService(EditionsCreditService::class);
         $item = $this->params()->fromRoute('id');
-        $row = [
-            'Person_ID' => $this->params()->fromPost('person_id'),
-            'Role_ID' => $this->params()->fromPost('role_id'),
-            'Position' => $this->params()->fromPost('pos'),
-            'Note_ID' => $this->params()->fromPost('note_id'),
-        ];
-        if (empty($row['Note_ID'])) {
-            $row['Note_ID'] = null;
+        $note = $this->params()->fromPost('note_id');
+        $editions = $editionService->getEditionsForItem($item);
+        foreach ($editions as $current) {
+            $editionId = $current['Edition_ID'];
+            $credit = $creditService->createEntity()
+                ->setEdition($editionId)
+                ->setPerson((int)$this->params()->fromPost('person_id'))
+                ->setRole((int)$this->params()->fromPost('role_id'))
+                ->setPosition((int)$this->params()->fromPost('pos'))
+                ->setNote($note ? (int)$note : null);
+            $creditService->persistEntity($credit);
         }
-        $table->insertForItem($item, $row);
         return $this->jsonReportSuccess();
     }
 
@@ -546,11 +563,15 @@ class EditItemController extends AbstractBase
      */
     protected function deleteCredit()
     {
+        $editionService = $this->getDbService(EditionService::class);
+        $creditService = $this->getDbService(EditionsCreditService::class);
         [$person, $role] = explode(',', $this->params()->fromRoute('extra'));
-        $this->getDbTable('editionscredits')->deleteForItem(
-            $this->params()->fromRoute('id'),
-            ['Person_ID' => $person, 'Role_ID' => $role]
-        );
+        $editions = $editionService->getEditionsForItem($this->params()->fromRoute('id'));
+        foreach ($editions as $current) {
+            if ($credit = $creditService->getByEditionAndPersonAndRole($current['Edition_ID'], $person, $role)) {
+                $creditService->deleteEntity($credit);
+            }
+        }
         return $this->jsonReportSuccess();
     }
 
@@ -561,18 +582,24 @@ class EditItemController extends AbstractBase
      */
     public function creditorderAction()
     {
-        if ($this->getRequest()->isPost()) {
-            $this->getDbTable('editionscredits')->updateForItem(
-                $this->params()->fromRoute('id'),
-                ['Position' => $this->params()->fromPost('pos')],
-                [
-                    'Person_ID' => $this->params()->fromPost('person_id'),
-                    'Role_ID' => $this->params()->fromPost('role_id'),
-                ]
-            );
-            return $this->jsonReportSuccess();
+        if (!$this->getRequest()->isPost()) {
+            return $this->jsonDie('Unexpected method');
         }
-        return $this->jsonDie('Unexpected method');
+        $editionService = $this->getDbService(EditionService::class);
+        $creditService = $this->getDbService(EditionsCreditService::class);
+        $editions = $editionService->getEditionsForItem($this->params()->fromRoute('id'));
+        foreach ($editions as $current) {
+            $credit = $creditService->getByEditionAndPersonAndRole(
+                $current['Edition_ID'],
+                $this->params()->fromPost('person_id'),
+                $this->params()->fromPost('role_id')
+            );
+            if ($credit) {
+                $credit->setPosition((int)$this->params()->fromPost('pos'));
+                $creditService->persistEntity($credit);
+            }
+        }
+        return $this->jsonReportSuccess();
     }
 
     /**
@@ -584,13 +611,13 @@ class EditItemController extends AbstractBase
     {
         // Special case: new description:
         if ($this->getRequest()->isPost()) {
-            $table = $this->getDbTable('itemsdescriptions');
-            $row = $table->createRow();
-            $row->Item_ID = $this->params()->fromRoute('id');
-            $row->Source = $this->params()->fromPost('type');
-            $row->Description = $this->params()->fromPost('desc');
+            $service = $this->getDbService(ItemsDescriptionService::class);
+            $entity = $service->createEntity()
+                ->setItem($this->params()->fromRoute('id'))
+                ->setSource($this->params()->fromPost('type'))
+                ->setDescription($this->params()->fromPost('desc'));
             try {
-                $table->insert((array)$row);
+                $service->persistEntity($entity);
             } catch (\Exception $e) {
                 return $this->jsonDie($e->getMessage());
             }
@@ -598,12 +625,13 @@ class EditItemController extends AbstractBase
         } else {
             // Otherwise, treat this as a generic link:
             return $this->handleGenericLink(
-                'itemsdescriptions',
-                'Item_ID',
-                'Source',
+                ItemsDescriptionService::class,
+                null,
+                null,
                 'descriptions',
                 'getDescriptions',
-                'geeby-deeby/edit-item/description-list.phtml'
+                'geeby-deeby/edit-item/description-list.phtml',
+                retrieveLinkMethod: 'getByItemAndSource'
             );
         }
     }
@@ -622,10 +650,10 @@ class EditItemController extends AbstractBase
         if ($this->getRequest()->isPost()) {
             $edition = $this->params()->fromPost('edition_id');
             $pos = $this->params()->fromPost('pos');
-            $this->getDbTable('edition')->update(
-                ['Item_Display_Order' => intval($pos)],
-                ['Edition_ID' => $edition]
-            );
+            $entityService = $this->getDbService(EditionService::class);
+            $entity = $entityService->getByPrimaryKey($edition);
+            $entity->setItemDisplayOrder(intval($pos));
+            $entityService->persistEntity($entity);
             return $this->jsonReportSuccess();
         }
         return $this->jsonDie('Unexpected method');
@@ -661,22 +689,26 @@ class EditItemController extends AbstractBase
         // the standard behavior consistent.
         $rid = $this->params()->fromRoute('relationship_id');
         if (substr($rid, 0, 1) === 'i') {
-            $linkFrom = 'Object_Item_ID';
-            $linkTo = 'Subject_Item_ID';
+            $linkFrom = 'setObject';
+            $linkTo = 'setSubject';
             $rid = substr($rid, 1);
+            $invertRetrieve = true;
         } else {
-            $linkFrom = 'Subject_Item_ID';
-            $linkTo = 'Object_Item_ID';
+            $linkFrom = 'setSubject';
+            $linkTo = 'setObject';
+            $invertRetrieve = false;
         }
-        $extras = ['Items_Relationship_ID' => $rid];
+        $extras = ['setRelationship' => $rid];
         return $this->handleGenericLink(
-            'itemsrelationshipsvalues',
+            ItemsRelationshipsValueService::class,
             $linkFrom,
             $linkTo,
             'relationshipsValues',
             'getRelationshipsForItem',
             'geeby-deeby/edit-item/relationship-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getBySubjectAndObjectAndRelationship',
+            invertRetrieveLinkParams: $invertRetrieve
         );
     }
 
@@ -688,12 +720,13 @@ class EditItemController extends AbstractBase
     public function tagAction()
     {
         return $this->handleGenericLink(
-            'itemstags',
-            'Item_ID',
-            'Tag_ID',
+            ItemsTagService::class,
+            'setItem',
+            'setTag',
             'tags',
-            'getTags',
-            'geeby-deeby/edit-item/tag-list.phtml'
+            'getTagsForItem',
+            'geeby-deeby/edit-item/tag-list.phtml',
+            retrieveLinkMethod: 'getByItemAndTag'
         );
     }
 
@@ -705,12 +738,13 @@ class EditItemController extends AbstractBase
     public function translationintoAction()
     {
         return $this->handleGenericLink(
-            'itemstranslations',
-            'Source_Item_ID',
-            'Trans_Item_ID',
+            ItemsTranslationService::class,
+            'setSourceItem',
+            'setTranslatedItem',
             'translatedInto',
             'getTranslatedFrom',
-            'geeby-deeby/edit-item/trans-into-list.phtml'
+            'geeby-deeby/edit-item/trans-into-list.phtml',
+            retrieveLinkMethod: 'getBySourceItemAndTranslatedItem'
         );
     }
 
@@ -722,12 +756,14 @@ class EditItemController extends AbstractBase
     public function translationfromAction()
     {
         return $this->handleGenericLink(
-            'itemstranslations',
-            'Trans_Item_ID',
-            'Source_Item_ID',
+            ItemsTranslationService::class,
+            'setTranslatedItem',
+            'setSourceItem',
             'translatedFrom',
             'getTranslatedInto',
-            'geeby-deeby/edit-item/trans-from-list.phtml'
+            'geeby-deeby/edit-item/trans-from-list.phtml',
+            retrieveLinkMethod: 'getBySourceItemAndTranslatedItem',
+            invertRetrieveLinkParams: true
         );
     }
 }

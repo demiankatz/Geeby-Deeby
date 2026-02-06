@@ -65,7 +65,7 @@
             <table class="edit">
               <tr><th scope="row"><label for="isbn">New ISBN</label></th><td><input type="text" id="isbn" /></td></tr>
               <tr><th scope="row"><label for="isbn_note">Note:</label></th><td><input id="isbn_note" class="Note_ID" /></td></tr>
-              <tr><td></td><td><input type="submit" value="Add" /></td></tr>
+              <tr><td></td><td><input id="add_isbn" type="submit" value="Add" /></td></tr>
             </table>
           </form>
           <b>ISBNs:</b>
@@ -78,7 +78,7 @@
             <table class="edit">
               <tr><th scope="row"><label for="oclc_number">New OCLC Number:</label></th><td><input type="text" id="oclc_number" /></td></tr>
               <tr><th scope="row"><label for="oclc_number_note">Note:</label></th><td><input id="oclc_number_note" class="Note_ID" /></td></tr>
-              <tr><td></td><td><input type="submit" value="Add" /></td></tr>
+              <tr><td></td><td><input id="add_oclc_number" type="submit" value="Add" /></td></tr>
             </table>
           </form>
           <b>OCLC Numbers:</b>
@@ -91,7 +91,7 @@
             <table class="edit">
               <tr><th scope="row"><label for="product_code">New Code</label></th><td><input type="text" id="product_code" /></td></tr>
               <tr><th scope="row"><label for="product_code_note">Note:</label></th><td><input id="product_code_note" class="Note_ID" /></td></tr>
-              <tr><td></td><td><input type="submit" value="Add" /></td></tr>
+              <tr><td></td><td><input id="add_product_code" type="submit" value="Add" /></td></tr>
             </table>
           </form>
           <b>Product Codes:</b>
@@ -211,13 +211,15 @@
   </div>
 
   <div id="platforms-tab" class="tab-pane">
-    <form onsubmit="Edition.link('Platform'); return false;">
-      <label>
-        Platform:
-        <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
-      </label>
-      <input type="submit" value="Add Platform" />
-    </form>
+    <div class="edit_container">
+      <form onsubmit="Edition.link('Platform'); return false;">
+        <label>
+          Platform:
+          <?=$this->render('geeby-deeby/edit-platform/select.phtml')?>
+        </label>
+        <input type="submit" value="Add Platform" />
+      </form>
+    </div>
     <b>Platforms:</b>
     <div id="platform_list">
     <?=$this->render('geeby-deeby/edit-edition/platform-list.phtml')?>

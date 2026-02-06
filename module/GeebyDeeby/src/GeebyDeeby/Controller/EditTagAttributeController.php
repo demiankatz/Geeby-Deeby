@@ -3,7 +3,7 @@
 /**
  * Edit tag attribute controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\TagsAttributeService;
 
 /**
  * Edit tag attribute controller
@@ -48,7 +50,7 @@ class EditTagAttributeController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'tagsattribute',
+            TagsAttributeService::class,
             'attributes',
             'geeby-deeby/edit-tag-attribute/render-tag-attributes'
         );
@@ -69,14 +71,13 @@ class EditTagAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'attribute_name' => 'Tags_Attribute_Name',
-            'rdf_property' => 'Tags_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority',
+            'attribute_name' => 'setAttributeName',
+            'rdf_property' => 'setRdfProperty',
+            'allow_html' => 'setAllowsHTML',
+            'priority' => 'setDisplayPriority',
 
         ];
-        [$response] = $this
-            ->handleGenericItem('tagsattribute', $assignMap, 'attribute');
+        [$response] = $this->handleGenericItem(TagsAttributeService::class, $assignMap, 'attribute');
 
         return $response;
     }

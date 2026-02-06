@@ -3,7 +3,7 @@
 /**
  * Edition controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,18 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\EditionsAttributesValueService;
+use GeebyDeeby\Db\Service\EditionsCreditService;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsFullTextService;
+use GeebyDeeby\Db\Service\EditionsImageService;
+use GeebyDeeby\Db\Service\EditionsIsbnService;
+use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\EditionsPlatformService;
+use GeebyDeeby\Db\Service\EditionsProductCodeService;
+use GeebyDeeby\Db\Service\EditionsReleaseDateService;
+use GeebyDeeby\Db\Service\ItemsCreatorService;
 
 use function is_object;
 
@@ -108,43 +120,28 @@ class EditionController extends AbstractBase
     {
         $id = ($overrideId === null)
             ? $this->params()->fromRoute('id') : $overrideId;
-        $table = $this->getDbTable('edition');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $service = $this->getDbService(EditionService::class);
+        $entity = (null === $id) ? null : $service->getByPrimaryKey($id);
+        if (!$entity) {
             return false;
         }
-        if (!empty($rowObj->Item_ID)) {
-            $itemTable = $this->getDbTable('item');
-            $itemObj = $itemTable->getByPrimaryKey($rowObj->Item_ID);
-            $item = $itemObj->toArray();
-            if (!empty($rowObj->Preferred_Item_AltName_ID)) {
-                $ian = $this->getDbTable('itemsalttitles');
-                $tmpRow = $ian->select(
-                    ['Sequence_ID' => $rowObj->Preferred_Item_AltName_ID]
-                )->current();
-                $item['Item_AltName'] = $tmpRow['Item_AltName'];
-            }
-        } else {
-            $item = [];
+        $itemEntity = $entity->getItem();
+        $item = $itemEntity->toArray();
+        if ($ian = $entity->getPreferredItemAlternateTitle()) {
+            $item['Item_AltName'] = $ian->getAltName();
         }
-        if (!empty($rowObj->Series_ID)) {
-            $seriesTable = $this->getDbTable('series');
-            $seriesObj = $seriesTable->getByPrimaryKey($rowObj->Series_ID);
-            $series = $seriesObj->toArray();
-            if (!empty($rowObj->Preferred_Series_AltName_ID)) {
-                $ian = $this->getDbTable('seriesalttitles');
-                $tmpSeriesRow = $ian->select(
-                    ['Sequence_ID' => $rowObj->Preferred_Series_AltName_ID]
-                )->current();
-                $series['Series_AltName'] = $tmpSeriesRow['Series_AltName'];
+        if ($seriesEntity = $entity->getSeries()) {
+            $series = $seriesEntity->toArray();
+            if ($san = $entity->getPreferredSeriesAlternateTitle()) {
+                $series['Series_AltName'] = $san->getAltName();
             }
         } else {
             $series = [];
         }
-        $extras['editionAttributes'] = $this->getDbTable('editionsattributesvalues')
+        $extras['editionAttributes'] = $this->getDbService(EditionsAttributesValueService::class)
             ->getAttributesForEdition($id);
         return $this->createViewModel(
-            ['edition' => $rowObj->toArray(), 'item' => $item, 'series' => $series]
+            ['edition' => $entity->toArray(), 'item' => $item, 'series' => $series]
             + $extras
         );
     }
@@ -197,8 +194,7 @@ class EditionController extends AbstractBase
                     $copy = $graph->resource($copyUri, $this->copyRdfClass);
                     $edition->add($this->hasCopyPredicate, $copy);
                     $copy->set($this->fullTextPredicate, $fullText['Full_Text_URL']);
-                    $currentAttribs
-                        = $view->fullTextAttributes[$fullText->Sequence_ID] ?? [];
+                    $currentAttribs = $view->fullTextAttributes[$fullText['Sequence_ID']] ?? [];
                     foreach ($currentAttribs as $attr) {
                         $prop = $attr['Editions_Full_Text_Attribute_RDF_Property'];
                         if (!empty($prop)) {
@@ -274,28 +270,23 @@ class EditionController extends AbstractBase
             return false;
         }
         $id = $view->edition['Edition_ID'];
-        $view->creators = $this->getDbTable('itemscreators')
+        $view->creators = $this->getDbService(ItemsCreatorService::class)
             ->getCreatorsForItem($view->edition['Item_ID']);
-        $view->credits = $this->getDbTable('editionscredits')
-            ->getCreditsForEdition($id);
-        $view->images = $this->getDbTable('editionsimages')
-            ->getImagesForEditionOrParentEdition($id);
-        $view->platforms = $this->getDbTable('editionsplatforms')
-            ->getPlatformsForEdition($id);
-        $view->dates = $this->getDbTable('editionsreleasedates')
-            ->getDatesForEditionOrParentEdition($id);
-        $view->isbns = $this->getDbTable('editionsisbns')->getISBNsForEdition($id);
-        $view->codes = $this->getDbTable('editionsproductcodes')
-            ->getProductCodesForEdition($id);
-        $view->oclcNumbers = $this->getDbTable('editionsoclcnumbers')
+        $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForEdition($id);
+        $view->images = $this->getDbService(EditionsImageService::class)->getImagesForEditionOrParentEdition($id);
+        $view->platforms = $this->getDbService(EditionsPlatformService::class)->getPlatformsForEdition($id);
+        $view->dates = $this->getDbService(EditionsReleaseDateService::class)->getDatesForEditionOrParentEdition($id);
+        $view->isbns = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($id);
+        $view->codes = $this->getDbService(EditionsProductCodeService::class)->getProductCodesForEdition($id);
+        $view->oclcNumbers = $this->getDbService(EditionsOclcNumberService::class)
             ->getOCLCNumbersForEdition($id);
-        $view->fullText = $this->getDbTable('editionsfulltext')
+        $view->fullText = $this->getDbService(EditionsFullTextService::class)
             ->getFullTextForEditionOrParentEdition($id);
         $this->addFullTextAttributesToView($view);
-        $edTable = $this->getDbTable('edition');
-        $view->publishers = $edTable->getPublishersForEdition($id);
-        $view->parent = $edTable->getParentItemForEdition($id);
-        $view->children = $edTable->getItemsForEdition($id);
+        $editionService = $this->getDbService(EditionService::class);
+        $view->publishers = $editionService->getPublishersForEdition($id);
+        $view->parent = $editionService->getParentItemForEdition($id);
+        $view->children = $editionService->getItemsForEdition($id);
         return $view;
     }
 

@@ -3,7 +3,7 @@
 /**
  * Cleanup controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -29,7 +29,10 @@
 
 namespace GeebyDeeby\Controller;
 
-use function count;
+use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsImageService;
+use GeebyDeeby\Db\Service\ItemsInCollectionService;
+
 use function is_object;
 
 /**
@@ -61,31 +64,29 @@ class CleanupController extends AbstractBase
      * Support method for processHierarchy() -- process a single parent-child
      * pairing.
      *
-     * @param int   $parent Parent Edition ID
+     * @param array $parent Parent Edition information
      * @param array $child  Child Item information
      *
      * @return void
      */
     protected function processHierarchyItem($parent, $child)
     {
-        $editionTable = $this->getDbTable('edition');
-        $seriesEditions = $editionTable->select(
-            ['Item_ID' => $child['Item_ID'], 'Series_ID' => $parent->Series_ID]
-        );
+        $editionService = $this->getDbService(EditionService::class);
+        $seriesEditions = $editionService->getByItemAndSeries($child['Item_ID'], $parent['Series_ID']);
 
         // Search editions in the current series to see if we have one that
         // can be assigned the current edition as its parent.
         foreach ($seriesEditions as $edition) {
-            if ($edition->Parent_Edition_ID == $parent->Edition_ID) {
+            $currentParent = $edition->getParentEdition();
+            if ($currentParent?->getId() == $parent['Edition_ID']) {
                 throw new \Exception('Duplicate encountered!');
             }
-            if (empty($edition->Parent_Edition_ID)) {
-                $edition->Preferred_Series_Publisher_ID
-                    = $parent->Preferred_Series_Publisher_ID;
-                $edition->Parent_Edition_ID = $parent->Edition_ID;
-                $edition->Position_In_Parent = $child->Position;
-                $edition->Extent_In_Parent = $child->Note;
-                $edition->save();
+            if (!$currentParent) {
+                $edition->setPreferredPublisher($parent['Preferred_Series_Publisher_ID'])
+                    ->setParentEdition($parent['Edition_ID'])
+                    ->setPositionInParent($child['Position'])
+                    ->setExtentInParent($child['Note']);
+                $editionService->persistEntity($edition);
                 return;
             }
         }
@@ -95,31 +96,22 @@ class CleanupController extends AbstractBase
         if (isset($edition) && is_object($edition)) {
             $templateEdition = $edition;
         } else {
-            $anyEditions = $editionTable->select(
-                ['Item_ID' => $child['Item_ID']]
-            );
-            $templateEdition = count($anyEditions) > 0
-                ? $anyEditions->current() : false;
+            $anyEditions = $editionService->getByItem($child['Item_ID']);
+            $templateEdition = $anyEditions[0] ?? null;
         }
 
         // If we got this far, we need to create a new edition:
-        $newEditionData = [
-            'Edition_Name' => $parent->Edition_Name,
-            'Series_ID' => $parent->Series_ID,
-            'Item_ID' => $child->Item_ID,
-            'Preferred_Series_Publisher_ID' =>
-                $parent->Preferred_Series_Publisher_ID,
-            'Parent_Edition_ID' => $parent->Edition_ID,
-            'Position_In_Parent' => $child->Position,
-            'Extent_In_Parent' => $child->Note,
-        ];
-        $editionTable->insert($newEditionData);
-        $newEdition = $editionTable->select($newEditionData)->current();
-        if (!is_object($newEdition)) {
-            throw new \Exception('Problem creating edition.');
-        }
+        $newEdition = $editionService->createEntity()
+            ->setEditionName($parent['Edition_Name'])
+            ->setSeries($parent['Series_ID'])
+            ->setItem($child['Item_ID'])
+            ->setPreferredPublisher($parent['Preferred_Series_Publisher_ID'])
+            ->setParentEdition($parent['Edition_ID'])
+            ->setPositionInParent($child['Position'])
+            ->setExtentInParent($child['Note']);
+        $editionService->persistEntity($newEdition);
         if ($templateEdition) {
-            $editionTable->copyAssociatedInfo($templateEdition, $newEdition);
+            $editionService->copyAssociatedInfo($templateEdition, $newEdition);
         }
     }
 
@@ -132,15 +124,15 @@ class CleanupController extends AbstractBase
      */
     protected function processHierarchy($item)
     {
-        $table = $this->getDbTable('itemsincollections');
-        $targets = $table->getItemsForCollection($item);
-        $editions = $this->getDbTable('edition')->select(['Item_ID' => $item]);
+        $service = $this->getDbService(ItemsInCollectionService::class);
+        $targets = $service->getItemsForCollection($item);
+        $editions = $this->getDbService(EditionService::class)->getByItem($item);
         foreach ($editions as $edition) {
             foreach ($targets as $target) {
-                $this->processHierarchyItem($edition, $target);
+                $this->processHierarchyItem($edition->toArray(), $target->toArray());
             }
         }
-        $table->delete(['Collection_Item_ID' => $item]);
+        $service->deleteCollection($item);
     }
 
     /**
@@ -160,8 +152,9 @@ class CleanupController extends AbstractBase
                 $this->processHierarchy($id);
             }
         }
-        $table = $this->getDbTable('itemsincollections');
-        return $this->createViewModel(['details' => $table->getAllCollections()]);
+        return $this->createViewModel(
+            ['details' => $this->getDbService(ItemsInCollectionService::class)->getAllCollections()]
+        );
     }
 
     /**
@@ -175,12 +168,11 @@ class CleanupController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
-        $table = $this->getDbTable('editionsimages');
-        $thumbs = $table->getDuplicateThumbs();
+        $service = $this->getDbService(EditionsImageService::class);
+        $thumbs = $service->getDuplicateThumbs();
         $details = [];
         foreach ($thumbs as $current) {
-            $details[$current['Thumb_Path']]
-                = $table->getEditionsForThumb($current['Thumb_Path']);
+            $details[$current['Thumb_Path']] = $service->getEditionsForThumb($current['Thumb_Path']);
         }
         return $this->createViewModel(['details' => $details]);
     }

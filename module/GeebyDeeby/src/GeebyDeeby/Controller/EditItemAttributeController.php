@@ -3,7 +3,7 @@
 /**
  * Edit item attribute controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2019.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\ItemsAttributeService;
 
 /**
  * Edit item attribute controller
@@ -48,7 +50,7 @@ class EditItemAttributeController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'itemsattribute',
+            ItemsAttributeService::class,
             'attributes',
             'geeby-deeby/edit-item-attribute/render-item-attributes'
         );
@@ -62,14 +64,13 @@ class EditItemAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'attribute_name' => 'Items_Attribute_Name',
-            'rdf_property' => 'Items_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'priority' => 'Display_Priority',
+            'attribute_name' => 'setAttributeName',
+            'rdf_property' => 'setRdfProperty',
+            'allow_html' => 'setAllowsHTML',
+            'priority' => 'setDisplayPriority',
 
         ];
-        [$response] = $this
-            ->handleGenericItem('itemsattribute', $assignMap, 'attribute');
+        [$response] = $this->handleGenericItem(ItemsAttributeService::class, $assignMap, 'attribute');
 
         return $response;
     }

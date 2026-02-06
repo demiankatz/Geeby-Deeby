@@ -3,7 +3,7 @@
 /**
  * Edit person controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,13 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\AuthorityService;
+use GeebyDeeby\Db\Service\PeopleUriService;
+use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\PredicateService;
+use GeebyDeeby\Db\Service\PseudonymService;
+use GeebyDeeby\Db\Service\RoleService;
 
 /**
  * Edit person controller
@@ -48,7 +55,7 @@ class EditPersonController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'person',
+            PersonService::class,
             'people',
             'geeby-deeby/edit-person/render-people'
         );
@@ -69,27 +76,26 @@ class EditPersonController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'first' => 'First_Name',
-            'last' => 'Last_Name',
-            'extra' => 'Extra_Details',
-            'bio' => 'Biography',
-            'authority' => 'Authority_ID',
+            'first' => 'setFirstName',
+            'last' => 'setLastName',
+            'extra' => 'setExtraDetails',
+            'bio' => 'setBiography',
+            'authority' => 'setAuthority',
         ];
-        [$view, $ok] = $this->handleGenericItem('person', $assignMap, 'person');
+        [$view, $ok] = $this->handleGenericItem(PersonService::class, $assignMap, 'person');
         if (!$ok) {
             return $view;
         }
         $view->authorities = $this->authoritylistAction()->authorities;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->pseudonyms = $this->getDbTable('pseudonyms')
-                ->getPseudonyms($view->personObj->Person_ID);
-            $view->realnames = $this->getDbTable('pseudonyms')
-                ->getRealNames($view->personObj->Person_ID);
-            $view->uris = $this->getDbTable('peopleuris')
-                ->getURIsForPerson($view->personObj->Person_ID);
+            $personId = $view->affectedEntity->getId();
+            $pseudoService = $this->getDbService(PseudonymService::class);
+            $view->pseudonyms = $pseudoService->getPseudonyms($personId);
+            $view->realnames = $pseudoService->getRealNames($personId);
+            $view->uris = $this->getDbService(PeopleUriService::class)->getURIsForPerson($view->affectedEntity);
             $view->setTemplate('geeby-deeby/edit-person/edit-full');
-            $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
         }
         return $view;
     }
@@ -101,16 +107,16 @@ class EditPersonController extends AbstractBase
      */
     public function uriAction()
     {
-        $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+        $extras = ($pid = $this->params()->fromPost('predicate_id')) ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'peopleuris',
-            'Person_ID',
-            'URI',
+            PeopleUriService::class,
+            'setPerson',
+            'setUri',
             'uris',
             'getURIsForPerson',
             'geeby-deeby/edit-person/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByPersonAndUri'
         );
     }
 
@@ -122,12 +128,13 @@ class EditPersonController extends AbstractBase
     public function aliaspseudonymAction()
     {
         return $this->handleGenericLink(
-            'pseudonyms',
-            'Real_Person_ID',
-            'Pseudo_Person_ID',
+            PseudonymService::class,
+            'setRealPerson',
+            'setPseudoPerson',
             'pseudonyms',
             'getPseudonyms',
-            'geeby-deeby/edit-person/pseudonym-list.phtml'
+            'geeby-deeby/edit-person/pseudonym-list.phtml',
+            retrieveLinkMethod: 'getByRealPersonAndPseudonym'
         );
     }
 
@@ -139,12 +146,14 @@ class EditPersonController extends AbstractBase
     public function aliasrealnameAction()
     {
         return $this->handleGenericLink(
-            'pseudonyms',
-            'Pseudo_Person_ID',
-            'Real_Person_ID',
+            PseudonymService::class,
+            'setPseudoPerson',
+            'setRealPerson',
             'realnames',
             'getRealNames',
-            'geeby-deeby/edit-person/realname-list.phtml'
+            'geeby-deeby/edit-person/realname-list.phtml',
+            retrieveLinkMethod: 'getByRealPersonAndPseudonym',
+            invertRetrieveLinkParams: true
         );
     }
 
@@ -156,7 +165,7 @@ class EditPersonController extends AbstractBase
     public function authoritylistAction()
     {
         return $this->getGenericList(
-            'authority',
+            AuthorityService::class,
             'authorities',
             'geeby-deeby/edit-person/render-authorities'
         );
@@ -169,8 +178,8 @@ class EditPersonController extends AbstractBase
      */
     public function authorityAction()
     {
-        $assignMap = ['authority' => 'Authority_Name'];
-        [$response] = $this->handleGenericItem('authority', $assignMap, 'authority');
+        $assignMap = ['authority' => 'setAuthorityName'];
+        [$response] = $this->handleGenericItem(AuthorityService::class, $assignMap, 'authority');
         return $response;
     }
 
@@ -182,7 +191,7 @@ class EditPersonController extends AbstractBase
     public function rolelistAction()
     {
         return $this->getGenericList(
-            'role',
+            RoleService::class,
             'roles',
             'geeby-deeby/edit-person/render-roles'
         );
@@ -196,11 +205,11 @@ class EditPersonController extends AbstractBase
     public function roleAction()
     {
         $assignMap = [
-            'role' => 'Role_Name',
-            'Item_Creator_Predicate' => 'Item_Creator_Predicate',
-            'Edition_Credit_Predicate' => 'Edition_Credit_Predicate',
+            'role' => 'setRoleName',
+            'Item_Creator_Predicate' => 'setItemCreatorPredicate',
+            'Edition_Credit_Predicate' => 'setEditionCreditPredicate',
         ];
-        [$response] = $this->handleGenericItem('role', $assignMap, 'role');
+        [$response] = $this->handleGenericItem(RoleService::class, $assignMap, 'role');
         return $response;
     }
 

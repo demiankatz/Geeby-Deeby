@@ -3,7 +3,7 @@
 /**
  * Database row plugin manager
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2019.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -49,9 +49,11 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'authority' => 'GeebyDeeby\Db\Row\Authority',
         'category' => 'GeebyDeeby\Db\Row\Category',
         'citation' => 'GeebyDeeby\Db\Row\Citation',
+        'citiesuris' => 'GeebyDeeby\Db\Row\CitiesURIs',
         'city' => 'GeebyDeeby\Db\Row\City',
         'collections' => 'GeebyDeeby\Db\Row\Collections',
         'country' => 'GeebyDeeby\Db\Row\Country',
+        'countriesuris' => 'GeebyDeeby\Db\Row\CountriesURIs',
         'edition' => 'GeebyDeeby\Db\Row\Edition',
         'editionsattribute' => 'GeebyDeeby\Db\Row\EditionsAttribute',
         'editionsfulltextattribute' => 'GeebyDeeby\Db\Row\EditionsFullTextAttribute',
@@ -63,7 +65,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'editionsplatforms' => 'GeebyDeeby\Db\Row\EditionsPlatforms',
         'editionsproductcodes' => 'GeebyDeeby\Db\Row\EditionsProductCodes',
         'editionsreleasedates' => 'GeebyDeeby\Db\Row\EditionsReleaseDates',
-        'faqs' => 'GeebyDeeby\Db\Row\FAQs',
         'file' => 'GeebyDeeby\Db\Row\File',
         'filetype' => 'GeebyDeeby\Db\Row\FileType',
         'fulltextsource' => 'GeebyDeeby\Db\Row\FullTextSource',
@@ -73,19 +74,12 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'itemsbibliography' => 'GeebyDeeby\Db\Row\ItemsBibliography',
         'itemscreators' => 'GeebyDeeby\Db\Row\ItemsCreators',
         'itemscreatorscitations' => 'GeebyDeeby\Db\Row\ItemsCreatorsCitations',
-        'itemscredits' => 'GeebyDeeby\Db\Row\ItemsCredits',
         'itemsdescriptions' => 'GeebyDeeby\Db\Row\ItemsDescriptions',
         'itemsfiles' => 'GeebyDeeby\Db\Row\ItemsFiles',
-        'itemsimages' => 'GeebyDeeby\Db\Row\ItemsImages',
         'itemsincollections' => 'GeebyDeeby\Db\Row\ItemsInCollections',
-        'itemsinseries' => 'GeebyDeeby\Db\Row\ItemsInSeries',
-        'itemsisbns' => 'GeebyDeeby\Db\Row\ItemsISBNs',
         'itemslinks' => 'GeebyDeeby\Db\Row\ItemsLinks',
-        'itemsplatforms' => 'GeebyDeeby\Db\Row\ItemsPlatforms',
-        'itemsproductcodes' => 'GeebyDeeby\Db\Row\ItemsProductCodes',
         'itemsrelationship' => 'GeebyDeeby\Db\Row\ItemsRelationship',
         'itemsrelationshipsvalues' => 'GeebyDeeby\Db\Row\ItemsRelationshipsValues',
-        'itemsreleasedates' => 'GeebyDeeby\Db\Row\ItemsReleaseDates',
         'itemsreviews' => 'GeebyDeeby\Db\Row\ItemsReviews',
         'itemstags' => 'GeebyDeeby\Db\Row\ItemsTags',
         'itemstranslations' => 'GeebyDeeby\Db\Row\ItemsTranslations',
@@ -105,7 +99,7 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'publisher' => 'GeebyDeeby\Db\Row\Publisher',
         'publishersaddresses' => 'GeebyDeeby\Db\Row\PublishersAddresses',
         'publishersimprints' => 'GeebyDeeby\Db\Row\PublishersImprints',
-        'recentreviews' => 'GeebyDeeby\Db\Row\RecentReviews',
+        'publishersuris' => 'GeebyDeeby\Db\Row\PublishersURIs',
         'role' => 'GeebyDeeby\Db\Row\Role',
         'series' => 'GeebyDeeby\Db\Row\Series',
         'seriesalttitles' => 'GeebyDeeby\Db\Row\SeriesAltTitles',

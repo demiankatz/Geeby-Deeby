@@ -3,7 +3,7 @@
 /**
  * Language controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,9 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\LanguageService;
+use GeebyDeeby\Db\Service\SeriesService;
 
 use function is_object;
 
@@ -50,17 +53,16 @@ class LanguageController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('language');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(LanguageService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Language', 'notfound');
         }
-        $view = $this->createViewModel(
-            ['language' => $rowObj->toArray()]
+        return $this->createViewModel(
+            [
+                'language' => $entity->toArray(),
+                'series' => $this->getDbService(SeriesService::class)->getSeriesForLanguage($id),
+            ]
         );
-        $view->series = $this->getDbTable('series')
-            ->getSeriesForLanguage($id);
-        return $view;
     }
 
     /**
@@ -71,7 +73,7 @@ class LanguageController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['languages' => $this->getDbTable('language')->getList()]
+            ['languages' => $this->getDbService(LanguageService::class)->getList()]
         );
     }
 

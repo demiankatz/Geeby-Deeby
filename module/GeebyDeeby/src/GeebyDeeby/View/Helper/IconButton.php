@@ -3,7 +3,7 @@
 /**
  * Button view helper
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  View_Helpers
@@ -29,8 +29,12 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\View\Helper\EscapeHtml;
+use Laminas\View\Helper\HtmlAttributes;
+
 /**
- * Title display view helper
+ * Button view helper
  *
  * @category GeebyDeeby
  * @package  View_Helpers
@@ -38,23 +42,39 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class IconButton extends \Laminas\View\Helper\AbstractHelper
+class IconButton
 {
+    /**
+     * Constructor
+     *
+     * @param HtmlAttributes $htmlAttributesHelper HtmlAttributes view helper
+     * @param EscapeHtml     $escapeHtmlHelper     EscapeHtml view helper
+     */
+    public function __construct(
+        #[Autowire(container: 'ViewHelperManager')]
+        protected HtmlAttributes $htmlAttributesHelper,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected EscapeHtml $escapeHtmlHelper
+    ) {
+    }
+
     /**
      * Create a button control.
      *
-     * @param string $type   Type of button
-     * @param string $action Javascript for button to execute
-     * @param string $label  Screen reader label
+     * @param string $type            Type of button
+     * @param string $action          Javascript for button to execute
+     * @param string $label           Screen reader label
+     * @param array  $extraAttributes Extra attributes to include in button tag
      *
      * @return string
      */
-    public function __invoke($type, $action, $label)
+    public function __invoke(string $type, string $action, string $label, array $extraAttributes = []): string
     {
-        $safeAction = $this->view->plugin('escapeHtmlAttr')->__invoke($action);
-        $safeLabel = $this->view->plugin('escapeHtml')->__invoke($label);
+        $extraAttributes['onclick'] = $action;
+        $attributes = ($this->htmlAttributesHelper)($extraAttributes);
+        $safeLabel = ($this->escapeHtmlHelper)($label);
         return <<<HTML
-            <button onclick="$safeAction">
+            <button $attributes>
               <span class="ui-icon ui-icon-$type">
               </span>
               <span class="sr-only">$safeLabel</span>

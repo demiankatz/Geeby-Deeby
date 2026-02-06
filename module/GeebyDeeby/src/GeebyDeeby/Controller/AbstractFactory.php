@@ -3,7 +3,7 @@
 /**
  * Abstract controller factory
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2019.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -29,7 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Abstract controller factory
@@ -60,7 +60,7 @@ class AbstractFactory implements \Laminas\ServiceManager\Factory\AbstractFactory
      *
      * @param ContainerInterface $container     Service container
      * @param string             $requestedName Name of service
-     * @param array              $options       Options (unused)
+     * @param ?array             $options       Options (unused)
      *
      * @return object
      *
@@ -69,7 +69,7 @@ class AbstractFactory implements \Laminas\ServiceManager\Factory\AbstractFactory
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         return new $requestedName($container);
     }

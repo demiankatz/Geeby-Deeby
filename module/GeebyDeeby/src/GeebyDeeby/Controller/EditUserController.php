@@ -3,7 +3,7 @@
 /**
  * Edit user controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2017.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -30,6 +30,9 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Crypt\PasswordHasher;
+use GeebyDeeby\Db\Service\PersonService;
+use GeebyDeeby\Db\Service\UserGroupService;
+use GeebyDeeby\Db\Service\UserService;
 
 /**
  * Edit user controller
@@ -50,7 +53,7 @@ class EditUserController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'user',
+            UserService::class,
             'users',
             'geeby-deeby/edit-user/render-users',
             'User_Editor'
@@ -77,29 +80,32 @@ class EditUserController extends AbstractBase
 
         // Process standard values:
         $assignMap = [
-            'username' => 'Username',
-            'name' => 'Name',
-            'address' => 'Address',
-            'person_id' => 'Person_ID',
-            'group_id' => 'User_Group_ID',
+            'username' => 'setUsername',
+            'name' => 'setName',
+            'address' => 'setAddress',
+            'approved' => 'setIsApproved',
+            'person_id' => 'setPerson',
+            'group_id' => 'setUserGroup',
         ];
         [$view, $ok]
-            = $this->handleGenericItem('user', $assignMap, 'user', 'User_Editor');
+            = $this->handleGenericItem(UserService::class, $assignMap, 'user', 'User_Editor');
         if (!$ok) {
             return $view;
         }
 
         // Add associated person details, if necessary:
         if (isset($view->user) && $view->user['Person_ID'] > 0) {
-            $view->person = $this->getDbTable('person')
-                ->getByPrimaryKey($view->user['Person_ID']);
+            $person = $this->getDbService(PersonService::class)->getByPrimaryKey($view->user['Person_ID']);
+            if ($person) {
+                $view->person = $person->toArray();
+            }
         }
 
         // Change password, if necessary:
-        if ($password && isset($view->affectedRow)) {
+        if ($password && isset($view->affectedEntity)) {
             $hasher = new PasswordHasher();
-            $view->affectedRow->Password_Hash = $hasher->create($password);
-            $view->affectedRow->save();
+            $view->affectedEntity->setPasswordHash($hasher->create($password));
+            $this->getDbService(UserService::class)->persistEntity($view->affectedEntity);
         }
 
         // Load group list:
@@ -120,7 +126,7 @@ class EditUserController extends AbstractBase
     public function usergrouplistAction()
     {
         return $this->getGenericList(
-            'usergroup',
+            UserGroupService::class,
             'usergroups',
             'geeby-deeby/edit-user/render-usergroups',
             'User_Editor'
@@ -135,14 +141,13 @@ class EditUserController extends AbstractBase
     public function usergroupAction()
     {
         $assignMap = [
-            'name' => 'Group_Name',
-            'content_editor' => 'Content_Editor',
-            'user_editor' => 'User_Editor',
-            'approver' => 'Approver',
-            'data_manager' => 'Data_Manager',
+            'name' => 'setGroupName',
+            'content_editor' => 'setIsContentEditor',
+            'user_editor' => 'setIsUserEditor',
+            'approver' => 'setIsApprover',
+            'data_manager' => 'setIsDataManager',
         ];
-        [$response] = $this
-            ->handleGenericItem('usergroup', $assignMap, 'usergroup', 'User_Editor');
+        [$response] = $this->handleGenericItem(UserGroupService::class, $assignMap, 'usergroup', 'User_Editor');
         return $response;
     }
 }

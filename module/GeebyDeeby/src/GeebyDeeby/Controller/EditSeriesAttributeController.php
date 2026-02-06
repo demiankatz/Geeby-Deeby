@@ -3,7 +3,7 @@
 /**
  * Edit series attribute controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\SeriesAttributeService;
 
 /**
  * Edit series attribute controller
@@ -48,7 +50,7 @@ class EditSeriesAttributeController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'seriesattribute',
+            SeriesAttributeService::class,
             'attributes',
             'geeby-deeby/edit-series-attribute/render-series-attributes'
         );
@@ -69,14 +71,13 @@ class EditSeriesAttributeController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'attribute_name' => 'Series_Attribute_Name',
-            'rdf_property' => 'Series_Attribute_RDF_Property',
-            'allow_html' => 'Allow_HTML',
-            'value_link' => 'Value_Link',
-            'priority' => 'Display_Priority',
+            'attribute_name' => 'setAttributeName',
+            'rdf_property' => 'setRdfProperty',
+            'allow_html' => 'setAllowsHTML',
+            'value_link' => 'setValueLink',
+            'priority' => 'setDisplayPriority',
         ];
-        [$response] = $this
-            ->handleGenericItem('seriesattribute', $assignMap, 'attribute');
+        [$response] = $this->handleGenericItem(SeriesAttributeService::class, $assignMap, 'attribute');
 
         return $response;
     }

@@ -3,7 +3,7 @@
 /**
  * Edit note controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\NoteService;
 
 /**
  * Edit note controller
@@ -48,7 +50,7 @@ class EditNoteController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'note',
+            NoteService::class,
             'notes',
             'geeby-deeby/edit-note/render-notes'
         );
@@ -61,8 +63,8 @@ class EditNoteController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['note' => 'Note'];
-        [$response] = $this->handleGenericItem('note', $assignMap, 'note');
+        $assignMap = ['note' => 'setNote'];
+        [$response] = $this->handleGenericItem(NoteService::class, $assignMap, 'note');
         return $response;
     }
 }

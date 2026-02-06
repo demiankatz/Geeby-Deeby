@@ -3,7 +3,7 @@
 /**
  * Row Definition for Series
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -29,7 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
-use function strlen;
+use GeebyDeeby\Db\Entity\LanguageEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 
 /**
  * Row Definition for Series
@@ -40,7 +41,7 @@ use function strlen;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Series extends TableAwareGateway
+class Series extends TableAwareGateway implements SeriesEntityInterface
 {
     /**
      * Constructor
@@ -53,34 +54,82 @@ class Series extends TableAwareGateway
     }
 
     /**
-     * Get category information for this series.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return array Integer IDs for all categories associated with the series.
+     * @return ?int
      */
-    public function getCategoryIDs()
+    public function getId(): ?int
     {
-        $categories = $this->getDbTable('seriescategories')
-            ->getCategories($this->Series_ID);
-        return array_map(
-            function ($current) {
-                return $current['Category_ID'];
-            },
-            $categories->toArray()
-        );
+        return $this->Series_ID ?? null;
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get the name of the series.
      *
-     * @return string|bool
+     * @return string
      */
-    public function validate()
+    public function getSeriesName(): string
     {
-        if (strlen(trim($this->Series_Name)) == 0) {
-            return 'Series name cannot be blank.';
-        }
-        return false;
+        return $this->Series_Name;
+    }
+
+    /**
+     * Set the name of the series.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setSeriesName(string $name): static
+    {
+        $this->Series_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get the description of the series.
+     *
+     * @return ?string
+     */
+    public function getDescription(): ?string
+    {
+        return $this->Series_Description;
+    }
+
+    /**
+     * Set the description of the series.
+     *
+     * @param ?string $desc New description.
+     *
+     * @return static
+     */
+    public function setDescription(?string $desc): static
+    {
+        $this->Series_Description = $desc;
+        return $this;
+    }
+
+    /**
+     * Get associated language.
+     *
+     * @return LanguageEntityInterface
+     */
+    public function getLanguage(): LanguageEntityInterface
+    {
+        return $this->getTableManager()->get('language')->getByPrimaryKey($this->Language_ID);
+    }
+
+    /**
+     * Set associated language.
+     *
+     * @param int|LanguageEntityInterface $language Associated language entity or ID
+     *
+     * @return static
+     */
+    public function setLanguage(int|LanguageEntityInterface $language): static
+    {
+        $this->Language_ID = $language instanceof LanguageEntityInterface ? $language->getId() : $language;
+        return $this;
     }
 
     /**
@@ -88,7 +137,7 @@ class Series extends TableAwareGateway
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->Series_Name;
     }

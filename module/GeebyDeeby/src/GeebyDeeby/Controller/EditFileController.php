@@ -3,7 +3,7 @@
 /**
  * Edit file controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,12 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\FileService;
+use GeebyDeeby\Db\Service\FileTypeService;
+use GeebyDeeby\Db\Service\ItemsFileService;
+use GeebyDeeby\Db\Service\PeopleFileService;
+use GeebyDeeby\Db\Service\SeriesFileService;
 
 /**
  * Edit file controller
@@ -48,7 +54,7 @@ class EditFileController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'file',
+            FileService::class,
             'files',
             'geeby-deeby/edit-file/render-files'
         );
@@ -67,22 +73,22 @@ class EditFileController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'file_name' => 'File_Name', 'path' => 'File_Path',
-            'desc' => 'Description', 'type_id' => 'File_Type_ID',
+            'file_name' => 'setFileName',
+            'path' => 'setFilePath',
+            'desc' => 'setDescription',
+            'type_id' => 'setFileType',
         ];
-        [$view, $ok] = $this->handleGenericItem('file', $assignMap, 'file');
+        [$view, $ok] = $this->handleGenericItem(FileService::class, $assignMap, 'file');
         if (!$ok) {
             return $view;
         }
         $view->fileTypes = $this->typelistAction()->fileTypes;
         // Add extra fields/controls if outside of a lightbox:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->itemsFiles = $this->getDbTable('itemsfiles')
-                ->getItemsForFile($view->fileObj->File_ID);
-            $view->peopleFiles = $this->getDbTable('peoplefiles')
-                ->getPeopleForFile($view->fileObj->File_ID);
-            $view->seriesFiles = $this->getDbTable('seriesfiles')
-                ->getSeriesForFile($view->fileObj->File_ID);
+            $fileId = $view->affectedEntity->getId();
+            $view->itemsFiles = $this->getDbService(ItemsFileService::class)->getItemsForFile($fileId);
+            $view->peopleFiles = $this->getDbService(PeopleFileService::class)->getPeopleForFile($fileId);
+            $view->seriesFiles = $this->getDbService(SeriesFileService::class)->getSeriesForFile($fileId);
             $view->setTemplate('geeby-deeby/edit-file/edit-full');
         }
         return $view;
@@ -96,7 +102,7 @@ class EditFileController extends AbstractBase
     public function typelistAction()
     {
         return $this->getGenericList(
-            'fileType',
+            FileTypeService::class,
             'fileTypes',
             'geeby-deeby/edit-file/render-types'
         );
@@ -109,8 +115,8 @@ class EditFileController extends AbstractBase
      */
     public function typeAction()
     {
-        $assignMap = ['fileType' => 'File_Type'];
-        [$response] = $this->handleGenericItem('fileType', $assignMap, 'fileType');
+        $assignMap = ['fileType' => 'setFileTypeName'];
+        [$response] = $this->handleGenericItem(FileTypeService::class, $assignMap, 'fileType');
         return $response;
     }
 
@@ -122,12 +128,13 @@ class EditFileController extends AbstractBase
     public function itemAction()
     {
         return $this->handleGenericLink(
-            'itemsfiles',
-            'File_ID',
-            'Item_ID',
+            ItemsFileService::class,
+            'setFile',
+            'setItem',
             'itemsFiles',
             'getItemsForFile',
-            'geeby-deeby/edit-file/item-list.phtml'
+            'geeby-deeby/edit-file/item-list.phtml',
+            retrieveLinkMethod: 'getForFileAndItem'
         );
     }
 
@@ -139,12 +146,13 @@ class EditFileController extends AbstractBase
     public function personAction()
     {
         return $this->handleGenericLink(
-            'peoplefiles',
-            'File_ID',
-            'Person_ID',
+            PeopleFileService::class,
+            'setFile',
+            'setPerson',
             'peopleFiles',
             'getPeopleForFile',
-            'geeby-deeby/edit-file/person-list.phtml'
+            'geeby-deeby/edit-file/person-list.phtml',
+            retrieveLinkMethod: 'getForFileAndPerson'
         );
     }
 
@@ -156,12 +164,13 @@ class EditFileController extends AbstractBase
     public function seriesAction()
     {
         return $this->handleGenericLink(
-            'seriesfiles',
-            'File_ID',
-            'Series_ID',
+            SeriesFileService::class,
+            'setFile',
+            'setSeries',
             'seriesFiles',
             'getSeriesForFile',
-            'geeby-deeby/edit-file/series-list.phtml'
+            'geeby-deeby/edit-file/series-list.phtml',
+            retrieveLinkMethod: 'getForFileAndSeries'
         );
     }
 }

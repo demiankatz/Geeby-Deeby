@@ -3,7 +3,7 @@
 /**
  * Edit item creator controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2018.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\ItemsCreatorsCitationService;
 
 /**
  * Edit item creator controller
@@ -51,17 +53,17 @@ class EditItemCreatorController extends AbstractBase
         if ($ok !== true) {
             return $ok;
         }
-        $table = $this->getDbTable('itemscreatorscitations');
-        $params = [
-            'Item_Creator_ID' => $this->params()->fromRoute('id'),
-            'Citation_ID' => $this->params()->fromRoute('extra'),
-        ];
+        $service = $this->getDbService(ItemsCreatorsCitationService::class);
+        $creator = $this->params()->fromRoute('id');
+        $citation = $this->params()->fromRoute('extra');
         try {
             if ($this->getRequest()->isPost()) {
-                $table->insert($params);
+                $service->persistEntity(
+                    $service->createEntity()->setCitation((int)$citation)->setCreator((int)$creator)
+                );
                 return $this->jsonReportSuccess();
             } elseif ($this->getRequest()->isDelete()) {
-                $table->delete($params);
+                $service->deleteEntity($service->getByCreatorAndCitation($creator, $citation));
                 return $this->jsonReportSuccess();
             }
         } catch (\Exception $e) {
@@ -70,7 +72,7 @@ class EditItemCreatorController extends AbstractBase
         // Default behavior: display list:
         $view = $this->createViewModel();
         $primary = $this->params()->fromRoute('id');
-        $view->selectedCitations = $table->getCitations($primary);
+        $view->selectedCitations = $service->getCitations($primary);
         $view->setTemplate('geeby-deeby/edit-item-creator/citation-list.phtml');
         $view->setTerminal(true);
         return $view;

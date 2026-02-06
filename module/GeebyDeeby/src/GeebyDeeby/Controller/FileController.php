@@ -3,7 +3,7 @@
 /**
  * File controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\FileService;
 
 use function count;
 
@@ -55,11 +57,11 @@ class FileController extends AbstractBase
 
         // Initialize values:
         $files = $excludes = [];
-        $table = $this->getDbTable('file');
+        $service = $this->getDbService(FileService::class);
 
         // Build custom groups:
         foreach ($groups as $name => $includes) {
-            $files[$name] = $table->getFilesByType($includes);
+            $files[$name] = $service->getFilesByType($includes);
             if (count($files[$name]) == 0) {
                 unset($files[$name]);
             }
@@ -67,7 +69,7 @@ class FileController extends AbstractBase
         }
 
         // Build standard groups:
-        $list = $table->getFilesByType(null, empty($excludes) ? null : $excludes);
+        $list = $service->getFilesByType(null, empty($excludes) ? null : $excludes);
         foreach ($list as $current) {
             if (!isset($files[$current['File_Type']])) {
                 $files[$current['File_Type']] = [];

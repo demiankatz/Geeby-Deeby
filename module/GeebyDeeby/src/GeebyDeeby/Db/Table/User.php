@@ -3,7 +3,7 @@
 /**
  * Table Definition for Users
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -45,60 +45,37 @@ use Laminas\Db\RowGateway\RowGateway;
 class User extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
      * @param PluginManager $tm      Table manager
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param ?RowGateway   $rowObj  Row prototype object (null for default)
      */
     public function __construct(
         Adapter $adapter,
         PluginManager $tm,
-        RowGateway $rowObj = null
+        ?RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Users');
     }
 
     /**
-     * Get a list of unapproved users.
-     *
-     * @return mixed
-     */
-    public function getUnapproved()
-    {
-        $callback = function ($select): void {
-            // Don't select all fields -- no need to risk exposing password data!
-            $select->columns(
-                [
-                    'User_ID', 'Username', 'Name', 'Address', 'Person_ID',
-                    'Join_Reason',
-                ]
-            );
-            $select->where->equalTo('Person_ID', 0);
-            $select->order('Username');
-        };
-        return $this->select($callback);
-    }
-
-    /**
      * Get a list of users.
      *
+     * @param ?bool $approvedFilter Limit to a specific approval status? (Null for no filter)
+     *
      * @return mixed
      */
-    public function getList()
+    public function getList($approvedFilter = null)
     {
-        $callback = function ($select): void {
+        $callback = function ($select) use ($approvedFilter): void {
             // Don't select all fields -- no need to risk exposing password data!
             $select->columns(
-                ['User_ID', 'Username', 'Name', 'Address', 'Person_ID']
+                ['User_ID', 'Username', 'Name', 'Address', 'Person_ID', 'Join_Reason']
             );
+            if ($approvedFilter !== null) {
+                $select->where->equalTo('Approved', $approvedFilter ? 'y' : 'n');
+            }
             $select->order('Username');
         };
         return $this->select($callback);

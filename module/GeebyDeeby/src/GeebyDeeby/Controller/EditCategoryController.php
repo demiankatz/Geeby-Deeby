@@ -3,7 +3,7 @@
 /**
  * Edit category controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\CategoryService;
 
 /**
  * Edit category controller
@@ -48,7 +50,7 @@ class EditCategoryController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'category',
+            CategoryService::class,
             'categories',
             'geeby-deeby/edit-category/render-categories'
         );
@@ -61,8 +63,8 @@ class EditCategoryController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['name' => 'Category', 'desc' => 'Description'];
-        [$response] = $this->handleGenericItem('category', $assignMap, 'category');
+        $assignMap = ['name' => 'setCategoryName', 'desc' => 'setDescription'];
+        [$response] = $this->handleGenericItem(CategoryService::class, $assignMap, 'category');
         return $response;
     }
 }

@@ -3,7 +3,7 @@
 /**
  * Reviews controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,9 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\ItemsReviewService;
+use GeebyDeeby\Db\Service\SeriesReviewService;
 
 /**
  * Reviews controller
@@ -47,11 +50,10 @@ class ReviewsController extends AbstractBase
      */
     public function listAction()
     {
-        $table = $this->getDbTable('recentreviews');
         return $this->createViewModel(
             [
-                'reviews' => $table->getRecentItemReviews(),
-                'comments' => $table->getRecentSeriesComments(),
+                'reviews' => $this->getDbService(ItemsReviewService::class)->getRecentItemReviews(),
+                'comments' => $this->getDbService(SeriesReviewService::class)->getRecentSeriesComments(),
             ]
         );
     }

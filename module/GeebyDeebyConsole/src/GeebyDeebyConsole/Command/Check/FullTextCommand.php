@@ -3,7 +3,7 @@
 /**
  * Console command: check full text links
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2020.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Console
@@ -29,7 +29,7 @@
 
 namespace GeebyDeebyConsole\Command\Check;
 
-use GeebyDeeby\Db\Table\EditionsFullText;
+use GeebyDeeby\Db\Service\EditionsFullTextService;
 use Laminas\Http\Client;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -54,13 +54,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FullTextCommand extends Command
 {
     /**
-     * Database table for retrieving full text from editions.
-     *
-     * @var EditionsFullText
-     */
-    protected $table;
-
-    /**
      * HTTP client
      *
      * @var Client
@@ -70,18 +63,16 @@ class FullTextCommand extends Command
     /**
      * Constructor
      *
-     * @param EditionsFullText $table  Database table for retrieving full text from
-     * editions
-     * @param Client           $client HTTP client
-     * @param string|null      $name   The name of the command; passing null means it
-     * must be set in configure()
+     * @param EditionsFullText $fullTextService Database service for retrieving full text from editions
+     * @param ?Client          $client          HTTP client
+     * @param ?string          $name            The name of the command; passing null means it must be set in
+     *                                          configure()
      */
     public function __construct(
-        EditionsFullText $table,
-        Client $client = null,
-        $name = null
+        protected EditionsFullTextService $fullTextService,
+        ?Client $client = null,
+        ?string $name = null
     ) {
-        $this->table = $table;
         $this->client = $client ?? new Client();
         parent::__construct($name);
     }
@@ -126,10 +117,9 @@ class FullTextCommand extends Command
      */
     protected function updateUrl(int $id, string $url): void
     {
-        $this->table->update(
-            ['Full_Text_URL' => $url],
-            ['Sequence_ID' => $id]
-        );
+        $entity = $this->fullTextService->getByPrimaryKey($id);
+        $entity->setUrl($url);
+        $this->fullTextService->persistEntity($entity);
     }
 
     /**
@@ -153,16 +143,16 @@ class FullTextCommand extends Command
             $provider = null;
         }
         $updateRedirects = $input->getOption('updateRedirects');
-        $items = $this->table->getItemsWithFullText($series, false, $provider);
+        $items = $this->fullTextService->getItemsWithFullText($series, false, $provider);
         foreach ($items as $current) {
-            $url = $current->Full_Text_URL;
+            $url = $current['Full_Text_URL'];
             $request = new \Laminas\Http\Request();
             $response = $this->client->send($request->setUri($url));
             $rewritten = 0;
             if ($updateRedirects && $this->client->getRedirectionsCount() > 0) {
                 $rewritten = 1;
                 $url = $this->client->getUri();
-                $this->updateUrl($current->Sequence_ID, $url);
+                $this->updateUrl($current['Sequence_ID'], $url);
             }
             $responseLine = [$url, $response->getStatusCode()];
             if ($updateRedirects) {

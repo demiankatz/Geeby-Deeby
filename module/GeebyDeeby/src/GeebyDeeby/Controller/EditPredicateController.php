@@ -3,7 +3,7 @@
 /**
  * Edit predicate controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2015.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\PredicateService;
 
 /**
  * Edit predicate controller
@@ -48,7 +50,7 @@ class EditPredicateController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'predicate',
+            PredicateService::class,
             'predicates',
             'geeby-deeby/edit-predicate/render-predicates'
         );
@@ -61,8 +63,8 @@ class EditPredicateController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['predicate' => 'Predicate', 'abbrev' => 'Predicate_Abbrev'];
-        [$response] = $this->handleGenericItem('predicate', $assignMap, 'predicate');
+        $assignMap = ['predicate' => 'setPredicate', 'abbrev' => 'setAbbreviation'];
+        [$response] = $this->handleGenericItem(PredicateService::class, $assignMap, 'predicate');
         return $response;
     }
 }

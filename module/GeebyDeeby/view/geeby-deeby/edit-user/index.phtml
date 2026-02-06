@@ -14,8 +14,12 @@
       <td><input type="email" id="Address" value="<?=isset($user['Address']) ? $this->escapeHtml($user['Address']) : '' ?>" /></td>
     </tr>
     <tr>
-      <th scope="row"><label for="Person_ID">Status (-1 = normal, 0 = not approved yet, >0 = ID of Person in DB):</label></th>
+      <th scope="row"><label for="Person_ID">ID of Person in DB (if any):</label></th>
       <td><input type="text" id="Person_ID" value="<?=isset($user['Person_ID']) ? $this->escapeHtml($user['Person_ID'] . (isset($person) ? ': ' . $this->showperson($person) : '')) : '' ?>" /></td>
+    </tr>
+    <tr>
+      <th scope="row"><label for="Approved">Approved:</label></th>
+      <td><input type="checkbox" id="Approved" value="1" <?=$user['Approved'] === 'y' ? 'checked="checked"' : ''?> /></td>
     </tr>
     <tr>
       <th scope="row"><label for="User_Group_ID">User Group:</label></th>

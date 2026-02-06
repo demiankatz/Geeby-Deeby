@@ -3,7 +3,7 @@
 /**
  * Generate "toggle link" view helper.
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2020.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  View_Helpers
@@ -29,7 +29,11 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\Db\Service\UserService;
 use GeebyDeeby\Db\Table\User;
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\View\Helper\Url;
 
 /**
  * Generate "toggle link" view helper.
@@ -40,23 +44,22 @@ use GeebyDeeby\Db\Table\User;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class ToggleLink extends \Laminas\View\Helper\AbstractHelper
+class ToggleLink
 {
-    /**
-     * User database table object
-     *
-     * @var User
-     */
-    protected $userTable;
-
     /**
      * Constructor.
      *
-     * @param User $userTable User database table object
+     * @param User                  $userService User database table object
+     * @param Url                   $urlHelper   Url view helper
+     * @param AuthenticationService $auth        Authentication service
      */
-    public function __construct(User $userTable)
-    {
-        $this->userTable = $userTable;
+    public function __construct(
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected UserService $userService,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected Url $urlHelper,
+        protected AuthenticationService $auth
+    ) {
     }
 
     /**
@@ -75,17 +78,12 @@ class ToggleLink extends \Laminas\View\Helper\AbstractHelper
         $label = null,
         $permission = 'Content_Editor'
     ) {
-        // Not logged in? No link.
-        if (!$this->view->auth()->hasIdentity()) {
-            return '';
-        }
-
         // Missing permission? No link.
         if (!$permission || !$this->checkPermission($permission)) {
             return '';
         }
 
-        $url = $this->view->url($route, compact('id'));
+        $url = ($this->urlHelper)($route, compact('id'));
         if ($label === null) {
             $label = (!str_contains($route, 'edit/') && $route !== 'edit')
                 ? '[switch to public view]'
@@ -103,9 +101,9 @@ class ToggleLink extends \Laminas\View\Helper\AbstractHelper
      */
     protected function checkPermission($permission)
     {
-        $user = $this->userTable->getByPrimaryKey(
-            $this->view->auth()->getIdentity()
-        );
-        return $user && $user->hasPermission($permission);
+        $user = $this->auth->hasIdentity()
+            ? $this->userService->getByPrimaryKey($this->auth->getIdentity())
+            : null;
+        return $user && !empty($user->getUserGroup()?->toArray()[$permission]);
     }
 }

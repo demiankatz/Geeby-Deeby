@@ -3,7 +3,7 @@
 /**
  * Edit city controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,10 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\CitiesUriService;
+use GeebyDeeby\Db\Service\CityService;
+use GeebyDeeby\Db\Service\PredicateService;
 
 /**
  * Edit city controller
@@ -48,7 +52,7 @@ class EditCityController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'city',
+            CityService::class,
             'cities',
             'geeby-deeby/edit-city/render-cities'
         );
@@ -61,13 +65,12 @@ class EditCityController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['city' => 'City_Name'];
-        [$view, $ok] = $this->handleGenericItem('city', $assignMap, 'city');
+        $assignMap = ['city' => 'setCityName'];
+        [$view, $ok] = $this->handleGenericItem(CityService::class, $assignMap, 'city');
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbTable('citiesuris')
-                ->getURIsForCity($view->cityObj->City_ID);
+            $view->uris = $this->getDbService(CitiesUriService::class)->getURIsForCity($view->affectedEntity);
             $view->setTemplate('geeby-deeby/edit-city/edit-full');
-            $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
         }
         return $view;
     }
@@ -80,15 +83,16 @@ class EditCityController extends AbstractBase
     public function uriAction()
     {
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+            ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'citiesuris',
-            'City_ID',
-            'URI',
+            CitiesUriService::class,
+            'setCity',
+            'setUri',
             'uris',
             'getURIsForCity',
             'geeby-deeby/edit-city/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByCityAndUri'
         );
     }
 }

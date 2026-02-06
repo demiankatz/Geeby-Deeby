@@ -3,7 +3,7 @@
 /**
  * Title display view helper
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  View_Helpers
@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\ServiceManager\Factory\Autowire;
+
 /**
  * Title display view helper
  *
@@ -38,23 +40,16 @@ namespace GeebyDeeby\View\Helper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class FixTitle extends \Laminas\View\Helper\AbstractHelper
+class FixTitle
 {
-    /**
-     * Articles object.
-     *
-     * @var \GeebyDeeby\Articles
-     */
-    protected $articles;
-
     /**
      * Constructor
      *
      * @param \GeebyDeeby\Articles $articles Articles object
      */
-    public function __construct(\GeebyDeeby\Articles $articles)
+    #[Autowire()]
+    public function __construct(protected \GeebyDeeby\Articles $articles)
     {
-        $this->articles = $articles;
     }
 
     /**

@@ -3,7 +3,7 @@
 /**
  * Table Definition for Series_Reviews
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -44,23 +44,16 @@ use Laminas\Db\RowGateway\RowGateway;
 class SeriesReviews extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
      * @param PluginManager $tm      Table manager
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param ?RowGateway   $rowObj  Row prototype object (null for default)
      */
     public function __construct(
         Adapter $adapter,
         PluginManager $tm,
-        RowGateway $rowObj = null
+        ?RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Series_Reviews');
     }
@@ -83,7 +76,7 @@ class SeriesReviews extends Gateway
                 'Series_Reviews.User_ID = u.User_ID'
             );
             if (null !== $approved) {
-                $select->where->equalTo('Approved', $approved);
+                $select->where->equalTo('Series_Reviews.Approved', $approved);
             }
             $select->where->equalTo('Series_ID', $seriesID);
         };
@@ -118,11 +111,33 @@ class SeriesReviews extends Gateway
                 ['Series_Name', 's.Series_ID']
             );
             if (null !== $approved) {
-                $select->where->equalTo('Approved', $approved);
+                $select->where->equalTo('Series_Reviews.Approved', $approved);
             }
             if (null !== $userID) {
                 $select->where->equalTo('User_ID', $userID);
             }
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get recent series comments
+     *
+     * @return mixed
+     */
+    public function getRecentSeriesComments()
+    {
+        $callback = function ($select): void {
+            $select->join(
+                ['u' => 'Users'],
+                'Series_Reviews.User_ID = u.User_ID'
+            );
+            $select->join(
+                ['s' => 'Series'],
+                'Series_Reviews.Series_ID = s.Series_ID'
+            );
+            $select->where->equalTo('Series_Reviews.Approved', 'y');
+            $select->order(['Added desc', 'Username']);
         };
         return $this->select($callback);
     }

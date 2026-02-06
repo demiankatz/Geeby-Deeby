@@ -3,7 +3,7 @@
 /**
  * Signup controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -30,8 +30,7 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Crypt\PasswordHasher;
-
-use function count;
+use GeebyDeeby\Db\Service\UserService;
 
 /**
  * Signup controller
@@ -80,22 +79,20 @@ class SignupController extends AbstractBase
             } elseif (!$validEmail) {
                 $view->error = 'The email address you provided is invalid. Please try again.';
             } else {
-                $table = $this->getDbTable('user');
-                $exists = $table->select(['Username' => $view->user]);
-                if (count($exists) > 0) {
+                $service = $this->getDbService(UserService::class);
+                $exists = $service->getByUsername($view->user);
+                if ($exists) {
                     $view->error = 'The username you selected is already in use.';
                 } else {
                     $hasher = new PasswordHasher();
-                    $table->insert(
-                        [
-                            'Username' => $view->user,
-                            'Password_Hash' => $hasher->create($password1),
-                            'Name' => $view->fullname,
-                            'Address' => $view->address,
-                            'Join_Reason' => $view->reason,
-                            'Person_ID' => 0,
-                        ]
-                    );
+                    $newUser = $service->createEntity()
+                        ->setUsername($view->user)
+                        ->setPasswordHash($hasher->create($password1))
+                        ->setName($view->fullname)
+                        ->setAddress($view->address)
+                        ->setJoinReason($view->reason)
+                        ->setPerson(null);
+                    $service->persistEntity($newUser);
                     $view->setTemplate('geeby-deeby/signup/success');
                 }
             }

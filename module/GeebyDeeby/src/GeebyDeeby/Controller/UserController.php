@@ -3,7 +3,7 @@
 /**
  * User controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -30,8 +30,10 @@
 namespace GeebyDeeby\Controller;
 
 use GeebyDeeby\Crypt\PasswordHasher;
-
-use function is_object;
+use GeebyDeeby\Db\Service\CollectionService;
+use GeebyDeeby\Db\Service\ItemsReviewService;
+use GeebyDeeby\Db\Service\SeriesReviewService;
+use GeebyDeeby\Db\Service\UserService;
 
 /**
  * User controller
@@ -52,14 +54,12 @@ class UserController extends AbstractBase
     protected function getViewModelWithUser()
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('user');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $service = $this->getDbService(UserService::class);
+        $entity = (null === $id) ? null : $service->getByPrimaryKey($id);
+        if (!$entity) {
             return false;
         }
-        return $this->createViewModel(
-            ['user' => $rowObj->toArray()]
-        );
+        return $this->createViewModel(['user' => $entity->toArray()]);
     }
 
     /**
@@ -73,7 +73,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $collection = $this->getDbTable('collections')
+        $collection = $this->getDbService(CollectionService::class)
             ->getForUser($view->user['User_ID'], ['have', 'want'], true);
         // Format the data for more convenient display:
         $formatted = [];
@@ -101,7 +101,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->buyers = $this->getDbTable('collections')->compareCollections(
+        $view->buyers = $this->getDbService(CollectionService::class)->compareCollections(
             $view->user['User_ID'],
             'extra',
             'want'
@@ -120,8 +120,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->comments = $this->getDbTable('seriesreviews')
-            ->getReviewsByUser($view->user['User_ID']);
+        $view->comments = $this->getDbService(SeriesReviewService::class)->getReviewsByUser($view->user['User_ID']);
         return $view;
     }
 
@@ -139,7 +138,7 @@ class UserController extends AbstractBase
         // Make sure user is logged in.
         if (
             !($user = $this->getCurrentUser())
-            || $view->user['User_ID'] != $user->User_ID
+            || $view->user['User_ID'] != $user->getId()
         ) {
             return $this->forceLogin();
         }
@@ -168,18 +167,15 @@ class UserController extends AbstractBase
                 if (!empty($password1) && !($passwordCheck?->isValid())) {
                     $view->error = 'The existing password you provided is incorrect.';
                 } else {
-                    $table = $this->getDbTable('user');
-                    $update = [
-                        'Name' => $view->fullname, 'Address' => $view->address,
-                    ];
+                    $service = $this->getDbService(UserService::class);
+                    $user = $service->getByPrimaryKey($view->user['User_ID']);
+                    $user->setName($view->fullname)
+                        ->setAddress($view->address);
                     if (!empty($password1)) {
                         $hasher = new PasswordHasher();
-                        $update['Password_Hash'] = $hasher->create($password1);
+                        $user->setPasswordHash($hasher->create($password1));
                     }
-                    $table->update(
-                        $update,
-                        ['User_ID' => $view->user['User_ID']]
-                    );
+                    $service->persistEntity($user);
                     return $this->redirect()->toRoute(
                         'user',
                         ['id' => $view->user['User_ID']]
@@ -204,7 +200,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->extras = $this->getDbTable('collections')
+        $view->extras = $this->getDbService(CollectionService::class)
             ->getForUser($view->user['User_ID'], 'extra');
         return $view;
     }
@@ -220,12 +216,9 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->stats = $this->getDbTable('collections')
-            ->getUserStatistics($view->user['User_ID']);
-        $view->comments = $this->getDbTable('seriesreviews')
-            ->getReviewsByUser($view->user['User_ID']);
-        $view->reviews = $this->getDbTable('itemsreviews')
-            ->getReviewIDsByUser($view->user['User_ID']);
+        $view->stats = $this->getDbService(CollectionService::class)->getUserStatistics($view->user['User_ID']);
+        $view->comments = $this->getDbService(SeriesReviewService::class)->getReviewsByUser($view->user['User_ID']);
+        $view->reviews = $this->getDbService(ItemsReviewService::class)->getReviewIDsByUser($view->user['User_ID']);
         return $view;
     }
 
@@ -237,7 +230,7 @@ class UserController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['users' => $this->getDbTable('user')->getList()]
+            ['users' => $this->getDbService(UserService::class)->getList(true)]
         );
     }
 
@@ -262,8 +255,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->reviews = $this->getDbTable('itemsreviews')
-            ->getReviewsByUser($view->user['User_ID']);
+        $view->reviews = $this->getDbService(ItemsReviewService::class)->getReviewsByUser($view->user['User_ID']);
         return $view;
     }
 
@@ -278,7 +270,7 @@ class UserController extends AbstractBase
         if (!$view) {
             return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
         }
-        $view->sellers = $this->getDbTable('collections')->compareCollections(
+        $view->sellers = $this->getDbService(CollectionService::class)->compareCollections(
             $view->user['User_ID'],
             'want',
             'extra'

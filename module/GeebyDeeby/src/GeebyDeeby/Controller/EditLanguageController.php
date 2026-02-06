@@ -3,7 +3,7 @@
 /**
  * Edit language controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\LanguageService;
 
 /**
  * Edit language controller
@@ -48,7 +50,7 @@ class EditLanguageController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'language',
+            LanguageService::class,
             'languages',
             'geeby-deeby/edit-language/render-languages'
         );
@@ -61,8 +63,8 @@ class EditLanguageController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['language' => 'Language_Name'];
-        [$response] = $this->handleGenericItem('language', $assignMap, 'language');
+        $assignMap = ['language' => 'setLanguageName'];
+        [$response] = $this->handleGenericItem(LanguageService::class, $assignMap, 'language');
         return $response;
     }
 }

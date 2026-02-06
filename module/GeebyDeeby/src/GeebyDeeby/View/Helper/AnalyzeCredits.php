@@ -3,7 +3,7 @@
 /**
  * Credit analysis view helper
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2018.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  View_Helpers
@@ -28,6 +28,10 @@
  */
 
 namespace GeebyDeeby\View\Helper;
+
+use GeebyDeeby\Db\Service\ItemsCreatorsCitationService;
+use GeebyDeeby\Db\Service\PseudonymService;
+use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 use function count;
 use function in_array;
@@ -41,22 +45,8 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
+class AnalyzeCredits
 {
-    /**
-     * Items_Creators_Citations table.
-     *
-     * @var object
-     */
-    protected $citationsTable;
-
-    /**
-     * Pseudonyms table.
-     *
-     * @var object
-     */
-    protected $pseudonymsTable;
-
     /**
      * Pseudonym information.
      *
@@ -74,13 +64,18 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
     /**
      * Constructor
      *
-     * @param object $pseudonyms Pseudonyms table.
-     * @param object $citations  Items_Creators_Citations table.
+     * @param Pseudonyms             $pseudonymService Pseudonyms service.
+     * @param ItemsCreatorsCitations $citationService  Items_Creators_Citations service.
+     * @param FixTitle               $fixTitleHelper   FixTitle view helper.
      */
-    public function __construct($pseudonyms, $citations)
-    {
-        $this->pseudonymsTable = $pseudonyms;
-        $this->citationsTable = $citations;
+    public function __construct(
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected PseudonymService $pseudonymService,
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected ItemsCreatorsCitationService $citationService,
+        #[Autowire(container: 'ViewHelperManager')]
+        protected FixTitle $fixTitleHelper
+    ) {
     }
 
     /**
@@ -98,8 +93,7 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
         // First group and associate the credits:
         foreach ($credits as $credit) {
             $personId = $credit['Person_ID'];
-            $prefix = $this->isMatchingPerson($personId, array_keys($creators))
-                ? '' : 'Incorrectly Attributed ';
+            $prefix = $this->isMatchingPerson($personId, array_keys($creators)) ? '' : 'Incorrectly Attributed ';
             $role = $prefix . $credit['Role_Name'];
             if (!isset($groupedCredits[$role])) {
                 $groupedCredits[$role] = [];
@@ -117,12 +111,8 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
             $creditedIds = array_keys(
                 $groupedCredits[$role] ?? []
             );
-            if (
-                empty($creditedIds)
-                || !$this->isMatchingPerson($personId, $creditedIds)
-            ) {
-                $groupedCredits[$role][$personId][]
-                    = $creator->getArrayCopy() + ['Note' => 'uncredited'];
+            if (empty($creditedIds) || !$this->isMatchingPerson($personId, $creditedIds)) {
+                $groupedCredits[$role][$personId][] = $creator->toArray() + ['Note' => 'uncredited'];
             }
         }
         return $groupedCredits;
@@ -191,8 +181,7 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
     protected function getPseudonymDetails($person, $filter = [])
     {
         if (!isset($this->pseudonyms[$person])) {
-            $this->pseudonyms[$person] = $this->pseudonymsTable
-                ->getPseudonyms($person)->toArray();
+            $this->pseudonyms[$person] = $this->pseudonymService->getPseudonyms($person);
         }
         return $this->filterNames($this->pseudonyms[$person], $filter);
     }
@@ -208,8 +197,7 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
     protected function getRealPersonDetails($person, $filter = [])
     {
         if (!isset($this->realNames[$person])) {
-            $this->realNames[$person] = $this->pseudonymsTable
-                ->getRealNames($person)->toArray();
+            $this->realNames[$person] = $this->pseudonymService->getRealNames($person);
         }
         return $this->filterNames($this->realNames[$person], $filter);
     }
@@ -226,39 +214,35 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
     protected function analyzeGroup($creators, $editions, $details)
     {
         $final = [];
-        $fixTitle = $this->view->plugin('fixtitle');
         foreach ($details as $person => $credits) {
             $notes = [];
-            foreach ($credits as $current) {
-                // If credit count doesn't match edition count, then different
-                // editions have different attributions.
-                if (count($credits) != count($editions)) {
-                    foreach ($credits as $credit) {
-                        $note = $fixTitle($credit['Edition_Name']);
-                        if (!empty($credit['Note'])) {
-                            if (!empty($note)) {
-                                $note .= ' - ';
-                            }
-                            $note .= $credit['Note'];
+            // If credit count doesn't match edition count, then different
+            // editions have different attributions.
+            $creditCountMismatch = count($credits) != count($editions);
+            foreach ($credits as $credit) {
+                if ($creditCountMismatch) {
+                    $note = ($this->fixTitleHelper)($credit['Edition_Name'] ?? '');
+                    if (!empty($credit['Note'])) {
+                        if (!empty($note)) {
+                            $note .= ' - ';
                         }
-                        $notes[] = $note;
+                        $note .= $credit['Note'];
                     }
                 } else {
-                    foreach ($credits as $credit) {
-                        if (!empty($credit['Note'])) {
-                            $notes[] = $credit['Note'];
-                        }
-                    }
+                    $note = $credit['Note'];
+                }
+                if (!empty($note)) {
+                    $notes[] = $note;
                 }
             }
             if (isset($credit)) {
                 $final[$person] = [
                     'person' => $credit,
-                    'realPerson' => $this
-                        ->getRealPersonDetails($person, array_keys($creators)),
+                    'realPerson' => $this->getRealPersonDetails($person, array_keys($creators)),
                     'notes' => implode('; ', array_unique($notes)),
                 ];
             }
+            unset($credit);
         }
         return $final;
     }
@@ -273,7 +257,7 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
     protected function getCitationGroup($id)
     {
         $citations = [];
-        foreach ($this->citationsTable->getCitations($id) as $citation) {
+        foreach ($this->citationService->getCitations($id) as $citation) {
             $citations[] = $citation['Citation'];
         }
         if (empty($citations)) {
@@ -286,11 +270,10 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
      * Group creators by citation. Return an array of arrays keyed by Person_ID
      *
      * @param array $creators Creators to group
-     * @param int   $itemId   Item ID creators belong to
      *
      * @return array
      */
-    protected function groupCreators($creators, $itemId)
+    protected function groupCreators($creators)
     {
         $groups = [];
         foreach ($creators as $creator) {
@@ -314,8 +297,7 @@ class AnalyzeCredits extends \Laminas\View\Helper\AbstractHelper
     {
         $final = [];
         $currentEdition = current($editions);
-        $itemId = $currentEdition['Item_ID'] ?? null;
-        $groupedCreators = $this->groupCreators($creators, $itemId);
+        $groupedCreators = $this->groupCreators($creators);
         if (empty($groupedCreators)) {
             $groupedCreators = ['an uncited source' => []];
         }

@@ -3,7 +3,7 @@
 /**
  * Row Definition for Full_Text_Sources
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\FullTextSourceEntityInterface;
+
 /**
  * Row Definition for Full_Text_Sources
  *
@@ -38,7 +40,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class FullTextSource extends RowGateway
+class FullTextSource extends RowGateway implements FullTextSourceEntityInterface
 {
     /**
      * Constructor
@@ -51,16 +53,35 @@ class FullTextSource extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Full_Text_Source_Name)) {
-            return 'Name cannot be blank.';
-        }
-        return false;
+        return $this->Full_Text_Source_ID ?? null;
+    }
+
+    /**
+     * Get the name of the source.
+     *
+     * @return string
+     */
+    public function getSourceName(): string
+    {
+        return $this->Full_Text_Source_Name;
+    }
+
+    /**
+     * Set the name of the source.
+     *
+     * @param string $name New name.
+     *
+     * @return static
+     */
+    public function setSourceName(string $name): static
+    {
+        $this->Full_Text_Source_Name = $name;
+        return $this;
     }
 }

@@ -3,7 +3,7 @@
 /**
  * Tag controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,12 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\TagsAttributesValueService;
+use GeebyDeeby\Db\Service\TagService;
+use GeebyDeeby\Db\Service\TagsRelationshipsValueService;
+use GeebyDeeby\Db\Service\TagsUriService;
 
 use function is_object;
 
@@ -87,7 +93,7 @@ class TagController extends AbstractBase
             }
         }
         foreach ($view->uris as $uri) {
-            $tag->add($uri->Predicate, $graph->resource($uri->URI));
+            $tag->add($uri['Predicate'], $graph->resource($uri['URI']));
         }
         return $tag;
     }
@@ -113,15 +119,10 @@ class TagController extends AbstractBase
      */
     public function labelAction()
     {
+        $label = $this->params()->fromRoute('label', '');
         // Look up tags by label, and redirect to the first match:
-        $tags = $this->getDbTable('tag')->select(
-            ['Tag' => $this->params()->fromRoute('label')]
-        );
-        foreach ($tags as $tag) {
-            return $this->redirect()->toRoute(
-                'tag',
-                ['id' => $tag['Tag_ID']]
-            );
+        if ($tag = $this->getDbService(TagService::class)->getByLabel($label)) {
+            return $this->redirect()->toRoute('tag', ['id' => $tag->getId()]);
         }
         // If we got this far, there was no match; time to 404!
         $response = $this->getResponse();
@@ -155,21 +156,18 @@ class TagController extends AbstractBase
     protected function getViewModelWithTag($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $table = $this->getDbTable('tag');
-        $rowObj = (null === $id) ? null : $table->getByPrimaryKey($id);
-        if (!is_object($rowObj)) {
+        $entity = (null === $id) ? null : $this->getDbService(TagService::class)->getByPrimaryKey($id);
+        if (!is_object($entity)) {
             return false;
         }
         $view = $this->createViewModel(
-            $extras + ['tag' => $rowObj->toArray()]
+            $extras + ['tag' => $entity->toArray()]
         );
-        $view->items = $this->getDbTable('itemstags')
-            ->getItemsForTag($id, $extras['sort'] ?? 'series');
-        $view->tagAttributes = $this->getDbTable('tagsattributesvalues')
-            ->getAttributesForTag($id);
-        $view->relationshipsValues = $this->getDbTable('tagsrelationshipsvalues')
+        $view->items = $this->getDbService(ItemsTagService::class)->getItemsForTag($id, $extras['sort'] ?? 'series');
+        $view->tagAttributes = $this->getDbService(TagsAttributesValueService::class)->getAttributesForTag($id);
+        $view->relationshipsValues = $this->getDbService(TagsRelationshipsValueService::class)
             ->getRelationshipsForTag($id);
-        $view->uris = $this->getDbTable('tagsuris')->getURIsForTag($id);
+        $view->uris = $this->getDbService(TagsUriService::class)->getURIsForTag($id);
         return $view;
     }
 
@@ -194,7 +192,7 @@ class TagController extends AbstractBase
     public function listAction()
     {
         return $this->createViewModel(
-            ['tags' => $this->getDbTable('tag')->getList()]
+            ['tags' => $this->getDbService(TagService::class)->getList()]
         );
     }
 

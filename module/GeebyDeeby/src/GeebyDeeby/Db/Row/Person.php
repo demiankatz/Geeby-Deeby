@@ -3,7 +3,7 @@
 /**
  * Row Definition for People
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -29,6 +29,9 @@
 
 namespace GeebyDeeby\Db\Row;
 
+use GeebyDeeby\Db\Entity\AuthorityEntityInterface;
+use GeebyDeeby\Db\Entity\PersonEntityInterface;
+
 /**
  * Row Definition for People
  *
@@ -38,7 +41,7 @@ namespace GeebyDeeby\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
  */
-class Person extends RowGateway
+class Person extends TableAwareGateway implements PersonEntityInterface
 {
     /**
      * Constructor
@@ -51,17 +54,13 @@ class Person extends RowGateway
     }
 
     /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return string|bool
+     * @return ?int
      */
-    public function validate()
+    public function getId(): ?int
     {
-        if (empty($this->Last_Name)) {
-            return 'Last name cannot be blank.';
-        }
-        return false;
+        return $this->Person_ID ?? null;
     }
 
     /**
@@ -69,10 +68,129 @@ class Person extends RowGateway
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
-        $n = $this->First_Name . ' ' . $this->Last_Name
-            . ' ' . $this->Extra_Details;
+        $n = $this->getFirstName() . ' ' . $this->getLastName() . ' ' . $this->getExtraDetails();
         return trim(preg_replace(['/\s+/', '/\s+,/'], [' ', ','], $n));
+    }
+
+    /**
+     * Get first name.
+     *
+     * @return string
+     */
+    public function getFirstName(): string
+    {
+        return $this->First_Name;
+    }
+
+    /**
+     * Set first name.
+     *
+     * @param string $name New value
+     *
+     * @return static
+     */
+    public function setFirstName(string $name): static
+    {
+        $this->First_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get last name.
+     *
+     * @return string
+     */
+    public function getLastName(): string
+    {
+        return $this->Last_Name;
+    }
+
+    /**
+     * Set last name.
+     *
+     * @param string $name New value
+     *
+     * @return static
+     */
+    public function setLastName(string $name): static
+    {
+        $this->Last_Name = $name;
+        return $this;
+    }
+
+    /**
+     * Get extra details.
+     *
+     * @return string
+     */
+    public function getExtraDetails(): string
+    {
+        return $this->Extra_Details;
+    }
+
+    /**
+     * Set extra details.
+     *
+     * @param string $details New value
+     *
+     * @return static
+     */
+    public function setExtraDetails(string $details): static
+    {
+        $this->Extra_Details = $details;
+        return $this;
+    }
+
+    /**
+     * Get biography.
+     *
+     * @return string
+     */
+    public function getBiography(): string
+    {
+        return $this->Biography;
+    }
+
+    /**
+     * Set biography.
+     *
+     * @param string $bio New value
+     *
+     * @return static
+     */
+    public function setBiography(string $bio): static
+    {
+        $this->Biography = $bio;
+        return $this;
+    }
+
+    /**
+     * Get associated authority (if any).
+     *
+     * @return ?AuthorityEntityInterface
+     */
+    public function getAuthority(): ?AuthorityEntityInterface
+    {
+        return $this->Authority_ID
+            ? $this->getTableManager()->get('authority')->getByPrimaryKey($this->Authority_ID)
+            : null;
+    }
+
+    /**
+     * Set associated authority.
+     *
+     * @param null|int|AuthorityEntityInterface $authority Associated authority entity or ID, or null
+     *
+     * @return static
+     */
+    public function setAuthority(null|int|AuthorityEntityInterface $authority): static
+    {
+        if ($authority instanceof AuthorityEntityInterface) {
+            $authority = $authority->Authority_ID;
+        }
+        $this->Authority_ID = $authority;
+        return $this;
     }
 }

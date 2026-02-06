@@ -3,7 +3,7 @@
 /**
  * Generic row gateway
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Row
@@ -42,20 +42,6 @@ use function count;
  */
 class RowGateway extends \Laminas\Db\RowGateway\RowGateway
 {
-    use \GeebyDeeby\Db\ActivityLoggerTrait;
-
-    /**
-     * Validate the fields in the current object.  Return error message if problem
-     * found, boolean false if no errors were found.
-     *
-     * @return string|bool
-     */
-    public function validate()
-    {
-        // Assume valid row by default:
-        return false;
-    }
-
     /**
      * Get primary key for the table.
      *
@@ -78,16 +64,5 @@ class RowGateway extends \Laminas\Db\RowGateway\RowGateway
         }
         $key = $this->primaryKeyColumn[0];
         return $this->$key;
-    }
-
-    /**
-     * Save
-     *
-     * @return void
-     */
-    public function save()
-    {
-        $this->logActivity();
-        parent::save();
     }
 }

@@ -3,7 +3,7 @@
 /**
  * Database table plugin manager
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -69,7 +69,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'editionsplatforms' => 'GeebyDeeby\Db\Table\EditionsPlatforms',
         'editionsproductcodes' => 'GeebyDeeby\Db\Table\EditionsProductCodes',
         'editionsreleasedates' => 'GeebyDeeby\Db\Table\EditionsReleaseDates',
-        'faqs' => 'GeebyDeeby\Db\Table\FAQs',
         'file' => 'GeebyDeeby\Db\Table\File',
         'filetype' => 'GeebyDeeby\Db\Table\FileType',
         'fulltextsource' => 'GeebyDeeby\Db\Table\FullTextSource',
@@ -81,19 +80,12 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'itemsbibliography' => 'GeebyDeeby\Db\Table\ItemsBibliography',
         'itemscreators' => 'GeebyDeeby\Db\Table\ItemsCreators',
         'itemscreatorscitations' => 'GeebyDeeby\Db\Table\ItemsCreatorsCitations',
-        'itemscredits' => 'GeebyDeeby\Db\Table\ItemsCredits',
         'itemsdescriptions' => 'GeebyDeeby\Db\Table\ItemsDescriptions',
         'itemsfiles' => 'GeebyDeeby\Db\Table\ItemsFiles',
-        'itemsimages' => 'GeebyDeeby\Db\Table\ItemsImages',
         'itemsincollections' => 'GeebyDeeby\Db\Table\ItemsInCollections',
-        'itemsinseries' => 'GeebyDeeby\Db\Table\ItemsInSeries',
-        'itemsisbns' => 'GeebyDeeby\Db\Table\ItemsISBNs',
         'itemslinks' => 'GeebyDeeby\Db\Table\ItemsLinks',
-        'itemsplatforms' => 'GeebyDeeby\Db\Table\ItemsPlatforms',
-        'itemsproductcodes' => 'GeebyDeeby\Db\Table\ItemsProductCodes',
         'itemsrelationship' => 'GeebyDeeby\Db\Table\ItemsRelationship',
         'itemsrelationshipsvalues' => 'GeebyDeeby\Db\Table\ItemsRelationshipsValues',
-        'itemsreleasedates' => 'GeebyDeeby\Db\Table\ItemsReleaseDates',
         'itemsreviews' => 'GeebyDeeby\Db\Table\ItemsReviews',
         'itemstags' => 'GeebyDeeby\Db\Table\ItemsTags',
         'itemstranslations' => 'GeebyDeeby\Db\Table\ItemsTranslations',
@@ -114,7 +106,6 @@ class PluginManager extends \GeebyDeeby\ServiceManager\AbstractPluginManager
         'publishersaddresses' => 'GeebyDeeby\Db\Table\PublishersAddresses',
         'publishersimprints' => 'GeebyDeeby\Db\Table\PublishersImprints',
         'publishersuris' => 'GeebyDeeby\Db\Table\PublishersURIs',
-        'recentreviews' => 'GeebyDeeby\Db\Table\RecentReviews',
         'role' => 'GeebyDeeby\Db\Table\Role',
         'series' => 'GeebyDeeby\Db\Table\Series',
         'seriesalttitles' => 'GeebyDeeby\Db\Table\SeriesAltTitles',

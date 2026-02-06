@@ -3,7 +3,7 @@
 /**
  * Edit country controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,10 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\CountriesUriService;
+use GeebyDeeby\Db\Service\CountryService;
+use GeebyDeeby\Db\Service\PredicateService;
 
 /**
  * Edit country controller
@@ -48,14 +52,13 @@ class EditCountryController extends AbstractBase
     public function listAction()
     {
         $view = $this->getGenericList(
-            'country',
+            CountryService::class,
             'countries',
             'geeby-deeby/edit-country/render-countries'
         );
         // If this is not an AJAX request, we also want to display cities:
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $view->cities
-                = $this->forwardTo(__NAMESPACE__ . '\EditCity', 'list')->cities;
+            $view->cities = $this->forwardTo(__NAMESPACE__ . '\EditCity', 'list')->cities;
         }
         return $view;
     }
@@ -67,14 +70,13 @@ class EditCountryController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['country' => 'Country_Name'];
-        [$view, $ok] = $this->handleGenericItem('country', $assignMap, 'country');
+        $assignMap = ['country' => 'setCountryName'];
+        [$view, $ok] = $this->handleGenericItem(CountryService::class, $assignMap, 'country');
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $view->uris = $this->getDbTable('countriesuris')
-                ->getURIsForCountry($view->countryObj->Country_ID);
+            $view->uris = $this->getDbService(CountriesUriService::class)->getURIsForCountry($view->affectedEntity);
             $view->setTemplate('geeby-deeby/edit-country/edit-full');
-            $view->predicates = $this->getDbTable('predicate')->getList();
+            $view->predicates = $this->getDbService(PredicateService::class)->getList();
         }
         return $view;
     }
@@ -87,15 +89,16 @@ class EditCountryController extends AbstractBase
     public function uriAction()
     {
         $extras = ($pid = $this->params()->fromPost('predicate_id'))
-            ? ['Predicate_ID' => $pid] : [];
+            ? ['setPredicate' => $pid] : [];
         return $this->handleGenericLink(
-            'countriesuris',
-            'Country_ID',
-            'URI',
+            CountriesUriService::class,
+            'setCountry',
+            'setUri',
             'uris',
             'getURIsForCountry',
             'geeby-deeby/edit-country/uri-list.phtml',
-            $extras
+            $extras,
+            retrieveLinkMethod: 'getByCountryAndUri'
         );
     }
 }

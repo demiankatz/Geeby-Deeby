@@ -3,7 +3,7 @@
 /**
  * Edit item relationship controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2019.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\ItemsRelationshipService;
 
 /**
  * Edit item relationship controller
@@ -48,7 +50,7 @@ class EditItemRelationshipController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'itemsrelationship',
+            ItemsRelationshipService::class,
             'relationships',
             'geeby-deeby/edit-item-relationship/render-item-relationships'
         );
@@ -62,15 +64,14 @@ class EditItemRelationshipController extends AbstractBase
     public function indexAction()
     {
         $assignMap = [
-            'relationship_name' => 'Items_Relationship_Name',
-            'rdf_property' => 'Items_Relationship_RDF_Property',
-            'priority' => 'Display_Priority',
-            'inverse_relationship_name' => 'Items_Inverse_Relationship_Name',
-            'inverse_rdf_property' => 'Items_Inverse_Relationship_RDF_Property',
-            'inverse_priority' => 'Inverse_Display_Priority',
+            'relationship_name' => 'setRelationshipName',
+            'rdf_property' => 'setRDFProperty',
+            'priority' => 'setDisplayPriority',
+            'inverse_relationship_name' => 'setInverseRelationshipName',
+            'inverse_rdf_property' => 'setInverseRDFProperty',
+            'inverse_priority' => 'setInverseDisplayPriority',
         ];
-        [$response] = $this
-            ->handleGenericItem('itemsrelationship', $assignMap, 'relationship');
+        [$response] = $this->handleGenericItem(ItemsRelationshipService::class, $assignMap, 'relationship');
 
         return $response;
     }

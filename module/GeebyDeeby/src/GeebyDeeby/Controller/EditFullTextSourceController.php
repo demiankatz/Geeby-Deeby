@@ -3,7 +3,7 @@
 /**
  * Edit full text source controller
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\FullTextSourceService;
 
 /**
  * Edit full text source controller
@@ -48,7 +50,7 @@ class EditFullTextSourceController extends AbstractBase
     public function listAction()
     {
         return $this->getGenericList(
-            'fulltextsource',
+            FullTextSourceService::class,
             'fulltextsources',
             'geeby-deeby/edit-full-text-source/render-sources'
         );
@@ -61,9 +63,9 @@ class EditFullTextSourceController extends AbstractBase
      */
     public function indexAction()
     {
-        $assignMap = ['fulltextsource' => 'Full_Text_Source_Name'];
+        $assignMap = ['fulltextsource' => 'setSourceName'];
         [$response] = $this->handleGenericItem(
-            'fulltextsource',
+            FullTextSourceService::class,
             $assignMap,
             'fulltextsource'
         );

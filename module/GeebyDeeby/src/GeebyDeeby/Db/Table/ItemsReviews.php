@@ -3,7 +3,7 @@
 /**
  * Table Definition for Items_Reviews
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -46,23 +46,16 @@ use Laminas\Db\Sql\Select;
 class ItemsReviews extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
      * @param PluginManager $tm      Table manager
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param ?RowGateway   $rowObj  Row prototype object (null for default)
      */
     public function __construct(
         Adapter $adapter,
         PluginManager $tm,
-        RowGateway $rowObj = null
+        ?RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Items_Reviews');
     }
@@ -85,7 +78,7 @@ class ItemsReviews extends Gateway
                 'Items_Reviews.User_ID = u.User_ID'
             );
             if (null !== $approved) {
-                $select->where->equalTo('Approved', $approved);
+                $select->where->equalTo('Items_Reviews.Approved', $approved);
             }
             $select->where->equalTo('Item_ID', $itemID);
         };
@@ -205,11 +198,33 @@ class ItemsReviews extends Gateway
             ];
             $select->order($series ? $all : ['Item_Name']);
             if (null !== $approved) {
-                $select->where->equalTo('Approved', $approved);
+                $select->where->equalTo('Items_Reviews.Approved', $approved);
             }
             if (null !== $userID) {
                 $select->where->equalTo('User_ID', $userID);
             }
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get recent item reviews
+     *
+     * @return mixed
+     */
+    public function getRecentItemReviews()
+    {
+        $callback = function ($select): void {
+            $select->join(
+                ['u' => 'Users'],
+                'Items_Reviews.User_ID = u.User_ID'
+            );
+            $select->join(
+                ['i' => 'Items'],
+                'Items_Reviews.Item_ID = i.Item_ID'
+            );
+            $select->where->equalTo('Items_Reviews.Approved', 'y');
+            $select->order(['Added desc', 'Username']);
         };
         return $this->select($callback);
     }

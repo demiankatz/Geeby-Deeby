@@ -3,7 +3,7 @@
 /**
  * Trait for shared logic related to full text attribute display.
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2020.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Controller
@@ -28,6 +28,8 @@
  */
 
 namespace GeebyDeeby\Controller;
+
+use GeebyDeeby\Db\Service\EditionsFullTextAttributesValueService;
 
 use function count;
 
@@ -53,15 +55,15 @@ trait FullTextAttributesTrait
     {
         $fullTextAttributes = [];
         if (count($view->fullText ?? []) > 0) {
-            $attrTable = $this->getDbTable('editionsfulltextattributesvalues');
+            $service = $this->getDbService(EditionsFullTextAttributesValueService::class);
             $ids = array_map(
                 function ($current) {
                     return $current['Sequence_ID'];
                 },
-                $view->fullText->toArray()
+                $view->fullText
             );
-            foreach ($attrTable->getAttributesForFullTextIDs($ids) as $attr) {
-                $fullTextAttributes[$attr->Editions_Full_Text_ID][] = $attr;
+            foreach ($service->getAttributesForFullTextIDs($ids) as $attr) {
+                $fullTextAttributes[$attr['Editions_Full_Text_ID']][] = $attr;
             }
         }
         $view->fullTextAttributes = $fullTextAttributes;

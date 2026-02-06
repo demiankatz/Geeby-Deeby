@@ -228,7 +228,8 @@ table td {padding-bottom:6px}
   padding:5px 8px;
 }
 
-ul.search-controls li {
+ul.search-controls li,
+ul.person-full-text li {
   list-style-type: none;
 }
 

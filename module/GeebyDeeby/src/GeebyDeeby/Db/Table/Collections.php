@@ -3,7 +3,7 @@
 /**
  * Table Definition for Collections
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Demian Katz 2012.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
  * @package  Db_Table
@@ -48,23 +48,16 @@ use function is_array;
 class Collections extends Gateway
 {
     /**
-     * Should we disable logging for this class?
-     *
-     * @var bool
-     */
-    protected static $doNotLog = true;
-
-    /**
      * Constructor
      *
      * @param Adapter       $adapter Database adapter
      * @param PluginManager $tm      Table manager
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param ?RowGateway   $rowObj  Row prototype object (null for default)
      */
     public function __construct(
         Adapter $adapter,
         PluginManager $tm,
-        RowGateway $rowObj = null
+        ?RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Collections');
     }
@@ -219,17 +212,18 @@ class Collections extends Gateway
      */
     public function getUserStatistics($userID)
     {
-        $callback = function ($select) use ($userID): void {
-            $count = new Expression(
-                'count(?)',
-                ['Item_ID'],
-                [Expression::TYPE_IDENTIFIER]
-            );
-            $select->columns(['Collection_Status', 'Count' => $count]);
-            $select->group('Collection_Status');
-            $select->where->equalTo('User_ID', $userID);
-        };
-        $result = $this->select($callback);
+        $select = $this->getSql()->select();
+        $count = new Expression(
+            'count(?)',
+            ['Item_ID'],
+            [Expression::TYPE_IDENTIFIER]
+        );
+        $select->columns(['Collection_Status', 'Count' => $count]);
+        $select->group('Collection_Status');
+        $select->where->equalTo('User_ID', $userID);
+
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute();
         $retVal = ['have' => 0, 'want' => 0, 'extra' => 0];
         foreach ($result as $current) {
             $retVal[$current['Collection_Status']] = $current['Count'];
