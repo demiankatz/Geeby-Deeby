@@ -29,6 +29,11 @@
 
 namespace GeebyDeebyLocal\Controller;
 
+use GeebyDeeby\Db\Service\EditionsCreditService;
+use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\MaterialTypeService;
+use GeebyDeeby\Db\Service\PeopleUriService;
+
 use function in_array;
 
 /**
@@ -89,7 +94,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
         $edition = parent::addPrimaryResourceToGraph($graph, $view, $class);
         if (!empty($view->item)) {
             $itemUri = $this->getServerUrl('item', ['id' => $view->item['Item_ID']]);
-            $itemType = $this->getDbTable('materialtype')->getByPrimaryKey(
+            $itemType = $this->getDbService(MaterialTypeService::class)->getByPrimaryKey(
                 $view->item['Material_Type_ID']
             );
             $predicate = $itemType['Material_Type_Name'] == 'Issue'
@@ -303,29 +308,26 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      */
     protected function addModsNames($xml, $editionID)
     {
-        $credits = $this->getDbTable('editionscredits')
-            ->getCreditsForEdition($editionID);
+        $credits = $this->getDbService(EditionsCreditService::class)->getCreditsForEdition($editionID);
         foreach ($credits as $credit) {
             $name = $xml->addChild('name');
-            if ($credit->Authority_ID == self::LC_NAME_AUTHORITY) {
+            if ($credit['Authority_ID'] == self::LC_NAME_AUTHORITY) {
                 $name['authority'] = 'naf';
                 $name['authorityURI'] = 'http://id.loc.gov/authorities/names';
-                $URIs = $this->getDbTable('peopleuris')
-                    ->getURIsForPerson($credit->Person_ID)->toArray();
+                $URIs = $this->getDbService(PeopleUriService::class)->getURIsForPerson($credit['Person_ID']);
                 $name['valueURI'] = $URIs[0]['URI'] ?? 'LC URI MISSING!!';
             } else {
                 $name['authority'] = 'dime';
                 $name['authorityURI'] = 'https://dimenovels.org/Person';
-                $name['valueURI'] = 'https://dimenovels.org/Person/'
-                    . $credit->Person_ID;
+                $name['valueURI'] = 'https://dimenovels.org/Person/' . $credit['Person_ID'];
             }
             $name['type'] = 'personal';
-            $mainName = $credit->Last_Name;
-            $firstName = trim($credit->First_Name);
+            $mainName = $credit['Last_Name'];
+            $firstName = trim($credit['First_Name']);
             if (!empty($firstName)) {
                 $mainName .= ', ' . $firstName;
             }
-            $rawExtra = trim($credit->Extra_Details);
+            $rawExtra = trim($credit['Extra_Details']);
             if (!empty($rawExtra)) {
                 if (substr($rawExtra, 0, 1) == '(') {
                     $mainName .= ' ' . $rawExtra;
@@ -341,7 +343,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                     ? 'date' : 'termsOfAddress';
                 $part['type'] = $extraType;
             }
-            $name->role->roleTerm = strtolower($credit->Role_Name);
+            $name->role->roleTerm = strtolower($credit['Role_Name']);
             $name->role->roleTerm['type'] = 'text';
         }
     }
@@ -358,12 +360,12 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     {
         $knownForms = ['Poem', 'Sketch'];
         $knownGenres = ['Detective and mystery stories'];
-        $tags = $this->getDbTable('itemstags')->getTags($itemID);
+        $tags = $this->getDbService(ItemsTagService::class)->getTagsForItem($itemID);
         foreach ($tags as $tag) {
-            if (in_array($tag->Tag, $knownForms)) {
+            if (in_array($tag['Tag'], $knownForms)) {
                 $modsTag = 'genre';
                 $auth = 'aat';
-            } elseif (in_array($tag->Tag, $knownGenres)) {
+            } elseif (in_array($tag['Tag'], $knownGenres)) {
                 $modsTag = 'genre';
                 $auth = null;
             } else {
@@ -373,7 +375,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
                 $auth = null;
                  */
             }
-            $tag = $xml->addChild($modsTag, $tag->Tag);
+            $tag = $xml->addChild($modsTag, $tag['Tag']);
             if (!empty($auth)) {
                 $tag['authority'] = $auth;
             }
