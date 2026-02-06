@@ -59,20 +59,6 @@ class SpreadsheetCommand extends Command
     use \GeebyDeebyLocal\Command\SeriesByTitleTrait;
 
     /**
-     * Editions table
-     *
-     * @var Edition
-     */
-    protected $editions;
-
-    /**
-     * Database ingester
-     *
-     * @var DatabaseIngester
-     */
-    protected $ingester;
-
-    /**
      * Constructor
      *
      * @param Series           $series     Series table
@@ -85,14 +71,12 @@ class SpreadsheetCommand extends Command
     public function __construct(
         Series $series,
         SeriesAltTitles $seriesAlts,
-        Edition $editions,
-        DatabaseIngester $ingester,
+        protected Edition $editions,
+        protected DatabaseIngester $ingester,
         $name = null
     ) {
         $this->series = $series;
         $this->seriesAltTitles = $seriesAlts;
-        $this->editions = $editions;
-        $this->ingester = $ingester;
         parent::__construct($name);
     }
 

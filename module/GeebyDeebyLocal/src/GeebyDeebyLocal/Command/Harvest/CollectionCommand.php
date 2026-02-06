@@ -57,20 +57,6 @@ class CollectionCommand extends Command
     use \GeebyDeebyLocal\Command\SeriesByTitleTrait;
 
     /**
-     * Fedora harvester
-     *
-     * @var FedoraHarvester
-     */
-    protected $fedora;
-
-    /**
-     * Solr harvester
-     *
-     * @var SolrHarvester
-     */
-    protected $solr;
-
-    /**
      * Constructor
      *
      * @param FedoraHarvester $fedora     Fedora harvester
@@ -81,14 +67,12 @@ class CollectionCommand extends Command
      * it must be set in configure()
      */
     public function __construct(
-        FedoraHarvester $fedora,
-        SolrHarvester $solr,
+        protected FedoraHarvester $fedora,
+        protected SolrHarvester $solr,
         Series $series,
         SeriesAltTitles $seriesAlts,
         $name = null
     ) {
-        $this->fedora = $fedora;
-        $this->solr = $solr;
         $this->series = $series;
         $this->seriesAltTitles = $seriesAlts;
         parent::__construct($name);
