@@ -110,4 +110,16 @@ class PeopleUriService extends AbstractDbService
         }
         return null;
     }
+
+    /**
+     * Get a list of people joined with URIs.
+     *
+     * @param ?string $startFrom Start retrieving with this last name (null to start at beginning)
+     *
+     * @return array
+     */
+    public function getPeopleWithURIs(?string $startFrom = null): array
+    {
+        return iterator_to_array($this->peopleUrisTable->getPeopleWithURIs($startFrom));
+    }
 }
