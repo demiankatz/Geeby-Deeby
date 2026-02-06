@@ -32,8 +32,6 @@ namespace GeebyDeeby\Db\Table;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
 
-use function is_callable;
-
 /**
  * Table Definition for People_URIs
  *
@@ -106,20 +104,20 @@ class PeopleURIs extends Gateway
     /**
      * Get a list of people joined with URIs.
      *
-     * @param callable $extraCallback Extra filter function (optional)
+     * @param ?string $startFrom Start retrieving with this last name (null to start at beginning)
      *
      * @return mixed
      */
-    public function getPeopleWithURIs($extraCallback = false)
+    public function getPeopleWithURIs(?string $startFrom = null)
     {
-        $callback = function ($select) use ($extraCallback): void {
+        $callback = function ($select) use ($startFrom): void {
             $select->join(
                 ['p' => 'People'],
                 'People_URIs.Person_ID = p.Person_ID'
             );
             $select->order(['Last_Name', 'First_Name']);
-            if (is_callable($extraCallback)) {
-                $extraCallback($select);
+            if (!empty($startFrom)) {
+                $select->where->greaterThan('Last_Name', $startFrom);
             }
         };
         return $this->select($callback);
