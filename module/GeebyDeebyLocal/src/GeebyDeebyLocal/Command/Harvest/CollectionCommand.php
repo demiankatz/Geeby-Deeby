@@ -29,8 +29,8 @@
 
 namespace GeebyDeebyLocal\Command\Harvest;
 
-use GeebyDeeby\Db\Table\Series;
-use GeebyDeeby\Db\Table\SeriesAltTitles;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeebyLocal\Ingest\FedoraHarvester;
 use GeebyDeebyLocal\Ingest\SolrHarvester;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -59,18 +59,18 @@ class CollectionCommand extends Command
     /**
      * Constructor
      *
-     * @param FedoraHarvester $fedora     Fedora harvester
-     * @param SolrHarvester   $solr       Solr harvester
-     * @param Series          $series     Series table object
-     * @param SeriesAltTitles $seriesAlts Series_AltTitles table object
-     * @param string|null     $name       The name of the command; passing null means
-     * it must be set in configure()
+     * @param FedoraHarvester       $fedora     Fedora harvester
+     * @param SolrHarvester         $solr       Solr harvester
+     * @param SeriesService         $series     Series table object
+     * @param SeriesAltTitleService $seriesAlts Series_AltTitles table object
+     * @param string|null           $name       The name of the command; passing null means
+     *                                          it must be set in configure()
      */
     public function __construct(
         protected FedoraHarvester $fedora,
         protected SolrHarvester $solr,
-        Series $series,
-        SeriesAltTitles $seriesAlts,
+        SeriesService $series,
+        SeriesAltTitleService $seriesAlts,
         $name = null
     ) {
         $this->series = $series;

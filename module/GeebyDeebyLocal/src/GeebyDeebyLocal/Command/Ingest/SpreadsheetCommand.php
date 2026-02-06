@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Command\Ingest;
 
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\Db\Table\Series;
 use GeebyDeeby\Db\Table\SeriesAltTitles;
@@ -61,16 +63,16 @@ class SpreadsheetCommand extends Command
     /**
      * Constructor
      *
-     * @param Series           $series     Series table
-     * @param SeriesAltTitles  $seriesAlts SeriesAltTitles table
-     * @param Edition          $editions   Edition table
-     * @param DatabaseIngester $ingester   Database ingester
-     * @param string|null      $name       The name of the command; passing null
-     * means it must be set in configure()
+     * @param SeriesService         $series     Series table
+     * @param SeriesAltTitleService $seriesAlts SeriesAltTitles table
+     * @param Edition               $editions   Edition table
+     * @param DatabaseIngester      $ingester   Database ingester
+     * @param string|null           $name       The name of the command; passing null
+     *                                          means it must be set in configure()
      */
     public function __construct(
-        Series $series,
-        SeriesAltTitles $seriesAlts,
+        SeriesService $series,
+        SeriesAltTitleService $seriesAlts,
         protected Edition $editions,
         protected DatabaseIngester $ingester,
         $name = null

@@ -29,8 +29,10 @@
 
 namespace GeebyDeebyLocal\Command\Harvest;
 
-use Interop\Container\ContainerInterface;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for harvest/series command.
@@ -60,16 +62,16 @@ class SeriesCommandFactory implements FactoryInterface
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
         $fedora = $container->get(\GeebyDeebyLocal\Ingest\FedoraHarvester::class);
         $solr = $container->get(\GeebyDeebyLocal\Ingest\SolrHarvester::class);
-        $tables = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
-        $series = $tables->get('series');
-        $seriesAlts = $tables->get('seriesalttitles');
+        $services = $container->get(\GeebyDeeby\Db\Service\PluginManager::class);
+        $series = $services->get(SeriesService::class);
+        $seriesAlts = $services->get(SeriesAltTitleService::class);
         return new $requestedName($fedora, $solr, $series, $seriesAlts);
     }
 }

@@ -30,6 +30,8 @@
 
 namespace GeebyDeebyLocal\Command;
 
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Table\Series;
 use GeebyDeeby\Db\Table\SeriesAltTitles;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,16 +53,16 @@ trait SeriesByTitleTrait
     /**
      * Series table
      *
-     * @var Series
+     * @var SeriesService
      */
-    protected $series;
+    protected SeriesService $series;
 
     /**
      * Series_AltTitles table
      *
-     * @var SeriesAltTitles
+     * @var SeriesAltTitleService
      */
-    protected $seriesAltTitles;
+    protected SeriesAltTitleService $seriesAltTitles;
 
     /**
      * Retrieve a series object from the database for a given title.
@@ -72,15 +74,13 @@ trait SeriesByTitleTrait
      */
     protected function getSeriesByTitle($title, OutputInterface $output)
     {
-        $result = $this->series->select(['Series_Name' => $title]);
+        $result = $this->series->getSeriesByName($title);
         if (count($result) != 1) {
             if (count($result) === 0) {
                 $output->writeln('No primary title match; trying alternate titles.');
-                $altResult = $this->seriesAltTitles
-                    ->select(['Series_AltName' => $title])->toArray();
+                $altResult = $this->seriesAltTitles->getByAltTitle($title);
                 if (count($altResult) === 1) {
-                    $result = $this->series
-                        ->select(['Series_ID' => $altResult[0]['Series_ID']]);
+                    $result = [$altResult[0]->getSeries()];
                 }
             }
             if (count($result) != 1) {
