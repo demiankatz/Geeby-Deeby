@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Controller;
 
+use GeebyDeeby\Db\Service\MaterialTypeService;
+
 /**
  * Item controller
  *
@@ -65,14 +67,13 @@ class ItemController extends \GeebyDeeby\Controller\ItemController
             'rda:preferredTitleForTheResource',
             $articleHelper->formatTrailingArticles($view->item['Item_Name'])
         );
-        $itemType = $this->getDbTable('materialtype')->getByPrimaryKey(
+        $itemType = $this->getDbService(MaterialTypeService::class)->getByPrimaryKey(
             $view->item['Material_Type_ID']
         );
         $relationship = ($itemType['Material_Type_Name'] == 'Issue')
             ? 'dime:HasEdition' : 'dime:HasRealizationOfCreativeWork';
         foreach ($view->editions as $edition) {
-            $editionUri
-                = $this->getServerUrl('edition', ['id' => $edition['Edition_ID']]);
+            $editionUri = $this->getServerUrl('edition', ['id' => $edition['Edition_ID']]);
             $item->add($relationship, $graph->resource($editionUri));
         }
         foreach ($view->altTitles as $altTitle) {
