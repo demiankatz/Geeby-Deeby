@@ -81,7 +81,7 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
      */
     protected function getProgressStatistics()
     {
-        $s = $this->getDbTable('series');
+        $s = $this->serviceLocator->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('series');
         $callback = function ($select): void {
             $select->columns(
                 [
