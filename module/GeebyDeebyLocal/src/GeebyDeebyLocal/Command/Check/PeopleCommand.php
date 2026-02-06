@@ -29,6 +29,7 @@
 
 namespace GeebyDeebyLocal\Command\Check;
 
+use GeebyDeeby\Db\Service\PeopleUriService;
 use GeebyDeeby\Db\Table\PeopleURIs;
 use GeebyDeeby\View\Helper\ShowPerson;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -53,22 +54,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PeopleCommand extends Command
 {
     /**
-     * Database table object for fetching information.
-     *
-     * @var PeopleURIs
-     */
-    protected $table;
-
-    /**
      * Constructor
      *
-     * @param PeopleURIs  $table The PeopleURIs database table object
-     * @param string|null $name  The name of the command; passing null means it
+     * @param PeopleURIs  $service The PeopleURIs database service
+     * @param string|null $name    The name of the command; passing null means it
      * must be set in configure()
      */
-    public function __construct(PeopleURIs $table, $name = null)
+    public function __construct(protected PeopleUriService $service, $name = null)
     {
-        $this->table = $table;
         parent::__construct($name);
     }
 
@@ -115,11 +108,7 @@ class PeopleCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $startFrom = $input->getArgument('startFrom');
-        $callback = empty($startFrom) ? false
-            : function ($select) use ($startFrom): void {
-                $select->where->greaterThan('Last_Name', $startFrom);
-            };
-        $list = $this->table->getPeopleWithURIs($callback);
+        $list = $this->service->getPeopleWithURIs($startFrom);
         $nameFormatter = new ShowPerson();
         if (!$list) {
             $output->writeln('Cannot find data.');
@@ -130,7 +119,7 @@ class PeopleCommand extends Command
         );
         foreach ($list as $current) {
             $actualHeading = $nameFormatter($current);
-            $uri = $current->URI;
+            $uri = $current['URI'];
             try {
                 $expectedHeading = $this->getExpectedHeading($uri);
             } catch (\Exception $e) {
