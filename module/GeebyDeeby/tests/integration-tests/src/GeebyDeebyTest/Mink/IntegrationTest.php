@@ -2023,6 +2023,24 @@ class IntegrationTest extends MinkTestCase
             . ' (last verified: 2025-12-01)'
             . ' User Comments this is my comment --user Please log in to leave a comment.',
         ];
+        yield 'series 1 full text (exact)' => [
+            '/Series/1/FullText',
+            'Showing exact matches; switch to fuzzy matches to add links to listings where online text comes from'
+            . ' a different edition.'
+            . ' Showing 1 result from: All Sources test full text source 1 test series 1 test item (1952)',
+        ];
+        yield 'series 1 full text (fuzzy)' => [
+            '/Series/1/FullText?fuzzy=1',
+            'Showing fuzzy matches; switch to exact matches to only show links where the online text exactly'
+            . ' matches the listed edition.'
+            . ' Showing 1 result from: All Sources test full text source 1 test series 1 test item (1952)',
+        ];
+        yield 'series 1 full text (filtered to non-matching source)' => [
+            '/Series/1/FullText?fuzzy=1&source=2',
+            'Showing fuzzy matches; switch to exact matches to only show links where the online text exactly'
+            . ' matches the listed edition.'
+            . ' Showing 0 result from: All Sources test full text source 1 No full text listed.',
+        ];
         yield 'series 2 (with volume/issue numbering)' => [
             '/Series/2',
             'Please log in to leave a comment.'

@@ -77,7 +77,7 @@ class FullTextSource extends Gateway
                     [],
                     \Laminas\Db\Sql\Select::JOIN_INNER
                 );
-                $select->columns(['Full_Text_Source_ID']);
+                $select->columns(['Sequence_ID', 'Full_Text_Source_ID']);
                 $select->quantifier(\Laminas\Db\Sql\Select::QUANTIFIER_DISTINCT);
                 $select->where(['Series_ID' => $seriesID]);
             };
