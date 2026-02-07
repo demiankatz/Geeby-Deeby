@@ -32,6 +32,8 @@ namespace GeebyDeeby\View\Helper;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 use function count;
+use function is_callable;
+use function is_object;
 
 /**
  * View helper to group together edition data
@@ -93,9 +95,15 @@ class GroupEditions
             $showEds = (count($editionsByGroup[$value]) != $edCount && $edCount > 1);
             $notes = [];
             foreach ($details as $detail) {
-                $note = $detail['Note'] ?? '';
+                // Use entity interface where appropriate:
+                $note = is_object($detail) && is_callable([$detail, 'getNote'])
+                    ? $detail->getNote()?->getNote() ?? ''
+                    : $detail['Note'] ?? '';
                 if ($showEds) {
-                    $name = ($this->fixTitleHelper)($detail['Edition_Name']);
+                    $editionName = is_object($detail) && is_callable([$detail, 'getEdition'])
+                        ? $detail->getEdition()?->getEditionName()
+                        : $detail['Edition_Name'];
+                    $name = ($this->fixTitleHelper)($editionName);
                     $note = empty($note) ? $name : $name . ' - ' . $note;
                 }
                 if (!empty($note)) {
