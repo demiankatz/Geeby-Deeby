@@ -30,7 +30,21 @@
 namespace GeebyDeebyLocal\Ingest;
 
 use GeebyDeeby\Articles;
-use GeebyDeeby\Db\Table\PluginManager;
+use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Service\CollectionService;
+use GeebyDeeby\Db\Service\DbServiceInterface;
+use GeebyDeeby\Db\Service\EditionsFullTextService;
+use GeebyDeeby\Db\Service\EditionsImageService;
+use GeebyDeeby\Db\Service\EditionsIsbnService;
+use GeebyDeeby\Db\Service\EditionsOclcNumberService;
+use GeebyDeeby\Db\Service\EditionsPlatformService;
+use GeebyDeeby\Db\Service\EditionsProductCodeService;
+use GeebyDeeby\Db\Service\EditionsReleaseDateService;
+use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\PluginManager as DbServiceManager;
+use GeebyDeebyLocal\Db\Service\EditionService;
 
 use function count;
 
@@ -48,20 +62,6 @@ class IssueMaker
     // constant values drawn from dimenovels.org database:
     public const MATERIALTYPE_WORK = 1;
     public const MATERIALTYPE_ISSUE = 2;
-
-    /**
-     * Table plugin manager
-     *
-     * @var PluginManager
-     */
-    protected $tables;
-
-    /**
-     * Articles helper
-     *
-     * @var Articles
-     */
-    protected $articles;
 
     /**
      * Last message sent to writeln()
@@ -95,26 +95,25 @@ class IssueMaker
     /**
      * Constructor
      *
-     * @param PluginManager $tables   Table plugin manager
-     * @param Articles      $articles Articles helper
+     * @param DbServiceManager $services DB service plugin manager
+     * @param Articles         $articles Articles helper
      */
-    public function __construct(PluginManager $tables, Articles $articles)
+    public function __construct(protected DbServiceManager $services, protected Articles $articles)
     {
-        $this->tables = $tables;
-        $this->articles = $articles;
     }
 
     /**
      * Make issues
      *
-     * @param object $seriesObj Series row object
-     * @param string $prefix    Title prefix for issues
+     * @param SeriesEntityInterface $seriesObj Series entity
+     * @param string                $prefix    Title prefix for issues
      *
      * @return bool
      */
-    public function makeIssues($seriesObj, $prefix)
+    public function makeIssues(SeriesEntityInterface $seriesObj, string $prefix): bool
     {
-        $works = $this->getEligibleWorks($seriesObj);
+        $works = $this->getDbService(EditionService::class)
+            ->getNumberedEditionsOfTypeFromSeries(self::MATERIALTYPE_WORK, $seriesObj);
         if (count($works) == 0) {
             $this->writeln('No eligible works.');
             return false;
@@ -128,26 +127,28 @@ class IssueMaker
     }
 
     /**
-     * Get a database table gateway.
+     * Get a database service.
      *
-     * @param string $table Name of table service to pull
+     * @param class-string<T> $name Name of service to retrieve
      *
-     * @return \Laminas\Db\TableGateway\AbstractTableGateway
+     * @template T
+     *
+     * @return T
      */
-    protected function getDbTable($table)
+    protected function getDbService(string $name): DbServiceInterface
     {
-        return $this->tables->get($table);
+        return $this->services->get($name);
     }
 
     /**
      * Create an Issue edition to wrap the provided Work edition.
      *
-     * @param object $workEdition Editions row object
-     * @param string $prefix      Title prefix for issues
+     * @param EditionEntityInterface $workEdition Edition entity
+     * @param string                 $prefix      Title prefix for issues
      *
      * @return bool
      */
-    public function createIssueForWork($workEdition, $prefix)
+    public function createIssueForWork(EditionEntityInterface $workEdition, string $prefix): bool
     {
         if (!$this->workIsEligibleForConversion($workEdition)) {
             return false;
@@ -160,33 +161,34 @@ class IssueMaker
     /**
      * Validate a work edition before proceeding with issue conversion.
      *
-     * @param object $workEdition Editions row object
+     * @param EditionEntityInterface $workEdition Edition entity
      *
      * @return bool
      */
-    protected function workIsEligibleForConversion($workEdition)
+    protected function workIsEligibleForConversion(EditionEntityInterface $workEdition)
     {
-        if ($this->issueAlreadyExists($workEdition)) {
+        $editionService = $this->getDbService(EditionService::class);
+        if ($editionService->hasEditionMatchingPositionAndType($workEdition, self::MATERIALTYPE_ISSUE)) {
             $this->writeln(
-                'Duplicate issue found for edition #' . $workEdition->Edition_ID
+                'Duplicate issue found for edition #' . $workEdition->getId()
             );
             return false;
         }
-        if ($workEdition->Volume > 0) {
+        if ($workEdition->getVolume() > 0) {
             $this->writeln('TODO: add support for volumes > 0');
             return false;
         }
-        if ($workEdition->Replacement_Number > 0) {
+        if ($workEdition->getReplacementNumber() > 0) {
             $this->writeln('TODO: add support for replacement numbers > 0');
             return false;
         }
         if (
-            !empty($workEdition->Parent_Edition_ID)
-            || !empty($workEdition->Position_In_Parent)
-            || !empty($workEdition->Extent_In_Parent)
+            $workEdition->getParentEdition()
+            || !empty($workEdition->getPositionInParent())
+            || !empty($workEdition->getExtentInParent())
         ) {
             $this->writeln(
-                'Unexpected parent details in edition #' . $workEdition->Edition_ID
+                'Unexpected parent details in edition #' . $workEdition->getId()
             );
             return false;
         }
@@ -196,142 +198,115 @@ class IssueMaker
     /**
      * Create an Issue edition.
      *
-     * @param object $issueItem   Items row object for new Issue
-     * @param object $workEdition Editions row object for existing Work
+     * @param ItemEntityInterface    $issueItem   Item entity for new Issue
+     * @param EditionEntityInterface $workEdition Edition entity for existing Work
      *
-     * @return object
+     * @return EditionEntityInterface
      */
-    protected function createIssueEdition($issueItem, $workEdition)
-    {
-        $editions = $this->getDbTable('edition');
-        $values = $workEdition->toArray();
-        unset($values['Edition_ID']);
-        unset($values['Preferred_Item_AltName_ID']);
-        $values['Item_ID'] = $issueItem->Item_ID;
-        $editions->insert($values);
-        return $editions->getByPrimaryKey($editions->getLastInsertValue());
+    protected function createIssueEdition(
+        ItemEntityInterface $issueItem,
+        EditionEntityInterface $workEdition
+    ): EditionEntityInterface {
+        $editionService = $this->getDbService(EditionService::class);
+        $newEdition = $editionService->createEntity();
+        $newEdition->setEditionName($workEdition->getEditionName())
+            ->setItem($issueItem)
+            ->setSeries($workEdition->getSeries())
+            ->setVolume($workEdition->getVolume())
+            ->setPosition($workEdition->getPosition())
+            ->setReplacementNumber($workEdition->getReplacementNumber())
+            ->setPreferredSeriesAlternateTitle($workEdition->getPreferredSeriesAlternateTitle())
+            ->setLength($workEdition->getLength())
+            ->setEndings($workEdition->getEndings())
+            ->setDescription($workEdition->getDescription())
+            ->setPreferredPublisher($workEdition->getPreferredPublisher());
+        $editionService->persistEntity($newEdition);
+        return $newEdition;
     }
 
     /**
      * Create an Issue item.
      *
-     * @param object $workEdition Editions row object
-     * @param string $prefix      Title prefix for issues
+     * @param EditionEntityInterface $workEdition Edition entity
+     * @param string                 $prefix      Title prefix for issues
      *
-     * @return object
+     * @return ItemEntityInterface
      */
-    protected function createIssueItem($workEdition, $prefix)
+    protected function createIssueItem(EditionEntityInterface $workEdition, string $prefix): ItemEntityInterface
     {
         $name = $this->articles->articleAwareAppend($prefix, $workEdition->Position);
         $this->writeln('Creating issue: ' . $name);
-        $items = $this->getDbTable('item');
-        $items->insert(
-            [
-                'Item_Name' => $name,
-                'Material_Type_ID' => self::MATERIALTYPE_ISSUE,
-            ]
-        );
-        return $items->getByPrimaryKey($items->getLastInsertValue());
-    }
-
-    /**
-     * Format a table name for use by the plugin manager.
-     *
-     * @param string $name Table name
-     *
-     * @return string
-     */
-    protected function formatTableName($name)
-    {
-        return strtolower(str_replace('_', '', $name));
+        $itemService = $this->getDbService(ItemService::class);
+        $item = $itemService->createEntity()->setItemName($name)->setMaterialType(self::MATERIALTYPE_ISSUE);
+        $itemService->persistEntity($item);
+        return $item;
     }
 
     /**
      * Transfer relevant data from work edition to issue edition
      *
-     * @param object $workEdition  Editions row object for work
-     * @param object $issueEdition Editions row object for issue
+     * @param EditionEntityInterface $workEdition  Edition entity for work
+     * @param EditionEntityInterface $issueEdition Edition entity for issue
      *
      * @return bool
      */
-    protected function transferEditionData($workEdition, $issueEdition)
-    {
+    protected function transferEditionData(
+        EditionEntityInterface $workEdition,
+        EditionEntityInterface $issueEdition
+    ): bool {
         // Attach work to issue and remove no-longer-relevant details
-        $workEdition->Parent_Edition_ID = $issueEdition->Edition_ID;
-        $workEdition->Position = 0;
-        $workEdition->Edition_Length = '';
-        $workEdition->Edition_Description = '';
-        $workEdition->save();
+        $editionService = $this->getDbService(EditionService::class);
+        $workEdition->setParentEdition($issueEdition)
+            ->setPosition(0)
+            ->setLength(null)
+            ->setDescription(null);
+        $editionService->persistEntity($workEdition);
 
         // Move relevant associations:
-        $editionTables = [
-            'Editions_Full_Text', 'Editions_Images', 'Editions_ISBNs',
-            'Editions_OCLC_Numbers', 'Editions_Platforms',
-            'Editions_Product_Codes', 'Editions_Release_Dates',
+        $editionLinkServices = [
+            [EditionsFullTextService::class, 'getFullTextForEdition'],
+            [EditionsImageService::class, 'getImagesForEdition'],
+            [EditionsIsbnService::class, 'getISBNsForEdition'],
+            [EditionsOclcNumberService::class, 'getOCLCNumbersForEdition'],
+            [EditionsProductCodeService::class, 'getProductCodesForEdition'],
         ];
-        foreach ($editionTables as $table) {
-            $this->getDbTable($this->formatTableName($table))->update(
-                ['Edition_ID' => $issueEdition->Edition_ID],
-                ['Edition_ID' => $workEdition->Edition_ID]
-            );
+        foreach ($editionLinkServices as $details) {
+            [$serviceName, $method] = $details;
+            $linkService = $this->getDbService($serviceName);
+            foreach ($linkService->$method($workEdition->getId()) as $current) {
+                $current->setEdition($issueEdition);
+                $linkService->persistEntity($current);
+            }
         }
-        $itemTables = ['Collections'];
-        foreach ($itemTables as $table) {
-            $this->getDbTable($this->formatTableName($table))->update(
-                ['Item_ID' => $issueEdition->Item_ID],
-                ['Item_ID' => $workEdition->Item_ID]
-            );
+        // Relocate platforms and dates (these don't update right in Laminas due to lack of primary key):
+        $platformService = $this->getDbService(EditionsPlatformService::class);
+        $platforms = $platformService->getPlatformsForEdition($workEdition->getId());
+        foreach ($platforms as $platform) {
+            $newLink = $platformService->createEntity()
+                ->setEdition($issueEdition)
+                ->setPlatform($platform->getPlatform());
+            $platformService->persistEntity($newLink);
+            $platformService->deleteEntity($platform);
+        }
+        $dateService = $this->getDbService(EditionsReleaseDateService::class);
+        $dates = $dateService->getDatesForEdition($workEdition->getId());
+        foreach ($dates as $date) {
+            $newDate = $dateService->createEntity()
+                ->setYear($date->getYear())
+                ->setMonth($date->getMonth())
+                ->setDay($date->getDay())
+                ->setNote($date->getNote())
+                ->setEdition($issueEdition);
+            $dateService->persistEntity($newDate);
+            $dateService->deleteEntity($date);
+        }
+
+        // Migrate collection data:
+        $collectionService = $this->getDbService(CollectionService::class);
+        foreach ($collectionService->getForItem($workEdition->getId()) as $collectionEntry) {
+            $collectionEntry->setItem($issueEdition->getItem());
+            $collectionService->persistEntity($collectionEntry);
         }
         return true;
-    }
-
-    /**
-     * Get Works that can be converted to Issues.
-     *
-     * @param object $seriesObj Series row object
-     *
-     * @return \Iterable
-     */
-    protected function getEligibleWorks($seriesObj)
-    {
-        $workId = self::MATERIALTYPE_WORK;
-        $callback = function ($select) use ($workId, $seriesObj): void {
-            $select->join(['i' => 'Items'], 'i.Item_ID = Editions.Item_ID', []);
-            $select->where(
-                [
-                    'Series_ID' => $seriesObj->Series_ID,
-                    'i.Material_Type_ID' => $workId,
-                ]
-            );
-            $select->where->greaterThan('Position', 0);
-            $select->order('Position');
-        };
-        return $this->getDbTable('edition')->select($callback);
-    }
-
-    /**
-     * Check if an issue matching the current work edition already exists.
-     *
-     * @param object $workEdition Editions row object
-     *
-     * @return bool
-     */
-    protected function issueAlreadyExists($workEdition)
-    {
-        $issueId = self::MATERIALTYPE_ISSUE;
-        $callback = function ($select) use ($issueId, $workEdition): void {
-            $select->join(['i' => 'Items'], 'i.Item_ID = Editions.Item_ID', []);
-            $select->where(
-                [
-                    'Series_ID' => $workEdition->Series_ID,
-                    'i.Material_Type_ID' => $issueId,
-                    'Position' => $workEdition->Position,
-                    'Volume' => $workEdition->Volume,
-                    'Replacement_Number' => $workEdition->Replacement_Number,
-                ]
-            );
-        };
-        $results = $this->getDbTable('edition')->select($callback);
-        return count($results) > 0;
     }
 }

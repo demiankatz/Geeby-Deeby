@@ -65,7 +65,7 @@ class IssueMakerFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $dbManager = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
+        $dbManager = $container->get(\GeebyDeeby\Db\Service\PluginManager::class);
         return new $requestedName(
             $dbManager,
             $container->get(\GeebyDeeby\Articles::class)

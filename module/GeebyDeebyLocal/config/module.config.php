@@ -36,6 +36,7 @@ return [
             ],
             'db_service' => [
                 'aliases' => [
+                    \GeebyDeeby\Db\Service\EditionService::class => \GeebyDeebyLocal\Db\Service\EditionService::class,
                     \GeebyDeeby\Db\Service\SeriesService::class => \GeebyDeebyLocal\Db\Service\SeriesService::class,
                 ],
             ],
