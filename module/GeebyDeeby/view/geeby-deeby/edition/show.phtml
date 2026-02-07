@@ -18,13 +18,13 @@
           <th scope="row">Online Full Text:</th>
           <td>
             <?php foreach ($fullText as $current): ?>
-              <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
-                <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
+              <a href="<?=$this->escapeHtml($current->getUrl())?>">
+                <?=$this->escapeHtml($current->getFullTextSource()->getSourceName())?>
               </a>
               <?php
                 $attrHtml = [];
-                if (count($fullTextAttributes[$current['Sequence_ID']] ?? []) > 0) {
-                  foreach ($fullTextAttributes[$current['Sequence_ID']] as $attr) {
+                if (count($fullTextAttributes[$current->getId()] ?? []) > 0) {
+                  foreach ($fullTextAttributes[$current->getId()] as $attr) {
                     $attrValue = $attr['Allow_HTML']
                       ? $attr['Editions_Full_Text_Attribute_Value']
                       : $this->escapeHtml($attr['Editions_Full_Text_Attribute_Value']);
