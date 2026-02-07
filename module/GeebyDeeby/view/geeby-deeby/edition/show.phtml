@@ -245,8 +245,8 @@
           <th scope="row">Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($codes as $code): ?>
-              <?=$this->escapeHtml($code['Product_Code'])?>
-              <?=!empty($code['Note']) ? '(' . $this->escapeHtml($code['Note']) . ')' : ''?>
+              <?=$this->escapeHtml($code->getProductCode())?>
+              <?=($note = $code->getNote()?->getNote()) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
             <?php endforeach; ?>
           </td>
