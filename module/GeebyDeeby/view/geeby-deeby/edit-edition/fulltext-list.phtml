@@ -1,16 +1,16 @@
-<?php if (isset($fullText) && count($fullText) > 0): ?>
+<?php if (count($fullText ?? []) > 0): ?>
   <?php foreach ($fullText as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>: <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>"><?=$this->escapeHtml($current['Full_Text_URL'])?></a>
+          <?=$this->escapeHtml($current->getFullTextSource()->getSourceName())?>: <a href="<?=$this->escapeHtml($current->getUrl())?>"><?=$this->escapeHtml($current->getUrl())?></a>
         </td>
         <td>
           <?=
             $this->iconButton(
                 'gear',
-                "Edition.editLink('FullText', " . $current['Sequence_ID'] . ')',
-                'Edit options for URL: ' . $current['Full_Text_URL']
+                "Edition.editLink('FullText', " . $current->getId() . ')',
+                'Edit options for URL: ' . $current->getUrl()
             )
           ?>
         </td>
@@ -18,8 +18,8 @@
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('FullText', " . $current['Sequence_ID'] . ')',
-                'Delete full text URL: ' . $current['Full_Text_URL']
+                "Edition.unlink('FullText', " . $current->getId() . ')',
+                'Delete full text URL: ' . $current->getUrl()
             )
           ?>
         </td>
