@@ -16,9 +16,9 @@
             $this->iconButton(
                 'trash',
                 "Edition.unlink('Image', " . $current->getId() . ')',
-                !empty($current->getIiifUri())
-              ? 'Delete image with IIIF URI: ' . $current->getIiifUri()
-              : 'Delete image with path: ' . $current->getImagePath()
+                ($iiif = $current->getIiifUri())
+                  ? "Delete image with IIIF URI: $iiif"
+                  : 'Delete image with path: ' . $current->getImagePath()
             )
           ?>
         </td>
