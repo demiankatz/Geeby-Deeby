@@ -26,11 +26,11 @@
           <?php
             $thumb = $current->getThumbPath();
             if (empty($thumb)) {
-              $thumb = $current->getIiifUri() . '/full/,120/0/default.jpg';
+              $thumb = $iiif . '/full/,120/0/default.jpg';
             }
             $image = $current->getImagePath();
             if (empty($image)) {
-              $image = $current->getIiifUri() . '/full/full/0/default.jpg';
+              $image = $iiif . '/full/full/0/default.jpg';
             }
           ?>
           <a target="_imagePopup" href="<?=$this->escapeHtml($image)?>">
@@ -45,8 +45,8 @@
           <?php if ($thumbPath = $current->getThumbPath()): ?>
             <b>Thumb Path:</b> <?=$this->escapeHtml($thumbPath)?><br />
           <?php endif; ?>
-          <?php if ($current->getIiifUri()): ?>
-            <b>IIIF URI:</b> <?=$this->escapeHtml($current->getIiifUri())?><br />
+          <?php if ($iiif): ?>
+            <b>IIIF URI:</b> <?=$this->escapeHtml($iiif)?><br />
           <?php endif; ?>
           <?php if ($note = $current->getNote()?->getNote()): ?>
             <b>Note:</b> <?=$this->escapeHtml($note)?>
