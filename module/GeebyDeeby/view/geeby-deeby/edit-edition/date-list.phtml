@@ -1,4 +1,4 @@
-<?php if (isset($releaseDates) && count($releaseDates) > 0): ?>
+<?php if (count($releaseDates ?? []) > 0): ?>
   <?php foreach ($releaseDates as $current): ?>
     <?php $displayDate = $this->formatReleaseDate($current); ?>
     <table class="list_item">
@@ -10,7 +10,7 @@
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('Date', '" . addslashes(implode(',', [$current['Year'], $current['Month'], $current['Day']])) . "')",
+                "Edition.unlink('Date', '" . addslashes(implode(',', [$current->getYear(), $current->getMonth(), $current->getDay()])) . "')",
                 'Delete date: ' . $displayDate
             )
           ?>

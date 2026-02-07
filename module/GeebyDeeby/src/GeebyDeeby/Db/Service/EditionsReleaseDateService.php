@@ -75,11 +75,24 @@ class EditionsReleaseDateService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return EditionsReleaseDateEntityInterface[]
      */
     public function getDatesForItem(int $itemID): array
     {
-        return iterator_to_array($this->releaseDatesTable->getDatesForItem($itemID));
+        $callback = function ($select) use ($itemID): void {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Year', 'Month', 'Day', 'Note_ID']);
+            $select->join(
+                ['eds' => 'Editions'],
+                'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
+                ['Edition_ID']
+            );
+            $select->join(['i' => 'Items'], 'eds.Item_ID = i.Item_ID', ['Item_ID']);
+            $select->order(['Year', 'Month', 'Day', 'Edition_Name']);
+            $select->where->equalTo('i.Item_ID', $itemID);
+        };
+        return iterator_to_array($this->releaseDatesTable->select($callback));
     }
 
     /**
@@ -87,11 +100,15 @@ class EditionsReleaseDateService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsReleaseDateEntityInterface[]
      */
     public function getDatesForEdition(int $editionID): array
     {
-        return iterator_to_array($this->releaseDatesTable->getDatesForEdition($editionID));
+        $callback = function ($select) use ($editionID): void {
+            $select->order(['Year', 'Month', 'Day']);
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return iterator_to_array($this->releaseDatesTable->select($callback));
     }
 
     /**
@@ -99,11 +116,23 @@ class EditionsReleaseDateService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsReleaseDateEntityInterface[]
      */
     public function getDatesForEditionOrParentEdition(int $editionID): array
     {
-        return iterator_to_array($this->releaseDatesTable->getDatesForEditionOrParentEdition($editionID));
+        $callback = function ($select) use ($editionID): void {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Year', 'Month', 'Day', 'Note_ID']);
+            $select->join(
+                ['eds' => 'Editions'],
+                'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
+                ['Edition_ID']
+            );
+            $select->where->equalTo('eds.Edition_ID', $editionID);
+            $select->order(['Year', 'Month', 'Day']);
+        };
+        return iterator_to_array($this->releaseDatesTable->select($callback));
     }
 
     /**

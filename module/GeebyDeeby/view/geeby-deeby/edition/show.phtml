@@ -91,7 +91,8 @@
           <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($platforms as $platform): ?>
-              <a href="<?=$this->url('platform', ['id' => $platform['Platform_ID']])?>"><?=$this->escapeHtml($platform['Platform'])?></a>
+              <?php $platformEntity = $platform->getPlatform(); ?>
+              <a href="<?=$this->url('platform', ['id' => $platformEntity->getId()])?>"><?=$this->escapeHtml($platformEntity->getPlatformName())?></a>
               <br />
             <?php endforeach; ?>
           </td>
@@ -230,8 +231,8 @@
           <th scope="row">OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($oclcNumbers as $number): ?>
-              <?=$this->escapeHtml($number['OCLC_Number'])?>
-              <?=!empty($number['Note']) ? '(' . $this->escapeHtml($number['Note']) . ')' : ''?>
+              <?=$this->escapeHtml($number->getOclcNumber())?>
+              <?=($note = $number->getNote()?->getNote()) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
             <?php endforeach; ?>
           </td>
@@ -244,8 +245,8 @@
           <th scope="row">Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($codes as $code): ?>
-              <?=$this->escapeHtml($code['Product_Code'])?>
-              <?=!empty($code['Note']) ? '(' . $this->escapeHtml($code['Note']) . ')' : ''?>
+              <?=$this->escapeHtml($code->getProductCode())?>
+              <?=($note = $code->getNote()?->getNote()) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
             <?php endforeach; ?>
           </td>

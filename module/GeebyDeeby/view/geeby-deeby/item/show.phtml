@@ -250,7 +250,7 @@
       <?php endif; ?>
 
       <?php
-        $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID');
+        $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID', 'getPlatform');
         $platformCount = count($platforms);
       ?>
       <?php if ($platformCount > 0): ?>

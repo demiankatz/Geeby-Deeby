@@ -86,11 +86,15 @@ class EditionsProductCodeService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsProductCodeEntityInterface[]
      */
     public function getProductCodesForEdition(int $editionID): array
     {
-        return iterator_to_array($this->productCodesTable->getProductCodesForEdition($editionID));
+        $callback = function ($select) use ($editionID): void {
+            $select->order('Product_Code');
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return iterator_to_array($this->productCodesTable->select($callback));
     }
 
     /**
@@ -98,10 +102,19 @@ class EditionsProductCodeService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return EditionsProductCodeEntityInterface[]
      */
     public function getProductCodesForItem(int $itemID): array
     {
-        return iterator_to_array($this->productCodesTable->getProductCodesForItem($itemID));
+        $callback = function ($select) use ($itemID): void {
+            $select->join(
+                ['eds' => 'Editions'],
+                'Editions_Product_Codes.Edition_ID = eds.Edition_ID',
+                []
+            );
+            $select->order('Product_Code');
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return iterator_to_array($this->productCodesTable->select($callback));
     }
 }

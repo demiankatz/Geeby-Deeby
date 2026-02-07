@@ -1,16 +1,17 @@
-<?php if (isset($editionPlatforms) && count($editionPlatforms) > 0): ?>
+<?php if (count($editionPlatforms ?? []) > 0): ?>
   <?php foreach ($editionPlatforms as $current): ?>
+    <?php $platform = $current->getPlatform(); ?>
     <table class="list_item">
       <tr>
         <td>
-          <?=$this->escapeHtml($current['Platform'])?>
+          <?=$this->escapeHtml($platform->getPlatformName())?>
         </td>
         <td>
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('Platform', " . $current['Platform_ID'] . ')',
-                'Unlink platform: ' . $current['Platform']
+                "Edition.unlink('Platform', " . $platform->getId() . ')',
+                'Unlink platform: ' . $platform->getPlatformName()
             )
           ?>
         </td>

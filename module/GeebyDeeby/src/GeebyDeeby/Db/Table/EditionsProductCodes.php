@@ -31,7 +31,6 @@ namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
-use Laminas\Db\Sql\Select;
 
 /**
  * Table Definition for Editions_Product_Codes
@@ -57,53 +56,5 @@ class EditionsProductCodes extends Gateway
         ?RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_Product_Codes');
-    }
-
-    /**
-     * Get a list of product codes for the specified edition.
-     *
-     * @param int $editionID Edition ID
-     *
-     * @return mixed
-     */
-    public function getProductCodesForEdition($editionID)
-    {
-        $callback = function ($select) use ($editionID): void {
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_Product_Codes.Note_ID = n.Note_ID',
-                Select::SQL_STAR,
-                Select::JOIN_LEFT
-            );
-            $select->order('Product_Code');
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return $this->select($callback);
-    }
-
-    /**
-     * Get a list of product codes for the specified item.
-     *
-     * @param int $itemID Item ID
-     *
-     * @return mixed
-     */
-    public function getProductCodesForItem($itemID)
-    {
-        $callback = function ($select) use ($itemID): void {
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_Product_Codes.Note_ID = n.Note_ID',
-                Select::SQL_STAR,
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Product_Codes.Edition_ID = eds.Edition_ID'
-            );
-            $select->order('Product_Code');
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
     }
 }

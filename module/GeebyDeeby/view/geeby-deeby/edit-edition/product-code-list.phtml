@@ -1,16 +1,16 @@
-<?php if (isset($productCodes) && count($productCodes) > 0): ?>
+<?php if (count($productCodes ?? []) > 0): ?>
   <?php foreach ($productCodes as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <?=$this->escapeHtml($current['Product_Code'])?><?php if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
+          <?=$this->escapeHtml($current->getProductCode())?><?php if ($note = $current->getNote()?->getNote()): ?> (<?=$this->escapeHtml($note)?>)<?php endif; ?>
         </td>
         <td>
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('ProductCode', " . $current['Sequence_ID'] . ')',
-                'Delete product code: ' . $current['Product_Code']
+                "Edition.unlink('ProductCode', " . $current->getId() . ')',
+                'Delete product code: ' . $current->getProductCode()
             )
           ?>
         </td>

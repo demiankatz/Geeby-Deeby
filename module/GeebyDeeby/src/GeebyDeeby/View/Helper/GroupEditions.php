@@ -60,23 +60,28 @@ class GroupEditions
     /**
      * Group together edition data
      *
-     * @param array  $data       Data to work with
-     * @param string $groupField Field to group data on
-     * @param array  $editions   A list of all editions
-     * @param string $idField    An ID field to prepend to the $groupField with
+     * @param array   $data            Data to work with
+     * @param string  $groupField      Field to group data on
+     * @param array   $editions        A list of all editions
+     * @param ?string $idField         An ID field to prepend to the $groupField with
      * a pipe delimiter (optional)
+     * @param ?string $subEntityGetter A method on objects in $data to fetch a sub-entity containing
+     * $groupField and/or $idField
      *
      * @return string
      */
-    public function __invoke($data, $groupField, $editions, $idField = null)
+    public function __invoke($data, $groupField, $editions, $idField = null, $subEntityGetter = null)
     {
         // Group the data:
         $grouped = [];
         $editionsByGroup = [];
         foreach ($data as $current) {
-            $groupValue = $current[$groupField];
+            if ($subEntityGetter && is_callable([$current, $subEntityGetter])) {
+                $subEntity = $current->$subEntityGetter();
+            }
+            $groupValue = $subEntity[$groupField] ?? $current[$groupField];
             if (!empty($idField)) {
-                $groupValue = $current[$idField] . '|' . $groupValue;
+                $groupValue = ($subEntity[$idField] ?? $current[$idField]) . '|' . $groupValue;
             }
             if (!isset($grouped[$groupValue])) {
                 $grouped[$groupValue] = [];

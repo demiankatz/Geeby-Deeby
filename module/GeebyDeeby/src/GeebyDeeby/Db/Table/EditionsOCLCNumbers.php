@@ -31,7 +31,6 @@ namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
-use Laminas\Db\Sql\Select;
 
 /**
  * Table Definition for Editions_OCLC_Numbers
@@ -57,53 +56,5 @@ class EditionsOCLCNumbers extends Gateway
         ?RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_OCLC_Numbers');
-    }
-
-    /**
-     * Get a list of OCLC numbers for the specified edition.
-     *
-     * @param int $editionID Edition ID
-     *
-     * @return mixed
-     */
-    public function getOCLCNumbersForEdition($editionID)
-    {
-        $callback = function ($select) use ($editionID): void {
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_OCLC_Numbers.Note_ID = n.Note_ID',
-                Select::SQL_STAR,
-                Select::JOIN_LEFT
-            );
-            $select->order('OCLC_Number');
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return $this->select($callback);
-    }
-
-    /**
-     * Get a list of OCLC numbers for the specified item.
-     *
-     * @param int $itemID Item ID
-     *
-     * @return mixed
-     */
-    public function getOCLCNumbersForItem($itemID)
-    {
-        $callback = function ($select) use ($itemID): void {
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_OCLC_Numbers.Note_ID = n.Note_ID',
-                Select::SQL_STAR,
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_OCLC_Numbers.Edition_ID = eds.Edition_ID'
-            );
-            $select->order('OCLC_Number');
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
     }
 }
