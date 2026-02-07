@@ -31,7 +31,6 @@ namespace GeebyDeeby\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\RowGateway\RowGateway;
-use Laminas\Db\Sql\Select;
 
 /**
  * Table Definition for Editions_ISBNs
@@ -57,54 +56,6 @@ class EditionsISBNs extends Gateway
         ?RowGateway $rowObj = null
     ) {
         parent::__construct($adapter, $tm, $rowObj, 'Editions_ISBNs');
-    }
-
-    /**
-     * Get a list of ISBNs for the specified edition.
-     *
-     * @param int $editionID Edition ID
-     *
-     * @return mixed
-     */
-    public function getISBNsForEdition($editionID)
-    {
-        $callback = function ($select) use ($editionID): void {
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_ISBNs.Note_ID = n.Note_ID',
-                Select::SQL_STAR,
-                Select::JOIN_LEFT
-            );
-            $select->order('ISBN13');
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return $this->select($callback);
-    }
-
-    /**
-     * Get a list of ISBNs for the specified item.
-     *
-     * @param int $itemID Item ID
-     *
-     * @return mixed
-     */
-    public function getISBNsForItem($itemID)
-    {
-        $callback = function ($select) use ($itemID): void {
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_ISBNs.Note_ID = n.Note_ID',
-                Select::SQL_STAR,
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_ISBNs.Edition_ID = eds.Edition_ID'
-            );
-            $select->order('ISBN13');
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
     }
 
     /**

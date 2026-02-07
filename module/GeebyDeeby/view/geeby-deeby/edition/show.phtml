@@ -91,7 +91,8 @@
           <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($platforms as $platform): ?>
-              <a href="<?=$this->url('platform', ['id' => $platform['Platform_ID']])?>"><?=$this->escapeHtml($platform['Platform'])?></a>
+              <?php $platformEntity = $platform->getPlatform(); ?>
+              <a href="<?=$this->url('platform', ['id' => $platformEntity->getId()])?>"><?=$this->escapeHtml($platformEntity->getPlatformName())?></a>
               <br />
             <?php endforeach; ?>
           </td>
@@ -210,14 +211,14 @@
           <th scope="row">ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($isbns as $isbn): ?>
-              <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn['ISBN13']])?>">
+              <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn->getIsbn13()])?>">
                 <?php
-                  $isbnConverter = new \VuFindCode\ISBN($isbn['ISBN13']);
+                  $isbnConverter = new \VuFindCode\ISBN($isbn->getIsbn13());
                   $isbn10 = $isbnConverter->get10();
                 ?>
-                <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn['ISBN13'] : $isbn['ISBN13'])?>
+                <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn->getIsbn13() : $isbn->getIsbn13())?>
               </a>
-              <?=!empty($isbn['Note']) ? '(' . $this->escapeHtml($isbn['Note']) . ')' : ''?>
+              <?=($note = $isbn->getNote()?->getNote()) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
             <?php endforeach; ?>
           </td>
@@ -230,8 +231,8 @@
           <th scope="row">OCLC Number<?=$oclcCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($oclcNumbers as $number): ?>
-              <?=$this->escapeHtml($number['OCLC_Number'])?>
-              <?=!empty($number['Note']) ? '(' . $this->escapeHtml($number['Note']) . ')' : ''?>
+              <?=$this->escapeHtml($number->getOclcNumber())?>
+              <?=($note = $number->getNote()?->getNote()) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
             <?php endforeach; ?>
           </td>
@@ -244,8 +245,8 @@
           <th scope="row">Product Code<?=$codeCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($codes as $code): ?>
-              <?=$this->escapeHtml($code['Product_Code'])?>
-              <?=!empty($code['Note']) ? '(' . $this->escapeHtml($code['Note']) . ')' : ''?>
+              <?=$this->escapeHtml($code->getProductCode())?>
+              <?=($note = $code->getNote()?->getNote()) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
             <?php endforeach; ?>
           </td>

@@ -97,48 +97,4 @@ class EditionsPlatforms extends Gateway
         };
         return $this->select($callback);
     }
-
-    /**
-     * Get a list of platforms for the specified item.
-     *
-     * @param int $itemID Item ID
-     *
-     * @return mixed
-     */
-    public function getPlatformsForItem($itemID)
-    {
-        $callback = function ($select) use ($itemID): void {
-            $select->join(
-                ['p' => 'Platforms'],
-                'Editions_Platforms.Platform_ID = p.Platform_ID'
-            );
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Platforms.Edition_ID = eds.Edition_ID'
-            );
-            $select->order(['Platform']);
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return $this->select($callback);
-    }
-
-    /**
-     * Get a list of platforms for the specified edition.
-     *
-     * @param int $editionID Edition ID
-     *
-     * @return mixed
-     */
-    public function getPlatformsForEdition($editionID)
-    {
-        $callback = function ($select) use ($editionID): void {
-            $select->join(
-                ['p' => 'Platforms'],
-                'Editions_Platforms.Platform_ID = p.Platform_ID'
-            );
-            $select->order(['Platform']);
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return $this->select($callback);
-    }
 }

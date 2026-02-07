@@ -88,11 +88,25 @@ class EditionsPlatformService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return EditionsPlatformEntityInterface[]
      */
     public function getPlatformsForItem(int $itemID): array
     {
-        return iterator_to_array($this->platformTable->getPlatformsForItem($itemID));
+        $callback = function ($select) use ($itemID): void {
+            $select->join(
+                ['p' => 'Platforms'],
+                'Editions_Platforms.Platform_ID = p.Platform_ID',
+                []
+            );
+            $select->join(
+                ['eds' => 'Editions'],
+                'Editions_Platforms.Edition_ID = eds.Edition_ID',
+                []
+            );
+            $select->order(['Platform']);
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return iterator_to_array($this->platformTable->select($callback));
     }
 
     /**
@@ -100,11 +114,20 @@ class EditionsPlatformService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsPlatformEntityInterface[]
      */
     public function getPlatformsForEdition(int $editionID): array
     {
-        return iterator_to_array($this->platformTable->getPlatformsForEdition($editionID));
+        $callback = function ($select) use ($editionID): void {
+            $select->join(
+                ['p' => 'Platforms'],
+                'Editions_Platforms.Platform_ID = p.Platform_ID',
+                []
+            );
+            $select->order(['Platform']);
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return iterator_to_array($this->platformTable->select($callback));
     }
 
     /**

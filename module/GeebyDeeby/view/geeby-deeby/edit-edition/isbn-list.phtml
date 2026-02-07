@@ -1,16 +1,16 @@
-<?php if (isset($ISBNs) && count($ISBNs) > 0): ?>
-  <?php foreach ($ISBNs as $current): ?>
+<?php if (count($isbns ?? []) > 0): ?>
+  <?php foreach ($isbns as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <?php if (!empty($current['ISBN'])): ?><?=$this->escapeHtml($current['ISBN'])?> / <?php endif; ?><?=$this->escapeHtml($current['ISBN13'])?><?php if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
+          <?php if ($isbn10 = $current->getIsbn10()): ?><?=$this->escapeHtml($isbn10)?> / <?php endif; ?><?=$this->escapeHtml($current->getIsbn13())?><?php if ($note = $current->getNote()?->getNote()): ?> (<?=$this->escapeHtml($note)?>)<?php endif; ?>
         </td>
         <td>
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('ISBN', " . $current['Sequence_ID'] . ')',
-                'Delete ISBN: ' . (empty($current['ISBN']) ? $current['ISBN13'] : $current['ISBN'])
+                "Edition.unlink('ISBN', " . $current->getId() . ')',
+                'Delete ISBN: ' . ($isbn10 ? $isbn10 : $current->getIsbn13())
             )
           ?>
         </td>

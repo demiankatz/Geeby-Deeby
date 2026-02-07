@@ -1,16 +1,16 @@
-<?php if (isset($oclcNumbers) && count($oclcNumbers) > 0): ?>
+<?php if (count($oclcNumbers ?? []) > 0): ?>
   <?php foreach ($oclcNumbers as $current): ?>
     <table class="list_item">
       <tr>
         <td>
-          <?=$this->escapeHtml($current['OCLC_Number'])?><?php if (strlen($current['Note']) > 0): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
+          <?=$this->escapeHtml($current->getOclcNumber())?><?php if ($note = $current->getNote()?->getNote()): ?> (<?=$this->escapeHtml($note)?>)<?php endif; ?>
         </td>
         <td>
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('OCLCNumber', " . $current['Sequence_ID'] . ')',
-                'Delete OCLC number: ' . $current['OCLC_Number']
+                "Edition.unlink('OCLCNumber', " . $current->getId() . ')',
+                'Delete OCLC number: ' . $current->getOclcNumber()
             )
           ?>
         </td>
