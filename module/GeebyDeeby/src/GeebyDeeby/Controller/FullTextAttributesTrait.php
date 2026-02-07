@@ -56,12 +56,7 @@ trait FullTextAttributesTrait
         $fullTextAttributes = [];
         if (count($view->fullText ?? []) > 0) {
             $service = $this->getDbService(EditionsFullTextAttributesValueService::class);
-            $ids = array_map(
-                function ($current) {
-                    return $current['Sequence_ID'];
-                },
-                $view->fullText
-            );
+            $ids = array_map(fn ($current) => $current->getId(), $view->fullText);
             foreach ($service->getAttributesForFullTextIDs($ids) as $attr) {
                 $fullTextAttributes[$attr['Editions_Full_Text_ID']][] = $attr;
             }

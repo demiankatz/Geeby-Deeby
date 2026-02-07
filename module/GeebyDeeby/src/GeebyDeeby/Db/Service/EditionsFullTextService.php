@@ -86,11 +86,21 @@ class EditionsFullTextService extends AbstractDbService
      *
      * @param int $edition Edition ID
      *
-     * @return array
+     * @return EditionsFullTextEntityInterface[]
      */
     public function getFullTextForEdition(int $edition): array
     {
-        return iterator_to_array($this->editionsFullTextTable->getFullTextForEdition($edition));
+        $callback = function ($select) use ($edition): void {
+            $select->join(
+                ['fts' => 'Full_Text_Sources'],
+                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
+                []
+            );
+            $fields = ['fts.Full_Text_Source_Name', 'Full_Text_URL'];
+            $select->order($fields);
+            $select->where->equalTo('Edition_ID', $edition);
+        };
+        return iterator_to_array($this->editionsFullTextTable->select($callback));
     }
 
     /**
@@ -99,11 +109,29 @@ class EditionsFullTextService extends AbstractDbService
      *
      * @param int $edition Edition ID
      *
-     * @return array
+     * @return EditionsFullTextEntityInterface[]
      */
     public function getFullTextForEditionOrParentEdition(int $edition): array
     {
-        return iterator_to_array($this->editionsFullTextTable->getFullTextForEditionOrParentEdition($edition));
+        $callback = function ($select) use ($edition): void {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Sequence_ID', 'Full_Text_URL', 'Full_Text_Source_ID']);
+            $select->join(
+                ['fts' => 'Full_Text_Sources'],
+                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
+                []
+            );
+            $select->join(
+                ['eds' => 'Editions'],
+                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
+                ['Edition_ID']
+            );
+            $fields = ['fts.Full_Text_Source_Name', 'Full_Text_URL'];
+            $select->order($fields);
+            $select->where->equalTo('eds.Edition_ID', $edition);
+        };
+        return iterator_to_array($this->editionsFullTextTable->select($callback));
     }
 
     /**
@@ -111,11 +139,30 @@ class EditionsFullTextService extends AbstractDbService
      *
      * @param int $item Item ID
      *
-     * @return array
+     * @return EditionsFullTextEntityInterface[]
      */
     public function getFullTextForItem(int $item): array
     {
-        return iterator_to_array($this->editionsFullTextTable->getFullTextForItem($item));
+        $callback = function ($select) use ($item): void {
+            $select->quantifier('DISTINCT');
+            $select->columns(['Sequence_ID', 'Full_Text_URL', 'Full_Text_Source_ID']);
+            $select->join(
+                ['fts' => 'Full_Text_Sources'],
+                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
+                []
+            );
+            $select->join(
+                ['eds' => 'Editions'],
+                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
+                . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
+                ['Edition_ID']
+            );
+            $select->join(['i' => 'Items'], 'eds.Item_ID = i.Item_ID');
+            $fields = ['fts.Full_Text_Source_Name', 'Edition_Name', 'Full_Text_URL'];
+            $select->order($fields);
+            $select->where->equalTo('i.Item_ID', $item);
+        };
+        return iterator_to_array($this->editionsFullTextTable->select($callback));
     }
 
     /**

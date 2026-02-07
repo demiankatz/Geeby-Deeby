@@ -213,8 +213,7 @@ class EditEditionController extends AbstractBase
             $view->releaseDates = $this->getDbService(EditionsReleaseDateService::class)
                 ->getDatesForEdition($editionId);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
-            $view->fullText = $this->getDbService(EditionsFullTextService::class)
-                ->getFullTextForEdition($editionId);
+            $view->fullText = $this->getDbService(EditionsFullTextService::class)->getFullTextForEdition($editionId);
             $view->fullTextSources = $this->getDbService(FullTextSourceService::class)->getList();
             if (is_object($view->affectedEntity)) {
                 $editionService = $this->getDbService(EditionService::class);
