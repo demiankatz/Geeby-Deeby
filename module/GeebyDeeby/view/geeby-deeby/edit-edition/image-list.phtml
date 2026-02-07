@@ -1,4 +1,4 @@
-<?php if (!isset($images) || count($images) < 1): ?>
+<?php if (count($images ?? []) < 1): ?>
   No images.
 <?php else: ?>
   <table class="list_item">
@@ -15,22 +15,22 @@
           <?=
             $this->iconButton(
                 'trash',
-                "Edition.unlink('Image', " . $current['Sequence_ID'] . ')',
-                !empty($current['IIIF_URI'])
-              ? 'Delete image with IIIF URI: ' . $current['IIIF_URI']
-              : 'Delete image with path: ' . $current['Image_Path']
+                "Edition.unlink('Image', " . $current->getId() . ')',
+                !empty($current->getIiifUri())
+              ? 'Delete image with IIIF URI: ' . $current->getIiifUri()
+              : 'Delete image with path: ' . $current->getImagePath()
             )
           ?>
         </td>
         <td>
           <?php
-            $thumb = $current['Thumb_Path'];
+            $thumb = $current->getThumbPath();
             if (empty($thumb)) {
-              $thumb = $current['IIIF_URI'] . '/full/,120/0/default.jpg';
+              $thumb = $current->getIiifUri() . '/full/,120/0/default.jpg';
             }
-            $image = $current['Image_Path'];
+            $image = $current->getImagePath();
             if (empty($image)) {
-              $image = $current['IIIF_URI'] . '/full/full/0/default.jpg';
+              $image = $current->getIiifUri() . '/full/full/0/default.jpg';
             }
           ?>
           <a target="_imagePopup" href="<?=$this->escapeHtml($image)?>">
@@ -39,17 +39,17 @@
           </a>
         </td>
         <td>
-          <?php if (!empty($current['Image_Path'])): ?>
-            <b>Image Path:</b> <?=$this->escapeHtml($current['Image_Path'])?><br />
+          <?php if ($imagePath = $current->getImagePath()): ?>
+            <b>Image Path:</b> <?=$this->escapeHtml($imagePath)?><br />
           <?php endif; ?>
-          <?php if (!empty($current['Thumb_Path'])): ?>
-            <b>Thumb Path:</b> <?=$this->escapeHtml($current['Thumb_Path'])?><br />
+          <?php if ($thumbPath = $current->getThumbPath()): ?>
+            <b>Thumb Path:</b> <?=$this->escapeHtml($thumbPath)?><br />
           <?php endif; ?>
-          <?php if (!empty($current['IIIF_URI'])): ?>
-            <b>IIIF URI:</b> <?=$this->escapeHtml($current['IIIF_URI'])?><br />
+          <?php if ($current->getIiifUri()): ?>
+            <b>IIIF URI:</b> <?=$this->escapeHtml($current->getIiifUri())?><br />
           <?php endif; ?>
-          <?php if (!empty($current['Note'])): ?>
-            <b>Note:</b> <?=$this->escapeHtml($current['Note'])?>
+          <?php if ($note = $current->getNote()?->getNote()): ?>
+            <b>Note:</b> <?=$this->escapeHtml($note)?>
           <?php endif; ?>
         </td>
       </tr>

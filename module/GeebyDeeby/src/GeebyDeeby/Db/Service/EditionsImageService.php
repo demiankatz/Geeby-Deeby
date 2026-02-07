@@ -108,11 +108,15 @@ class EditionsImageService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsImageEntityInterface[]
      */
     public function getImagesForEdition(int $editionID): array
     {
-        return iterator_to_array($this->editionsImagesTable->getImagesForEdition($editionID));
+        $callback = function ($select) use ($editionID): void {
+            $select->order(['Editions_Images.Position']);
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return iterator_to_array($this->editionsImagesTable->select($callback));
     }
 
     /**
