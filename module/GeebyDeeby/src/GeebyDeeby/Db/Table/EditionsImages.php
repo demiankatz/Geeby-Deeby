@@ -100,28 +100,6 @@ class EditionsImages extends Gateway
     }
 
     /**
-     * Get a list of images for the specified edition.
-     *
-     * @param int $editionID Edition ID
-     *
-     * @return mixed
-     */
-    public function getImagesForEdition($editionID)
-    {
-        $callback = function ($select) use ($editionID): void {
-            $select->join(
-                ['n' => 'Notes'],
-                'Editions_Images.Note_ID = n.Note_ID',
-                Select::SQL_STAR,
-                Select::JOIN_LEFT
-            );
-            $select->order(['Editions_Images.Position']);
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return $this->select($callback);
-    }
-
-    /**
      * Get a list of images for the specified edition (or its immediate parent).
      *
      * @param int $editionID Edition ID
