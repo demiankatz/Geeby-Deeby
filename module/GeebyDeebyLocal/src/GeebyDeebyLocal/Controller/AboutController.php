@@ -29,8 +29,7 @@
 
 namespace GeebyDeebyLocal\Controller;
 
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Select;
+use GeebyDeeby\Db\Service\SeriesService;
 
 /**
  * About controller
@@ -70,61 +69,7 @@ class AboutController extends \GeebyDeeby\Controller\AbstractBase
      */
     public function progressAction()
     {
-        $stats = $this->getProgressStatistics();
+        $stats = $this->getDbService(SeriesService::class)->getProgressStatistics();
         return $this->createViewModel(['progress' => $stats]);
-    }
-
-    /**
-     * Retrieve progress statistics.
-     *
-     * @return array
-     */
-    protected function getProgressStatistics()
-    {
-        $s = $this->serviceLocator->get(\GeebyDeeby\Db\Table\PluginManager::class)->get('series');
-        $callback = function ($select): void {
-            $select->columns(
-                [
-                    'Series_ID' => 'Series_ID',
-                    'Series_Name' => 'Series_Name',
-                    'Item_Count' => new Expression(
-                        'count(distinct(?))',
-                        ['Item_ID'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Complete' => new Expression(
-                        'if (Series_Description like \'%in progress%\', 0, 1)'
-                    ),
-                ]
-            );
-            $select->join(
-                ['e' => 'Editions'],
-                'Series.Series_ID = e.Series_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['source' => 'Series_Attributes_Values'],
-                new \Laminas\Db\Sql\Expression(
-                    'Series.Series_ID = source.Series_ID '
-                    . 'AND source.Series_Attribute_ID=16'
-                ),
-                ['source' => 'Series_Attribute_Value'],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['status' => 'Series_Attributes_Values'],
-                new \Laminas\Db\Sql\Expression(
-                    'Series.Series_ID = status.Series_ID '
-                    . 'AND status.Series_Attribute_ID=17'
-                ),
-                ['status' => 'Series_Attribute_Value'],
-                Select::JOIN_LEFT
-            );
-            $select->group(['Series.Series_ID']);
-            $select->where(['e.Parent_Edition_ID' => null]);
-            $select->order(['Series.Series_Name']);
-        };
-        return $s->select($callback)->toArray();
     }
 }

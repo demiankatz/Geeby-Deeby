@@ -34,6 +34,11 @@ return [
                     'GeebyDeebyLocal\Command\Make\IssuesCommand' => 'GeebyDeebyLocal\Command\Make\IssuesCommandFactory',
                 ],
             ],
+            'db_service' => [
+                'aliases' => [
+                    \GeebyDeeby\Db\Service\SeriesService::class => \GeebyDeebyLocal\Db\Service\SeriesService::class,
+                ],
+            ],
         ],
         'search_controls' => [
             'edition_attributes' => [
