@@ -210,14 +210,14 @@
           <th scope="row">ISBN<?=$isbnCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($isbns as $isbn): ?>
-              <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn['ISBN13']])?>">
+              <a href="<?=$this->url('item', ['id' => $item['Item_ID'], 'action' => 'ISBNDetails', 'extra' => $isbn->getIsbn13()])?>">
                 <?php
-                  $isbnConverter = new \VuFindCode\ISBN($isbn['ISBN13']);
+                  $isbnConverter = new \VuFindCode\ISBN($isbn->getIsbn13());
                   $isbn10 = $isbnConverter->get10();
                 ?>
-                <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn['ISBN13'] : $isbn['ISBN13'])?>
+                <?=$this->escapeHtml(!empty($isbn10) ? $isbn10 . ' / ' . $isbn->getIsbn13() : $isbn->getIsbn13())?>
               </a>
-              <?=!empty($isbn['Note']) ? '(' . $this->escapeHtml($isbn['Note']) . ')' : ''?>
+              <?=($note = $isbn->getNote()?->getNote()) ? '(' . $this->escapeHtml($note) . ')' : ''?>
               <br />
             <?php endforeach; ?>
           </td>
