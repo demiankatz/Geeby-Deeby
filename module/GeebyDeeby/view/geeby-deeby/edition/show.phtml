@@ -91,7 +91,8 @@
           <th scope="row">Platform<?=$platformCount > 1 ? 's' : ''?>:</th>
           <td>
             <?php foreach ($platforms as $platform): ?>
-              <a href="<?=$this->url('platform', ['id' => $platform['Platform_ID']])?>"><?=$this->escapeHtml($platform['Platform'])?></a>
+              <?php $platformEntity = $platform->getPlatform(); ?>
+              <a href="<?=$this->url('platform', ['id' => $platformEntity->getId()])?>"><?=$this->escapeHtml($platformEntity->getPlatformName())?></a>
               <br />
             <?php endforeach; ?>
           </td>
