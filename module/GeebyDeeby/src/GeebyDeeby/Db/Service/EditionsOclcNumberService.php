@@ -86,11 +86,15 @@ class EditionsOclcNumberService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsOclcNumberEntityInterface[]
      */
     public function getOCLCNumbersForEdition(int $editionID): array
     {
-        return iterator_to_array($this->oclcNumbersTable->getOCLCNumbersForEdition($editionID));
+        $callback = function ($select) use ($editionID): void {
+            $select->order('OCLC_Number');
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return iterator_to_array($this->oclcNumbersTable->select($callback));
     }
 
     /**
@@ -98,10 +102,19 @@ class EditionsOclcNumberService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return EditionsOclcNumberEntityInterface[]
      */
     public function getOCLCNumbersForItem(int $itemID): array
     {
-        return iterator_to_array($this->oclcNumbersTable->getOCLCNumbersForItem($itemID));
+        $callback = function ($select) use ($itemID): void {
+            $select->join(
+                ['eds' => 'Editions'],
+                'Editions_OCLC_Numbers.Edition_ID = eds.Edition_ID',
+                []
+            );
+            $select->order('OCLC_Number');
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return iterator_to_array($this->oclcNumbersTable->select($callback));
     }
 }
