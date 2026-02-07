@@ -193,8 +193,8 @@ class EditionController extends AbstractBase
                     $copyUri = $uri . '#copy' . $i;
                     $copy = $graph->resource($copyUri, $this->copyRdfClass);
                     $edition->add($this->hasCopyPredicate, $copy);
-                    $copy->set($this->fullTextPredicate, $fullText['Full_Text_URL']);
-                    $currentAttribs = $view->fullTextAttributes[$fullText['Sequence_ID']] ?? [];
+                    $copy->set($this->fullTextPredicate, $fullText->getUrl());
+                    $currentAttribs = $view->fullTextAttributes[$fullText->getId()] ?? [];
                     foreach ($currentAttribs as $attr) {
                         $prop = $attr['Editions_Full_Text_Attribute_RDF_Property'];
                         if (!empty($prop)) {
