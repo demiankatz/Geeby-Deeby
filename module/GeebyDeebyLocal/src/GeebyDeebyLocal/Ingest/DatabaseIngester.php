@@ -80,12 +80,13 @@ class DatabaseIngester extends BaseIngester
     /**
      * Constructor
      *
-     * @param object               $tables   Table plugin manager
-     * @param \GeebyDeeby\Articles $articles Articles helper
+     * @param \GeebyDeeby\Db\Service\PluginManager $services Database service manager
+     * @param object                               $tables   Table plugin manager
+     * @param \GeebyDeeby\Articles                 $articles Articles helper
      */
-    public function __construct($tables, $articles)
+    public function __construct(\GeebyDeeby\Db\Service\PluginManager $services, $tables, $articles)
     {
-        parent::__construct($tables);
+        parent::__construct($services, $tables);
         $this->articles = $articles;
     }
 

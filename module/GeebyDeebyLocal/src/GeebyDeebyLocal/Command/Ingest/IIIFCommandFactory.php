@@ -66,15 +66,15 @@ class IIIFCommandFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $tables = $container->get(\GeebyDeeby\Db\Table\PluginManager::class);
+        $services = $container->get(\GeebyDeeby\Db\Service\PluginManager::class);
         $solr = $container->get(\GeebyDeebyLocal\Ingest\SolrHarvester::class);
         $ingesters = [
             // IA currently disabled due to poor results (first image is often
             // irrelevant/misleading):
             //'InternetArchive' => new ImageIngester\InternetArchive($tables),
-            'NIU' => new ImageIngester\NIU($tables, $solr),
-            'Stanford' => new ImageIngester\Stanford($tables),
-            'Villanova' => new ImageIngester\VU($tables),
+            'NIU' => new ImageIngester\NIU($services, $solr),
+            'Stanford' => new ImageIngester\Stanford($services),
+            'Villanova' => new ImageIngester\VU($services),
         ];
         return new $requestedName($ingesters);
     }

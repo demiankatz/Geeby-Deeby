@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Ingest\ImageIngester;
 
+use GeebyDeeby\Db\Service\EditionsFullTextService;
+use GeebyDeeby\Db\Service\EditionsImageService;
 use GeebyDeebyLocal\Ingest\BaseIngester;
 
 use function in_array;
@@ -95,9 +97,13 @@ abstract class AbstractThumbIngestor extends BaseIngester
      */
     public function ingestImages()
     {
-        $existingImages = $this->getExistingImages();
-        $table = $this->getDbTable('editionsimages');
-        foreach ($this->getMissingImageLinks() as $link) {
+        $imageService = $this->getDbService(EditionsImageService::class);
+        $existingImages = array_map(
+            fn ($row) => $row->getEdition()->getId(),
+            $imageService->getByDomain($this->domain)
+        );
+        $fullTextService = $this->getDbService(EditionsFullTextService::class);
+        foreach ($fullTextService->getFullTextForSource($this->fullTextSource) as $link) {
             if (!in_array($link->Edition_ID, $existingImages)) {
                 $this->writeln('Adding image to edition ' . $link->Edition_ID);
                 try {
@@ -107,33 +113,14 @@ abstract class AbstractThumbIngestor extends BaseIngester
                     $this->writeln($e->getMessage());
                     continue;
                 }
-                $table->insert(
-                    [
-                        'Edition_ID' => $link->Edition_ID,
-                        'Image_Path' => $link->Full_Text_URL,
-                        'IIIF_URI' => $iiifUrl,
-                        'Note_ID' => $this->noteID,
-                    ]
-                );
+                $entity = $imageService->createEntity()
+                    ->setEdition($link->getEdition())
+                    ->setImagePath($link->getUrl())
+                    ->setIiifUri($iiifUrl)
+                    ->setNote($this->noteID);
+                $imageService->persistEntity($entity);
             }
         }
-    }
-
-    /**
-     * Get a list of Edition_ID values that already have images.
-     *
-     * @return array
-     */
-    protected function getExistingImages()
-    {
-        $callback = function ($select): void {
-            $select->where->like('Image_Path', '%' . $this->domain . '%');
-        };
-        $results = [];
-        foreach ($this->getDbTable('editionsimages')->select($callback) as $edImg) {
-            $results[] = $edImg->Edition_ID;
-        }
-        return $results;
     }
 
     /**
@@ -144,17 +131,4 @@ abstract class AbstractThumbIngestor extends BaseIngester
      * @return string
      */
     abstract protected function getIIIFURI($uri);
-
-    /**
-     * Get a list of full text links that lack corresponding images.
-     *
-     * @return \Iterable
-     */
-    protected function getMissingImageLinks()
-    {
-        $callback = function ($select): void {
-            $select->where(['Full_Text_Source_ID' => $this->fullTextSource]);
-        };
-        return $this->getDbTable('editionsfulltext')->select($callback);
-    }
 }

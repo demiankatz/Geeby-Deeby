@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Ingest\ImageIngester;
 
+use GeebyDeebyLocal\Ingest\SolrHarvester;
+
 /**
  * Class to load NIU thumbnails into the database.
  *
@@ -69,22 +71,14 @@ class NIU extends AbstractThumbIngestor
     protected $pidPrefix = 'dimenovels';
 
     /**
-     * Solr harvester
-     *
-     * @var SolrHarvester
-     */
-    protected $solr;
-
-    /**
      * Constructor
      *
-     * @param object        $tables Table plugin manager
-     * @param SolrHarvester $solr   Solr harvester
+     * @param \GeebyDeeby\Db\Service\PluginManager $services Database service manager
+     * @param SolrHarvester                        $solr     Solr harvester
      */
-    public function __construct($tables, $solr)
+    public function __construct($services, protected SolrHarvester $solr)
     {
-        parent::__construct($tables);
-        $this->solr = $solr;
+        parent::__construct($services);
     }
 
     /**

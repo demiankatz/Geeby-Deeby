@@ -29,6 +29,8 @@
 
 namespace GeebyDeebyLocal\Ingest;
 
+use GeebyDeeby\Db\Service\DbServiceInterface;
+
 /**
  * Class to load information into the database.
  *
@@ -57,20 +59,27 @@ abstract class BaseIngester
     public const TAGTYPE_LC = 1;
 
     /**
-     * Table plugin manager
-     *
-     * @var object
-     */
-    protected $tables;
-
-    /**
      * Constructor
      *
-     * @param object $tables Table plugin manager
+     * @param \GeebyDeeby\Db\Service\PluginManager $services Database service manager
+     * @param object                               $tables   Table plugin manager
      */
-    public function __construct($tables)
+    public function __construct(protected \GeebyDeeby\Db\Service\PluginManager $services, protected $tables = null)
     {
-        $this->tables = $tables;
+    }
+
+    /**
+     * Get a database service.
+     *
+     * @param class-string<T> $name Name of service to retrieve
+     *
+     * @template T
+     *
+     * @return T
+     */
+    protected function getDbService(string $name): DbServiceInterface
+    {
+        return $this->services->get($name);
     }
 
     /**
@@ -79,9 +88,14 @@ abstract class BaseIngester
      * @param string $table Name of table service to pull
      *
      * @return \Laminas\Db\TableGateway\AbstractTableGateway
+     *
+     * @deprecated
      */
     protected function getDbTable($table)
     {
+        if ($this->tables) {
+            throw new \Exception('Cannot retrieve table due to missing table manager');
+        }
         return $this->tables->get($table);
     }
 }
