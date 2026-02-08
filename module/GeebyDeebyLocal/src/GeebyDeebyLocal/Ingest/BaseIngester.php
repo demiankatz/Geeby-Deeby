@@ -93,7 +93,7 @@ abstract class BaseIngester
      */
     protected function getDbTable($table)
     {
-        if ($this->tables) {
+        if (!$this->tables) {
             throw new \Exception('Cannot retrieve table due to missing table manager');
         }
         return $this->tables->get($table);

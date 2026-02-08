@@ -29,6 +29,11 @@
 
 namespace GeebyDeebyLocal\Ingest;
 
+use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Service\EditionsReleaseDateService;
+use GeebyDeeby\Db\Service\SeriesAltTitleService;
+
 use function chr;
 use function count;
 use function in_array;
@@ -268,16 +273,16 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given a series object, get all titles (primary + alternate).
      *
-     * @param object $seriesObj Series object
+     * @param SeriesEntityInterface $seriesObj Series object
      *
-     * @return array
+     * @return string[]
      */
-    protected function getAllSeriesTitles($seriesObj)
+    protected function getAllSeriesTitles(SeriesEntityInterface $seriesObj): array
     {
-        $titles = [$seriesObj->Series_Name];
-        $san = $this->getDbTable('seriesalttitles');
-        foreach ($san->getAltTitles($seriesObj->Series_ID) as $alt) {
-            $titles[] = $alt->Series_AltName;
+        $titles = [$seriesObj->getSeriesName()];
+        $san = $this->getDbService(SeriesAltTitleService::class);
+        foreach ($san->getAltTitles($seriesObj->getId()) as $alt) {
+            $titles[] = $alt['Series_AltName'];
         }
         return $titles;
     }
@@ -369,21 +374,22 @@ class DatabaseIngester extends BaseIngester
      * Set top-level details (publisher, ID number, links, dates, etc.) for container
      * item.
      *
-     * @param object       $editionObj Edition row
-     * @param array|object $series     Series summary array (see getSeriesForEdition)
+     * @param EditionEntityInterface      $editionObj Edition row
+     * @param array|SeriesEntityInterface $series     Series summary array (see getSeriesForEdition)
      * or Series row object
-     * @param array        $details    Details from ModsExtractor or equivalent
+     * @param array                       $details    Details from ModsExtractor or equivalent
      *
      * @return bool True for success
      */
-    protected function setTopLevelDetails($editionObj, $series, $details)
-    {
+    protected function setTopLevelDetails(
+        EditionEntityInterface $editionObj,
+        array|SeriesEntityInterface $series,
+        array $details
+    ): bool {
         // Make sure we're operating on the top-level object:
-        if ($editionObj->Parent_Edition_ID) {
-            $edsTable = $this->getDbTable('edition');
-            $editionObj = $edsTable->getByPrimaryKey($editionObj->Parent_Edition_ID);
+        if ($parent = $editionObj->getParentEdition()) {
+            $editionObj = $parent;
         }
-        $item = $this->getItemForEdition($editionObj);
         if (isset($details['date'])) {
             if (!$this->processDate($details['date'], $editionObj)) {
                 return false;
@@ -488,23 +494,23 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given a date, update the edition.
      *
-     * @param string $date       Date string.
-     * @param object $editionObj Row representing Edition row in database.
+     * @param string                 $date       Date string.
+     * @param EditionEntityInterface $editionObj Row representing Edition row in database.
      *
      * @return bool Success?
      */
-    protected function processDate($date, $editionObj)
+    protected function processDate(string $date, EditionEntityInterface $editionObj): bool
     {
         [$year, $month, $day] = $this->parseDate($date);
-        $table = $this->getDbTable('editionsreleasedates');
-        $known = $table->getDatesForEdition($editionObj->Edition_ID);
+        $service = $this->getDbService(EditionsReleaseDateService::class);
+        $known = $service->getDatesForEdition($editionObj->getId());
         $foundMatch = false;
         $current = false;
         foreach ($known as $current) {
             if (
-                ($current->Month == $month || null === $month)
-                && $current->Year == $year
-                && ($current->Day == $day || null === $day)
+                ($current->getMonth() == $month || null === $month)
+                && $current->getYear() == $year
+                && ($current->getDay() == $day || null === $day)
             ) {
                 $foundMatch = true;
                 break;
@@ -526,17 +532,12 @@ class DatabaseIngester extends BaseIngester
         }
         if (count($known) == 0) {
             $this->writeln("Adding date: {$date}");
-            $fields = [
-                'Edition_ID' => $editionObj->Edition_ID,
-                'Year' => $year,
-            ];
-            if (!empty($month)) {
-                $fields['Month'] = $month;
-            }
-            if (!empty($day)) {
-                $fields['Day'] = $day;
-            }
-            $table->insert($fields);
+            $entity = $service->createEntity()
+                ->setEdition($editionObj)
+                ->setYear($year)
+                ->setMonth(empty($month) ? 0 : $month)
+                ->setDay(empty($day) ? 0 : $day);
+            $service->persistEntity($entity);
         }
         return true;
     }
@@ -2533,21 +2534,16 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given an edition row object, return a summary item array.
      *
-     * @param object $rowObj Edition row
+     * @param EditionEntityInterface $rowObj Edition row
      *
      * @return array
      */
-    protected function getItemForEdition($rowObj)
+    protected function getItemForEdition(EditionEntityInterface $rowObj): array
     {
-        $itemTable = $this->getDbTable('item');
-        $itemObj = $itemTable->getByPrimaryKey($rowObj->Item_ID);
+        $itemObj = $rowObj->getItem();
         $item = $itemObj->toArray();
-        if (!empty($rowObj->Preferred_Item_AltName_ID)) {
-            $ian = $this->getDbTable('itemsalttitles');
-            $tmpRow = $ian->select(
-                ['Sequence_ID' => $rowObj->Preferred_Item_AltName_ID]
-            )->current();
-            $item['Item_AltName'] = $tmpRow['Item_AltName'];
+        if ($tmpRow = $rowObj->getPreferredItemAlternateTitle()) {
+            $item['Item_AltName'] = $tmpRow->getAltName();
         }
         return $item;
     }
@@ -2555,21 +2551,16 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given an edition row object, return a summary series array.
      *
-     * @param object $rowObj Edition row
+     * @param EditionEntityInterface $rowObj Edition row
      *
      * @return array
      */
-    protected function getSeriesForEdition($rowObj)
+    protected function getSeriesForEdition(EditionEntityInterface $rowObj): array
     {
-        $seriesTable = $this->getDbTable('series');
-        $seriesObj = $seriesTable->getByPrimaryKey($rowObj->Series_ID);
+        $seriesObj = $rowObj->getSeries();
         $series = $seriesObj->toArray();
-        if (!empty($rowObj->Preferred_Series_AltName_ID)) {
-            $san = $this->getDbTable('seriesalttitles');
-            $tmpRow = $san->select(
-                ['Sequence_ID' => $rowObj->Preferred_Series_AltName_ID]
-            )->current();
-            $series['Series_AltName'] = $tmpRow['Series_AltName'];
+        if ($tmpRow = $rowObj->getPreferredSeriesAlternateTitle()) {
+            $series['Series_AltName'] = $tmpRow->getAltName();
         }
         return $series;
     }
