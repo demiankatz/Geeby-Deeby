@@ -166,6 +166,21 @@ class EditionsFullTextService extends AbstractDbService
     }
 
     /**
+     * Get a list of full text entries by full text source.
+     *
+     * @param int $source Full text source ID
+     *
+     * @return EditionsFullTextEntityInterface[]
+     */
+    public function getFullTextForSource(int $source): array
+    {
+        $callback = function ($select) use ($source): void {
+            $select->where(['Full_Text_Source_ID' => $source]);
+        };
+        return iterator_to_array($this->editionsFullTextTable->select($callback));
+    }
+
+    /**
      * Get a list of items with full text.
      *
      * @param ?int $series Series ID (optional limiter)
