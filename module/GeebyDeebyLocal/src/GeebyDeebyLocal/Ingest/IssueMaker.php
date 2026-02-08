@@ -234,7 +234,7 @@ class IssueMaker
      */
     protected function createIssueItem(EditionEntityInterface $workEdition, string $prefix): ItemEntityInterface
     {
-        $name = $this->articles->articleAwareAppend($prefix, $workEdition->Position);
+        $name = $this->articles->articleAwareAppend($prefix, $workEdition->getPosition());
         $this->writeln('Creating issue: ' . $name);
         $itemService = $this->getDbService(ItemService::class);
         $item = $itemService->createEntity()->setItemName($name)->setMaterialType(self::MATERIALTYPE_ISSUE);

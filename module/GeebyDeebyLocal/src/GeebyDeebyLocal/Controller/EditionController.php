@@ -386,7 +386,7 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
      * Add a child record to a MODS object.
      *
      * @param \SimpleXMLElement $xml   A <mods:mods> element
-     * @param object            $child Child record information in object form
+     * @param array             $child Child record information in array form
      *
      * @return void
      */
@@ -394,11 +394,11 @@ class EditionController extends \GeebyDeeby\Controller\EditionController
     {
         $current = $xml->addChild('relatedItem');
         $current['type'] = 'constituent';
-        $this->addModsTitle($current->addChild('titleInfo'), $child->Item_Name);
-        $this->addModsNames($current, $child->Edition_ID);
-        $this->addModsGenres($current, $child->Item_ID);
-        if (!empty($child->Extent_In_Parent)) {
-            $this->addModsPart($current->addChild('part'), $child->Extent_In_Parent);
+        $this->addModsTitle($current->addChild('titleInfo'), $child['Item_Name']);
+        $this->addModsNames($current, $child['Edition_ID']);
+        $this->addModsGenres($current, $child['Item_ID']);
+        if (!empty($child['Extent_In_Parent'])) {
+            $this->addModsPart($current->addChild('part'), $child['Extent_In_Parent']);
         }
     }
 

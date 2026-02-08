@@ -104,10 +104,11 @@ abstract class AbstractThumbIngestor extends BaseIngester
         );
         $fullTextService = $this->getDbService(EditionsFullTextService::class);
         foreach ($fullTextService->getFullTextForSource($this->fullTextSource) as $link) {
-            if (!in_array($link->Edition_ID, $existingImages)) {
-                $this->writeln('Adding image to edition ' . $link->Edition_ID);
+            $linkEditionId = $link->getEdition()->getId();
+            if (!in_array($linkEditionId, $existingImages)) {
+                $this->writeln('Adding image to edition ' . $linkEditionId);
                 try {
-                    $iiifUrl = $this->getIIIFURI($link->Full_Text_URL);
+                    $iiifUrl = $this->getIIIFURI($link->getUrl());
                 } catch (\Exception $e) {
                     // Skip bad images....
                     $this->writeln($e->getMessage());

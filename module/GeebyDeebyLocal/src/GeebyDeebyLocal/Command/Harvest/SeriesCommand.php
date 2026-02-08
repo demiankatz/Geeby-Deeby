@@ -142,7 +142,7 @@ class SeriesCommand extends Command
             json_encode(
                 [
                     'type' => 'series',
-                    'id' => $seriesObj->Series_ID,
+                    'id' => $seriesObj->getId(),
                     'count' => $count,
                 ]
             )
