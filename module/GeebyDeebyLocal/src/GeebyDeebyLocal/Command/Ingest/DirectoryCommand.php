@@ -139,7 +139,11 @@ class DirectoryCommand extends Command
                 }
                 $extra = $this->editionService->getByPrimaryKey($extras->edition);
             }
-            if (!$this->ingester->ingest($details, $job->type, $extra ?? null)) {
+            if (!($extra ?? null)) {
+                $output->writeln('Unexpected job type!');
+                return 1;
+            }
+            if (!$this->ingester->ingest($details, $extra)) {
                 $prompt = 'Continue with next item anyway?';
                 if ($this->ingester->askQuestion($prompt)) {
                     continue;

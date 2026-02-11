@@ -32,13 +32,18 @@ namespace GeebyDeebyLocal\Ingest;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Service\CityService;
+use GeebyDeeby\Db\Service\EditionsCreditService;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsFullTextService;
 use GeebyDeeby\Db\Service\EditionsOclcNumberService;
 use GeebyDeeby\Db\Service\EditionsReleaseDateService;
+use GeebyDeeby\Db\Service\ItemsAltTitleService;
+use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
+use GeebyDeeby\Db\Service\TagService;
+use GeebyDeeby\Db\Service\TagsUriService;
 
 use function chr;
 use function count;
@@ -104,19 +109,19 @@ class DatabaseIngester extends BaseIngester
     /**
      * Ingest data.
      *
-     * @param array  $details Details from ModsExtractor or equivalent
-     * @param string $type    Type of import (existing or series)
-     * @param object $extra   Support object (Edition row for existing, Series
-     * row for series)
+     * @param array                                        $details Details from ModsExtractor or equivalent
+     * @param EditionEntityInterface|SeriesEntityInterface $extra   Support object (Edition entity for existing,
+     * Series entity for series)
      *
      * @return bool True for success
      */
-    public function ingest($details, $type, $extra = null)
-    {
-        if ($type == 'existing') {
-            return $this->ingestExisting($details, $extra);
-        }
-        return $this->ingestSeries($details, $extra);
+    public function ingest(
+        array $details,
+        EditionEntityInterface|SeriesEntityInterface $extra
+    ): bool {
+        return ($extra instanceof EditionEntityInterface)
+            ? $this->ingestExisting($details, $extra)
+            : $this->ingestSeries($details, $extra);
     }
 
     /**
@@ -232,12 +237,12 @@ class DatabaseIngester extends BaseIngester
     /**
      * Ingest existing edition
      *
-     * @param array  $details    Details from ModsExtractor or equivalent
-     * @param object $editionObj Edition row
+     * @param array                  $details    Details from ModsExtractor or equivalent
+     * @param EditionEntityInterface $editionObj Edition row
      *
      * @return bool True for success
      */
-    protected function ingestExisting($details, $editionObj)
+    protected function ingestExisting(array $details, EditionEntityInterface $editionObj): bool
     {
         $series = $this->getSeriesForEdition($editionObj);
         $item = $this->getItemForEdition($editionObj);
@@ -296,12 +301,12 @@ class DatabaseIngester extends BaseIngester
     /**
      * Ingest series entry
      *
-     * @param array  $details   Details from ModsExtractor or equivalent
-     * @param object $seriesObj Series row
+     * @param array                 $details   Details from ModsExtractor or equivalent
+     * @param SeriesEntityInterface $seriesObj Series row
      *
      * @return bool True for success
      */
-    protected function ingestSeries($details, $seriesObj)
+    protected function ingestSeries(array $details, SeriesEntityInterface $seriesObj): bool
     {
         $pos = empty($details['series'])
             ? 0
@@ -309,9 +314,7 @@ class DatabaseIngester extends BaseIngester
         $item = ($pos === 0)
             ? $this->getItemForNewEdition($details['contents'][0]) : null;
         $contentSummary = array_map(
-            function ($n) {
-                return $n['title'];
-            },
+            fn ($n) =>  $n['title'],
             $details['contents']
         );
         $this->writeln('Working on ' . $seriesObj->Series_Name . " no. $pos...");
@@ -323,8 +326,7 @@ class DatabaseIngester extends BaseIngester
             $this->writeln('Publisher: ' . $details['publisher']['name']);
         }
         $this->editionPreferences = [];
-        $childDetails
-            = $this->synchronizeSeriesEntries($seriesObj, $pos, $details, $item);
+        $childDetails = $this->synchronizeSeriesEntries($seriesObj, $pos, $details, $item);
         if (!$childDetails) {
             return false;
         }
@@ -343,8 +345,7 @@ class DatabaseIngester extends BaseIngester
             // container, rather than one of its contents. We'll issue a warning so
             // this can be double-checked by hand, just in case.
             foreach ($this->getAllSeriesTitles($seriesObj) as $seriesTitle) {
-                $foundMatch = $this
-                    ->fuzzyCompare($seriesTitle, $childDetails[0][0]['title']);
+                $foundMatch = $this->fuzzyCompare($seriesTitle, $childDetails[0][0]['title']);
                 if ($foundMatch) {
                     $this->writeln(
                         'WARNING: assuming first child is top-level item due to '
@@ -362,12 +363,8 @@ class DatabaseIngester extends BaseIngester
             if (isset($details['url'])) {
                 $newChildData['url'] = $details['url'];
             }
-            $newEdition
-                = $this->getChildIssueForSeries($seriesObj, $newChildData, $pos);
-            if (
-                !$newEdition
-                || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)
-            ) {
+            $newEdition = $this->getChildIssueForSeries($seriesObj, $newChildData, $pos);
+            if (!$newEdition || !$this->setTopLevelDetails($newEdition, $seriesObj, $details)) {
                 return false;
             }
             return $this->updateChildWorks($newEdition, $childDetails);
@@ -439,7 +436,7 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool True for success
      */
-    protected function updateDatabaseForFlatEdition($series, $pos, $details)
+    protected function updateDatabaseForFlatEdition(SeriesEntityInterface $series, int $pos, array $details): bool
     {
         [$data, $db] = $details['contents'][0];
         if (!$db) {
@@ -853,16 +850,14 @@ class DatabaseIngester extends BaseIngester
         if ($this->hasPersonProblem($ids, $db[$idKey], $roleName)) {
             return false;
         }
-        $table = $this->getDbTable('editionscredits');
+        $service = $this->getDbService(EditionsCreditService::class);
         foreach (array_diff($ids, $db[$idKey]) as $current) {
             $this->writeln("Attaching $roleName ID $current");
-            $table->insert(
-                [
-                    'Edition_ID' => $db['edition']['Edition_ID'],
-                    'Person_ID' => $current,
-                    'Role_ID' => $roleId,
-                ]
-            );
+            $entity = $service->createEntity()
+                ->setEdition($db['edition']->getId())
+                ->setPerson($current)
+                ->setRole($roleId);
+            $service->persistEntity($entity);
         }
         return true;
     }
@@ -886,26 +881,25 @@ class DatabaseIngester extends BaseIngester
      *
      * @param array $subjects Associative array of subject data.
      *
-     * @return array
+     * @return array|false
      */
-    protected function subjectUrisToIds($subjects)
+    protected function subjectUrisToIds(array $subjects): array|false
     {
-        $tagsUris = $this->getDbTable('tagsuris');
-        $tags = $this->getDbTable('tag');
+        $tagsUris = $this->getDbService(TagsUriService::class);
+        $tags = $this->getDbService(TagService::class);
 
         $ids = [];
         foreach ($subjects as $uri => $text) {
             if ($tagId = $this->extractIdFromDimeNovelsUri($uri, 'Tag')) {
                 $id = $tags->getByPrimaryKey($tagId);
-                if (!$this->fuzzyCompare($text, $id->Tag)) {
+                if (!$this->fuzzyCompare($text, $id->getTag())) {
                     $this->writeln("FATAL: Tag mismatch: $uri, '$text'");
                     return false;
                 }
             } else {
                 $uriLookup = $tagsUris->getTagsForURI($uri);
                 if (count($uriLookup) == 0) {
-                    $uriLookup = $tagsUris
-                        ->getTagsForURI($this->switchProtocol($uri));
+                    $uriLookup = $tagsUris->getTagsForURI($this->switchProtocol($uri));
                 }
                 $id = false;
                 foreach ($uriLookup as $id) {
@@ -913,39 +907,26 @@ class DatabaseIngester extends BaseIngester
                 }
             }
             if ($id) {
-                $ids[$uri] = $id->Tag_ID;
+                $ids[$uri] = $id->getId();
             } else {
                 if (!stristr($uri, 'loc.gov')) {
                     $this->writeln('FATAL: Unexpected subject URI: ' . $uri);
                     return false;
                 }
-                $tagObj = false;
-                $result = $tags->select(['Tag' => $text]);
-                foreach ($result as $tagObj) {
-                    break;
-                }
-                if ($tagObj) {
+                if ($entity = $tags->getByLabel($text)) {
                     $this->writeln("Upgrading subject: $text");
-                    $tagObj->Tag_Type_ID = self::TAGTYPE_LC;
-                    $tagObj->save();
-                    $ids[$uri] = $tagObj->Tag_ID;
+                    $entity->setTagType(self::TAGTYPE_LC);
                 } else {
                     $this->writeln("Adding subject: $text");
-                    $tags->insert(
-                        [
-                            'Tag' => $text,
-                            'Tag_Type_ID' => self::TAGTYPE_LC,
-                        ]
-                    );
-                    $ids[$uri] = $tags->getLastInsertValue();
+                    $entity = $tags->createEntity()->setTag($text)->setTagType(self::TAGTYPE_LC);
                 }
-                $tagsUris->insert(
-                    [
-                        'Tag_ID' => $ids[$uri],
-                        'URI' => $uri,
-                        'Predicate_ID' => self::PREDICATE_OWL_SAMEAS,
-                    ]
-                );
+                $tags->persistEntity($entity);
+                $ids[$uri] = $entity->getId();
+                $link = $tagsUris->createEntity()
+                    ->setTag($ids[$uri])
+                    ->setUri($uri)
+                    ->setPredicate(self::PREDICATE_OWL_SAMEAS);
+                $tagsUris->persistEntity($link);
             }
         }
         return $ids;
@@ -1027,7 +1008,7 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool
      */
-    protected function processSubjects($subjects, $db)
+    protected function processSubjects(array $subjects, array $db): bool
     {
         $item = $db['item']['Item_ID'];
         $subjectIds = $this->subjectUrisToIds($subjects);
@@ -1054,12 +1035,12 @@ class DatabaseIngester extends BaseIngester
      * Given an edition object, update its child works with the provided details.
      * Return true on success, false on error.
      *
-     * @param object $editionObj Edition object
-     * @param array  $details    Incoming details
+     * @param EditionEntityInterface $editionObj Edition object
+     * @param array                  $details    Incoming details
      *
      * @return bool
      */
-    protected function updateChildWorks($editionObj, $details)
+    protected function updateChildWorks(EditionEntityInterface $editionObj, array $details): bool
     {
         foreach ($details as $i => $current) {
             [$data, $db] = $current;
@@ -1069,7 +1050,7 @@ class DatabaseIngester extends BaseIngester
                 }
             } else {
                 $this->writeln(
-                    "Processing edition ID {$db['edition']['Edition_ID']}"
+                    "Processing edition ID {$db['edition']->getId()}"
                 );
                 if (!$this->updateWorkInDatabase($data, $db)) {
                     return false;
@@ -1082,19 +1063,18 @@ class DatabaseIngester extends BaseIngester
     /**
      * Given an item ID, return an associative array of id => display string.
      *
-     * @param string    $item  Item ID
+     * @param int       $item  Item ID
      * @param int|int[] $roles Role ID(s) to accept
      *
      * @return array
      */
-    protected function getPeopleForItem($item, $roles = self::ROLE_AUTHOR)
+    protected function getPeopleForItem(int $item, int|array $roles = self::ROLE_AUTHOR): array
     {
-        $table = $this->getDbTable('editionscredits');
+        $service = $this->getDbService(EditionsCreditService::class);
         $ids = [];
-        foreach ($table->getCreditsForItem($item) as $credit) {
-            if (in_array($credit->Role_ID, (array)$roles)) {
-                $ids[$credit->Person_ID]
-                    = trim($credit->First_Name . ' ' . $credit->Last_Name);
+        foreach ($service->getCreditsForItem($item) as $credit) {
+            if (in_array($credit['Role_ID'], (array)$roles)) {
+                $ids[$credit['Person_ID']] = trim($credit['First_Name'] . ' ' . $credit['Last_Name']);
             }
         }
         return $ids;
@@ -1427,8 +1407,9 @@ class DatabaseIngester extends BaseIngester
      */
     protected function addAltTitle($title, $item)
     {
-        $table = $this->getDbTable('itemsalttitles');
-        $table->insert(['Item_ID' => $item, 'Item_AltName' => $title]);
+        $service = $this->getDbService(ItemsAltTitleService::class);
+        $entity = $service->createEntity()->setItem($item)->setAltName($title);
+        $service->persistEntity($entity);
     }
 
     /**
@@ -1448,10 +1429,8 @@ class DatabaseIngester extends BaseIngester
                 return $perfect;
             }
             $authors = [];
-            if (isset($data['authors'])) {
-                foreach ($data['authors'] as $current) {
-                    $authors[] = $current['name'];
-                }
+            foreach ($data['authors'] ?? [] as $current) {
+                $authors[] = $current['name'];
             }
             $authors = count($authors) > 0
                 ? 'by ' . implode(', ', $authors) : ' - no credits';
@@ -1494,9 +1473,10 @@ class DatabaseIngester extends BaseIngester
         }
 
         // If we made it this far, we need to create a new item.
-        $table = $this->getDbTable('item');
-        $table->insert(['Item_Name' => $data['title'], 'Material_Type_ID' => $type]);
-        $id = $table->getLastInsertValue();
+        $service = $this->getDbService(ItemService::class);
+        $entity = $service->createEntity()->setItemName($data['title'])->setMaterialType($type);
+        $service->persistEntity($entity);
+        $id = $entity->getId();
         $this->writeln("Added item ID {$id} ({$data['title']})");
         return $id;
     }
@@ -1504,31 +1484,30 @@ class DatabaseIngester extends BaseIngester
     /**
      * Add a child work to an edition
      *
-     * @param object $parentEdition Parent edition object
-     * @param array  $data          Data representing child edition
-     * @param int    $pos           Position of child within parent
+     * @param EditionEntityInterface $parentEdition Parent edition object
+     * @param array                  $data          Data representing child edition
+     * @param int                    $pos           Position of child within parent
      *
      * @return object|bool Edition object on success, false otherwise.
      */
-    protected function addChildWorkToEdition($parentEdition, $data, $pos = 0)
-    {
+    protected function addChildWorkToEdition(
+        EditionEntityInterface $parentEdition,
+        array $data,
+        int $pos = 0
+    ): EditionEntityInterface|false {
         $item = $this->getItemForNewEdition($data);
-        $edName = $parentEdition->Edition_Name;
-        $seriesID = $parentEdition->Series_ID;
-        $edsTable = $this->getDbTable('edition');
-        $altName
-            = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
-        $edsTable->insert(
-            [
-                'Edition_Name' => $edName,
-                'Series_ID' => $seriesID,
-                'Item_ID' => $item,
-                'Parent_Edition_ID' => $parentEdition->Edition_ID,
-                'Position_In_Parent' => $pos,
-                'Preferred_Item_AltName_ID' => $altName ? $altName : null,
-            ]
-        );
-        $newObj = $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
+        $edName = $parentEdition->getEditionName();
+        $series = $parentEdition->getSeries();
+        $service = $this->getDbService(EditionService::class);
+        $altName = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
+        $newObj = $service->createEntity()
+            ->setEditionName($edName)
+            ->setSeries($series)
+            ->setItem($item)
+            ->setParentEdition($parentEdition)
+            ->setPositionInParent($pos)
+            ->setPreferredItemAlternateTitle($altName ?: null);
+        $service->persistEntity($newObj);
         $this->writeln('Added edition ID ' . $newObj->Edition_ID);
         return $this->updateWorkInDatabase(
             $data,
@@ -1761,9 +1740,9 @@ class DatabaseIngester extends BaseIngester
      * @param array $data Incoming data about a single work.
      * @param array $db   Existing data about the same work.
      *
-     * @return object|bool Edition object on success, false otherwise.
+     * @return EditionEntityInterface|false Edition object on success, false otherwise.
      */
-    protected function updateWorkInDatabase($data, $db)
+    protected function updateWorkInDatabase(array $data, array $db): EditionEntityInterface|false
     {
         if (isset($data['title']) && !$this->processTitle($data['title'], $db)) {
             return false;
@@ -2107,21 +2086,21 @@ class DatabaseIngester extends BaseIngester
     /**
      * Check if the provided edition matches any of the provided URLs.
      *
-     * @param object $edition Edition to check
-     * @param array  $urls    URLs to check
+     * @param EditionEntityInterface $edition Edition to check
+     * @param array                  $urls    URLs to check
      *
      * @return bool
      */
-    protected function checkEditionFullTextMatch($edition, $urls)
+    protected function checkEditionFullTextMatch(EditionEntityInterface $edition, array $urls): bool
     {
         if (!empty($urls)) {
             $urlNormalizer = function ($url) {
                 return str_replace('%3A', ':', $url);
             };
             $normalizedUrls = array_map($urlNormalizer, $urls);
-            $fulltext = $this->getDbTable('editionsfulltext');
-            foreach ($fulltext->getFullTextForEdition($edition->Edition_ID) as $ft) {
-                if (in_array($urlNormalizer($ft->Full_Text_URL), $normalizedUrls)) {
+            $fulltext = $this->getDbService(EditionsFullTextService::class);
+            foreach ($fulltext->getFullTextForEdition($edition->getId()) as $ft) {
+                if (in_array($urlNormalizer($ft->getUrl()), $normalizedUrls)) {
                     return true;
                 }
             }
@@ -2179,25 +2158,28 @@ class DatabaseIngester extends BaseIngester
      * element and a matching array of edition/item data (or false) as the second
      * element.
      *
-     * @param object $seriesObj Series row for containing series.
-     * @param int    $pos       Position of incoming contents within series.
-     * @param array  $details   The details from ModsExtractor or equivalent
-     * @param int    $item      Optional item ID (used for disambiguation when
-     * $pos == 0)
+     * @param SeriesEntityInterface $seriesObj Series row for containing series.
+     * @param int                   $pos       Position of incoming contents within series.
+     * @param array                 $details   The details from ModsExtractor or equivalent
+     * @param ?int                  $item      Optional item ID (used for disambiguation when $pos == 0)
      *
-     * @return array
+     * @return array|false
      */
-    protected function synchronizeSeriesEntries($seriesObj, $pos, $details, $item)
-    {
+    protected function synchronizeSeriesEntries(
+        SeriesEntityInterface $seriesObj,
+        int $pos,
+        array $details,
+        ?int $item
+    ): array|false {
         $contents = $details['contents'];
-        $params = ['Series_ID' => $seriesObj->Series_ID, 'Position' => $pos];
-        if ($pos === 0 && !empty($item)) {
-            $params['Item_ID'] = $item;
-        }
-        $lookup = $this->getDbTable('edition')->select($params);
+        $lookup = $this->getDbService(EditionService::class)->getBySeriesAndPosition($seriesObj, $pos);
         $sorted = [];
         foreach ($lookup as $child) {
-            $sorted[$child->Replacement_Number][] = $child;
+            // If we have an item ID filter, apply it now:
+            if ($pos === 0 && !empty($item) && $item != $child->getItem()->getId()) {
+                continue;
+            }
+            $sorted[$child->getReplacementNumber()][] = $child;
         }
         // Special case -- no matches found; test with an empty array.
         if (empty($sorted)) {
@@ -2229,9 +2211,9 @@ class DatabaseIngester extends BaseIngester
      * @param array $contents The 'contents' section of the details from
      * ModsExtractor or equivalent
      *
-     * @return array
+     * @return array|false
      */
-    protected function synchronizeSeriesEntriesHelper($lookup, $contents)
+    protected function synchronizeSeriesEntriesHelper(array $lookup, array $contents): array|false
     {
         $children = [];
         $titlesChecked = [];

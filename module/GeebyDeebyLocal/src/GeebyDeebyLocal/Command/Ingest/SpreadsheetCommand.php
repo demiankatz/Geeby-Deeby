@@ -102,7 +102,7 @@ class SpreadsheetCommand extends Command
      */
     protected function spreadsheetLineToDetails($line)
     {
-        [$title, $author, $date, $place, $publisher, $series, $number, $url, $oclc] = $line;
+        [$title, $author, $date, $place, $publisher, $series, $number, $url, $oclc, $tags] = $line;
         $content = compact('title');
         if (!empty($author)) {
             $content['authors'] = [['name' => $author]];
@@ -122,6 +122,14 @@ class SpreadsheetCommand extends Command
         }
         if (!empty($oclc)) {
             $details['oclc'] = explode('|', $oclc);
+        }
+        if (!empty($tags)) {
+            $parts = explode('|', $tags);
+            $details['subjects'] = [];
+            foreach ($parts as $part) {
+                [$uri, $tag] = explode('=', $part, 2);
+                $details['subjects'][$uri] = $tag;
+            }
         }
         return $details;
     }
@@ -165,7 +173,7 @@ class SpreadsheetCommand extends Command
                     continue;
                 }
                 break;
-            } elseif (!$this->ingester->ingest($details, 'series', $seriesObj)) {
+            } elseif (!$this->ingester->ingest($details, $seriesObj)) {
                 if ($this->ingester->askQuestion($continuePrompt)) {
                     continue;
                 }
