@@ -33,6 +33,8 @@ use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Service\CityService;
 use GeebyDeeby\Db\Service\EditionService;
+use GeebyDeeby\Db\Service\EditionsFullTextService;
+use GeebyDeeby\Db\Service\EditionsOclcNumberService;
 use GeebyDeeby\Db\Service\EditionsReleaseDateService;
 use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
@@ -751,33 +753,29 @@ class DatabaseIngester extends BaseIngester
     }
 
     /**
-     * Normalize and store OCLC number.
+     * Normalize and store OCLC numbers.
      *
-     * @param string $oclc       Incoming OCLC number
-     * @param object $editionObj Edition row
+     * @param array                  $oclc       Incoming OCLC numbers
+     * @param EditionEntityInterface $editionObj Edition row
      *
      * @return bool True on success
      */
-    protected function processOclcNum($oclc, $editionObj)
+    protected function processOclcNum(array $oclc, EditionEntityInterface $editionObj): bool
     {
         // strip off non-digits (useless OCLC prefixes):
         foreach ($oclc as $i => $current) {
             $oclc[$i] = preg_replace('/[^0-9]/', '', $current);
         }
-        $table = $this->getDbTable('editionsoclcnumbers');
-        $known = $table->getOCLCNumbersForEdition($editionObj->Edition_ID);
+        $service = $this->getDbService(EditionsOclcNumberService::class);
+        $known = $service->getOCLCNumbersForEdition($editionObj->Edition_ID);
         $knownArr = [];
         foreach ($known as $current) {
-            $knownArr[] = $current->OCLC_Number;
+            $knownArr[] = $current->getOclcNumber();
         }
         foreach (array_diff($oclc, $knownArr) as $current) {
             $this->writeln("Adding OCLC number: {$current}");
-            $table->insert(
-                [
-                    'Edition_ID' => $editionObj->Edition_ID,
-                    'OCLC_Number' => $current,
-                ]
-            );
+            $entity = $service->createEntity()->setEdition($editionObj)->setOclcNumber($current);
+            $service->persistEntity($entity);
         }
         return true;
     }
@@ -810,15 +808,15 @@ class DatabaseIngester extends BaseIngester
     /**
      * Validate and store URLs for edition.
      *
-     * @param array  $urls       Incoming URLs.
-     * @param object $editionObj Edition row
+     * @param array                  $urls       Incoming URLs
+     * @param EditionEntityInterface $editionObj Edition row
      *
      * @return bool True on success
      */
-    protected function processUrl($urls, $editionObj)
+    protected function processUrl(array $urls, EditionEntityInterface $editionObj): bool
     {
-        $table = $this->getDbTable('editionsfulltext');
-        $known = $table->getFullTextForEdition($editionObj->Edition_ID);
+        $service = $this->getDbService(EditionsFullTextService::class);
+        $known = $service->getFullTextForEdition($editionObj->getId());
         $knownArr = [];
         foreach ($known as $current) {
             $knownArr[] = $current->Full_Text_URL;
@@ -830,13 +828,11 @@ class DatabaseIngester extends BaseIngester
                 return false;
             }
             $this->writeln("Adding URL: {$current}");
-            $table->insert(
-                [
-                    'Edition_ID' => $editionObj->Edition_ID,
-                    'Full_Text_URL' => $current,
-                    'Full_Text_Source_ID' => $source,
-                ]
-            );
+            $entity = $service->createEntity()
+                ->setEdition($editionObj)
+                ->setUrl($current)
+                ->setFullTextSource($source);
+            $service->persistEntity($entity);
         }
         return true;
     }
