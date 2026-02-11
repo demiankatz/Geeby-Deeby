@@ -31,6 +31,7 @@ namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
@@ -521,6 +522,23 @@ class EditionService extends AbstractDbService
     public function getBySeriesAltTitleId(int $altId): array
     {
         return iterator_to_array($this->editionsTable->select(['Preferred_Series_AltName_ID' => $altId]));
+    }
+
+    /**
+     * Get editions at the specified position in the specified series.
+     *
+     * @param int|SeriesEntityInterface $series Series ID
+     * @param int                       $pos    Position in series
+     *
+     * @return EditionEntityInterface[]
+     */
+    public function getBySeriesAndPosition(int|SeriesEntityInterface $series, int $pos): array
+    {
+        $where = [
+            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
+            'Position' => $pos,
+        ];
+        return iterator_to_array($this->editionsTable->select($where));
     }
 
     /**
