@@ -186,8 +186,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function ingestExistingIssue($details, $editionObj, $series)
     {
-        $childDetails = $this
-            ->synchronizeChildren($editionObj, $details['contents']);
+        $childDetails = $this->synchronizeChildren($editionObj, $details['contents']);
         if (!$childDetails) {
             return false;
         }
@@ -196,8 +195,7 @@ class DatabaseIngester extends BaseIngester
             return false;
         }
         $details['contents'] = $childDetails;
-        return $this
-            ->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
+        return $this->updateDatabaseForHierarchicalEdition($editionObj, $series, $details);
     }
 
     /**
@@ -439,6 +437,7 @@ class DatabaseIngester extends BaseIngester
     protected function updateDatabaseForFlatEdition(SeriesEntityInterface $series, int $pos, array $details): bool
     {
         [$data, $db] = $details['contents'][0];
+        $data['subjects'] = $details['subjects'];
         if (!$db) {
             if (!($editionObj = $this->addChildWorkToSeries($series, $data, $pos))) {
                 return false;
@@ -972,11 +971,11 @@ class DatabaseIngester extends BaseIngester
         }
         if (!empty($filteredTitles)) {
             $item = $db['item']['Item_ID'];
-            $table = $this->getDbTable('itemsalttitles');
-            $result = $table->getAltTitles($item);
+            $service = $this->getDbService(ItemsAltTitleService::class);
+            $result = $service->getAltTitles($item);
             $existing = [$db['item']['Item_Name']];
             foreach ($result as $current) {
-                $existing[] = $current->Item_AltName;
+                $existing[] = $current['Item_AltName'];
             }
             foreach ($filteredTitles as $newTitle) {
                 $skip = false;
@@ -990,9 +989,8 @@ class DatabaseIngester extends BaseIngester
                     }
                 }
                 if (!$skip) {
-                    $table->insert(
-                        ['Item_ID' => $item, 'Item_AltName' => $newTitle]
-                    );
+                    $new = $service->createEntity()->setItem($item)->setAltName($newTitle);
+                    $service->persistEntity($new);
                     $this->writeln('Added alternate title: ' . $newTitle);
                 }
             }
@@ -1907,15 +1905,15 @@ class DatabaseIngester extends BaseIngester
     {
         foreach ($details as & $match) {
             if ($match[1]) {
-                $credits = $this->getDbTable('editionscredits')
+                $credits = $this->getDbService(EditionsCreditService::class)
                     ->getCreditsForEdition($match[1]['edition']['Edition_ID']);
                 $match[1]['authorIds'] = $match[1]['editorIds'] = [];
                 foreach ($credits as $credit) {
-                    if ($credit->Role_ID == self::ROLE_AUTHOR) {
-                        $match[1]['authorIds'][] = $credit->Person_ID;
+                    if ($credit['Role_ID'] == self::ROLE_AUTHOR) {
+                        $match[1]['authorIds'][] = $credit['Person_ID'];
                     }
-                    if ($credit->Role_ID == self::ROLE_EDITOR) {
-                        $match[1]['editorIds'][] = $credit->Person_ID;
+                    if ($credit['Role_ID'] == self::ROLE_EDITOR) {
+                        $match[1]['editorIds'][] = $credit['Person_ID'];
                     }
                 }
             }
@@ -2293,8 +2291,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function synchronizeChildren($editionObj, $contents)
     {
-        $lookup = $this->getDbTable('edition')
-            ->select(['Parent_Edition_ID' => $editionObj->Edition_ID]);
+        $lookup = $this->getDbService(EditionService::class)->getChildren($editionObj);
         $children = [];
         foreach ($lookup as $child) {
             $children[] = [
@@ -2308,8 +2305,7 @@ class DatabaseIngester extends BaseIngester
             $match = false;
             // First try exact match:
             foreach ($children as & $currentChild) {
-                $match = $this
-                    ->checkItemTitles($currentChild['item'], $currentContent, false);
+                $match = $this->checkItemTitles($currentChild['item'], $currentContent, false);
                 if ($match) {
                     $result[] = [$currentContent, $currentChild];
                     $currentChild['matched'] = true;
@@ -2319,8 +2315,7 @@ class DatabaseIngester extends BaseIngester
             // Next try inexact match:
             if (!$match) {
                 foreach ($children as & $currentChild) {
-                    $match = $this
-                        ->checkItemTitles($currentChild['item'], $currentContent);
+                    $match = $this->checkItemTitles($currentChild['item'], $currentContent);
                     if ($match) {
                         $result[] = [$currentContent, $currentChild];
                         $currentChild['matched'] = true;
@@ -2362,13 +2357,13 @@ class DatabaseIngester extends BaseIngester
      * Check the consistency of the incoming series data with existing database
      * entries.
      *
-     * @param array  $details    Details from ModsExtractor or equivalent
-     * @param object $editionObj Edition row
-     * @param array  $series     Series summary array (see getSeriesForEdition)
+     * @param array                  $details    Details from ModsExtractor or equivalent
+     * @param EditionEntityInterface $editionObj Edition row
+     * @param array                  $series     Series summary array (see getSeriesForEdition)
      *
      * @return True if all is well.
      */
-    protected function validateSeries($details, $editionObj, $series)
+    protected function validateSeries(array $details, EditionEntityInterface $editionObj, array $series): bool
     {
         if (!isset($details['series'])) {
             $this->writeln('No series found.');
@@ -2393,9 +2388,9 @@ class DatabaseIngester extends BaseIngester
      *
      * @param string $str String to normalize.
      *
-     * @return bool
+     * @return string
      */
-    protected function fuzz($str)
+    protected function fuzz(string $str): string
     {
         $regex = '/[^a-z0-9]/';
         return preg_replace($regex, '', strtolower($str));
@@ -2409,7 +2404,7 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool
      */
-    protected function fuzzyCompare($str1, $str2)
+    protected function fuzzyCompare(string $str1, string $str2): bool
     {
         //$this->writeln("Comparing {$str1} to {$str2}...");
         return $this->fuzz($str1) == $this->fuzz($str2);
@@ -2423,7 +2418,7 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool
      */
-    protected function fuzzyContains($haystack, $needle)
+    protected function fuzzyContains(string $haystack, string $needle): bool
     {
         return strstr($this->fuzz($haystack), $this->fuzz($needle));
     }
@@ -2500,7 +2495,7 @@ class DatabaseIngester extends BaseIngester
      *
      * @return bool
      */
-    protected function checkSeriesTitle($series, $title)
+    protected function checkSeriesTitle(array $series, string $title): bool
     {
         $seriesTitle = !empty($series['Series_AltName'])
             ? $series['Series_AltName'] : $series['Series_Name'];
