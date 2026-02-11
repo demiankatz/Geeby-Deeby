@@ -76,7 +76,9 @@ class EditPublisherController extends AbstractBase
         [$view, $ok] = $this->handleGenericItem(PublisherService::class, $assignMap, 'publisher');
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $publisherId = $view->affectedEntity->getId();
+            if (!$publisherId = $view->affectedEntity->getId()) {
+                return $this->forwardTo(__NAMESPACE__ . '\Publisher', 'notfound');
+            }
             $view->cities = $this->getDbService(CityService::class)->getList();
             $view->countries = $this->getDbService(CountryService::class)->getList();
             $view->addresses = $this->getDbService(PublishersAddressService::class)
