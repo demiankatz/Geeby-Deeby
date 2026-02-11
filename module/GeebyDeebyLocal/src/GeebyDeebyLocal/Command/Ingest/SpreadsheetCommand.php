@@ -102,8 +102,7 @@ class SpreadsheetCommand extends Command
      */
     protected function spreadsheetLineToDetails($line)
     {
-        [$title, $author, $date, $place, $publisher, $series, $number, $url]
-            = $line;
+        [$title, $author, $date, $place, $publisher, $series, $number, $url, $oclc] = $line;
         $content = compact('title');
         if (!empty($author)) {
             $content['authors'] = [['name' => $author]];
@@ -120,6 +119,9 @@ class SpreadsheetCommand extends Command
         }
         if (!empty($date)) {
             $details['date'] = $date;
+        }
+        if (!empty($oclc)) {
+            $details['oclc'] = explode('|', $oclc);
         }
         return $details;
     }
