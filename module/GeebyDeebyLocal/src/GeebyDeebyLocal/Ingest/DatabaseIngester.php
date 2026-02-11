@@ -39,6 +39,7 @@ use GeebyDeeby\Db\Service\EditionsOclcNumberService;
 use GeebyDeeby\Db\Service\EditionsReleaseDateService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
+use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
@@ -437,7 +438,7 @@ class DatabaseIngester extends BaseIngester
     protected function updateDatabaseForFlatEdition(SeriesEntityInterface $series, int $pos, array $details): bool
     {
         [$data, $db] = $details['contents'][0];
-        $data['subjects'] = $details['subjects'];
+        $data['subjects'] = $details['subjects'] ?? [];
         if (!$db) {
             if (!($editionObj = $this->addChildWorkToSeries($series, $data, $pos))) {
                 return false;
@@ -890,23 +891,21 @@ class DatabaseIngester extends BaseIngester
         $ids = [];
         foreach ($subjects as $uri => $text) {
             if ($tagId = $this->extractIdFromDimeNovelsUri($uri, 'Tag')) {
-                $id = $tags->getByPrimaryKey($tagId);
-                if (!$this->fuzzyCompare($text, $id->getTag())) {
+                $exactMatch = $tags->getByPrimaryKey($tagId);
+                if (!$this->fuzzyCompare($text, $exactMatch->getTag())) {
                     $this->writeln("FATAL: Tag mismatch: $uri, '$text'");
                     return false;
                 }
+                $id = $exactMatch->getId();
             } else {
                 $uriLookup = $tagsUris->getTagsForURI($uri);
                 if (count($uriLookup) == 0) {
                     $uriLookup = $tagsUris->getTagsForURI($this->switchProtocol($uri));
                 }
-                $id = false;
-                foreach ($uriLookup as $id) {
-                    break;
-                }
+                $id = $uriLookup[0]['Tag_ID'] ?? null;
             }
             if ($id) {
-                $ids[$uri] = $id->getId();
+                $ids[$uri] = $id;
             } else {
                 if (!stristr($uri, 'loc.gov')) {
                     $this->writeln('FATAL: Unexpected subject URI: ' . $uri);
@@ -1013,17 +1012,15 @@ class DatabaseIngester extends BaseIngester
         if (false === $subjectIds) {
             return false;
         }
-        $itemsTags = $this->getDbTable('itemstags');
-        $existingTags = $itemsTags->getTags($item);
-        $existingIds = [];
-        foreach ($existingTags as $current) {
-            $existingIds[] = $current->Tag_ID;
-        }
+        $itemsTags = $this->getDbService(ItemsTagService::class);
+        $existingTags = $itemsTags->getTagsForItem($item);
+        $existingIds = array_map(fn ($tag) => $tag['Tag_ID'], $existingTags);
         $missing = array_unique(array_diff($subjectIds, $existingIds));
         if (count($missing) > 0) {
             $this->writeln('Adding subject IDs: ' . implode(', ', $missing));
             foreach ($missing as $id) {
-                $itemsTags->insert(['Item_ID' => $item, 'Tag_ID' => $id]);
+                $link = $itemsTags->createEntity()->setItem($item)->setTag($id);
+                $itemsTags->persistEntity($link);
             }
         }
         return true;
