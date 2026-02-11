@@ -31,8 +31,12 @@ namespace GeebyDeebyLocal\Ingest;
 
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Service\CityService;
+use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\EditionsReleaseDateService;
+use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
+use GeebyDeeby\Db\Service\SeriesPublisherService;
 
 use function chr;
 use function count;
@@ -655,13 +659,13 @@ class DatabaseIngester extends BaseIngester
     /**
      * Validate and store publisher information.
      *
-     * @param string $publisher  Publisher string from metadata.
-     * @param object $editionObj Edition row
-     * @param int    $seriesId   ID of series being worked on.
+     * @param array                  $publisher  Publisher data (array with name/place keys) from metadata.
+     * @param EditionEntityInterface $editionObj Edition row
+     * @param int                    $seriesId   ID of series being worked on.
      *
      * @return bool True on success.
      */
-    protected function processPublisher($publisher, $editionObj, $seriesId)
+    protected function processPublisher(array $publisher, EditionEntityInterface $editionObj, int $seriesId): bool
     {
         [$name, $street] = $this->separateNameAndStreet($publisher['name']);
         if (empty($street)) {
@@ -669,22 +673,21 @@ class DatabaseIngester extends BaseIngester
             return true;
         }
         $place = $publisher['place'];
-        $spTable = $this->getDbTable('seriespublishers');
-        $cityTable = $this->getDbTable('city');
-        $pubTable = $this->getDbTable('publisher');
-        $result = $spTable->getPublishers($seriesId);
+        $cityService = $this->getDbService(CityService::class);
+        $pubService = $this->getDbService(PublisherService::class);
+        $result = $this->getDbService(SeriesPublisherService::class)->getPublishersForSeries($seriesId);
         $match = false;
         foreach ($result as $current) {
             $city = $current['City_ID']
-                ? $cityTable->getByPrimaryKey($current['City_ID']) : false;
+                ? $cityService->getByPrimaryKey($current['City_ID']) : null;
             $pub = $current['Publisher_ID']
-                ? $pubTable->getByPrimaryKey($current['Publisher_ID']) : false;
+                ? $pubService->getByPrimaryKey($current['Publisher_ID']) : null;
             if (
-                $city && $this->citiesMatch($place, $city->City_Name)
-                && $pub && $this->publishersMatch($name, $pub->Publisher_Name)
-                && $this->streetsMatch($street, $current->Street)
+                $city && $this->citiesMatch($place, $city->getCityName())
+                && $pub && $this->publishersMatch($name, $pub->getPublisherName())
+                && $this->streetsMatch($street, $current['Street'])
             ) {
-                $match = $current->Series_Publisher_ID;
+                $match = $current['Series_Publisher_ID'];
                 break;
             }
         }
@@ -695,12 +698,10 @@ class DatabaseIngester extends BaseIngester
             );
             return true;
         }
-        if (
-            $editionObj->Preferred_Series_Publisher_ID
-            && $editionObj->Preferred_Series_Publisher_ID != $match
-        ) {
-            $edPublishers = $this->getDbTable('edition')
-                ->getPublishersForEdition($editionObj->Edition_ID);
+        $preferredPublisherId = $editionObj->getPreferredPublisher()?->getId();
+        if ($preferredPublisherId && $preferredPublisherId != $match) {
+            $edPublishers = $this->getDbService(EditionService::class)
+                ->getPublishersForEdition($editionObj->getId());
             foreach ($edPublishers as $ed) {
                 // fast-forward to end of results...
             }
@@ -714,15 +715,12 @@ class DatabaseIngester extends BaseIngester
                 return false;
             }
         }
-        if (
-            $editionObj->Preferred_Series_Publisher_ID
-            && $editionObj->Preferred_Series_Publisher_ID == $match
-        ) {
+        if ($preferredPublisherId && $preferredPublisherId == $match) {
             return true;
         }
         $this->writeln("Updating address to $name, $street, $place");
-        $editionObj->Preferred_Series_Publisher_ID = $match;
-        $editionObj->save();
+        $editionObj->setPreferredPublisher($match);
+        $this->getDbService(EditionService::class)->persistEntity($editionObj);
         return true;
     }
 
