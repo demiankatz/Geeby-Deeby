@@ -41,7 +41,6 @@ use Doctrine\ORM\Mapping as ORM;
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
 #[ORM\Table(name: 'Full_Text_Sources')]
-#[ORM\Index(columns: ['Full_Text_Source_ID'])]
 #[ORM\Entity]
 class FullTextSourceEntity extends AbstractEntity implements FullTextSourceEntityInterface
 {
@@ -60,7 +59,7 @@ class FullTextSourceEntity extends AbstractEntity implements FullTextSourceEntit
      *
      * @var string
      */
-    #[ORM\Column(name: 'Full_Text_Source_Name', type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'Full_Text_Source_Name', type: 'text', length: 255, nullable: true)]
     protected string $sourceName;
 
     /**
