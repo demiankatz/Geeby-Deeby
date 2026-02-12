@@ -70,13 +70,6 @@ class DatabaseIngester extends BaseIngester
     use \GeebyDeebyConsole\ConsoleOutputTrait;
 
     /**
-     * Articles helper
-     *
-     * @var \GeebyDeeby\Articles
-     */
-    protected $articles;
-
-    /**
      * Input interface
      *
      * @var InputInterface
@@ -101,13 +94,11 @@ class DatabaseIngester extends BaseIngester
      * Constructor
      *
      * @param \GeebyDeeby\Db\Service\PluginManager $services Database service manager
-     * @param object                               $tables   Table plugin manager
      * @param \GeebyDeeby\Articles                 $articles Articles helper
      */
-    public function __construct(\GeebyDeeby\Db\Service\PluginManager $services, $tables, $articles)
+    public function __construct(\GeebyDeeby\Db\Service\PluginManager $services, protected $articles)
     {
-        parent::__construct($services, $tables);
-        $this->articles = $articles;
+        parent::__construct($services);
     }
 
     /**

@@ -62,9 +62,8 @@ abstract class BaseIngester
      * Constructor
      *
      * @param \GeebyDeeby\Db\Service\PluginManager $services Database service manager
-     * @param object                               $tables   Table plugin manager
      */
-    public function __construct(protected \GeebyDeeby\Db\Service\PluginManager $services, protected $tables = null)
+    public function __construct(protected \GeebyDeeby\Db\Service\PluginManager $services)
     {
     }
 
@@ -80,22 +79,5 @@ abstract class BaseIngester
     protected function getDbService(string $name): DbServiceInterface
     {
         return $this->services->get($name);
-    }
-
-    /**
-     * Get a database table gateway.
-     *
-     * @param string $table Name of table service to pull
-     *
-     * @return \Laminas\Db\TableGateway\AbstractTableGateway
-     *
-     * @deprecated
-     */
-    protected function getDbTable($table)
-    {
-        if (!$this->tables) {
-            throw new \Exception('Cannot retrieve table due to missing table manager');
-        }
-        return $this->tables->get($table);
     }
 }

@@ -67,7 +67,6 @@ class DatabaseIngesterFactory implements FactoryInterface
         }
         return new $requestedName(
             $container->get(\GeebyDeeby\Db\Service\PluginManager::class),
-            $container->get(\GeebyDeeby\Db\Table\PluginManager::class),
             $container->get(\GeebyDeeby\Articles::class)
         );
     }
