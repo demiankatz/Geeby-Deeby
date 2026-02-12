@@ -40,6 +40,8 @@ use GeebyDeeby\Db\Service\EditionsReleaseDateService;
 use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsTagService;
+use GeebyDeeby\Db\Service\PeopleUriService;
+use GeebyDeeby\Db\Service\PseudonymService;
 use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
@@ -1205,7 +1207,7 @@ class DatabaseIngester extends BaseIngester
      */
     protected function getItemMatchCandidatesUsingAuthor($author, $data)
     {
-        $ec = $this->getDbTable('editionscredits');
+        $ec = $this->getDbService(EditionsCreditService::class);
         $candidates = [];
         foreach ($ec->getItemCreditsForPerson($author, 'title', false) as $current) {
             $score = $this->measureStringSimilarity(
@@ -1221,19 +1223,17 @@ class DatabaseIngester extends BaseIngester
                     'confidence' => $score,
                 ];
             } else {
-                $table = $this->getDbTable('itemsalttitles');
-                foreach ($table->getAltTitles($current['Item_ID']) as $currentAlt) {
+                $service = $this->getDbService(ItemsAltTitleService::class);
+                foreach ($service->getAltTitles($current['Item_ID']) as $currentAlt) {
                     $score = $this->measureStringSimilarity(
                         $currentAlt['Item_AltName'],
                         $data['title']
                     );
                     if ($score > 0) {
-                        $currentCredits
-                            = $this->getPeopleForItem($current['Item_ID']);
+                        $currentCredits = $this->getPeopleForItem($current['Item_ID']);
                         $candidates[] = [
                             'id' => $current['Item_ID'],
-                            'title' => $currentAlt['Item_AltName']
-                                . ' (alt. title for ' . $current['Item_Name'] . ')',
+                            'title' => $currentAlt['Item_AltName'] . ' (alt. title for ' . $current['Item_Name'] . ')',
                             'authors' => implode(', ', $currentCredits),
                             'confidence' => $score,
                         ];
@@ -1259,7 +1259,7 @@ class DatabaseIngester extends BaseIngester
         }
         $candidates = [];
         $allAuthors = [];
-        $pseudo = $this->getDbTable('pseudonyms');
+        $pseudo = $this->getDbService(PseudonymService::class);
         foreach ($data['authorIds'] as $author) {
             $allAuthors[] = $author;
             foreach ($pseudo->getPseudonyms($author) as $p) {
@@ -1482,31 +1482,30 @@ class DatabaseIngester extends BaseIngester
     /**
      * Create an edition object in a series.
      *
-     * @param object $series Series row object
-     * @param int    $item   Item ID number
-     * @param int    $pos    Position of edition in series
-     * @param array  $data   Incoming data
+     * @param SeriesEntityInterface $series Series row object
+     * @param int                   $item   Item ID number
+     * @param int                   $pos    Position of edition in series
+     * @param array                 $data   Incoming data
      *
-     * @return object Edition row object
+     * @return EditionEntityInterface Edition row object
      */
-    protected function createEditionInSeries($series, $item, $pos, $data)
-    {
-        $edName = $this->articles
-            ->articleAwareAppend($series->Series_Name, ' edition');
-        $seriesID = $series->Series_ID;
-        $edsTable = $this->getDbTable('edition');
-        $altName
-            = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
-        $edsTable->insert(
-            [
-                'Edition_Name' => $edName,
-                'Series_ID' => $seriesID,
-                'Item_ID' => $item,
-                'Position' => $pos,
-                'Preferred_Item_AltName_ID' => $altName ? $altName : null,
-            ]
-        );
-        return $edsTable->getByPrimaryKey($edsTable->getLastInsertValue());
+    protected function createEditionInSeries(
+        SeriesEntityInterface $series,
+        int $item,
+        int $pos,
+        array $data
+    ): EditionEntityInterface {
+        $edName = $this->articles->articleAwareAppend($series->getSeriesName(), ' edition');
+        $editionService = $this->getDbService(EditionService::class);
+        $altName = $this->hasMatchingAltTitle($data['title'], $item, '', false, true);
+        $edition = $editionService->createEntity()
+            ->setEditionName($edName)
+            ->setSeries($series)
+            ->setItem($item)
+            ->setPosition($pos)
+            ->setPreferredItemAlternateTitle($altName ?: null);
+        $editionService->persistEntity($edition);
+        return $edition;
     }
 
     /**
@@ -1547,8 +1546,7 @@ class DatabaseIngester extends BaseIngester
     protected function getChildIssueForSeries($series, $data, $pos = 0)
     {
         // first make sure we don't already have an issue:
-        $lookup = $this->getDbTable('edition')
-            ->select(['Series_ID' => $series->Series_ID, 'Position' => $pos]);
+        $lookup = $this->getDbService(EditionService::class)->getBySeriesAndPosition($series, $pos);
         if (count($lookup) == 0) {
             $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
             $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
@@ -1594,9 +1592,9 @@ class DatabaseIngester extends BaseIngester
         $returnId = false
     ) {
         // Check the alt titles table:
-        $table = $this->getDbTable('itemsalttitles');
-        foreach ($table->getAltTitles($itemID) as $current) {
-            $currentAlt = $current->Item_AltName;
+        $service = $this->getDbService(ItemsAltTitleService::class);
+        foreach ($service->getAltTitles($itemID) as $current) {
+            $currentAlt = $current['Item_AltName'];
             if ($this->fuzzyCompare($title, $currentAlt)) {
                 if ($warn) {
                     $this->writeln(
@@ -1604,7 +1602,7 @@ class DatabaseIngester extends BaseIngester
                         . $currentAlt
                     );
                 }
-                return $returnId ? $current->Sequence_ID : true;
+                return $returnId ? $current['Sequence_ID'] : true;
             }
         }
 
@@ -1612,8 +1610,7 @@ class DatabaseIngester extends BaseIngester
         // can't do this in "return ID" mode because these kinds of alt. title
         // match do not exist in the database table and thus have no sequence ID
         // to return.
-        [$itemArticle, $itemMainTitle]
-            = $this->articles->separateArticle($itemTitle);
+        [$itemArticle, $itemMainTitle] = $this->articles->separateArticle($itemTitle);
         $titleParts = preg_split('/[;:, ]\s*or[;:, ]/', $itemMainTitle);
         if (!$returnId && count($titleParts) > 1) {
             if ($itemArticle) {
@@ -1910,7 +1907,7 @@ class DatabaseIngester extends BaseIngester
     {
         $unexpected = array_diff($storedList, $incomingList);
         if (count($unexpected) > 0) {
-            $pseudo = $this->getDbTable('pseudonyms');
+            $pseudo = $this->getDbService(PseudonymService::class);
             $stillUnexpected = [];
             foreach ($unexpected as $current) {
                 $matched = false;
@@ -1998,13 +1995,13 @@ class DatabaseIngester extends BaseIngester
      *
      * @return int|bool Person ID, or false for no match.
      */
-    protected function getPersonIdForUri($uri)
+    protected function getPersonIdForUri(string $uri): int|bool
     {
         if (!($id = $this->extractIdFromDimeNovelsUri($uri, 'Person'))) {
-            $table = $this->getDbTable('peopleuris');
-            $result = $table->select(['URI' => $uri]);
+            $service = $this->getDbService(PeopleUriService::class);
+            $result = $service->getPeopleForURI($uri);
             if (count($result) === 0) {
-                $result = $table->select(['URI' => $this->switchProtocol($uri)]);
+                $result = $service->getPeopleForURI($this->switchProtocol($uri));
             }
             foreach ($result as $curr) {
                 $id = $curr['Person_ID'];
