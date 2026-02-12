@@ -32,9 +32,9 @@ namespace GeebyDeebyTest\Mink;
 use Behat\Mink\Element\Element;
 use Behat\Mink\Element\TraversableElement;
 use GeebyDeeby\Db\Service\UserService;
+use GeebyDeebyTest\Feature\ServiceLocatorTrait;
 use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 
 use function in_array;
 use function is_string;
@@ -50,12 +50,7 @@ use function is_string;
  */
 class IntegrationTest extends MinkTestCase
 {
-    /**
-     * Service locator
-     *
-     * @var ?ServiceLocatorInterface
-     */
-    protected $serviceLocator = null;
+    use ServiceLocatorTrait;
 
     /**
      * Do a basic page content comparison.
@@ -163,20 +158,6 @@ class IntegrationTest extends MinkTestCase
         bool $regExMatch = false
     ): void {
         $this->assertPageContent($expectedMessage, '', $linkText, $containerIndex, $regExMatch);
-    }
-
-    /**
-     * Get the service locator.
-     *
-     * @return ServiceLocatorInterface
-     */
-    protected function getServiceLocator(): ServiceLocatorInterface
-    {
-        if (null === $this->serviceLocator) {
-            $app = \Laminas\Mvc\Application::init(require 'config/application.config.php');
-            $this->serviceLocator = $app->getServiceManager();
-        }
-        return $this->serviceLocator;
     }
 
     /**
