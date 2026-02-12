@@ -68,7 +68,7 @@ class SeriesPublishers extends TableAwareGateway implements SeriesPublisherEntit
      */
     public function getId(): ?int
     {
-        return $this->Sequence_ID ?? null;
+        return $this->Series_Publisher_ID ?? null;
     }
 
     /**

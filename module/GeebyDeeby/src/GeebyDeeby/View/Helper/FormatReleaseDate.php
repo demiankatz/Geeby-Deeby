@@ -29,7 +29,10 @@
 
 namespace GeebyDeeby\View\Helper;
 
+use GeebyDeeby\Db\Entity\EditionsReleaseDateEntityInterface;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
+
+use function is_array;
 
 /**
  * Release date view helper
@@ -66,13 +69,20 @@ class FormatReleaseDate
     /**
      * Format date information for display
      *
-     * @param array $arr         Date information
-     * @param bool  $showEdition Show edition information
+     * @param array|EditionsReleaseDateEntityInterface $date        Date information
+     * @param bool                                     $showEdition Show edition information
      *
      * @return string
      */
-    public function __invoke($arr, $showEdition = false)
+    public function __invoke(array|EditionsReleaseDateEntityInterface $date, bool $showEdition = false): string
     {
+        if (is_array($date)) {
+            $arr = $date;
+        } else {
+            $arr = $date->toArray();
+            $arr['Note'] = $date->getNote()?->getNote();
+            $arr['Edition_Name'] = $date->getEdition()->getEditionName();
+        }
         $str = '';
 
         // Special case -- unpublished:

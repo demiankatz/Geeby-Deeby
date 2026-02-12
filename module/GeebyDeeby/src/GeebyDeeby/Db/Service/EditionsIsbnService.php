@@ -86,11 +86,15 @@ class EditionsIsbnService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsIsbnEntityInterface[]
      */
     public function getISBNsForEdition(int $editionID): array
     {
-        return iterator_to_array($this->isbnsTable->getISBNsForEdition($editionID));
+        $callback = function ($select) use ($editionID): void {
+            $select->order('ISBN13');
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return iterator_to_array($this->isbnsTable->select($callback));
     }
 
     /**
@@ -98,11 +102,20 @@ class EditionsIsbnService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return EditionsIsbnEntityInterface[]
      */
     public function getISBNsForItem(int $itemID): array
     {
-        return iterator_to_array($this->isbnsTable->getISBNsForItem($itemID));
+        $callback = function ($select) use ($itemID): void {
+            $select->join(
+                ['eds' => 'Editions'],
+                'Editions_ISBNs.Edition_ID = eds.Edition_ID',
+                []
+            );
+            $select->order('ISBN13');
+            $select->where->equalTo('Item_ID', $itemID);
+        };
+        return iterator_to_array($this->isbnsTable->select($callback));
     }
 
     /**

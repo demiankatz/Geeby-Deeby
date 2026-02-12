@@ -32,6 +32,8 @@ namespace GeebyDeeby\View\Helper;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 use function count;
+use function is_callable;
+use function is_object;
 
 /**
  * View helper to group together edition data
@@ -58,23 +60,28 @@ class GroupEditions
     /**
      * Group together edition data
      *
-     * @param array  $data       Data to work with
-     * @param string $groupField Field to group data on
-     * @param array  $editions   A list of all editions
-     * @param string $idField    An ID field to prepend to the $groupField with
+     * @param array   $data            Data to work with
+     * @param string  $groupField      Field to group data on
+     * @param array   $editions        A list of all editions
+     * @param ?string $idField         An ID field to prepend to the $groupField with
      * a pipe delimiter (optional)
+     * @param ?string $subEntityGetter A method on objects in $data to fetch a sub-entity containing
+     * $groupField and/or $idField
      *
      * @return string
      */
-    public function __invoke($data, $groupField, $editions, $idField = null)
+    public function __invoke($data, $groupField, $editions, $idField = null, $subEntityGetter = null)
     {
         // Group the data:
         $grouped = [];
         $editionsByGroup = [];
         foreach ($data as $current) {
-            $groupValue = $current[$groupField];
+            if ($subEntityGetter && is_callable([$current, $subEntityGetter])) {
+                $subEntity = $current->$subEntityGetter();
+            }
+            $groupValue = $subEntity[$groupField] ?? $current[$groupField];
             if (!empty($idField)) {
-                $groupValue = $current[$idField] . '|' . $groupValue;
+                $groupValue = ($subEntity[$idField] ?? $current[$idField]) . '|' . $groupValue;
             }
             if (!isset($grouped[$groupValue])) {
                 $grouped[$groupValue] = [];
@@ -93,9 +100,15 @@ class GroupEditions
             $showEds = (count($editionsByGroup[$value]) != $edCount && $edCount > 1);
             $notes = [];
             foreach ($details as $detail) {
-                $note = $detail['Note'] ?? '';
+                // Use entity interface where appropriate:
+                $note = is_object($detail) && is_callable([$detail, 'getNote'])
+                    ? $detail->getNote()?->getNote() ?? ''
+                    : $detail['Note'] ?? '';
                 if ($showEds) {
-                    $name = ($this->fixTitleHelper)($detail['Edition_Name']);
+                    $editionName = is_object($detail) && is_callable([$detail, 'getEdition'])
+                        ? $detail->getEdition()?->getEditionName()
+                        : $detail['Edition_Name'];
+                    $name = ($this->fixTitleHelper)($editionName);
                     $note = empty($note) ? $name : $name . ' - ' . $note;
                 }
                 if (!empty($note)) {

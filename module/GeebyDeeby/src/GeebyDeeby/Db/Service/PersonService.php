@@ -35,6 +35,9 @@ use GeebyDeeby\Db\Table\Person;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
 
+use function count;
+use function strlen;
+
 /**
  * Database service for the People table.
  *
@@ -166,5 +169,70 @@ class PersonService extends AbstractDbService
     public function keywordSearch(array $tokens): array
     {
         return iterator_to_array($this->personTable->keywordSearch($tokens));
+    }
+
+    /**
+     * Get an exact match for the provided name parts (null if not found).
+     *
+     * @param string $first First name to search
+     * @param string $last  Last name to search
+     * @param string $extra Extra details
+     *
+     * @return ?PersonEntityInterface
+     */
+    public function getExactMatch(string $first, string $last, string $extra): ?PersonEntityInterface
+    {
+        $query = [
+            'Last_Name' => $last,
+        ];
+        if (!empty($first)) {
+            $query['First_Name'] = $first;
+        }
+        if (!empty($extra)) {
+            $query['Extra_Details'] = $extra;
+        }
+        $result = $this->personTable->select($query);
+        if (count($result) >= 1) {
+            foreach ($result as $current) {
+                if (empty($first) && strlen($current->getFirstName())) {
+                    continue;
+                }
+                if ($current->getExtraDetails() == $extra) {
+                    return $current;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find people with similar names to the provided values.
+     *
+     * @param string $first        First name to search
+     * @param string $last         Last name to search
+     * @param bool   $allowFuzzier If no first+last match is found, should we fall back to last-only matches?
+     *
+     * @return PersonEntityInterface[]
+     */
+    public function getFuzzyMatches(string $first, string $last, bool $allowFuzzier = true): array
+    {
+        $callback = function ($select) use ($first, $last): void {
+            if (strlen($first) > 0) {
+                $initial = substr($first, 0, 1);
+                $select->where->like('First_Name', $initial . '%');
+            }
+            $select->where->like('Last_Name', $last);
+            $select->order(['Last_Name', 'First_Name']);
+        };
+        $result = $this->personTable->select($callback);
+        if (count($result) === 0 && $allowFuzzier) {
+            $fuzzierCallback = function ($select) use ($last): void {
+                $chunk = substr($last, 0, strlen($last) - 1);
+                $select->where->like('Last_Name', $chunk . '%');
+                $select->order(['Last_Name', 'First_Name']);
+            };
+            $result = $this->personTable->select($fuzzierCallback);
+        }
+        return iterator_to_array($result);
     }
 }

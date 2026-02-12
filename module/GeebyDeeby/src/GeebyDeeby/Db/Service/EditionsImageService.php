@@ -108,11 +108,15 @@ class EditionsImageService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsImageEntityInterface[]
      */
     public function getImagesForEdition(int $editionID): array
     {
-        return iterator_to_array($this->editionsImagesTable->getImagesForEdition($editionID));
+        $callback = function ($select) use ($editionID): void {
+            $select->order(['Editions_Images.Position']);
+            $select->where->equalTo('Edition_ID', $editionID);
+        };
+        return iterator_to_array($this->editionsImagesTable->select($callback));
     }
 
     /**
@@ -150,5 +154,20 @@ class EditionsImageService extends AbstractDbService
     public function getImagesForSeries(int $seriesID, bool $groupByMaterial = true): array
     {
         return iterator_to_array($this->editionsImagesTable->getImagesForSeries($seriesID, $groupByMaterial));
+    }
+
+    /**
+     * Get image information where the link points to a specific domain (or other substring).
+     *
+     * @param string $domain String to search for in the Image_Path field
+     *
+     * @return EditionsImageEntityInterface[]
+     */
+    public function getByDomain(string $domain): array
+    {
+        $callback = function ($select) use ($domain): void {
+            $select->where->like('Image_Path', '%' . $domain . '%');
+        };
+        return iterator_to_array($this->editionsImagesTable->select($callback));
     }
 }
