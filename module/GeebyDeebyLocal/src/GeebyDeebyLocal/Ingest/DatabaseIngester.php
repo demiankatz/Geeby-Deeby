@@ -318,7 +318,7 @@ class DatabaseIngester extends BaseIngester
             fn ($n) =>  $n['title'],
             $details['contents']
         );
-        $this->writeln('Working on ' . $seriesObj->Series_Name . " no. $pos...");
+        $this->writeln('Working on ' . $seriesObj->getSeriesName() . " no. $pos...");
         $this->writeln(
             'Contents (' . count($contentSummary) . '): '
             . implode(' -- ', $contentSummary)
@@ -528,8 +528,8 @@ class DatabaseIngester extends BaseIngester
             return false;
         }
         if (
-            ($current && $current->Month > 0 && null === $month)
-            || ($current && $current->Day > 0 && null === $day)
+            ($current && $current->getMonth() > 0 && null === $month)
+            || ($current && $current->getDay() > 0 && null === $day)
         ) {
             $this->writeln(
                 'WARNING: More specific date in database than in incoming data.'
@@ -728,24 +728,24 @@ class DatabaseIngester extends BaseIngester
     /**
      * Normalize and store edition notes.
      *
-     * @param array  $notes      Notes
-     * @param object $editionObj Edition row
+     * @param array                  $notes      Notes
+     * @param EditionEntityInterface $editionObj Edition row
      *
      * @return bool True on success
      */
-    protected function processNotes($notes, $editionObj)
+    protected function processNotes(array $notes, EditionEntityInterface $editionObj): bool
     {
         $notes = trim(implode(' ', $notes));
-        if (empty($editionObj->Edition_Description)) {
+        if (!$editionObj->getDescription()) {
             $this->writeln("Adding edition description: $notes");
-            $editionObj->Edition_Description = $notes;
-            $editionObj->save();
+            $editionObj->setDescription($notes);
+            $this->getDbService(EditionService::class)->persistEntity($editionObj);
             return true;
         }
-        if (false === strstr($editionObj->Edition_Description, $notes)) {
+        if (false === strstr($editionObj->getDescription(), $notes)) {
             $this->writeln(
                 'WARNING: edition description mismatch: '
-                . "{$notes} vs. {$editionObj->Edition_Description}"
+                . "{$notes} vs. {$editionObj->getDescription()}"
             );
         }
         return true;
@@ -766,7 +766,7 @@ class DatabaseIngester extends BaseIngester
             $oclc[$i] = preg_replace('/[^0-9]/', '', $current);
         }
         $service = $this->getDbService(EditionsOclcNumberService::class);
-        $known = $service->getOCLCNumbersForEdition($editionObj->Edition_ID);
+        $known = $service->getOCLCNumbersForEdition($editionObj->getId());
         $knownArr = [];
         foreach ($known as $current) {
             $knownArr[] = $current->getOclcNumber();
@@ -816,10 +816,7 @@ class DatabaseIngester extends BaseIngester
     {
         $service = $this->getDbService(EditionsFullTextService::class);
         $known = $service->getFullTextForEdition($editionObj->getId());
-        $knownArr = [];
-        foreach ($known as $current) {
-            $knownArr[] = $current->Full_Text_URL;
-        }
+        $knownArr = array_map(fn ($current) => $current->getUrl(), $known);
         foreach (array_diff($urls, $knownArr) as $current) {
             $source = $this->getSourceForUrl($current);
             if (null === $source) {
@@ -1467,7 +1464,7 @@ class DatabaseIngester extends BaseIngester
             ->setPositionInParent($pos)
             ->setPreferredItemAlternateTitle($altName ?: null);
         $service->persistEntity($newObj);
-        $this->writeln('Added edition ID ' . $newObj->Edition_ID);
+        $this->writeln('Added edition ID ' . $newObj->getId());
         return $this->updateWorkInDatabase(
             $data,
             [
@@ -1521,7 +1518,7 @@ class DatabaseIngester extends BaseIngester
     {
         $item = $this->getItemForNewEdition($data);
         $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
-        $this->writeln('Added edition ID ' . $newObj->Edition_ID);
+        $this->writeln('Added edition ID ' . $newObj->getId());
         return $this->updateWorkInDatabase(
             $data,
             [
@@ -1550,7 +1547,7 @@ class DatabaseIngester extends BaseIngester
         if (count($lookup) == 0) {
             $item = $this->getItemForNewEdition($data, self::MATERIALTYPE_ISSUE);
             $newObj = $this->createEditionInSeries($series, $item, $pos, $data);
-            $this->writeln('Added edition ID ' . $newObj->Edition_ID);
+            $this->writeln('Added edition ID ' . $newObj->getId());
             $edition = $newObj;
         } elseif (count($lookup) == 1) {
             $edition = null;
@@ -1663,29 +1660,28 @@ class DatabaseIngester extends BaseIngester
     /**
      * Process extent data
      *
-     * @param string $extent Extent to process.
-     * @param array  $db     Data to check against.
+     * @param string                 $extent Extent to process.
+     * @param EditionEntityInterface $ed     Edition entity to check against.
      *
      * @return bool
      */
-    protected function processExtent($extent, $db)
+    protected function processExtent(string $extent, EditionEntityInterface $ed): bool
     {
-        $ed = $db['edition'];
-        if (!empty($ed->Extent_In_Parent) && $ed->Extent_In_Parent !== $extent) {
+        $existingExtent = $ed->getExtentInParent();
+        if (!empty($existingExtent) && $existingExtent !== $extent) {
             $this->writeln(
-                'WARNING: Unexpected extent: ' . $extent
-                . '; Expected: ' . $ed->Extent_In_Parent
+                'WARNING: Unexpected extent: ' . $extent . '; Expected: ' . $existingExtent
             );
             return true;
         }
-        if (empty($ed->Parent_Edition_ID)) {
+        if (!$ed->getParentEdition()) {
             $this->writeln('FATAL ERROR: Missing parent ID.');
             return false;
         }
-        if (empty($ed->Extent_In_Parent)) {
+        if (empty($existingExtent)) {
             $this->writeln('Adding extent: ' . $extent);
-            $ed->Extent_In_Parent = $extent;
-            $ed->save();
+            $ed->setExtentInParent($extent);
+            $this->getDbService(EditionService::class)->persistEntity($ed);
         }
         return true;
     }
@@ -1709,7 +1705,7 @@ class DatabaseIngester extends BaseIngester
             }
         }
         if (isset($data['extent']) && !empty($data['extent'])) {
-            if (!$this->processExtent($data['extent'], $db)) {
+            if (!$this->processExtent($data['extent'], $db['edition'])) {
                 return false;
             }
         }
@@ -1781,23 +1777,23 @@ class DatabaseIngester extends BaseIngester
             return false;
         }
         foreach ($result as $option) {
-            if (in_array($option->Person_ID, $expected)) {
+            if (in_array($option['Person_ID'], $expected)) {
                 $this->writeln(
                     "WARNING: Fuzzy person match between $raw and "
-                    . $option->First_Name . ' ' . $option->Last_Name
-                    . $option->Extra_Details
+                    . $option['First_Name'] . ' ' . $option['Last_Name']
+                    . $option['Extra_Details']
                 );
-                return $option->Person_ID;
+                return $option['Person_ID'];
             }
         }
         $this->writeln("Possible matches found for $raw...");
         foreach ($result as $option) {
-            $people[] = $option->Person_ID;
+            $people[] = $option['Person_ID'];
             $letter = chr(64 + count($people));
             $options .= $letter;
             $this->writeln(
-                $letter . '. ' . $option->First_Name . ' ' . $option->Last_Name
-                . $option->Extra_Details
+                $letter . '. ' . $option['First_Name'] . ' ' . $option['Last_Name']
+                . $option['Extra_Details']
             );
         }
         $char = strtoupper(
@@ -1843,8 +1839,11 @@ class DatabaseIngester extends BaseIngester
         $result = $people->select($query);
         if (count($result) >= 1) {
             foreach ($result as $current) {
-                if ($current->Extra_Details == $extra) {
-                    return $current->Person_ID;
+                if (empty($first) && !empty($current['First_Name'])) {
+                    continue;
+                }
+                if ($current['Extra_Details'] == $extra) {
+                    return $current['Person_ID'];
                 }
             }
             $this->writeln('Extra detail mismatch in person.');
@@ -2084,7 +2083,7 @@ class DatabaseIngester extends BaseIngester
             }
             $letter = chr(65 + $i);
             $options .= $letter;
-            $menu[] = $letter . '. ' . $current->Edition_Name;
+            $menu[] = $letter . '. ' . $current['Edition_Name'];
             $choices[] = $current;
         }
         $menuString = implode("\n", $menu);
@@ -2227,7 +2226,7 @@ class DatabaseIngester extends BaseIngester
                 }
                 $this->writeln(
                     'FATAL: No series match found for edition '
-                    . $child['edition']->Edition_ID
+                    . $child['edition']['Edition_ID']
                 );
                 return false;
             }
@@ -2297,7 +2296,7 @@ class DatabaseIngester extends BaseIngester
                 }
                 $this->writeln(
                     'WARNING: No child match found for edition '
-                    . $child['edition']->Edition_ID
+                    . $child['edition']['Edition_ID']
                 );
                 $result[] = [null, $child];
             } else {
@@ -2327,7 +2326,7 @@ class DatabaseIngester extends BaseIngester
             $this->writeln('No series found.');
             return false;
         }
-        $expectedNumber = intval($editionObj->Position);
+        $expectedNumber = intval($editionObj->getPosition());
         foreach ($details['series'] as $seriesName => $number) {
             $actualNumber = intval(preg_replace('/[^0-9]/', '', $number));
             //$this->writeln("Comparing {$expectedNumber} to {$actualNumber}...");
