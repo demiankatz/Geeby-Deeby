@@ -41,6 +41,7 @@ use GeebyDeeby\Db\Service\ItemsAltTitleService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\ItemsTagService;
 use GeebyDeeby\Db\Service\PeopleUriService;
+use GeebyDeeby\Db\Service\PersonService;
 use GeebyDeeby\Db\Service\PseudonymService;
 use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\SeriesAltTitleService;
@@ -1747,53 +1748,36 @@ class DatabaseIngester extends BaseIngester
      * @param string $first    First name
      * @param string $last     Last name
      * @param string $raw      Raw name string
-     * @param array  $expected IDs we're expecting to find (if any)
+     * @param int[]  $expected IDs we're expecting to find (if any)
      *
-     * @return int|bool
+     * @return int|false
      */
-    protected function fuzzyPersonMatch($first, $last, $raw, $expected)
+    protected function fuzzyPersonMatch(string $first, string $last, string $raw, array $expected): int|false
     {
-        $peopleTable = $this->getDbTable('person');
-        $callback = function ($select) use ($first, $last): void {
-            if (strlen($first) > 0) {
-                $initial = substr($first, 0, 1);
-                $select->where->like('First_Name', $initial . '%');
-            }
-            $select->where->like('Last_Name', $last);
-            $select->order(['Last_Name', 'First_Name']);
-        };
         $people = [];
         $options = '';
-        $result = $peopleTable->select($callback);
-        if (count($result) === 0) {
-            $fuzzierCallback = function ($select) use ($last): void {
-                $chunk = substr($last, 0, strlen($last) - 1);
-                $select->where->like('Last_Name', $chunk . '%');
-                $select->order(['Last_Name', 'First_Name']);
-            };
-            $result = $peopleTable->select($fuzzierCallback);
-        }
+        $result = $this->getDbService(PersonService::class)->getFuzzyMatches($first, $last);
         if (count($result) === 0) {
             return false;
         }
         foreach ($result as $option) {
-            if (in_array($option['Person_ID'], $expected)) {
+            if (in_array($option->getId(), $expected)) {
                 $this->writeln(
                     "WARNING: Fuzzy person match between $raw and "
-                    . $option['First_Name'] . ' ' . $option['Last_Name']
-                    . $option['Extra_Details']
+                    . $option->getFirstName() . ' ' . $option->getLastName()
+                    . $option->getExtraDetails()
                 );
-                return $option['Person_ID'];
+                return $option->getId();
             }
         }
         $this->writeln("Possible matches found for $raw...");
         foreach ($result as $option) {
-            $people[] = $option['Person_ID'];
+            $people[] = $option->getId();
             $letter = chr(64 + count($people));
             $options .= $letter;
             $this->writeln(
-                $letter . '. ' . $option['First_Name'] . ' ' . $option['Last_Name']
-                . $option['Extra_Details']
+                $letter . '. ' . $option->getFirstName() . ' ' . $option->getLastName()
+                . $option->getExtraDetails()
             );
         }
         $char = strtoupper(
@@ -1806,12 +1790,12 @@ class DatabaseIngester extends BaseIngester
      * Given a name string, look up a matching person ID.
      *
      * @param string $str      Name string
-     * @param array  $expected Person IDs we're expecting to find (from database,
+     * @param int[]  $expected Person IDs we're expecting to find (from database,
      * if we're trying to match an existing entry)
      *
-     * @return int|bool Person ID, or false for no match.
+     * @return int|false Person ID, or false for no match.
      */
-    protected function getPersonIdForString($str, $expected = [])
+    protected function getPersonIdForString(string $str, array $expected = []): int|false
     {
         $bad = '(dime novelist)';
         if (substr(strtolower($str), -strlen($bad)) === $bad) {
@@ -1826,27 +1810,8 @@ class DatabaseIngester extends BaseIngester
             $first = null;
         }
         $extra = isset($parts[2]) ? (', ' . trim($parts[2])) : '';
-        $people = $this->getDbTable('person');
-        $query = [
-            'Last_Name' => $last,
-        ];
-        if (!empty($first)) {
-            $query['First_Name'] = $first;
-        }
-        if (!empty($extra)) {
-            $query['Extra_Details'] = $extra;
-        }
-        $result = $people->select($query);
-        if (count($result) >= 1) {
-            foreach ($result as $current) {
-                if (empty($first) && !empty($current['First_Name'])) {
-                    continue;
-                }
-                if ($current['Extra_Details'] == $extra) {
-                    return $current['Person_ID'];
-                }
-            }
-            $this->writeln('Extra detail mismatch in person.');
+        if ($exact = $this->getDbService(PersonService::class)->getExactMatch($first, $last, $extra)) {
+            return $exact->getId();
         }
         return $this->fuzzyPersonMatch($first, $last, $str, $expected);
     }
