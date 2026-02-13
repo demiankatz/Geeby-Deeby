@@ -42,7 +42,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Table(name: 'Full_Text_Sources')]
 #[ORM\Entity]
-class FullTextSourceEntity extends AbstractEntity implements FullTextSourceEntityInterface
+class FullTextSource extends AbstractEntity implements FullTextSourceEntityInterface
 {
     /**
      * Unique ID.

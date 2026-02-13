@@ -30,10 +30,10 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
-use GeebyDeeby\Db\Entity\FullTextSourceEntity;
+use GeebyDeeby\Db\Entity\FullTextSource;
 use GeebyDeeby\Db\Entity\FullTextSourceEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\FullTextSource;
+use GeebyDeeby\Db\Table\FullTextSource as FullTextSourceTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -50,15 +50,15 @@ class FullTextSourceService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param EntityManager      $entityManager       Entity manager
-     * @param PersistenceManager $persistenceManager  Persistence manager
-     * @param FullTextSource     $fullTextSourceTable FullTextSource table
+     * @param EntityManager       $entityManager       Entity manager
+     * @param PersistenceManager  $persistenceManager  Persistence manager
+     * @param FullTextSourceTable $fullTextSourceTable FullTextSource table
      */
     public function __construct(
         protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected FullTextSource $fullTextSourceTable
+        protected FullTextSourceTable $fullTextSourceTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -70,7 +70,7 @@ class FullTextSourceService extends AbstractDbService
      */
     public function createEntity(): FullTextSourceEntityInterface
     {
-        return new FullTextSourceEntity();
+        return new FullTextSource();
     }
 
     /**
@@ -82,7 +82,7 @@ class FullTextSourceService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?FullTextSourceEntityInterface
     {
-        return $this->entityManager->find(FullTextSourceEntity::class, $id);
+        return $this->entityManager->find(FullTextSource::class, $id);
     }
 
     /**
@@ -107,12 +107,12 @@ class FullTextSourceService extends AbstractDbService
      */
     public function getList(?int $seriesID = null): array
     {
-        $dql = 'SELECT fts FROM ' . FullTextSourceEntity::class . ' fts';
+        $dql = 'SELECT fts FROM ' . FullTextSource::class . ' fts';
         if ($seriesID) {
-            throw new \Exception('TODO: implement series filtering');
+            // TODO: implement series filtering
+            return iterator_to_array($this->fullTextSourceTable->getList($seriesID));
         }
         $query = $this->entityManager->createQuery($dql);
         return $query->getResult();
-        //return iterator_to_array($this->fullTextSourceTable->getList($seriesID));
     }
 }

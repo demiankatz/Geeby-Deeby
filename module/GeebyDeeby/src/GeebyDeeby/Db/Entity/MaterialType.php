@@ -42,7 +42,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Table(name: 'Material_Types')]
 #[ORM\Entity]
-class MaterialTypeEntity extends AbstractEntity implements MaterialTypeEntityInterface
+class MaterialType extends AbstractEntity implements MaterialTypeEntityInterface
 {
     /**
      * Unique ID.
