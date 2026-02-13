@@ -112,6 +112,7 @@ class FullTextSourceService extends AbstractDbService
             // TODO: implement series filtering
             return iterator_to_array($this->fullTextSourceTable->getList($seriesID));
         }
+        $dql .= ' ORDER BY fts.sourceName';
         $query = $this->entityManager->createQuery($dql);
         return $query->getResult();
     }

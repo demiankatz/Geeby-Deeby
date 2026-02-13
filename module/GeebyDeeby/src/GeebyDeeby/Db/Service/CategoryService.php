@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Category;
 use GeebyDeeby\Db\Entity\CategoryEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Category;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class CategoryService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Category           $categoryTable      Category table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Category $categoryTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class CategoryService extends AbstractDbService
      */
     public function createEntity(): CategoryEntityInterface
     {
-        return $this->categoryTable->createRow();
+        return new Category();
     }
 
     /**
@@ -78,7 +79,7 @@ class CategoryService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?CategoryEntityInterface
     {
-        return $this->categoryTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Category::class, $id);
     }
 
     /**
@@ -101,7 +102,9 @@ class CategoryService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->categoryTable->getList());
+        $dql = 'SELECT c FROM ' . Category::class . ' c ORDER BY c.categoryName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -113,6 +116,11 @@ class CategoryService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->categoryTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 'c.categoryName LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT c.id AS Category_ID, c.categoryName AS Category FROM ' . Category::class . ' c WHERE '
+            . implode(' AND ', $where) . ' ORDER BY c.categoryName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 }
