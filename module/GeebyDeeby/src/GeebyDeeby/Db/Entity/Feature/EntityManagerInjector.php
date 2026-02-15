@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EntityManager-aware feature for entities.
+ * EntityManager injector listener.
  *
  * PHP version 8
  *
@@ -29,11 +29,14 @@
 
 namespace GeebyDeeby\Db\Entity\Feature;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Event\PostLoadEventArgs;
 use Exception;
+use GeebyDeeby\Db\Entity\AbstractEntity;
+
+use function is_callable;
 
 /**
- * EntityManager-aware feature for entities.
+ * EntityManager injector listener.
  *
  * @category GeebyDeeby
  * @package  Database
@@ -41,38 +44,21 @@ use Exception;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-trait EntityManagerAwareTrait
+class EntityManagerInjector
 {
     /**
-     * Entity manager.
+     * Post-load callback to inject entity manager.
      *
-     * @var ?EntityManager
-     */
-    protected ?EntityManager $entityManager = null;
-
-    /**
-     * Get the entity manager.
+     * @param AbstractEntity    $entity Entity to populate
+     * @param PostLoadEventArgs $args   Event arguments
      *
-     * @return EntityManager
+     * @return void
      */
-    public function getEntityManager(): EntityManager
+    public function postLoad(AbstractEntity $entity, PostLoadEventArgs $args): void
     {
-        if (!$this->entityManager) {
-            throw new Exception('EntityManager missing!');
+        if (!is_callable([$entity, 'setEntityManager'])) {
+            throw new Exception($entity::class . ' lacks setEntityManager method.');
         }
-        return $this->entityManager;
-    }
-
-    /**
-     * Set the entity manager.
-     *
-     * @param EntityManager $entityManager Entity manager
-     *
-     * @return static
-     */
-    public function setEntityManager(EntityManager $entityManager): static
-    {
-        $this->entityManager = $entityManager;
-        return $this;
+        $entity->setEntityManager($args->getObjectManager());
     }
 }

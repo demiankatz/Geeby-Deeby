@@ -44,6 +44,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'city_id', columns: ['City_ID'])]
 #[ORM\Index(name: 'predicate_id', columns: ['Predicate_ID'])]
 #[ORM\Entity]
+#[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
 class CitiesUri extends AbstractEntity implements CitiesUriEntityInterface
 {
     use Feature\EntityManagerAwareTrait;
