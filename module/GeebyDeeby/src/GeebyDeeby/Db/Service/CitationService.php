@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Citation;
 use GeebyDeeby\Db\Entity\CitationEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Citation;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class CitationService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Citation           $citationTable      Citation table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Citation $citationTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class CitationService extends AbstractDbService
      */
     public function createEntity(): CitationEntityInterface
     {
-        return $this->citationTable->createRow();
+        return new Citation();
     }
 
     /**
@@ -78,7 +79,7 @@ class CitationService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?CitationEntityInterface
     {
-        return $this->citationTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Citation::class, $id);
     }
 
     /**
@@ -101,6 +102,8 @@ class CitationService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->citationTable->getList());
+        $dql = 'SELECT c FROM ' . Citation::class . ' c ORDER BY c.citationName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }
