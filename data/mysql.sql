@@ -796,7 +796,7 @@ CREATE TABLE `Material_Types` (
   `Material_Type_Name` tinytext NOT NULL,
   `Material_Type_Plural_Name` tinytext NOT NULL,
   `Material_Type_RDF_Class` tinytext,
-  `Is_Default` smallint(1) NOT NULL DEFAULT '0',
+  `Is_Default` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Material_Type_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
