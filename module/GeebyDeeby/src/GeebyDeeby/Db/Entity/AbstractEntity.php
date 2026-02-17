@@ -35,6 +35,8 @@ use Doctrine\ORM\Mapping\Id;
 use Exception;
 use ReflectionClass;
 
+use function count;
+
 /**
  * Trait for exporting entities as arrays.
  *
@@ -84,6 +86,20 @@ abstract class AbstractEntity implements ArrayAccess, EntityInterface
             }
         }
         return $vals;
+    }
+
+    /**
+     * Get primary key value for the table
+     *
+     * @return int
+     */
+    public function getPrimaryKeyValue(): int
+    {
+        $keyCols = $this->getPrimaryKeyColumn();
+        if (count($keyCols) != 1) {
+            throw new \Exception('Unsupported for multi-key tables');
+        }
+        return $this->offsetGet($keyCols[0]);
     }
 
     /**

@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Predicate;
 use GeebyDeeby\Db\Entity\PredicateEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Predicate;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class PredicateService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Predicate          $predicateTable     Predicate table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Predicate $predicateTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class PredicateService extends AbstractDbService
      */
     public function createEntity(): PredicateEntityInterface
     {
-        return $this->predicateTable->createRow();
+        return new Predicate();
     }
 
     /**
@@ -78,7 +79,7 @@ class PredicateService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?PredicateEntityInterface
     {
-        return $this->predicateTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Predicate::class, $id);
     }
 
     /**
@@ -104,7 +105,9 @@ class PredicateService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->predicateTable->getList());
+        $dql = 'SELECT p FROM ' . Predicate::class . ' p ORDER BY p.abbreviation';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -113,10 +116,17 @@ class PredicateService extends AbstractDbService
      * @param string $query The user query.
      * @param ?int   $limit Limit on returned rows (null for no limit).
      *
-     * @return array
+     * @return PredicateEntityInterface[]
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->predicateTable->getSuggestions($query, $limit));
+        $dql = 'SELECT p FROM ' . Predicate::class . ' p WHERE p.abbreviation LIKE :query'
+            . ' ORDER BY p.abbreviation';
+        $queryObj = $this->entityManager->createQuery($dql);
+        $queryObj->setParameter('query', $query . '%');
+        if ($limit) {
+            $queryObj->setMaxResults($limit);
+        }
+        return $queryObj->getResult();
     }
 }

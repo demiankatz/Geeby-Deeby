@@ -53,4 +53,11 @@ interface EntityInterface
      * @return array
      */
     public function getPrimaryKeyColumn();
+
+    /**
+     * Get primary key value for the table
+     *
+     * @return int
+     */
+    public function getPrimaryKeyValue();
 }
