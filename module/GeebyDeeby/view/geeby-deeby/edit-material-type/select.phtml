@@ -1,9 +1,9 @@
 <?php if (isset($materials) && count($materials) > 0): ?>
   <select id="<?=!empty($idPrefix) ? $this->escapeHtml($idPrefix) : ''?>Material_Type_ID">
     <?php foreach ($materials as $current): ?>
-      <?php $isSelected = (isset($selected) && !empty($selected)) ? ($current['Material_Type_ID'] == $selected) : ($current['Default'] == 1) ?>
-      <option value="<?=$current['Material_Type_ID']?>"<?=$isSelected ? ' selected="selected"' : ''?>>
-        <?=$this->escapeHtml($current['Material_Type_Name'])?>
+      <?php $isSelected = (isset($selected) && !empty($selected)) ? ($current->getId() == $selected) : $current->isDefault() ?>
+      <option value="<?=$current->getId()?>"<?=$isSelected ? ' selected="selected"' : ''?>>
+        <?=$this->escapeHtml($current->getSingularName())?>
       </option>
     <?php endforeach; ?>
   </select>
