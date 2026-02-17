@@ -115,7 +115,7 @@ class MaterialType extends RowGateway implements MaterialTypeEntityInterface
      */
     public function isDefault(): bool
     {
-        return (bool)$this->Default;
+        return (bool)$this->Is_Default;
     }
 
     /**
@@ -127,7 +127,7 @@ class MaterialType extends RowGateway implements MaterialTypeEntityInterface
      */
     public function setIsDefault(bool $state): static
     {
-        $this->Default = $state ? 1 : 0;
+        $this->Is_Default = $state ? 1 : 0;
         return $this;
     }
 
