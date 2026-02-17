@@ -15,7 +15,7 @@
     </tr>
     <tr>
       <th scope="row"><label for="Default">Set as default:</label></th>
-      <td><input type="checkbox" id="Default" value="1" <?=isset($material['Default']) && $material['Default'] == 1 ? 'checked="checked" ' : ''?>/></td>
+      <td><input type="checkbox" id="Default" value="1" <?=($material['Is_Default'] ?? false) ? 'checked="checked" ' : ''?>/></td>
     </tr>
   </table>
   <input type="submit" value="Save" />

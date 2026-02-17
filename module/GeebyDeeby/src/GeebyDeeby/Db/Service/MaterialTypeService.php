@@ -114,7 +114,7 @@ class MaterialTypeService extends AbstractDbService
     public function setDefaultMaterialType(MaterialTypeEntityInterface $default): void
     {
         // First clear existing default:
-        $this->materialTypeTable->update(['Default' => 0]);
+        $this->materialTypeTable->update(['Is_Default' => 0]);
 
         // Now set new default:
         $this->persistEntity($default->setIsDefault(true));
