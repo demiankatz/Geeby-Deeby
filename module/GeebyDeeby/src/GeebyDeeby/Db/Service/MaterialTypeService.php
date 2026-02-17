@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\MaterialType;
 use GeebyDeeby\Db\Entity\MaterialTypeEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\MaterialType;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class MaterialTypeService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param MaterialType       $materialTypeTable  Material type table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected MaterialType $materialTypeTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class MaterialTypeService extends AbstractDbService
      */
     public function createEntity(): MaterialTypeEntityInterface
     {
-        return $this->materialTypeTable->createRow();
+        return new MaterialType();
     }
 
     /**
@@ -78,7 +79,7 @@ class MaterialTypeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?MaterialTypeEntityInterface
     {
-        return $this->materialTypeTable->getByPrimaryKey($id);
+        return $this->entityManager->find(MaterialType::class, $id);
     }
 
     /**
@@ -101,7 +102,9 @@ class MaterialTypeService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->materialTypeTable->getList());
+        $dql = 'SELECT m FROM ' . MaterialType::class . ' m ORDER BY m.singularName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -114,7 +117,8 @@ class MaterialTypeService extends AbstractDbService
     public function setDefaultMaterialType(MaterialTypeEntityInterface $default): void
     {
         // First clear existing default:
-        $this->materialTypeTable->update(['Is_Default' => 0]);
+        $dql = 'UPDATE ' . MaterialType::class . ' m SET m.default=false';
+        $this->entityManager->createQuery($dql)->execute();
 
         // Now set new default:
         $this->persistEntity($default->setIsDefault(true));

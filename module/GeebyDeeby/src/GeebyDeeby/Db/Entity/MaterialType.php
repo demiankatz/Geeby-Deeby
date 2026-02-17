@@ -83,8 +83,8 @@ class MaterialType extends AbstractEntity implements MaterialTypeEntityInterface
      *
      * @var bool
      */
-    #[ORM\Column(name: 'Default', type: 'boolean', nullable: false, options: ['default' => false])]
-    protected bool $default;
+    #[ORM\Column(name: 'Is_Default', type: 'boolean', nullable: false, options: ['default' => false])]
+    protected bool $default = false;
 
     /**
      * Get identifier (returns null for an uninitialized or non-persisted object).
