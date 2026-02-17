@@ -29,10 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\CountriesUri;
 use GeebyDeeby\Db\Entity\CountriesUriEntityInterface;
+use GeebyDeeby\Db\Entity\Country;
 use GeebyDeeby\Db\Entity\CountryEntityInterface;
+use GeebyDeeby\Db\Entity\Predicate;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\CountriesURIs;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -49,13 +52,13 @@ class CountriesUriService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param CountriesURIs      $countriesUrisTable CountriesURIs table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected CountriesURIs $countriesUrisTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -67,7 +70,9 @@ class CountriesUriService extends AbstractDbService
      */
     public function createEntity(): CountriesUriEntityInterface
     {
-        return $this->countriesUrisTable->createRow();
+        $entity = new CountriesUri();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +84,15 @@ class CountriesUriService extends AbstractDbService
      */
     public function getCountriesForURI(string $uri): array
     {
-        return iterator_to_array($this->countriesUrisTable->getCountriesForURI($uri));
+        $dql = 'SELECT cu.id AS Sequence_ID, cu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev, '
+            . 'c.id AS City_ID, c.cityName as City_Name'
+            . ' FROM ' . CountriesUri::class . ' cu INNER JOIN ' . Predicate::class . ' p ON cu.predicate = p.id'
+            . ' INNER JOIN ' . Country::class . ' c ON cu.city = c.id'
+            . ' WHERE cu.uri = :uri';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('uri', $uri);
+        return $query->getResult();
     }
 
     /**
@@ -91,8 +104,13 @@ class CountriesUriService extends AbstractDbService
      */
     public function getURIsForCountry(int|CountryEntityInterface $country): array
     {
-        $countryId = $country instanceof CountryEntityInterface ? $country->getId() : $country;
-        return iterator_to_array($this->countriesUrisTable->getURIsForCountry($countryId));
+        $dql = 'SELECT cu.id AS Sequence_ID, cu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev '
+            . ' FROM ' . CountriesUri::class . ' cu INNER JOIN ' . Predicate::class . ' p ON cu.predicate = p.id'
+            . ' WHERE cu.country = :country';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('country', $country instanceof CountryEntityInterface ? $country->getId() : $country);
+        return $query->getResult();
     }
 
     /**
@@ -105,9 +123,10 @@ class CountriesUriService extends AbstractDbService
      */
     public function getByCountryAndUri(int $countryId, string $uri): ?CountriesUriEntityInterface
     {
-        foreach ($this->countriesUrisTable->select(['Country_ID' => $countryId, 'URI' => $uri]) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT cu FROM ' . CountriesUri::class . ' cu WHERE cu.country = :country AND cu.uri = :uri';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['country' => $countryId, 'uri' => $uri]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
