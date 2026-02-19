@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\LinkType;
 use GeebyDeeby\Db\Entity\LinkTypeEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\LinkType;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class LinkTypeService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param LinkType           $linkTypeTable      LinkType table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected LinkType $linkTypeTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class LinkTypeService extends AbstractDbService
      */
     public function createEntity(): LinkTypeEntityInterface
     {
-        return $this->linkTypeTable->createRow();
+        return new LinkType();
     }
 
     /**
@@ -78,7 +79,7 @@ class LinkTypeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?LinkTypeEntityInterface
     {
-        return $this->linkTypeTable->getByPrimaryKey($id);
+        return $this->entityManager->find(LinkType::class, $id);
     }
 
     /**
@@ -101,6 +102,8 @@ class LinkTypeService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->linkTypeTable->getList());
+        $dql = 'SELECT l FROM ' . LinkType::class . ' l ORDER BY l.linkTypeName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

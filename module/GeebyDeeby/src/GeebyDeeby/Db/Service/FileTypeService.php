@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\FileType;
 use GeebyDeeby\Db\Entity\FileTypeEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\FileType;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class FileTypeService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param FileType           $fileTypeTable      FileType table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected FileType $fileTypeTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class FileTypeService extends AbstractDbService
      */
     public function createEntity(): FileTypeEntityInterface
     {
-        return $this->fileTypeTable->createRow();
+        return new FileType();
     }
 
     /**
@@ -78,7 +79,7 @@ class FileTypeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?FileTypeEntityInterface
     {
-        return $this->fileTypeTable->getByPrimaryKey($id);
+        return $this->entityManager->find(FileType::class, $id);
     }
 
     /**
@@ -101,6 +102,8 @@ class FileTypeService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->fileTypeTable->getList());
+        $dql = 'SELECT f FROM ' . FileType::class . ' f ORDER BY f.fileTypeName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }
