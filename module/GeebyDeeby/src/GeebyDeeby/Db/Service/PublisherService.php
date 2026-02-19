@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Publisher;
 use GeebyDeeby\Db\Entity\PublisherEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Publisher;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class PublisherService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Publisher          $publisherTable     Publisher table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Publisher $publisherTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class PublisherService extends AbstractDbService
      */
     public function createEntity(): PublisherEntityInterface
     {
-        return $this->publisherTable->createRow();
+        return new Publisher();
     }
 
     /**
@@ -78,7 +79,7 @@ class PublisherService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?PublisherEntityInterface
     {
-        return $this->publisherTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Publisher::class, $id);
     }
 
     /**
@@ -101,7 +102,9 @@ class PublisherService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->publisherTable->getList());
+        $dql = 'SELECT p FROM ' . Publisher::class . ' p ORDER BY p.publisherName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -114,6 +117,12 @@ class PublisherService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->publisherTable->getSuggestions($query, $limit));
+        $dql = 'SELECT p FROM ' . Publisher::class . ' p WHERE p.publisherName LIKE :query ORDER BY p.publisherName';
+        $queryObj = $this->entityManager->createQuery($dql);
+        $queryObj->setParameter('query', $query . '%');
+        if ($limit) {
+            $queryObj->setMaxResults($limit);
+        }
+        return $queryObj->getResult();
     }
 }
