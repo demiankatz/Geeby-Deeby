@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Platform;
 use GeebyDeeby\Db\Entity\PlatformEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Platform;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class PlatformService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Platform           $platformTable      Platform table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Platform $platformTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class PlatformService extends AbstractDbService
      */
     public function createEntity(): PlatformEntityInterface
     {
-        return $this->platformTable->createRow();
+        return new Platform();
     }
 
     /**
@@ -78,7 +79,7 @@ class PlatformService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?PlatformEntityInterface
     {
-        return $this->platformTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Platform::class, $id);
     }
 
     /**
@@ -101,6 +102,8 @@ class PlatformService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->platformTable->getList());
+        $dql = 'SELECT p FROM ' . Platform::class . ' p ORDER BY p.platformName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }
