@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database adapter factory.
+ * Entity manager factory.
  *
  * PHP version 8
  *
@@ -21,7 +21,7 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
@@ -36,10 +36,10 @@ use Doctrine\ORM\Proxy\ProxyFactory;
 use Psr\Container\ContainerInterface;
 
 /**
- * Database adapter factory.
+ * Entity manager factory.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site

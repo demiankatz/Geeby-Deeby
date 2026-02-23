@@ -21,7 +21,7 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site
@@ -36,7 +36,7 @@ use Laminas\Paginator\Adapter\AdapterInterface;
  * Adapter to bridge gap between Doctrine paginator and Laminas paginator.
  *
  * @category GeebyDeeby
- * @package  Db_Row
+ * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/demiankatz/Geeby-Deeby Main Site

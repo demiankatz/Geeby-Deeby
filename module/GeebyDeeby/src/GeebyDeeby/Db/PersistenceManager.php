@@ -21,7 +21,7 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category GeebyDeeby
- * @package  Db
+ * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
@@ -42,7 +42,7 @@ use Laminas\Db\RowGateway\AbstractRowGateway;
  * Class to manage database persistence operations.
  *
  * @category GeebyDeeby
- * @package  Db
+ * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
