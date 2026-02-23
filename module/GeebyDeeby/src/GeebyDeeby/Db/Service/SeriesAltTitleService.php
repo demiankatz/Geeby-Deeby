@@ -87,7 +87,7 @@ class SeriesAltTitleService extends AbstractDbService
         $dql = 'SELECT s.id AS Series_ID, sa.altName as Series_AltName, n.id AS Note_ID, n.note AS Note, '
             . 'sa.id AS Sequence_ID FROM ' . SeriesAltTitle::class . ' sa LEFT JOIN '
             . Note::class . ' n ON sa.note=n.id JOIN ' . Series::class . ' s ON sa.series=s.id '
-            . 'WHERE s.id = :series';
+            . 'WHERE s.id = :series ORDER BY sa.altName';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameter('series', $seriesID);
         return $query->getResult();
