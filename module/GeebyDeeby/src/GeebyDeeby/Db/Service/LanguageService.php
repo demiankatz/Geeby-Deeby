@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Language;
 use GeebyDeeby\Db\Entity\LanguageEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Language;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class LanguageService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Language           $languageTable      Language table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Language $languageTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class LanguageService extends AbstractDbService
      */
     public function createEntity(): LanguageEntityInterface
     {
-        return $this->languageTable->createRow();
+        return new Language();
     }
 
     /**
@@ -78,7 +79,7 @@ class LanguageService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?LanguageEntityInterface
     {
-        return $this->languageTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Language::class, $id);
     }
 
     /**
@@ -101,6 +102,8 @@ class LanguageService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->languageTable->getList());
+        $dql = 'SELECT l FROM ' . Language::class . ' l ORDER BY l.languageName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }
