@@ -55,7 +55,7 @@ class Language extends AbstractEntity implements LanguageEntityInterface
     protected int $id;
 
     /**
-     * Link type name.
+     * Language name.
      *
      * @var string
      */

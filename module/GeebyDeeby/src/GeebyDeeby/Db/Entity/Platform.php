@@ -55,7 +55,7 @@ class Platform extends AbstractEntity implements PlatformEntityInterface
     protected int $id;
 
     /**
-     * Link type name.
+     * Platform name.
      *
      * @var string
      */

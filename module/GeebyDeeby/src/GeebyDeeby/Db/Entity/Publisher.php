@@ -55,7 +55,7 @@ class Publisher extends AbstractEntity implements PublisherEntityInterface
     protected int $id;
 
     /**
-     * Link type name.
+     * Publisher name.
      *
      * @var string
      */

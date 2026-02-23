@@ -55,7 +55,7 @@ class Note extends AbstractEntity implements NoteEntityInterface
     protected int $id;
 
     /**
-     * Link type name.
+     * Note name.
      *
      * @var string
      */
