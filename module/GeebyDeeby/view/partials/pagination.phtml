@@ -34,7 +34,7 @@
       <span class="disabled">Next |</span>
     <?php endif; ?>
 
-    <?php if (isset($this->last)): ?>
+    <?php if (isset($this->last) && $this->last != $this->current): ?>
     <a href="?page=<?=$this->last?>">
       Last
     </a>
