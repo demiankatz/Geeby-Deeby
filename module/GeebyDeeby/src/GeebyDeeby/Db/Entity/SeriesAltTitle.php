@@ -84,7 +84,7 @@ class SeriesAltTitle extends AbstractEntity implements SeriesAltTitleEntityInter
     /**
      * Note.
      *
-     * @var Note
+     * @var ?Note
      */
     #[ORM\JoinColumn(
         name: 'Note_ID',
@@ -93,7 +93,7 @@ class SeriesAltTitle extends AbstractEntity implements SeriesAltTitleEntityInter
         options: ['default' => null]
     )]
     #[ORM\ManyToOne(targetEntity: Note::class)]
-    protected Note $note;
+    protected ?Note $note;
 
     /**
      * Get identifier (returns null for an uninitialized or non-persisted object).
