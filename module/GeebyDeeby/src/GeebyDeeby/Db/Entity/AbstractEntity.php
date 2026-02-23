@@ -32,10 +32,12 @@ namespace GeebyDeeby\Db\Entity;
 use ArrayAccess;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Exception;
 use ReflectionClass;
 
 use function count;
+use function is_callable;
 
 /**
  * Trait for exporting entities as arrays.
@@ -59,9 +61,15 @@ abstract class AbstractEntity implements ArrayAccess, EntityInterface
         $reflection = new ReflectionClass($this);
         $properties = $reflection->getProperties();
         foreach ($properties as $property) {
-            $attrs = $property->getAttributes(Column::class);
+            $attrs = $property->getAttributes(Column::class) ?: $property->getAttributes(JoinColumn::class);
             if ($attrs && ($args = $attrs[0]->getArguments()) && $args['name']) {
-                $vals[$args['name']] = $property->getValue($this);
+                $name = $args['name'];
+                $value = $property->getValue($this);
+                if (str_ends_with($args['name'], '_ID') && is_callable([$value, 'getId'])) {
+                    $vals[$name] = $value->getId();
+                    $name = str_replace('_ID', '_Object', $name);
+                }
+                $vals[$name] = $value;
             }
         }
         return $vals;
