@@ -29,9 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Series;
+use GeebyDeeby\Db\Table\Series as SeriesTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
 
@@ -49,13 +51,16 @@ class SeriesService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Series             $seriesTable        Series table
+     * @param SeriesTable        $seriesTable        Series table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Series $seriesTable
+        protected SeriesTable $seriesTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -67,7 +72,9 @@ class SeriesService extends AbstractDbService
      */
     public function createEntity(): SeriesEntityInterface
     {
-        return $this->seriesTable->createRow();
+        $entity = new Series();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +86,7 @@ class SeriesService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?SeriesEntityInterface
     {
-        return $this->seriesTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Series::class, $id);
     }
 
     /**
@@ -102,7 +109,9 @@ class SeriesService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->seriesTable->getList());
+        $dql = 'SELECT s FROM ' . Series::class . ' s ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -114,7 +123,10 @@ class SeriesService extends AbstractDbService
      */
     public function getSeriesForLanguage(int $langID): array
     {
-        return iterator_to_array($this->seriesTable->getSeriesForLanguage($langID));
+        $dql = 'SELECT s FROM ' . Series::class . ' s WHERE s.language = :language ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('language', $langID);
+        return $query->getResult();
     }
 
     /**
@@ -139,7 +151,12 @@ class SeriesService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->seriesTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 's.seriesName LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name FROM ' . Series::class . ' s WHERE '
+            . implode(' AND ', $where) . ' ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -194,6 +211,9 @@ class SeriesService extends AbstractDbService
      */
     public function getSeriesByName(string $name): array
     {
-        return iterator_to_array($this->seriesTable->select(['Series_Name' => $name]));
+        $dql = 'SELECT s FROM ' . Series::class . ' s WHERE s.seriesName = :name ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('name', $name);
+        return $query->getResult();
     }
 }
