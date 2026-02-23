@@ -30,6 +30,8 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
+use GeebyDeeby\Db\DoctrinePaginatorAdapter;
 use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
@@ -169,14 +171,13 @@ class SeriesService extends AbstractDbService
      */
     public function getNewSeriesPaginator(int $page = 1, int $pageSize = 50): Paginator
     {
-        $adapter = $this->seriesTable->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($this->seriesTable->getTable());
-        $query->order('Series_ID DESC');
+        $dql = 'SELECT s FROM ' . Series::class . ' s ORDER BY s.id DESC';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setFirstResult(($page - 1) * $pageSize)->setMaxResults($pageSize);
+        $doctrinePaginator = new PaginationPaginator($query);
+        $doctrinePaginator->setUseOutputWalkers(false);
         $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+            new DoctrinePaginatorAdapter($doctrinePaginator)
         );
         $paginator->setItemCountPerPage($pageSize);
         $paginator->setCurrentPageNumber($page);
