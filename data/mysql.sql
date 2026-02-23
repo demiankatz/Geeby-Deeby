@@ -455,7 +455,8 @@ CREATE TABLE `Items` (
   `Item_Errata` text,
   `Item_Thanks` tinytext,
   `Material_Type_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`)
+  PRIMARY KEY (`Item_ID`),
+  FOREIGN KEY (`Material_Type_ID`) REFERENCES `Material_Types` (`Material_Type_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
