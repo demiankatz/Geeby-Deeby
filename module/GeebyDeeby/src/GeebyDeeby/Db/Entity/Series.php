@@ -95,7 +95,7 @@ class Series extends AbstractEntity implements SeriesEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

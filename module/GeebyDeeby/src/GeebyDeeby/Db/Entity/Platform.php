@@ -69,7 +69,7 @@ class Platform extends AbstractEntity implements PlatformEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

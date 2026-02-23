@@ -77,7 +77,7 @@ class Category extends AbstractEntity implements CategoryEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

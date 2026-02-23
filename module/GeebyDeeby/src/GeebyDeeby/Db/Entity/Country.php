@@ -69,7 +69,7 @@ class Country extends AbstractEntity implements CountryEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

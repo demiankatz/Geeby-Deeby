@@ -92,7 +92,7 @@ class CitiesUri extends AbstractEntity implements CitiesUriEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

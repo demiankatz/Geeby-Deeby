@@ -69,7 +69,7 @@ class Citation extends AbstractEntity implements CitationEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

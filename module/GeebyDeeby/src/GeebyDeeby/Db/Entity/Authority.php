@@ -69,7 +69,7 @@ class Authority extends AbstractEntity implements AuthorityEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

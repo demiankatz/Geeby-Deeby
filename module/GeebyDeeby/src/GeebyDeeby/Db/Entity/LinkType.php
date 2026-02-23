@@ -69,7 +69,7 @@ class LinkType extends AbstractEntity implements LinkTypeEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

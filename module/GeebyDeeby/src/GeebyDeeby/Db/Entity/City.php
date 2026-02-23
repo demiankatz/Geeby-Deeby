@@ -69,7 +69,7 @@ class City extends AbstractEntity implements CityEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

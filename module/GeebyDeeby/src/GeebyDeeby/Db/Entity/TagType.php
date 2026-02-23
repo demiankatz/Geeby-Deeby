@@ -69,7 +69,7 @@ class TagType extends AbstractEntity implements TagTypeEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

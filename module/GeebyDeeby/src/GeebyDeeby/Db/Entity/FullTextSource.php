@@ -69,7 +69,7 @@ class FullTextSource extends AbstractEntity implements FullTextSourceEntityInter
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

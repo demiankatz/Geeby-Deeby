@@ -77,7 +77,7 @@ class Predicate extends AbstractEntity implements PredicateEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

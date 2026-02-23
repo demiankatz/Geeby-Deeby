@@ -69,7 +69,7 @@ class Note extends AbstractEntity implements NoteEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

@@ -69,7 +69,7 @@ class FileType extends AbstractEntity implements FileTypeEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

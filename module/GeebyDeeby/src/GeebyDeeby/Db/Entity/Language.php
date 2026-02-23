@@ -69,7 +69,7 @@ class Language extends AbstractEntity implements LanguageEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

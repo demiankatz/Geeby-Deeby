@@ -92,7 +92,7 @@ class CountriesUri extends AbstractEntity implements CountriesUriEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

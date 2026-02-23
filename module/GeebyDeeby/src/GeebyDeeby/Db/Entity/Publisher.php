@@ -69,7 +69,7 @@ class Publisher extends AbstractEntity implements PublisherEntityInterface
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**
