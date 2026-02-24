@@ -107,7 +107,7 @@ class CitiesUriService extends AbstractDbService
         $dql = 'SELECT cu.id AS Sequence_ID, cu.uri AS URI, '
             . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev '
             . ' FROM ' . CitiesUri::class . ' cu INNER JOIN ' . Predicate::class . ' p ON cu.predicate = p.id'
-            . ' WHERE cu.city = :city';
+            . ' WHERE cu.city = :city ORDER BY cu.uri, p.abbreviation';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameter('city', $city instanceof CityEntityInterface ? $city->getId() : $city);
         return $query->getResult();

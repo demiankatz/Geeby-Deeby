@@ -107,7 +107,7 @@ class CountriesUriService extends AbstractDbService
         $dql = 'SELECT cu.id AS Sequence_ID, cu.uri AS URI, '
             . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev '
             . ' FROM ' . CountriesUri::class . ' cu INNER JOIN ' . Predicate::class . ' p ON cu.predicate = p.id'
-            . ' WHERE cu.country = :country';
+            . ' WHERE cu.country = :country ORDER BY cu.uri, p.abbreviation';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameter('country', $country instanceof CountryEntityInterface ? $country->getId() : $country);
         return $query->getResult();

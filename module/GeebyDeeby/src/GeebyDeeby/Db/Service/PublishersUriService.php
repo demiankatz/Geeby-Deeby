@@ -107,7 +107,7 @@ class PublishersUriService extends AbstractDbService
         $dql = 'SELECT pu.id AS Sequence_ID, pu.uri AS URI, '
             . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev '
             . ' FROM ' . PublishersUri::class . ' pu INNER JOIN ' . Predicate::class . ' p ON pu.predicate = p.id'
-            . ' WHERE pu.publisher = :publisher';
+            . ' WHERE pu.publisher = :publisher ORDER BY pu.uri, p.abbreviation';
         $query = $this->entityManager->createQuery($dql);
         $publisherId = $publisher instanceof PublisherEntityInterface ? $publisher->getId() : $publisher;
         $query->setParameter('publisher', $publisherId);
