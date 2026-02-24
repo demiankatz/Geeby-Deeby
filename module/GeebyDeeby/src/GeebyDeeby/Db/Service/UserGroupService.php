@@ -29,9 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\UserGroup;
 use GeebyDeeby\Db\Entity\UserGroupEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\UserGroup;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +49,13 @@ class UserGroupService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param UserGroup          $userGroupTable     User group table
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected UserGroup $userGroupTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +67,7 @@ class UserGroupService extends AbstractDbService
      */
     public function createEntity(): UserGroupEntityInterface
     {
-        return $this->userGroupTable->createRow();
+        return new UserGroup();
     }
 
     /**
@@ -78,7 +79,7 @@ class UserGroupService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?UserGroupEntityInterface
     {
-        return $this->userGroupTable->getByPrimaryKey($id);
+        return $this->entityManager->find(UserGroup::class, $id);
     }
 
     /**
@@ -101,6 +102,8 @@ class UserGroupService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->userGroupTable->getList());
+        $dql = 'SELECT g FROM ' . UserGroup::class . ' g ORDER BY g.groupName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }
