@@ -29,9 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\City;
+use GeebyDeeby\Db\Entity\Country;
+use GeebyDeeby\Db\Entity\PublishersAddress;
 use GeebyDeeby\Db\Entity\PublishersAddressEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\PublishersAddresses;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +51,13 @@ class PublishersAddressService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param PersistenceManager  $persistenceManager       Persistence manager
-     * @param PublishersAddresses $publishersAddressesTable PublishersAddresses table
+     * @param EntityManager      $entityManager      Entity manager
+     * @param PersistenceManager $persistenceManager Persistence manager
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected PublishersAddresses $publishersAddressesTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +69,9 @@ class PublishersAddressService extends AbstractDbService
      */
     public function createEntity(): PublishersAddressEntityInterface
     {
-        return $this->publishersAddressesTable->createRow();
+        $entity = new PublishersAddress();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -78,7 +83,15 @@ class PublishersAddressService extends AbstractDbService
      */
     public function getAddressesForPublisher(int $pubID): array
     {
-        return iterator_to_array($this->publishersAddressesTable->getAddressesForPublisher($pubID));
+        $dql = 'SELECT pa.id AS Address_ID, pa.street AS Street, '
+            . 'ci.id as City_ID, ci.cityName as City_Name, '
+            . 'co.id as Country_ID, co.countryName as Country_Name '
+            . 'FROM ' . PublishersAddress::class . ' pa INNER JOIN ' . Country::class . ' co ON pa.country = co.id '
+            . 'LEFT JOIN ' . City::class . ' ci ON pa.city = ci.id '
+            . 'WHERE pa.publisher = :publisher ORDER BY co.countryName, ci.cityName, pa.street';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('publisher', $pubID);
+        return $query->getResult();
     }
 
     /**
@@ -93,11 +106,10 @@ class PublishersAddressService extends AbstractDbService
         int $publisherId,
         int $addressId
     ): ?PublishersAddressEntityInterface {
-        $result = $this->publishersAddressesTable
-            ->select(['Publisher_ID' => $publisherId, 'Address_ID' => $addressId]);
-        foreach ($result as $current) {
-            return $current;
-        }
-        return null;
+        $dql = 'SELECT p FROM ' . PublishersAddress::class . ' p WHERE p.publisher = :publisher AND p.id = :address';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['publisher' => $publisherId, 'address' => $addressId]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
