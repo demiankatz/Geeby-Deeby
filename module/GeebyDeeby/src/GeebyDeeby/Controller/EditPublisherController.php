@@ -119,8 +119,8 @@ class EditPublisherController extends AbstractBase
         if ($this->getRequest()->isDelete()) {
             $extra = $this->params()->fromRoute('extra');
             $result = $this->getDbService(SeriesPublisherService::class)->getSeriesForAddress($extra);
-            if (count($result) > 0) {
-                $msg = 'You cannot delete this address; it is used by Series ' . $result[0]['Series_ID'] . '.';
+            if (isset($result[0])) {
+                $msg = 'You cannot delete this address; it is used by Series ' . $result[0]->getId() . '.';
                 return $this->jsonDie($msg);
             }
         }

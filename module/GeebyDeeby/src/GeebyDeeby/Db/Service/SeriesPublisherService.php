@@ -29,9 +29,18 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\City;
+use GeebyDeeby\Db\Entity\Country;
+use GeebyDeeby\Db\Entity\Note;
+use GeebyDeeby\Db\Entity\Publisher;
+use GeebyDeeby\Db\Entity\PublishersAddress;
+use GeebyDeeby\Db\Entity\PublishersImprint;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesPublisher;
 use GeebyDeeby\Db\Entity\SeriesPublisherEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesPublishers;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -48,13 +57,13 @@ class SeriesPublisherService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param PersistenceManager $persistenceManager    Persistence manager
-     * @param SeriesPublishers   $seriesPublishersTable SeriesPublishers table
+     * @param EntityManager      $entityManager      Entity manager
+     * @param PersistenceManager $persistenceManager Persistence manager
      */
+    #[Autowire()]
     public function __construct(
+        protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesPublishers $seriesPublishersTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -66,7 +75,9 @@ class SeriesPublisherService extends AbstractDbService
      */
     public function createEntity(): SeriesPublisherEntityInterface
     {
-        return $this->seriesPublishersTable->createRow();
+        $entity = new SeriesPublisher();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -74,11 +85,18 @@ class SeriesPublisherService extends AbstractDbService
      *
      * @param int $cityID City ID
      *
-     * @return array
+     * @return SeriesEntityInterface[]
      */
     public function getSeriesForCity(int $cityID): array
     {
-        return iterator_to_array($this->seriesPublishersTable->getSeriesForCity($cityID));
+        $dql = 'SELECT DISTINCT s FROM ' . Series::class . ' s'
+            . ' INNER JOIN ' . SeriesPublisher::class . ' sp ON s.id = sp.series '
+            . 'INNER JOIN ' . PublishersAddress::class . ' pa ON sp.address = pa.id '
+            . 'WHERE pa.city = :city '
+            . 'ORDER BY s.seriesName, s.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('city', $cityID);
+        return $query->getResult();
     }
 
     /**
@@ -86,11 +104,18 @@ class SeriesPublisherService extends AbstractDbService
      *
      * @param int $countryID Country ID
      *
-     * @return array
+     * @return SeriesEntityInterface[]
      */
     public function getSeriesForCountry(int $countryID): array
     {
-        return iterator_to_array($this->seriesPublishersTable->getSeriesForCountry($countryID));
+        $dql = 'SELECT DISTINCT s FROM ' . Series::class . ' s'
+            . ' INNER JOIN ' . SeriesPublisher::class . ' sp ON s.id = sp.series '
+            . 'INNER JOIN ' . PublishersAddress::class . ' pa ON sp.address = pa.id '
+            . 'WHERE pa.country = :country '
+            . 'ORDER BY s.seriesName, s.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('country', $countryID);
+        return $query->getResult();
     }
 
     /**
@@ -98,11 +123,17 @@ class SeriesPublisherService extends AbstractDbService
      *
      * @param int $addressID Address ID
      *
-     * @return array
+     * @return SeriesEntityInterface[]
      */
     public function getSeriesForAddress(int $addressID): array
     {
-        return iterator_to_array($this->seriesPublishersTable->select(['Address_ID' => $addressID]));
+        $dql = 'SELECT DISTINCT s FROM ' . Series::class . ' s'
+            . ' INNER JOIN ' . SeriesPublisher::class . ' sp ON s.id = sp.series '
+            . 'WHERE sp.address = :address '
+            . 'ORDER BY s.seriesName, s.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('address', $addressID);
+        return $query->getResult();
     }
 
     /**
@@ -110,11 +141,17 @@ class SeriesPublisherService extends AbstractDbService
      *
      * @param int $imprintID Imprint ID
      *
-     * @return array
+     * @return SeriesEntityInterface[]
      */
     public function getSeriesForImprint(int $imprintID): array
     {
-        return iterator_to_array($this->seriesPublishersTable->select(['Imprint_ID' => $imprintID]));
+        $dql = 'SELECT DISTINCT s FROM ' . Series::class . ' s'
+            . ' INNER JOIN ' . SeriesPublisher::class . ' sp ON s.id = sp.series '
+            . 'WHERE sp.imprint = :imprint '
+            . 'ORDER BY s.seriesName, s.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('imprint', $imprintID);
+        return $query->getResult();
     }
 
     /**
@@ -122,11 +159,17 @@ class SeriesPublisherService extends AbstractDbService
      *
      * @param int $publisherID Publisher ID
      *
-     * @return array
+     * @return SeriesEntityInterface[]
      */
     public function getSeriesForPublisher(int $publisherID): array
     {
-        return iterator_to_array($this->seriesPublishersTable->getSeriesForPublisher($publisherID));
+        $dql = 'SELECT DISTINCT s FROM ' . Series::class . ' s'
+            . ' INNER JOIN ' . SeriesPublisher::class . ' sp ON s.id = sp.series '
+            . 'WHERE sp.publisher = :publisher '
+            . 'ORDER BY s.seriesName, s.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('publisher', $publisherID);
+        return $query->getResult();
     }
 
     /**
@@ -138,7 +181,24 @@ class SeriesPublisherService extends AbstractDbService
      */
     public function getPublishersForSeries(int $seriesID): array
     {
-        return iterator_to_array($this->seriesPublishersTable->getPublishers($seriesID));
+        $dql = 'SELECT sp.id AS Series_Publisher_ID, p.id AS Publisher_ID, p.publisherName as Publisher_Name, '
+            . 'pa.id AS Address_ID, pa.street AS Street, '
+            . 'ci.id AS City_ID, ci.cityName AS City_Name, '
+            . 'co.id AS Country_ID, co.countryName AS Country_Name, '
+            . 'n.id AS Note_ID, n.note AS Note, '
+            . 'i.id AS Imprint_ID, i.imprintName AS Imprint_Name '
+            . 'FROM ' . SeriesPublisher::class . ' sp '
+            . 'LEFT JOIN ' . Publisher::class . ' p ON sp.publisher = p.id '
+            . 'LEFT JOIN ' . PublishersAddress::class . ' pa ON sp.address = pa.id '
+            . 'LEFT JOIN ' . Country::class . ' co ON pa.country = co.id '
+            . 'LEFT JOIN ' . City::class . ' ci ON pa.city = ci.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON sp.note = n.id '
+            . 'LEFT JOIN ' . PublishersImprint::class . ' i ON sp.imprint = i.id '
+            . 'WHERE sp.series = :series '
+            . 'ORDER BY p.publisherName, i.imprintName, co.countryName, ci.cityName, pa.street';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -150,7 +210,7 @@ class SeriesPublisherService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?SeriesPublisherEntityInterface
     {
-        return $this->seriesPublishersTable->getByPrimaryKey($id);
+        return $this->entityManager->find(SeriesPublisher::class, $id);
     }
 
     /**
@@ -163,10 +223,10 @@ class SeriesPublisherService extends AbstractDbService
      */
     public function getBySeriesAndId(int $seriesId, string $spId): ?SeriesPublisherEntityInterface
     {
-        $query = ['Series_ID' => $seriesId, 'Series_Publisher_ID' => $spId];
-        foreach ($this->seriesPublishersTable->select($query) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT sp FROM ' . SeriesPublisher::class . ' sp WHERE sp.series = :series AND sp.id = :id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['series' => $seriesId, 'id' => $spId]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
