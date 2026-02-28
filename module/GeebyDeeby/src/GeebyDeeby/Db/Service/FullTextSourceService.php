@@ -30,10 +30,11 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsFullText;
 use GeebyDeeby\Db\Entity\FullTextSource;
 use GeebyDeeby\Db\Entity\FullTextSourceEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\FullTextSource as FullTextSourceTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -50,15 +51,13 @@ class FullTextSourceService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param EntityManager       $entityManager       Entity manager
-     * @param PersistenceManager  $persistenceManager  Persistence manager
-     * @param FullTextSourceTable $fullTextSourceTable FullTextSource table
+     * @param EntityManager      $entityManager      Entity manager
+     * @param PersistenceManager $persistenceManager Persistence manager
      */
+    #[Autowire()]
     public function __construct(
         protected EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected FullTextSourceTable $fullTextSourceTable
     ) {
         parent::__construct($persistenceManager);
     }
@@ -108,12 +107,20 @@ class FullTextSourceService extends AbstractDbService
     public function getList(?int $seriesID = null): array
     {
         $dql = 'SELECT fts FROM ' . FullTextSource::class . ' fts';
+        $params = [];
         if ($seriesID) {
-            // TODO: implement series filtering
-            return iterator_to_array($this->fullTextSourceTable->getList($seriesID));
+            $subquery = 'SELECT DISTINCT ifts.id FROM ' . Edition::class . ' e INNER JOIN '
+                . EditionsFullText::class . ' eft ON e.id = eft.edition INNER JOIN '
+                . FullTextSource::class . ' ifts ON eft.source = ifts.id'
+                . ' WHERE e.series = :series';
+            $dql .= " WHERE fts.id IN ($subquery)";
+            $params['series'] = $seriesID;
         }
         $dql .= ' ORDER BY fts.sourceName';
         $query = $this->entityManager->createQuery($dql);
+        if ($params) {
+            $query->setParameters($params);
+        }
         return $query->getResult();
     }
 }
