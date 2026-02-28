@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\FileEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesFileEntityInterface;
@@ -50,15 +51,17 @@ class SeriesFileService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
      * @param SeriesFiles        $seriesFilesTable   SeriesFiles table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected SeriesFiles $seriesFilesTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

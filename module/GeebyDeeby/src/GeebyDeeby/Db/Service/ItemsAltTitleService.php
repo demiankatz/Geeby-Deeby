@@ -29,14 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsAltTitle;
 use GeebyDeeby\Db\Entity\ItemsAltTitleEntityInterface;
 use GeebyDeeby\Db\Entity\Note;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_AltTitles table.
@@ -49,20 +46,6 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class ItemsAltTitleService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     */
-    #[Autowire()]
-    public function __construct(
-        protected EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *

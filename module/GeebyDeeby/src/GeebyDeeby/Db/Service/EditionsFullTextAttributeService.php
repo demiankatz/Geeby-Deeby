@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\EditionsFullTextAttributeEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\EditionsFullTextAttribute;
@@ -48,15 +49,17 @@ class EditionsFullTextAttributeService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager             $entityManager                  Entity manager
      * @param PersistenceManager        $persistenceManager             Persistence manager
      * @param EditionsFullTextAttribute $editionsFullTextAttributeTable EditionsFullTextAttribute table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected EditionsFullTextAttribute $editionsFullTextAttributeTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

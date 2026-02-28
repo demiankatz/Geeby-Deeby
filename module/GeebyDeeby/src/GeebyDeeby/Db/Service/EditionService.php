@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
@@ -55,18 +56,20 @@ class EditionService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
      * @param Editions           $editionsTable      Editions table
      * @param ItemService        $itemService        Item database service
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected Edition $editionsTable,
         #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
         protected ItemService $itemService
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

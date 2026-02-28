@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\TagEntityInterface;
 use GeebyDeeby\Db\Entity\TagsUriEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
@@ -49,15 +50,17 @@ class TagsUriService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
      * @param TagsURIs           $tagsUrisTable      TagsURIs table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected TagsURIs $tagsUrisTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

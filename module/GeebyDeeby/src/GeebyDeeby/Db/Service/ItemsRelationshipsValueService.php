@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsRelationshipEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsRelationshipsValueEntityInterface;
@@ -50,15 +51,17 @@ class ItemsRelationshipsValueService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager            $entityManager           Entity manager
      * @param PersistenceManager       $persistenceManager      Persistence manager
      * @param ItemsRelationshipsValues $relationshipsValueTable ItemsRelationshipsValues table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected ItemsRelationshipsValues $relationshipsValueTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\PeopleBibliographyEntityInterface;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
@@ -50,15 +51,17 @@ class PeopleBibliographyService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager           Entity manager
      * @param PersistenceManager $persistenceManager      Persistence manager
      * @param PeopleBibliography $peopleBibliographyTable PeopleBibliography table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected PeopleBibliography $peopleBibliographyTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

@@ -29,11 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\MaterialType;
 use GeebyDeeby\Db\Entity\MaterialTypeEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Material_Types table.
@@ -46,20 +43,6 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class MaterialTypeService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     */
-    #[Autowire()]
-    public function __construct(
-        protected EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *

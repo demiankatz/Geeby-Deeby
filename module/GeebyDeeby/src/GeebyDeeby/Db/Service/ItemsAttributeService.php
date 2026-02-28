@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\ItemsAttributeEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\ItemsAttribute;
@@ -48,15 +49,17 @@ class ItemsAttributeService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager       Entity manager
      * @param PersistenceManager $persistenceManager  Persistence manager
      * @param ItemsAttribute     $itemsAttributeTable ItemsAttribute table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected ItemsAttribute $itemsAttributeTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

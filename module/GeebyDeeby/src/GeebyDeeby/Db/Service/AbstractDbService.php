@@ -29,8 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\EntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
+use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service abstract base class
@@ -46,10 +48,14 @@ abstract class AbstractDbService implements DbServiceInterface
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
      */
-    public function __construct(protected PersistenceManager $persistenceManager)
-    {
+    #[Autowire()]
+    public function __construct(
+        protected EntityManager $entityManager,
+        protected PersistenceManager $persistenceManager,
+    ) {
     }
 
     /**

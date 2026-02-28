@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use DateTime;
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\LinkEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Link;
@@ -49,15 +50,17 @@ class LinkService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
      * @param Link               $linkTable          Link table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected Link $linkTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

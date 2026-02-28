@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\TagEntityInterface;
 use GeebyDeeby\Db\Entity\TagsAttributesValueEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
@@ -49,15 +50,17 @@ class TagsAttributesValueService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager        $entityManager      Entity manager
      * @param PersistenceManager   $persistenceManager Persistence manager
      * @param TagsAttributesValues $valuesTable        TagsAttribute table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected TagsAttributesValues $valuesTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

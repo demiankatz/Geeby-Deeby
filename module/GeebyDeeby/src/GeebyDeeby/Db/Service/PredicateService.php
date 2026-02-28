@@ -29,11 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\Predicate;
 use GeebyDeeby\Db\Entity\PredicateEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Predicates table.
@@ -46,20 +43,6 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class PredicateService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     */
-    #[Autowire()]
-    public function __construct(
-        protected EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *

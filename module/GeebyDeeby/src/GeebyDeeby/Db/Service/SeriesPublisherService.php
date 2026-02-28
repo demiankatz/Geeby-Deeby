@@ -29,7 +29,6 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\City;
 use GeebyDeeby\Db\Entity\Country;
 use GeebyDeeby\Db\Entity\Note;
@@ -40,8 +39,6 @@ use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesPublisher;
 use GeebyDeeby\Db\Entity\SeriesPublisherEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Publishers table.
@@ -54,20 +51,6 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class SeriesPublisherService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     */
-    #[Autowire()]
-    public function __construct(
-        protected EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *

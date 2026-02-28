@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\CitationEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsCreatorEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsCreatorsCitationEntityInterface;
@@ -50,15 +51,17 @@ class ItemsCreatorsCitationService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager          $entityManager      Entity manager
      * @param PersistenceManager     $persistenceManager Persistence manager
      * @param ItemsCreatorsCitations $itemsCreatorsTable ItemsCreatorsCitations table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected ItemsCreatorsCitations $itemsCreatorsTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

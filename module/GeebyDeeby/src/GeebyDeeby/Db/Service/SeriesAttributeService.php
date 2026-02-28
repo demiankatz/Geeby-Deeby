@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\SeriesAttributeEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\SeriesAttribute;
@@ -48,15 +49,17 @@ class SeriesAttributeService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager        Entity manager
      * @param PersistenceManager $persistenceManager   Persistence manager
      * @param SeriesAttribute    $seriesAttributeTable SeriesAttribute table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected SeriesAttribute $seriesAttributeTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

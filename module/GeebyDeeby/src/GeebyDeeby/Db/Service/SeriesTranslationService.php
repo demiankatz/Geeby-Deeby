@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesTranslationEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
@@ -49,15 +50,17 @@ class SeriesTranslationService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager           Entity manager
      * @param PersistenceManager $persistenceManager      Persistence manager
      * @param SeriesTranslations $seriesTranslationsTable SeriesTranslations table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected SeriesTranslations $seriesTranslationsTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

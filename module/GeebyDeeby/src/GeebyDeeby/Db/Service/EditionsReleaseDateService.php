@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsReleaseDateEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
@@ -49,15 +50,17 @@ class EditionsReleaseDateService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager        $entityManager      Entity manager
      * @param PersistenceManager   $persistenceManager Persistence manager
      * @param EditionsReleaseDates $releaseDatesTable  EditionsReleaseDates table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected EditionsReleaseDates $releaseDatesTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

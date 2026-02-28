@@ -29,13 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\City;
 use GeebyDeeby\Db\Entity\Country;
 use GeebyDeeby\Db\Entity\PublishersAddress;
 use GeebyDeeby\Db\Entity\PublishersAddressEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Publishers_Addresses table.
@@ -48,20 +45,6 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class PublishersAddressService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     */
-    #[Autowire()]
-    public function __construct(
-        protected EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *

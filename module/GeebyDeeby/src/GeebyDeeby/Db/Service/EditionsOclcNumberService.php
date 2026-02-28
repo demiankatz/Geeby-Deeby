@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\EditionsOclcNumberEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\EditionsOCLCNumbers;
@@ -48,15 +49,17 @@ class EditionsOclcNumberService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager       $entityManager      Entity manager
      * @param PersistenceManager  $persistenceManager Persistence manager
      * @param EditionsOCLCNumbers $oclcNumbersTable   EditionsOCLCNumbers table
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected EditionsOCLCNumbers $oclcNumbersTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**

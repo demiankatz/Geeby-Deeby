@@ -57,14 +57,13 @@ class SeriesService extends AbstractDbService
      * @param PersistenceManager $persistenceManager Persistence manager
      * @param SeriesTable        $seriesTable        Series table
      */
-    #[Autowire()]
     public function __construct(
-        protected EntityManager $entityManager,
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
         protected SeriesTable $seriesTable
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**
