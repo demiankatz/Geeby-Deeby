@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\UnionType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
 use GeebyDeeby\Db\DoctrinePaginatorAdapter;
@@ -140,7 +142,27 @@ class SeriesService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->seriesTable->getSuggestions($query, $limit));
+        $connection = $this->entityManager->getConnection();
+        $firstQuery = new QueryBuilder($connection);
+        $firstQuery->select('s.Series_ID, Series_Name')
+            ->from('Series', 's')
+            ->where('s.Series_Name LIKE :query');
+        $secondQuery = $this->entityManager->createQueryBuilder();
+        $secondQuery->select(
+            "s.Series_ID, CONCAT(sat.Series_AltName, ' [alt. title for ', s.Series_Name, ']') AS Series_Name"
+        )->from('Series_AltTitles', 'sat')
+            ->innerJoin('Series', 's', 'ON', 's.Series_ID = sat.Series_ID')
+            ->where('sat.Series_AltName LIKE :query');
+        $queryBuilder = new QueryBuilder($connection);
+        $union = $queryBuilder
+            ->union($firstQuery)
+            ->addUnion($secondQuery, UnionType::DISTINCT)
+            ->orderBy('Series_Name', 'ASC');
+        if ($limit) {
+            $union->setMaxResults($limit);
+        }
+        $result = $connection->executeQuery($union->getSQL(), ['query' => $query . '%']);
+        return $result->fetchAllAssociative();
     }
 
     /**

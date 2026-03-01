@@ -29,6 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\UnionType;
 use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
@@ -118,7 +120,27 @@ class ItemService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->itemTable->getSuggestions($query, $limit));
+        $connection = $this->entityManager->getConnection();
+        $firstQuery = new QueryBuilder($connection);
+        $firstQuery->select('i.Item_ID, Item_Name')
+            ->from('Items', 'i')
+            ->where('i.Item_Name LIKE :query');
+        $secondQuery = $this->entityManager->createQueryBuilder();
+        $secondQuery->select(
+            "i.Item_ID, CONCAT(iat.Item_AltName, ' [alt. title for ', i.Item_Name, ']') AS Item_Name"
+        )->from('Items_AltTitles', 'iat')
+            ->innerJoin('Items', 'i', 'ON', 'i.Item_ID = iat.Item_ID')
+            ->where('iat.Item_AltName LIKE :query');
+        $queryBuilder = new QueryBuilder($connection);
+        $union = $queryBuilder
+            ->union($firstQuery)
+            ->addUnion($secondQuery, UnionType::DISTINCT)
+            ->orderBy('Item_Name', 'ASC');
+        if ($limit) {
+            $union->setMaxResults($limit);
+        }
+        $result = $connection->executeQuery($union->getSQL(), ['query' => $query . '%']);
+        return $result->fetchAllAssociative();
     }
 
     /**
