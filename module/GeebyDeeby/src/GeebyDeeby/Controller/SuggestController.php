@@ -29,6 +29,7 @@
 
 namespace GeebyDeeby\Controller;
 
+use GeebyDeeby\Db\Entity\EntityInterface;
 use GeebyDeeby\Db\Service\EditionService;
 use GeebyDeeby\Db\Service\ItemService;
 use GeebyDeeby\Db\Service\NoteService;
@@ -51,6 +52,29 @@ use function is_callable;
  */
 class SuggestController extends AbstractBase
 {
+    /**
+     * Format an array into a suggestion, assuming the array has an ID field and a display field.
+     *
+     * @param EntityInterface|array $suggestion Suggestion to format
+     *
+     * @return string
+     */
+    protected function formatSuggestionArray(EntityInterface|array $suggestion): string
+    {
+        if ($suggestion instanceof EntityInterface) {
+            return $suggestion->getPrimaryKeyValue() . ': ' . $suggestion->getDisplayName() . "\n";
+        }
+        $id = $display = 'ERROR - MISSING';
+        foreach ($suggestion as $key => $value) {
+            if (str_ends_with($key, '_ID')) {
+                $id = $value;
+            } else {
+                $display = $value;
+            }
+        }
+        return "$id: $display\n";
+    }
+
     /**
      * Default home page
      *
@@ -84,8 +108,7 @@ class SuggestController extends AbstractBase
         );
         $response = '';
         foreach ($suggestions as $current) {
-            $response .= $current->getPrimaryKeyValue() . ': '
-                . $current->getDisplayName() . "\n";
+            $response .= $this->formatSuggestionArray($current);
         }
         return $this->getResponse()->setContent($response);
     }
