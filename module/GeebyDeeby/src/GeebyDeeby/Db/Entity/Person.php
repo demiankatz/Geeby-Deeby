@@ -61,34 +61,34 @@ class Person extends AbstractEntity implements PersonEntityInterface
     /**
      * First name.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'First_Name', type: 'text', length: 255, nullable: true)]
-    protected string $firstName;
+    protected ?string $firstName;
 
     /**
      * Last name.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Last_Name', type: 'text', length: 255, nullable: true)]
-    protected string $lastName;
+    protected ?string $lastName;
 
     /**
      * Extra details.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Extra_Details', type: 'text', length: 255, nullable: true)]
-    protected string $extraDetails;
+    protected ?string $extraDetails;
 
     /**
      * Biography.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Biography', type: 'text', length: 65535, nullable: true)]
-    protected string $biography;
+    protected ?string $biography;
 
     /**
      * Authority source.
@@ -132,7 +132,7 @@ class Person extends AbstractEntity implements PersonEntityInterface
      */
     public function getFirstName(): string
     {
-        return $this->firstName;
+        return $this->firstName ?? '';
     }
 
     /**
@@ -155,7 +155,7 @@ class Person extends AbstractEntity implements PersonEntityInterface
      */
     public function getLastName(): string
     {
-        return $this->lastName;
+        return $this->lastName ?? '';
     }
 
     /**
@@ -178,7 +178,7 @@ class Person extends AbstractEntity implements PersonEntityInterface
      */
     public function getExtraDetails(): string
     {
-        return $this->extraDetails;
+        return $this->extraDetails ?? '';
     }
 
     /**
@@ -201,7 +201,7 @@ class Person extends AbstractEntity implements PersonEntityInterface
      */
     public function getBiography(): string
     {
-        return $this->biography;
+        return $this->biography ?? '';
     }
 
     /**
