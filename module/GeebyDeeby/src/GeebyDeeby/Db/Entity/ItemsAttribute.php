@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Tag attribute entity model.
+ * Item attribute entity model.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace GeebyDeeby\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Tag attribute entity model.
+ * Item attribute entity model.
  *
  * @category GeebyDeeby
  * @package  Database
@@ -40,17 +40,17 @@ use Doctrine\ORM\Mapping as ORM;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-#[ORM\Table(name: 'Tags_Attributes')]
+#[ORM\Table(name: 'Items_Attributes')]
 #[ORM\Entity]
 #[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
-class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterface
+class ItemsAttribute extends AbstractEntity implements ItemsAttributeEntityInterface
 {
     /**
      * Unique ID.
      *
      * @var int
      */
-    #[ORM\Column(name: 'Tags_Attribute_ID', type: 'bigint', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Column(name: 'Items_Attribute_ID', type: 'bigint', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     protected int $id;
@@ -60,7 +60,7 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
      *
      * @var string
      */
-    #[ORM\Column(name: 'Tags_Attribute_Name', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'Items_Attribute_Name', type: 'string', length: 255, nullable: false)]
     protected string $attributeName;
 
     /**
@@ -68,7 +68,7 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
      *
      * @var ?string
      */
-    #[ORM\Column(name: 'Tags_Attribute_RDF_Property', type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'Items_Attribute_RDF_Property', type: 'string', length: 255, nullable: true)]
     protected ?string $rdfProperty;
 
     /**

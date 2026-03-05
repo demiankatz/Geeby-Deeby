@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Tag attribute entity model.
+ * Series attribute entity model.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace GeebyDeeby\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Tag attribute entity model.
+ * Series attribute entity model.
  *
  * @category GeebyDeeby
  * @package  Database
@@ -40,17 +40,17 @@ use Doctrine\ORM\Mapping as ORM;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-#[ORM\Table(name: 'Tags_Attributes')]
+#[ORM\Table(name: 'Series_Attributes')]
 #[ORM\Entity]
 #[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
-class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterface
+class SeriesAttribute extends AbstractEntity implements SeriesAttributeEntityInterface
 {
     /**
      * Unique ID.
      *
      * @var int
      */
-    #[ORM\Column(name: 'Tags_Attribute_ID', type: 'bigint', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Column(name: 'Series_Attribute_ID', type: 'bigint', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     protected int $id;
@@ -60,7 +60,7 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
      *
      * @var string
      */
-    #[ORM\Column(name: 'Tags_Attribute_Name', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'Series_Attribute_Name', type: 'string', length: 255, nullable: false)]
     protected string $attributeName;
 
     /**
@@ -68,7 +68,7 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
      *
      * @var ?string
      */
-    #[ORM\Column(name: 'Tags_Attribute_RDF_Property', type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'Series_Attribute_RDF_Property', type: 'string', length: 255, nullable: true)]
     protected ?string $rdfProperty;
 
     /**
@@ -86,6 +86,14 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
      */
     #[ORM\Column(name: 'Display_Priority', type: 'integer', nullable: false, options: ['default' => 0])]
     protected int $displayPriority = 0;
+
+    /**
+     * URL to link values to.
+     *
+     * @var ?string
+     */
+    #[ORM\Column(name: 'Value_Link', type: 'string', length: 2048, nullable: true, options: ['default' => null])]
+    protected ?string $valueLink = null;
 
     /**
      * Get identifier (returns null for an uninitialized or non-persisted object).
@@ -186,6 +194,29 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
     public function setDisplayPriority(int $priority): static
     {
         $this->displayPriority = $priority;
+        return $this;
+    }
+
+    /**
+     * Get the value link (null if none).
+     *
+     * @return ?string
+     */
+    public function getValueLink(): ?string
+    {
+        return $this->valueLink;
+    }
+
+    /**
+     * Set the value link.
+     *
+     * @param ?string $link New value link (null for none)
+     *
+     * @return static
+     */
+    public function setValueLink(?string $link): static
+    {
+        $this->valueLink = $link;
         return $this;
     }
 }

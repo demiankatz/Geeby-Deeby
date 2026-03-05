@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Tag attribute entity model.
+ * Edition attribute entity model.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace GeebyDeeby\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Tag attribute entity model.
+ * Edition attribute entity model.
  *
  * @category GeebyDeeby
  * @package  Database
@@ -40,17 +40,17 @@ use Doctrine\ORM\Mapping as ORM;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-#[ORM\Table(name: 'Tags_Attributes')]
+#[ORM\Table(name: 'Editions_Attributes')]
 #[ORM\Entity]
 #[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
-class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterface
+class EditionsAttribute extends AbstractEntity implements EditionsAttributeEntityInterface
 {
     /**
      * Unique ID.
      *
      * @var int
      */
-    #[ORM\Column(name: 'Tags_Attribute_ID', type: 'bigint', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Column(name: 'Editions_Attribute_ID', type: 'bigint', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     protected int $id;
@@ -60,7 +60,7 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
      *
      * @var string
      */
-    #[ORM\Column(name: 'Tags_Attribute_Name', type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'Editions_Attribute_Name', type: 'string', length: 255, nullable: false)]
     protected string $attributeName;
 
     /**
@@ -68,7 +68,7 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
      *
      * @var ?string
      */
-    #[ORM\Column(name: 'Tags_Attribute_RDF_Property', type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'Editions_Attribute_RDF_Property', type: 'string', length: 255, nullable: true)]
     protected ?string $rdfProperty;
 
     /**
@@ -78,6 +78,14 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
      */
     #[ORM\Column(name: 'Allow_HTML', type: 'boolean', nullable: false, options: ['default' => false])]
     protected bool $allowHtml = false;
+
+    /**
+     * Should this value be copied to clones?
+     *
+     * @var bool
+     */
+    #[ORM\Column(name: 'Copy_To_Clone', type: 'boolean', nullable: false, options: ['default' => false])]
+    protected bool $copyToClone = false;
 
     /**
      * Display priority.
@@ -174,6 +182,29 @@ class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterfa
     public function getDisplayPriority(): int
     {
         return $this->displayPriority;
+    }
+
+    /**
+     * Should this attribute be copied to clones?
+     *
+     * @return bool
+     */
+    public function copyToClone(): bool
+    {
+        return $this->copyToClone;
+    }
+
+    /**
+     * Set whether this attribute should be copied to clones.
+     *
+     * @param bool $state New state
+     *
+     * @return static
+     */
+    public function setCopyToClone(bool $state): static
+    {
+        $this->copyToClone = $state;
+        return $this;
     }
 
     /**
