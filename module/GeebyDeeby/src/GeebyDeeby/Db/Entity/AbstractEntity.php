@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Entity;
 
 use ArrayAccess;
+use DateTime;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -68,6 +69,10 @@ abstract class AbstractEntity implements ArrayAccess, EntityInterface
                 if (str_ends_with($args['name'], '_ID') && is_callable([$value, 'getId'])) {
                     $vals[$name] = $value->getId();
                     $name = str_replace('_ID', '_Object', $name);
+                }
+                if ($value instanceof DateTime) {
+                    $vals[$name . 'Object'] = $value;
+                    $value = $value->format('Y-m-d h:i:s');
                 }
                 $vals[$name] = $value;
             }

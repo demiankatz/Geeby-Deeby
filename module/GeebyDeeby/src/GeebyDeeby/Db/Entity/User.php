@@ -140,7 +140,7 @@ class User extends AbstractEntity implements UserEntityInterface
     /**
      * Has the user been approved?
      *
-     * @var string
+     * @var Approved
      */
     #[ORM\Column(
         name: 'Approved',
@@ -149,7 +149,7 @@ class User extends AbstractEntity implements UserEntityInterface
         nullable: false,
         options: ['default' => Approved::No]
     )]
-    protected string $approved = Approved::No;
+    protected Approved $approved = Approved::No;
 
     /**
      * Get identifier (returns null for an uninitialized or non-persisted object).
@@ -364,7 +364,7 @@ class User extends AbstractEntity implements UserEntityInterface
      */
     public function isApproved(): bool
     {
-        return $this->approved === 'y';
+        return $this->approved === Approved::Yes;
     }
 
     /**
@@ -376,7 +376,7 @@ class User extends AbstractEntity implements UserEntityInterface
      */
     public function setIsApproved(bool $approved): static
     {
-        $this->approved = $approved ? 'y' : 'n';
+        $this->approved = $approved ? Approved::Yes : Approved::No;
         return $this;
     }
 }

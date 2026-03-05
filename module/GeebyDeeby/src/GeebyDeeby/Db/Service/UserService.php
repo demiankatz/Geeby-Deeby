@@ -29,11 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Crypt\PasswordHasher;
+use GeebyDeeby\Db\Entity\Enum\Approved;
+use GeebyDeeby\Db\Entity\User;
 use GeebyDeeby\Db\Entity\UserEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\User;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Users table.
@@ -47,29 +46,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class UserService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param User               $userTable          User table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected User $userTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return UserEntityInterface
      */
     public function createEntity(): UserEntityInterface
     {
-        return $this->userTable->createRow();
+        $user = new User();
+        $user->setEntityManager($this->entityManager);
+        return $user;
     }
 
     /**
@@ -81,7 +66,7 @@ class UserService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?UserEntityInterface
     {
-        return $this->userTable->getByPrimaryKey($id);
+        return $this->entityManager->find(User::class, $id);
     }
 
     /**
@@ -93,10 +78,11 @@ class UserService extends AbstractDbService
      */
     public function getByUsername(string $username): ?UserEntityInterface
     {
-        foreach ($this->userTable->select(['Username' => $username]) as $user) {
-            return $user;
-        }
-        return null;
+        $dql = 'SELECT u FROM ' . User::class . ' u WHERE u.username = :username';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('username', $username);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -121,7 +107,18 @@ class UserService extends AbstractDbService
      */
     public function getList(?bool $approvedFilter = null): array
     {
-        return iterator_to_array($this->userTable->getList($approvedFilter));
+        $dql = 'SELECT u FROM ' . User::class . ' u';
+        $params = [];
+        if ($approvedFilter !== null) {
+            $dql .= ' WHERE u.approved = :approvedFilter';
+            $params['approvedFilter'] = $approvedFilter ? Approved::Yes : Approved::No;
+        }
+        $dql .= ' ORDER BY u.username';
+        $query = $this->entityManager->createQuery($dql);
+        if ($params) {
+            $query->setParameters($params);
+        }
+        return $query->getResult();
     }
 
     /**
@@ -135,6 +132,8 @@ class UserService extends AbstractDbService
      */
     public function passwordLogin(string $username, string $password): ?UserEntityInterface
     {
-        return $this->userTable->passwordLogin($username, $password);
+        $user = $this->getByUsername($username);
+        $hasher = new PasswordHasher();
+        return ($user && $hasher->verify($password, $user->getPasswordHash())) ? $user : null;
     }
 }
