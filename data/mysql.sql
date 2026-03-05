@@ -188,8 +188,8 @@ CREATE TABLE `Editions_Attributes` (
   `Editions_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Editions_Attribute_Name` varchar(255) NOT NULL,
   `Editions_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
-  `Copy_To_Clone` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
+  `Copy_To_Clone` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Editions_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
@@ -262,7 +262,7 @@ CREATE TABLE `Editions_Full_Text_Attributes` (
   `Editions_Full_Text_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Editions_Full_Text_Attribute_Name` varchar(255) NOT NULL,
   `Editions_Full_Text_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Editions_Full_Text_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
@@ -505,7 +505,7 @@ CREATE TABLE `Items_Attributes` (
   `Items_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Items_Attribute_Name` varchar(255) NOT NULL,
   `Items_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Items_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
@@ -1076,7 +1076,7 @@ CREATE TABLE `Series_Attributes` (
   `Series_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Series_Attribute_Name` varchar(255) NOT NULL,
   `Series_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   `Value_Link` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`Series_Attribute_ID`)
@@ -1322,7 +1322,7 @@ CREATE TABLE `Tags_Attributes` (
   `Tags_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Tags_Attribute_Name` varchar(255) NOT NULL,
   `Tags_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Tags_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
