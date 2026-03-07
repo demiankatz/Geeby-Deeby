@@ -30,9 +30,17 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Collection;
 use GeebyDeeby\Db\Entity\CollectionEntityInterface;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\Enum\CollectionStatus;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\Language;
+use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\User;
 use GeebyDeeby\Db\Entity\UserEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Collections;
@@ -72,7 +80,9 @@ class CollectionService extends AbstractDbService
      */
     public function createEntity(): CollectionEntityInterface
     {
-        return $this->collectionTable->createRow();
+        $entity = new Collection();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -91,16 +101,18 @@ class CollectionService extends AbstractDbService
         int|SeriesEntityInterface $series,
         string $status
     ): ?CollectionEntityInterface {
-        $where = [
-            'User_ID' => $user instanceof UserEntityInterface ? $user->getId() : $user,
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
-            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
-            'Collection_Status' => $status,
+        $dql = 'SELECT c FROM ' . Collection::class
+            . ' c WHERE c.user=:user AND c.item=:item AND c.series=:series AND c.status=:status';
+        $params = [
+            'user' => $user instanceof UserEntityInterface ? $user->getId() : $user,
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
+            'series' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
+            'status' => CollectionStatus::from($status),
         ];
-        foreach ($this->collectionTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -159,7 +171,18 @@ class CollectionService extends AbstractDbService
      */
     public function getForItem(int $itemID, ?string $type = null): array
     {
-        return iterator_to_array($this->collectionTable->getForItem($itemID, $type));
+        $params = ['item' => $itemID];
+        $dql = 'SELECT u.id AS User_ID, u.username AS Username, c.note AS Collection_Note, '
+            . 'c.status AS Collection_Status FROM ' . Collection::class
+            . ' c INNER JOIN ' . User::class . ' u ON c.user=u.id WHERE c.item=:item ';
+        if ($type) {
+            $dql .= 'AND c.status=:status ';
+            $params['status'] = CollectionStatus::from($type);
+        }
+        $dql .= 'ORDER BY u.username, c.status, c.note';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
@@ -174,7 +197,31 @@ class CollectionService extends AbstractDbService
      */
     public function getForUser(int $userID, string|array|null $type = null, bool $groupByLang = false): array
     {
-        return iterator_to_array($this->collectionTable->getForUser($userID, $type, $groupByLang));
+        $extraJoins = $extraSelects = $extraWhere = '';
+        $order = 's.seriesName, s.id, c.status, e.volume, e.position, e.replacementNumber, i.itemName';
+        $params = ['user' => $userID];
+        if ($groupByLang) {
+            $extraJoins = 'INNER JOIN ' . Language::class . ' l ON s.language=l.id ';
+            $extraSelects = ', l.id AS Language_ID, l.languageName AS Language_Name';
+            $order = 'l.languageName, ' . $order;
+        }
+        if ($type) {
+            $extraWhere = 'AND c.status IN (:type) ';
+            $params['type'] = (array)$type;
+        }
+        $dql = 'SELECT c.status AS Collection_Status, c.note AS Collection_Note, '
+            . 'i.id AS Item_ID, i.itemName AS Item_Name, '
+            . 'iat.altName as Item_AltName, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 's.id AS Series_ID, s.seriesName AS Series_Name' . $extraSelects
+            . ' FROM ' . Collection::class . ' c INNER JOIN ' . Item::class . ' i ON c.item=i.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON i.id=e.item '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'INNER JOIN ' . Series::class . ' s ON c.series=s.id AND e.series=s.id ' . $extraJoins
+            . 'WHERE c.user = :user ' . $extraWhere . 'GROUP BY ' . $order . ', i.id ORDER BY ' . $order;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
