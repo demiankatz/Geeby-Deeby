@@ -24,7 +24,7 @@
  * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @file     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
 
 namespace GeebyDeeby\Db\Entity;
@@ -38,7 +38,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @package  Database
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @file     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
 #[ORM\Table(name: 'Series_Files')]
 #[ORM\Index(name: 'idx_aa4a50b87e63b755', columns: ['Series_ID'])]
