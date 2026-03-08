@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Item relationship value entity model.
+ * Item adaptation entity model.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace GeebyDeeby\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Item relationship value entity model.
+ * Item adaptation entity model.
  *
  * @category GeebyDeeby
  * @package  Database
