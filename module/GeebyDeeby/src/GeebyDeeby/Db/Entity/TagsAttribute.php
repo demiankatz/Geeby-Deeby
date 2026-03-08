@@ -42,7 +42,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Table(name: 'Tags_Attributes')]
 #[ORM\Entity]
-#[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
 class TagsAttribute extends AbstractEntity implements TagsAttributeEntityInterface
 {
     /**

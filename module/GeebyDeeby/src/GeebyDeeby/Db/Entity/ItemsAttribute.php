@@ -42,7 +42,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Table(name: 'Items_Attributes')]
 #[ORM\Entity]
-#[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
 class ItemsAttribute extends AbstractEntity implements ItemsAttributeEntityInterface
 {
     /**

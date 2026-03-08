@@ -29,11 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\EditionsFullTextAttribute;
 use GeebyDeeby\Db\Entity\EditionsFullTextAttributeEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsFullTextAttribute;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Editions_Full_Text_Attributes table.
@@ -47,29 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsFullTextAttributeService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager             $entityManager                  Entity manager
-     * @param PersistenceManager        $persistenceManager             Persistence manager
-     * @param EditionsFullTextAttribute $editionsFullTextAttributeTable EditionsFullTextAttribute table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsFullTextAttribute $editionsFullTextAttributeTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsFullTextAttributeEntityInterface
      */
     public function createEntity(): EditionsFullTextAttributeEntityInterface
     {
-        return $this->editionsFullTextAttributeTable->createRow();
+        return new EditionsFullTextAttribute();
     }
 
     /**
@@ -81,7 +62,7 @@ class EditionsFullTextAttributeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsFullTextAttributeEntityInterface
     {
-        return $this->editionsFullTextAttributeTable->getByPrimaryKey($id);
+        return $this->entityManager->find(EditionsFullTextAttribute::class, $id);
     }
 
     /**
@@ -104,6 +85,8 @@ class EditionsFullTextAttributeService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->editionsFullTextAttributeTable->getList());
+        $dql = 'SELECT a FROM ' . EditionsFullTextAttribute::class . ' a ORDER BY a.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

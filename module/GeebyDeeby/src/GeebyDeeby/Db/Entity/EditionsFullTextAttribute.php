@@ -42,7 +42,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Table(name: 'Editions_Full_Text_Attributes')]
 #[ORM\Entity]
-#[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
 class EditionsFullTextAttribute extends AbstractEntity implements EditionsFullTextAttributeEntityInterface
 {
     /**
