@@ -120,7 +120,7 @@ class File extends TableAwareGateway implements FileEntityInterface
     }
 
     /**
-     * Set the file.
+     * Set the description of the file.
      *
      * @param string $description New description
      *
