@@ -77,7 +77,7 @@ class ItemsAdaptations extends TableAwareGateway implements ItemsAdaptationEntit
     }
 
     /**
-     * Get adapted item.
+     * Get translated item.
      *
      * @return ItemEntityInterface
      */
@@ -87,7 +87,7 @@ class ItemsAdaptations extends TableAwareGateway implements ItemsAdaptationEntit
     }
 
     /**
-     * Set adapted item.
+     * Set translated item.
      *
      * @param int|ItemEntityInterface $item Associated item entity or ID
      *
