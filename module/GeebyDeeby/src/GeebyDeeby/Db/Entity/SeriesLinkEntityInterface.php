@@ -57,18 +57,18 @@ interface SeriesLinkEntityInterface extends EntityInterface
     public function setSeries(int|SeriesEntityInterface $series): static;
 
     /**
-     * Get associated Link.
+     * Get associated link.
      *
      * @return LinkEntityInterface
      */
     public function getLink(): LinkEntityInterface;
 
     /**
-     * Set associated Link.
+     * Set associated link.
      *
-     * @param int|LinkEntityInterface $Link Associated Link entity or ID
+     * @param int|LinkEntityInterface $link Associated link entity or ID
      *
      * @return static
      */
-    public function setLink(int|LinkEntityInterface $Link): static;
+    public function setLink(int|LinkEntityInterface $link): static;
 }
