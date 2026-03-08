@@ -87,7 +87,7 @@ interface FileEntityInterface extends EntityInterface
     public function getDescription(): string;
 
     /**
-     * Set the file.
+     * Set the description of the file.
      *
      * @param string $description New description
      *
