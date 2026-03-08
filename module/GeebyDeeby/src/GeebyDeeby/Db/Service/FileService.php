@@ -29,11 +29,9 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\File;
 use GeebyDeeby\Db\Entity\FileEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\File;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\FileType;
 
 /**
  * Database service for the Files table.
@@ -47,29 +45,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class FileService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param File               $fileTable          File table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected File $fileTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return FileEntityInterface
      */
     public function createEntity(): FileEntityInterface
     {
-        return $this->fileTable->createRow();
+        $file = new File();
+        $file->setEntityManager($this->entityManager);
+        return $file;
     }
 
     /**
@@ -81,7 +65,7 @@ class FileService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?FileEntityInterface
     {
-        return $this->fileTable->getByPrimaryKey($id);
+        return $this->entityManager->find(File::class, $id);
     }
 
     /**
@@ -107,7 +91,9 @@ class FileService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->fileTable->getList());
+        $dql = 'SELECT f FROM ' . File::class . ' f ORDER BY f.fileName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -122,6 +108,24 @@ class FileService extends AbstractDbService
      */
     public function getFilesByType(?array $include = null, ?array $exclude = null): array
     {
-        return iterator_to_array($this->fileTable->getFilesByType($include, $exclude));
+        $where = $params = [];
+        if ($include) {
+            $where[] = 'f.fileType IN (:include)';
+            $params['include'] = $include;
+        }
+        if ($exclude) {
+            $where[] = 'f.fileType NOT IN (:exclude)';
+            $params['exclude'] = $exclude;
+        }
+        $dql = 'SELECT f.id AS File_ID, f.fileName AS File_Name, f.path AS File_Path, f.description AS Description, '
+            . 't.id AS File_Type_ID, t.fileTypeName AS File_Type '
+            . 'FROM ' . File::class . ' f INNER JOIN ' . FileType::class . ' t ON f.fileType=t.id'
+            . ($where ? ' WHERE ' . implode(' AND ', $where) : '')
+            . ' ORDER BY t.fileTypeName, f.fileName';
+        $query = $this->entityManager->createQuery($dql);
+        if ($params) {
+            $query->setParameters($params);
+        }
+        return $query->getResult();
     }
 }
