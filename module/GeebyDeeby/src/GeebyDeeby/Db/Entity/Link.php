@@ -211,7 +211,7 @@ class Link extends AbstractEntity implements LinkEntityInterface
      */
     public function setDateChecked(string|DateTime $checked): static
     {
-        $this->lastLogin = $date instanceof DateTime ? $date : DateTime::createFromFormat('Y-m-d', $date);
+        $this->checked = $checked instanceof DateTime ? $checked : DateTime::createFromFormat('Y-m-d', $checked);
         return $this;
     }
 
