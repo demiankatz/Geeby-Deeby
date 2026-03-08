@@ -57,14 +57,14 @@ interface ItemsTranslationEntityInterface extends EntityInterface
     public function setSourceItem(int|ItemEntityInterface $item): static;
 
     /**
-     * Get adapted item.
+     * Get translated item.
      *
      * @return ItemEntityInterface
      */
     public function getTranslatedItem(): ItemEntityInterface;
 
     /**
-     * Set adapted item.
+     * Set translated item.
      *
      * @param int|ItemEntityInterface $item Associated item entity or ID
      *
