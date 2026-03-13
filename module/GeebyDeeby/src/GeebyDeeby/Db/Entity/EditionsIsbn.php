@@ -149,7 +149,7 @@ class EditionsIsbn extends AbstractEntity implements EditionsIsbnEntityInterface
      */
     public function getIsbn10(): ?string
     {
-        $this->isbn10;
+        return $this->isbn10;
     }
 
     /**
