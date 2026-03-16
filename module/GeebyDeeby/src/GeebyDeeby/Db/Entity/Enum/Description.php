@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Collection status enumeration.
+ * Description enumeration.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace GeebyDeeby\Db\Entity\Enum;
 
 /**
- * Collection status enumeration.
+ * Description enumeration.
  *
  * @category GeebyDeeby
  * @package  Database
@@ -38,9 +38,10 @@ namespace GeebyDeeby\Db\Entity\Enum;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-enum CollectionStatus: string
+enum Description: string
 {
-    case Have = 'have';
-    case Want = 'want';
-    case Extra = 'extra';
+    case LC = 'LC';
+    case Cover = 'Cover';
+    case User = 'User';
+    case Ad = 'Ad';
 }
