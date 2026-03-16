@@ -114,10 +114,10 @@ class Collection extends AbstractEntity implements CollectionEntityInterface
     /**
      * Collection note.
      *
-     * @var string
+     * @var ?string
      */
     #[Orm\Column(name: 'Collection_Note', type: 'text', length: 255, nullable: true)]
-    protected string $note;
+    protected ?string $note;
 
     /**
      * Get associated series.
