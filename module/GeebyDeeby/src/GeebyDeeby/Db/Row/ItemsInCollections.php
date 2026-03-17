@@ -101,7 +101,7 @@ class ItemsInCollections extends TableAwareGateway implements ItemsInCollectionE
     }
 
     /**
-     * Get position in credits.
+     * Get position in collection.
      *
      * @return int
      */
@@ -111,9 +111,9 @@ class ItemsInCollections extends TableAwareGateway implements ItemsInCollectionE
     }
 
     /**
-     * Set position in credits.
+     * Set position in collection.
      *
-     * @param int $position Position in credits
+     * @param int $position Position in collection
      *
      * @return static
      */
