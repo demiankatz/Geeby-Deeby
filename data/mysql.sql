@@ -626,7 +626,8 @@ CREATE TABLE `Items_In_Collections` (
   `Note_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Item_ID`,`Collection_Item_ID`,`Position`),
   FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
-  FOREIGN KEY (`Collection_Item_ID`) REFERENCES `Items` (`Item_ID`)
+  FOREIGN KEY (`Collection_Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
