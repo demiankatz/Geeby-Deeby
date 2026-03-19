@@ -29,12 +29,9 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsDescription;
 use GeebyDeeby\Db\Entity\ItemsDescriptionEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsDescriptions;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_Descriptions table.
@@ -48,29 +45,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsDescriptionService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager          Entity manager
-     * @param PersistenceManager $persistenceManager     Persistence manager
-     * @param ItemsDescriptions  $itemsDescriptionsTable ItemsDescriptions table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsDescriptions $itemsDescriptionsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsDescriptionEntityInterface
      */
     public function createEntity(): ItemsDescriptionEntityInterface
     {
-        return $this->itemsDescriptionsTable->createRow();
+        $entity = new ItemsDescription();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -78,11 +61,14 @@ class ItemsDescriptionService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return ItemsDescriptionEntityInterface[]
      */
     public function getDescriptions(int $itemID): array
     {
-        return iterator_to_array($this->itemsDescriptionsTable->getDescriptions($itemID));
+        $dql = 'SELECT d FROM ' . ItemsDescription::class . ' d WHERE d.item=:item ORDER BY d.source';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -97,13 +83,11 @@ class ItemsDescriptionService extends AbstractDbService
         int|ItemEntityInterface $item,
         string $source
     ): ?ItemsDescriptionEntityInterface {
-        $where = [
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
-            'Source' => $source instanceof ItemEntityInterface ? $source->getId() : $source,
-        ];
-        foreach ($this->itemsDescriptionsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT d FROM ' . ItemsDescription::class . ' d WHERE d.item=:item AND d.source=:source';
+        $itemId = $item instanceof ItemEntityInterface ? $item->getId() : $item;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['item' => $itemId, 'source' => $source]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
