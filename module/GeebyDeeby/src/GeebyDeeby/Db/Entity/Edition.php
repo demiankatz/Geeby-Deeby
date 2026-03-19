@@ -69,7 +69,7 @@ class Edition extends AbstractEntity implements EditionEntityInterface
      * @var string
      */
     #[ORM\Column(name: 'Edition_Name', type: 'text', length: 255, nullable: false)]
-    protected string $EditionName;
+    protected string $editionName;
 
     /**
      * Item.
@@ -244,7 +244,7 @@ class Edition extends AbstractEntity implements EditionEntityInterface
      */
     public function getEditionName(): string
     {
-        return $this->EditionName;
+        return $this->editionName;
     }
 
     /**
@@ -256,7 +256,7 @@ class Edition extends AbstractEntity implements EditionEntityInterface
      */
     public function setEditionName(string $name): static
     {
-        $this->EditionName = $name;
+        $this->editionName = $name;
         return $this;
     }
 

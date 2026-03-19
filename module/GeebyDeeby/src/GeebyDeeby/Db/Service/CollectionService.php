@@ -29,7 +29,6 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\Collection;
 use GeebyDeeby\Db\Entity\CollectionEntityInterface;
 use GeebyDeeby\Db\Entity\Edition;
@@ -42,9 +41,6 @@ use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\User;
 use GeebyDeeby\Db\Entity\UserEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Collections;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Collections table.
@@ -57,22 +53,6 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class CollectionService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Collections        $collectionTable    Collections table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Collections $collectionTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *
@@ -236,7 +216,27 @@ class CollectionService extends AbstractDbService
      */
     public function compareCollections(int $userID, string $userStatus, string $desiredStatus): array
     {
-        return iterator_to_array($this->collectionTable->compareCollections($userID, $userStatus, $desiredStatus));
+        $orderAndGroup = 'u.username, s.seriesName, s.id, e.volume, e.position, e.replacementNumber, i.itemName, i.id';
+        $dql = 'SELECT c.status AS Collection_Status, c.note AS Collection_Note,'
+            . ' o.note AS Other_Note,'
+            . ' i.id AS Item_ID, i.itemName AS Item_Name,'
+            . ' s.id AS Series_ID, s.seriesName AS Series_Name,'
+            . ' u.id AS User_ID, u.username AS Username, u.name AS Name,'
+            . ' e.id AS Edition_ID, e.editionName AS Edition_Name, e.volume AS Volume, e.position AS Position,'
+            . ' e.replacementNumber as Replacement_Number, iat.altName AS Item_AltName'
+            . ' FROM ' . Collection::class . ' c'
+            . ' INNER JOIN ' . Collection::class . ' o ON c.series=o.series AND c.item=o.item'
+            . ' INNER JOIN ' . Series::class . ' s ON c.series=s.id'
+            . ' INNER JOIN ' . Item::class . ' i ON c.item=i.id'
+            . ' INNER JOIN ' . User::class . ' u ON c.user=u.id'
+            . ' INNER JOIN ' . Edition::class . ' e ON c.item=e.item AND c.series=e.series'
+            . ' LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id'
+            . ' WHERE o.user = :user AND c.user != :user AND o.status = :userStatus AND c.status = :desiredStatus'
+            . ' GROUP BY ' . $orderAndGroup
+            . ' ORDER BY ' . $orderAndGroup;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(compact('userStatus', 'desiredStatus') + ['user' => $userID]);
+        return $query->getResult();
     }
 
     /**
@@ -248,6 +248,14 @@ class CollectionService extends AbstractDbService
      */
     public function getUserStatistics(int $userID): array
     {
-        return $this->collectionTable->getUserStatistics($userID);
+        $dql = 'SELECT c.status, count(c.item) AS count FROM '
+            . Collection::class . ' c WHERE c.user=:user GROUP BY c.status';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('user', $userID);
+        $retVal = ['have' => 0, 'want' => 0, 'extra' => 0];
+        foreach ($query->getResult() as $current) {
+            $retVal[$current['status']->value] = $current['count'];
+        }
+        return $retVal;
     }
 }
