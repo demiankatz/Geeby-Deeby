@@ -29,12 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
 use GeebyDeeby\Db\Entity\EditionsReleaseDateEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsReleaseDates;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\Note;
 
 /**
  * Database service for the Editions_Release_Dates table.
@@ -48,29 +49,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsReleaseDateService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager        $entityManager      Entity manager
-     * @param PersistenceManager   $persistenceManager Persistence manager
-     * @param EditionsReleaseDates $releaseDatesTable  EditionsReleaseDates table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsReleaseDates $releaseDatesTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsReleaseDateEntityInterface
      */
     public function createEntity(): EditionsReleaseDateEntityInterface
     {
-        return $this->releaseDatesTable->createRow();
+        $entity = new EditionsReleaseDate();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -82,20 +69,13 @@ class EditionsReleaseDateService extends AbstractDbService
      */
     public function getDatesForItem(int $itemID): array
     {
-        $callback = function ($select) use ($itemID): void {
-            $select->quantifier('DISTINCT');
-            $select->columns(['Year', 'Month', 'Day', 'Note_ID']);
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
-                . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
-                ['Edition_ID']
-            );
-            $select->join(['i' => 'Items'], 'eds.Item_ID = i.Item_ID', ['Item_ID']);
-            $select->order(['Year', 'Month', 'Day', 'Edition_Name']);
-            $select->where->equalTo('i.Item_ID', $itemID);
-        };
-        return iterator_to_array($this->releaseDatesTable->select($callback));
+        $dql = 'SELECT DISTINCT d FROM ' . EditionsReleaseDate::class . ' d '
+            . 'LEFT JOIN ' . Edition::class . ' e ON d.edition=e.id OR d.edition=e.parentEdition '
+            . 'WHERE e.item=:item '
+            . 'ORDER BY d.year, d.month, d.day, e.editionName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -107,11 +87,13 @@ class EditionsReleaseDateService extends AbstractDbService
      */
     public function getDatesForEdition(int $editionID): array
     {
-        $callback = function ($select) use ($editionID): void {
-            $select->order(['Year', 'Month', 'Day']);
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return iterator_to_array($this->releaseDatesTable->select($callback));
+        $dql = 'SELECT DISTINCT d FROM ' . EditionsReleaseDate::class . ' d '
+            . 'LEFT JOIN ' . Edition::class . ' e ON d.edition=e.id '
+            . 'WHERE e.id=:edition '
+            . 'ORDER BY d.year, d.month, d.day';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -123,19 +105,13 @@ class EditionsReleaseDateService extends AbstractDbService
      */
     public function getDatesForEditionOrParentEdition(int $editionID): array
     {
-        $callback = function ($select) use ($editionID): void {
-            $select->quantifier('DISTINCT');
-            $select->columns(['Year', 'Month', 'Day', 'Note_ID']);
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Release_Dates.Edition_ID = eds.Edition_ID'
-                . ' OR eds.Parent_Edition_ID = Editions_Release_Dates.Edition_ID',
-                ['Edition_ID']
-            );
-            $select->where->equalTo('eds.Edition_ID', $editionID);
-            $select->order(['Year', 'Month', 'Day']);
-        };
-        return iterator_to_array($this->releaseDatesTable->select($callback));
+        $dql = 'SELECT DISTINCT d FROM ' . EditionsReleaseDate::class . ' d '
+            . 'LEFT JOIN ' . Edition::class . ' e ON d.edition=e.id OR d.edition=e.parentEdition '
+            . 'WHERE e.id=:edition '
+            . 'ORDER BY d.year, d.month, d.day';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -145,7 +121,16 @@ class EditionsReleaseDateService extends AbstractDbService
      */
     public function getItemsByYear(): array
     {
-        return iterator_to_array($this->releaseDatesTable->getItemsByYear());
+        $dql = 'SELECT d.year AS Year, i.id AS Item_ID, i.itemName AS Item_Name, iat.altName AS Item_AltName, '
+            . 'n.id AS Note_ID, n.note AS Note, e.id AS Edition_ID, e.editionName AS Edition_Name '
+            . 'FROM ' . EditionsReleaseDate::class . ' d '
+            . 'INNER JOIN ' . Edition::class . ' e ON d.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON d.note=n.id '
+            . 'ORDER BY d.year, i.itemName, e.editionName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -164,11 +149,13 @@ class EditionsReleaseDateService extends AbstractDbService
         int $month,
         int $day
     ): ?EditionsReleaseDateEntityInterface {
-        $editionId = $edition instanceof EditionEntityInterface ? $edition->getId() : $edition;
-        $where = ['Edition_ID' => $editionId, 'Year' => $year, 'Month' => $month, 'Day' => $day];
-        foreach ($this->releaseDatesTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $params = ['edition' => $edition instanceof EditionEntityInterface ? $edition->getId() : $edition]
+            + compact('year', 'month', 'day');
+        $dql = 'SELECT d FROM ' . EditionsReleaseDate::class
+            . ' d WHERE d.edition = :edition AND d.year = :year AND d.month = :month AND d.day = :day';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
