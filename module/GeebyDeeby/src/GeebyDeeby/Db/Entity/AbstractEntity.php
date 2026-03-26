@@ -72,7 +72,8 @@ abstract class AbstractEntity implements ArrayAccess, EntityInterface
                 }
                 if ($value instanceof DateTime) {
                     $vals[$name . 'Object'] = $value;
-                    $value = $value->format('Y-m-d h:i:s');
+                    $format = ($args['type'] ?? '') === 'date' ? 'Y-m-d' : 'Y-m-d h:i:s';
+                    $value = $value->format($format);
                 }
                 $vals[$name] = $value;
             }
