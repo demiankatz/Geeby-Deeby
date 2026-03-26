@@ -14,7 +14,8 @@
       <a href="<?=$this->escapeHtml($link['URL'])?>"><?=$this->fixtitle($link['Link_Name'])?></a><br />
       <?php if (!empty($link['Description'])): ?><?=$link['Description']?><br /><?php endif; ?>
       <span class="url"><?=$this->escapeHtml($link['URL'])?></span>
-      (last verified: <?=$this->escapeHtml($link['Date_Checked'])?>)
+      <?php $date = $link['Date_Checked'] instanceof \DateTime ? $link['Date_Checked']->format('Y-m-d') : $link['Date_Checked']; ?>
+      (last verified: <?=$this->escapeHtml($date)?>)
     </p>
   <?php endforeach; ?>
 <?php endif; ?>
