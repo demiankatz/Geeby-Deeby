@@ -29,12 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAdaptation;
 use GeebyDeeby\Db\Entity\ItemsAdaptationEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsAdaptations;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\MaterialType;
 
 /**
  * Database service for the Items_Adaptations table.
@@ -48,29 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsAdaptationService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager         Entity manager
-     * @param PersistenceManager $persistenceManager    Persistence manager
-     * @param ItemsAdaptations   $itemsAdaptationsTable ItemsAdaptations table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsAdaptations $itemsAdaptationsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsAdaptationEntityInterface
      */
     public function createEntity(): ItemsAdaptationEntityInterface
     {
-        return $this->itemsAdaptationsTable->createRow();
+        $entity = new ItemsAdaptation();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -82,7 +67,16 @@ class ItemsAdaptationService extends AbstractDbService
      */
     public function getAdaptedFrom(int $itemID): array
     {
-        return iterator_to_array($this->itemsAdaptationsTable->getAdaptedFrom($itemID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, '
+            . 'm.id AS Material_Type_ID, m.singularName AS Material_Type_Name, '
+            . 'm.pluralName AS Material_Type_Plural_Name '
+            . 'FROM ' . ItemsAdaptation::class . ' ia '
+            . 'INNER JOIN ' . Item::class . ' i ON ia.adaptedItem = i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' m ON i.materialType = m.id '
+            . 'WHERE ia.sourceItem = :item ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -94,7 +88,16 @@ class ItemsAdaptationService extends AbstractDbService
      */
     public function getAdaptedInto(int $itemID): array
     {
-        return iterator_to_array($this->itemsAdaptationsTable->getAdaptedInto($itemID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, '
+            . 'm.id AS Material_Type_ID, m.singularName AS Material_Type_Name, '
+            . 'm.pluralName AS Material_Type_Plural_Name '
+            . 'FROM ' . ItemsAdaptation::class . ' ia '
+            . 'INNER JOIN ' . Item::class . ' i ON ia.sourceItem = i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' m ON i.materialType = m.id '
+            . 'WHERE ia.adaptedItem = :item ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -109,13 +112,12 @@ class ItemsAdaptationService extends AbstractDbService
         int|ItemEntityInterface $source,
         int|ItemEntityInterface $adapted
     ): ?ItemsAdaptationEntityInterface {
-        $where = [
-            'Source_Item_ID' => $source instanceof ItemEntityInterface ? $source->getId() : $source,
-            'Adapted_Item_ID' => $adapted instanceof ItemEntityInterface ? $adapted->getId() : $adapted,
-        ];
-        foreach ($this->itemsAdaptationsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT ia FROM ' . ItemsAdaptation::class
+            . ' ia WHERE ia.sourceItem=:source AND ia.adaptedItem=:adapted';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('source', $source instanceof ItemEntityInterface ? $source->getId() : $source);
+        $query->setParameter('adapted', $adapted instanceof ItemEntityInterface ? $adapted->getId() : $adapted);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
