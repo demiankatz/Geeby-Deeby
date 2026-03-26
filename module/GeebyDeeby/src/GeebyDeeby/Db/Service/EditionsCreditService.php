@@ -30,9 +30,17 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsCredit;
 use GeebyDeeby\Db\Entity\EditionsCreditEntityInterface;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsCreator;
+use GeebyDeeby\Db\Entity\Note;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
+use GeebyDeeby\Db\Entity\Role;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\EditionsCredits;
@@ -145,7 +153,22 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getCreditsForItem(int $itemID, bool $group = false): array
     {
-        return iterator_to_array($this->editionsCreditsTable->getCreditsForItem($itemID, $group));
+        $dql = 'SELECT i.id AS Item_ID, e.editionName AS Edition_Name, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'n.id AS Note_ID, n.note AS Note, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . EditionsCredit::class . ' ec ON ec.edition=e.id '
+            . 'INNER JOIN ' . Role::class . ' r ON ec.role=r.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON ec.note=n.id '
+            . 'INNER JOIN ' . Person::class . ' p ON ec.person=p.id '
+            . 'WHERE i.id = :item '
+            . ($group ? 'GROUP BY r.id, p.id, n.id ' : '')
+            . 'ORDER BY r.roleName, ec.position, p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -158,7 +181,20 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getPeopleForSeries(int $seriesID): array
     {
-        return iterator_to_array($this->editionsCreditsTable->getPeopleForSeries($seriesID));
+        $dql = 'SELECT DISTINCT i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 'COALESCE(iat.altName, i.itemName) AS Best_Title, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'LEFT JOIN ' . EditionsCredit::class . ' ec ON e.id=ec.edition '
+            . 'LEFT JOIN ' . ItemsCreator::class . ' ic ON e.item = ic.item '
+            . 'INNER JOIN ' . Person::class . ' p ON ec.person=p.id OR ic.person=p.id '
+            . 'WHERE e.series = :series '
+            . 'ORDER BY p.lastName, p.firstName, p.extraDetails, Best_Title';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -175,14 +211,16 @@ class EditionsCreditService extends AbstractDbService
         int|PersonEntityInterface $person,
         int|RoleEntityInterface $role
     ): ?EditionsCreditEntityInterface {
-        $where = [
-            'Edition_ID' => $edition instanceof EditionEntityInterface ? $edition->getId() : $edition,
-            'Person_ID' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
-            'Role_ID' => $role instanceof RoleEntityInterface ? $role->getId() : $role,
+        $params = [
+            'edition' => $edition instanceof EditionEntityInterface ? $edition->getId() : $edition,
+            'person' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
+            'role' => $role instanceof RoleEntityInterface ? $role->getId() : $role,
         ];
-        foreach ($this->editionsCreditsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT c FROM ' . EditionsCredit::class
+            . ' c WHERE c.edition = :edition AND c.person = :person AND c.role = :role';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
