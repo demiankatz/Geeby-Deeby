@@ -31,6 +31,7 @@ namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsTranslation;
 use GeebyDeeby\Db\Entity\ItemsTranslationEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\ItemsTranslations;
@@ -111,13 +112,15 @@ class ItemsTranslationService extends AbstractDbService
         int|ItemEntityInterface $source,
         int|ItemEntityInterface $translated
     ): ?ItemsTranslationEntityInterface {
-        $where = [
-            'Source_Item_ID' => $source instanceof ItemEntityInterface ? $source->getId() : $source,
-            'Trans_Item_ID' => $translated instanceof ItemEntityInterface ? $translated->getId() : $translated,
-        ];
-        foreach ($this->itemsTranslationsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT it FROM ' . ItemsTranslation::class
+            . ' it WHERE it.sourceItem=:source AND it.translatedItem=:translated';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('source', $source instanceof ItemEntityInterface ? $source->getId() : $source);
+        $query->setParameter(
+            'translated',
+            $translated instanceof ItemEntityInterface ? $translated->getId() : $translated
+        );
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
