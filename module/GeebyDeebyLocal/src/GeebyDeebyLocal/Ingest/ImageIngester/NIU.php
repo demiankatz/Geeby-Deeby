@@ -100,6 +100,22 @@ class NIU extends AbstractThumbIngestor
     }
 
     /**
+     * Given an NIU URI, extract a IIIF manifest URL.
+     *
+     * @param string $uri NIU URI
+     *
+     * @return string
+     */
+    protected function getManifestFromUri(string $uri): string
+    {
+        $html = file_get_contents($uri);
+        if (!preg_match('/data-history-node-id="(\d+)"/', $html, $matches)) {
+            throw new \Exception("Cannot find manifest in $uri");
+        }
+        return "https://dimenovels.lib.niu.edu/node/{$matches[1]}/manifest";
+    }
+
+    /**
      * Convert a full-text link to an image URI.
      *
      * @param string $uri Full text link
@@ -108,10 +124,14 @@ class NIU extends AbstractThumbIngestor
      */
     protected function getIIIFURI($uri)
     {
-        $pid = $this->solr->getFirstPagePID($this->extractPID($uri));
-        if (!$pid) {
-            throw new \Exception("Could not find first page PID for $uri");
+        $manifest = json_decode(file_get_contents($this->getManifestFromUri($uri)));
+        $image = $manifest->sequences[0]->canvases[0]->images[0]
+            ->resource->service->{'@id'} ?? null;
+        if (null === $image) {
+            throw new \Exception(
+                'Problem finding IIIF source for ' . $uri
+            );
         }
-        return 'https://dimenovels.lib.niu.edu/iiif/2/' . urlencode($pid);
+        return $image;
     }
 }
