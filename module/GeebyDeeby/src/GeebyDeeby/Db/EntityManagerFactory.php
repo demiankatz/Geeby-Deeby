@@ -33,6 +33,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Proxy\ProxyFactory;
+use Oro\ORM\Query\AST\Functions\String\GroupConcat;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -74,6 +75,7 @@ class EntityManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInt
                 'dbname' => $config['geeby-deeby']['dbName'],
         ];
         $doctrineConfig = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
+        $doctrineConfig->addCustomStringFunction('group_concat', GroupConcat::class);
         $doctrineConfig->setProxyDir(realpath(__DIR__ . '/../../../../../data/cache'));
         // TODO: this is only appropriate as a development setting:
         $doctrineConfig->setAutoGenerateProxyClasses(ProxyFactory::AUTOGENERATE_ALWAYS);

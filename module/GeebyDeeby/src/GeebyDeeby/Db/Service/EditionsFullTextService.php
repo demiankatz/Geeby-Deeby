@@ -29,14 +29,14 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionsFullText;
 use GeebyDeeby\Db\Entity\EditionsFullTextEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
 use GeebyDeeby\Db\Entity\FullTextSource;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsFullText as EditionsFullTextTable;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\Series;
 
 /**
  * Database service for the Editions_Full_Text table.
@@ -49,22 +49,6 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class EditionsFullTextService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager         $entityManager         Entity manager
-     * @param PersistenceManager    $persistenceManager    Persistence manager
-     * @param EditionsFullTextTable $editionsFullTextTable EditionsFullText table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsFullTextTable $editionsFullTextTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *
@@ -176,6 +160,39 @@ class EditionsFullTextService extends AbstractDbService
         bool $fuzzy = false,
         ?int $source = null
     ): array {
-        return iterator_to_array($this->editionsFullTextTable->getItemsWithFullText($series, $fuzzy, $source));
+        $editionJoin = $fuzzy
+            ? 'INNER JOIN ' . Edition::class . ' e2 ON eft.edition=e2.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON e2.item=e.item '
+            : 'INNER JOIN ' . Edition::class . ' e ON eft.edition=e.id ';
+        $where = $params = [];
+        if ($series) {
+            $where[] = 'e.series = :series';
+            $params['series'] = $series;
+        }
+        if ($source) {
+            $where[] = 'eft.source = :source';
+            $params['source'] = $source;
+        }
+        $dql = 'SELECT MIN(erd.year) AS Earliest_Year, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 's.seriesName AS Series_Name, s.id AS Series_ID, '
+            . 'GROUP_CONCAT('
+            . "COALESCE(childIat.altName, childI.itemName) ORDER BY childE.positionInParent SEPARATOR '||'"
+            . ') AS Child_Items '
+            . 'FROM ' . EditionsFullText::class . ' eft ' . $editionJoin
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'LEFT JOIN ' . Edition::class . ' childE ON childE.parentEdition=e.id '
+            . 'LEFT JOIN ' . Item::class . ' childI ON childE.item=childI.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' childIat ON childE.preferredItemAltName=childIat.id '
+            . ($where ? ('WHERE ' . implode(' AND ', $where) . ' ') : '')
+            . 'GROUP BY i.id, s.id, e.volume, e.position, e.replacementNumber '
+            . 'ORDER BY s.seriesName, s.id, e.volume, e.position, e.replacementNumber, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 }

@@ -32,6 +32,7 @@
         "laminas/laminas-session": "^2.12.1",
         "laminas/laminas-validator": "^2.64",
         "laminas/laminas-view": "^2.16.0",
+        "oro/doctrine-extensions": "^3.0",
         "symfony/cache": "*",
         "symfony/console": "^6.4.4",
         "symfony/google-mailer": "^6.4",
