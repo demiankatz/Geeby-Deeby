@@ -29,13 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsLink;
 use GeebyDeeby\Db\Entity\ItemsLinkEntityInterface;
+use GeebyDeeby\Db\Entity\Link;
 use GeebyDeeby\Db\Entity\LinkEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsLinks;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_Links table.
@@ -49,29 +48,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsLinkService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param ItemsLinks         $itemsLinksTable    ItemsLinks table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsLinks $itemsLinksTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsLinkEntityInterface
      */
     public function createEntity(): ItemsLinkEntityInterface
     {
-        return $this->itemsLinksTable->createRow();
+        $entity = new ItemsLink();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,11 +64,16 @@ class ItemsLinkService extends AbstractDbService
      *
      * @param int $linkID Link ID
      *
-     * @return array
+     * @return ItemEntityInterface[]
      */
     public function getItemsForLink(int $linkID): array
     {
-        return iterator_to_array($this->itemsLinksTable->getItemsForLink($linkID));
+        $dql = 'SELECT i FROM ' . ItemsLink::class . ' il '
+            . 'INNER JOIN ' . Item::class . ' i ON il.item=i.id '
+            . 'WHERE il.link = :link ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('link', $linkID);
+        return $query->getResult();
     }
 
     /**
@@ -91,11 +81,16 @@ class ItemsLinkService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return LinkEntityInterface[]
      */
     public function getLinksForItem(int $itemID): array
     {
-        return iterator_to_array($this->itemsLinksTable->getLinksForItem($itemID));
+        $dql = 'SELECT l FROM ' . ItemsLink::class . ' il '
+            . 'INNER JOIN ' . Link::class . ' l ON il.link=l.id '
+            . 'WHERE il.item = :item ORDER BY l.linkName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -110,13 +105,14 @@ class ItemsLinkService extends AbstractDbService
         int|LinkEntityInterface $link,
         int|ItemEntityInterface $item
     ): ?ItemsLinkEntityInterface {
-        $where = [
-            'Link_ID' => $link instanceof LinkEntityInterface ? $link->getId() : $link,
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
+        $params = [
+            'link' => $link instanceof LinkEntityInterface ? $link->getId() : $link,
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
         ];
-        foreach ($this->itemsLinksTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT il FROM ' . ItemsLink::class . ' il WHERE il.item = :item AND il.link = :link';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

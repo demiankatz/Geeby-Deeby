@@ -29,13 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Link;
 use GeebyDeeby\Db\Entity\LinkEntityInterface;
+use GeebyDeeby\Db\Entity\PeopleLink;
 use GeebyDeeby\Db\Entity\PeopleLinkEntityInterface;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\PeopleLinks;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the People_Links table.
@@ -49,29 +48,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class PeopleLinkService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param PeopleLinks        $peopleLinksTable   PeopleLinks table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected PeopleLinks $peopleLinksTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return PeopleLinkEntityInterface
      */
     public function createEntity(): PeopleLinkEntityInterface
     {
-        return $this->peopleLinksTable->createRow();
+        $entity = new PeopleLink();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,11 +64,16 @@ class PeopleLinkService extends AbstractDbService
      *
      * @param int $linkID Link ID
      *
-     * @return array
+     * @return PersonEntityInterface[]
      */
     public function getPeopleForLink(int $linkID): array
     {
-        return iterator_to_array($this->peopleLinksTable->getPeopleForLink($linkID));
+        $dql = 'SELECT p FROM ' . PeopleLink::class . ' pl '
+            . 'INNER JOIN ' . Person::class . ' p ON pl.person=p.id '
+            . 'WHERE pl.link = :link ORDER BY p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('link', $linkID);
+        return $query->getResult();
     }
 
     /**
@@ -91,11 +81,16 @@ class PeopleLinkService extends AbstractDbService
      *
      * @param int $personID Person ID
      *
-     * @return array
+     * @return LinkEntityInterface[]
      */
     public function getLinksForPerson(int $personID): array
     {
-        return iterator_to_array($this->peopleLinksTable->getLinksForPerson($personID));
+        $dql = 'SELECT l FROM ' . PeopleLink::class . ' pl '
+            . 'INNER JOIN ' . Link::class . ' l ON pl.link=l.id '
+            . 'WHERE pl.person = :person ORDER BY l.linkName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -110,13 +105,14 @@ class PeopleLinkService extends AbstractDbService
         int|LinkEntityInterface $link,
         int|PersonEntityInterface $person
     ): ?PeopleLinkEntityInterface {
-        $where = [
-            'Link_ID' => $link instanceof LinkEntityInterface ? $link->getId() : $link,
-            'Person_ID' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
+        $params = [
+            'link' => $link instanceof LinkEntityInterface ? $link->getId() : $link,
+            'person' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
         ];
-        foreach ($this->peopleLinksTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT pl FROM ' . PeopleLink::class . ' pl WHERE pl.person = :person AND pl.link = :link';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
