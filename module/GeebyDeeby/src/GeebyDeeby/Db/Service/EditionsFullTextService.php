@@ -30,9 +30,12 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsFullText;
 use GeebyDeeby\Db\Entity\EditionsFullTextEntityInterface;
+use GeebyDeeby\Db\Entity\FullTextSource;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsFullText;
+use GeebyDeeby\Db\Table\EditionsFullText as EditionsFullTextTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -49,15 +52,15 @@ class EditionsFullTextService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param EntityManager      $entityManager         Entity manager
-     * @param PersistenceManager $persistenceManager    Persistence manager
-     * @param EditionsFullText   $editionsFullTextTable EditionsFullText table
+     * @param EntityManager         $entityManager         Entity manager
+     * @param PersistenceManager    $persistenceManager    Persistence manager
+     * @param EditionsFullTextTable $editionsFullTextTable EditionsFullText table
      */
     public function __construct(
         EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsFullText $editionsFullTextTable
+        protected EditionsFullTextTable $editionsFullTextTable
     ) {
         parent::__construct($entityManager, $persistenceManager);
     }
@@ -69,7 +72,9 @@ class EditionsFullTextService extends AbstractDbService
      */
     public function createEntity(): EditionsFullTextEntityInterface
     {
-        return $this->editionsFullTextTable->createRow();
+        $entity = new EditionsFullText();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -81,7 +86,7 @@ class EditionsFullTextService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsFullTextEntityInterface
     {
-        return $this->editionsFullTextTable->getByPrimaryKey($id);
+        return $this->entityManager->find(EditionsFullText::class, $id);
     }
 
     /**
@@ -93,17 +98,14 @@ class EditionsFullTextService extends AbstractDbService
      */
     public function getFullTextForEdition(int $edition): array
     {
-        $callback = function ($select) use ($edition): void {
-            $select->join(
-                ['fts' => 'Full_Text_Sources'],
-                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
-                []
-            );
-            $fields = ['fts.Full_Text_Source_Name', 'Full_Text_URL'];
-            $select->order($fields);
-            $select->where->equalTo('Edition_ID', $edition);
-        };
-        return iterator_to_array($this->editionsFullTextTable->select($callback));
+        $dql = 'SELECT DISTINCT eft FROM ' . EditionsFullText::class . ' eft '
+            . 'INNER JOIN ' . FullTextSource::class . ' fts ON eft.source=fts.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON eft.edition=e.id '
+            . 'WHERE e.id = :edition '
+            . 'ORDER BY fts.sourceName, eft.url';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $edition);
+        return $query->getResult();
     }
 
     /**
@@ -116,25 +118,14 @@ class EditionsFullTextService extends AbstractDbService
      */
     public function getFullTextForEditionOrParentEdition(int $edition): array
     {
-        $callback = function ($select) use ($edition): void {
-            $select->quantifier('DISTINCT');
-            $select->columns(['Sequence_ID', 'Full_Text_URL', 'Full_Text_Source_ID']);
-            $select->join(
-                ['fts' => 'Full_Text_Sources'],
-                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
-                []
-            );
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
-                . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
-                ['Edition_ID']
-            );
-            $fields = ['fts.Full_Text_Source_Name', 'Full_Text_URL'];
-            $select->order($fields);
-            $select->where->equalTo('eds.Edition_ID', $edition);
-        };
-        return iterator_to_array($this->editionsFullTextTable->select($callback));
+        $dql = 'SELECT DISTINCT eft FROM ' . EditionsFullText::class . ' eft '
+            . 'INNER JOIN ' . FullTextSource::class . ' fts ON eft.source=fts.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON eft.edition=e.id OR eft.edition=e.parentEdition '
+            . 'WHERE e.id = :edition '
+            . 'ORDER BY fts.sourceName, eft.url';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $edition);
+        return $query->getResult();
     }
 
     /**
@@ -146,26 +137,14 @@ class EditionsFullTextService extends AbstractDbService
      */
     public function getFullTextForItem(int $item): array
     {
-        $callback = function ($select) use ($item): void {
-            $select->quantifier('DISTINCT');
-            $select->columns(['Sequence_ID', 'Full_Text_URL', 'Full_Text_Source_ID']);
-            $select->join(
-                ['fts' => 'Full_Text_Sources'],
-                'Editions_Full_Text.Full_Text_Source_ID = fts.Full_Text_Source_ID',
-                []
-            );
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Full_Text.Edition_ID = eds.Edition_ID'
-                . ' OR eds.Parent_Edition_ID = Editions_Full_Text.Edition_ID',
-                ['Edition_ID']
-            );
-            $select->join(['i' => 'Items'], 'eds.Item_ID = i.Item_ID');
-            $fields = ['fts.Full_Text_Source_Name', 'Edition_Name', 'Full_Text_URL'];
-            $select->order($fields);
-            $select->where->equalTo('i.Item_ID', $item);
-        };
-        return iterator_to_array($this->editionsFullTextTable->select($callback));
+        $dql = 'SELECT DISTINCT eft FROM ' . EditionsFullText::class . ' eft '
+            . 'INNER JOIN ' . FullTextSource::class . ' fts ON eft.source=fts.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON eft.edition=e.id OR eft.edition=e.parentEdition '
+            . 'WHERE e.item = :item '
+            . 'ORDER BY fts.sourceName, e.editionName, eft.url';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $item);
+        return $query->getResult();
     }
 
     /**
@@ -177,10 +156,10 @@ class EditionsFullTextService extends AbstractDbService
      */
     public function getFullTextForSource(int $source): array
     {
-        $callback = function ($select) use ($source): void {
-            $select->where(['Full_Text_Source_ID' => $source]);
-        };
-        return iterator_to_array($this->editionsFullTextTable->select($callback));
+        $dql = 'SELECT eft FROM ' . EditionsFullText::class . ' eft WHERE eft.source = :source ORDER BY eft.url';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('source', $source);
+        return $query->getResult();
     }
 
     /**
