@@ -29,7 +29,6 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsCredit;
@@ -43,9 +42,7 @@ use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
 use GeebyDeeby\Db\Entity\Role;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsCredits;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Series;
 
 /**
  * Database service for the Editions_Credits table.
@@ -59,29 +56,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsCreditService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager        Entity manager
-     * @param PersistenceManager $persistenceManager   Persistence manager
-     * @param EditionsCredits    $editionsCreditsTable EditionsCredits table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsCredits $editionsCreditsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsCreditEntityInterface
      */
     public function createEntity(): EditionsCreditEntityInterface
     {
-        return $this->editionsCreditsTable->createRow();
+        $entity = new EditionsCredit();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -150,7 +133,26 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getSeriesCreditsForPerson(int $personID): array
     {
-        return iterator_to_array($this->editionsCreditsTable->getSeriesCreditsForPerson($personID));
+        $groupAndOrderFields = 'r.roleName, s.seriesName, s.id, e.volume, e.position, e.replacementNumber, '
+            . 'i.itemName, n.note';
+        $dql = 'SELECT e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 's.seriesName AS Series_Name, s.id AS Series_ID, n.id AS Note_ID, n.note AS Note, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'r.editionCreditPredicate AS Edition_Credit_Predicate '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'INNER JOIN ' . EditionsCredit::class . ' ec ON ec.edition=e.id '
+            . 'INNER JOIN ' . Role::class . ' r ON ec.role=r.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON ec.note=n.id '
+            . 'WHERE ec.person=:person '
+            . 'GROUP BY ' . $groupAndOrderFields . ' ORDER BY ' . $groupAndOrderFields;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
