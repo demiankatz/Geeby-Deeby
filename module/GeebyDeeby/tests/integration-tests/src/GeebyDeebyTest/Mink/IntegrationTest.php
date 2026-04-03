@@ -1220,7 +1220,7 @@ class IntegrationTest extends MinkTestCase
             '/^No dates set.$/',
             '/February 3, 1952 \\(test note\\)/',
         ];
-        yield 'edition full text link' => [
+        yield 'edition 1 full text link' => [
             '/edit/Edition/1',
             'Full Text Links',
             ['#Full_Text_URL' => 'http://example.com/fulltext'],
@@ -1229,6 +1229,16 @@ class IntegrationTest extends MinkTestCase
             '|test full text source 1: http://example.com/fulltext '
             . 'Edit options for URL: http://example.com/fulltext '
             . 'Delete full text URL: http://example.com/fulltext|',
+        ];
+        yield 'edition 2 full text link' => [
+            '/edit/Edition/2',
+            'Full Text Links',
+            ['#Full_Text_URL' => 'http://example.com/fulltext2'],
+            '#fulltext_list',
+            '/^No full text set.$/',
+            '|test full text source 1: http://example.com/fulltext2 '
+            . 'Edit options for URL: http://example.com/fulltext2 '
+            . 'Delete full text URL: http://example.com/fulltext2|',
         ];
         yield 'edition image' => [
             '/edit/Edition/1',
@@ -2105,6 +2115,7 @@ class IntegrationTest extends MinkTestCase
             '/Item/2',
             'Please log in to manage your collection or post a review.'
             . ' View: Combined By Edition Combined Summary'
+            . ' Online Full Text: test full text source 1 (test series 2 edition)'
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contents: example article 1 (second test material (edited))'
             . ' example article 2 (second test material (edited))'
@@ -2124,6 +2135,7 @@ class IntegrationTest extends MinkTestCase
             . ' example article 2'
             . ' Length: 32 pages Number of Endings: 1'
             . ' test series 2 edition'
+            . ' Online Full Text: test full text source 1'
             . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
             . ' Contents: example article 1'
@@ -2135,6 +2147,7 @@ class IntegrationTest extends MinkTestCase
             '/Item/4',
             'Please log in to manage your collection or post a review.'
             . ' View: Combined By Edition Combined Summary'
+            . ' Online Full Text: test full text source 1 (test series 2 edition)'
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contained In: example article 2 (second test material (edited), test note)'
             . ' Translated Into: example article 2 (test language 1)'
@@ -2148,6 +2161,7 @@ class IntegrationTest extends MinkTestCase
             '/Item/5',
             'Please log in to manage your collection or post a review.'
             . ' View: Combined By Edition Combined Summary'
+            . ' Online Full Text: test full text source 1 (test series 2 edition)'
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contains: example article 1 (second test material (edited), test note)'
             . ' Translated From: example article 1 (test language 1)'
@@ -2180,14 +2194,16 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'parent edition' => [
             '/Edition/2',
-            'Series: test series 2 (edited) v. 1 no. 1'
+            'Online Full Text: test full text source 1'
+            . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
             . ' Contents: example article 1 example article 2'
             . ' Length: 32 pages Number of Endings: 1',
         ];
         yield 'child edition' => [
             '/Edition/4',
-            'Series: test series 2 (edited) v. 1 no. 1'
+            'Online Full Text: test full text source 1'
+            . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example article 1'
             . ' Length: 16 pages',
         ];
@@ -2529,7 +2545,13 @@ class IntegrationTest extends MinkTestCase
         yield 'items by platform' => ['by platform', 'T test platform test platform 2 (edited)', 2];
         yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
         yield 'items by year' => ['by year', '1952 test item (test note)', 2];
-        yield 'items with full text' => ['with full text', '/.*test series 1 test item \\(1952\\)$/', 2, true];
+        yield 'items with full text' => [
+            'with full text',
+            '/.*test series 1 test item \\(1952\\) '
+            . 'test series 2 \\(edited\\) v. 1, no. 1. example issue 1 \\(example article 1 and 1 more item\\)$/',
+            2,
+            true,
+        ];
         yield 'items with reviews' => ['with reviews', 'test series 1 test item', 2];
         yield 'recently added items' => [
             'recently added',
