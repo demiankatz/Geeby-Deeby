@@ -89,7 +89,7 @@ class EditionsAttributesValueService extends AbstractDbService
      */
     public function getAttributesForItem(int|array $itemID, ?int $attributeID = null): array
     {
-        $dql = 'SELECT eav.value AS Editions_Attribute_Value, ea.id AS Editions_Attribute_ID, '
+        $dql = 'SELECT e.id AS Edition_ID, eav.value AS Editions_Attribute_Value, ea.id AS Editions_Attribute_ID, '
             . 'ea.attributeName AS Editions_Attribute_Name, ea.rdfProperty AS Editions_Attribute_RDF_Property, '
             . 'ea.allowHtml AS Allow_HTML, ea.displayPriority AS Display_Priority FROM '
             . EditionsAttributesValue::class . ' eav '
