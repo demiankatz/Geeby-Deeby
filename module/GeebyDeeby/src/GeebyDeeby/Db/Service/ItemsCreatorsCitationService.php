@@ -29,13 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Citation;
 use GeebyDeeby\Db\Entity\CitationEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsCreatorEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsCreatorsCitation;
 use GeebyDeeby\Db\Entity\ItemsCreatorsCitationEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsCreatorsCitations;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_Creators_Citations table.
@@ -49,29 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsCreatorsCitationService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager          $entityManager      Entity manager
-     * @param PersistenceManager     $persistenceManager Persistence manager
-     * @param ItemsCreatorsCitations $itemsCreatorsTable ItemsCreatorsCitations table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsCreatorsCitations $itemsCreatorsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsCreatorsCitationEntityInterface
      */
     public function createEntity(): ItemsCreatorsCitationEntityInterface
     {
-        return $this->itemsCreatorsTable->createRow();
+        $entity = new ItemsCreatorsCitation();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -83,11 +67,17 @@ class ItemsCreatorsCitationService extends AbstractDbService
      */
     public function getCitations(int $rowID): array
     {
-        return iterator_to_array($this->itemsCreatorsTable->getCitations($rowID));
+        $dql = 'SELECT c.id AS Citation_ID, c.citationName as Citation '
+            . 'FROM ' . ItemsCreatorsCitation::class
+            . ' icc JOIN ' . Citation::class . ' c ON icc.citation=c.id '
+            . 'WHERE icc.creator = :id ORDER BY c.citationName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('id', $rowID);
+        return $query->getResult();
     }
 
     /**
-     * Get an entity by item, person and role.
+     * Get an entity by creator and citation.
      *
      * @param int|ItemsCreatorEntityInterface $creator  Creator entity or ID
      * @param int|CitationEntityInterface     $citation Citation entity or ID
@@ -98,13 +88,15 @@ class ItemsCreatorsCitationService extends AbstractDbService
         int|ItemsCreatorEntityInterface $creator,
         int|CitationEntityInterface $citation
     ): ?ItemsCreatorsCitationEntityInterface {
-        $where = [
-            'Item_Creator_ID' => $creator instanceof ItemsCreatorEntityInterface ? $creator->getId() : $creator,
-            'Citation_ID' => $citation instanceof CitationEntityInterface ? $citation->getId() : $citation,
+        $params = [
+            'creator' => $creator instanceof ItemsCreatorEntityInterface ? $creator->getId() : $creator,
+            'citation' => $citation instanceof CitationEntityInterface ? $citation->getId() : $citation,
         ];
-        foreach ($this->itemsCreatorsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT icc FROM ' . ItemsCreatorsCitation::class
+            . ' icc WHERE icc.creator = :creator AND icc.citation = :citation';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
