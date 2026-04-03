@@ -34,6 +34,7 @@ use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsCredit;
 use GeebyDeeby\Db\Entity\EditionsCreditEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
 use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemsAltTitle;
 use GeebyDeeby\Db\Entity\ItemsCreator;
@@ -115,7 +116,28 @@ class EditionsCreditService extends AbstractDbService
         string $sort = 'title',
         bool $includeYear = true
     ): array {
-        return iterator_to_array($this->editionsCreditsTable->getItemCreditsForPerson($personID, $sort, $includeYear));
+        $omitYear = ($sort !== 'year' && !$includeYear);
+        $extraSelect = $omitYear ? '' : 'MIN(erd.year) AS Earliest_Year, ';
+        $yearJoin = $omitYear
+            ? ''
+            : (' LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition OR e.parentEdition=erd.edition ');
+        if ($sort === 'year') {
+            $sortFields = 'r.roleName, Earliest_Year, i.itemName';
+        } else {
+            $sortFields = 'r.roleName, i.itemName' . ($omitYear ? '' : ', Earliest_Year');
+        }
+        $dql = "SELECT {$extraSelect}COUNT(e.id) AS Edition_Count, i.itemName AS Item_Name, i.id AS Item_ID, "
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . EditionsCredit::class . ' ec ON ec.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id ' . $yearJoin
+            . 'INNER JOIN ' . Role::class . ' r ON ec.role=r.id '
+            . 'WHERE ec.person = :person '
+            . 'GROUP BY r.roleName, i.itemName '
+            . 'ORDER BY ' . $sortFields;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
