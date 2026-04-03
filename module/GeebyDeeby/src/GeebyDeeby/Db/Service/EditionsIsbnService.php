@@ -29,11 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsIsbn;
 use GeebyDeeby\Db\Entity\EditionsIsbnEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsISBNs;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Item;
 
 /**
  * Database service for the Editions_ISBNs table.
@@ -47,29 +46,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsIsbnService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param EditionsISBNs      $isbnsTable         EditionsISBNs table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsISBNs $isbnsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsIsbnEntityInterface
      */
     public function createEntity(): EditionsIsbnEntityInterface
     {
-        return $this->isbnsTable->createRow();
+        $entity = new EditionsIsbn();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -81,7 +66,7 @@ class EditionsIsbnService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsIsbnEntityInterface
     {
-        return $this->isbnsTable->getByPrimaryKey($id) ?: null;
+        return $this->entityManager->find(EditionsIsbn::class, $id);
     }
 
     /**
@@ -93,11 +78,11 @@ class EditionsIsbnService extends AbstractDbService
      */
     public function getISBNsForEdition(int $editionID): array
     {
-        $callback = function ($select) use ($editionID): void {
-            $select->order('ISBN13');
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return iterator_to_array($this->isbnsTable->select($callback));
+        $dql = 'SELECT ei FROM ' . EditionsIsbn::class
+            . ' ei WHERE ei.edition = :edition ORDER BY ei.isbn13';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -109,16 +94,12 @@ class EditionsIsbnService extends AbstractDbService
      */
     public function getISBNsForItem(int $itemID): array
     {
-        $callback = function ($select) use ($itemID): void {
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_ISBNs.Edition_ID = eds.Edition_ID',
-                []
-            );
-            $select->order('ISBN13');
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return iterator_to_array($this->isbnsTable->select($callback));
+        $dql = 'SELECT ei FROM ' . EditionsIsbn::class . ' ei '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.id=ei.edition '
+            . 'WHERE e.item = :item ORDER BY ei.isbn13';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -130,6 +111,13 @@ class EditionsIsbnService extends AbstractDbService
      */
     public function searchForItems(string $q): array
     {
-        return iterator_to_array($this->isbnsTable->searchForItems($q));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, ei.isbn10 AS ISBN, ei.isbn13 AS ISBN13 '
+            . 'FROM ' . EditionsIsbn::class . ' ei '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.id=ei.edition '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'WHERE ei.isbn10 LIKE :query OR ei.isbn13 LIKE :query ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('query', "$q%");
+        return $query->getResult();
     }
 }
