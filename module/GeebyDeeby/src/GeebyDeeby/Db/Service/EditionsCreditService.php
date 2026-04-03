@@ -162,7 +162,18 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getCreditsForEdition(int $editionID): array
     {
-        return iterator_to_array($this->editionsCreditsTable->getCreditsForEdition($editionID));
+        $dql = 'SELECT n.id AS Note_ID, n.note AS Note, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . EditionsCredit::class . ' ec '
+            . 'INNER JOIN ' . Role::class . ' r ON ec.role=r.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON ec.note=n.id '
+            . 'INNER JOIN ' . Person::class . ' p ON ec.person=p.id '
+            . 'WHERE ec.edition = :edition '
+            . 'ORDER BY r.roleName, ec.position, p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
