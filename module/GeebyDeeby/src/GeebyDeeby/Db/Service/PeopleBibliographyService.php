@@ -29,13 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\MaterialType;
+use GeebyDeeby\Db\Entity\PeopleBibliography;
 use GeebyDeeby\Db\Entity\PeopleBibliographyEntityInterface;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\PeopleBibliography;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the People_Bibliography table.
@@ -49,29 +49,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class PeopleBibliographyService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager           Entity manager
-     * @param PersistenceManager $persistenceManager      Persistence manager
-     * @param PeopleBibliography $peopleBibliographyTable PeopleBibliography table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected PeopleBibliography $peopleBibliographyTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return PeopleBibliographyEntityInterface
      */
     public function createEntity(): PeopleBibliographyEntityInterface
     {
-        return $this->peopleBibliographyTable->createRow();
+        $entity = new PeopleBibliography();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -83,7 +69,15 @@ class PeopleBibliographyService extends AbstractDbService
      */
     public function getItemsDescribingPerson(int $personID): array
     {
-        return iterator_to_array($this->peopleBibliographyTable->getItemsDescribingPerson($personID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, mt.id AS Material_Type_ID, '
+            . 'mt.singularName AS Material_Type_Name, mt.pluralName AS Material_Type_Plural_Name '
+            . 'FROM ' . PeopleBibliography::class . ' b '
+            . 'INNER JOIN ' . Item::class . ' i ON b.item=i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' mt ON i.materialType=mt.id '
+            . 'WHERE b.person = :person ORDER BY mt.singularName, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -95,7 +89,14 @@ class PeopleBibliographyService extends AbstractDbService
      */
     public function getPeopleDescribedByItem(int $itemID): array
     {
-        return iterator_to_array($this->peopleBibliographyTable->getPeopleDescribedByItem($itemID));
+        $dql = 'SELECT p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, '
+            . 'p.extraDetails AS Extra_Details '
+            . 'FROM ' . PeopleBibliography::class . ' b '
+            . 'INNER JOIN ' . Person::class . ' p ON b.person=p.id '
+            . 'WHERE b.item = :item ORDER BY p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -110,13 +111,14 @@ class PeopleBibliographyService extends AbstractDbService
         int|ItemEntityInterface $item,
         int|PersonEntityInterface $person
     ): ?PeopleBibliographyEntityInterface {
-        $where = [
-            'Person_ID' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
+        $params = [
+            'person' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
         ];
-        foreach ($this->peopleBibliographyTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT b FROM ' . PeopleBibliography::class . ' b WHERE b.item = :item AND b.person = :person';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

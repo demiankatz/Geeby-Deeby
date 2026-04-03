@@ -29,13 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\MaterialType;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\SeriesBibliography;
 use GeebyDeeby\Db\Entity\SeriesBibliographyEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesBibliography;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Bibliography table.
@@ -49,29 +49,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesBibliographyService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager           Entity manager
-     * @param PersistenceManager $persistenceManager      Persistence manager
-     * @param SeriesBibliography $seriesBibliographyTable SeriesBibliography table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesBibliography $seriesBibliographyTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesBibliographyEntityInterface
      */
     public function createEntity(): SeriesBibliographyEntityInterface
     {
-        return $this->seriesBibliographyTable->createRow();
+        $entity = new SeriesBibliography();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -83,7 +69,15 @@ class SeriesBibliographyService extends AbstractDbService
      */
     public function getItemsDescribingSeries(int $seriesID): array
     {
-        return iterator_to_array($this->seriesBibliographyTable->getItemsDescribingSeries($seriesID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, mt.id AS Material_Type_ID, '
+            . 'mt.singularName AS Material_Type_Name, mt.pluralName AS Material_Type_Plural_Name '
+            . 'FROM ' . SeriesBibliography::class . ' b '
+            . 'INNER JOIN ' . Item::class . ' i ON b.item=i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' mt ON i.materialType=mt.id '
+            . 'WHERE b.series = :series ORDER BY mt.singularName, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -95,7 +89,13 @@ class SeriesBibliographyService extends AbstractDbService
      */
     public function getSeriesDescribedByItem(int $itemID): array
     {
-        return iterator_to_array($this->seriesBibliographyTable->getSeriesDescribedByItem($itemID));
+        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name '
+            . 'FROM ' . SeriesBibliography::class . ' b '
+            . 'INNER JOIN ' . Series::class . ' s ON b.series=s.id '
+            . 'WHERE b.item = :item ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -110,13 +110,14 @@ class SeriesBibliographyService extends AbstractDbService
         int|ItemEntityInterface $item,
         int|SeriesEntityInterface $series
     ): ?SeriesBibliographyEntityInterface {
-        $where = [
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
-            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
+        $params = [
+            'series' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
         ];
-        foreach ($this->seriesBibliographyTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT b FROM ' . SeriesBibliography::class . ' b WHERE b.item = :item AND b.series = :series';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
