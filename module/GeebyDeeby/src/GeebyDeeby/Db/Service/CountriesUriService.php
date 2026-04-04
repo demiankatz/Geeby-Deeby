@@ -72,7 +72,7 @@ class CountriesUriService extends AbstractDbService
             . 'c.id AS City_ID, c.cityName as City_Name'
             . ' FROM ' . CountriesUri::class . ' cu INNER JOIN ' . Predicate::class . ' p ON cu.predicate = p.id'
             . ' INNER JOIN ' . Country::class . ' c ON cu.city = c.id'
-            . ' WHERE cu.uri = :uri';
+            . ' WHERE cu.uri = :uri ORDER BY c.countryName';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameter('uri', $uri);
         return $query->getResult();
