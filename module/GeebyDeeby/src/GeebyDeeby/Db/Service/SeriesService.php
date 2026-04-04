@@ -31,14 +31,13 @@ namespace GeebyDeeby\Db\Service;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\UnionType;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
 use GeebyDeeby\Db\DoctrinePaginatorAdapter;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\SeriesAltTitle;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Series as SeriesTable;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
 
 /**
@@ -52,22 +51,6 @@ use Laminas\Paginator\Paginator;
  */
 class SeriesService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param SeriesTable        $seriesTable        Series table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesTable $seriesTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *
@@ -219,9 +202,33 @@ class SeriesService extends AbstractDbService
         bool $includePosition = true,
         bool $includeParentPosition = false
     ): array {
-        return iterator_to_array(
-            $this->seriesTable->getSeriesForItem($itemID, $includePosition, $includeParentPosition)
-        );
+        $positionFields = $includePosition
+            ? 'e.volume AS Volume, e.position AS Position, '
+            . 'e.replacementNumber AS Replacement_Number, e.extentInParent AS Extent_In_Parent, '
+            : '';
+        $parentJoins = '';
+        $sortAndGroup = 's.seriesName, s.id';
+        if ($includePosition && $includeParentPosition) {
+            $parentJoins .= 'LEFT JOIN ' . Edition::class . ' parentE ON e.parentEdition=parentE.id '
+                . 'LEFT JOIN ' . Item::class . ' parentI ON parentE.item=parentI.id ';
+            $positionFields .= 'parentE.volume AS Parent_Volume, parentE.position AS Parent_Position, '
+                . 'parentE.replacementNumber AS Parent_Replacement_Number, parentI.id AS Parent_Item_ID, ';
+            $sortAndGroup .= ', parentE.volume, parentE.position, parentE.replacementNumber';
+        }
+        if ($includePosition) {
+            $sortAndGroup .= ', e.volume, e.position, e.replacementNumber';
+        }
+        $dql = 'SELECT ' . $positionFields . 's.seriesName AS Series_Name, s.id AS Series_ID, '
+            . 'sat.altName AS Series_AltName '
+            . 'FROM ' . Series::class . ' s '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.series=s.id '
+            . $parentJoins
+            . 'LEFT JOIN ' . SeriesAltTitle::class . ' sat ON e.preferredSeriesAltName=sat.id '
+            . 'WHERE e.item=:item '
+            . "GROUP BY $sortAndGroup ORDER BY $sortAndGroup";
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
