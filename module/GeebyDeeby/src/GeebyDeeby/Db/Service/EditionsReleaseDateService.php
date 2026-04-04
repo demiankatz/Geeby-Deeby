@@ -121,7 +121,8 @@ class EditionsReleaseDateService extends AbstractDbService
      */
     public function getItemsByYear(): array
     {
-        $dql = 'SELECT d.year AS Year, i.id AS Item_ID, i.itemName AS Item_Name, iat.altName AS Item_AltName, '
+        $dql = 'SELECT d.month AS Month, d.day AS Day, d.year AS Year, '
+            . 'i.id AS Item_ID, i.itemName AS Item_Name, iat.altName AS Item_AltName, '
             . 'n.id AS Note_ID, n.note AS Note, e.id AS Edition_ID, e.editionName AS Edition_Name '
             . 'FROM ' . EditionsReleaseDate::class . ' d '
             . 'INNER JOIN ' . Edition::class . ' e ON d.edition=e.id '

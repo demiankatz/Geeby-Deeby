@@ -188,7 +188,7 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getCreditsForItem(int $itemID, bool $group = false): array
     {
-        $dql = 'SELECT i.id AS Item_ID, e.editionName AS Edition_Name, '
+        $dql = 'SELECT i.id AS Item_ID, e.editionName AS Edition_Name, ec.position AS Position, '
             . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
             . 'n.id AS Note_ID, n.note AS Note, '
             . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
