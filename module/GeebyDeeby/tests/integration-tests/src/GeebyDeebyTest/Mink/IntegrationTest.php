@@ -2152,7 +2152,7 @@ class IntegrationTest extends MinkTestCase
             . ' Online Full Text: test full text source 1'
             . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
-            . ' Contents: example article 1'
+            . ' Contents: example article 1 (pages 3-6)'
             . ' example article 2'
             . ' Length: 32 pages Number of Endings: 1'
             . ' Please log in to manage your collection or post a review.',
@@ -2168,7 +2168,8 @@ class IntegrationTest extends MinkTestCase
             . ' Adapted Into: example article 2 (second test material (edited))'
             . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
             . ' Known Editions'
-            . ' Copy of test series 2 edition (in example issue 1) test series 2 edition (in example issue 1)'
+            . ' Copy of test series 2 edition (pages 3-6 in example issue 1)'
+            . ' test series 2 edition (pages 3-6 in example issue 1)'
             . ' Please log in to manage your collection or post a review.',
         ];
         yield 'item (also with parents and relationships)' => [
