@@ -29,17 +29,19 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
 use GeebyDeeby\Db\Entity\ItemsCreator;
 use GeebyDeeby\Db\Entity\ItemsCreatorEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsCreatorsCitation;
 use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
 use GeebyDeeby\Db\Entity\Role;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsCreators;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Series;
 
 /**
  * Database service for the Items_Creators table.
@@ -52,22 +54,6 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class ItemsCreatorService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param ItemsCreators      $itemsCreatorsTable ItemsCreators table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsCreators $itemsCreatorsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *
@@ -120,7 +106,24 @@ class ItemsCreatorService extends AbstractDbService
      */
     public function getItemCitationsForPerson(int $personID, string $sort = 'title'): array
     {
-        return iterator_to_array($this->itemsCreatorsTable->getItemCitationsForPerson($personID, $sort));
+        $sortFields = ($sort === 'year')
+            ? 'r.roleName, Earliest_Year, i.itemName'
+            : 'r.roleName, i.itemName, Earliest_Year';
+        $dql = 'SELECT COUNT(DISTINCT icc.citation) AS Citation_Count, i.itemName AS Item_Name, i.id AS Item_ID, '
+            . 'MIN(erd.year) AS Earliest_Year, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . ItemsCreator::class . ' ic ON ic.item=i.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition OR e.parentEdition=erd.edition '
+            . 'INNER JOIN ' . Role::class . ' r ON ic.role=r.id '
+            . 'LEFT JOIN ' . ItemsCreatorsCitation::class . ' icc ON icc.creator=ic.id '
+            . 'WHERE ic.person = :person '
+            . 'GROUP BY r.roleName, i.itemName '
+            . 'ORDER BY ' . $sortFields;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -133,7 +136,25 @@ class ItemsCreatorService extends AbstractDbService
      */
     public function getSeriesCitationsForPerson(int $personID): array
     {
-        return iterator_to_array($this->itemsCreatorsTable->getSeriesCitationsForPerson($personID));
+        $groupAndOrderFields = 'r.roleName, s.seriesName, s.id, e.volume, e.position, e.replacementNumber, '
+            . 'i.itemName';
+        $dql = 'SELECT e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 's.seriesName AS Series_Name, s.id AS Series_ID, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'r.editionCreditPredicate AS Edition_Credit_Predicate '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'INNER JOIN ' . ItemsCreator::class . ' ic ON ic.item=i.id '
+            . 'INNER JOIN ' . Role::class . ' r ON ic.role=r.id '
+            . 'WHERE ic.person=:person '
+            . 'GROUP BY ' . $groupAndOrderFields . ' ORDER BY ' . $groupAndOrderFields;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
