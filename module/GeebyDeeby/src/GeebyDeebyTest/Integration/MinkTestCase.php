@@ -205,12 +205,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
         $timeout = null,
         $index = 0
     ) {
-        $timeout ??= $this->getDefaultTimeout();
-        $session = $this->getMinkSession();
-        $session->wait(
-            $timeout,
-            "document.querySelectorAll('$selector').length > $index"
-        );
+        $this->waitStatement("document.querySelectorAll('$selector').length > $index", $timeout);
         $results = $page->findAll('css', $selector);
         $this->assertIsArray($results, "Selector not found: $selector");
         $result = $results[$index] ?? null;
