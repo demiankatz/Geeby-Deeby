@@ -42,7 +42,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Table(name: 'Items_Relationships')]
 #[ORM\Entity]
-#[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
 class ItemsRelationship extends AbstractEntity implements ItemsRelationshipEntityInterface
 {
     /**

@@ -42,7 +42,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Table(name: 'Series_Relationships')]
 #[ORM\Entity]
-#[ORM\EntityListeners([Feature\EntityManagerInjector::class])]
 class SeriesRelationship extends AbstractEntity implements SeriesRelationshipEntityInterface
 {
     /**
