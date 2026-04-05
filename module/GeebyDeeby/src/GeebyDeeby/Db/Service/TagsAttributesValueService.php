@@ -29,12 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\TagEntityInterface;
+use GeebyDeeby\Db\Entity\TagsAttribute;
+use GeebyDeeby\Db\Entity\TagsAttributesValue;
 use GeebyDeeby\Db\Entity\TagsAttributesValueEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\TagsAttributesValues;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Tags_Attributes_Values table.
@@ -48,29 +46,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class TagsAttributesValueService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager        $entityManager      Entity manager
-     * @param PersistenceManager   $persistenceManager Persistence manager
-     * @param TagsAttributesValues $valuesTable        TagsAttribute table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected TagsAttributesValues $valuesTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return TagsAttributesValueEntityInterface
      */
     public function createEntity(): TagsAttributesValueEntityInterface
     {
-        return $this->valuesTable->createRow();
+        $entity = new TagsAttributesValue();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -82,7 +66,15 @@ class TagsAttributesValueService extends AbstractDbService
      */
     public function getAttributesForTag(int $tagID): array
     {
-        return iterator_to_array($this->valuesTable->getAttributesForTag($tagID));
+        $dql = 'SELECT tav.value AS Tags_Attribute_Value, ta.id AS Tags_Attribute_ID, '
+            . 'ta.attributeName AS Tags_Attribute_Name, ta.rdfProperty AS Tags_Attribute_RDF_Property, '
+            . 'ta.allowHtml AS Allow_HTML, ta.displayPriority AS Display_Priority FROM '
+            . TagsAttributesValue::class . ' tav '
+            . 'INNER JOIN ' . TagsAttribute::class . ' ta ON tav.attribute=ta.id '
+            . 'WHERE tav.tag = :tag ORDER BY ta.displayPriority, ta.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('tag', $tagID);
+        return $query->getResult();
     }
 
     /**
@@ -94,7 +86,9 @@ class TagsAttributesValueService extends AbstractDbService
      */
     public function deleteByTag(int|TagEntityInterface $tag): void
     {
-        $where = ['Tag_ID' => $tag instanceof TagEntityInterface ? $tag->getId() : $tag];
-        $this->valuesTable->delete($where);
+        $dql = 'DELETE FROM ' . TagsAttributesValue::class . ' tav WHERE tav.tag=:tag';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('tag', $tag instanceof TagEntityInterface ? $tag->getId() : $tag);
+        $query->execute();
     }
 }

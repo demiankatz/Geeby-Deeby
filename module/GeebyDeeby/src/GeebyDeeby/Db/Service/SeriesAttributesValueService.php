@@ -29,12 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\SeriesAttribute;
+use GeebyDeeby\Db\Entity\SeriesAttributesValue;
 use GeebyDeeby\Db\Entity\SeriesAttributesValueEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesAttributesValues;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Attributes_Values table.
@@ -48,29 +46,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesAttributesValueService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager          $entityManager      Entity manager
-     * @param PersistenceManager     $persistenceManager Persistence manager
-     * @param SeriesAttributesValues $valuesTable        SeriesAttribute table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesAttributesValues $valuesTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesAttributesValueEntityInterface
      */
     public function createEntity(): SeriesAttributesValueEntityInterface
     {
-        return $this->valuesTable->createRow();
+        $entity = new SeriesAttributesValue();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -82,7 +66,15 @@ class SeriesAttributesValueService extends AbstractDbService
      */
     public function getAttributesForSeries(int $seriesID): array
     {
-        return iterator_to_array($this->valuesTable->getAttributesForSeries($seriesID));
+        $dql = 'SELECT sav.value AS Series_Attribute_Value, sa.id AS Series_Attribute_ID, '
+            . 'sa.attributeName AS Series_Attribute_Name, sa.rdfProperty AS Series_Attribute_RDF_Property, '
+            . 'sa.allowHtml AS Allow_HTML, sa.displayPriority AS Display_Priority FROM '
+            . SeriesAttributesValue::class . ' sav '
+            . 'INNER JOIN ' . SeriesAttribute::class . ' sa ON sav.attribute=sa.id '
+            . 'WHERE sav.series = :series ORDER BY sa.displayPriority, sa.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -94,7 +86,9 @@ class SeriesAttributesValueService extends AbstractDbService
      */
     public function deleteBySeries(int|SeriesEntityInterface $series): void
     {
-        $where = ['Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series];
-        $this->valuesTable->delete($where);
+        $dql = 'DELETE FROM ' . SeriesAttributesValue::class . ' sav WHERE sav.series=:series';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $series instanceof SeriesEntityInterface ? $series->getId() : $series);
+        $query->execute();
     }
 }
