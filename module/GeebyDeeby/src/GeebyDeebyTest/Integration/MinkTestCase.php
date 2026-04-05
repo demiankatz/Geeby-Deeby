@@ -32,7 +32,6 @@ namespace GeebyDeebyTest\Integration;
 use Behat\Mink\Element\Element;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Element\TraversableElement;
-use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Session;
 use DMore\ChromeDriver\ChromeDriver;
 
