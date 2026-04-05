@@ -29,11 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Category;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\SeriesCategory;
 use GeebyDeeby\Db\Entity\SeriesCategoryEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesCategories;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 
 /**
  * Database service for the Series_Categories table.
@@ -47,42 +47,32 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesCategoryService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager         Entity manager
-     * @param PersistenceManager $persistenceManager    Persistence manager
-     * @param SeriesCategories   $seriesCategoriesTable SeriesCategories table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesCategories $seriesCategoriesTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesCategoryEntityInterface
      */
     public function createEntity(): SeriesCategoryEntityInterface
     {
-        return $this->seriesCategoriesTable->createRow();
+        $entity = new SeriesCategory();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
      * Get series for the specified tag.
      *
-     * @param int    $tagID Category ID
-     * @param string $sort  Sort type (title or series; default = title)
+     * @param int $categoryID Category ID
      *
-     * @return array
+     * @return SeriesEntityInterface[]
      */
-    public function getSeriesForCategory(int $tagID, string $sort = 'title'): array
+    public function getSeriesForCategory(int $categoryID): array
     {
-        return iterator_to_array($this->seriesCategoriesTable->getSeriesForCategory($tagID));
+        $dql = 'SELECT s FROM ' . SeriesCategory::class . ' sc '
+            . 'INNER JOIN ' . Series::class . ' s ON sc.series=s.id '
+            . 'WHERE sc.category=:category ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('category', $categoryID);
+        return $query->getResult();
     }
 
     /**
@@ -94,7 +84,27 @@ class SeriesCategoryService extends AbstractDbService
      */
     public function getCategoriesForSeries(int $seriesID): array
     {
-        return iterator_to_array($this->seriesCategoriesTable->getCategories($seriesID));
+        $dql = 'SELECT c FROM ' . SeriesCategory::class . ' sc '
+            . 'INNER JOIN ' . Category::class . ' c ON sc.category=c.id '
+            . 'WHERE sc.series=:series ORDER BY c.categoryName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
+    }
+
+    /**
+     * Delete the categories for a series.
+     *
+     * @param int $seriesId Series ID
+     *
+     * @return void
+     */
+    public function deleteCategoriesForSeries(int $seriesId): void
+    {
+        $dql = 'DELETE FROM ' . SeriesCategory::class . ' sc WHERE sc.series=:series';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesId);
+        $query->execute();
     }
 
     /**
@@ -107,9 +117,9 @@ class SeriesCategoryService extends AbstractDbService
      */
     public function setCategoriesForSeries(int $seriesId, array $categories): void
     {
-        $this->seriesCategoriesTable->delete(['Series_ID' => $seriesId]);
+        $this->deleteCategoriesForSeries($seriesId);
         foreach ($categories as $cat) {
-            $this->seriesCategoriesTable->insert(['Series_ID' => $seriesId, 'Category_ID' => $cat]);
+            $this->persistEntity($this->createEntity()->setSeries($seriesId)->setCategory($cat));
         }
     }
 }
