@@ -29,13 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\File;
 use GeebyDeeby\Db\Entity\FileEntityInterface;
+use GeebyDeeby\Db\Entity\FileType;
+use GeebyDeeby\Db\Entity\PeopleFile;
 use GeebyDeeby\Db\Entity\PeopleFileEntityInterface;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\PeopleFiles;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the People_Files table.
@@ -49,29 +49,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class PeopleFileService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param PeopleFiles        $peopleFilesTable   PeopleFiles table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected PeopleFiles $peopleFilesTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return PeopleFileEntityInterface
      */
     public function createEntity(): PeopleFileEntityInterface
     {
-        return $this->peopleFilesTable->createRow();
+        $entity = new PeopleFile();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -83,7 +69,11 @@ class PeopleFileService extends AbstractDbService
      */
     public function getPeopleForFile(int $fileID): array
     {
-        return iterator_to_array($this->peopleFilesTable->getPeopleForFile($fileID));
+        $dql = 'SELECT p FROM ' . PeopleFile::class . ' pf INNER JOIN ' . Person::class . ' p ON pf.person=p.id '
+            . 'WHERE pf.file = :file ORDER BY p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('file', $fileID);
+        return $query->getResult();
     }
 
     /**
@@ -95,7 +85,14 @@ class PeopleFileService extends AbstractDbService
      */
     public function getFilesForPerson(int $personID): array
     {
-        return iterator_to_array($this->peopleFilesTable->getFilesForPerson($personID));
+        $dql = 'SELECT ft.id AS File_Type_ID, ft.fileTypeName AS File_Type, '
+            . 'f.id AS File_ID, f.fileName AS File_Name, f.path AS File_Path, f.description AS Description '
+            . 'FROM ' . PeopleFile::class . ' pf INNER JOIN ' . File::class . ' f ON pf.file=f.id '
+            . 'INNER JOIN ' . FileType::class . ' ft ON f.fileType=ft.id '
+            . 'WHERE pf.person = :person ORDER BY ft.fileTypeName, f.fileName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -110,13 +107,14 @@ class PeopleFileService extends AbstractDbService
         int|FileEntityInterface $file,
         int|PersonEntityInterface $person
     ): ?PeopleFileEntityInterface {
-        $where = [
-            'File_ID' => $file instanceof FileEntityInterface ? $file->getId() : $file,
-            'Person_ID' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
+        $params = [
+            'file' => $file instanceof FileEntityInterface ? $file->getId() : $file,
+            'person' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
         ];
-        foreach ($this->peopleFilesTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT pf FROM ' . PeopleFile::class . ' pf WHERE pf.person = :person AND pf.file = :file';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

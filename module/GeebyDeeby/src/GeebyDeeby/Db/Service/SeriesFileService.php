@@ -29,13 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\File;
 use GeebyDeeby\Db\Entity\FileEntityInterface;
+use GeebyDeeby\Db\Entity\FileType;
+use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesFile;
 use GeebyDeeby\Db\Entity\SeriesFileEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesFiles;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Files table.
@@ -49,29 +49,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesFileService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param SeriesFiles        $seriesFilesTable   SeriesFiles table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesFiles $seriesFilesTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesFileEntityInterface
      */
     public function createEntity(): SeriesFileEntityInterface
     {
-        return $this->seriesFilesTable->createRow();
+        $entity = new SeriesFile();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -83,7 +69,11 @@ class SeriesFileService extends AbstractDbService
      */
     public function getSeriesForFile(int $fileID): array
     {
-        return iterator_to_array($this->seriesFilesTable->getSeriesForFile($fileID));
+        $dql = 'SELECT s FROM ' . SeriesFile::class . ' sf INNER JOIN ' . Series::class . ' s ON sf.series=s.id '
+            . 'WHERE sf.file = :file ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('file', $fileID);
+        return $query->getResult();
     }
 
     /**
@@ -95,7 +85,14 @@ class SeriesFileService extends AbstractDbService
      */
     public function getFilesForSeries(int $seriesID): array
     {
-        return iterator_to_array($this->seriesFilesTable->getFilesForSeries($seriesID));
+        $dql = 'SELECT ft.id AS File_Type_ID, ft.fileTypeName AS File_Type, '
+            . 'f.id AS File_ID, f.fileName AS File_Name, f.path AS File_Path, f.description AS Description '
+            . 'FROM ' . SeriesFile::class . ' sf INNER JOIN ' . File::class . ' f ON sf.file=f.id '
+            . 'INNER JOIN ' . FileType::class . ' ft ON f.fileType=ft.id '
+            . 'WHERE sf.series = :series ORDER BY ft.fileTypeName, f.fileName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -110,13 +107,14 @@ class SeriesFileService extends AbstractDbService
         int|FileEntityInterface $file,
         int|SeriesEntityInterface $series
     ): ?SeriesFileEntityInterface {
-        $where = [
-            'File_ID' => $file instanceof FileEntityInterface ? $file->getId() : $file,
-            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
+        $params = [
+            'file' => $file instanceof FileEntityInterface ? $file->getId() : $file,
+            'series' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
         ];
-        foreach ($this->seriesFilesTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT sf FROM ' . SeriesFile::class . ' sf WHERE sf.series = :series AND sf.file = :file';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

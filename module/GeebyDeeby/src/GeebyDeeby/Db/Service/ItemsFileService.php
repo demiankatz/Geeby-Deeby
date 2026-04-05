@@ -29,13 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\File;
 use GeebyDeeby\Db\Entity\FileEntityInterface;
+use GeebyDeeby\Db\Entity\FileType;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsFile;
 use GeebyDeeby\Db\Entity\ItemsFileEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsFiles;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_Files table.
@@ -49,29 +49,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsFileService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param ItemsFiles         $itemsFilesTable    ItemsFiles table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsFiles $itemsFilesTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsFileEntityInterface
      */
     public function createEntity(): ItemsFileEntityInterface
     {
-        return $this->itemsFilesTable->createRow();
+        $entity = new ItemsFile();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,11 +65,15 @@ class ItemsFileService extends AbstractDbService
      *
      * @param int $fileID File ID
      *
-     * @return array
+     * @return ItemEntityInterface[]
      */
     public function getItemsForFile(int $fileID): array
     {
-        return iterator_to_array($this->itemsFilesTable->getItemsForFile($fileID));
+        $dql = 'SELECT i FROM ' . ItemsFile::class . ' if INNER JOIN ' . Item::class . ' i ON if.item=i.id '
+            . 'WHERE if.file = :file ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('file', $fileID);
+        return $query->getResult();
     }
 
     /**
@@ -95,7 +85,14 @@ class ItemsFileService extends AbstractDbService
      */
     public function getFilesForItem(int $itemID): array
     {
-        return iterator_to_array($this->itemsFilesTable->getFilesForItem($itemID));
+        $dql = 'SELECT ft.id AS File_Type_ID, ft.fileTypeName AS File_Type, '
+            . 'f.id AS File_ID, f.fileName AS File_Name, f.path AS File_Path, f.description AS Description '
+            . 'FROM ' . ItemsFile::class . ' if INNER JOIN ' . File::class . ' f ON if.file=f.id '
+            . 'INNER JOIN ' . FileType::class . ' ft ON f.fileType=ft.id '
+            . 'WHERE if.item = :item ORDER BY ft.fileTypeName, f.fileName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -110,13 +107,14 @@ class ItemsFileService extends AbstractDbService
         int|FileEntityInterface $file,
         int|ItemEntityInterface $item
     ): ?ItemsFileEntityInterface {
-        $where = [
-            'File_ID' => $file instanceof FileEntityInterface ? $file->getId() : $file,
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
+        $params = [
+            'file' => $file instanceof FileEntityInterface ? $file->getId() : $file,
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
         ];
-        foreach ($this->itemsFilesTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT if FROM ' . ItemsFile::class . ' if WHERE if.item = :item AND if.file = :file';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
