@@ -29,13 +29,16 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\Enum\Approved;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsReview;
 use GeebyDeeby\Db\Entity\ItemsReviewEntityInterface;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\User;
 use GeebyDeeby\Db\Entity\UserEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsReviews;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_Reviews table.
@@ -49,29 +52,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsReviewService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param ItemsReviews       $itemsReviewsTable  ItemsReviews table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsReviews $itemsReviewsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsReviewEntityInterface
      */
     public function createEntity(): ItemsReviewEntityInterface
     {
-        return $this->itemsReviewsTable->createRow();
+        $entity = new ItemsReview();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -85,7 +74,19 @@ class ItemsReviewService extends AbstractDbService
      */
     public function getReviewsForItem(int $itemID, ?string $approved = 'y'): array
     {
-        return iterator_to_array($this->itemsReviewsTable->getReviewsForItem($itemID, $approved));
+        $params = ['item' => $itemID];
+        $dql = 'SELECT r.review AS Review, r.added as Added, u.id AS User_ID, u.username AS Username, u.name AS Name '
+            . 'FROM ' . ItemsReview::class . ' r '
+            . 'INNER JOIN ' . User::class . ' u ON r.user=u.id '
+            . 'WHERE r.item=:item';
+        if ($approved) {
+            $dql .= ' AND r.approved=:approved';
+            $params['approved'] = Approved::from($approved);
+        }
+        $dql .= ' ORDER BY u.username';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
@@ -95,11 +96,19 @@ class ItemsReviewService extends AbstractDbService
      * @param ?string $approved 'y' to get only approved items, 'n' for only
      * unapproved items, null for all items
      *
-     * @return array
+     * @return ItemsReviewEntityInterface[]
      */
     public function getReviewIDsByUser(int $userID, ?string $approved = 'y'): array
     {
-        return iterator_to_array($this->itemsReviewsTable->getReviewIDsByUser($userID, $approved));
+        $params = ['user' => $userID];
+        $dql = 'SELECT r FROM ' . ItemsReview::class . ' r WHERE r.user=:user';
+        if ($approved) {
+            $dql .= ' AND r.approved=:approved';
+            $params['approved'] = Approved::from($approved);
+        }
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
@@ -114,7 +123,42 @@ class ItemsReviewService extends AbstractDbService
      */
     public function getReviewsByUser(?int $userID, ?string $approved = 'y', bool $series = true): array
     {
-        return iterator_to_array($this->itemsReviewsTable->getReviewsByUser($userID, $approved, $series));
+        $params = $where = [];
+        $extraSelect = $extraJoin = $groupBy = '';
+        $order = 'i.itemName';
+        if ($approved) {
+            $where[] = 'r.approved=:approved';
+            $params['approved'] = Approved::from($approved);
+        }
+        if ($userID) {
+            $where[] = 'r.user=:user';
+            $params['user'] = $userID;
+        }
+        if ($series) {
+            $groupBy = 'GROUP BY i.id, r.user, s.id, Volume, Position, Replacement_Number';
+            // Add more sort settings when series are included:
+            $order = 's.seriesName, s.id, Volume, Position, Replacement_Number, ' . $order;
+            $extraSelect .= 'iat.altName AS Item_AltName, COALESCE(e.volume, parent.volume) AS Volume, '
+                . 'COALESCE(e.position, parent.position) AS Position, '
+                . 'COALESCE(e.replacementNumber, parent.replacementNumber) AS Replacement_Number, '
+                . 's.id AS Series_ID, s.seriesName AS Series_Name, ';
+            $extraJoin .= 'INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+                . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id '
+                . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+                . 'LEFT JOIN ' . Edition::class . ' parent ON e.parentEdition=parent.id ';
+        }
+        $dql = 'SELECT r.review AS Review, r.added as Added, ' . $extraSelect
+            . 'u.id AS User_ID, u.username AS Username, u.name AS Name, '
+            . 'i.id AS Item_ID, i.itemName AS Item_Name '
+            . 'FROM ' . ItemsReview::class . ' r '
+            . 'INNER JOIN ' . Item::class . ' i ON r.item=i.id '
+            . 'INNER JOIN ' . User::class . ' u ON r.user=u.id '
+            . $extraJoin
+            . ($where ? 'WHERE ' . implode(' AND ', $where) . ' ' : '')
+            . "$groupBy ORDER BY $order";
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
@@ -124,7 +168,15 @@ class ItemsReviewService extends AbstractDbService
      */
     public function getRecentItemReviews(): array
     {
-        return iterator_to_array($this->itemsReviewsTable->getRecentItemReviews());
+        $dql = 'SELECT r.review AS Review, r.added as Added, u.id AS User_ID, u.username AS Username, u.name AS Name, '
+            . 'i.id AS Item_ID, i.itemName AS Item_Name '
+            . 'FROM ' . ItemsReview::class . ' r '
+            . 'INNER JOIN ' . User::class . ' u ON r.user=u.id '
+            . 'INNER JOIN ' . Item::class . ' i ON r.item=i.id '
+            . 'WHERE r.approved=:approved ORDER BY r.added DESC, u.username';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('approved', Approved::Yes);
+        return $query->getResult();
     }
 
     /**
@@ -139,13 +191,14 @@ class ItemsReviewService extends AbstractDbService
         int|UserEntityInterface $user,
         int|ItemEntityInterface $item
     ): ?ItemsReviewEntityInterface {
-        $where = [
-            'User_ID' => $user instanceof UserEntityInterface ? $user->getId() : $user,
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
+        $params = [
+            'user' => $user instanceof UserEntityInterface ? $user->getId() : $user,
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
         ];
-        foreach ($this->itemsReviewsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT r FROM ' . ItemsReview::class . ' r WHERE r.item = :item AND r.user = :user';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
