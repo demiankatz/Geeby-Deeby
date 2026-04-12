@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\EditionsImage;
 use GeebyDeeby\Db\Entity\EditionsImageEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\EditionsImages;
@@ -69,7 +70,9 @@ class EditionsImageService extends AbstractDbService
      */
     public function createEntity(): EditionsImageEntityInterface
     {
-        return $this->editionsImagesTable->createRow();
+        $entity = new EditionsImage();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -81,7 +84,7 @@ class EditionsImageService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsImageEntityInterface
     {
-        return $this->editionsImagesTable->getByPrimaryKey($id);
+        return $this->entityManager->find(EditionsImage::class, $id);
     }
 
     /**
@@ -115,11 +118,10 @@ class EditionsImageService extends AbstractDbService
      */
     public function getImagesForEdition(int $editionID): array
     {
-        $callback = function ($select) use ($editionID): void {
-            $select->order(['Editions_Images.Position']);
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return iterator_to_array($this->editionsImagesTable->select($callback));
+        $dql = 'SELECT i FROM ' . EditionsImage::class . ' i WHERE i.edition=:edition ORDER BY i.position';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -168,9 +170,9 @@ class EditionsImageService extends AbstractDbService
      */
     public function getByDomain(string $domain): array
     {
-        $callback = function ($select) use ($domain): void {
-            $select->where->like('Image_Path', '%' . $domain . '%');
-        };
-        return iterator_to_array($this->editionsImagesTable->select($callback));
+        $dql = 'SELECT i FROM ' . EditionsImage::class . ' i WHERE i.imagePath LIKE :domain';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('domain', "%$domain%");
+        return $query->getResult();
     }
 }

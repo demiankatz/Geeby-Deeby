@@ -76,26 +76,26 @@ class EditionsImage extends AbstractEntity implements EditionsImageEntityInterfa
     /**
      * Image path.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Image_Path', type: 'text', length: 255, nullable: true)]
-    protected string $imagePath;
+    protected ?string $imagePath = null;
 
     /**
      * Thumb path.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Thumb_Path', type: 'text', length: 255, nullable: true)]
-    protected string $thumbPath;
+    protected ?string $thumbPath = null;
 
     /**
      * IIIF URI.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'IIIF_URI', type: 'text', length: 255, nullable: true)]
-    protected string $iiifUri;
+    protected ?string $iiifUri = null;
 
     /**
      * Position.
