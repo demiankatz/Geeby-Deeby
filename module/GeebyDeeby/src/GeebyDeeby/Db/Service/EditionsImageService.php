@@ -30,6 +30,7 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionsImage;
 use GeebyDeeby\Db\Entity\EditionsImageEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
@@ -94,7 +95,10 @@ class EditionsImageService extends AbstractDbService
      */
     public function getDuplicateThumbs(): array
     {
-        return iterator_to_array($this->editionsImagesTable->getDuplicateThumbs());
+        $dql = 'SELECT i.thumbPath AS Thumb_Path, COUNT(i.thumbPath) AS c FROM '
+            . EditionsImage::class . ' i GROUP BY i.thumbPath HAVING c > 1';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -106,7 +110,13 @@ class EditionsImageService extends AbstractDbService
      */
     public function getEditionsForThumb(string $thumb): array
     {
-        return iterator_to_array($this->editionsImagesTable->getEditionsForThumb($thumb));
+        $dql = 'SELECT DISTINCT e.id AS Edition_ID, i.id AS Sequence_ID, e.editionName AS Edition_Name FROM '
+            . EditionsImage::class . ' i '
+            . 'INNER JOIN ' . Edition::class . ' e ON i.edition=e.id '
+            . 'WHERE i.thumbPath=:path';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('path', $thumb);
+        return $query->getResult();
     }
 
     /**

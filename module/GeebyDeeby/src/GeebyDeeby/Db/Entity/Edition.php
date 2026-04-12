@@ -154,26 +154,26 @@ class Edition extends AbstractEntity implements EditionEntityInterface
     /**
      * Length.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Edition_Length', type: 'text', length: 255, nullable: true)]
-    protected string $length;
+    protected ?string $length;
 
     /**
      * Endings count.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Edition_Endings', type: 'text', length: 255, nullable: true)]
-    protected string $endings;
+    protected ?string $endings;
 
     /**
      * Description.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Edition_Description', type: 'text', length: 65535, nullable: true)]
-    protected string $description;
+    protected ?string $description;
 
     /**
      * Preferred series/publisher link.
@@ -214,10 +214,10 @@ class Edition extends AbstractEntity implements EditionEntityInterface
     /**
      * Endings count.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Extent_In_Parent', type: 'text', length: 65535, nullable: true)]
-    protected string $extentInParent;
+    protected ?string $extentInParent;
 
     /**
      * Display order within item.
