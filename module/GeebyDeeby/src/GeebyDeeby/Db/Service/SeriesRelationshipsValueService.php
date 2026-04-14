@@ -30,11 +30,13 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesRelationship;
 use GeebyDeeby\Db\Entity\SeriesRelationshipEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesRelationshipsValue;
 use GeebyDeeby\Db\Entity\SeriesRelationshipsValueEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesRelationshipsValues;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -51,15 +53,15 @@ class SeriesRelationshipsValueService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param EntityManager             $entityManager           Entity manager
-     * @param PersistenceManager        $persistenceManager      Persistence manager
-     * @param SeriesRelationshipsValues $relationshipsValueTable SeriesRelationshipsValues table
+     * @param EntityManager             $entityManager             Entity manager
+     * @param PersistenceManager        $persistenceManager        Persistence manager
+     * @param SeriesRelationshipService $seriesRelationshipService SeriesRelationship database service
      */
     public function __construct(
         EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesRelationshipsValues $relationshipsValueTable
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected SeriesRelationshipService $seriesRelationshipService
     ) {
         parent::__construct($entityManager, $persistenceManager);
     }
@@ -71,7 +73,9 @@ class SeriesRelationshipsValueService extends AbstractDbService
      */
     public function createEntity(): SeriesRelationshipsValueEntityInterface
     {
-        return $this->relationshipsValueTable->createRow();
+        $entity = new SeriesRelationshipsValue();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -83,7 +87,14 @@ class SeriesRelationshipsValueService extends AbstractDbService
      */
     public function getSeriesRelatedtoObjectSeries(int $seriesID): array
     {
-        return iterator_to_array($this->relationshipsValueTable->getSeriesRelatedtoObjectSeries($seriesID));
+        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name, r.id AS Series_Relationship_ID '
+            . 'FROM ' . SeriesRelationshipsValue::class
+            . ' rv INNER JOIN ' . Series::class . ' s ON rv.subjectSeries=s.id '
+            . 'INNER JOIN ' . SeriesRelationship::class . ' r ON rv.relationship=r.id '
+            . 'WHERE rv.objectSeries=:series ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -95,7 +106,14 @@ class SeriesRelationshipsValueService extends AbstractDbService
      */
     public function getSeriesRelatedtoSubjectSeries(int $seriesID): array
     {
-        return iterator_to_array($this->relationshipsValueTable->getSeriesRelatedtoSubjectSeries($seriesID));
+        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name, r.id AS Series_Relationship_ID '
+            . 'FROM ' . SeriesRelationshipsValue::class
+            . ' rv INNER JOIN ' . Series::class . ' s ON rv.objectSeries=s.id '
+            . 'INNER JOIN ' . SeriesRelationship::class . ' r ON rv.relationship=r.id '
+            . 'WHERE rv.subjectSeries=:series ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -107,7 +125,29 @@ class SeriesRelationshipsValueService extends AbstractDbService
      */
     public function getRelationshipsForSeries(int $seriesID): array
     {
-        return $this->relationshipsValueTable->getRelationshipsForSeries($seriesID);
+        // Collect forward and inverse relationships in an index:
+        $index = [];
+        $subjectList = $this->getSeriesRelatedtoSubjectSeries($seriesID);
+        foreach ($subjectList as $current) {
+            $index[$current['Series_Relationship_ID']][] = $current;
+        }
+        $objectList = $this->getSeriesRelatedtoObjectSeries($seriesID);
+        foreach ($objectList as $current) {
+            $index['i' . $current['Series_Relationship_ID']][] = $current;
+        }
+
+        // Look up all options on the option list in the index to build return value:
+        $retVal = [];
+        $optionList = $this->seriesRelationshipService->getOptionList(true);
+        foreach ($optionList as $id => $relationship) {
+            if (isset($index[$id])) {
+                $retVal[] = $relationship + [
+                    'relationship_id' => $id,
+                    'values' => $index[$id],
+                ];
+            }
+        }
+        return $retVal;
     }
 
     /**
@@ -124,15 +164,17 @@ class SeriesRelationshipsValueService extends AbstractDbService
         int|SeriesEntityInterface $object,
         int|SeriesRelationshipEntityInterface $relationship
     ): ?SeriesRelationshipsValueEntityInterface {
-        $where = [
-            'Subject_Series_ID' => $subject instanceof SeriesEntityInterface ? $subject->getId() : $subject,
-            'Object_Series_ID' => $object instanceof SeriesEntityInterface ? $object->getId() : $object,
-            'Series_Relationship_ID' => $relationship instanceof SeriesRelationshipEntityInterface
+        $params = [
+            'subject' => $subject instanceof SeriesEntityInterface ? $subject->getId() : $subject,
+            'object' => $object instanceof SeriesEntityInterface ? $object->getId() : $object,
+            'relationship' => $relationship instanceof SeriesRelationshipEntityInterface
                 ? $relationship->getId() : $relationship,
         ];
-        foreach ($this->relationshipsValueTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT r FROM ' . SeriesRelationshipsValue::class
+            . ' r WHERE r.subjectSeries=:subject AND r.objectSeries=:object AND r.relationship=:relationship';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
