@@ -354,8 +354,8 @@ class EditItemController extends AbstractBase
             }
             return $this->jsonReportSuccess();
         }
-        $note = intval($this->params()->fromPost('note_id'));
-        $extras = ['setPosition' => 0, 'setNote' => $note];
+        $note = $this->params()->fromPost('note_id');
+        $extras = ['setPosition' => 0, 'setNote' => empty($note) ? null : intval($note)];
         return $this->handleGenericLink(
             ItemsInCollectionService::class,
             'setCollectionItem',
