@@ -29,12 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsInCollection;
 use GeebyDeeby\Db\Entity\ItemsInCollectionEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsInCollections;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\MaterialType;
+use GeebyDeeby\Db\Entity\Note;
 
 /**
  * Database service for the Items_In_Collections table.
@@ -48,29 +48,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsInCollectionService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager           Entity manager
-     * @param PersistenceManager $persistenceManager      Persistence manager
-     * @param ItemsInCollections $itemsInCollectionsTable ItemsInCollections table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsInCollections $itemsInCollectionsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsInCollectionEntityInterface
      */
     public function createEntity(): ItemsInCollectionEntityInterface
     {
-        return $this->itemsInCollectionsTable->createRow();
+        $entity = new ItemsInCollection();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -80,7 +66,12 @@ class ItemsInCollectionService extends AbstractDbService
      */
     public function getAllCollections(): array
     {
-        return iterator_to_array($this->itemsInCollectionsTable->getAllCollections());
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name '
+            . 'FROM ' . ItemsInCollection::class . ' c '
+            . 'INNER JOIN ' . Item::class . ' i ON c.collectionItem=i.id '
+            . 'GROUP BY i.id, i.itemName ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -92,7 +83,16 @@ class ItemsInCollectionService extends AbstractDbService
      */
     public function getCollectionsForItem(int $itemID): array
     {
-        return iterator_to_array($this->itemsInCollectionsTable->getCollectionsForItem($itemID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, '
+            . 'm.id AS Material_Type_ID, m.singularName AS Material_Type_Name, n.id AS Note_ID, n.note AS Note '
+            . 'FROM ' . ItemsInCollection::class . ' c '
+            . 'INNER JOIN ' . Item::class . ' i ON c.collectionItem=i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' m ON i.materialType=m.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON c.note=n.id '
+            . 'WHERE c.item=:item ORDER BY m.singularName, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -104,7 +104,16 @@ class ItemsInCollectionService extends AbstractDbService
      */
     public function getItemsForCollection(int $collectionID): array
     {
-        return iterator_to_array($this->itemsInCollectionsTable->getItemsForCollection($collectionID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, c.position AS Position, '
+            . 'm.id AS Material_Type_ID, m.singularName AS Material_Type_Name, n.id AS Note_ID, n.note AS Note '
+            . 'FROM ' . ItemsInCollection::class . ' c '
+            . 'INNER JOIN ' . Item::class . ' i ON c.item=i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' m ON i.materialType=m.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON c.note=n.id '
+            . 'WHERE c.collectionItem=:collectionItem ORDER BY m.singularName, c.position, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('collectionItem', $collectionID);
+        return $query->getResult();
     }
 
     /**
@@ -116,7 +125,10 @@ class ItemsInCollectionService extends AbstractDbService
      */
     public function deleteCollection(int $collectionId): void
     {
-        $this->itemsInCollectionsTable->delete(['Collection_Item_ID' => $collectionId]);
+        $dql = 'DELETE FROM ' . ItemsInCollection::class . ' c WHERE c.collectionItem=:collectionItem';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('collectionItem', $collectionId);
+        $query->execute();
     }
 
     /**
@@ -133,16 +145,19 @@ class ItemsInCollectionService extends AbstractDbService
         int|ItemEntityInterface $item,
         ?int $pos = null
     ): ?ItemsInCollectionEntityInterface {
-        $where = [
-            'Collection_Item_ID' => $collection instanceof ItemEntityInterface ? $collection->getId() : $collection,
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
+        $dql = 'SELECT c FROM ' . ItemsInCollection::class
+            . ' c WHERE c.collectionItem=:collectionItem AND c.item=:item';
+        $params = [
+            'collectionItem' => $collection instanceof ItemEntityInterface ? $collection->getId() : $collection,
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
         ];
         if ($pos !== null) {
-            $where['Position'] = $pos;
+            $dql .= ' AND c.position=:position';
+            $params['position'] = $pos;
         }
-        foreach ($this->itemsInCollectionsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
