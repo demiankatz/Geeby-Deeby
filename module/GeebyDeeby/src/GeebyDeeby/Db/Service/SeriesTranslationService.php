@@ -29,12 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
-use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Language;
+use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesTranslation;
 use GeebyDeeby\Db\Entity\SeriesTranslationEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesTranslations;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Translations table.
@@ -48,29 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesTranslationService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager           Entity manager
-     * @param PersistenceManager $persistenceManager      Persistence manager
-     * @param SeriesTranslations $seriesTranslationsTable SeriesTranslations table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesTranslations $seriesTranslationsTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesTranslationEntityInterface
      */
     public function createEntity(): SeriesTranslationEntityInterface
     {
-        return $this->seriesTranslationsTable->createRow();
+        $entity = new SeriesTranslation();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -82,7 +67,15 @@ class SeriesTranslationService extends AbstractDbService
      */
     public function getTranslatedFrom(int $seriesID): array
     {
-        return iterator_to_array($this->seriesTranslationsTable->getTranslatedFrom($seriesID));
+        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name, '
+            . 'l.id AS Language_ID, l.languageName AS Language_Name '
+            . 'FROM ' . SeriesTranslation::class . ' st '
+            . 'INNER JOIN ' . Series::class . ' s ON st.translatedSeries=s.id '
+            . 'INNER JOIN ' . Language::class . ' l ON s.language=l.id '
+            . 'WHERE st.sourceSeries=:series ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -94,7 +87,15 @@ class SeriesTranslationService extends AbstractDbService
      */
     public function getTranslatedInto(int $seriesID): array
     {
-        return iterator_to_array($this->seriesTranslationsTable->getTranslatedInto($seriesID));
+        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name, '
+            . 'l.id AS Language_ID, l.languageName AS Language_Name '
+            . 'FROM ' . SeriesTranslation::class . ' st '
+            . 'INNER JOIN ' . Series::class . ' s ON st.sourceSeries=s.id '
+            . 'INNER JOIN ' . Language::class . ' l ON s.language=l.id '
+            . 'WHERE st.translatedSeries=:series ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -109,13 +110,15 @@ class SeriesTranslationService extends AbstractDbService
         int|SeriesEntityInterface $source,
         int|SeriesEntityInterface $translated
     ): ?SeriesTranslationEntityInterface {
-        $where = [
-            'Source_Series_ID' => $source instanceof SeriesEntityInterface ? $source->getId() : $source,
-            'Trans_Series_ID' => $translated instanceof SeriesEntityInterface ? $translated->getId() : $translated,
-        ];
-        foreach ($this->seriesTranslationsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT st FROM ' . SeriesTranslation::class
+            . ' st WHERE st.sourceSeries=:source AND st.translatedSeries=:translated';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('source', $source instanceof SeriesEntityInterface ? $source->getId() : $source);
+        $query->setParameter(
+            'translated',
+            $translated instanceof SeriesEntityInterface ? $translated->getId() : $translated
+        );
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }
