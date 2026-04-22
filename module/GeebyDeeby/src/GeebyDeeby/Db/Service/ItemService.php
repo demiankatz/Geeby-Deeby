@@ -32,9 +32,12 @@ namespace GeebyDeeby\Db\Service;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\UnionType;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
+use GeebyDeeby\Db\DoctrinePaginatorAdapter;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Item;
+use GeebyDeeby\Db\Table\Item as ItemTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
 
@@ -54,13 +57,13 @@ class ItemService extends AbstractDbService
      *
      * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Item               $itemTable          Item table
+     * @param ItemTable          $itemTable          Item table
      */
     public function __construct(
         EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Item $itemTable
+        protected ItemTable $itemTable
     ) {
         parent::__construct($entityManager, $persistenceManager);
     }
@@ -72,7 +75,9 @@ class ItemService extends AbstractDbService
      */
     public function createEntity(): ItemEntityInterface
     {
-        return $this->itemTable->createRow();
+        $entity = new Item();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -84,7 +89,7 @@ class ItemService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?ItemEntityInterface
     {
-        return $this->itemTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Item::class, $id);
     }
 
     /**
@@ -107,7 +112,9 @@ class ItemService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->itemTable->getList());
+        $dql = 'SELECT i FROM ' . Item::class . ' i ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -152,7 +159,12 @@ class ItemService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->itemTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 'i.itemName LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name FROM ' . Item::class . ' i WHERE '
+            . implode(' AND ', $where) . ' ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -230,14 +242,13 @@ class ItemService extends AbstractDbService
      */
     public function getNewItemsPaginator(int $page = 1, int $pageSize = 50): Paginator
     {
-        $adapter = $this->itemTable->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($this->itemTable->getTable());
-        $query->order('Item_ID DESC');
+        $dql = 'SELECT i FROM ' . Item::class . ' i ORDER BY i.id DESC';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setFirstResult(($page - 1) * $pageSize)->setMaxResults($pageSize);
+        $doctrinePaginator = new PaginationPaginator($query);
+        $doctrinePaginator->setUseOutputWalkers(false);
         $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+            new DoctrinePaginatorAdapter($doctrinePaginator)
         );
         $paginator->setItemCountPerPage($pageSize);
         $paginator->setCurrentPageNumber($page);
