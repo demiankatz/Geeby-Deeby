@@ -199,6 +199,8 @@ class ItemService extends AbstractDbService
                 . "COALESCE(childIat.altName, childI.itemName) ORDER BY childE.positionInParent SEPARATOR '||'"
                 . ') AS Child_Items, ';
             $where[] = 'e.parentEdition IS NULL';
+        } else {
+            $extraJoins = $extraSelect = '';
         }
         $dql = 'SELECT ' . $extraSelect . 'MIN(erd.year) AS Earliest_Year, MIN(e.id) AS Edition_ID, '
             . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
