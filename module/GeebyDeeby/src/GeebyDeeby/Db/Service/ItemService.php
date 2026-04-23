@@ -34,8 +34,12 @@ use Doctrine\DBAL\Query\UnionType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
 use GeebyDeeby\Db\DoctrinePaginatorAdapter;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
 use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\MaterialType;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Item as ItemTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
@@ -181,7 +185,38 @@ class ItemService extends AbstractDbService
         bool $topOnly = true,
         bool $groupByMaterial = true
     ): array {
-        return iterator_to_array($this->itemTable->getItemsForSeries($seriesID, $topOnly, $groupByMaterial));
+        $order = 'e.volume, e.position, e.replacementNumber, Best_Title';
+        if ($groupByMaterial) {
+            $order = 'm.singularName, ' . $order;
+        }
+        $where = ['e.series=:series'];
+        $params = ['series' => $seriesID];
+        if ($topOnly) {
+            $extraJoins =  'LEFT JOIN ' . Edition::class . ' childE ON childE.parentEdition=e.id '
+                . 'LEFT JOIN ' . Item::class . ' childI ON childE.item=childI.id '
+                . 'LEFT JOIN ' . ItemsAltTitle::class . ' childIat ON childE.preferredItemAltName=childIat.id ';
+            $extraSelect = 'GROUP_CONCAT('
+                . "COALESCE(childIat.altName, childI.itemName) ORDER BY childE.positionInParent SEPARATOR '||'"
+                . ') AS Child_Items, ';
+            $where[] = 'e.parentEdition IS NULL';
+        }
+        $dql = 'SELECT ' . $extraSelect . 'MIN(erd.year) AS Earliest_Year, MIN(e.id) AS Edition_ID, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 'm.id AS Material_Type_ID, m.singularName AS Material_Type_Name, '
+            . 'm.pluralName AS Material_Type_Plural_Name, COALESCE(iat.altName, i.itemName) AS Best_Title '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' m ON i.materialType=m.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . $extraJoins
+            . 'WHERE ' . implode(' AND ', $where) . ' '
+            . 'GROUP BY i.id, e.volume, e.position, e.replacementNumber, m.id '
+            . 'ORDER BY ' . $order;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
