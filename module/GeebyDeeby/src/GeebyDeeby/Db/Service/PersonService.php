@@ -30,9 +30,15 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
+use GeebyDeeby\Db\DoctrinePaginatorAdapter;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsCredit;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Person;
+use GeebyDeeby\Db\Table\Person as PersonTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
 
@@ -55,13 +61,13 @@ class PersonService extends AbstractDbService
      *
      * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Person             $personTable        Person table
+     * @param PersonTable        $personTable        Person table
      */
     public function __construct(
         EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Person $personTable
+        protected PersonTable $personTable
     ) {
         parent::__construct($entityManager, $persistenceManager);
     }
@@ -73,7 +79,9 @@ class PersonService extends AbstractDbService
      */
     public function createEntity(): PersonEntityInterface
     {
-        return $this->personTable->createRow();
+        $entity = new Person();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -85,7 +93,7 @@ class PersonService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?PersonEntityInterface
     {
-        return $this->personTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Person::class, $id);
     }
 
     /**
@@ -110,7 +118,11 @@ class PersonService extends AbstractDbService
      */
     public function getList(bool $biosOnly = false): array
     {
-        return iterator_to_array($this->personTable->getList($biosOnly));
+        $dql = 'SELECT p FROM ' . Person::class . ' p'
+            . ($biosOnly ? " WHERE p.biography != ''" : '')
+            . ' ORDER BY p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -123,14 +135,13 @@ class PersonService extends AbstractDbService
      */
     public function getNewPeoplePaginator(int $page = 1, int $pageSize = 50): Paginator
     {
-        $adapter = $this->personTable->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($this->personTable->getTable());
-        $query->order('Person_ID DESC');
-        $paginator = new Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+        $dql = 'SELECT p FROM ' . Person::class . ' p ORDER BY p.id DESC';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setFirstResult(($page - 1) * $pageSize)->setMaxResults($pageSize);
+        $doctrinePaginator = new PaginationPaginator($query);
+        $doctrinePaginator->setUseOutputWalkers(false);
+        $paginator = new \Laminas\Paginator\Paginator(
+            new DoctrinePaginatorAdapter($doctrinePaginator)
         );
         $paginator->setItemCountPerPage($pageSize);
         $paginator->setCurrentPageNumber($page);
@@ -146,7 +157,17 @@ class PersonService extends AbstractDbService
      */
     public function getListForItemIds(array $itemIds): array
     {
-        return iterator_to_array($this->personTable->getListForItemIds($itemIds));
+        $dql = 'SELECT i.id AS Item_ID, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . Person::class . ' p '
+            . 'INNER JOIN ' . EditionsCredit::class . ' ec ON ec.person=p.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON ec.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'WHERE i.id IN (:items) '
+            . 'ORDER BY p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('items', $itemIds);
+        return $query->getResult();
     }
 
     /**
