@@ -30,11 +30,13 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsCredit;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Edition;
+use GeebyDeeby\Db\Table\Edition as EditionTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
@@ -58,14 +60,14 @@ class EditionService extends AbstractDbService
      *
      * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Editions           $editionsTable      Editions table
+     * @param EditionTable       $editionsTable      Editions table
      * @param ItemService        $itemService        Item database service
      */
     public function __construct(
         EntityManager $entityManager,
         PersistenceManager $persistenceManager,
         #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Edition $editionsTable,
+        protected EditionTable $editionsTable,
         #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
         protected ItemService $itemService
     ) {
@@ -79,7 +81,9 @@ class EditionService extends AbstractDbService
      */
     public function createEntity(): EditionEntityInterface
     {
-        return $this->editionsTable->createRow();
+        $entity = new Edition();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -148,8 +152,8 @@ class EditionService extends AbstractDbService
     {
         $editions = $this->getEditionParentChain($edition);
         $items = [];
-        foreach ($editions as $edition) {
-            $items[] = $this->editionsTable->getByPrimaryKey($edition)->getItem()->getId();
+        foreach ($editions as $current) {
+            $items[] = $this->getByPrimaryKey($current)->getItem()->getId();
         }
         return $items;
     }
@@ -252,7 +256,9 @@ class EditionService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->editionsTable->getList());
+        $dql = 'SELECT e FROM ' . Edition::class . ' e ORDER BY e.editionName, e.id';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -261,11 +267,17 @@ class EditionService extends AbstractDbService
      * @param string $query The user query.
      * @param ?int   $limit Limit on returned rows (null for no limit).
      *
-     * @return array
+     * @return EditionEntityInterface[]
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->editionsTable->getSuggestions($query, $limit));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.editionName LIKE :query ORDER BY e.editionName, e.id';
+        $queryObj = $this->entityManager->createQuery($dql);
+        $queryObj->setParameter('query', $query . '%');
+        if ($limit) {
+            $queryObj->setMaxResults($limit);
+        }
+        return $queryObj->getResult();
     }
 
     /**
@@ -432,7 +444,15 @@ class EditionService extends AbstractDbService
      */
     public function copyCredits(int $from, int $to): void
     {
-        $this->editionsTable->copyCredits($from, $to);
+        $dql = 'SELECT c FROM ' . EditionsCredit::class . ' c WHERE c.edition=:from';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('from', $from);
+        $credits = $query->getResult();
+        foreach ($credits as $credit) {
+            $clone = clone $credit;
+            $credit->setEdition($to);
+            $this->persistEntity($clone);
+        }
     }
 
     /**
