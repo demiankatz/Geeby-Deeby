@@ -109,6 +109,19 @@ class EditionsCredit extends AbstractEntity implements EditionsCreditEntityInter
     protected ?int $position;
 
     /**
+     * Map of database field => setter for use by populateFromArray().
+     *
+     * @var array
+     */
+    protected array $setterMap = [
+        'Edition_ID' => 'setEdition',
+        'Note_ID' => 'setNote',
+        'Person_ID' => 'setPerson',
+        'Position' => 'setPosition',
+        'Role_ID' => 'setRole',
+    ];
+
+    /**
      * Get associated edition.
      *
      * @return EditionEntityInterface

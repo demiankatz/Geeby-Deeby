@@ -32,6 +32,8 @@ namespace GeebyDeeby\Db\Service;
 use Doctrine\ORM\EntityManager;
 use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsAttribute;
+use GeebyDeeby\Db\Entity\EditionsAttributesValue;
 use GeebyDeeby\Db\Entity\EditionsCredit;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
@@ -43,6 +45,7 @@ use Laminas\Db\Sql\Select;
 
 use function count;
 use function in_array;
+use function is_int;
 
 /**
  * Database service for the Editions table.
@@ -418,7 +421,20 @@ class EditionService extends AbstractDbService
      */
     public function copyAssociatedInfo(int|EditionEntityInterface $from, int|EditionEntityInterface $to): void
     {
-        $this->editionsTable->copyAssociatedInfo($from, $to);
+        $from = is_int($from) ? $this->getByPrimaryKey($from) : $from;
+        $to = is_int($to) ? $this->getByPrimaryKey($to) : $to;
+        foreach ($this->getChildren($from) as $child) {
+            $this->copyEdition(
+                $child,
+                [
+                    'Parent_Edition_ID' => $to->getId(),
+                    'Series_ID' => $to->getSeries()->getId(),
+                    'Edition_Name' => $to->getEditionName(),
+                ]
+            );
+        }
+        $this->copyAttributes($from->getId(), $to->getId());
+        $this->copyCredits($from->getId(), $to->getId());
     }
 
     /**
@@ -431,7 +447,40 @@ class EditionService extends AbstractDbService
      */
     public function copyEdition(EditionEntityInterface $source, array $overrides = []): EditionEntityInterface
     {
-        return $this->editionsTable->copyEdition($source, $overrides);
+        $new = $this->createEntity();
+        $newValues = $source->toArray();
+        $newValues['Edition_Name'] = 'Copy of ' . $newValues['Edition_Name'];
+        $newValues = array_merge($newValues, $overrides);
+        unset($newValues['Edition_ID']);
+        $new->populateFromArray($newValues);
+        $this->persistEntity($new);
+        $this->copyAssociatedInfo($source, $new);
+        return $new;
+    }
+
+    /**
+     * Copy attributes from another edition.
+     *
+     * @param int $from Edition to copy from
+     * @param int $to   Edition to copy to
+     *
+     * @return void
+     */
+    protected function copyAttributes($from, $to)
+    {
+        $dql = 'SELECT DISTINCT v FROM ' . EditionsAttributesValue::class . ' v '
+            . 'INNER JOIN ' . EditionsAttribute::class . ' a ON v.attribute = a.id '
+            . 'WHERE v.edition=:edition AND a.copyToClone=true';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $from);
+        foreach ($query->getResult() as $attr) {
+            $newAttr = new EditionsAttributesValue();
+            $newAttr->setEntityManager($this->entityManager);
+            $data = $attr->toArray();
+            $data['Edition_ID'] = $to;
+            $newAttr->populateFromArray($data);
+            $this->persistEntity($newAttr);
+        }
     }
 
     /**
@@ -449,8 +498,11 @@ class EditionService extends AbstractDbService
         $query->setParameter('from', $from);
         $credits = $query->getResult();
         foreach ($credits as $credit) {
-            $clone = clone $credit;
-            $credit->setEdition($to);
+            $clone = new EditionsCredit();
+            $clone->setEntityManager($this->entityManager);
+            $data = $credit->toArray();
+            $data['Edition_ID'] = $to;
+            $clone->populateFromArray($data);
             $this->persistEntity($clone);
         }
     }
@@ -479,10 +531,10 @@ class EditionService extends AbstractDbService
      */
     public function getByItemAndSeries(int $itemId, int $seriesId): array
     {
-        $seriesEditions = $this->editionsTable->select(
-            ['Item_ID' => $itemId, 'Series_ID' => $seriesId]
-        );
-        return iterator_to_array($seriesEditions);
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.item=:item AND e.series=:series';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['item' => $itemId, 'series' => $seriesId]);
+        return $query->getResult();
     }
 
     /**

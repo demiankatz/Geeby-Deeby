@@ -228,6 +228,30 @@ class Edition extends AbstractEntity implements EditionEntityInterface
     protected int $itemDisplayOrder = 0;
 
     /**
+     * Map of database field => setter for use by populateFromArray().
+     *
+     * @var array
+     */
+    protected array $setterMap = [
+        'Edition_Description' => 'setDescription',
+        'Edition_Endings' => 'setEndings',
+        'Edition_Length' => 'setLength',
+        'Edition_Name' => 'setEditionName',
+        'Extent_In_Parent' => 'setExtentInParent',
+        'Item_Display_Order' => 'setItemDisplayOrder',
+        'Item_ID' => 'setItem',
+        'Parent_Edition_ID' => 'setParentEdition',
+        'Position' => 'setPosition',
+        'Position_In_Parent' => 'setPositionInParent',
+        'Preferred_Item_AltName_ID' => 'setPreferredItemAlternateTitle',
+        'Preferred_Series_AltName_ID' => 'setPreferredSeriesAlternateTitle',
+        'Preferred_Series_Publisher_ID' => 'setPreferredPublisher',
+        'Replacement_Number' => 'setReplacementNumber',
+        'Series_ID' => 'setSeries',
+        'Volume' => 'setVolume',
+    ];
+
+    /**
      * Get identifier (returns null for an uninitialized or non-persisted object).
      *
      * @return ?int

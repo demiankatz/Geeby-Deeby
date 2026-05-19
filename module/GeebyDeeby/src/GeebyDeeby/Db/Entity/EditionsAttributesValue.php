@@ -88,6 +88,17 @@ class EditionsAttributesValue extends AbstractEntity implements EditionsAttribut
     protected string $value;
 
     /**
+     * Map of database field => setter for use by populateFromArray().
+     *
+     * @var array
+     */
+    protected array $setterMap = [
+        'Edition_ID' => 'setEdition',
+        'Editions_Attribute_ID' => 'setAttribute',
+        'Editions_Attribute_Value' => 'setValue',
+    ];
+
+    /**
      * Get associated edition.
      *
      * @return ?EditionEntityInterface

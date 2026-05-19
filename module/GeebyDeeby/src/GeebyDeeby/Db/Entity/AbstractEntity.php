@@ -52,6 +52,13 @@ use function is_callable;
 abstract class AbstractEntity implements ArrayAccess, EntityInterface
 {
     /**
+     * Map of database field => setter for use by populateFromArray().
+     *
+     * @var array
+     */
+    protected array $setterMap = [];
+
+    /**
      * Return an array representation of the entity
      *
      * @return array
@@ -79,6 +86,28 @@ abstract class AbstractEntity implements ArrayAccess, EntityInterface
             }
         }
         return $vals;
+    }
+
+    /**
+     * Given an array of database field name => value, populate the entity.
+     *
+     * @param array $values Values to populate.
+     *
+     * @return static
+     */
+    public function populateFromArray(array $values): static
+    {
+        foreach ($values as $key => $value) {
+            if ($setter = $this->setterMap[$key] ?? null) {
+                $this->$setter($value);
+            } elseif (str_ends_with($key, '_Object')) {
+                // Ignore object keys (they are redundant)
+            } else {
+                $class = static::class;
+                throw new \Exception("Unsupported $class key: $key");
+            }
+        }
+        return $this;
     }
 
     /**
