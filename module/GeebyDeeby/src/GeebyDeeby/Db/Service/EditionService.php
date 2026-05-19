@@ -408,7 +408,10 @@ class EditionService extends AbstractDbService
      */
     public function getChildren(EditionEntityInterface $edition): array
     {
-        return iterator_to_array($this->editionsTable->getChildren($edition));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.parentEdition=:edition';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $edition->getId());
+        return $query->getResult();
     }
 
     /**
