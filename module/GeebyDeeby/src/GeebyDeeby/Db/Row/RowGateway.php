@@ -65,4 +65,19 @@ class RowGateway extends \Laminas\Db\RowGateway\RowGateway
         $key = $this->primaryKeyColumn[0];
         return $this->$key;
     }
+
+    /**
+     * Given an array of database field name => value, populate the entity.
+     *
+     * @param array $values Values to populate.
+     *
+     * @return static
+     */
+    public function populateFromArray(array $values): static
+    {
+        foreach ($values as $key => $value) {
+            $this->$key = $value;
+        }
+        return $this;
+    }
 }
