@@ -48,6 +48,15 @@ interface EntityInterface
     public function toArray();
 
     /**
+     * Given an array of database field name => value, populate the entity.
+     *
+     * @param array $values Values to populate.
+     *
+     * @return static
+     */
+    public function populateFromArray(array $values): static;
+
+    /**
      * Get an array of primary key fields for the entity.
      *
      * @return array
