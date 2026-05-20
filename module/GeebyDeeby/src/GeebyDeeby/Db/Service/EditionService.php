@@ -38,6 +38,7 @@ use GeebyDeeby\Db\Entity\EditionsCredit;
 use GeebyDeeby\Db\Entity\EditionsReleaseDate;
 use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
 use GeebyDeeby\Db\Entity\ItemsCreator;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
@@ -301,11 +302,25 @@ class EditionService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return ?EditionEntityInterface
+     * @return ?array
      */
-    public function getParentItemForEdition(int $editionID): ?EditionEntityInterface
+    public function getParentItemForEdition(int $editionID): ?array
     {
-        return $this->editionsTable->getParentItemForEdition($editionID) ?: null;
+        $ed = $this->getByPrimaryKey($editionID);
+        if (!($parentObj = $ed->getParentEdition())) {
+            return null;
+        }
+        $parent = $parentObj->getId();
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'iat.altName as Item_AltName FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'WHERE e.id=:edition';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $parent);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -397,7 +412,23 @@ class EditionService extends AbstractDbService
      */
     public function safeDelete(int $id): void
     {
-        $this->editionsTable->safeDelete($id);
+        $edition = $this->getByPrimaryKey($id);
+        $dql = 'SELECT COUNT(ec.position) FROM ' . EditionsCredit::class . ' ec WHERE ec.edition=:edition';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $edition->getId());
+        if ($query->getSingleScalarResult() > 0) {
+            throw new \Exception('Cannot delete - attached credits.');
+        }
+        $dql2 = 'SELECT COUNT(erd.year) FROM ' . EditionsReleaseDate::class . ' erd WHERE erd.edition=:edition';
+        $query2 = $this->entityManager->createQuery($dql2);
+        $query2->setParameter('edition', $edition->getId());
+        if ($query2->getSingleScalarResult() > 0) {
+            throw new \Exception('Cannot delete - attached dates.');
+        }
+        if (count($this->getChildren($edition)) > 0) {
+            throw new \Exception('Cannot delete - has child editions.');
+        }
+        $this->deleteEntity($edition);
     }
 
     /**
