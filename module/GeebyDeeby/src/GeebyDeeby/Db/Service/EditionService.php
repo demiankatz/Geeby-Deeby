@@ -294,7 +294,12 @@ class EditionService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->editionsTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 'e.editionName LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT e.id AS Edition_ID, e.editionName AS Edition_Name FROM ' . Edition::class . ' e WHERE '
+            . implode(' AND ', $where) . ' ORDER BY e.editionName, e.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -551,9 +556,10 @@ class EditionService extends AbstractDbService
      */
     public function getByItem(int|ItemEntityInterface $item): array
     {
-        $itemId = $item instanceof ItemEntityInterface ? $item->getId() : $item;
-        $itemEditions = $this->editionsTable->select(['Item_ID' => $itemId]);
-        return iterator_to_array($itemEditions);
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.item=:item ORDER BY e.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $item instanceof ItemEntityInterface ? $item->getId() : $item);
+        return $query->getResult();
     }
 
     /**
