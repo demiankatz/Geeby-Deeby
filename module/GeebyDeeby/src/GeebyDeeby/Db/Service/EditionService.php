@@ -672,11 +672,10 @@ class EditionService extends AbstractDbService
      */
     public function getBySeriesAndPosition(int|SeriesEntityInterface $series, int $pos): array
     {
-        $where = [
-            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
-            'Position' => $pos,
-        ];
-        return iterator_to_array($this->editionsTable->select($where));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.series=:series AND e.position=:pos';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(compact('series', 'pos'));
+        return $query->getResult();
     }
 
     /**
