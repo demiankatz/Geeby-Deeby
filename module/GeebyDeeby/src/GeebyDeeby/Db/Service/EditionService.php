@@ -682,7 +682,10 @@ class EditionService extends AbstractDbService
      */
     public function getByPreferredPublisherId(int $id): array
     {
-        return iterator_to_array($this->editionsTable->select(['Preferred_Series_Publisher_ID' => $id]));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.preferredSeriesPublisher=:id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('id', $id);
+        return $query->getResult();
     }
 
     /**
