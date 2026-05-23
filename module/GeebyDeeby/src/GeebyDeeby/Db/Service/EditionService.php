@@ -30,6 +30,8 @@
 namespace GeebyDeeby\Db\Service;
 
 use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\City;
+use GeebyDeeby\Db\Entity\Country;
 use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsAttribute;
@@ -40,7 +42,12 @@ use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsAltTitle;
 use GeebyDeeby\Db\Entity\ItemsCreator;
+use GeebyDeeby\Db\Entity\Note;
+use GeebyDeeby\Db\Entity\Publisher;
+use GeebyDeeby\Db\Entity\PublishersAddress;
+use GeebyDeeby\Db\Entity\PublishersImprint;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesPublisher;
 use GeebyDeeby\Db\PersistenceManager;
 use GeebyDeeby\Db\Table\Edition as EditionTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
@@ -367,6 +374,32 @@ class EditionService extends AbstractDbService
     }
 
     /**
+     * Retrieve publishers for the specified match.
+     *
+     * @param string $field Field to match
+     * @param int    $value Value to match
+     *
+     * @return mixed
+     */
+    protected function getPublishersForWhereClause(string $field, int $value): array
+    {
+        $dql = 'SELECT p.id AS Publisher_ID, p.publisherName as Publisher_Name, n.id AS Note_ID, n.note AS Note, '
+            . 'pa.street AS Street, pi.imprintName AS Imprint_Name, '
+            . 'co.id AS Country_ID, co.countryName AS Country_Name, ci.id AS City_ID, ci.cityName AS City_Name '
+            . 'FROM ' . SeriesPublisher::class . ' sp INNER JOIN ' . Publisher::class . ' p ON sp.publisher=p.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON sp.id=e.preferredSeriesPublisher '
+            . 'LEFT JOIN ' . PublishersAddress::class . ' pa ON sp.address=pa.id '
+            . 'LEFT JOIN ' . PublishersImprint::class . ' pi ON sp.imprint=pi.id '
+            . 'LEFT JOIN ' . Country::class . ' co ON pa.country=co.id '
+            . 'LEFT JOIN ' . City::class . ' ci ON pa.city=ci.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON sp.note=n.id '
+            . "WHERE $field=:value ORDER BY e.editionName, p.publisherName, co.countryName, ci.cityName, pa.street";
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('value', $value);
+        return $query->getResult();
+    }
+
+    /**
      * Retrieve publishers for the specified edition.
      *
      * @param int $id Edition ID.
@@ -375,7 +408,7 @@ class EditionService extends AbstractDbService
      */
     public function getPublishersForEdition(int $id): array
     {
-        return iterator_to_array($this->editionsTable->getPublishersForEdition($id));
+        return $this->getPublishersForWhereClause('e.id', $id);
     }
 
     /**
@@ -387,7 +420,7 @@ class EditionService extends AbstractDbService
      */
     public function getPublishersForItem(int $itemID): array
     {
-        return iterator_to_array($this->editionsTable->getPublishersForItem($itemID));
+        return $this->getPublishersForWhereClause('e.item', $itemID);
     }
 
     /**
