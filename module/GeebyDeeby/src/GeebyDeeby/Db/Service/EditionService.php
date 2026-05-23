@@ -641,7 +641,10 @@ class EditionService extends AbstractDbService
      */
     public function getByItemAltTitleId(int $altId): array
     {
-        return iterator_to_array($this->editionsTable->select(['Preferred_Item_AltName_ID' => $altId]));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.preferredItemAltName=:id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('id', $altId);
+        return $query->getResult();
     }
 
     /**
@@ -653,7 +656,10 @@ class EditionService extends AbstractDbService
      */
     public function getBySeriesAltTitleId(int $altId): array
     {
-        return iterator_to_array($this->editionsTable->select(['Preferred_Series_AltName_ID' => $altId]));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.preferredSeriesAltName=:id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('id', $altId);
+        return $query->getResult();
     }
 
     /**
