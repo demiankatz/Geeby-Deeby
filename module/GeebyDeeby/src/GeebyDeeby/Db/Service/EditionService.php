@@ -177,57 +177,40 @@ class EditionService extends AbstractDbService
         if (!$series) {
             return null;
         }
-        $editionId = $edition->getId();
-        $seriesId = $series->getId();
-        $vol = $edition->getVolume();
-        $pos = $edition->getPosition();
-        $rep = $edition->getReplacementNumber();
-        $name = $edition->getEditionName();
-        $callback = function ($select) use (
-            $editionId,
-            $seriesId,
-            $name,
-            $vol,
-            $pos,
-            $rep,
-            $next
-        ): void {
-            $select->where->equalTo('Series_ID', $seriesId);
-            $select->where->notEqualTo('Edition_ID', $editionId);
-            $fields = [
-                'Volume', 'Position', 'Replacement_Number', 'Edition_Name',
-                'Edition_ID',
-            ];
-            $vals = [$vol, $pos, $rep, $name, $editionId];
-            $nest = $select->where->NEST;
-            for ($i = 0; $i < count($fields); $i++) {
-                $clause = $nest->OR->NEST;
-                for ($j = 0; $j <= $i; $j++) {
-                    if ($j == $i) {
-                        if ($next) {
-                            $clause->greaterThan($fields[$j], $vals[$j]);
-                        } else {
-                            $clause->lessThan($fields[$j], $vals[$j]);
-                        }
-                    } else {
-                        $clause->equalTo($fields[$j], $vals[$j]);
-                    }
+        // Order of keys in $params is important -- needs to align with $fields below.
+        $params = [
+            'vol' => $edition->getVolume(),
+            'pos' => $edition->getPosition(),
+            'rep' => $edition->getReplacementNumber(),
+            'name' => $edition->getEditionName(),
+            'edition' => $edition->getId(),
+            'series' => $series->getId(),
+        ];
+        $keys = array_keys($params);
+        $fields = ['volume', 'position', 'replacementNumber', 'editionName', 'id'];
+        $clauses = [];
+        for ($i = 0; $i < count($fields); $i++) {
+            $subclauses = [];
+            for ($j = 0; $j <= $i; $j++) {
+                if ($j == $i) {
+                    $operator = $next ? '>' : '<';
+                } else {
+                    $operator = '=';
                 }
-                $clause->UNNEST;
+                $subclauses[] = 'e.' . $fields[$j] . $operator . ':' . $keys[$j];
             }
-            $nest->UNNEST;
-            $select->order(
-                $next ? $fields : array_map(
-                    function ($i) {
-                        return "$i DESC";
-                    },
-                    $fields
-                )
-            );
-            $select->limit(1);
-        };
-        $results = $this->editionsTable->select($callback);
-        return count($results) > 0 ? $results->current() : null;
+            $clauses[] = '(' . implode(' AND ', $subclauses) . ')';
+        }
+
+        $orderCallback = $next ? fn ($order) => "e.$order" : fn ($order) => "e.$order DESC";
+        $order = array_map($orderCallback, $fields);
+        $dql = 'SELECT e FROM ' . Edition::class . ' e '
+            . 'WHERE e.series=:series AND e.id != :edition AND (' . implode(' OR ', $clauses) . ')'
+            . ' ORDER BY ' . implode(', ', $order);
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 
     /**
