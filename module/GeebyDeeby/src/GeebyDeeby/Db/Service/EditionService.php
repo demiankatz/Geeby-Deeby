@@ -46,10 +46,11 @@ use GeebyDeeby\Db\Entity\Note;
 use GeebyDeeby\Db\Entity\Publisher;
 use GeebyDeeby\Db\Entity\PublishersAddress;
 use GeebyDeeby\Db\Entity\PublishersImprint;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\SeriesAltTitle;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesPublisher;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Edition as EditionTable;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 use function count;
@@ -72,14 +73,11 @@ class EditionService extends AbstractDbService
      *
      * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param EditionTable       $editionsTable      Editions table
      * @param ItemService        $itemService        Item database service
      */
     public function __construct(
         EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionTable $editionsTable,
         #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
         protected ItemService $itemService
     ) {
@@ -107,7 +105,7 @@ class EditionService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionEntityInterface
     {
-        return $this->editionsTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Edition::class, $id);
     }
 
     /**
@@ -370,7 +368,42 @@ class EditionService extends AbstractDbService
      */
     public function getEditionsForItem(int $itemID, bool $includeParents = false): array
     {
-        return iterator_to_array($this->editionsTable->getEditionsForItem($itemID, $includeParents));
+        $order = 'e.itemDisplayOrder, Earliest_Year, e.editionName';
+        $extraSelect = '';
+        $extraJoin = '';
+        $group = 'Edition_ID, Edition_Name, Item_ID, Series_ID, Volume, Position, Replacement_Number, '
+            . 'Preferred_Item_AltName_ID, Preferred_Series_AltName_ID, Edition_Length, Edition_Endings, '
+            . 'Edition_Description, Preferred_Series_Publisher_ID, Parent_Edition_ID, Position_In_Parent, '
+            . 'Extent_In_Parent, Item_Display_Order';
+        if ($includeParents) {
+            $extraSelect .= ', pi.id AS Parent_Item_ID, pi.itemName AS Item_Name, piat.altName AS Item_AltName';
+            $extraJoin .= ' LEFT JOIN ' . Item::class . ' pi ON pe.item=pi.id '
+                . 'LEFT JOIN ' . Series::class . ' ps ON pe.series=ps.id '
+                . 'LEFT JOIN ' . ItemsAltTitle::class . ' piat ON pe.preferredItemAltName=piat.id ';
+            $order .= ', ps.id, pe.volume, pe.position, pe.replacementNumber';
+            $group .= ', Item_Name, Item_AltName';
+        }
+        $dql = 'SELECT MIN(erd.year) AS Earliest_Year, e.id AS Edition_ID, e.editionName AS Edition_Name, '
+            . 'e.length AS Edition_Length, e.endings AS Edition_Endings, e.description AS Edition_Description, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'e.positionInParent as Position_In_Parent, e.extentInParent AS Extent_In_Parent, '
+            . 'e.itemDisplayOrder AS Item_Display_Order, i.id AS Item_ID, s.id AS Series_ID, '
+            . 'pe.id AS Parent_Edition_ID, iat.id AS Preferred_Item_AltName_ID, '
+            . 'sp.id AS Preferred_Series_Publisher_ID, sat.id AS Preferred_Series_AltName_ID'
+            . $extraSelect . ' FROM ' . Edition::class . ' e '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON erd.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . Series::class . ' s ON e.series=s.id '
+            . 'LEFT JOIN ' . Edition::class . ' pe ON e.parentEdition=pe.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'LEFT JOIN ' . SeriesAltTitle::class . ' sat ON e.preferredSeriesAltName=sat.id '
+            . 'LEFT JOIN ' . SeriesPublisher::class . ' sp ON sp.id=e.preferredSeriesPublisher '
+            . $extraJoin
+            . 'WHERE i.id=:item '
+            . "GROUP BY $group ORDER BY $order";
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
