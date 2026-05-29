@@ -230,7 +230,18 @@ class ItemService extends AbstractDbService
      */
     public function getItemChildren(int $itemID): array
     {
-        return iterator_to_array($this->itemTable->getItemChildren($itemID));
+        $dql = 'SELECT e.id AS Edition_ID, e.editionName AS EditionName, ci.id AS Item_ID, ci.itemName AS Item_Name, '
+            . 'ce.extentInParent AS Extent_In_Parent, ce.positionInParent AS Position_In_Parent, '
+            . 'mt.singularName AS Material_Type_Name, iat.altName AS Item_AltName '
+            . 'FROM ' . Item::class . ' i INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'INNER JOIN ' . Edition::class . ' ce ON ce.parentEdition=e.id '
+            . 'INNER JOIN ' . Item::class . ' ci ON ce.item=ci.id '
+            . 'INNER JOIN ' . MaterialType::class . ' mt ON ci.materialType=mt.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON iat.id=ce.preferredItemAltName '
+            . 'WHERE i.id=:item ORDER BY e.editionName, e.id, ce.positionInParent, ci.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -242,7 +253,17 @@ class ItemService extends AbstractDbService
      */
     public function getItemParents(int $itemID): array
     {
-        return iterator_to_array($this->itemTable->getItemParents($itemID));
+        $dql = 'SELECT pi.id AS Item_ID, pi.itemName AS Item_Name, '
+            . 'mt.singularName AS Material_Type_Name, iat.altName AS Item_AltName '
+            . 'FROM ' . Item::class . ' i INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'INNER JOIN ' . Edition::class . ' pe ON e.parentEdition=pe.id '
+            . 'INNER JOIN ' . Item::class . ' pi ON pe.item=pi.id '
+            . 'INNER JOIN ' . MaterialType::class . ' mt ON pi.materialType=mt.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON iat.id=pe.preferredItemAltName '
+            . 'WHERE i.id=:item GROUP BY pi.id, mt.singularName ORDER BY pi.itemName, mt.singularName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
