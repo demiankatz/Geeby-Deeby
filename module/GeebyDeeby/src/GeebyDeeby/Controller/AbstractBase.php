@@ -513,9 +513,9 @@ class AbstractBase extends AbstractActionController
     /**
      * Get the current user (if logged in) or false.
      *
-     * @return \GeebyDeeby\Db\Row\User|bool
+     * @return UserEntityInterface|false
      */
-    protected function getCurrentUser()
+    protected function getCurrentUser(): UserEntityInterface|false
     {
         if ($this->getAuth()->hasIdentity()) {
             $id = $this->getAuth()->getIdentity();

@@ -1309,15 +1309,11 @@ return [
             \Doctrine\ORM\EntityManager::class => \GeebyDeeby\Db\EntityManagerFactory::class,
             \GeebyDeeby\Articles::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
             \GeebyDeeby\Db\PersistenceManager::class => \GeebyDeeby\Db\PersistenceManagerFactory::class,
-            \GeebyDeeby\Db\Row\PluginManager::class => \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
             \GeebyDeeby\Db\Service\PluginManager::class =>
-                \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
-            \GeebyDeeby\Db\Table\PluginManager::class =>
                 \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
             \GeebyDeeby\EmailService::class => \GeebyDeeby\EmailServiceFactory::class,
             \Laminas\Authentication\AuthenticationService::class =>
                 \Laminas\ServiceManager\Factory\InvokableFactory::class,
-            \Laminas\Db\Adapter\Adapter::class => \GeebyDeeby\Db\AdapterFactory::class,
         ],
         'aliases' => [
             'GeebyDeeby\Authentication' => \Laminas\Authentication\AuthenticationService::class,

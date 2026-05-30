@@ -36,7 +36,6 @@ use GeebyDeeby\Db\Entity\EntityInterface;
 use GeebyDeeby\Db\Entity\ItemsReviewEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesReviewEntityInterface;
 use GeebyDeeby\Db\Entity\UserEntityInterface;
-use Laminas\Db\RowGateway\AbstractRowGateway;
 
 /**
  * Class to manage database persistence operations.
@@ -85,14 +84,11 @@ class PersistenceManager
     public function persistEntity(EntityInterface $entity): void
     {
         $this->logActivity($entity, 'PERSIST');
-        if ($entity instanceof AbstractRowGateway) {
-            $entity->save();
-        } elseif ($entity instanceof AbstractEntity) {
-            $this->entityManager->persist($entity);
-            $this->entityManager->flush();
-        } else {
+        if (!($entity instanceof AbstractEntity)) {
             throw new \Exception('Unexpected entity type');
         }
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
     /**
