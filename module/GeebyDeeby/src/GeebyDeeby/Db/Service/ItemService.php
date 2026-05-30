@@ -275,7 +275,16 @@ class ItemService extends AbstractDbService
      */
     public function getItemsForEdition(int $editionID): array
     {
-        return iterator_to_array($this->itemTable->getItemsForEdition($editionID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, e.id AS Edition_ID, e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'e.positionInParent AS Position_In_Parent, e.extentInParent AS Extent_In_Parent, '
+            . 'e.itemDisplayOrder AS Item_Display_Order, iat.altName AS Item_AltName FROM '
+            . Item::class . ' i INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'WHERE e.parentEdition=:edition ORDER BY e.positionInParent, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
