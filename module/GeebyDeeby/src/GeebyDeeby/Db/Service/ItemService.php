@@ -31,18 +31,17 @@ namespace GeebyDeeby\Db\Service;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\UnionType;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
 use GeebyDeeby\Db\DoctrinePaginatorAdapter;
 use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsCredit;
+use GeebyDeeby\Db\Entity\EditionsFullText;
 use GeebyDeeby\Db\Entity\EditionsReleaseDate;
 use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
 use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsCreator;
 use GeebyDeeby\Db\Entity\MaterialType;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Item as ItemTable;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
 
 /**
@@ -56,22 +55,6 @@ use Laminas\Paginator\Paginator;
  */
 class ItemService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param EntityManager      $entityManager      Entity manager
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param ItemTable          $itemTable          Item table
-     */
-    public function __construct(
-        EntityManager $entityManager,
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemTable $itemTable
-    ) {
-        parent::__construct($entityManager, $persistenceManager);
-    }
-
     /**
      * Create an empty entity.
      *
@@ -296,7 +279,15 @@ class ItemService extends AbstractDbService
      */
     public function getItemsWithFullTextByPerson(int $personId): array
     {
-        return iterator_to_array($this->itemTable->getItemsWithFullTextByPerson($personId));
+        $dql = 'SELECT DISTINCT i.id AS Item_ID, i.itemName AS Item_Name FROM ' . Item::class . ' i '
+            . 'LEFT JOIN ' . ItemsCreator::class . ' ic ON ic.item=i.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'INNER JOIN ' . EditionsFullText::class . ' eft ON eft.edition=e.id '
+            . 'LEFT JOIN ' . EditionsCredit::class . ' c ON c.edition=e.id '
+            . 'WHERE (ic.person=:person OR c.person=:person) ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personId);
+        return $query->getResult();
     }
 
     /**
