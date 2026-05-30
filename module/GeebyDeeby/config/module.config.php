@@ -11,6 +11,7 @@ return [
         'dbName' => 'gbdb', // database schema name
         'dbUser' => 'gbdb', // database username
         'dbPass' => 'gbdb', // database password
+        'dbAlwaysRegenerateProxies' => false, // set to true to always regenerate Doctrine proxy classes (not recommended in production)
         // Should we group series entries by material type (true), or display them as one continuous list (false)?
         'groupSeriesByMaterialType' => true,
         // Set to a directory path to create log files of editor activity:

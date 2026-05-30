@@ -67,18 +67,19 @@ class EntityManagerFactory implements \Laminas\ServiceManager\Factory\FactoryInt
         $isDevMode = false;
         $config = $container->get('Config');
         $dbParams = [
-                'driver' => 'pdo_mysql',
-                'charset' => 'utf8mb4',
-                'host' => $config['geeby-deeby']['dbHost'],
-                'user' => $config['geeby-deeby']['dbUser'],
-                'password' => $config['geeby-deeby']['dbPass'],
-                'dbname' => $config['geeby-deeby']['dbName'],
+            'driver' => 'pdo_mysql',
+            'charset' => 'utf8mb4',
+            'host' => $config['geeby-deeby']['dbHost'],
+            'user' => $config['geeby-deeby']['dbUser'],
+            'password' => $config['geeby-deeby']['dbPass'],
+            'dbname' => $config['geeby-deeby']['dbName'],
         ];
         $doctrineConfig = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
         $doctrineConfig->addCustomStringFunction('group_concat', GroupConcat::class);
         $doctrineConfig->setProxyDir(realpath(__DIR__ . '/../../../../../data/cache'));
-        // TODO: this is only appropriate as a development setting:
-        $doctrineConfig->setAutoGenerateProxyClasses(ProxyFactory::AUTOGENERATE_ALWAYS);
+        $proxyMode = ($config['geeby-deeby']['dbAlwaysRegenerateProxies'] ?? false)
+            ? ProxyFactory::AUTOGENERATE_ALWAYS : ProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED;
+        $doctrineConfig->setAutoGenerateProxyClasses($proxyMode);
         $connection = DriverManager::getConnection($dbParams, $doctrineConfig);
         return new EntityManager($connection, $doctrineConfig);
     }
