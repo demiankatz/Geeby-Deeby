@@ -213,7 +213,7 @@ class ItemService extends AbstractDbService
      */
     public function getItemChildren(int $itemID): array
     {
-        $dql = 'SELECT e.id AS Edition_ID, e.editionName AS EditionName, ci.id AS Item_ID, ci.itemName AS Item_Name, '
+        $dql = 'SELECT e.id AS Edition_ID, e.editionName AS Edition_Name, ci.id AS Item_ID, ci.itemName AS Item_Name, '
             . 'ce.extentInParent AS Extent_In_Parent, ce.positionInParent AS Position_In_Parent, '
             . 'mt.singularName AS Material_Type_Name, iat.altName AS Item_AltName '
             . 'FROM ' . Item::class . ' i INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
