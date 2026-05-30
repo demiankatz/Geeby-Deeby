@@ -101,14 +101,11 @@ class PersistenceManager
     public function deleteEntity(EntityInterface $entity): void
     {
         $this->logActivity($entity, 'DELETE');
-        if ($entity instanceof AbstractRowGateway) {
-            $entity->delete();
-        } elseif ($entity instanceof AbstractEntity) {
-            $this->entityManager->remove($entity);
-            $this->entityManager->flush();
-        } else {
+        if (!($entity instanceof AbstractEntity)) {
             throw new \Exception('Unexpected entity type');
         }
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
     }
 
     /**
