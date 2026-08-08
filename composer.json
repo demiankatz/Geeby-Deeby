@@ -43,7 +43,7 @@
         "phpstan/phpstan": "2.1.32",
         "phpunit/phpunit": "11.5.50",
         "rector/rector": "2.2.7",
-        "squizlabs/php_codesniffer": "4.0.1"
+        "squizlabs/php_codesniffer": "4.0.2"
     },
     "scripts": {
         "fix": "phing fix-php",
