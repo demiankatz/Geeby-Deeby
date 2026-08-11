@@ -29,11 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
+use GeebyDeeby\Db\Entity\Pseudonym;
 use GeebyDeeby\Db\Entity\PseudonymEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Pseudonyms;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Pseudonyms table.
@@ -47,27 +46,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class PseudonymService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Pseudonyms         $pseudonymsTable    Pseudonyms table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Pseudonyms $pseudonymsTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return PseudonymEntityInterface
      */
     public function createEntity(): PseudonymEntityInterface
     {
-        return $this->pseudonymsTable->createRow();
+        $entity = new Pseudonym();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +66,13 @@ class PseudonymService extends AbstractDbService
      */
     public function getPseudonyms(int $personID): array
     {
-        return iterator_to_array($this->pseudonymsTable->getPseudonyms($personID));
+        $dql = 'SELECT p.id AS Pseudo_Person_ID, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . Person::class . ' p INNER JOIN ' . Pseudonym::class . ' pseudo ON p.id=pseudo.pseudoPerson'
+            . ' WHERE pseudo.realPerson=:real ORDER BY p.lastName, p.firstName, p.extraDetails, p.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('real', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -91,19 +84,32 @@ class PseudonymService extends AbstractDbService
      */
     public function getRealNames(int $personID): array
     {
-        return iterator_to_array($this->pseudonymsTable->getRealNames($personID));
+        $dql = 'SELECT p.id AS Real_Person_ID, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . Person::class . ' p INNER JOIN ' . Pseudonym::class . ' pseudo ON p.id=pseudo.realPerson'
+            . ' WHERE pseudo.pseudoPerson=:pseudo ORDER BY p.lastName, p.firstName, p.extraDetails, p.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('pseudo', $personID);
+        return $query->getResult();
     }
 
     /**
      * Get a batch of real name information keyed by ID.
      *
-     * @param iterable $people Collection of people to look up
+     * @param iterable<PersonEntityInterface> $people Collection of people to look up
      *
      * @return array
      */
     public function getRealNamesBatch(iterable $people): array
     {
-        return $this->pseudonymsTable->getRealNamesBatch($people);
+        $retVal = [];
+        foreach ($people as $person) {
+            $id = $person->getId();
+            if (!isset($retVal[$id])) {
+                $retVal[$id] = $this->getRealNames($id);
+            }
+        }
+        return $retVal;
     }
 
     /**
@@ -118,13 +124,14 @@ class PseudonymService extends AbstractDbService
         int|PersonEntityInterface $real,
         int|PersonEntityInterface $pseudo
     ): ?PseudonymEntityInterface {
-        $where = [
-            'Real_Person_ID' => $real instanceof PersonEntityInterface ? $real->getId() : $real,
-            'Pseudo_Person_ID' => $pseudo instanceof PersonEntityInterface ? $pseudo->getId() : $pseudo,
+        $params = [
+            'real' => $real instanceof PersonEntityInterface ? $real->getId() : $real,
+            'pseudo' => $pseudo instanceof PersonEntityInterface ? $pseudo->getId() : $pseudo,
         ];
-        foreach ($this->pseudonymsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT p FROM ' . Pseudonym::class . ' p WHERE p.realPerson=:real AND p.pseudoPerson=:pseudo';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

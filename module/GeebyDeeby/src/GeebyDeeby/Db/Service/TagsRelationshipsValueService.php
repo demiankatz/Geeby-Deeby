@@ -29,11 +29,14 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Tag;
 use GeebyDeeby\Db\Entity\TagEntityInterface;
+use GeebyDeeby\Db\Entity\TagsRelationship;
 use GeebyDeeby\Db\Entity\TagsRelationshipEntityInterface;
+use GeebyDeeby\Db\Entity\TagsRelationshipsValue;
 use GeebyDeeby\Db\Entity\TagsRelationshipsValueEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\TagsRelationshipsValues;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -50,15 +53,17 @@ class TagsRelationshipsValueService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager           $entityManager           Entity manager
      * @param PersistenceManager      $persistenceManager      Persistence manager
-     * @param TagsRelationshipsValues $relationshipsValueTable TagsRelationshipsValues table
+     * @param TagsRelationshipService $tagsRelationshipService TagsRelationship database service
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected TagsRelationshipsValues $relationshipsValueTable
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected TagsRelationshipService $tagsRelationshipService
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**
@@ -68,7 +73,9 @@ class TagsRelationshipsValueService extends AbstractDbService
      */
     public function createEntity(): TagsRelationshipsValueEntityInterface
     {
-        return $this->relationshipsValueTable->createRow();
+        $entity = new TagsRelationshipsValue();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -80,7 +87,14 @@ class TagsRelationshipsValueService extends AbstractDbService
      */
     public function getTagsRelatedtoObjectTag(int $tagID): array
     {
-        return iterator_to_array($this->relationshipsValueTable->getTagsRelatedtoObjectTag($tagID));
+        $dql = 'SELECT t.id AS Tag_ID, t.tag AS Tag, r.id AS Tags_Relationship_ID '
+            . 'FROM ' . TagsRelationshipsValue::class
+            . ' rv INNER JOIN ' . Tag::class . ' t ON rv.subjectTag=t.id '
+            . 'INNER JOIN ' . TagsRelationship::class . ' r ON rv.relationship=r.id '
+            . 'WHERE rv.objectTag=:tag ORDER BY t.tag';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('tag', $tagID);
+        return $query->getResult();
     }
 
     /**
@@ -92,7 +106,14 @@ class TagsRelationshipsValueService extends AbstractDbService
      */
     public function getTagsRelatedtoSubjectTag(int $tagID): array
     {
-        return iterator_to_array($this->relationshipsValueTable->getTagsRelatedtoSubjectTag($tagID));
+        $dql = 'SELECT t.id AS Tag_ID, t.tag AS Tag, r.id AS Tags_Relationship_ID '
+            . 'FROM ' . TagsRelationshipsValue::class
+            . ' rv INNER JOIN ' . Tag::class . ' t ON rv.objectTag=t.id '
+            . 'INNER JOIN ' . TagsRelationship::class . ' r ON rv.relationship=r.id '
+            . 'WHERE rv.subjectTag=:tag ORDER BY t.tag';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('tag', $tagID);
+        return $query->getResult();
     }
 
     /**
@@ -104,7 +125,29 @@ class TagsRelationshipsValueService extends AbstractDbService
      */
     public function getRelationshipsForTag(int $tagID): array
     {
-        return $this->relationshipsValueTable->getRelationshipsForTag($tagID);
+        // Collect forward and inverse relationships in an index:
+        $index = [];
+        $subjectList = $this->getTagsRelatedtoSubjectTag($tagID);
+        foreach ($subjectList as $current) {
+            $index[$current['Tags_Relationship_ID']][] = $current;
+        }
+        $objectList = $this->getTagsRelatedtoObjectTag($tagID);
+        foreach ($objectList as $current) {
+            $index['i' . $current['Tags_Relationship_ID']][] = $current;
+        }
+
+        // Look up all options on the option list in the index to build return value:
+        $retVal = [];
+        $optionList = $this->tagsRelationshipService->getOptionList(true);
+        foreach ($optionList as $id => $relationship) {
+            if (isset($index[$id])) {
+                $retVal[] = $relationship + [
+                    'relationship_id' => $id,
+                    'values' => $index[$id],
+                ];
+            }
+        }
+        return $retVal;
     }
 
     /**
@@ -121,15 +164,17 @@ class TagsRelationshipsValueService extends AbstractDbService
         int|TagEntityInterface $object,
         int|TagsRelationshipEntityInterface $relationship
     ): ?TagsRelationshipsValueEntityInterface {
-        $where = [
-            'Subject_Tag_ID' => $subject instanceof TagEntityInterface ? $subject->getId() : $subject,
-            'Object_Tag_ID' => $object instanceof TagEntityInterface ? $object->getId() : $object,
-            'Tags_Relationship_ID' => $relationship instanceof TagsRelationshipEntityInterface
+        $params = [
+            'subject' => $subject instanceof TagEntityInterface ? $subject->getId() : $subject,
+            'object' => $object instanceof TagEntityInterface ? $object->getId() : $object,
+            'relationship' => $relationship instanceof TagsRelationshipEntityInterface
                 ? $relationship->getId() : $relationship,
         ];
-        foreach ($this->relationshipsValueTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT r FROM ' . TagsRelationshipsValue::class
+            . ' r WHERE r.subjectTag=:subject AND r.objectTag=:object AND r.relationship=:relationship';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

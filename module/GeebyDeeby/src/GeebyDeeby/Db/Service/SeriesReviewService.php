@@ -29,12 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Enum\Approved;
+use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesReview;
 use GeebyDeeby\Db\Entity\SeriesReviewEntityInterface;
+use GeebyDeeby\Db\Entity\User;
 use GeebyDeeby\Db\Entity\UserEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesReviews;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Reviews table.
@@ -48,27 +49,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesReviewService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param SeriesReviews      $seriesReviewsTable SeriesReviews table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesReviews $seriesReviewsTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesReviewEntityInterface
      */
     public function createEntity(): SeriesReviewEntityInterface
     {
-        return $this->seriesReviewsTable->createRow();
+        $entity = new SeriesReview();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -82,7 +71,19 @@ class SeriesReviewService extends AbstractDbService
      */
     public function getReviewsForSeries(int $seriesID, ?string $approved = 'y'): array
     {
-        return iterator_to_array($this->seriesReviewsTable->getReviewsForSeries($seriesID, $approved));
+        $params = ['series' => $seriesID];
+        $dql = 'SELECT r.review AS Review, r.added as Added, u.id AS User_ID, u.username AS Username, u.name AS Name '
+            . 'FROM ' . SeriesReview::class . ' r '
+            . 'INNER JOIN ' . User::class . ' u ON r.user=u.id '
+            . 'WHERE r.series=:series';
+        if ($approved) {
+            $dql .= ' AND r.approved=:approved';
+            $params['approved'] = Approved::from($approved);
+        }
+        $dql .= ' ORDER BY u.username';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
@@ -96,7 +97,25 @@ class SeriesReviewService extends AbstractDbService
      */
     public function getReviewsByUser(?int $userID, ?string $approved = 'y'): array
     {
-        return iterator_to_array($this->seriesReviewsTable->getReviewsByUser($userID, $approved));
+        $params = $where = [];
+        if ($approved) {
+            $where[] = 'r.approved=:approved';
+            $params['approved'] = Approved::from($approved);
+        }
+        if ($userID) {
+            $where[] = 'r.user=:user';
+            $params['user'] = $userID;
+        }
+        $dql = 'SELECT r.review AS Review, r.added as Added, '
+            . 'u.id AS User_ID, u.username AS Username, u.name AS Name, s.id AS Series_ID, s.seriesName AS Series_Name '
+            . 'FROM ' . SeriesReview::class . ' r '
+            . 'INNER JOIN ' . User::class . ' u ON r.user=u.id '
+            . 'INNER JOIN ' . Series::class . ' s ON r.series=s.id '
+            . ($where ? 'WHERE ' . implode(' AND ', $where) . ' ' : '')
+            . 'ORDER BY s.seriesName, s.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
@@ -106,7 +125,15 @@ class SeriesReviewService extends AbstractDbService
      */
     public function getRecentSeriesComments(): array
     {
-        return iterator_to_array($this->seriesReviewsTable->getRecentSeriesComments());
+        $dql = 'SELECT r.review AS Review, r.added as Added, u.id AS User_ID, u.username AS Username, u.name AS Name, '
+            . 's.id AS Series_ID, s.seriesName AS Series_Name '
+            . 'FROM ' . SeriesReview::class . ' r '
+            . 'INNER JOIN ' . User::class . ' u ON r.user=u.id '
+            . 'INNER JOIN ' . Series::class . ' s ON r.series=s.id '
+            . 'WHERE r.approved=:approved ORDER BY r.added DESC, u.username';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('approved', Approved::Yes);
+        return $query->getResult();
     }
 
     /**
@@ -121,13 +148,14 @@ class SeriesReviewService extends AbstractDbService
         int|UserEntityInterface $user,
         int|SeriesEntityInterface $series
     ): ?SeriesReviewEntityInterface {
-        $where = [
-            'User_ID' => $user instanceof UserEntityInterface ? $user->getId() : $user,
-            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
+        $params = [
+            'user' => $user instanceof UserEntityInterface ? $user->getId() : $user,
+            'series' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
         ];
-        foreach ($this->seriesReviewsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT r FROM ' . SeriesReview::class . ' r WHERE r.series = :series AND r.user = :user';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

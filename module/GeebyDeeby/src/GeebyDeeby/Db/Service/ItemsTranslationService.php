@@ -29,11 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsTranslation;
 use GeebyDeeby\Db\Entity\ItemsTranslationEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsTranslations;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Language;
+use GeebyDeeby\Db\Entity\Series;
 
 /**
  * Database service for the Items_Translations table.
@@ -47,27 +49,41 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsTranslationService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager     Persistence manager
-     * @param ItemsTranslations  $itemsTranslationsTable ItemsTranslations table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsTranslations $itemsTranslationsTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsTranslationEntityInterface
      */
     public function createEntity(): ItemsTranslationEntityInterface
     {
-        return $this->itemsTranslationsTable->createRow();
+        $entity = new ItemsTranslation();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
+    }
+
+    /**
+     * Build the DQL query to look up translation relationships.
+     *
+     * @param bool   $includeLang Should we also load language information?
+     * @param string $joinField   Name of ItemsTranslation field to join on
+     * @param string $whereField  Name of ItemsTranslation field to select on
+     *
+     * @return string
+     */
+    protected function getTranslationDql(bool $includeLang, string $joinField, string $whereField): string
+    {
+        $fields = 'i.id AS Item_ID, i.itemName AS Item_Name';
+        $extraJoins = $groupBy = '';
+        if ($includeLang) {
+            $fields .= ', l.id AS Language_ID, l.languageName AS Language_Name';
+            $extraJoins .= 'INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+                . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id '
+                . 'INNER JOIN ' . Language::class . ' l ON s.language=l.id ';
+            $groupBy .= ' GROUP BY i.id ORDER BY i.itemName';
+        }
+        return "SELECT $fields FROM " . ItemsTranslation::class . ' it '
+            . 'INNER JOIN ' . Item::class . ' i ON it.' . $joinField . '=i.id '
+            . $extraJoins
+            . 'WHERE it.' . $whereField . '=:item' . $groupBy;
     }
 
     /**
@@ -80,7 +96,10 @@ class ItemsTranslationService extends AbstractDbService
      */
     public function getTranslatedFrom(int $itemID, bool $includeLang = false): array
     {
-        return iterator_to_array($this->itemsTranslationsTable->getTranslatedFrom($itemID, $includeLang));
+        $dql = $this->getTranslationDql($includeLang, 'translatedItem', 'sourceItem');
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -93,7 +112,10 @@ class ItemsTranslationService extends AbstractDbService
      */
     public function getTranslatedInto(int $itemID, bool $includeLang = false): array
     {
-        return iterator_to_array($this->itemsTranslationsTable->getTranslatedInto($itemID, $includeLang));
+        $dql = $this->getTranslationDql($includeLang, 'sourceItem', 'translatedItem');
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -108,13 +130,15 @@ class ItemsTranslationService extends AbstractDbService
         int|ItemEntityInterface $source,
         int|ItemEntityInterface $translated
     ): ?ItemsTranslationEntityInterface {
-        $where = [
-            'Source_Item_ID' => $source instanceof ItemEntityInterface ? $source->getId() : $source,
-            'Trans_Item_ID' => $translated instanceof ItemEntityInterface ? $translated->getId() : $translated,
-        ];
-        foreach ($this->itemsTranslationsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT it FROM ' . ItemsTranslation::class
+            . ' it WHERE it.sourceItem=:source AND it.translatedItem=:translated';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('source', $source instanceof ItemEntityInterface ? $source->getId() : $source);
+        $query->setParameter(
+            'translated',
+            $translated instanceof ItemEntityInterface ? $translated->getId() : $translated
+        );
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

@@ -202,7 +202,7 @@ class EditEditionController extends AbstractBase
             $view->roles = $this->getDbService(RoleService::class)->getList();
             $view->credits = $this->getDbService(EditionsCreditService::class)->getCreditsForEdition($editionId);
             $view->images = $this->getDbService(EditionsImageService::class)->getImagesForEdition($editionId);
-            $view->ISBNs = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($editionId);
+            $view->isbns = $this->getDbService(EditionsIsbnService::class)->getISBNsForEdition($editionId);
             $view->oclcNumbers = $this->getDbService(EditionsOclcNumberService::class)
                 ->getOCLCNumbersForEdition($editionId);
             $view->editionPlatforms = $this->getDbService(EditionsPlatformService::class)
@@ -213,8 +213,7 @@ class EditEditionController extends AbstractBase
             $view->releaseDates = $this->getDbService(EditionsReleaseDateService::class)
                 ->getDatesForEdition($editionId);
             $view->setTemplate('geeby-deeby/edit-edition/edit-full');
-            $view->fullText = $this->getDbService(EditionsFullTextService::class)
-                ->getFullTextForEdition($editionId);
+            $view->fullText = $this->getDbService(EditionsFullTextService::class)->getFullTextForEdition($editionId);
             $view->fullTextSources = $this->getDbService(FullTextSourceService::class)->getList();
             if (is_object($view->affectedEntity)) {
                 $editionService = $this->getDbService(EditionService::class);
@@ -746,7 +745,7 @@ class EditEditionController extends AbstractBase
                 EditionsIsbnService::class,
                 null,
                 null,
-                'ISBNs',
+                'isbns',
                 'getISBNsForEdition',
                 'geeby-deeby/edit-edition/isbn-list.phtml',
                 retrieveLinkMethod: 'getByPrimaryKey',

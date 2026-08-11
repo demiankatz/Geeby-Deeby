@@ -73,16 +73,16 @@ interface ItemsInCollectionEntityInterface extends EntityInterface
     public function setCollectionItem(int|ItemEntityInterface $item): static;
 
     /**
-     * Get position in credits.
+     * Get position in collection.
      *
      * @return int
      */
     public function getPosition(): int;
 
     /**
-     * Set position in credits.
+     * Set position in collection.
      *
-     * @param int $position Position in credits
+     * @param int $position Position in collection
      *
      * @return static
      */

@@ -29,11 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\EditionsFullText;
+use GeebyDeeby\Db\Entity\EditionsFullTextAttribute;
+use GeebyDeeby\Db\Entity\EditionsFullTextAttributesValue;
 use GeebyDeeby\Db\Entity\EditionsFullTextAttributesValueEntityInterface;
 use GeebyDeeby\Db\Entity\EditionsFullTextEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsFullTextAttributesValues;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Editions_Full_Text_Attributes_Values table.
@@ -47,27 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsFullTextAttributesValueService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager               $persistenceManager Persistence manager
-     * @param EditionsFullTextAttributesValues $valuesTable        EditionsFullTextAttribute table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsFullTextAttributesValues $valuesTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsFullTextAttributesValueEntityInterface
      */
     public function createEntity(): EditionsFullTextAttributesValueEntityInterface
     {
-        return $this->valuesTable->createRow();
+        $entity = new EditionsFullTextAttributesValue();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +67,18 @@ class EditionsFullTextAttributesValueService extends AbstractDbService
      */
     public function getAttributesForFullTextIDs(int|array $fullTextID)
     {
-        return iterator_to_array($this->valuesTable->getAttributesForFullTextIDs((array)$fullTextID));
+        $dql = 'SELECT e.id AS Editions_Full_Text_ID, eftav.value AS Editions_Full_Text_Attribute_Value, '
+            . 'efta.id AS Editions_Full_Text_Attribute_ID, '
+            . 'efta.attributeName AS Editions_Full_Text_Attribute_Name, '
+            . 'efta.rdfProperty AS Editions_Full_Text_Attribute_RDF_Property, '
+            . 'efta.allowHtml AS Allow_HTML, efta.displayPriority AS Display_Priority FROM '
+            . EditionsFullTextAttributesValue::class . ' eftav '
+            . 'INNER JOIN ' . EditionsFullTextAttribute::class . ' efta ON eftav.attribute=efta.id '
+            . 'INNER JOIN ' . EditionsFullText::class . ' e ON eftav.fullText=e.id '
+            . 'WHERE eftav.fullText IN (:ids) ORDER BY efta.displayPriority, efta.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('ids', (array)$fullTextID);
+        return $query->getResult();
     }
 
     /**
@@ -91,7 +90,9 @@ class EditionsFullTextAttributesValueService extends AbstractDbService
      */
     public function deleteByEditionFullText(int|EditionsFullTextEntityInterface $eft): void
     {
-        $where = ['Editions_Full_Text_ID' => $eft instanceof EditionsFullTextEntityInterface ? $eft->getId() : $eft];
-        $this->valuesTable->delete($where);
+        $dql = 'DELETE FROM ' . EditionsFullTextAttributesValue::class . ' e WHERE e.fullText=:id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('id', $eft instanceof EditionsFullTextEntityInterface ? $eft->getId() : $eft);
+        $query->execute();
     }
 }

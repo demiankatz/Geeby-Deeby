@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\TagType;
 use GeebyDeeby\Db\Entity\TagTypeEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\TagType;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Tag_Types table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class TagTypeService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param TagType            $tagTypeTable       TagType table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected TagType $tagTypeTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return TagTypeEntityInterface
      */
     public function createEntity(): TagTypeEntityInterface
     {
-        return $this->tagTypeTable->createRow();
+        return new TagType();
     }
 
     /**
@@ -78,7 +62,7 @@ class TagTypeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?TagTypeEntityInterface
     {
-        return $this->tagTypeTable->getByPrimaryKey($id);
+        return $this->entityManager->find(TagType::class, $id);
     }
 
     /**
@@ -101,6 +85,8 @@ class TagTypeService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->tagTypeTable->getList());
+        $dql = 'SELECT t FROM ' . TagType::class . ' t ORDER BY t.tagTypeName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

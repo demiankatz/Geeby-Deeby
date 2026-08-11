@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Role;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Role;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Roles table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class RoleService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Role               $roleTable          Role table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Role $roleTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return RoleEntityInterface
      */
     public function createEntity(): RoleEntityInterface
     {
-        return $this->roleTable->createRow();
+        return new Role();
     }
 
     /**
@@ -78,7 +62,7 @@ class RoleService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?RoleEntityInterface
     {
-        return $this->roleTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Role::class, $id);
     }
 
     /**
@@ -101,6 +85,8 @@ class RoleService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->roleTable->getList());
+        $dql = 'SELECT r FROM ' . Role::class . ' r ORDER BY r.roleName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

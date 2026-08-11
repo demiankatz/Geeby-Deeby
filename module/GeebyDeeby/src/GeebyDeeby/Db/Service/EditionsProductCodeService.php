@@ -29,10 +29,9 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsProductCode;
 use GeebyDeeby\Db\Entity\EditionsProductCodeEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsProductCodes;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Editions_Product_Codes table.
@@ -46,27 +45,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsProductCodeService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager   $persistenceManager Persistence manager
-     * @param EditionsProductCodes $productCodesTable  EditionsProductCodes table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsProductCodes $productCodesTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsProductCodeEntityInterface
      */
     public function createEntity(): EditionsProductCodeEntityInterface
     {
-        return $this->productCodesTable->createRow();
+        $entity = new EditionsProductCode();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -78,7 +65,7 @@ class EditionsProductCodeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsProductCodeEntityInterface
     {
-        return $this->productCodesTable->getByPrimaryKey($id) ?: null;
+        return $this->entityManager->find(EditionsProductCode::class, $id);
     }
 
     /**
@@ -86,11 +73,15 @@ class EditionsProductCodeService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsProductCodeEntityInterface[]
      */
     public function getProductCodesForEdition(int $editionID): array
     {
-        return iterator_to_array($this->productCodesTable->getProductCodesForEdition($editionID));
+        $dql = 'SELECT ep FROM ' . EditionsProductCode::class
+            . ' ep WHERE ep.edition = :edition ORDER BY ep.productCode';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -98,10 +89,15 @@ class EditionsProductCodeService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return EditionsProductCodeEntityInterface[]
      */
     public function getProductCodesForItem(int $itemID): array
     {
-        return iterator_to_array($this->productCodesTable->getProductCodesForItem($itemID));
+        $dql = 'SELECT ep FROM ' . EditionsProductCode::class . ' ep '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.id=ep.edition '
+            . 'WHERE e.item = :item ORDER BY ep.productCode';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 }

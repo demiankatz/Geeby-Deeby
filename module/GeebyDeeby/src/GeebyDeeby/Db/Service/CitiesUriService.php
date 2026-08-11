@@ -29,11 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\CitiesUri;
 use GeebyDeeby\Db\Entity\CitiesUriEntityInterface;
+use GeebyDeeby\Db\Entity\City;
 use GeebyDeeby\Db\Entity\CityEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\CitiesURIs;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Predicate;
 
 /**
  * Database service for the Cities_URIs table.
@@ -47,27 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class CitiesUriService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param CitiesURIs         $citiesUrisTable    CitiesURIs table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected CitiesURIs $citiesUrisTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return CitiesUriEntityInterface
      */
     public function createEntity(): CitiesUriEntityInterface
     {
-        return $this->citiesUrisTable->createRow();
+        $entity = new CitiesUri();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +67,15 @@ class CitiesUriService extends AbstractDbService
      */
     public function getCitiesForURI(string $uri): array
     {
-        return iterator_to_array($this->citiesUrisTable->getCitiesForURI($uri));
+        $dql = 'SELECT cu.id AS Sequence_ID, cu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev, '
+            . 'c.id AS City_ID, c.cityName as City_Name'
+            . ' FROM ' . CitiesUri::class . ' cu INNER JOIN ' . Predicate::class . ' p ON cu.predicate = p.id'
+            . ' INNER JOIN ' . City::class . ' c ON cu.city = c.id'
+            . ' WHERE cu.uri = :uri';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('uri', $uri);
+        return $query->getResult();
     }
 
     /**
@@ -91,8 +87,13 @@ class CitiesUriService extends AbstractDbService
      */
     public function getURIsForCity(int|CityEntityInterface $city): array
     {
-        $cityId = $city instanceof CityEntityInterface ? $city->getId() : $city;
-        return iterator_to_array($this->citiesUrisTable->getURIsForCity($cityId));
+        $dql = 'SELECT cu.id AS Sequence_ID, cu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev '
+            . ' FROM ' . CitiesUri::class . ' cu INNER JOIN ' . Predicate::class . ' p ON cu.predicate = p.id'
+            . ' WHERE cu.city = :city ORDER BY cu.uri, p.abbreviation';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('city', $city instanceof CityEntityInterface ? $city->getId() : $city);
+        return $query->getResult();
     }
 
     /**
@@ -105,9 +106,10 @@ class CitiesUriService extends AbstractDbService
      */
     public function getByCityAndUri(int $cityId, string $uri): ?CitiesUriEntityInterface
     {
-        foreach ($this->citiesUrisTable->select(['City_ID' => $cityId, 'URI' => $uri]) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT cu FROM ' . CitiesUri::class . ' cu WHERE cu.city = :city AND cu.uri = :uri';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['city' => $cityId, 'uri' => $uri]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

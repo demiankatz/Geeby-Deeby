@@ -29,10 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsFullText;
+use GeebyDeeby\Db\Entity\FullTextSource;
 use GeebyDeeby\Db\Entity\FullTextSourceEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\FullTextSource;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Full_Text_Sources table.
@@ -46,27 +46,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class FullTextSourceService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager  Persistence manager
-     * @param FullTextSource     $fullTextSourceTable FullTextSource table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected FullTextSource $fullTextSourceTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return FullTextSourceEntityInterface
      */
     public function createEntity(): FullTextSourceEntityInterface
     {
-        return $this->fullTextSourceTable->createRow();
+        return new FullTextSource();
     }
 
     /**
@@ -78,7 +64,7 @@ class FullTextSourceService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?FullTextSourceEntityInterface
     {
-        return $this->fullTextSourceTable->getByPrimaryKey($id);
+        return $this->entityManager->find(FullTextSource::class, $id);
     }
 
     /**
@@ -103,6 +89,21 @@ class FullTextSourceService extends AbstractDbService
      */
     public function getList(?int $seriesID = null): array
     {
-        return iterator_to_array($this->fullTextSourceTable->getList($seriesID));
+        $dql = 'SELECT fts FROM ' . FullTextSource::class . ' fts';
+        $params = [];
+        if ($seriesID) {
+            $subquery = 'SELECT DISTINCT ifts.id FROM ' . Edition::class . ' e INNER JOIN '
+                . EditionsFullText::class . ' eft ON e.id = eft.edition INNER JOIN '
+                . FullTextSource::class . ' ifts ON eft.source = ifts.id'
+                . ' WHERE e.series = :series';
+            $dql .= " WHERE fts.id IN ($subquery)";
+            $params['series'] = $seriesID;
+        }
+        $dql .= ' ORDER BY fts.sourceName';
+        $query = $this->entityManager->createQuery($dql);
+        if ($params) {
+            $query->setParameters($params);
+        }
+        return $query->getResult();
     }
 }

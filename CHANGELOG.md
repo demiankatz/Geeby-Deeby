@@ -13,8 +13,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- The database system has been refactored to abstract Laminas Row and Table classes behind generalized services and entity interfaces.
-- The getSuggestions() methods of various Row classes now accept null as well as false to indicate no limit.
+- The database system has been refactored to replace Laminas\Db with Doctrine, introducing generalized database services and entity interfaces.
+- The getSuggestions() methods of various classes now accept null as well as false to indicate no limit.
+- The Default column of the Material_Types table has been renamed to Is_Default to reduce conflicts with SQL keywords and changed to tinyint to save space.
 - The Recent_Reviews table has been removed and replaced with an Added column in the Items_Reviews and Series_Reviews tables.
 - Search result displays have been made more consistent.
 - View helpers have been modernized (including significant simplification of AnalyzeCredits helper).

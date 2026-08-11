@@ -210,8 +210,8 @@
       <?php if (count($descriptions) > 0): ?>
         <?php foreach ($descriptions as $desc): ?>
           <tr>
-            <th scope="row"><?=$this->escapeHtml($this->descriptionsource()->getName($desc['Source']))?>:</th>
-            <td><?=$desc['Description']?></td>
+            <th scope="row"><?=$this->escapeHtml($this->descriptionsource()->getName($desc->getSource()))?>:</th>
+            <td><?=$desc->getDescription()?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

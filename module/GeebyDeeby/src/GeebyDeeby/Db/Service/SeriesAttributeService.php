@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\SeriesAttribute;
 use GeebyDeeby\Db\Entity\SeriesAttributeEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesAttribute;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Attributes table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesAttributeService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager   Persistence manager
-     * @param SeriesAttribute    $seriesAttributeTable SeriesAttribute table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesAttribute $seriesAttributeTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesAttributeEntityInterface
      */
     public function createEntity(): SeriesAttributeEntityInterface
     {
-        return $this->seriesAttributeTable->createRow();
+        return new SeriesAttribute();
     }
 
     /**
@@ -78,7 +62,7 @@ class SeriesAttributeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?SeriesAttributeEntityInterface
     {
-        return $this->seriesAttributeTable->getByPrimaryKey($id);
+        return $this->entityManager->find(SeriesAttribute::class, $id);
     }
 
     /**
@@ -101,6 +85,8 @@ class SeriesAttributeService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->seriesAttributeTable->getList());
+        $dql = 'SELECT a FROM ' . SeriesAttribute::class . ' a ORDER BY a.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

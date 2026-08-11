@@ -29,10 +29,19 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\UnionType;
+use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
+use GeebyDeeby\Db\DoctrinePaginatorAdapter;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsCredit;
+use GeebyDeeby\Db\Entity\EditionsFullText;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Item;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsCreator;
+use GeebyDeeby\Db\Entity\MaterialType;
 use Laminas\Paginator\Paginator;
 
 /**
@@ -47,27 +56,15 @@ use Laminas\Paginator\Paginator;
 class ItemService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Item               $itemTable          Item table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Item $itemTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemEntityInterface
      */
     public function createEntity(): ItemEntityInterface
     {
-        return $this->itemTable->createRow();
+        $entity = new Item();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +76,7 @@ class ItemService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?ItemEntityInterface
     {
-        return $this->itemTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Item::class, $id);
     }
 
     /**
@@ -102,7 +99,9 @@ class ItemService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->itemTable->getList());
+        $dql = 'SELECT i FROM ' . Item::class . ' i ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -115,7 +114,27 @@ class ItemService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->itemTable->getSuggestions($query, $limit));
+        $connection = $this->entityManager->getConnection();
+        $firstQuery = new QueryBuilder($connection);
+        $firstQuery->select('i.Item_ID, Item_Name')
+            ->from('Items', 'i')
+            ->where('i.Item_Name LIKE :query');
+        $secondQuery = $this->entityManager->createQueryBuilder();
+        $secondQuery->select(
+            "i.Item_ID, CONCAT(iat.Item_AltName, ' [alt. title for ', i.Item_Name, ']') AS Item_Name"
+        )->from('Items_AltTitles', 'iat')
+            ->innerJoin('Items', 'i', 'ON', 'i.Item_ID = iat.Item_ID')
+            ->where('iat.Item_AltName LIKE :query');
+        $queryBuilder = new QueryBuilder($connection);
+        $union = $queryBuilder
+            ->union($firstQuery)
+            ->addUnion($secondQuery, UnionType::DISTINCT)
+            ->orderBy('Item_Name', 'ASC');
+        if ($limit) {
+            $union->setMaxResults($limit);
+        }
+        $result = $connection->executeQuery($union->getSQL(), ['query' => $query . '%']);
+        return $result->fetchAllAssociative();
     }
 
     /**
@@ -127,7 +146,12 @@ class ItemService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->itemTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 'i.itemName LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name FROM ' . Item::class . ' i WHERE '
+            . implode(' AND ', $where) . ' ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -144,7 +168,40 @@ class ItemService extends AbstractDbService
         bool $topOnly = true,
         bool $groupByMaterial = true
     ): array {
-        return iterator_to_array($this->itemTable->getItemsForSeries($seriesID, $topOnly, $groupByMaterial));
+        $order = 'e.volume, e.position, e.replacementNumber, Best_Title';
+        if ($groupByMaterial) {
+            $order = 'm.singularName, ' . $order;
+        }
+        $where = ['e.series=:series'];
+        $params = ['series' => $seriesID];
+        if ($topOnly) {
+            $extraJoins =  'LEFT JOIN ' . Edition::class . ' childE ON childE.parentEdition=e.id '
+                . 'LEFT JOIN ' . Item::class . ' childI ON childE.item=childI.id '
+                . 'LEFT JOIN ' . ItemsAltTitle::class . ' childIat ON childE.preferredItemAltName=childIat.id ';
+            $extraSelect = 'GROUP_CONCAT('
+                . "COALESCE(childIat.altName, childI.itemName) ORDER BY childE.positionInParent SEPARATOR '||'"
+                . ') AS Child_Items, ';
+            $where[] = 'e.parentEdition IS NULL';
+        } else {
+            $extraJoins = $extraSelect = '';
+        }
+        $dql = 'SELECT ' . $extraSelect . 'MIN(erd.year) AS Earliest_Year, MIN(e.id) AS Edition_ID, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 'm.id AS Material_Type_ID, m.singularName AS Material_Type_Name, '
+            . 'm.pluralName AS Material_Type_Plural_Name, COALESCE(iat.altName, i.itemName) AS Best_Title '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' m ON i.materialType=m.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . $extraJoins
+            . 'WHERE ' . implode(' AND ', $where) . ' '
+            . 'GROUP BY i.id, e.volume, e.position, e.replacementNumber, m.id '
+            . 'ORDER BY ' . $order;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        return $query->getResult();
     }
 
     /**
@@ -156,7 +213,18 @@ class ItemService extends AbstractDbService
      */
     public function getItemChildren(int $itemID): array
     {
-        return iterator_to_array($this->itemTable->getItemChildren($itemID));
+        $dql = 'SELECT e.id AS Edition_ID, e.editionName AS Edition_Name, ci.id AS Item_ID, ci.itemName AS Item_Name, '
+            . 'ce.extentInParent AS Extent_In_Parent, ce.positionInParent AS Position_In_Parent, '
+            . 'mt.singularName AS Material_Type_Name, iat.altName AS Item_AltName '
+            . 'FROM ' . Item::class . ' i INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'INNER JOIN ' . Edition::class . ' ce ON ce.parentEdition=e.id '
+            . 'INNER JOIN ' . Item::class . ' ci ON ce.item=ci.id '
+            . 'INNER JOIN ' . MaterialType::class . ' mt ON ci.materialType=mt.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON iat.id=ce.preferredItemAltName '
+            . 'WHERE i.id=:item ORDER BY e.editionName, e.id, ce.positionInParent, ci.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -168,7 +236,17 @@ class ItemService extends AbstractDbService
      */
     public function getItemParents(int $itemID): array
     {
-        return iterator_to_array($this->itemTable->getItemParents($itemID));
+        $dql = 'SELECT pi.id AS Item_ID, pi.itemName AS Item_Name, '
+            . 'mt.singularName AS Material_Type_Name, iat.altName AS Item_AltName '
+            . 'FROM ' . Item::class . ' i INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'INNER JOIN ' . Edition::class . ' pe ON e.parentEdition=pe.id '
+            . 'INNER JOIN ' . Item::class . ' pi ON pe.item=pi.id '
+            . 'INNER JOIN ' . MaterialType::class . ' mt ON pi.materialType=mt.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON iat.id=pe.preferredItemAltName '
+            . 'WHERE i.id=:item GROUP BY pi.id, mt.singularName ORDER BY pi.itemName, mt.singularName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -180,7 +258,16 @@ class ItemService extends AbstractDbService
      */
     public function getItemsForEdition(int $editionID): array
     {
-        return iterator_to_array($this->itemTable->getItemsForEdition($editionID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, e.id AS Edition_ID, e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'e.positionInParent AS Position_In_Parent, e.extentInParent AS Extent_In_Parent, '
+            . 'e.itemDisplayOrder AS Item_Display_Order, iat.altName AS Item_AltName FROM '
+            . Item::class . ' i INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'WHERE e.parentEdition=:edition ORDER BY e.positionInParent, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -192,7 +279,15 @@ class ItemService extends AbstractDbService
      */
     public function getItemsWithFullTextByPerson(int $personId): array
     {
-        return iterator_to_array($this->itemTable->getItemsWithFullTextByPerson($personId));
+        $dql = 'SELECT DISTINCT i.id AS Item_ID, i.itemName AS Item_Name FROM ' . Item::class . ' i '
+            . 'LEFT JOIN ' . ItemsCreator::class . ' ic ON ic.item=i.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'INNER JOIN ' . EditionsFullText::class . ' eft ON eft.edition=e.id '
+            . 'LEFT JOIN ' . EditionsCredit::class . ' c ON c.edition=e.id '
+            . 'WHERE (ic.person=:person OR c.person=:person) ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personId);
+        return $query->getResult();
     }
 
     /**
@@ -205,14 +300,13 @@ class ItemService extends AbstractDbService
      */
     public function getNewItemsPaginator(int $page = 1, int $pageSize = 50): Paginator
     {
-        $adapter = $this->itemTable->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($this->itemTable->getTable());
-        $query->order('Item_ID DESC');
+        $dql = 'SELECT i FROM ' . Item::class . ' i ORDER BY i.id DESC';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setFirstResult(($page - 1) * $pageSize)->setMaxResults($pageSize);
+        $doctrinePaginator = new PaginationPaginator($query);
+        $doctrinePaginator->setUseOutputWalkers(false);
         $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+            new DoctrinePaginatorAdapter($doctrinePaginator)
         );
         $paginator->setItemCountPerPage($pageSize);
         $paginator->setCurrentPageNumber($page);

@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\City;
 use GeebyDeeby\Db\Entity\CityEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\City;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Cities table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class CityService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param City               $cityTable          City table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected City $cityTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return CityEntityInterface
      */
     public function createEntity(): CityEntityInterface
     {
-        return $this->cityTable->createRow();
+        return new City();
     }
 
     /**
@@ -78,7 +62,7 @@ class CityService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?CityEntityInterface
     {
-        return $this->cityTable->getByPrimaryKey($id);
+        return $this->entityManager->find(City::class, $id);
     }
 
     /**
@@ -101,6 +85,8 @@ class CityService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->cityTable->getList());
+        $dql = 'SELECT c FROM ' . City::class . ' c ORDER BY c.cityName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

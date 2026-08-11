@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\TagsAttribute;
 use GeebyDeeby\Db\Entity\TagsAttributeEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\TagsAttribute;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Tags_Attributes table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class TagsAttributeService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param TagsAttribute      $tagsAttributeTable TagsAttribute table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected TagsAttribute $tagsAttributeTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return TagsAttributeEntityInterface
      */
     public function createEntity(): TagsAttributeEntityInterface
     {
-        return $this->tagsAttributeTable->createRow();
+        return new TagsAttribute();
     }
 
     /**
@@ -78,7 +62,7 @@ class TagsAttributeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?TagsAttributeEntityInterface
     {
-        return $this->tagsAttributeTable->getByPrimaryKey($id);
+        return $this->entityManager->find(TagsAttribute::class, $id);
     }
 
     /**
@@ -101,6 +85,8 @@ class TagsAttributeService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->tagsAttributeTable->getList());
+        $dql = 'SELECT a FROM ' . TagsAttribute::class . ' a ORDER BY a.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

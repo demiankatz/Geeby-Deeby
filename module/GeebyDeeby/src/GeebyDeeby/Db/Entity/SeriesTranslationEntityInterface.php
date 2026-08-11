@@ -57,14 +57,14 @@ interface SeriesTranslationEntityInterface extends EntityInterface
     public function setSourceSeries(int|SeriesEntityInterface $series): static;
 
     /**
-     * Get adapted series.
+     * Get translated series.
      *
      * @return SeriesEntityInterface
      */
     public function getTranslatedSeries(): SeriesEntityInterface;
 
     /**
-     * Set adapted series.
+     * Set translated series.
      *
      * @param int|SeriesEntityInterface $series Associated series entity or ID
      *

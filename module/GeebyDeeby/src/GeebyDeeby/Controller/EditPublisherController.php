@@ -76,7 +76,9 @@ class EditPublisherController extends AbstractBase
         [$view, $ok] = $this->handleGenericItem(PublisherService::class, $assignMap, 'publisher');
         // Add extra fields/controls if outside of a lightbox:
         if ($ok && !$this->getRequest()->isXmlHttpRequest()) {
-            $publisherId = $view->affectedEntity->getId();
+            if (!$publisherId = $view->affectedEntity->getId()) {
+                return $this->forwardTo(__NAMESPACE__ . '\Publisher', 'notfound');
+            }
             $view->cities = $this->getDbService(CityService::class)->getList();
             $view->countries = $this->getDbService(CountryService::class)->getList();
             $view->addresses = $this->getDbService(PublishersAddressService::class)
@@ -117,8 +119,8 @@ class EditPublisherController extends AbstractBase
         if ($this->getRequest()->isDelete()) {
             $extra = $this->params()->fromRoute('extra');
             $result = $this->getDbService(SeriesPublisherService::class)->getSeriesForAddress($extra);
-            if (count($result) > 0) {
-                $msg = 'You cannot delete this address; it is used by Series ' . $result[0]['Series_ID'] . '.';
+            if (isset($result[0])) {
+                $msg = 'You cannot delete this address; it is used by Series ' . $result[0]->getId() . '.';
                 return $this->jsonDie($msg);
             }
         }

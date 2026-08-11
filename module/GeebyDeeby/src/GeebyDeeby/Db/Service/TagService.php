@@ -29,10 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsTag;
+use GeebyDeeby\Db\Entity\Tag;
 use GeebyDeeby\Db\Entity\TagEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Tag;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Tags table.
@@ -46,27 +48,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class TagService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Tag                $tagTable           Tag table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Tag $tagTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return TagEntityInterface
      */
     public function createEntity(): TagEntityInterface
     {
-        return $this->tagTable->createRow();
+        $entity = new Tag();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -78,7 +68,7 @@ class TagService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?TagEntityInterface
     {
-        return $this->tagTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Tag::class, $id);
     }
 
     /**
@@ -101,7 +91,9 @@ class TagService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->tagTable->getList());
+        $dql = 'SELECT t FROM ' . Tag::class . ' t ORDER BY t.tag';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -114,7 +106,13 @@ class TagService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->tagTable->getSuggestions($query, $limit));
+        $dql = 'SELECT t FROM ' . Tag::class . ' t WHERE t.tag LIKE :query ORDER BY t.tag';
+        $queryObj = $this->entityManager->createQuery($dql);
+        $queryObj->setParameter('query', "$query%");
+        if ($limit) {
+            $queryObj->setMaxResults($limit);
+        }
+        return $queryObj->getResult();
     }
 
     /**
@@ -126,7 +124,17 @@ class TagService extends AbstractDbService
      */
     public function getTagsForSeries(int $seriesID): array
     {
-        return iterator_to_array($this->tagTable->getTagsForSeries($seriesID));
+        $dql = 'SELECT DISTINCT t.id AS Tag_ID, t.tag AS Tag, i.id AS Item_ID, i.itemName AS Item_Name, '
+            . 'iat.altName AS Item_AltName, COALESCE(iat.altName, i.itemName) AS Best_Title '
+            . 'FROM ' . Tag::class . ' t '
+            . 'INNER JOIN ' . ItemsTag::class . ' it ON it.tag=t.id '
+            . 'INNER JOIN ' . Item::class . ' i ON it.item=i.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'WHERE e.series=:series ORDER BY t.tag, Best_Title';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -138,7 +146,12 @@ class TagService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->tagTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 't.tag LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT t.id AS Tag_ID, t.tag AS Tag FROM ' . Tag::class . ' t WHERE '
+            . implode(' AND ', $where) . ' ORDER BY t.tag';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -150,10 +163,10 @@ class TagService extends AbstractDbService
      */
     public function getByLabel(string $label): ?TagEntityInterface
     {
-        $tags = $this->tagTable->select(['Tag' => $label]);
-        foreach ($tags as $tag) {
-            return $tag;
-        }
-        return null;
+        $dql = 'SELECT t FROM ' . Tag::class . ' t WHERE t.tag=:query';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('query', $label);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

@@ -29,11 +29,14 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsRelationship;
 use GeebyDeeby\Db\Entity\ItemsRelationshipEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsRelationshipsValue;
 use GeebyDeeby\Db\Entity\ItemsRelationshipsValueEntityInterface;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsRelationshipsValues;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
@@ -50,15 +53,17 @@ class ItemsRelationshipsValueService extends AbstractDbService
     /**
      * Constructor
      *
-     * @param PersistenceManager       $persistenceManager      Persistence manager
-     * @param ItemsRelationshipsValues $relationshipsValueTable ItemsRelationshipsValues table
+     * @param EntityManager            $entityManager            Entity manager
+     * @param PersistenceManager       $persistenceManager       Persistence manager
+     * @param ItemsRelationshipService $itemsRelationshipService ItemsRelationships database service
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsRelationshipsValues $relationshipsValueTable
+        #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
+        protected ItemsRelationshipService $itemsRelationshipService
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**
@@ -68,7 +73,9 @@ class ItemsRelationshipsValueService extends AbstractDbService
      */
     public function createEntity(): ItemsRelationshipsValueEntityInterface
     {
-        return $this->relationshipsValueTable->createRow();
+        $entity = new ItemsRelationshipsValue();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -80,7 +87,14 @@ class ItemsRelationshipsValueService extends AbstractDbService
      */
     public function getItemsRelatedtoObjectItem(int $itemID): array
     {
-        return iterator_to_array($this->relationshipsValueTable->getItemsRelatedtoObjectItem($itemID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, r.id AS Items_Relationship_ID '
+            . 'FROM ' . ItemsRelationshipsValue::class
+            . ' rv INNER JOIN ' . Item::class . ' i ON rv.subjectItem=i.id '
+            . 'INNER JOIN ' . ItemsRelationship::class . ' r ON rv.relationship=r.id '
+            . 'WHERE rv.objectItem=:item ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -92,7 +106,14 @@ class ItemsRelationshipsValueService extends AbstractDbService
      */
     public function getItemsRelatedtoSubjectItem(int $itemID): array
     {
-        return iterator_to_array($this->relationshipsValueTable->getItemsRelatedtoSubjectItem($itemID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, r.id AS Items_Relationship_ID '
+            . 'FROM ' . ItemsRelationshipsValue::class
+            . ' rv INNER JOIN ' . Item::class . ' i ON rv.objectItem=i.id '
+            . 'INNER JOIN ' . ItemsRelationship::class . ' r ON rv.relationship=r.id '
+            . 'WHERE rv.subjectItem=:item ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -104,7 +125,29 @@ class ItemsRelationshipsValueService extends AbstractDbService
      */
     public function getRelationshipsForItem(int $itemID): array
     {
-        return $this->relationshipsValueTable->getRelationshipsForItem($itemID);
+        // Collect forward and inverse relationships in an index:
+        $index = [];
+        $subjectList = $this->getItemsRelatedtoSubjectItem($itemID);
+        foreach ($subjectList as $current) {
+            $index[$current['Items_Relationship_ID']][] = $current;
+        }
+        $objectList = $this->getItemsRelatedtoObjectItem($itemID);
+        foreach ($objectList as $current) {
+            $index['i' . $current['Items_Relationship_ID']][] = $current;
+        }
+
+        // Look up all options on the option list in the index to build return value:
+        $retVal = [];
+        $optionList = $this->itemsRelationshipService->getOptionList(true);
+        foreach ($optionList as $id => $relationship) {
+            if (isset($index[$id])) {
+                $retVal[] = $relationship + [
+                    'relationship_id' => $id,
+                    'values' => $index[$id],
+                ];
+            }
+        }
+        return $retVal;
     }
 
     /**
@@ -121,15 +164,17 @@ class ItemsRelationshipsValueService extends AbstractDbService
         int|ItemEntityInterface $object,
         int|ItemsRelationshipEntityInterface $relationship
     ): ?ItemsRelationshipsValueEntityInterface {
-        $where = [
-            'Subject_Item_ID' => $subject instanceof ItemEntityInterface ? $subject->getId() : $subject,
-            'Object_Item_ID' => $object instanceof ItemEntityInterface ? $object->getId() : $object,
-            'Items_Relationship_ID' => $relationship instanceof ItemsRelationshipEntityInterface
+        $params = [
+            'subject' => $subject instanceof ItemEntityInterface ? $subject->getId() : $subject,
+            'object' => $object instanceof ItemEntityInterface ? $object->getId() : $object,
+            'relationship' => $relationship instanceof ItemsRelationshipEntityInterface
                 ? $relationship->getId() : $relationship,
         ];
-        foreach ($this->relationshipsValueTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT r FROM ' . ItemsRelationshipsValue::class
+            . ' r WHERE r.subjectItem=:subject AND r.objectItem=:object AND r.relationship=:relationship';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

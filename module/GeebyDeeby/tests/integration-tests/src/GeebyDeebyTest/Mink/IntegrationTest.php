@@ -32,9 +32,9 @@ namespace GeebyDeebyTest\Mink;
 use Behat\Mink\Element\Element;
 use Behat\Mink\Element\TraversableElement;
 use GeebyDeeby\Db\Service\UserService;
+use GeebyDeebyTest\Feature\ServiceLocatorTrait;
 use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 
 use function in_array;
 use function is_string;
@@ -50,12 +50,7 @@ use function is_string;
  */
 class IntegrationTest extends MinkTestCase
 {
-    /**
-     * Service locator
-     *
-     * @var ?ServiceLocatorInterface
-     */
-    protected $serviceLocator = null;
+    use ServiceLocatorTrait;
 
     /**
      * Do a basic page content comparison.
@@ -163,20 +158,6 @@ class IntegrationTest extends MinkTestCase
         bool $regExMatch = false
     ): void {
         $this->assertPageContent($expectedMessage, '', $linkText, $containerIndex, $regExMatch);
-    }
-
-    /**
-     * Get the service locator.
-     *
-     * @return ServiceLocatorInterface
-     */
-    protected function getServiceLocator(): ServiceLocatorInterface
-    {
-        if (null === $this->serviceLocator) {
-            $app = \Laminas\Mvc\Application::init(require 'config/application.config.php');
-            $this->serviceLocator = $app->getServiceManager();
-        }
-        return $this->serviceLocator;
     }
 
     /**
@@ -1239,7 +1220,7 @@ class IntegrationTest extends MinkTestCase
             '/^No dates set.$/',
             '/February 3, 1952 \\(test note\\)/',
         ];
-        yield 'edition full text link' => [
+        yield 'edition 1 full text link' => [
             '/edit/Edition/1',
             'Full Text Links',
             ['#Full_Text_URL' => 'http://example.com/fulltext'],
@@ -1248,6 +1229,16 @@ class IntegrationTest extends MinkTestCase
             '|test full text source 1: http://example.com/fulltext '
             . 'Edit options for URL: http://example.com/fulltext '
             . 'Delete full text URL: http://example.com/fulltext|',
+        ];
+        yield 'edition 2 full text link' => [
+            '/edit/Edition/2',
+            'Full Text Links',
+            ['#Full_Text_URL' => 'http://example.com/fulltext2'],
+            '#fulltext_list',
+            '/^No full text set.$/',
+            '|test full text source 1: http://example.com/fulltext2 '
+            . 'Edit options for URL: http://example.com/fulltext2 '
+            . 'Delete full text URL: http://example.com/fulltext2|',
         ];
         yield 'edition image' => [
             '/edit/Edition/1',
@@ -1654,7 +1645,21 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
-     * Test copying an addition (including children for completeness).
+     * Test adding an extent to an edition.
+     *
+     * @return void
+     */
+    public function testSetExtentInParent(): void
+    {
+        $page = $this->goToPage('/edit/Edition/4');
+        $this->logIn($page, 'admin');
+        $this->clickCss($page, '#toggleParent');
+        $this->findCssAndSetValue($page, '#Extent_In_Parent', 'pages 3-6');
+        $this->clickCss($page, '.edit_container input[type="submit"]');
+    }
+
+    /**
+     * Test copying an edition (including children for completeness).
      *
      * @return void
      */
@@ -2023,6 +2028,24 @@ class IntegrationTest extends MinkTestCase
             . ' (last verified: 2025-12-01)'
             . ' User Comments this is my comment --user Please log in to leave a comment.',
         ];
+        yield 'series 1 full text (exact)' => [
+            '/Series/1/FullText',
+            'Showing exact matches; switch to fuzzy matches to add links to listings where online text comes from'
+            . ' a different edition.'
+            . ' Showing 1 result from: All Sources test full text source 1 test series 1 test item (1952)',
+        ];
+        yield 'series 1 full text (fuzzy)' => [
+            '/Series/1/FullText?fuzzy=1',
+            'Showing fuzzy matches; switch to exact matches to only show links where the online text exactly'
+            . ' matches the listed edition.'
+            . ' Showing 1 result from: All Sources test full text source 1 test series 1 test item (1952)',
+        ];
+        yield 'series 1 full text (filtered to non-matching source)' => [
+            '/Series/1/FullText?fuzzy=1&source=2',
+            'Showing fuzzy matches; switch to exact matches to only show links where the online text exactly'
+            . ' matches the listed edition.'
+            . ' Showing 0 result from: All Sources test full text source 1 No full text listed.',
+        ];
         yield 'series 2 (with volume/issue numbering)' => [
             '/Series/2',
             'Please log in to leave a comment.'
@@ -2106,8 +2129,9 @@ class IntegrationTest extends MinkTestCase
             '/Item/2',
             'Please log in to manage your collection or post a review.'
             . ' View: Combined By Edition Combined Summary'
+            . ' Online Full Text: test full text source 1 (test series 2 edition)'
             . ' Series: test series 2 (edited) — v. 1 no. 1'
-            . ' Contents: example article 1 (second test material (edited))'
+            . ' Contents: example article 1 (second test material (edited), pages 3-6)'
             . ' example article 2 (second test material (edited))'
             . ' Length: 32 pages Number of Endings: 1 Errata: none -- perfection! Special Thanks: for nothing'
             . ' Known Editions Copy of test series 2 edition test series 2 edition'
@@ -2121,13 +2145,14 @@ class IntegrationTest extends MinkTestCase
             . ' Copy of test series 2 edition'
             . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
-            . ' Contents: example article 1'
+            . ' Contents: example article 1 (pages 3-6)'
             . ' example article 2'
             . ' Length: 32 pages Number of Endings: 1'
             . ' test series 2 edition'
+            . ' Online Full Text: test full text source 1'
             . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
-            . ' Contents: example article 1'
+            . ' Contents: example article 1 (pages 3-6)'
             . ' example article 2'
             . ' Length: 32 pages Number of Endings: 1'
             . ' Please log in to manage your collection or post a review.',
@@ -2136,19 +2161,22 @@ class IntegrationTest extends MinkTestCase
             '/Item/4',
             'Please log in to manage your collection or post a review.'
             . ' View: Combined By Edition Combined Summary'
-            . ' Series: test series 2 (edited) — v. 1 no. 1'
+            . ' Online Full Text: test full text source 1 (test series 2 edition)'
+            . ' Series: test series 2 (edited) — v. 1 no. 1 — pages 3-6'
             . ' Contained In: example article 2 (second test material (edited), test note)'
             . ' Translated Into: example article 2 (test language 1)'
             . ' Adapted Into: example article 2 (second test material (edited))'
             . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
             . ' Known Editions'
-            . ' Copy of test series 2 edition (in example issue 1) test series 2 edition (in example issue 1)'
+            . ' Copy of test series 2 edition (pages 3-6 in example issue 1)'
+            . ' test series 2 edition (pages 3-6 in example issue 1)'
             . ' Please log in to manage your collection or post a review.',
         ];
         yield 'item (also with parents and relationships)' => [
             '/Item/5',
             'Please log in to manage your collection or post a review.'
             . ' View: Combined By Edition Combined Summary'
+            . ' Online Full Text: test full text source 1 (test series 2 edition)'
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contains: example article 1 (second test material (edited), test note)'
             . ' Translated From: example article 1 (test language 1)'
@@ -2181,14 +2209,16 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'parent edition' => [
             '/Edition/2',
-            'Series: test series 2 (edited) v. 1 no. 1'
+            'Online Full Text: test full text source 1'
+            . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
-            . ' Contents: example article 1 example article 2'
+            . ' Contents: example article 1 (pages 3-6) example article 2'
             . ' Length: 32 pages Number of Endings: 1',
         ];
         yield 'child edition' => [
             '/Edition/4',
-            'Series: test series 2 (edited) v. 1 no. 1'
+            'Online Full Text: test full text source 1'
+            . ' Series: test series 2 (edited) v. 1 no. 1 (pages 3-6)'
             . ' Item: example article 1'
             . ' Length: 16 pages',
         ];
@@ -2530,7 +2560,13 @@ class IntegrationTest extends MinkTestCase
         yield 'items by platform' => ['by platform', 'T test platform test platform 2 (edited)', 2];
         yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
         yield 'items by year' => ['by year', '1952 test item (test note)', 2];
-        yield 'items with full text' => ['with full text', '/.*test series 1 test item \\(1952\\)$/', 2, true];
+        yield 'items with full text' => [
+            'with full text',
+            '/.*test series 1 test item \\(1952\\) '
+            . 'test series 2 \\(edited\\) v. 1, no. 1. example issue 1 \\(example article 1 and 1 more item\\)$/',
+            2,
+            true,
+        ];
         yield 'items with reviews' => ['with reviews', 'test series 1 test item', 2];
         yield 'recently added items' => [
             'recently added',

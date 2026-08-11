@@ -2,8 +2,6 @@ parameters:
     paths:
         - %currentWorkingDirectory%/module
     tmpDir: %currentWorkingDirectory%/.phpstan_cache
-    ignoreErrors:
-        - '#Access to an undefined property GeebyDeeby\\Db\\Row.*#'
     level: 1
     parallel:
         processTimeout: 600.0

@@ -11,6 +11,7 @@ return [
         'dbName' => 'gbdb', // database schema name
         'dbUser' => 'gbdb', // database username
         'dbPass' => 'gbdb', // database password
+        'dbAlwaysRegenerateProxies' => false, // set to true to always regenerate Doctrine proxy classes (not recommended in production)
         // Should we group series entries by material type (true), or display them as one continuous list (false)?
         'groupSeriesByMaterialType' => true,
         // Set to a directory path to create log files of editor activity:
@@ -1306,17 +1307,14 @@ return [
     ],
     'service_manager' => [
         'factories' => [
+            \Doctrine\ORM\EntityManager::class => \GeebyDeeby\Db\EntityManagerFactory::class,
             \GeebyDeeby\Articles::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
             \GeebyDeeby\Db\PersistenceManager::class => \GeebyDeeby\Db\PersistenceManagerFactory::class,
-            \GeebyDeeby\Db\Row\PluginManager::class => \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
             \GeebyDeeby\Db\Service\PluginManager::class =>
-                \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
-            \GeebyDeeby\Db\Table\PluginManager::class =>
                 \GeebyDeeby\ServiceManager\AbstractPluginManagerFactory::class,
             \GeebyDeeby\EmailService::class => \GeebyDeeby\EmailServiceFactory::class,
             \Laminas\Authentication\AuthenticationService::class =>
                 \Laminas\ServiceManager\Factory\InvokableFactory::class,
-            \Laminas\Db\Adapter\Adapter::class => \GeebyDeeby\Db\AdapterFactory::class,
         ],
         'aliases' => [
             'GeebyDeeby\Authentication' => \Laminas\Authentication\AuthenticationService::class,

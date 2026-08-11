@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Authority;
 use GeebyDeeby\Db\Entity\AuthorityEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Authority;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Authorities table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class AuthorityService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Authority          $authorityTable     Authority table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Authority $authorityTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return AuthorityEntityInterface
      */
     public function createEntity(): AuthorityEntityInterface
     {
-        return $this->authorityTable->createRow();
+        return new Authority();
     }
 
     /**
@@ -78,7 +62,7 @@ class AuthorityService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?AuthorityEntityInterface
     {
-        return $this->authorityTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Authority::class, $id);
     }
 
     /**
@@ -101,6 +85,8 @@ class AuthorityService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->authorityTable->getList());
+        $dql = 'SELECT a FROM ' . Authority::class . ' a ORDER BY a.authorityName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

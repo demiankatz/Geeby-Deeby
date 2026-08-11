@@ -12,7 +12,7 @@
           <tr><th scope="col">Date</th><th scope="col">Title</th><th scope="col">User</th></tr>
           <?php foreach ($reviews as $current): ?>
             <tr>
-              <td><?=$this->escapeHtml($current['Added'])?></td>
+              <td><?=$this->escapeHtml($current['Added'] instanceof \DateTime ? $current['Added']->format('Y-m-d') : $current['Added'])?></td>
               <td>
                 <a href="<?=$this->url('item', ['id' => $current['Item_ID']])?>">
                   <?=$this->escapeHtml($this->fixtitle($current['Item_Name']))?>
@@ -36,7 +36,7 @@
           <tr><th scope="col">Date</th><th scope="col">Title</th><th scope="col">User</th></tr>
           <?php foreach ($comments as $current): ?>
             <tr>
-              <td><?=$this->escapeHtml($current['Added'])?></td>
+              <td><?=$this->escapeHtml($current['Added'] instanceof \DateTime ? $current['Added']->format('Y-m-d') : $current['Added'])?></td>
               <td>
                 <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
                   <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>

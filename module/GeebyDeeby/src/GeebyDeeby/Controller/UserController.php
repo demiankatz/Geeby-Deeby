@@ -35,6 +35,8 @@ use GeebyDeeby\Db\Service\ItemsReviewService;
 use GeebyDeeby\Db\Service\SeriesReviewService;
 use GeebyDeeby\Db\Service\UserService;
 
+use function is_string;
+
 /**
  * User controller
  *
@@ -82,7 +84,9 @@ class UserController extends AbstractBase
             $lang = $current['Language_Name'];
             $series = $current['Series_ID'];
             $seriesNames[$series] = $current['Series_Name'];
-            $type = $current['Collection_Status'];
+            // Convert enum to string if necessary:
+            $type = is_string($current['Collection_Status'])
+                ? $current['Collection_Status'] : $current['Collection_Status']->value;
             $formatted[$lang][$series][$type][] = $current;
         }
         $view->collection = $formatted;

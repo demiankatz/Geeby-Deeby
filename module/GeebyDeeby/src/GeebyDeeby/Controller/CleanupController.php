@@ -129,7 +129,7 @@ class CleanupController extends AbstractBase
         $editions = $this->getDbService(EditionService::class)->getByItem($item);
         foreach ($editions as $edition) {
             foreach ($targets as $target) {
-                $this->processHierarchyItem($edition->toArray(), $target->toArray());
+                $this->processHierarchyItem($edition->toArray(), $target);
             }
         }
         $service->deleteCollection($item);

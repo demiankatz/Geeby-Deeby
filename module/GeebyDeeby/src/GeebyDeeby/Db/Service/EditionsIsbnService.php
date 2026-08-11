@@ -29,10 +29,10 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsIsbn;
 use GeebyDeeby\Db\Entity\EditionsIsbnEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsISBNs;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Item;
 
 /**
  * Database service for the Editions_ISBNs table.
@@ -46,27 +46,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsIsbnService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param EditionsISBNs      $isbnsTable         EditionsISBNs table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsISBNs $isbnsTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsIsbnEntityInterface
      */
     public function createEntity(): EditionsIsbnEntityInterface
     {
-        return $this->isbnsTable->createRow();
+        $entity = new EditionsIsbn();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -78,7 +66,7 @@ class EditionsIsbnService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsIsbnEntityInterface
     {
-        return $this->isbnsTable->getByPrimaryKey($id) ?: null;
+        return $this->entityManager->find(EditionsIsbn::class, $id);
     }
 
     /**
@@ -86,11 +74,15 @@ class EditionsIsbnService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return array
+     * @return EditionsIsbnEntityInterface[]
      */
     public function getISBNsForEdition(int $editionID): array
     {
-        return iterator_to_array($this->isbnsTable->getISBNsForEdition($editionID));
+        $dql = 'SELECT ei FROM ' . EditionsIsbn::class
+            . ' ei WHERE ei.edition = :edition ORDER BY ei.isbn13';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -98,11 +90,16 @@ class EditionsIsbnService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return EditionsIsbnEntityInterface[]
      */
     public function getISBNsForItem(int $itemID): array
     {
-        return iterator_to_array($this->isbnsTable->getISBNsForItem($itemID));
+        $dql = 'SELECT ei FROM ' . EditionsIsbn::class . ' ei '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.id=ei.edition '
+            . 'WHERE e.item = :item ORDER BY ei.isbn13';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -114,6 +111,13 @@ class EditionsIsbnService extends AbstractDbService
      */
     public function searchForItems(string $q): array
     {
-        return iterator_to_array($this->isbnsTable->searchForItems($q));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, ei.isbn10 AS ISBN, ei.isbn13 AS ISBN13 '
+            . 'FROM ' . EditionsIsbn::class . ' ei '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.id=ei.edition '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'WHERE ei.isbn10 LIKE :query OR ei.isbn13 LIKE :query ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('query', "$q%");
+        return $query->getResult();
     }
 }

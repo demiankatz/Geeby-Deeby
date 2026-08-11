@@ -8,7 +8,7 @@
       <tr>
         <td>
           <form onsubmit="Edition.reorderLink('Item', { 'edition_id': <?=$current['Edition_ID']?> }); return false;">
-            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=$this->escapeHtml($current['Position_in_Parent'])?>" id="item_order_<?=$current['Edition_ID']?>" /></label>
+            <label><span class="sr-only">Order: </span><input class="number" type="text" value="<?=$this->escapeHtml($current['Position_In_Parent'])?>" id="item_order_<?=$current['Edition_ID']?>" /></label>
             <input type="submit" value="Set" />
           </form>
         </td>

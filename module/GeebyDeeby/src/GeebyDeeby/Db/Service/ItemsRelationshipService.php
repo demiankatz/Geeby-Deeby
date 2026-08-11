@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\ItemsRelationship;
 use GeebyDeeby\Db\Entity\ItemsRelationshipEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsRelationship;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_Relationships table.
@@ -45,19 +43,7 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class ItemsRelationshipService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager     Persistence manager
-     * @param ItemsRelationship  $itemsRelationshipTable ItemsRelationship table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsRelationship $itemsRelationshipTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
+    use Feature\RelationshipOptionListTrait;
 
     /**
      * Create an empty entity.
@@ -66,7 +52,7 @@ class ItemsRelationshipService extends AbstractDbService
      */
     public function createEntity(): ItemsRelationshipEntityInterface
     {
-        return $this->itemsRelationshipTable->createRow();
+        return new ItemsRelationship();
     }
 
     /**
@@ -78,7 +64,7 @@ class ItemsRelationshipService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?ItemsRelationshipEntityInterface
     {
-        return $this->itemsRelationshipTable->getByPrimaryKey($id);
+        return $this->entityManager->find(ItemsRelationship::class, $id);
     }
 
     /**
@@ -101,19 +87,8 @@ class ItemsRelationshipService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->itemsRelationshipTable->getList());
-    }
-
-    /**
-     * Get a list of relationships, formatted to populate a select control.
-     *
-     * @param bool $includePredicate Should we return labels only (false) or an
-     * array with label and predicate (true)?
-     *
-     * @return array
-     */
-    public function getOptionList(bool $includePredicate = false): array
-    {
-        return $this->itemsRelationshipTable->getOptionList($includePredicate);
+        $dql = 'SELECT r FROM ' . ItemsRelationship::class . ' r ORDER BY r.relationshipName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

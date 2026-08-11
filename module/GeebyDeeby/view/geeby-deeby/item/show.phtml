@@ -129,26 +129,26 @@
     </div>
     <?php if (count($editions) > 1): ?><h2>Combined Summary</h2><?php endif; ?>
     <table class="item">
-      <?php if (count($fullText) > 0): ?>
+      <?php if ($fullTextCount = count($fullText)): ?>
         <tr>
           <th scope="row">Online Full Text:</th>
           <td>
-            <?php $fullTextCount = count($fullText); ?>
             <?php $previousFullTextName = $skippedFullText = false; ?>
             <?php foreach ($fullText as $current): ?>
-              <?php if ($fullTextCount > 6 && $current['Edition_Name'] == $previousFullTextName): ?>
+              <?php $currentEditionName = $current->getEdition()->getEditionName(); ?>
+              <?php if ($fullTextCount > 6 && $currentEditionName == $previousFullTextName): ?>
                 <?php $skippedFullText = true; ?>
               <?php else: ?>
-                <a href="<?=$this->escapeHtml($current['Full_Text_URL'])?>">
-                  <?=$this->escapeHtml($current['Full_Text_Source_Name'])?>
+                <a href="<?=$this->escapeHtml($current->getUrl())?>">
+                  <?=$this->escapeHtml($current->getFullTextSource()->getSourceName())?>
                   <?php if (count($editions) > 1): ?>
-                    (<?=$this->escapeHtml($this->fixtitle($current['Edition_Name']))?>)
+                    (<?=$this->escapeHtml($this->fixtitle($currentEditionName))?>)
                   <?php endif; ?>
                 </a>
                 <?php
                   $attrHtml = [];
-                  if (count($fullTextAttributes[$current['Sequence_ID']] ?? []) > 0) {
-                    foreach ($fullTextAttributes[$current['Sequence_ID']] as $attr) {
+                  if (count($fullTextAttributes[$current->getId()] ?? []) > 0) {
+                    foreach ($fullTextAttributes[$current->getId()] as $attr) {
                       $attrValue = $attr['Allow_HTML']
                         ? $attr['Editions_Full_Text_Attribute_Value']
                         : $this->escapeHtml($attr['Editions_Full_Text_Attribute_Value']);
@@ -162,7 +162,7 @@
                 ?>
                 <br />
               <?php endif; ?>
-              <?php $previousFullTextName = $current['Edition_Name'] ?>
+              <?php $previousFullTextName = $currentEditionName ?>
             <?php endforeach; ?>
             <?php if ($skippedFullText): ?>
               <i>To see all <?=$fullTextCount?> full text links, switch to
@@ -250,7 +250,7 @@
       <?php endif; ?>
 
       <?php
-        $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID');
+        $platforms = $this->groupeditions($platforms, 'Platform', $editions, 'Platform_ID', 'getPlatform');
         $platformCount = count($platforms);
       ?>
       <?php if ($platformCount > 0): ?>
@@ -677,8 +677,8 @@
       <?php if (count($descriptions) > 0): ?>
         <?php foreach ($descriptions as $desc): ?>
           <tr>
-            <th scope="row"><?=$this->escapeHtml($this->descriptionsource()->getName($desc['Source']))?>:</th>
-            <td><?=$desc['Description']?></td>
+            <th scope="row"><?=$this->escapeHtml($this->descriptionsource()->getName($desc->getSource()))?>:</th>
+            <td><?=$desc->getDescription()?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

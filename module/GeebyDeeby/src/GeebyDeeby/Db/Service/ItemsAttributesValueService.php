@@ -30,10 +30,9 @@
 namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAttribute;
+use GeebyDeeby\Db\Entity\ItemsAttributesValue;
 use GeebyDeeby\Db\Entity\ItemsAttributesValueEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsAttributesValues;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_Attributes_Values table.
@@ -47,27 +46,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsAttributesValueService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager    $persistenceManager Persistence manager
-     * @param ItemsAttributesValues $valuesTable        ItemsAttribute table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsAttributesValues $valuesTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsAttributesValueEntityInterface
      */
     public function createEntity(): ItemsAttributesValueEntityInterface
     {
-        return $this->valuesTable->createRow();
+        $entity = new ItemsAttributesValue();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +66,15 @@ class ItemsAttributesValueService extends AbstractDbService
      */
     public function getAttributesForItem(int $itemID): array
     {
-        return iterator_to_array($this->valuesTable->getAttributesForItem($itemID));
+        $dql = 'SELECT iav.value AS Items_Attribute_Value, ia.id AS Items_Attribute_ID, '
+            . 'ia.attributeName AS Items_Attribute_Name, ia.rdfProperty AS Items_Attribute_RDF_Property, '
+            . 'ia.allowHtml AS Allow_HTML, ia.displayPriority AS Display_Priority FROM '
+            . ItemsAttributesValue::class . ' iav '
+            . 'INNER JOIN ' . ItemsAttribute::class . ' ia ON iav.attribute=ia.id '
+            . 'WHERE iav.item = :item ORDER BY ia.displayPriority, ia.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -91,7 +86,9 @@ class ItemsAttributesValueService extends AbstractDbService
      */
     public function deleteByItem(int|ItemEntityInterface $item): void
     {
-        $where = ['Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item];
-        $this->valuesTable->delete($where);
+        $dql = 'DELETE FROM ' . ItemsAttributesValue::class . ' iav WHERE iav.item=:item';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $item instanceof ItemEntityInterface ? $item->getId() : $item);
+        $query->execute();
     }
 }

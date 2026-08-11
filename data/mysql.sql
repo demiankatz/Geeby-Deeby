@@ -188,8 +188,8 @@ CREATE TABLE `Editions_Attributes` (
   `Editions_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Editions_Attribute_Name` varchar(255) NOT NULL,
   `Editions_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
-  `Copy_To_Clone` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
+  `Copy_To_Clone` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Editions_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
@@ -262,7 +262,7 @@ CREATE TABLE `Editions_Full_Text_Attributes` (
   `Editions_Full_Text_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Editions_Full_Text_Attribute_Name` varchar(255) NOT NULL,
   `Editions_Full_Text_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Editions_Full_Text_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
@@ -455,7 +455,8 @@ CREATE TABLE `Items` (
   `Item_Errata` text,
   `Item_Thanks` text,
   `Material_Type_ID` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`Item_ID`)
+  PRIMARY KEY (`Item_ID`),
+  FOREIGN KEY (`Material_Type_ID`) REFERENCES `Material_Types` (`Material_Type_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -504,7 +505,7 @@ CREATE TABLE `Items_Attributes` (
   `Items_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Items_Attribute_Name` varchar(255) NOT NULL,
   `Items_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Items_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
@@ -625,7 +626,8 @@ CREATE TABLE `Items_In_Collections` (
   `Note_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`Item_ID`,`Collection_Item_ID`,`Position`),
   FOREIGN KEY (`Item_ID`) REFERENCES `Items` (`Item_ID`),
-  FOREIGN KEY (`Collection_Item_ID`) REFERENCES `Items` (`Item_ID`)
+  FOREIGN KEY (`Collection_Item_ID`) REFERENCES `Items` (`Item_ID`),
+  FOREIGN KEY (`Note_ID`) REFERENCES `Notes` (`Note_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -796,7 +798,7 @@ CREATE TABLE `Material_Types` (
   `Material_Type_Name` tinytext NOT NULL,
   `Material_Type_Plural_Name` tinytext NOT NULL,
   `Material_Type_RDF_Class` tinytext,
-  `Default` smallint(1) NOT NULL DEFAULT '0',
+  `Is_Default` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Material_Type_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1075,7 +1077,7 @@ CREATE TABLE `Series_Attributes` (
   `Series_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Series_Attribute_Name` varchar(255) NOT NULL,
   `Series_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   `Value_Link` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`Series_Attribute_ID`)
@@ -1321,7 +1323,7 @@ CREATE TABLE `Tags_Attributes` (
   `Tags_Attribute_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `Tags_Attribute_Name` varchar(255) NOT NULL,
   `Tags_Attribute_RDF_Property` varchar(255),
-  `Allow_HTML` smallint(1) NOT NULL DEFAULT '0',
+  `Allow_HTML` tinyint(1) NOT NULL DEFAULT '0',
   `Display_Priority` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Tags_Attribute_ID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
