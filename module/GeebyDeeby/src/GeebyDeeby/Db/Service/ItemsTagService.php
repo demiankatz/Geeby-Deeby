@@ -78,7 +78,7 @@ class ItemsTagService extends AbstractDbService
             $extraSelect = ', s.id AS Series_ID, s.seriesName AS Series_Name, '
                 . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
                 . 'iat.altName AS Item_AltName';
-            $order = 's.seriesName, s.id, e.volume, e.position, e.replacementNumber';
+            $order = 's.seriesName, s.id, e.volume, e.position, e.replacementNumber, i.itemName';
             $group = ' GROUP BY i.id, e.volume, e.position, e.replacementNumber';
         } else {
             $order = 'i.itemName';

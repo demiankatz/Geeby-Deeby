@@ -69,18 +69,18 @@ class Item extends AbstractEntity implements ItemEntityInterface
     /**
      * Item errata.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Item_Errata', type: 'text', length: 65535, nullable: true)]
-    protected string $errata;
+    protected ?string $errata;
 
     /**
      * Item thanks.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Item_Thanks', type: 'text', length: 255, nullable: true)]
-    protected string $thanks;
+    protected ?string $thanks;
 
     /**
      * Material type.

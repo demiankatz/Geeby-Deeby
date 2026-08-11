@@ -66,16 +66,16 @@ interface CategoryEntityInterface extends EntityInterface
     /**
      * Get a description of the category.
      *
-     * @return string
+     * @return ?string
      */
-    public function getDescription(): string;
+    public function getDescription(): ?string;
 
     /**
      * Set the description.
      *
-     * @param string $description New description
+     * @param ?string $description New description
      *
      * @return static
      */
-    public function setDescription(string $description): static;
+    public function setDescription(?string $description): static;
 }
