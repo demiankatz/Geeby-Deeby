@@ -21,7 +21,7 @@
     },
     "require": {
         "php": ">=8.2",
-        "doctrine/orm": "^3",
+        "doctrine/orm": "^3.6.8",
         "easyrdf/easyrdf": "^1.1.1",
         "vufind-org/vufindcode": "^1.2",
         "laminas/laminas-authentication": "^2.10.1",
