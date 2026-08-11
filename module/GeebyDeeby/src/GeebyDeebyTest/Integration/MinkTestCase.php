@@ -34,6 +34,7 @@ use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Element\TraversableElement;
 use Behat\Mink\Session;
 use DMore\ChromeDriver\ChromeDriver;
+use WebSocket\ConnectionException;
 
 use function call_user_func;
 use function floatval;
@@ -58,9 +59,16 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     /**
      * Mink session
      *
-     * @var Session
+     * @var ?Session
      */
-    protected $session;
+    protected $session = null;
+
+    /**
+     * Shared Mink session.
+     *
+     * @var ?Session
+     */
+    protected static $sharedSession = null;
 
     /**
      * Get name of the current test
@@ -153,21 +161,66 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      */
     protected function getMinkSession(): Session
     {
-        if (empty($this->session)) {
-            $this->session = new Session($this->getMinkDriver());
-            $this->session->start();
+        if (!$this->session) {
+            if (!static::$sharedSession) {
+                static::$sharedSession = new Session($this->getMinkDriver());
+                static::$sharedSession->start();
+            }
+            $this->session = static::$sharedSession;
         }
         return $this->session;
     }
 
     /**
-     * Shut down the Mink session.
+     * Reset the Mink session.
+     *
+     * @param bool $clearLocalStorage   Should we clear out local storage as part of reset?
+     * @param bool $clearSessionStorage Should we clear out session storage as part of reset?
      *
      * @return void
      */
-    protected function stopMinkSession()
+    protected function resetMinkSession(bool $clearLocalStorage = true, bool $clearSessionStorage = true): void
     {
-        if (!empty($this->session)) {
+        if ($this->session) {
+            // If requested, make sure we don't carry local storage forward to the next test:
+            if ($clearLocalStorage) {
+                $this->clearBrowserLocalStorage();
+            }
+            // If requested, make sure we don't carry session storage forward to the next test:
+            if ($clearSessionStorage) {
+                $this->clearBrowserSessionStorage();
+            }
+            // Navigate to about:blank to stop any AJAX requests:
+            $this->session->visit('about:blank');
+            try {
+                $this->session->reset();
+            } catch (ConnectionException $e) {
+                $this->logWarning('Session reset failed in ' . $this->getTestName() . '. Resetting connection.');
+                try {
+                    $this->session->stop();
+                } catch (ConnectionException $e) {
+                    // Do nothing
+                }
+                $this->session = null;
+                static::$sharedSession = null;
+            }
+        }
+    }
+
+    /**
+     * Shut down the Mink session.
+     *
+     * @param bool $clearLocalStorage Should we clear out local storage as part of shutdown?
+     *
+     * @return void
+     */
+    protected function stopMinkSession(bool $clearLocalStorage = true): void
+    {
+        if ($this->session) {
+            // If requested, make sure we don't carry local storage forward to the next test:
+            if ($clearLocalStorage) {
+                $this->clearBrowserLocalStorage();
+            }
             $this->session->stop();
             $this->session = null;
         }
@@ -769,6 +822,32 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Clear the browser's local storage.
+     *
+     * @return void
+     */
+    protected function clearBrowserLocalStorage(): void
+    {
+        $this->getMinkSession()->evaluateScript('window.localStorage.clear();');
+    }
+
+    /**
+     * Clear the browser's session storage.
+     *
+     * @return void
+     */
+    protected function clearBrowserSessionStorage(): void
+    {
+        $this->getMinkSession()->evaluateScript('window.sessionStorage.clear();');
+        // Also clear on unload to ensure we remove everything that could be added on unload (note: it would be nice
+        // to be able to trigger any page unload handlers here and then clear the storage, but loading another page
+        // would slow things down, and about:blank loaded in resetMinkSession won't allow access to VuFind's session
+        // storage).
+        $this->getMinkSession()
+            ->evaluateScript('window.addEventListener("beforeunload", () => window.sessionStorage.clear());');
+    }
+
+    /**
      * Standard setup method.
      *
      * @return void
@@ -818,7 +897,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
             }
         }
 
-        $this->stopMinkSession();
+        $this->resetMinkSession();
     }
 
     /**
