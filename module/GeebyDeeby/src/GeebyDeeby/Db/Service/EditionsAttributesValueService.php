@@ -29,11 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsAttribute;
+use GeebyDeeby\Db\Entity\EditionsAttributesValue;
 use GeebyDeeby\Db\Entity\EditionsAttributesValueEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsAttributesValues;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Item;
 
 /**
  * Database service for the Editions_Attributes_Values table.
@@ -47,27 +48,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsAttributesValueService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager       $persistenceManager Persistence manager
-     * @param EditionsAttributesValues $valuesTable        EditionsAttribute table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsAttributesValues $valuesTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsAttributesValueEntityInterface
      */
     public function createEntity(): EditionsAttributesValueEntityInterface
     {
-        return $this->valuesTable->createRow();
+        $entity = new EditionsAttributesValue();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +68,15 @@ class EditionsAttributesValueService extends AbstractDbService
      */
     public function getAttributesForEdition(int $editionID): array
     {
-        return iterator_to_array($this->valuesTable->getAttributesForEdition($editionID));
+        $dql = 'SELECT eav.value AS Editions_Attribute_Value, ea.id AS Editions_Attribute_ID, '
+            . 'ea.attributeName AS Editions_Attribute_Name, ea.rdfProperty AS Editions_Attribute_RDF_Property, '
+            . 'ea.allowHtml AS Allow_HTML, ea.displayPriority AS Display_Priority FROM '
+            . EditionsAttributesValue::class . ' eav '
+            . 'INNER JOIN ' . EditionsAttribute::class . ' ea ON eav.attribute=ea.id '
+            . 'WHERE eav.edition = :edition ORDER BY ea.displayPriority, ea.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -92,7 +89,21 @@ class EditionsAttributesValueService extends AbstractDbService
      */
     public function getAttributesForItem(int|array $itemID, ?int $attributeID = null): array
     {
-        return iterator_to_array($this->valuesTable->getAttributesForItem($itemID, $attributeID));
+        $dql = 'SELECT e.id AS Edition_ID, eav.value AS Editions_Attribute_Value, ea.id AS Editions_Attribute_ID, '
+            . 'ea.attributeName AS Editions_Attribute_Name, ea.rdfProperty AS Editions_Attribute_RDF_Property, '
+            . 'ea.allowHtml AS Allow_HTML, ea.displayPriority AS Display_Priority FROM '
+            . EditionsAttributesValue::class . ' eav '
+            . 'INNER JOIN ' . EditionsAttribute::class . ' ea ON eav.attribute=ea.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON eav.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'WHERE i.id IN (:item) ' . ($attributeID ? 'AND ea.id=:attribute ' : '')
+            . 'ORDER BY ea.displayPriority, ea.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', (array)$itemID);
+        if ($attributeID) {
+            $query->setParameter('attribute', $attributeID);
+        }
+        return $query->getResult();
     }
 
     /**
@@ -104,7 +115,9 @@ class EditionsAttributesValueService extends AbstractDbService
      */
     public function deleteByEdition(int|EditionEntityInterface $edition): void
     {
-        $where = ['Edition_ID' => $edition instanceof EditionEntityInterface ? $edition->getId() : $edition];
-        $this->valuesTable->delete($where);
+        $dql = 'DELETE FROM ' . EditionsAttributesValue::class . ' eav WHERE eav.edition=:edition';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $edition instanceof EditionEntityInterface ? $edition->getId() : $edition);
+        $query->execute();
     }
 }

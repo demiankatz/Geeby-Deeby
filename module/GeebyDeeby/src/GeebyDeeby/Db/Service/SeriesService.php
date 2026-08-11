@@ -29,10 +29,15 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\UnionType;
+use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
+use GeebyDeeby\Db\DoctrinePaginatorAdapter;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\SeriesAltTitle;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Series;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
 
 /**
@@ -47,27 +52,15 @@ use Laminas\Paginator\Paginator;
 class SeriesService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Series             $seriesTable        Series table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Series $seriesTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesEntityInterface
      */
     public function createEntity(): SeriesEntityInterface
     {
-        return $this->seriesTable->createRow();
+        $entity = new Series();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +72,7 @@ class SeriesService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?SeriesEntityInterface
     {
-        return $this->seriesTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Series::class, $id);
     }
 
     /**
@@ -102,7 +95,9 @@ class SeriesService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->seriesTable->getList());
+        $dql = 'SELECT s FROM ' . Series::class . ' s ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -114,7 +109,10 @@ class SeriesService extends AbstractDbService
      */
     public function getSeriesForLanguage(int $langID): array
     {
-        return iterator_to_array($this->seriesTable->getSeriesForLanguage($langID));
+        $dql = 'SELECT s FROM ' . Series::class . ' s WHERE s.language = :language ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('language', $langID);
+        return $query->getResult();
     }
 
     /**
@@ -127,7 +125,27 @@ class SeriesService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->seriesTable->getSuggestions($query, $limit));
+        $connection = $this->entityManager->getConnection();
+        $firstQuery = new QueryBuilder($connection);
+        $firstQuery->select('s.Series_ID, Series_Name')
+            ->from('Series', 's')
+            ->where('s.Series_Name LIKE :query');
+        $secondQuery = $this->entityManager->createQueryBuilder();
+        $secondQuery->select(
+            "s.Series_ID, CONCAT(sat.Series_AltName, ' [alt. title for ', s.Series_Name, ']') AS Series_Name"
+        )->from('Series_AltTitles', 'sat')
+            ->innerJoin('Series', 's', 'ON', 's.Series_ID = sat.Series_ID')
+            ->where('sat.Series_AltName LIKE :query');
+        $queryBuilder = new QueryBuilder($connection);
+        $union = $queryBuilder
+            ->union($firstQuery)
+            ->addUnion($secondQuery, UnionType::DISTINCT)
+            ->orderBy('Series_Name', 'ASC');
+        if ($limit) {
+            $union->setMaxResults($limit);
+        }
+        $result = $connection->executeQuery($union->getSQL(), ['query' => $query . '%']);
+        return $result->fetchAllAssociative();
     }
 
     /**
@@ -139,7 +157,12 @@ class SeriesService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->seriesTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 's.seriesName LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name FROM ' . Series::class . ' s WHERE '
+            . implode(' AND ', $where) . ' ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -152,14 +175,13 @@ class SeriesService extends AbstractDbService
      */
     public function getNewSeriesPaginator(int $page = 1, int $pageSize = 50): Paginator
     {
-        $adapter = $this->seriesTable->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($this->seriesTable->getTable());
-        $query->order('Series_ID DESC');
+        $dql = 'SELECT s FROM ' . Series::class . ' s ORDER BY s.id DESC';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setFirstResult(($page - 1) * $pageSize)->setMaxResults($pageSize);
+        $doctrinePaginator = new PaginationPaginator($query);
+        $doctrinePaginator->setUseOutputWalkers(false);
         $paginator = new \Laminas\Paginator\Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+            new DoctrinePaginatorAdapter($doctrinePaginator)
         );
         $paginator->setItemCountPerPage($pageSize);
         $paginator->setCurrentPageNumber($page);
@@ -180,9 +202,33 @@ class SeriesService extends AbstractDbService
         bool $includePosition = true,
         bool $includeParentPosition = false
     ): array {
-        return iterator_to_array(
-            $this->seriesTable->getSeriesForItem($itemID, $includePosition, $includeParentPosition)
-        );
+        $positionFields = $includePosition
+            ? 'e.volume AS Volume, e.position AS Position, '
+            . 'e.replacementNumber AS Replacement_Number, e.extentInParent AS Extent_In_Parent, '
+            : '';
+        $parentJoins = '';
+        $sortAndGroup = 's.seriesName, s.id';
+        if ($includePosition && $includeParentPosition) {
+            $parentJoins .= 'LEFT JOIN ' . Edition::class . ' parentE ON e.parentEdition=parentE.id '
+                . 'LEFT JOIN ' . Item::class . ' parentI ON parentE.item=parentI.id ';
+            $positionFields .= 'parentE.volume AS Parent_Volume, parentE.position AS Parent_Position, '
+                . 'parentE.replacementNumber AS Parent_Replacement_Number, parentI.id AS Parent_Item_ID, ';
+            $sortAndGroup .= ', parentE.volume, parentE.position, parentE.replacementNumber';
+        }
+        if ($includePosition) {
+            $sortAndGroup .= ', e.volume, e.position, e.replacementNumber';
+        }
+        $dql = 'SELECT ' . $positionFields . 's.seriesName AS Series_Name, s.id AS Series_ID, '
+            . 'sat.altName AS Series_AltName '
+            . 'FROM ' . Series::class . ' s '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.series=s.id '
+            . $parentJoins
+            . 'LEFT JOIN ' . SeriesAltTitle::class . ' sat ON e.preferredSeriesAltName=sat.id '
+            . 'WHERE e.item=:item '
+            . "GROUP BY $sortAndGroup ORDER BY $sortAndGroup";
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -194,6 +240,9 @@ class SeriesService extends AbstractDbService
      */
     public function getSeriesByName(string $name): array
     {
-        return iterator_to_array($this->seriesTable->select(['Series_Name' => $name]));
+        $dql = 'SELECT s FROM ' . Series::class . ' s WHERE s.seriesName = :name ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('name', $name);
+        return $query->getResult();
     }
 }

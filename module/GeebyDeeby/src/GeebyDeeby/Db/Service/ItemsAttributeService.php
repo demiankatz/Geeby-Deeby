@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\ItemsAttribute;
 use GeebyDeeby\Db\Entity\ItemsAttributeEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsAttribute;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Items_Attributes table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsAttributeService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager  Persistence manager
-     * @param ItemsAttribute     $itemsAttributeTable ItemsAttribute table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsAttribute $itemsAttributeTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsAttributeEntityInterface
      */
     public function createEntity(): ItemsAttributeEntityInterface
     {
-        return $this->itemsAttributeTable->createRow();
+        return new ItemsAttribute();
     }
 
     /**
@@ -78,7 +62,7 @@ class ItemsAttributeService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?ItemsAttributeEntityInterface
     {
-        return $this->itemsAttributeTable->getByPrimaryKey($id);
+        return $this->entityManager->find(ItemsAttribute::class, $id);
     }
 
     /**
@@ -101,6 +85,8 @@ class ItemsAttributeService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->itemsAttributeTable->getList());
+        $dql = 'SELECT a FROM ' . ItemsAttribute::class . ' a ORDER BY a.attributeName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

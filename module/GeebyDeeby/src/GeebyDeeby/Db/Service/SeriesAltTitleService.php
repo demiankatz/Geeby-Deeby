@@ -29,11 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Note;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\SeriesAltTitle;
 use GeebyDeeby\Db\Entity\SeriesAltTitleEntityInterface;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesAltTitles;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_AltTitles table.
@@ -47,27 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesAltTitleService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager   Persistence manager
-     * @param SeriesAltTitles    $seriesAltTitlesTable SeriesAltTitles table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesAltTitles $seriesAltTitlesTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesAltTitleEntityInterface
      */
     public function createEntity(): SeriesAltTitleEntityInterface
     {
-        return $this->seriesAltTitlesTable->createRow();
+        $entity = new SeriesAltTitle();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +67,13 @@ class SeriesAltTitleService extends AbstractDbService
      */
     public function getAltTitles(int $seriesID): array
     {
-        return iterator_to_array($this->seriesAltTitlesTable->getAltTitles($seriesID));
+        $dql = 'SELECT s.id AS Series_ID, sa.altName as Series_AltName, n.id AS Note_ID, n.note AS Note, '
+            . 'sa.id AS Sequence_ID FROM ' . SeriesAltTitle::class . ' sa LEFT JOIN '
+            . Note::class . ' n ON sa.note=n.id JOIN ' . Series::class . ' s ON sa.series=s.id '
+            . 'WHERE s.id = :series ORDER BY sa.altName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -91,7 +85,7 @@ class SeriesAltTitleService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?SeriesAltTitleEntityInterface
     {
-        return $this->seriesAltTitlesTable->getByPrimaryKey($id);
+        return $this->entityManager->find(SeriesAltTitle::class, $id);
     }
 
     /**
@@ -103,7 +97,13 @@ class SeriesAltTitleService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->seriesAltTitlesTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 'sa.altName LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT s.id AS Series_ID, sa.altName AS Series_AltName FROM '
+            . SeriesAltTitle::class . ' sa JOIN ' . Series::class . ' s ON sa.series=s.id WHERE '
+            . implode(' AND ', $where) . ' ORDER BY sa.altName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -116,10 +116,11 @@ class SeriesAltTitleService extends AbstractDbService
      */
     public function getBySeriesAndId(int $seriesId, string $altId): ?SeriesAltTitleEntityInterface
     {
-        foreach ($this->seriesAltTitlesTable->select(['Series_ID' => $seriesId, 'Sequence_ID' => $altId]) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT s FROM ' . SeriesAltTitle::class . ' s WHERE s.series = :series AND s.id = :id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setMaxResults(1);
+        $query->setParameters(['series' => $seriesId, 'id' => $altId]);
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -134,11 +135,12 @@ class SeriesAltTitleService extends AbstractDbService
         int|SeriesEntityInterface $series,
         string $title
     ): ?SeriesAltTitleEntityInterface {
+        $dql = 'SELECT s FROM ' . SeriesAltTitle::class . ' s WHERE s.series = :series AND s.altName = :title';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setMaxResults(1);
         $seriesId = $series instanceof SeriesEntityInterface ? $series->getId() : $series;
-        foreach ($this->seriesAltTitlesTable->select(['Series_ID' => $seriesId, 'Series_AltName' => $title]) as $row) {
-            return $row;
-        }
-        return null;
+        $query->setParameters(['series' => $seriesId, 'title' => $title]);
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -150,6 +152,9 @@ class SeriesAltTitleService extends AbstractDbService
      */
     public function getByAltTitle(string $title): array
     {
-        return iterator_to_array($this->seriesAltTitlesTable->select(['Series_AltName' => $title]));
+        $dql = 'SELECT s FROM ' . SeriesAltTitle::class . ' s WHERE s.altName = :title';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('title', $title);
+        return $query->getResult();
     }
 }

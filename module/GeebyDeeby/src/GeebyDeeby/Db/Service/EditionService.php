@@ -29,17 +29,33 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\EntityManager;
+use GeebyDeeby\Db\Entity\City;
+use GeebyDeeby\Db\Entity\Country;
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsAttribute;
+use GeebyDeeby\Db\Entity\EditionsAttributesValue;
+use GeebyDeeby\Db\Entity\EditionsCredit;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsCreator;
+use GeebyDeeby\Db\Entity\Note;
+use GeebyDeeby\Db\Entity\Publisher;
+use GeebyDeeby\Db\Entity\PublishersAddress;
+use GeebyDeeby\Db\Entity\PublishersImprint;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\SeriesAltTitle;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesPublisher;
 use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Edition;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Select;
 
 use function count;
 use function in_array;
+use function is_int;
 
 /**
  * Database service for the Editions table.
@@ -55,18 +71,17 @@ class EditionService extends AbstractDbService
     /**
      * Constructor
      *
+     * @param EntityManager      $entityManager      Entity manager
      * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Editions           $editionsTable      Editions table
      * @param ItemService        $itemService        Item database service
      */
     public function __construct(
+        EntityManager $entityManager,
         PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Edition $editionsTable,
         #[Autowire(container: \GeebyDeeby\Db\Service\PluginManager::class)]
         protected ItemService $itemService
     ) {
-        parent::__construct($persistenceManager);
+        parent::__construct($entityManager, $persistenceManager);
     }
 
     /**
@@ -76,7 +91,9 @@ class EditionService extends AbstractDbService
      */
     public function createEntity(): EditionEntityInterface
     {
-        return $this->editionsTable->createRow();
+        $entity = new Edition();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -88,7 +105,7 @@ class EditionService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionEntityInterface
     {
-        return $this->editionsTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Edition::class, $id);
     }
 
     /**
@@ -145,8 +162,8 @@ class EditionService extends AbstractDbService
     {
         $editions = $this->getEditionParentChain($edition);
         $items = [];
-        foreach ($editions as $edition) {
-            $items[] = $this->editionsTable->getByPrimaryKey($edition)->getItem()->getId();
+        foreach ($editions as $current) {
+            $items[] = $this->getByPrimaryKey($current)->getItem()->getId();
         }
         return $items;
     }
@@ -165,57 +182,40 @@ class EditionService extends AbstractDbService
         if (!$series) {
             return null;
         }
-        $editionId = $edition->getId();
-        $seriesId = $series->getId();
-        $vol = $edition->getVolume();
-        $pos = $edition->getPosition();
-        $rep = $edition->getReplacementNumber();
-        $name = $edition->getEditionName();
-        $callback = function ($select) use (
-            $editionId,
-            $seriesId,
-            $name,
-            $vol,
-            $pos,
-            $rep,
-            $next
-        ): void {
-            $select->where->equalTo('Series_ID', $seriesId);
-            $select->where->notEqualTo('Edition_ID', $editionId);
-            $fields = [
-                'Volume', 'Position', 'Replacement_Number', 'Edition_Name',
-                'Edition_ID',
-            ];
-            $vals = [$vol, $pos, $rep, $name, $editionId];
-            $nest = $select->where->NEST;
-            for ($i = 0; $i < count($fields); $i++) {
-                $clause = $nest->OR->NEST;
-                for ($j = 0; $j <= $i; $j++) {
-                    if ($j == $i) {
-                        if ($next) {
-                            $clause->greaterThan($fields[$j], $vals[$j]);
-                        } else {
-                            $clause->lessThan($fields[$j], $vals[$j]);
-                        }
-                    } else {
-                        $clause->equalTo($fields[$j], $vals[$j]);
-                    }
+        // Order of keys in $params is important -- needs to align with $fields below.
+        $params = [
+            'vol' => $edition->getVolume(),
+            'pos' => $edition->getPosition(),
+            'rep' => $edition->getReplacementNumber(),
+            'name' => $edition->getEditionName(),
+            'edition' => $edition->getId(),
+            'series' => $series->getId(),
+        ];
+        $keys = array_keys($params);
+        $fields = ['volume', 'position', 'replacementNumber', 'editionName', 'id'];
+        $clauses = [];
+        for ($i = 0; $i < count($fields); $i++) {
+            $subclauses = [];
+            for ($j = 0; $j <= $i; $j++) {
+                if ($j == $i) {
+                    $operator = $next ? '>' : '<';
+                } else {
+                    $operator = '=';
                 }
-                $clause->UNNEST;
+                $subclauses[] = 'e.' . $fields[$j] . $operator . ':' . $keys[$j];
             }
-            $nest->UNNEST;
-            $select->order(
-                $next ? $fields : array_map(
-                    function ($i) {
-                        return "$i DESC";
-                    },
-                    $fields
-                )
-            );
-            $select->limit(1);
-        };
-        $results = $this->editionsTable->select($callback);
-        return count($results) > 0 ? $results->current() : null;
+            $clauses[] = '(' . implode(' AND ', $subclauses) . ')';
+        }
+
+        $orderCallback = $next ? fn ($order) => "e.$order" : fn ($order) => "e.$order DESC";
+        $order = array_map($orderCallback, $fields);
+        $dql = 'SELECT e FROM ' . Edition::class . ' e '
+            . 'WHERE e.series=:series AND e.id != :edition AND (' . implode(' OR ', $clauses) . ')'
+            . ' ORDER BY ' . implode(', ', $order);
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -249,7 +249,9 @@ class EditionService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->editionsTable->getList());
+        $dql = 'SELECT e FROM ' . Edition::class . ' e ORDER BY e.editionName, e.id';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -258,11 +260,17 @@ class EditionService extends AbstractDbService
      * @param string $query The user query.
      * @param ?int   $limit Limit on returned rows (null for no limit).
      *
-     * @return array
+     * @return EditionEntityInterface[]
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->editionsTable->getSuggestions($query, $limit));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.editionName LIKE :query ORDER BY e.editionName, e.id';
+        $queryObj = $this->entityManager->createQuery($dql);
+        $queryObj->setParameter('query', $query . '%');
+        if ($limit) {
+            $queryObj->setMaxResults($limit);
+        }
+        return $queryObj->getResult();
     }
 
     /**
@@ -274,7 +282,12 @@ class EditionService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->editionsTable->keywordSearch($tokens));
+        $where = array_map(fn ($i) => 'e.editionName LIKE ?' . $i, array_keys($tokens));
+        $dql = 'SELECT e.id AS Edition_ID, e.editionName AS Edition_Name FROM ' . Edition::class . ' e WHERE '
+            . implode(' AND ', $where) . ' ORDER BY e.editionName, e.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -282,11 +295,25 @@ class EditionService extends AbstractDbService
      *
      * @param int $editionID Edition ID
      *
-     * @return ?EditionEntityInterface
+     * @return ?array
      */
-    public function getParentItemForEdition(int $editionID): ?EditionEntityInterface
+    public function getParentItemForEdition(int $editionID): ?array
     {
-        return $this->editionsTable->getParentItemForEdition($editionID) ?: null;
+        $ed = $this->getByPrimaryKey($editionID);
+        if (!($parentObj = $ed->getParentEdition())) {
+            return null;
+        }
+        $parent = $parentObj->getId();
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'iat.altName as Item_AltName FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'WHERE e.id=:edition';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $parent);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -341,7 +368,68 @@ class EditionService extends AbstractDbService
      */
     public function getEditionsForItem(int $itemID, bool $includeParents = false): array
     {
-        return iterator_to_array($this->editionsTable->getEditionsForItem($itemID, $includeParents));
+        $order = 'e.itemDisplayOrder, Earliest_Year, e.editionName';
+        $extraSelect = '';
+        $extraJoin = '';
+        $group = 'Edition_ID, Edition_Name, Item_ID, Series_ID, Volume, Position, Replacement_Number, '
+            . 'Preferred_Item_AltName_ID, Preferred_Series_AltName_ID, Edition_Length, Edition_Endings, '
+            . 'Edition_Description, Preferred_Series_Publisher_ID, Parent_Edition_ID, Position_In_Parent, '
+            . 'Extent_In_Parent, Item_Display_Order';
+        if ($includeParents) {
+            $extraSelect .= ', pi.id AS Parent_Item_ID, pi.itemName AS Item_Name, piat.altName AS Item_AltName';
+            $extraJoin .= ' LEFT JOIN ' . Item::class . ' pi ON pe.item=pi.id '
+                . 'LEFT JOIN ' . Series::class . ' ps ON pe.series=ps.id '
+                . 'LEFT JOIN ' . ItemsAltTitle::class . ' piat ON pe.preferredItemAltName=piat.id ';
+            $order .= ', ps.id, pe.volume, pe.position, pe.replacementNumber';
+            $group .= ', Item_Name, Item_AltName';
+        }
+        $dql = 'SELECT MIN(erd.year) AS Earliest_Year, e.id AS Edition_ID, e.editionName AS Edition_Name, '
+            . 'e.length AS Edition_Length, e.endings AS Edition_Endings, e.description AS Edition_Description, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'e.positionInParent as Position_In_Parent, e.extentInParent AS Extent_In_Parent, '
+            . 'e.itemDisplayOrder AS Item_Display_Order, i.id AS Item_ID, s.id AS Series_ID, '
+            . 'pe.id AS Parent_Edition_ID, iat.id AS Preferred_Item_AltName_ID, '
+            . 'sp.id AS Preferred_Series_Publisher_ID, sat.id AS Preferred_Series_AltName_ID'
+            . $extraSelect . ' FROM ' . Edition::class . ' e '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON erd.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . Series::class . ' s ON e.series=s.id '
+            . 'LEFT JOIN ' . Edition::class . ' pe ON e.parentEdition=pe.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'LEFT JOIN ' . SeriesAltTitle::class . ' sat ON e.preferredSeriesAltName=sat.id '
+            . 'LEFT JOIN ' . SeriesPublisher::class . ' sp ON sp.id=e.preferredSeriesPublisher '
+            . $extraJoin
+            . 'WHERE i.id=:item '
+            . "GROUP BY $group ORDER BY $order";
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
+    }
+
+    /**
+     * Retrieve publishers for the specified match.
+     *
+     * @param string $field Field to match
+     * @param int    $value Value to match
+     *
+     * @return mixed
+     */
+    protected function getPublishersForWhereClause(string $field, int $value): array
+    {
+        $dql = 'SELECT p.id AS Publisher_ID, p.publisherName as Publisher_Name, n.id AS Note_ID, n.note AS Note, '
+            . 'pa.street AS Street, pi.imprintName AS Imprint_Name, '
+            . 'co.id AS Country_ID, co.countryName AS Country_Name, ci.id AS City_ID, ci.cityName AS City_Name '
+            . 'FROM ' . SeriesPublisher::class . ' sp INNER JOIN ' . Publisher::class . ' p ON sp.publisher=p.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON sp.id=e.preferredSeriesPublisher '
+            . 'LEFT JOIN ' . PublishersAddress::class . ' pa ON sp.address=pa.id '
+            . 'LEFT JOIN ' . PublishersImprint::class . ' pi ON sp.imprint=pi.id '
+            . 'LEFT JOIN ' . Country::class . ' co ON pa.country=co.id '
+            . 'LEFT JOIN ' . City::class . ' ci ON pa.city=ci.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON sp.note=n.id '
+            . "WHERE $field=:value ORDER BY e.editionName, p.publisherName, co.countryName, ci.cityName, pa.street";
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('value', $value);
+        return $query->getResult();
     }
 
     /**
@@ -353,7 +441,7 @@ class EditionService extends AbstractDbService
      */
     public function getPublishersForEdition(int $id): array
     {
-        return iterator_to_array($this->editionsTable->getPublishersForEdition($id));
+        return $this->getPublishersForWhereClause('e.id', $id);
     }
 
     /**
@@ -365,7 +453,7 @@ class EditionService extends AbstractDbService
      */
     public function getPublishersForItem(int $itemID): array
     {
-        return iterator_to_array($this->editionsTable->getPublishersForItem($itemID));
+        return $this->getPublishersForWhereClause('e.item', $itemID);
     }
 
     /**
@@ -378,7 +466,23 @@ class EditionService extends AbstractDbService
      */
     public function safeDelete(int $id): void
     {
-        $this->editionsTable->safeDelete($id);
+        $edition = $this->getByPrimaryKey($id);
+        $dql = 'SELECT COUNT(ec.position) FROM ' . EditionsCredit::class . ' ec WHERE ec.edition=:edition';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $edition->getId());
+        if ($query->getSingleScalarResult() > 0) {
+            throw new \Exception('Cannot delete - attached credits.');
+        }
+        $dql2 = 'SELECT COUNT(erd.year) FROM ' . EditionsReleaseDate::class . ' erd WHERE erd.edition=:edition';
+        $query2 = $this->entityManager->createQuery($dql2);
+        $query2->setParameter('edition', $edition->getId());
+        if ($query2->getSingleScalarResult() > 0) {
+            throw new \Exception('Cannot delete - attached dates.');
+        }
+        if (count($this->getChildren($edition)) > 0) {
+            throw new \Exception('Cannot delete - has child editions.');
+        }
+        $this->deleteEntity($edition);
     }
 
     /**
@@ -390,7 +494,10 @@ class EditionService extends AbstractDbService
      */
     public function getChildren(EditionEntityInterface $edition): array
     {
-        return iterator_to_array($this->editionsTable->getChildren($edition));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.parentEdition=:edition';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $edition->getId());
+        return $query->getResult();
     }
 
     /**
@@ -403,7 +510,20 @@ class EditionService extends AbstractDbService
      */
     public function copyAssociatedInfo(int|EditionEntityInterface $from, int|EditionEntityInterface $to): void
     {
-        $this->editionsTable->copyAssociatedInfo($from, $to);
+        $from = is_int($from) ? $this->getByPrimaryKey($from) : $from;
+        $to = is_int($to) ? $this->getByPrimaryKey($to) : $to;
+        foreach ($this->getChildren($from) as $child) {
+            $this->copyEdition(
+                $child,
+                [
+                    'Parent_Edition_ID' => $to->getId(),
+                    'Series_ID' => $to->getSeries()->getId(),
+                    'Edition_Name' => $to->getEditionName(),
+                ]
+            );
+        }
+        $this->copyAttributes($from->getId(), $to->getId());
+        $this->copyCredits($from->getId(), $to->getId());
     }
 
     /**
@@ -416,7 +536,40 @@ class EditionService extends AbstractDbService
      */
     public function copyEdition(EditionEntityInterface $source, array $overrides = []): EditionEntityInterface
     {
-        return $this->editionsTable->copyEdition($source, $overrides);
+        $new = $this->createEntity();
+        $newValues = $source->toArray();
+        $newValues['Edition_Name'] = 'Copy of ' . $newValues['Edition_Name'];
+        $newValues = array_merge($newValues, $overrides);
+        unset($newValues['Edition_ID']);
+        $new->populateFromArray($newValues);
+        $this->persistEntity($new);
+        $this->copyAssociatedInfo($source, $new);
+        return $new;
+    }
+
+    /**
+     * Copy attributes from another edition.
+     *
+     * @param int $from Edition to copy from
+     * @param int $to   Edition to copy to
+     *
+     * @return void
+     */
+    protected function copyAttributes($from, $to)
+    {
+        $dql = 'SELECT DISTINCT v FROM ' . EditionsAttributesValue::class . ' v '
+            . 'INNER JOIN ' . EditionsAttribute::class . ' a ON v.attribute = a.id '
+            . 'WHERE v.edition=:edition AND a.copyToClone=true';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $from);
+        foreach ($query->getResult() as $attr) {
+            $newAttr = new EditionsAttributesValue();
+            $newAttr->setEntityManager($this->entityManager);
+            $data = $attr->toArray();
+            $data['Edition_ID'] = $to;
+            $newAttr->populateFromArray($data);
+            $this->persistEntity($newAttr);
+        }
     }
 
     /**
@@ -429,7 +582,18 @@ class EditionService extends AbstractDbService
      */
     public function copyCredits(int $from, int $to): void
     {
-        $this->editionsTable->copyCredits($from, $to);
+        $dql = 'SELECT c FROM ' . EditionsCredit::class . ' c WHERE c.edition=:from';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('from', $from);
+        $credits = $query->getResult();
+        foreach ($credits as $credit) {
+            $clone = new EditionsCredit();
+            $clone->setEntityManager($this->entityManager);
+            $data = $credit->toArray();
+            $data['Edition_ID'] = $to;
+            $clone->populateFromArray($data);
+            $this->persistEntity($clone);
+        }
     }
 
     /**
@@ -441,9 +605,10 @@ class EditionService extends AbstractDbService
      */
     public function getByItem(int|ItemEntityInterface $item): array
     {
-        $itemId = $item instanceof ItemEntityInterface ? $item->getId() : $item;
-        $itemEditions = $this->editionsTable->select(['Item_ID' => $itemId]);
-        return iterator_to_array($itemEditions);
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.item=:item ORDER BY e.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $item instanceof ItemEntityInterface ? $item->getId() : $item);
+        return $query->getResult();
     }
 
     /**
@@ -456,10 +621,10 @@ class EditionService extends AbstractDbService
      */
     public function getByItemAndSeries(int $itemId, int $seriesId): array
     {
-        $seriesEditions = $this->editionsTable->select(
-            ['Item_ID' => $itemId, 'Series_ID' => $seriesId]
-        );
-        return iterator_to_array($seriesEditions);
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.item=:item AND e.series=:series';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['item' => $itemId, 'series' => $seriesId]);
+        return $query->getResult();
     }
 
     /**
@@ -509,7 +674,10 @@ class EditionService extends AbstractDbService
      */
     public function getByItemAltTitleId(int $altId): array
     {
-        return iterator_to_array($this->editionsTable->select(['Preferred_Item_AltName_ID' => $altId]));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.preferredItemAltName=:id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('id', $altId);
+        return $query->getResult();
     }
 
     /**
@@ -521,7 +689,10 @@ class EditionService extends AbstractDbService
      */
     public function getBySeriesAltTitleId(int $altId): array
     {
-        return iterator_to_array($this->editionsTable->select(['Preferred_Series_AltName_ID' => $altId]));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.preferredSeriesAltName=:id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('id', $altId);
+        return $query->getResult();
     }
 
     /**
@@ -534,11 +705,10 @@ class EditionService extends AbstractDbService
      */
     public function getBySeriesAndPosition(int|SeriesEntityInterface $series, int $pos): array
     {
-        $where = [
-            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
-            'Position' => $pos,
-        ];
-        return iterator_to_array($this->editionsTable->select($where));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.series=:series AND e.position=:pos';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(compact('series', 'pos'));
+        return $query->getResult();
     }
 
     /**
@@ -550,7 +720,10 @@ class EditionService extends AbstractDbService
      */
     public function getByPreferredPublisherId(int $id): array
     {
-        return iterator_to_array($this->editionsTable->select(['Preferred_Series_Publisher_ID' => $id]));
+        $dql = 'SELECT e FROM ' . Edition::class . ' e WHERE e.preferredSeriesPublisher=:id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('id', $id);
+        return $query->getResult();
     }
 
     /**
@@ -562,26 +735,15 @@ class EditionService extends AbstractDbService
      */
     public function getMissingCreators(int $seriesId): array
     {
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['ic' => 'Items_Creators'],
-                'Editions.Item_ID = ic.Item_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('ic.Person_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        return $this->editionsTable->select($callback)->toArray();
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, e.id AS Edition_ID, e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number '
+            . 'FROM ' . Edition::class . ' e LEFT JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsCreator::class . ' ic ON ic.item=i.id '
+            . 'WHERE ic.person IS NULL AND e.series=:series '
+            . 'ORDER BY e.volume, e.position, e.replacementNumber, i.itemName, e.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesId);
+        return $query->getResult();
     }
 
     /**
@@ -593,26 +755,15 @@ class EditionService extends AbstractDbService
      */
     public function getMissingCredits(int $seriesId): array
     {
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['ec' => 'Editions_Credits'],
-                'Editions.Edition_ID = ec.Edition_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('ec.Person_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        return $this->editionsTable->select($callback)->toArray();
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, e.id AS Edition_ID, e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number '
+            . 'FROM ' . Edition::class . ' e LEFT JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . EditionsCredit::class . ' ec ON ec.edition=e.id '
+            . 'WHERE ec.person IS NULL AND e.series=:series '
+            . 'ORDER BY e.volume, e.position, e.replacementNumber, i.itemName, e.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesId);
+        return $query->getResult();
     }
 
     /**
@@ -624,27 +775,15 @@ class EditionService extends AbstractDbService
      */
     public function getMissingDates(int $seriesId): array
     {
-        $callback = function ($select) use ($seriesId): void {
-            $select->join(
-                ['d' => 'Editions_Release_Dates'],
-                'Editions.Edition_ID = d.Edition_ID',
-                [],
-                Select::JOIN_LEFT
-            );
-            $select->join(
-                ['i' => 'Items'],
-                'Editions.Item_ID = i.Item_ID',
-                ['Item_Name'],
-                Select::JOIN_LEFT
-            );
-            $select->where->isNull('d.Year');
-            $select->where->isNull('Editions.Parent_Edition_ID');
-            $select->where(['Series_ID' => $seriesId]);
-            $select->order(
-                'Editions.Volume, Editions.Position, Editions.Replacement_Number'
-            );
-        };
-        return $this->editionsTable->select($callback)->toArray();
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, e.id AS Edition_ID, e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number '
+            . 'FROM ' . Edition::class . ' e LEFT JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON erd.edition=e.id '
+            . 'WHERE erd.year IS NULL AND e.parentEdition IS NULL AND e.series=:series '
+            . 'ORDER BY e.volume, e.position, e.replacementNumber, i.itemName, e.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesId);
+        return $query->getResult();
     }
 
     /**
@@ -656,37 +795,14 @@ class EditionService extends AbstractDbService
      */
     public function getSeriesDateStats(int $seriesId): array
     {
-        $callback = function ($select) use ($seriesId): void {
-            $select->where(['Series_ID' => $seriesId]);
-            $select->columns(
-                [
-                    'Edition_ID' => new Expression(
-                        'min(?)',
-                        ['Editions.Edition_ID'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ]
-            );
-            $select->join(
-                ['d' => 'Editions_Release_Dates'],
-                'Editions.Edition_ID = d.Edition_ID',
-                [
-                    'Start' => new Expression(
-                        'min(?)',
-                        ['Year'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'End' => new Expression(
-                        'max(?)',
-                        ['Year'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ],
-                Select::JOIN_LEFT
-            );
-            $select->group('Series_ID');
-        };
-        return current($this->editionsTable->select($callback)->toArray());
+        $dql = 'SELECT MIN(e.id) AS Edition_ID, MIN(erd.year) AS Start, MAX(erd.year) AS End FROM '
+            . Edition::class . ' e '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON erd.edition=e.id '
+            . 'WHERE e.series=:series GROUP BY e.series';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesId);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult() ?? [];
     }
 
     /**
@@ -698,41 +814,13 @@ class EditionService extends AbstractDbService
      */
     public function getSeriesItemStats(int $seriesId): array
     {
-        $callback = function ($select) use ($seriesId): void {
-            $select->where(['Series_ID' => $seriesId]);
-            $select->columns(
-                [
-                    'Edition_ID' => new Expression(
-                        'min(?)',
-                        ['Edition_ID'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Vol' => new Expression(
-                        'min(?)',
-                        ['Volume'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Pos' => new Expression(
-                        'min(?)',
-                        ['Position'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Rep' => new Expression(
-                        'min(?)',
-                        ['Replacement_Number'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                    'Total' => new Expression(
-                        'count(?)',
-                        ['Position'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ),
-                ]
-            );
-            $select->where->isNull('Parent_Edition_ID');
-            $select->group(['Volume', 'Position', 'Replacement_Number']);
-            $select->order(['Volume', 'Position', 'Replacement_Number']);
-        };
-        return $this->editionsTable->select($callback)->toArray();
+        $fields = 'e.volume, e.position, e.replacementNumber';
+        $dql = 'SELECT MIN(e.id) AS Edition_ID, MIN(e.volume) AS Vol, MIN(e.position) AS Pos, '
+            . 'MIN(e.replacementNumber) AS Rep, COUNT(e.position) AS Total FROM ' . Edition::class
+            . ' e WHERE e.parentEdition IS NULL AND e.series=:series '
+            . "GROUP BY $fields ORDER BY $fields";
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesId);
+        return $query->getResult();
     }
 }

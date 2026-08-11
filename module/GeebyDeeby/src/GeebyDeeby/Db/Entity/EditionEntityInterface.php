@@ -87,7 +87,7 @@ interface EditionEntityInterface extends EntityInterface
     public function getSeries(): ?SeriesEntityInterface;
 
     /**
-     * Set associated series.
+     * Set associated series (if any).
      *
      * @param int|SeriesEntityInterface|null $series Associated series entity or ID
      *

@@ -29,13 +29,20 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsCredit;
 use GeebyDeeby\Db\Entity\EditionsCreditEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsCreator;
+use GeebyDeeby\Db\Entity\Note;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
+use GeebyDeeby\Db\Entity\Role;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsCredits;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Series;
 
 /**
  * Database service for the Editions_Credits table.
@@ -49,27 +56,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsCreditService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager   Persistence manager
-     * @param EditionsCredits    $editionsCreditsTable EditionsCredits table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsCredits $editionsCreditsTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsCreditEntityInterface
      */
     public function createEntity(): EditionsCreditEntityInterface
     {
-        return $this->editionsCreditsTable->createRow();
+        $entity = new EditionsCredit();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -104,7 +99,28 @@ class EditionsCreditService extends AbstractDbService
         string $sort = 'title',
         bool $includeYear = true
     ): array {
-        return iterator_to_array($this->editionsCreditsTable->getItemCreditsForPerson($personID, $sort, $includeYear));
+        $omitYear = ($sort !== 'year' && !$includeYear);
+        $extraSelect = $omitYear ? '' : 'MIN(erd.year) AS Earliest_Year, ';
+        $yearJoin = $omitYear
+            ? ''
+            : (' LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition OR e.parentEdition=erd.edition ');
+        if ($sort === 'year') {
+            $sortFields = 'r.roleName, Earliest_Year, i.itemName';
+        } else {
+            $sortFields = 'r.roleName, i.itemName' . ($omitYear ? '' : ', Earliest_Year');
+        }
+        $dql = "SELECT {$extraSelect}COUNT(e.id) AS Edition_Count, i.itemName AS Item_Name, i.id AS Item_ID, "
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . EditionsCredit::class . ' ec ON ec.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id ' . $yearJoin
+            . 'INNER JOIN ' . Role::class . ' r ON ec.role=r.id '
+            . 'WHERE ec.person = :person '
+            . 'GROUP BY r.roleName, i.itemName '
+            . 'ORDER BY ' . $sortFields;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -117,7 +133,26 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getSeriesCreditsForPerson(int $personID): array
     {
-        return iterator_to_array($this->editionsCreditsTable->getSeriesCreditsForPerson($personID));
+        $groupAndOrderFields = 'r.roleName, s.seriesName, s.id, e.volume, e.position, e.replacementNumber, '
+            . 'i.itemName, n.note';
+        $dql = 'SELECT e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 's.seriesName AS Series_Name, s.id AS Series_ID, n.id AS Note_ID, n.note AS Note, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'r.editionCreditPredicate AS Edition_Credit_Predicate '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'INNER JOIN ' . EditionsCredit::class . ' ec ON ec.edition=e.id '
+            . 'INNER JOIN ' . Role::class . ' r ON ec.role=r.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON ec.note=n.id '
+            . 'WHERE ec.person=:person '
+            . 'GROUP BY ' . $groupAndOrderFields . ' ORDER BY ' . $groupAndOrderFields;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -129,7 +164,18 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getCreditsForEdition(int $editionID): array
     {
-        return iterator_to_array($this->editionsCreditsTable->getCreditsForEdition($editionID));
+        $dql = 'SELECT ec.position AS Position, n.id AS Note_ID, n.note AS Note, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . EditionsCredit::class . ' ec '
+            . 'INNER JOIN ' . Role::class . ' r ON ec.role=r.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON ec.note=n.id '
+            . 'INNER JOIN ' . Person::class . ' p ON ec.person=p.id '
+            . 'WHERE ec.edition = :edition '
+            . 'ORDER BY r.roleName, ec.position, p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -142,7 +188,22 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getCreditsForItem(int $itemID, bool $group = false): array
     {
-        return iterator_to_array($this->editionsCreditsTable->getCreditsForItem($itemID, $group));
+        $dql = 'SELECT i.id AS Item_ID, e.editionName AS Edition_Name, ec.position AS Position, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'n.id AS Note_ID, n.note AS Note, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . EditionsCredit::class . ' ec ON ec.edition=e.id '
+            . 'INNER JOIN ' . Role::class . ' r ON ec.role=r.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON ec.note=n.id '
+            . 'INNER JOIN ' . Person::class . ' p ON ec.person=p.id '
+            . 'WHERE i.id = :item '
+            . ($group ? 'GROUP BY r.id, p.id, n.id ' : '')
+            . 'ORDER BY r.roleName, ec.position, p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -155,7 +216,20 @@ class EditionsCreditService extends AbstractDbService
      */
     public function getPeopleForSeries(int $seriesID): array
     {
-        return iterator_to_array($this->editionsCreditsTable->getPeopleForSeries($seriesID));
+        $dql = 'SELECT DISTINCT i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 'COALESCE(iat.altName, i.itemName) AS Best_Title, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'LEFT JOIN ' . EditionsCredit::class . ' ec ON e.id=ec.edition '
+            . 'LEFT JOIN ' . ItemsCreator::class . ' ic ON e.item = ic.item '
+            . 'INNER JOIN ' . Person::class . ' p ON ec.person=p.id OR ic.person=p.id '
+            . 'WHERE e.series = :series '
+            . 'ORDER BY p.lastName, p.firstName, p.extraDetails, Best_Title';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -172,14 +246,16 @@ class EditionsCreditService extends AbstractDbService
         int|PersonEntityInterface $person,
         int|RoleEntityInterface $role
     ): ?EditionsCreditEntityInterface {
-        $where = [
-            'Edition_ID' => $edition instanceof EditionEntityInterface ? $edition->getId() : $edition,
-            'Person_ID' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
-            'Role_ID' => $role instanceof RoleEntityInterface ? $role->getId() : $role,
+        $params = [
+            'edition' => $edition instanceof EditionEntityInterface ? $edition->getId() : $edition,
+            'person' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
+            'role' => $role instanceof RoleEntityInterface ? $role->getId() : $role,
         ];
-        foreach ($this->editionsCreditsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT c FROM ' . EditionsCredit::class
+            . ' c WHERE c.edition = :edition AND c.person = :person AND c.role = :role';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\SeriesRelationship;
 use GeebyDeeby\Db\Entity\SeriesRelationshipEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesRelationship;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Relationships table.
@@ -45,19 +43,7 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class SeriesRelationshipService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager      Persistence manager
-     * @param SeriesRelationship $seriesRelationshipTable SeriesRelationship table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesRelationship $seriesRelationshipTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
+    use Feature\RelationshipOptionListTrait;
 
     /**
      * Create an empty entity.
@@ -66,7 +52,7 @@ class SeriesRelationshipService extends AbstractDbService
      */
     public function createEntity(): SeriesRelationshipEntityInterface
     {
-        return $this->seriesRelationshipTable->createRow();
+        return new SeriesRelationship();
     }
 
     /**
@@ -78,7 +64,7 @@ class SeriesRelationshipService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?SeriesRelationshipEntityInterface
     {
-        return $this->seriesRelationshipTable->getByPrimaryKey($id);
+        return $this->entityManager->find(SeriesRelationship::class, $id);
     }
 
     /**
@@ -101,19 +87,8 @@ class SeriesRelationshipService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->seriesRelationshipTable->getList());
-    }
-
-    /**
-     * Get a list of relationships, formatted to populate a select control.
-     *
-     * @param bool $includePredicate Should we return labels only (false) or an
-     * array with label and predicate (true)?
-     *
-     * @return array
-     */
-    public function getOptionList(bool $includePredicate = false): array
-    {
-        return $this->seriesRelationshipTable->getOptionList($includePredicate);
+        $dql = 'SELECT r FROM ' . SeriesRelationship::class . ' r ORDER BY r.relationshipName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

@@ -29,12 +29,14 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\EditionEntityInterface;
+use GeebyDeeby\Db\Entity\EditionsPlatform;
 use GeebyDeeby\Db\Entity\EditionsPlatformEntityInterface;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\Platform;
 use GeebyDeeby\Db\Entity\PlatformEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsPlatforms;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Series;
 
 /**
  * Database service for the Editions_Platforms table.
@@ -48,27 +50,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsPlatformService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param EditionsPlatforms  $platformTable      EditionsPlatforms table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsPlatforms $platformTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsPlatformEntityInterface
      */
     public function createEntity(): EditionsPlatformEntityInterface
     {
-        return $this->platformTable->createRow();
+        $entity = new EditionsPlatform();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -80,7 +70,19 @@ class EditionsPlatformService extends AbstractDbService
      */
     public function getItemsForPlatform(int $platformID): array
     {
-        return iterator_to_array($this->platformTable->getItemsForPlatform($platformID));
+        $dql = 'SELECT  e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'i.itemName AS Item_Name, i.id AS Item_ID, '
+            . 's.seriesName AS Series_Name, s.id AS Series_ID '
+            . ' FROM ' . EditionsPlatform::class . ' ep '
+            . 'INNER JOIN ' . Edition::class . ' e ON ep.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id '
+            . 'WHERE ep.platform = :platform '
+            . 'GROUP BY s.seriesName, i.id, s.id, e.volume, e.position, e.replacementNumber, i.itemName '
+            . 'ORDER BY s.seriesName, s.id, e.volume, e.position, e.replacementNumber, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('platform', $platformID);
+        return $query->getResult();
     }
 
     /**
@@ -92,21 +94,13 @@ class EditionsPlatformService extends AbstractDbService
      */
     public function getPlatformsForItem(int $itemID): array
     {
-        $callback = function ($select) use ($itemID): void {
-            $select->join(
-                ['p' => 'Platforms'],
-                'Editions_Platforms.Platform_ID = p.Platform_ID',
-                []
-            );
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_Platforms.Edition_ID = eds.Edition_ID',
-                []
-            );
-            $select->order(['Platform']);
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return iterator_to_array($this->platformTable->select($callback));
+        $dql = 'SELECT ep FROM ' . EditionsPlatform::class
+            . ' ep INNER JOIN ' . Platform::class . ' p ON ep.platform=p.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON ep.edition=e.id '
+            . 'WHERE e.item = :item ORDER BY p.platformName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -118,16 +112,12 @@ class EditionsPlatformService extends AbstractDbService
      */
     public function getPlatformsForEdition(int $editionID): array
     {
-        $callback = function ($select) use ($editionID): void {
-            $select->join(
-                ['p' => 'Platforms'],
-                'Editions_Platforms.Platform_ID = p.Platform_ID',
-                []
-            );
-            $select->order(['Platform']);
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return iterator_to_array($this->platformTable->select($callback));
+        $dql = 'SELECT ep FROM ' . EditionsPlatform::class
+            . ' ep INNER JOIN ' . Platform::class . ' p ON ep.platform=p.id '
+            . 'WHERE ep.edition = :edition ORDER BY p.platformName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -142,13 +132,13 @@ class EditionsPlatformService extends AbstractDbService
         int|EditionEntityInterface $edition,
         int|PlatformEntityInterface $platform
     ): ?EditionsPlatformEntityInterface {
-        $where = [
-            'Edition_ID' => $edition instanceof EditionEntityInterface ? $edition->getId() : $edition,
-            'Platform_ID' => $platform instanceof PlatformEntityInterface ? $platform->getId() : $platform,
-        ];
-        foreach ($this->platformTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $editionId = $edition instanceof EditionEntityInterface ? $edition->getId() : $edition;
+        $platformId = $platform instanceof PlatformEntityInterface ? $platform->getId() : $platform;
+        $dql = 'SELECT ep FROM ' . EditionsPlatform::class
+            . ' ep WHERE ep.edition = :edition AND ep.platform = :platform';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['platform' => $platformId, 'edition' => $editionId]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

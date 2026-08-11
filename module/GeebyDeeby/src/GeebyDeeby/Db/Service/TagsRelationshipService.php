@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\TagsRelationship;
 use GeebyDeeby\Db\Entity\TagsRelationshipEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\TagsRelationship;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Tags_Relationships table.
@@ -45,19 +43,7 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
  */
 class TagsRelationshipService extends AbstractDbService
 {
-    /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager    Persistence manager
-     * @param TagsRelationship   $tagsRelationshipTable TagsRelationship table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected TagsRelationship $tagsRelationshipTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
+    use Feature\RelationshipOptionListTrait;
 
     /**
      * Create an empty entity.
@@ -66,7 +52,7 @@ class TagsRelationshipService extends AbstractDbService
      */
     public function createEntity(): TagsRelationshipEntityInterface
     {
-        return $this->tagsRelationshipTable->createRow();
+        return new TagsRelationship();
     }
 
     /**
@@ -78,7 +64,7 @@ class TagsRelationshipService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?TagsRelationshipEntityInterface
     {
-        return $this->tagsRelationshipTable->getByPrimaryKey($id);
+        return $this->entityManager->find(TagsRelationship::class, $id);
     }
 
     /**
@@ -101,19 +87,8 @@ class TagsRelationshipService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->tagsRelationshipTable->getList());
-    }
-
-    /**
-     * Get a list of relationships, formatted to populate a select control.
-     *
-     * @param bool $includePredicate Should we return labels only (false) or an
-     * array with label and predicate (true)?
-     *
-     * @return array
-     */
-    public function getOptionList(bool $includePredicate = false): array
-    {
-        return $this->tagsRelationshipTable->getOptionList($includePredicate);
+        $dql = 'SELECT r FROM ' . TagsRelationship::class . ' r ORDER BY r.relationshipName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

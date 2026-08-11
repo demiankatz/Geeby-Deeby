@@ -29,11 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsBibliography;
 use GeebyDeeby\Db\Entity\ItemsBibliographyEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsBibliography;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\MaterialType;
 
 /**
  * Database service for the Items_Bibliography table.
@@ -47,27 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsBibliographyService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager     Persistence manager
-     * @param ItemsBibliography  $itemsBibliographyTable ItemsBibliography table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsBibliography $itemsBibliographyTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsBibliographyEntityInterface
      */
     public function createEntity(): ItemsBibliographyEntityInterface
     {
-        return $this->itemsBibliographyTable->createRow();
+        $entity = new ItemsBibliography();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +67,15 @@ class ItemsBibliographyService extends AbstractDbService
      */
     public function getItemsDescribingItem(int $itemID): array
     {
-        return iterator_to_array($this->itemsBibliographyTable->getItemsDescribingItem($itemID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name, mt.id AS Material_Type_ID, '
+            . 'mt.singularName AS Material_Type_Name, mt.pluralName AS Material_Type_Plural_Name '
+            . 'FROM ' . ItemsBibliography::class . ' ib '
+            . 'INNER JOIN ' . Item::class . ' i ON ib.bibliographyItem=i.id '
+            . 'INNER JOIN ' . MaterialType::class . ' mt ON i.materialType=mt.id '
+            . 'WHERE ib.item = :item ORDER BY mt.singularName, i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -91,7 +87,13 @@ class ItemsBibliographyService extends AbstractDbService
      */
     public function getItemsDescribedByItem(int $itemID): array
     {
-        return iterator_to_array($this->itemsBibliographyTable->getItemsDescribedByItem($itemID));
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name '
+            . 'FROM ' . ItemsBibliography::class . ' ib '
+            . 'INNER JOIN ' . Item::class . ' i ON ib.item=i.id '
+            . 'WHERE ib.bibliographyItem = :item ORDER BY i.itemName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -106,13 +108,15 @@ class ItemsBibliographyService extends AbstractDbService
         int|ItemEntityInterface $bib,
         int|ItemEntityInterface $item
     ): ?ItemsBibliographyEntityInterface {
-        $where = [
-            'Bib_Item_ID' => $bib instanceof ItemEntityInterface ? $bib->getId() : $bib,
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
+        $params = [
+            'bib' => $bib instanceof ItemEntityInterface ? $bib->getId() : $bib,
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
         ];
-        foreach ($this->itemsBibliographyTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT ib FROM ' . ItemsBibliography::class
+            . ' ib WHERE ib.item = :item AND ib.bibliographyItem = :bib';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

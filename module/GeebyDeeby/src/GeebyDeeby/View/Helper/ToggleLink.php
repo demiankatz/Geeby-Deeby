@@ -30,7 +30,6 @@
 namespace GeebyDeeby\View\Helper;
 
 use GeebyDeeby\Db\Service\UserService;
-use GeebyDeeby\Db\Table\User;
 use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\View\Helper\Url;
@@ -49,7 +48,7 @@ class ToggleLink
     /**
      * Constructor.
      *
-     * @param User                  $userService User database table object
+     * @param UserService           $userService User database table object
      * @param Url                   $urlHelper   Url view helper
      * @param AuthenticationService $auth        Authentication service
      */

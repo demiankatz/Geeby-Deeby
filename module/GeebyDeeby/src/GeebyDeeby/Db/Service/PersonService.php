@@ -29,13 +29,17 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
+use GeebyDeeby\Db\DoctrinePaginatorAdapter;
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsCredit;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Person;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 use Laminas\Paginator\Paginator;
 
 use function count;
+use function intval;
 use function strlen;
 
 /**
@@ -50,27 +54,15 @@ use function strlen;
 class PersonService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Person             $personTable        Person table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Person $personTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return PersonEntityInterface
      */
     public function createEntity(): PersonEntityInterface
     {
-        return $this->personTable->createRow();
+        $entity = new Person();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -82,7 +74,7 @@ class PersonService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?PersonEntityInterface
     {
-        return $this->personTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Person::class, $id);
     }
 
     /**
@@ -107,7 +99,11 @@ class PersonService extends AbstractDbService
      */
     public function getList(bool $biosOnly = false): array
     {
-        return iterator_to_array($this->personTable->getList($biosOnly));
+        $dql = 'SELECT p FROM ' . Person::class . ' p'
+            . ($biosOnly ? " WHERE p.biography != ''" : '')
+            . ' ORDER BY p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -120,14 +116,13 @@ class PersonService extends AbstractDbService
      */
     public function getNewPeoplePaginator(int $page = 1, int $pageSize = 50): Paginator
     {
-        $adapter = $this->personTable->getAdapter();
-        $query = new \Laminas\Db\Sql\Select($this->personTable->getTable());
-        $query->order('Person_ID DESC');
-        $paginator = new Paginator(
-            new \Laminas\Paginator\Adapter\DbSelect(
-                $query,
-                $adapter
-            )
+        $dql = 'SELECT p FROM ' . Person::class . ' p ORDER BY p.id DESC';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setFirstResult(($page - 1) * $pageSize)->setMaxResults($pageSize);
+        $doctrinePaginator = new PaginationPaginator($query);
+        $doctrinePaginator->setUseOutputWalkers(false);
+        $paginator = new \Laminas\Paginator\Paginator(
+            new DoctrinePaginatorAdapter($doctrinePaginator)
         );
         $paginator->setItemCountPerPage($pageSize);
         $paginator->setCurrentPageNumber($page);
@@ -143,7 +138,17 @@ class PersonService extends AbstractDbService
      */
     public function getListForItemIds(array $itemIds): array
     {
-        return iterator_to_array($this->personTable->getListForItemIds($itemIds));
+        $dql = 'SELECT i.id AS Item_ID, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . Person::class . ' p '
+            . 'INNER JOIN ' . EditionsCredit::class . ' ec ON ec.person=p.id '
+            . 'INNER JOIN ' . Edition::class . ' e ON ec.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'WHERE i.id IN (:items) '
+            . 'ORDER BY p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('items', $itemIds);
+        return $query->getResult();
     }
 
     /**
@@ -156,7 +161,27 @@ class PersonService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->personTable->getSuggestions($query, $limit));
+        $parts = preg_split("/[\s,]+/", $query);
+        $first = $parts[0];
+        $params = ['first' => $first . '%'];
+        $c = count($parts);
+        $last = ($c > 1) ? $parts[$c - 1] : null;
+        $dql = 'SELECT p FROM ' . Person::class . ' p WHERE (p.firstName LIKE :first OR p.lastName LIKE :first';
+        if (intval($first) > 0) {
+            $dql .= ' OR p.id=:first';
+        }
+        $dql .= ')';
+        if ($last) {
+            $dql .= ' AND (p.firstName LIKE :last OR p.lastName LIKE :last)';
+            $params['last'] = $last;
+        }
+        $dql .= ' ORDER BY p.lastName, p.firstName, p.extraDetails, p.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        if ($limit) {
+            $query->setMaxResults($limit);
+        }
+        return $query->getResult();
     }
 
     /**
@@ -168,7 +193,15 @@ class PersonService extends AbstractDbService
      */
     public function keywordSearch(array $tokens): array
     {
-        return iterator_to_array($this->personTable->keywordSearch($tokens));
+        $where = array_map(
+            fn ($i) => "(p.firstName LIKE ?$i OR p.lastName LIKE ?$i OR p.extraDetails LIKE ?$i)",
+            array_keys($tokens)
+        );
+        $dql = 'SELECT p FROM ' . Person::class . ' p WHERE '
+            . implode(' AND ', $where) . ' ORDER BY p.lastName, p.firstName, p.extraDetails, p.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
+        return $query->getResult();
     }
 
     /**
@@ -182,16 +215,19 @@ class PersonService extends AbstractDbService
      */
     public function getExactMatch(string $first, string $last, string $extra): ?PersonEntityInterface
     {
-        $query = [
-            'Last_Name' => $last,
-        ];
+        $dql = 'SELECT p FROM ' . Person::class . ' p WHERE p.lastName=:last';
+        $params = compact('last');
         if (!empty($first)) {
-            $query['First_Name'] = $first;
+            $dql .= ' AND p.firstName=:first';
+            $params['first'] = $first;
         }
         if (!empty($extra)) {
-            $query['Extra_Details'] = $extra;
+            $dql .= ' AND p.extraDetails=:extra';
+            $params['extra'] = $extra;
         }
-        $result = $this->personTable->select($query);
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $result = $query->getResult();
         if (count($result) >= 1) {
             foreach ($result as $current) {
                 if (empty($first) && strlen($current->getFirstName())) {
@@ -216,23 +252,23 @@ class PersonService extends AbstractDbService
      */
     public function getFuzzyMatches(string $first, string $last, bool $allowFuzzier = true): array
     {
-        $callback = function ($select) use ($first, $last): void {
-            if (strlen($first) > 0) {
-                $initial = substr($first, 0, 1);
-                $select->where->like('First_Name', $initial . '%');
-            }
-            $select->where->like('Last_Name', $last);
-            $select->order(['Last_Name', 'First_Name']);
-        };
-        $result = $this->personTable->select($callback);
-        if (count($result) === 0 && $allowFuzzier) {
-            $fuzzierCallback = function ($select) use ($last): void {
-                $chunk = substr($last, 0, strlen($last) - 1);
-                $select->where->like('Last_Name', $chunk . '%');
-                $select->order(['Last_Name', 'First_Name']);
-            };
-            $result = $this->personTable->select($fuzzierCallback);
+        $params = ['last' => $last . '%'];
+        $dql = 'SELECT p FROM ' . Person::class . ' p WHERE p.lastName LIKE :last';
+        if (strlen($first) > 0) {
+            $params['initial'] = substr($first, 0, 1) . '%';
+            $dql .= ' AND p.firstName LIKE :initial';
         }
-        return iterator_to_array($result);
+        $dql .= ' ORDER BY p.lastName, p.firstName, p.extraDetails, p.id';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $result = $query->getResult();
+        if (count($result) === 0 && $allowFuzzier) {
+            $fuzzierDql = 'SELECT p FROM ' . Person::class . ' p WHERE p.lastName LIKE :chunk'
+                . ' ORDER BY p.lastName, p.firstName, p.extraDetails, p.id';
+            $fuzzierQuery = $this->entityManager->createQuery($fuzzierDql);
+            $fuzzierQuery->setParameter('chunk', substr($last, 0, strlen($last) - 1) . '%');
+            return $fuzzierQuery->getResult();
+        }
+        return $result;
     }
 }

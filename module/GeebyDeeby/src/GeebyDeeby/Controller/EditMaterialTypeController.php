@@ -60,7 +60,7 @@ class EditMaterialTypeController extends AbstractBase
     /**
      * Support method for indexAction -- set a default material type.
      *
-     * @param \GeebyDeeby\Db\Row\MaterialType $row Material type to set as default
+     * @param MaterialTypeEntityInterface $row Material type to set as default
      *
      * @return void
      */

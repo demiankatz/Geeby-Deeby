@@ -29,10 +29,13 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsImage;
 use GeebyDeeby\Db\Entity\EditionsImageEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsImages;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\MaterialType;
+use GeebyDeeby\Db\Entity\Note;
 
 /**
  * Database service for the Editions_Images table.
@@ -46,27 +49,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsImageService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager  Persistence manager
-     * @param EditionsImages     $editionsImagesTable EditionsImages table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsImages $editionsImagesTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsImageEntityInterface
      */
     public function createEntity(): EditionsImageEntityInterface
     {
-        return $this->editionsImagesTable->createRow();
+        $entity = new EditionsImage();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -78,7 +69,7 @@ class EditionsImageService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsImageEntityInterface
     {
-        return $this->editionsImagesTable->getByPrimaryKey($id);
+        return $this->entityManager->find(EditionsImage::class, $id);
     }
 
     /**
@@ -88,7 +79,10 @@ class EditionsImageService extends AbstractDbService
      */
     public function getDuplicateThumbs(): array
     {
-        return iterator_to_array($this->editionsImagesTable->getDuplicateThumbs());
+        $dql = 'SELECT i.thumbPath AS Thumb_Path, COUNT(i.thumbPath) AS c FROM '
+            . EditionsImage::class . ' i GROUP BY i.thumbPath HAVING c > 1';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -100,7 +94,13 @@ class EditionsImageService extends AbstractDbService
      */
     public function getEditionsForThumb(string $thumb): array
     {
-        return iterator_to_array($this->editionsImagesTable->getEditionsForThumb($thumb));
+        $dql = 'SELECT DISTINCT e.id AS Edition_ID, i.id AS Sequence_ID, e.editionName AS Edition_Name FROM '
+            . EditionsImage::class . ' i '
+            . 'INNER JOIN ' . Edition::class . ' e ON i.edition=e.id '
+            . 'WHERE i.thumbPath=:path';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('path', $thumb);
+        return $query->getResult();
     }
 
     /**
@@ -112,11 +112,10 @@ class EditionsImageService extends AbstractDbService
      */
     public function getImagesForEdition(int $editionID): array
     {
-        $callback = function ($select) use ($editionID): void {
-            $select->order(['Editions_Images.Position']);
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return iterator_to_array($this->editionsImagesTable->select($callback));
+        $dql = 'SELECT i FROM ' . EditionsImage::class . ' i WHERE i.edition=:edition ORDER BY i.position';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -128,7 +127,15 @@ class EditionsImageService extends AbstractDbService
      */
     public function getImagesForEditionOrParentEdition(int $editionID): array
     {
-        return iterator_to_array($this->editionsImagesTable->getImagesForEditionOrParentEdition($editionID));
+        $dql = 'SELECT i.id AS Sequence_ID, e.id AS Edition_ID, i.imagePath AS Image_Path, i.thumbPath AS Thumb_Path, '
+            . 'i.iiifUri AS IIIF_URI, i.position AS Position, n.id AS Note_ID, n.note AS Note '
+            . 'FROM ' . EditionsImage::class . ' i '
+            . 'INNER JOIN ' . Edition::class . ' e ON i.edition=e.id OR i.edition=e.parentEdition '
+            . 'LEFT JOIN ' . Note::class . ' n ON i.note=n.id '
+            . 'WHERE e.id=:edition ORDER BY i.position';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -140,7 +147,20 @@ class EditionsImageService extends AbstractDbService
      */
     public function getImagesForItem(int $itemID): array
     {
-        return iterator_to_array($this->editionsImagesTable->getImagesForItem($itemID));
+        $dql = 'SELECT DISTINCT e.id AS Edition_ID, i.imagePath AS Image_Path, i.thumbPath AS Thumb_Path, '
+            . 'i.iiifUri AS IIIF_URI, i.position AS Position, n.id AS Note_ID, n.note AS Note, item.id AS Item_ID, '
+            . 'MIN(erd.year) AS Earliest_Year '
+            . 'FROM ' . EditionsImage::class . ' i '
+            . 'INNER JOIN ' . Edition::class . ' e ON i.edition=e.id OR i.edition=e.parentEdition '
+            . 'INNER JOIN ' . Item::class . ' item ON e.item=item.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition OR e.parentEdition=erd.edition '
+            . 'LEFT JOIN ' . Note::class . ' n ON i.note=n.id '
+            . 'WHERE item.id=:item '
+            . 'GROUP BY e.id, i.imagePath, i.thumbPath, i.iiifUri, i.position, n.id, e.editionName, item.id, n.note '
+            . 'ORDER BY e.itemDisplayOrder, i.position, Earliest_Year';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -153,7 +173,24 @@ class EditionsImageService extends AbstractDbService
      */
     public function getImagesForSeries(int $seriesID, bool $groupByMaterial = true): array
     {
-        return iterator_to_array($this->editionsImagesTable->getImagesForSeries($seriesID, $groupByMaterial));
+        $order = 'e.volume, e.position, e.replacementNumber, e.itemDisplayOrder, item.itemName, i.position';
+        if ($groupByMaterial) {
+            $order = "mt.singularName, $order";
+        }
+        $dql = 'SELECT i.thumbPath AS Thumb_Path, i.iiifUri AS IIIF_URI, item.id AS Item_ID, '
+            . 'mt.id AS Material_Type_ID, mt.singularName AS Material_Type_Name, '
+            . 'e.id AS Edition_ID, e.editionName AS Edition_Name, n.id AS Note_ID, n.note AS Note '
+            . 'FROM ' . EditionsImage::class . ' i '
+            . 'INNER JOIN ' . Edition::class . ' e ON i.edition=e.id '
+            . 'INNER JOIN ' . Item::class . ' item ON e.item=item.id '
+            . 'INNER JOIN ' . MaterialType::class . ' mt ON item.materialType=mt.id '
+            . 'LEFT JOIN ' . Note::class . ' n ON i.note=n.id '
+            . 'WHERE e.series=:series '
+            . 'GROUP BY i.thumbPath, i.iiifUri, e.volume, e.position, e.replacementNumber, i.position, item.id, n.note '
+            . 'ORDER BY ' . $order;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -165,9 +202,9 @@ class EditionsImageService extends AbstractDbService
      */
     public function getByDomain(string $domain): array
     {
-        $callback = function ($select) use ($domain): void {
-            $select->where->like('Image_Path', '%' . $domain . '%');
-        };
-        return iterator_to_array($this->editionsImagesTable->select($callback));
+        $dql = 'SELECT i FROM ' . EditionsImage::class . ' i WHERE i.imagePath LIKE :domain';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('domain', "%$domain%");
+        return $query->getResult();
     }
 }

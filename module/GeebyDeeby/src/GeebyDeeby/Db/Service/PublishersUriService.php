@@ -29,11 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Predicate;
+use GeebyDeeby\Db\Entity\Publisher;
 use GeebyDeeby\Db\Entity\PublisherEntityInterface;
+use GeebyDeeby\Db\Entity\PublishersUri;
 use GeebyDeeby\Db\Entity\PublishersUriEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\PublishersURIs;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Publishers_URIs table.
@@ -47,27 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class PublishersUriService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager  Persistence manager
-     * @param PublishersURIs     $publishersUrisTable PublishersURIs table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected PublishersURIs $publishersUrisTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return PublishersUriEntityInterface
      */
     public function createEntity(): PublishersUriEntityInterface
     {
-        return $this->publishersUrisTable->createRow();
+        $entity = new PublishersUri();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +67,15 @@ class PublishersUriService extends AbstractDbService
      */
     public function getPublishersForURI(string $uri): array
     {
-        return iterator_to_array($this->publishersUrisTable->getPublishersForURI($uri));
+        $dql = 'SELECT pu.id AS Sequence_ID, pu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev, '
+            . 'pub.id AS Publisher_ID, pub.publisherName as Publisher_Name'
+            . ' FROM ' . PublishersUri::class . ' pu INNER JOIN ' . Predicate::class . ' p ON pu.predicate = p.id'
+            . ' INNER JOIN ' . Publisher::class . ' pub ON pu.publisher = pub.id'
+            . ' WHERE pu.uri = :uri';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('uri', $uri);
+        return $query->getResult();
     }
 
     /**
@@ -91,8 +87,14 @@ class PublishersUriService extends AbstractDbService
      */
     public function getURIsForPublisher(int|PublisherEntityInterface $publisher): array
     {
+        $dql = 'SELECT pu.id AS Sequence_ID, pu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev '
+            . ' FROM ' . PublishersUri::class . ' pu INNER JOIN ' . Predicate::class . ' p ON pu.predicate = p.id'
+            . ' WHERE pu.publisher = :publisher ORDER BY pu.uri, p.abbreviation';
+        $query = $this->entityManager->createQuery($dql);
         $publisherId = $publisher instanceof PublisherEntityInterface ? $publisher->getId() : $publisher;
-        return iterator_to_array($this->publishersUrisTable->getURIsForPublisher($publisherId));
+        $query->setParameter('publisher', $publisherId);
+        return $query->getResult();
     }
 
     /**
@@ -105,9 +107,10 @@ class PublishersUriService extends AbstractDbService
      */
     public function getByPublisherAndUri(int $publisherId, string $uri): ?PublishersUriEntityInterface
     {
-        foreach ($this->publishersUrisTable->select(['Publisher_ID' => $publisherId, 'URI' => $uri]) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT pu FROM ' . PublishersUri::class . ' pu WHERE pu.publisher = :publisher AND pu.uri = :uri';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['publisher' => $publisherId, 'uri' => $uri]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Country;
 use GeebyDeeby\Db\Entity\CountryEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Country;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Countries table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class CountryService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Country            $countryTable       Country table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Country $countryTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return CountryEntityInterface
      */
     public function createEntity(): CountryEntityInterface
     {
-        return $this->countryTable->createRow();
+        return new Country();
     }
 
     /**
@@ -78,7 +62,7 @@ class CountryService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?CountryEntityInterface
     {
-        return $this->countryTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Country::class, $id);
     }
 
     /**
@@ -101,6 +85,8 @@ class CountryService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->countryTable->getList());
+        $dql = 'SELECT c FROM ' . Country::class . ' c ORDER BY c.countryName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 }

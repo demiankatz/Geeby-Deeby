@@ -29,11 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Predicate;
+use GeebyDeeby\Db\Entity\Tag;
 use GeebyDeeby\Db\Entity\TagEntityInterface;
+use GeebyDeeby\Db\Entity\TagsUri;
 use GeebyDeeby\Db\Entity\TagsUriEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\TagsURIs;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Tags_URIs table.
@@ -47,27 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class TagsUriService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param TagsURIs           $tagsUrisTable      TagsURIs table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected TagsURIs $tagsUrisTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return TagsUriEntityInterface
      */
     public function createEntity(): TagsUriEntityInterface
     {
-        return $this->tagsUrisTable->createRow();
+        $entity = new TagsUri();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +67,15 @@ class TagsUriService extends AbstractDbService
      */
     public function getTagsForURI(string $uri): array
     {
-        return iterator_to_array($this->tagsUrisTable->getTagsForURI($uri));
+        $dql = 'SELECT tu.id AS Sequence_ID, tu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev, '
+            . 't.id AS Tag_ID, t.tag as Tag'
+            . ' FROM ' . TagsUri::class . ' tu INNER JOIN ' . Predicate::class . ' p ON tu.predicate = p.id'
+            . ' INNER JOIN ' . Tag::class . ' t ON tu.tag = t.id'
+            . ' WHERE tu.uri = :uri ORDER BY t.tag';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('uri', $uri);
+        return $query->getResult();
     }
 
     /**
@@ -91,8 +87,13 @@ class TagsUriService extends AbstractDbService
      */
     public function getURIsForTag(int|TagEntityInterface $tag): array
     {
-        $tagId = $tag instanceof TagEntityInterface ? $tag->getId() : $tag;
-        return iterator_to_array($this->tagsUrisTable->getURIsForTag($tagId));
+        $dql = 'SELECT tu.id AS Sequence_ID, tu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev '
+            . ' FROM ' . TagsUri::class . ' tu INNER JOIN ' . Predicate::class . ' p ON tu.predicate = p.id'
+            . ' WHERE tu.tag = :tag ORDER BY tu.uri, p.abbreviation';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('tag', $tag instanceof TagEntityInterface ? $tag->getId() : $tag);
+        return $query->getResult();
     }
 
     /**
@@ -105,9 +106,10 @@ class TagsUriService extends AbstractDbService
      */
     public function getByTagAndUri(int $tagId, string $uri): ?TagsUriEntityInterface
     {
-        foreach ($this->tagsUrisTable->select(['Tag_ID' => $tagId, 'URI' => $uri]) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT tu FROM ' . TagsUri::class . ' tu WHERE tu.tag = :tag AND tu.uri = :uri';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['tag' => $tagId, 'uri' => $uri]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

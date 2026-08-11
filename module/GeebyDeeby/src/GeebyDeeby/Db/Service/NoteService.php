@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Note;
 use GeebyDeeby\Db\Entity\NoteEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Note;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Notes table.
@@ -46,27 +44,13 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class NoteService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Note               $noteTable          Note table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Note $noteTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return NoteEntityInterface
      */
     public function createEntity(): NoteEntityInterface
     {
-        return $this->noteTable->createRow();
+        return new Note();
     }
 
     /**
@@ -78,7 +62,7 @@ class NoteService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?NoteEntityInterface
     {
-        return $this->noteTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Note::class, $id);
     }
 
     /**
@@ -101,7 +85,9 @@ class NoteService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->noteTable->getList());
+        $dql = 'SELECT n FROM ' . Note::class . ' n ORDER BY n.note';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -114,6 +100,12 @@ class NoteService extends AbstractDbService
      */
     public function getSuggestions(string $query, ?int $limit = null): array
     {
-        return iterator_to_array($this->noteTable->getSuggestions($query, $limit));
+        $dql = 'SELECT n FROM ' . Note::class . ' n WHERE n.note LIKE :query ORDER BY n.note';
+        $queryObj = $this->entityManager->createQuery($dql);
+        $queryObj->setParameter('query', $query . '%');
+        if ($limit) {
+            $queryObj->setMaxResults($limit);
+        }
+        return $queryObj->getResult();
     }
 }

@@ -29,10 +29,8 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\PublishersImprint;
 use GeebyDeeby\Db\Entity\PublishersImprintEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\PublishersImprints;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Publishers_Imprints table.
@@ -46,27 +44,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class PublishersImprintService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager      Persistence manager
-     * @param PublishersImprints $publishersImprintsTable PublishersImprints table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected PublishersImprints $publishersImprintsTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return PublishersImprintEntityInterface
      */
     public function createEntity(): PublishersImprintEntityInterface
     {
-        return $this->publishersImprintsTable->createRow();
+        $entity = new PublishersImprint();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -78,7 +64,12 @@ class PublishersImprintService extends AbstractDbService
      */
     public function getImprintsForPublisher(int $pubID): array
     {
-        return iterator_to_array($this->publishersImprintsTable->getImprintsForPublisher($pubID));
+        $dql = 'SELECT pi.id AS Imprint_ID, pi.imprintName AS Imprint_Name '
+            . 'FROM ' . PublishersImprint::class . ' pi '
+            . 'WHERE pi.publisher = :publisher ORDER BY pi.imprintName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('publisher', $pubID);
+        return $query->getResult();
     }
 
     /**
@@ -93,11 +84,10 @@ class PublishersImprintService extends AbstractDbService
         int $publisherId,
         int $imprintId
     ): ?PublishersImprintEntityInterface {
-        $result = $this->publishersImprintsTable
-            ->select(['Publisher_ID' => $publisherId, 'Imprint_ID' => $imprintId]);
-        foreach ($result as $current) {
-            return $current;
-        }
-        return null;
+        $dql = 'SELECT p FROM ' . PublishersImprint::class . ' p WHERE p.publisher = :publisher AND p.id = :imprint';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['publisher' => $publisherId, 'imprint' => $imprintId]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

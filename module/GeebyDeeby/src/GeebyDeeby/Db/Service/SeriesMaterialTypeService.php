@@ -29,12 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\MaterialType;
 use GeebyDeeby\Db\Entity\MaterialTypeEntityInterface;
+use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesMaterialType;
 use GeebyDeeby\Db\Entity\SeriesMaterialTypeEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesMaterialTypes;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Material_Types table.
@@ -48,27 +48,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesMaterialTypeService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager  $persistenceManager       Persistence manager
-     * @param SeriesMaterialTypes $seriesMaterialTypesTable SeriesMaterialTypes table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesMaterialTypes $seriesMaterialTypesTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesMaterialTypeEntityInterface
      */
     public function createEntity(): SeriesMaterialTypeEntityInterface
     {
-        return $this->seriesMaterialTypesTable->createRow();
+        $entity = new SeriesMaterialType();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -76,11 +64,16 @@ class SeriesMaterialTypeService extends AbstractDbService
      *
      * @param int $materialTypeID MaterialType ID
      *
-     * @return array
+     * @return SeriesEntityInterface[]
      */
     public function getSeriesForMaterialType(int $materialTypeID): array
     {
-        return iterator_to_array($this->seriesMaterialTypesTable->getSeriesForMaterialType($materialTypeID));
+        $dql = 'SELECT DISTINCT s FROM ' . Series::class . ' s INNER JOIN '
+            . SeriesMaterialType::class . ' sm ON s.id=sm.series '
+            . 'WHERE sm.materialType=:type ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('type', $materialTypeID);
+        return $query->getResult();
     }
 
     /**
@@ -88,11 +81,19 @@ class SeriesMaterialTypeService extends AbstractDbService
      *
      * @param ?int $seriesID Series ID (null for all series)
      *
-     * @return array
+     * @return MaterialTypeEntityInterface[]
      */
     public function getMaterialTypesForSeries(?int $seriesID = null): array
     {
-        return iterator_to_array($this->seriesMaterialTypesTable->getMaterials($seriesID));
+        $dql = 'SELECT DISTINCT m FROM ' . MaterialType::class . ' m INNER JOIN '
+            . SeriesMaterialType::class . ' sm ON m.id=sm.materialType '
+            . ($seriesID ? 'WHERE sm.series=:series' : '')
+            . ' ORDER BY m.singularName';
+        $query = $this->entityManager->createQuery($dql);
+        if ($seriesID) {
+            $query->setParameter('series', $seriesID);
+        }
+        return $query->getResult();
     }
 
     /**
@@ -107,14 +108,10 @@ class SeriesMaterialTypeService extends AbstractDbService
         int|SeriesEntityInterface $series,
         int|MaterialTypeEntityInterface $materialType
     ): ?SeriesMaterialTypeEntityInterface {
-        $where = [
-            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
-            'Material_Type_ID' => $materialType instanceof MaterialTypeEntityInterface
-                ? $materialType->getId() : $materialType,
-        ];
-        foreach ($this->seriesMaterialTypesTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT m FROM ' . SeriesMaterialType::class . ' m WHERE m.materialType = :type AND m.series = :series';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setMaxResults(1);
+        $query->setParameters(['type' => $materialType, 'series' => $series]);
+        return $query->getOneOrNullResult();
     }
 }

@@ -29,13 +29,19 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
+use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\ItemEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsCreator;
 use GeebyDeeby\Db\Entity\ItemsCreatorEntityInterface;
+use GeebyDeeby\Db\Entity\ItemsCreatorsCitation;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
+use GeebyDeeby\Db\Entity\Role;
 use GeebyDeeby\Db\Entity\RoleEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsCreators;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Series;
 
 /**
  * Database service for the Items_Creators table.
@@ -49,27 +55,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsCreatorService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param ItemsCreators      $itemsCreatorsTable ItemsCreators table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsCreators $itemsCreatorsTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsCreatorEntityInterface
      */
     public function createEntity(): ItemsCreatorEntityInterface
     {
-        return $this->itemsCreatorsTable->createRow();
+        $entity = new ItemsCreator();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -81,7 +75,7 @@ class ItemsCreatorService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?ItemsCreatorEntityInterface
     {
-        return $this->itemsCreatorsTable->getByPrimaryKey($id) ?: null;
+        return $this->entityManager->find(ItemsCreator::class, $id);
     }
 
     /**
@@ -112,7 +106,24 @@ class ItemsCreatorService extends AbstractDbService
      */
     public function getItemCitationsForPerson(int $personID, string $sort = 'title'): array
     {
-        return iterator_to_array($this->itemsCreatorsTable->getItemCitationsForPerson($personID, $sort));
+        $sortFields = ($sort === 'year')
+            ? 'r.roleName, Earliest_Year, i.itemName'
+            : 'r.roleName, i.itemName, Earliest_Year';
+        $dql = 'SELECT COUNT(DISTINCT icc.citation) AS Citation_Count, i.itemName AS Item_Name, i.id AS Item_ID, '
+            . 'MIN(erd.year) AS Earliest_Year, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . ItemsCreator::class . ' ic ON ic.item=i.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition OR e.parentEdition=erd.edition '
+            . 'INNER JOIN ' . Role::class . ' r ON ic.role=r.id '
+            . 'LEFT JOIN ' . ItemsCreatorsCitation::class . ' icc ON icc.creator=ic.id '
+            . 'WHERE ic.person = :person '
+            . 'GROUP BY r.roleName, i.itemName '
+            . 'ORDER BY ' . $sortFields;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -125,7 +136,25 @@ class ItemsCreatorService extends AbstractDbService
      */
     public function getSeriesCitationsForPerson(int $personID): array
     {
-        return iterator_to_array($this->itemsCreatorsTable->getSeriesCitationsForPerson($personID));
+        $groupAndOrderFields = 'r.roleName, s.seriesName, s.id, e.volume, e.position, e.replacementNumber, '
+            . 'i.itemName';
+        $dql = 'SELECT e.editionName AS Edition_Name, '
+            . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+            . 'i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
+            . 's.seriesName AS Series_Name, s.id AS Series_ID, '
+            . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'r.editionCreditPredicate AS Edition_Credit_Predicate '
+            . 'FROM ' . Edition::class . ' e '
+            . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id '
+            . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+            . 'INNER JOIN ' . ItemsCreator::class . ' ic ON ic.item=i.id '
+            . 'INNER JOIN ' . Role::class . ' r ON ic.role=r.id '
+            . 'WHERE ic.person=:person '
+            . 'GROUP BY ' . $groupAndOrderFields . ' ORDER BY ' . $groupAndOrderFields;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $personID);
+        return $query->getResult();
     }
 
     /**
@@ -137,7 +166,17 @@ class ItemsCreatorService extends AbstractDbService
      */
     public function getCreatorsForItem(int $itemID): array
     {
-        return iterator_to_array($this->itemsCreatorsTable->getCreatorsForItem($itemID));
+        $dql = 'SELECT r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate, '
+            . 'ic.id AS Item_Creator_ID, '
+            . 'p.id AS Person_ID, p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details '
+            . 'FROM ' . ItemsCreator::class . ' ic '
+            . 'INNER JOIN ' . Role::class . ' r ON ic.role=r.id '
+            . 'INNER JOIN ' . Person::class . ' p ON ic.person=p.id '
+            . 'WHERE ic.item = :item '
+            . 'ORDER BY r.roleName, p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
@@ -154,14 +193,16 @@ class ItemsCreatorService extends AbstractDbService
         int|PersonEntityInterface $person,
         int|RoleEntityInterface $role
     ): ?ItemsCreatorEntityInterface {
-        $where = [
-            'Item_ID' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
-            'Person_ID' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
-            'Role_ID' => $role instanceof RoleEntityInterface ? $role->getId() : $role,
+        $params = [
+            'item' => $item instanceof ItemEntityInterface ? $item->getId() : $item,
+            'person' => $person instanceof PersonEntityInterface ? $person->getId() : $person,
+            'role' => $role instanceof RoleEntityInterface ? $role->getId() : $role,
         ];
-        foreach ($this->itemsCreatorsTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT c FROM ' . ItemsCreator::class
+            . ' c WHERE c.item = :item AND c.person = :person AND c.role = :role';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

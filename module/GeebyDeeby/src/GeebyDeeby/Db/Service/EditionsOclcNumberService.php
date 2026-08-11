@@ -29,10 +29,9 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsOclcNumber;
 use GeebyDeeby\Db\Entity\EditionsOclcNumberEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\EditionsOCLCNumbers;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Editions_OCLC_Numbers table.
@@ -46,27 +45,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class EditionsOclcNumberService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager  $persistenceManager Persistence manager
-     * @param EditionsOCLCNumbers $oclcNumbersTable   EditionsOCLCNumbers table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected EditionsOCLCNumbers $oclcNumbersTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return EditionsOclcNumberEntityInterface
      */
     public function createEntity(): EditionsOclcNumberEntityInterface
     {
-        return $this->oclcNumbersTable->createRow();
+        $entity = new EditionsOclcNumber();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -78,7 +65,7 @@ class EditionsOclcNumberService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?EditionsOclcNumberEntityInterface
     {
-        return $this->oclcNumbersTable->getByPrimaryKey($id) ?: null;
+        return $this->entityManager->find(EditionsOclcNumber::class, $id);
     }
 
     /**
@@ -90,11 +77,11 @@ class EditionsOclcNumberService extends AbstractDbService
      */
     public function getOCLCNumbersForEdition(int $editionID): array
     {
-        $callback = function ($select) use ($editionID): void {
-            $select->order('OCLC_Number');
-            $select->where->equalTo('Edition_ID', $editionID);
-        };
-        return iterator_to_array($this->oclcNumbersTable->select($callback));
+        $dql = 'SELECT eo FROM ' . EditionsOclcNumber::class
+            . ' eo WHERE eo.edition = :edition ORDER BY eo.oclcNumber';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('edition', $editionID);
+        return $query->getResult();
     }
 
     /**
@@ -106,15 +93,11 @@ class EditionsOclcNumberService extends AbstractDbService
      */
     public function getOCLCNumbersForItem(int $itemID): array
     {
-        $callback = function ($select) use ($itemID): void {
-            $select->join(
-                ['eds' => 'Editions'],
-                'Editions_OCLC_Numbers.Edition_ID = eds.Edition_ID',
-                []
-            );
-            $select->order('OCLC_Number');
-            $select->where->equalTo('Item_ID', $itemID);
-        };
-        return iterator_to_array($this->oclcNumbersTable->select($callback));
+        $dql = 'SELECT eo FROM ' . EditionsOclcNumber::class . ' eo '
+            . 'INNER JOIN ' . Edition::class . ' e ON e.id=eo.edition '
+            . 'WHERE e.item = :item ORDER BY eo.oclcNumber';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 }

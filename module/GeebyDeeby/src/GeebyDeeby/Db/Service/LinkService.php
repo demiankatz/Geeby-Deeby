@@ -30,10 +30,9 @@
 namespace GeebyDeeby\Db\Service;
 
 use DateTime;
+use GeebyDeeby\Db\Entity\Link;
 use GeebyDeeby\Db\Entity\LinkEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\Link;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\LinkType;
 
 /**
  * Database service for the Links table.
@@ -47,27 +46,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class LinkService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param Link               $linkTable          Link table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected Link $linkTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return LinkEntityInterface
      */
     public function createEntity(): LinkEntityInterface
     {
-        return $this->linkTable->createRow();
+        $entity = new Link();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +66,7 @@ class LinkService extends AbstractDbService
      */
     public function getByPrimaryKey(int $id): ?LinkEntityInterface
     {
-        return $this->linkTable->getByPrimaryKey($id);
+        return $this->entityManager->find(Link::class, $id);
     }
 
     /**
@@ -108,7 +95,9 @@ class LinkService extends AbstractDbService
      */
     public function getList(): array
     {
-        return iterator_to_array($this->linkTable->getList());
+        $dql = 'SELECT l FROM ' . Link::class . ' l ORDER BY l.linkName';
+        $query = $this->entityManager->createQuery($dql);
+        return $query->getResult();
     }
 
     /**
@@ -120,6 +109,15 @@ class LinkService extends AbstractDbService
      */
     public function getListByType(?string $typeFilter = null): array
     {
-        return iterator_to_array($this->linkTable->getListByType($typeFilter));
+        $dql = 'SELECT l.id AS Link_ID, l.linkName AS Link_Name, l.url AS URL, l.description AS Description, '
+            . 'l.checked AS Date_Checked, lt.id AS Link_Type_ID, lt.linkTypeName AS Link_Type '
+            . 'FROM ' . Link::class . ' l INNER JOIN ' . LinkType::class . ' lt '
+            . ($typeFilter ? 'WHERE lt.linkTypeName LIKE :filter ' : '')
+            . 'ORDER BY lt.linkTypeName, l.linkName';
+        $query = $this->entityManager->createQuery($dql);
+        if ($typeFilter) {
+            $query->setParameter('filter', $typeFilter . '%');
+        }
+        return $query->getResult();
     }
 }

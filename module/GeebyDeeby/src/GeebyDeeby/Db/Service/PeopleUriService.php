@@ -29,11 +29,11 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\PeopleUri;
 use GeebyDeeby\Db\Entity\PeopleUriEntityInterface;
+use GeebyDeeby\Db\Entity\Person;
 use GeebyDeeby\Db\Entity\PersonEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\PeopleURIs;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Predicate;
 
 /**
  * Database service for the People_URIs table.
@@ -47,27 +47,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class PeopleUriService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param PeopleURIs         $peopleUrisTable    PeopleURIs table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected PeopleURIs $peopleUrisTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return PeopleUriEntityInterface
      */
     public function createEntity(): PeopleUriEntityInterface
     {
-        return $this->peopleUrisTable->createRow();
+        $entity = new PeopleUri();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +67,15 @@ class PeopleUriService extends AbstractDbService
      */
     public function getPeopleForURI(string $uri): array
     {
-        return iterator_to_array($this->peopleUrisTable->getPeopleForURI($uri));
+        $dql = 'SELECT pu.id AS Sequence_ID, pu.uri AS URI, person.id AS Person_ID, '
+            . 'person.firstName AS First_Name, person.lastName AS Last_Name, person.extraDetails AS Extra_Details, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev'
+            . ' FROM ' . PeopleUri::class . ' pu INNER JOIN ' . Predicate::class . ' p ON pu.predicate = p.id'
+            . ' INNER JOIN ' . Person::class . ' person ON pu.person = person.id'
+            . ' WHERE pu.uri = :uri ORDER BY person.lastName, person.firstName, person.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('uri', $uri);
+        return $query->getResult();
     }
 
     /**
@@ -91,8 +87,13 @@ class PeopleUriService extends AbstractDbService
      */
     public function getURIsForPerson(int|PersonEntityInterface $person): array
     {
-        $personId = $person instanceof PersonEntityInterface ? $person->getId() : $person;
-        return iterator_to_array($this->peopleUrisTable->getURIsForPerson($personId));
+        $dql = 'SELECT pu.id AS Sequence_ID, pu.uri AS URI, '
+            . 'p.id AS Predicate_ID, p.predicate AS Predicate, p.abbreviation AS Predicate_Abbrev '
+            . ' FROM ' . PeopleUri::class . ' pu INNER JOIN ' . Predicate::class . ' p ON pu.predicate = p.id'
+            . ' WHERE pu.person = :person ORDER BY pu.uri, p.abbreviation';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('person', $person instanceof PersonEntityInterface ? $person->getId() : $person);
+        return $query->getResult();
     }
 
     /**
@@ -105,10 +106,11 @@ class PeopleUriService extends AbstractDbService
      */
     public function getByPersonAndUri(int $personId, string $uri): ?PeopleUriEntityInterface
     {
-        foreach ($this->peopleUrisTable->select(['Person_ID' => $personId, 'URI' => $uri]) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT pu FROM ' . PeopleUri::class . ' pu WHERE pu.person = :person AND pu.uri = :uri';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['person' => $personId, 'uri' => $uri]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -120,6 +122,18 @@ class PeopleUriService extends AbstractDbService
      */
     public function getPeopleWithURIs(?string $startFrom = null): array
     {
-        return iterator_to_array($this->peopleUrisTable->getPeopleWithURIs($startFrom));
+        $dql = 'SELECT pu.id AS Sequence_ID, pu.uri AS URI, p.id AS Person_ID, '
+            . 'p.firstName AS First_Name, p.lastName AS Last_Name, p.extraDetails AS Extra_Details'
+            . ' FROM ' . PeopleUri::class . ' pu'
+            . ' INNER JOIN ' . Person::class . ' p ON pu.person = p.id';
+        if ($startFrom) {
+            $dql .= ' WHERE p.lastName > :startFrom';
+        }
+        $dql .= ' ORDER BY p.lastName, p.firstName, p.extraDetails';
+        $query = $this->entityManager->createQuery($dql);
+        if ($startFrom) {
+            $query->setParameter('startFrom', $startFrom);
+        }
+        return $query->getResult();
     }
 }

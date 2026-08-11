@@ -29,12 +29,12 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Link;
 use GeebyDeeby\Db\Entity\LinkEntityInterface;
+use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesEntityInterface;
+use GeebyDeeby\Db\Entity\SeriesLink;
 use GeebyDeeby\Db\Entity\SeriesLinkEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\SeriesLinks;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
 
 /**
  * Database service for the Series_Links table.
@@ -48,27 +48,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class SeriesLinkService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param SeriesLinks        $seriesLinksTable   SeriesLinks table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected SeriesLinks $seriesLinksTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return SeriesLinkEntityInterface
      */
     public function createEntity(): SeriesLinkEntityInterface
     {
-        return $this->seriesLinksTable->createRow();
+        $entity = new SeriesLink();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -76,11 +64,16 @@ class SeriesLinkService extends AbstractDbService
      *
      * @param int $linkID Link ID
      *
-     * @return array
+     * @return SeriesEntityInterface[]
      */
     public function getSeriesForLink(int $linkID): array
     {
-        return iterator_to_array($this->seriesLinksTable->getSeriesForLink($linkID));
+        $dql = 'SELECT s FROM ' . SeriesLink::class . ' sl '
+            . 'INNER JOIN ' . Series::class . ' s ON sl.series=s.id '
+            . 'WHERE sl.link = :link ORDER BY s.seriesName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('link', $linkID);
+        return $query->getResult();
     }
 
     /**
@@ -88,11 +81,16 @@ class SeriesLinkService extends AbstractDbService
      *
      * @param int $seriesID Series ID
      *
-     * @return array
+     * @return LinkEntityInterface[]
      */
     public function getLinksForSeries(int $seriesID): array
     {
-        return iterator_to_array($this->seriesLinksTable->getLinksForSeries($seriesID));
+        $dql = 'SELECT l FROM ' . SeriesLink::class . ' sl '
+            . 'INNER JOIN ' . Link::class . ' l ON sl.link=l.id '
+            . 'WHERE sl.series = :series ORDER BY l.linkName';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('series', $seriesID);
+        return $query->getResult();
     }
 
     /**
@@ -107,13 +105,14 @@ class SeriesLinkService extends AbstractDbService
         int|LinkEntityInterface $link,
         int|SeriesEntityInterface $series
     ): ?SeriesLinkEntityInterface {
-        $where = [
-            'Link_ID' => $link instanceof LinkEntityInterface ? $link->getId() : $link,
-            'Series_ID' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
+        $params = [
+            'link' => $link instanceof LinkEntityInterface ? $link->getId() : $link,
+            'series' => $series instanceof SeriesEntityInterface ? $series->getId() : $series,
         ];
-        foreach ($this->seriesLinksTable->select($where) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT sl FROM ' . SeriesLink::class . ' sl WHERE sl.series = :series AND sl.link = :link';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

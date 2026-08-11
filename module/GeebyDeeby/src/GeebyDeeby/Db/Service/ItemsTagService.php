@@ -29,10 +29,14 @@
 
 namespace GeebyDeeby\Db\Service;
 
+use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\Item;
+use GeebyDeeby\Db\Entity\ItemsAltTitle;
+use GeebyDeeby\Db\Entity\ItemsTag;
 use GeebyDeeby\Db\Entity\ItemsTagEntityInterface;
-use GeebyDeeby\Db\PersistenceManager;
-use GeebyDeeby\Db\Table\ItemsTags;
-use GeebyDeeby\ServiceManager\Factory\Autowire;
+use GeebyDeeby\Db\Entity\Series;
+use GeebyDeeby\Db\Entity\Tag;
+use GeebyDeeby\Db\Entity\TagEntityInterface;
 
 /**
  * Database service for the Items_Tags table.
@@ -46,27 +50,15 @@ use GeebyDeeby\ServiceManager\Factory\Autowire;
 class ItemsTagService extends AbstractDbService
 {
     /**
-     * Constructor
-     *
-     * @param PersistenceManager $persistenceManager Persistence manager
-     * @param ItemsTags          $itemsTagsTable     ItemsTags table
-     */
-    public function __construct(
-        PersistenceManager $persistenceManager,
-        #[Autowire(container: \GeebyDeeby\Db\Table\PluginManager::class)]
-        protected ItemsTags $itemsTagsTable
-    ) {
-        parent::__construct($persistenceManager);
-    }
-
-    /**
      * Create an empty entity.
      *
      * @return ItemsTagEntityInterface
      */
     public function createEntity(): ItemsTagEntityInterface
     {
-        return $this->itemsTagsTable->createRow();
+        $entity = new ItemsTag();
+        $entity->setEntityManager($this->entityManager);
+        return $entity;
     }
 
     /**
@@ -79,7 +71,27 @@ class ItemsTagService extends AbstractDbService
      */
     public function getItemsForTag(int $tagID, string $sort = 'title'): array
     {
-        return iterator_to_array($this->itemsTagsTable->getItemsForTag($tagID, $sort));
+        if ($sort === 'series') {
+            $extraJoin = 'INNER JOIN ' . Edition::class . ' e ON e.item=i.id '
+                . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
+                . 'INNER JOIN ' . Series::class . ' s ON e.series=s.id ';
+            $extraSelect = ', s.id AS Series_ID, s.seriesName AS Series_Name, '
+                . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
+                . 'iat.altName AS Item_AltName';
+            $order = 's.seriesName, s.id, e.volume, e.position, e.replacementNumber';
+            $group = ' GROUP BY i.id, e.volume, e.position, e.replacementNumber';
+        } else {
+            $order = 'i.itemName';
+            $extraJoin = $extraSelect = $group = '';
+        }
+        $dql = 'SELECT i.id AS Item_ID, i.itemName AS Item_Name' . $extraSelect
+            . ' FROM ' . ItemsTag::class . ' it '
+            . 'INNER JOIN ' . Item::class . ' i ON it.item=i.id '
+            . $extraJoin
+            . 'WHERE it.tag = :tag' . $group . ' ORDER BY ' . $order;
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('tag', $tagID);
+        return $query->getResult();
     }
 
     /**
@@ -87,26 +99,31 @@ class ItemsTagService extends AbstractDbService
      *
      * @param int $itemID Item ID
      *
-     * @return array
+     * @return TagEntityInterface[]
      */
     public function getTagsForItem(int $itemID): array
     {
-        return iterator_to_array($this->itemsTagsTable->getTags($itemID));
+        $dql = 'SELECT t FROM ' . ItemsTag::class . ' it '
+            . 'INNER JOIN ' . Tag::class . '  t ON it.tag=t.id WHERE it.item = :item ORDER BY t.tag';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('item', $itemID);
+        return $query->getResult();
     }
 
     /**
      * Retrieve an existing entry using an item ID and tag ID (null if not found).
      *
-     * @param int    $itemId Item ID
-     * @param string $tagId  Tag ID
+     * @param int $itemId Item ID
+     * @param int $tagId  Tag ID
      *
      * @return ?ItemsTagEntityInterface
      */
-    public function getByItemAndTag(int $itemId, string $tagId): ?ItemsTagEntityInterface
+    public function getByItemAndTag(int $itemId, int $tagId): ?ItemsTagEntityInterface
     {
-        foreach ($this->itemsTagsTable->select(['Item_ID' => $itemId, 'Tag_ID' => $tagId]) as $row) {
-            return $row;
-        }
-        return null;
+        $dql = 'SELECT it FROM ' . ItemsTag::class . ' it WHERE it.item = :item AND it.tag = :tag';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(['item' => $itemId, 'tag' => $tagId]);
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult();
     }
 }

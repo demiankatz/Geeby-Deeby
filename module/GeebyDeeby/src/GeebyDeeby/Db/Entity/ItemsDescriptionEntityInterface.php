@@ -66,11 +66,11 @@ interface ItemsDescriptionEntityInterface extends EntityInterface
     /**
      * Set the description source.
      *
-     * @param string $name New name.
+     * @param string $source New source.
      *
      * @return static
      */
-    public function setSource(string $name): static;
+    public function setSource(string $source): static;
 
     /**
      * Get a description of the item.
