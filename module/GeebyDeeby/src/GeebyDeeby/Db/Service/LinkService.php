@@ -111,7 +111,7 @@ class LinkService extends AbstractDbService
     {
         $dql = 'SELECT l.id AS Link_ID, l.linkName AS Link_Name, l.url AS URL, l.description AS Description, '
             . 'l.checked AS Date_Checked, lt.id AS Link_Type_ID, lt.linkTypeName AS Link_Type '
-            . 'FROM ' . Link::class . ' l INNER JOIN ' . LinkType::class . ' lt '
+            . 'FROM ' . Link::class . ' l INNER JOIN ' . LinkType::class . ' lt ON l.linkType=lt.id '
             . ($typeFilter ? 'WHERE lt.linkTypeName LIKE :filter ' : '')
             . 'ORDER BY lt.linkTypeName, l.linkName';
         $query = $this->entityManager->createQuery($dql);
