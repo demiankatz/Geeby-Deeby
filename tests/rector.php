@@ -13,7 +13,6 @@ use Rector\PHPUnit\CodeQuality\Rector\MethodCall\AssertInstanceOfComparisonRecto
 use Rector\PHPUnit\CodeQuality\Rector\MethodCall\AssertNotOperatorRector;
 use Rector\PHPUnit\CodeQuality\Rector\MethodCall\FlipAssertRector;
 use Rector\PHPUnit\CodeQuality\Rector\MethodCall\MatchAssertSameExpectedTypeRector;
-use Rector\PHPUnit\CodeQuality\Rector\MethodCall\RemoveExpectAnyFromMockRector;
 use Rector\PHPUnit\CodeQuality\Rector\MethodCall\SingleWithConsecutiveToWithRector;
 use Rector\PHPUnit\CodeQuality\Rector\MethodCall\UseSpecificWillMethodRector;
 use Rector\PHPUnit\CodeQuality\Rector\MethodCall\UseSpecificWithMethodRector;
@@ -44,7 +43,6 @@ return RectorConfig::configure()
         FlipAssertRector::class,
         GetMockBuilderGetMockToCreateMockRector::class,
         MatchAssertSameExpectedTypeRector::class,
-        RemoveExpectAnyFromMockRector::class,
         ReplaceAtMethodWithDesiredMatcherRector::class,
         SingleWithConsecutiveToWithRector::class,
         UseSpecificWillMethodRector::class,
