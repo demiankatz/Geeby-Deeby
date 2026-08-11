@@ -974,6 +974,7 @@ class IntegrationTest extends MinkTestCase
                 '#URL' => 'https://dimenovels.org',
                 '#Description' => 'This has been edited.',
                 '#Date_Checked' => '2025-12-01',
+                '#Link_Type_ID' => '2',
             ],
             inModal: false
         );
@@ -2582,6 +2583,7 @@ class IntegrationTest extends MinkTestCase
             'List Links',
             '|test link type 1 Back to Top ↑ '
             . 'test link 1 https://gamebooks.org/ \\(last verified: [\d-]+\\) '
+            . 'test link type 2 \\(edited\\) Back to Top ↑ '
             . 'test link 2 \\(edited\\) This has been edited. https://dimenovels.org '
             . '\\(last verified: 2025-12-01\\)|',
             null,
