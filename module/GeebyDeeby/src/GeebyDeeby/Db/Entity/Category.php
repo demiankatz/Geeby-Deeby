@@ -65,10 +65,10 @@ class Category extends AbstractEntity implements CategoryEntityInterface
     /**
      * Category description.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Description', type: 'text', length: 65535, nullable: true)]
-    protected string $description;
+    protected ?string $description;
 
     /**
      * Get identifier (returns null for an uninitialized or non-persisted object).
@@ -106,9 +106,9 @@ class Category extends AbstractEntity implements CategoryEntityInterface
     /**
      * Get a description of the category.
      *
-     * @return string
+     * @return ?string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -116,11 +116,11 @@ class Category extends AbstractEntity implements CategoryEntityInterface
     /**
      * Set the description.
      *
-     * @param string $description New description
+     * @param ?string $description New description
      *
      * @return static
      */
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;
