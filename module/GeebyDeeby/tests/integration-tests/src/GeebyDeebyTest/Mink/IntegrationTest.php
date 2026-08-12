@@ -2143,7 +2143,7 @@ class IntegrationTest extends MinkTestCase
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contents: example article 1 (second test material (edited), pages 3-6)'
             . ' example article 2 (second test material (edited))'
-            . ' ISBN: 9798196260513'
+            . ' ISBN: 9798196260513 (test series 2 edition)'
             . ' Length: 32 pages Number of Endings: 1 Errata: none -- perfection! Special Thanks: for nothing'
             . ' Known Editions Copy of test series 2 edition test series 2 edition'
             . ' Please log in to manage your collection or post a review.',
