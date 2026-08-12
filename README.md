@@ -12,6 +12,12 @@ The following sections run through the installation process; you should follow a
 
 First, after cloning this repository to a directory, use "composer install" to load dependencies (see http://getcomposer.org for details).
 
+### Set Up Cache Permissions
+
+The `data/cache` directory under your installation needs to be writable by Apache. In Debian-flavored Linux, you can do this by setting ownership to the `www-data` user; in RedHat-flavored Linux, the owner should usually be `apache`. If you have SELinux or other extra security layers installed, additional configuration may be necessary.
+
+For example, if you are installed in the `/opt/gbdb` directory in Ubuntu Linux, you could run `sudo chown www-data:www-data /opt/gbdb/data/cache` to set things up appropriately.
+
 ### Publish Web Content
 
 The easiest way to get Geeby-Deeby running is to create a symbolic link to /public in your system's web root (often something like `/var/www` or `/var/www/html`). So, for example, if you had installed Geeby-Deeby into `/opt/gbdb`, you could run a command like: `sudo ln -s /opt/gbdb/public /var/www/html/gbdb`.
