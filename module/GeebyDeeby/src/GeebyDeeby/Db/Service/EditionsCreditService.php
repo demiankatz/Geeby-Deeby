@@ -100,10 +100,15 @@ class EditionsCreditService extends AbstractDbService
         bool $includeYear = true
     ): array {
         $omitYear = ($sort !== 'year' && !$includeYear);
-        $extraSelect = $omitYear ? '' : 'MIN(erd.year) AS Earliest_Year, ';
+        $extraSelect = $omitYear ? '' : 'COALESCE(MIN(erdFiltered.year), MIN(erd.year)) AS Earliest_Year, ';
         $yearJoin = $omitYear
             ? ''
-            : (' LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition OR e.parentEdition=erd.edition ');
+            : (
+                ' LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition OR e.parentEdition=erd.edition '
+                // We need a filtered version of the join to prevent -1 (Unpublished) from being prioritized:
+                . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erdFiltered '
+                . 'ON (e.id=erdFiltered.edition OR e.parentEdition=erdFiltered.edition) AND erdFiltered.year > 0'
+            );
         if ($sort === 'year') {
             $sortFields = 'r.roleName, Earliest_Year, i.itemName';
         } else {
