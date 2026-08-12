@@ -1186,13 +1186,22 @@ class IntegrationTest extends MinkTestCase
             '/^No credits.$/',
             '/test person role: test-last, test-first, extra \\(test note\\)/',
         ];
-        yield 'edition ISBN' => [
+        yield 'edition ISBN-10' => [
             '/edit/Edition/1',
             'Codes/ISBNs',
             ['#isbn' => '0123456789', '#isbn_note' => '1'],
             '#isbn_list',
             '/^No ISBNs set.$/',
             '|0123456789 / 9780123456786 \\(test note\\)|',
+            '#add_isbn',
+        ];
+        yield 'edition ISBN-13' => [
+            '/edit/Edition/2',
+            'Codes/ISBNs',
+            ['#isbn' => '9798196260513'],
+            '#isbn_list',
+            '/^No ISBNs set.$/',
+            '|9798196260513|',
             '#add_isbn',
         ];
         yield 'edition OCLC number' => [
@@ -2134,6 +2143,7 @@ class IntegrationTest extends MinkTestCase
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contents: example article 1 (second test material (edited), pages 3-6)'
             . ' example article 2 (second test material (edited))'
+            . ' ISBN: 9798196260513'
             . ' Length: 32 pages Number of Endings: 1 Errata: none -- perfection! Special Thanks: for nothing'
             . ' Known Editions Copy of test series 2 edition test series 2 edition'
             . ' Please log in to manage your collection or post a review.',
@@ -2155,6 +2165,7 @@ class IntegrationTest extends MinkTestCase
             . ' Item: example issue 1'
             . ' Contents: example article 1 (pages 3-6)'
             . ' example article 2'
+            . ' ISBN: 9798196260513'
             . ' Length: 32 pages Number of Endings: 1'
             . ' Please log in to manage your collection or post a review.',
         ];
@@ -2214,6 +2225,7 @@ class IntegrationTest extends MinkTestCase
             . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
             . ' Contents: example article 1 (pages 3-6) example article 2'
+            . ' ISBN: 9798196260513'
             . ' Length: 32 pages Number of Endings: 1',
         ];
         yield 'child edition' => [

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.0.1 - 2026-08-12
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- ISBN-13 display bug.
+
 ## 3.0.0 - 2026-08-11
 
 ### Added

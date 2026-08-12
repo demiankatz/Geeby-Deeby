@@ -76,18 +76,18 @@ class EditionsIsbn extends AbstractEntity implements EditionsIsbnEntityInterface
     /**
      * ISBN-10.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'ISBN', type: 'string', length: 10, nullable: true, options: ['fixed' => true])]
-    protected string $isbn10;
+    protected ?string $isbn10;
 
     /**
      * ISBN-13.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'ISBN13', type: 'string', length: 13, nullable: true, options: ['fixed' => true])]
-    protected string $isbn13;
+    protected ?string $isbn13;
 
     /**
      * Note.
