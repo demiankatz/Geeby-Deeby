@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.0.2 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- "Unpublished" showing instead of earliest publication date in some places.
+
 ## 3.0.1 - 2026-08-12
 
 ### Added
