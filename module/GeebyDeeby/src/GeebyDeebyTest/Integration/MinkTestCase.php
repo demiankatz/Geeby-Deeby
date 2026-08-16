@@ -38,7 +38,6 @@ use WebSocket\ConnectionException;
 
 use function call_user_func;
 use function floatval;
-use function intval;
 use function is_string;
 
 /**
@@ -127,7 +126,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      */
     protected function getDefaultTimeout(): int
     {
-        return intval(
+        return (int)(
             getenv('GBDB_DEFAULT_TEST_TIMEOUT') ?: self::DEFAULT_TIMEOUT
         );
     }

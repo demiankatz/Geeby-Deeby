@@ -54,7 +54,6 @@ use GeebyDeeby\Db\Service\SeriesService;
 use Throwable;
 
 use function count;
-use function intval;
 
 /**
  * Edit item controller
@@ -355,7 +354,7 @@ class EditItemController extends AbstractBase
             return $this->jsonReportSuccess();
         }
         $note = $this->params()->fromPost('note_id');
-        $extras = ['setPosition' => 0, 'setNote' => empty($note) ? null : intval($note)];
+        $extras = ['setPosition' => 0, 'setNote' => empty($note) ? null : (int)$note];
         return $this->handleGenericLink(
             ItemsInCollectionService::class,
             'setCollectionItem',
@@ -400,7 +399,7 @@ class EditItemController extends AbstractBase
         $pos = $this->params()->fromPost('pos');
         $service = $this->getDbService(ItemsInCollectionService::class);
         if ($entity = $service->getByCollectionItemAndItemAndPosition($collection, $item)) {
-            $entity->setPosition(intval($pos));
+            $entity->setPosition((int)$pos);
             try {
                 $service->persistEntity($entity);
             } catch (Throwable $e) {
@@ -652,7 +651,7 @@ class EditItemController extends AbstractBase
             $pos = $this->params()->fromPost('pos');
             $entityService = $this->getDbService(EditionService::class);
             $entity = $entityService->getByPrimaryKey($edition);
-            $entity->setItemDisplayOrder(intval($pos));
+            $entity->setItemDisplayOrder((int)$pos);
             $entityService->persistEntity($entity);
             return $this->jsonReportSuccess();
         }

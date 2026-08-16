@@ -50,7 +50,6 @@ use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\SeriesTranslationService;
 
 use function count;
-use function intval;
 
 /**
  * Edit series controller
@@ -411,8 +410,8 @@ class EditSeriesController extends AbstractBase
             }
             $service = $this->getDbService(EditionService::class);
             $entity = $service->getByPrimaryKey($edition)
-                ->setPosition(intval($pos))
-                ->setVolume(intval($vol));
+                ->setPosition((int)$pos)
+                ->setVolume((int)$vol);
             $service->persistEntity($entity);
             return $this->jsonReportSuccess();
         }

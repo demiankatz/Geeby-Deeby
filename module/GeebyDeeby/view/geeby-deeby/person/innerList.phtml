@@ -38,10 +38,10 @@
     </a>
     <?php if (!empty($current['Note'])): ?> (<?=$this->escapeHtml($current['Note'])?>)<?php endif; ?>
     <?php if ($sort === 'title' && !empty($current['Edition_Count'])): ?>
-      (<?=$current['Edition_Count'] === 1 ? '1 edition' : intval($current['Edition_Count']) . ' editions'?>)
+      (<?=$current['Edition_Count'] === 1 ? '1 edition' : ((int)$current['Edition_Count']) . ' editions'?>)
     <?php endif; ?>
     <?php if ($sort === 'title' && !empty($current['Citation_Count'])): ?>
-      (<?=$current['Citation_Count'] === 1 ? '1 citation' : intval($current['Citation_Count']) . ' citations'?>)
+      (<?=$current['Citation_Count'] === 1 ? '1 citation' : ((int)$current['Citation_Count']) . ' citations'?>)
     <?php endif; ?>
     <br />
   </span>

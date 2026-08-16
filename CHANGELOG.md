@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
+- Eliminated use of intval() to improve performance.
 - Improved efficiency of item material type RDF class loading.
 
 ### Removed
