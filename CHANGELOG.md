@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 3.0.2 - TBD
+## 3.0.2 - 2026-08-16
 
 ### Added
 
@@ -19,7 +19,9 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Fixed
 
 - 500 errors caused by using non-integer values to retrieve records.
+- Type error in PublishersAddress entity.
 - "Unpublished" showing instead of earliest publication date in some places.
+- Warning caused by attempting to clear non-existent fields.
 
 ## 3.0.1 - 2026-08-12
 
