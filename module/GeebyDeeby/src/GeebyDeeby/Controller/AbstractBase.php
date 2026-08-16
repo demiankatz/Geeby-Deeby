@@ -41,7 +41,6 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 
-use function intval;
 use function is_callable;
 use function is_object;
 
@@ -232,7 +231,7 @@ class AbstractBase extends AbstractActionController
         // Handle IDs and nullable ints intelligently: empty value should be treated as null and
         // other values should be converted to integers!
         if ($this->isEntityType($firstParam) || $this->isNullableIntType($firstParam)) {
-            return empty($value) ? null : intval($value);
+            return empty($value) ? null : (int)$value;
         }
         return $value;
     }
@@ -253,7 +252,7 @@ class AbstractBase extends AbstractActionController
             $idField,
             $this->params()->fromPost($idField, 'NEW')
         );
-        $id = $id == 'NEW' ? false : intval($id);
+        $id = $id == 'NEW' ? false : (int)$id;
 
         // Attempt to save changes:
         $service = $this->getDbService($serviceName);
@@ -320,7 +319,7 @@ class AbstractBase extends AbstractActionController
     protected function showGenericItem(string $serviceName, string $assignTo): ViewModel
     {
         $id = $this->params()->fromRoute('id', 'NEW');
-        $id = $id == 'NEW' ? false : intval($id);
+        $id = $id == 'NEW' ? false : (int)$id;
         $service = $this->getDbService($serviceName);
         if ($id) {
             $entity = $service->getByPrimaryKey($id);
