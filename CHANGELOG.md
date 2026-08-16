@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- 500 errors caused by using non-integer values to retrieve records.
 - "Unpublished" showing instead of earliest publication date in some places.
 
 ## 3.0.1 - 2026-08-12
