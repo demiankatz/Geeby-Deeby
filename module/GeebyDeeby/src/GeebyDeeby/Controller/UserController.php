@@ -35,7 +35,6 @@ use GeebyDeeby\Db\Service\ItemsReviewService;
 use GeebyDeeby\Db\Service\SeriesReviewService;
 use GeebyDeeby\Db\Service\UserService;
 
-use function intval;
 use function is_string;
 
 /**
@@ -58,7 +57,7 @@ class UserController extends AbstractBase
     {
         $id = $this->params()->fromRoute('id');
         $service = $this->getDbService(UserService::class);
-        $entity = (null === $id) ? null : $service->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $service->getByPrimaryKey((int)$id);
         if (!$entity) {
             return false;
         }

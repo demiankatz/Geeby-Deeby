@@ -32,8 +32,6 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesMaterialTypeService;
 
-use function intval;
-
 /**
  * Material type controller
  *
@@ -53,7 +51,7 @@ class MaterialTypeController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(MaterialTypeService::class)->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $this->getDbService(MaterialTypeService::class)->getByPrimaryKey((int)$id);
         if (!$entity) {
             return $this->forwardTo(__NAMESPACE__ . '\MaterialType', 'notfound');
         }

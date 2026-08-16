@@ -35,7 +35,6 @@ use GeebyDeeby\Db\Service\TagService;
 use GeebyDeeby\Db\Service\TagsRelationshipsValueService;
 use GeebyDeeby\Db\Service\TagsUriService;
 
-use function intval;
 use function is_object;
 
 /**
@@ -157,7 +156,7 @@ class TagController extends AbstractBase
     protected function getViewModelWithTag($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(TagService::class)->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $this->getDbService(TagService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }

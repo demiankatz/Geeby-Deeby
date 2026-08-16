@@ -32,7 +32,6 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\EditionsPlatformService;
 use GeebyDeeby\Db\Service\PlatformService;
 
-use function intval;
 use function is_object;
 
 /**
@@ -54,7 +53,7 @@ class PlatformController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(PlatformService::class)->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $this->getDbService(PlatformService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Platform', 'notfound');
         }

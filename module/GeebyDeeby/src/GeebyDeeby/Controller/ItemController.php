@@ -60,7 +60,6 @@ use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
-use function intval;
 use function is_object;
 
 /**
@@ -117,7 +116,7 @@ class ItemController extends AbstractBase
     protected function getViewModelWithItem($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(ItemService::class)->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $this->getDbService(ItemService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }

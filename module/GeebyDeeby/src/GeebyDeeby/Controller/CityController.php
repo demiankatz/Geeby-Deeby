@@ -33,7 +33,6 @@ use GeebyDeeby\Db\Service\CitiesUriService;
 use GeebyDeeby\Db\Service\CityService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 
-use function intval;
 use function is_object;
 
 /**
@@ -133,7 +132,7 @@ class CityController extends AbstractBase
     public function getCityViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(CityService::class)->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $this->getDbService(CityService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }

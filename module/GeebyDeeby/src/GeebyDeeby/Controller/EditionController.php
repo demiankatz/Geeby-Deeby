@@ -41,7 +41,6 @@ use GeebyDeeby\Db\Service\EditionsProductCodeService;
 use GeebyDeeby\Db\Service\EditionsReleaseDateService;
 use GeebyDeeby\Db\Service\ItemsCreatorService;
 
-use function intval;
 use function is_object;
 
 /**
@@ -122,7 +121,7 @@ class EditionController extends AbstractBase
         $id = ($overrideId === null)
             ? $this->params()->fromRoute('id') : $overrideId;
         $service = $this->getDbService(EditionService::class);
-        $entity = (null === $id) ? null : $service->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $service->getByPrimaryKey((int)$id);
         if (!$entity) {
             return false;
         }

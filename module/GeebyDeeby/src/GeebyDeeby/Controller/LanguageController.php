@@ -32,7 +32,6 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\LanguageService;
 use GeebyDeeby\Db\Service\SeriesService;
 
-use function intval;
 use function is_object;
 
 /**
@@ -54,7 +53,7 @@ class LanguageController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(LanguageService::class)->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $this->getDbService(LanguageService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Language', 'notfound');
         }

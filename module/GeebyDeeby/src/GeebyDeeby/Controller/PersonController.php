@@ -40,7 +40,6 @@ use GeebyDeeby\Db\Service\PersonService;
 use GeebyDeeby\Db\Service\PseudonymService;
 use Laminas\View\Model\ViewModel;
 
-use function intval;
 use function is_object;
 
 /**
@@ -220,7 +219,7 @@ class PersonController extends AbstractBase
      */
     protected function getPersonViewModel($id, $sort = 'title')
     {
-        $entity = $this->getDbService(PersonService::class)->getByPrimaryKey(intval($id));
+        $entity = $this->getDbService(PersonService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }

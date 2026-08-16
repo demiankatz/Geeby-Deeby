@@ -33,7 +33,6 @@ use GeebyDeeby\Db\Service\CountriesUriService;
 use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 
-use function intval;
 use function is_object;
 
 /**
@@ -134,7 +133,7 @@ class CountryController extends AbstractBase
     public function getCountryViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(CountryService::class)->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $this->getDbService(CountryService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }

@@ -33,7 +33,6 @@ use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\PublishersUriService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 
-use function intval;
 use function is_object;
 
 /**
@@ -135,7 +134,7 @@ class PublisherController extends AbstractBase
     protected function getPublisherViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(PublisherService::class)->getByPrimaryKey(intval($id));
+        $entity = (null === $id) ? null : $this->getDbService(PublisherService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }
