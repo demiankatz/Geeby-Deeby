@@ -516,7 +516,11 @@ class IntegrationTest extends MinkTestCase
         yield 'material type 2' => [
             'MaterialTypeList',
             '#add_material_type',
-            ['#Material_Type_Name' => 'second test material', '#Material_Type_Plural_Name' => 'second test materials'],
+            [
+                '#Material_Type_Name' => 'second test material',
+                '#Material_Type_Plural_Name' => 'second test materials',
+                '#Material_Type_RDF_Class' => 'http://second-test-material',
+            ],
             '#material_type_list',
             null,
             2,
@@ -2425,7 +2429,9 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'item' => [
             '/Item/1/RDF',
-            '<http://localhost/Item/1> <http://purl.org/dc/terms/title> "test item" .',
+            '<http://localhost/Item/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://second-test-material (edited)> .\n"
+            . '<http://localhost/Item/1> <http://purl.org/dc/terms/title> "test item" .',
         ];
         yield 'edition' => [
             '/Edition/1/RDF',
