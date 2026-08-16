@@ -134,7 +134,7 @@ class PublisherController extends AbstractBase
     protected function getPublisherViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(PublisherService::class)->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $this->getDbService(PublisherService::class)->getByPrimaryKey(intval($id));
         if (!is_object($entity)) {
             return false;
         }

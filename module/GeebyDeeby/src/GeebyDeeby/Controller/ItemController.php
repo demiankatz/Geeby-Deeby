@@ -116,7 +116,7 @@ class ItemController extends AbstractBase
     protected function getViewModelWithItem($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(ItemService::class)->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $this->getDbService(ItemService::class)->getByPrimaryKey(intval($id));
         if (!is_object($entity)) {
             return false;
         }

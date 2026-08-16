@@ -121,7 +121,7 @@ class EditionController extends AbstractBase
         $id = ($overrideId === null)
             ? $this->params()->fromRoute('id') : $overrideId;
         $service = $this->getDbService(EditionService::class);
-        $entity = (null === $id) ? null : $service->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $service->getByPrimaryKey(intval($id));
         if (!$entity) {
             return false;
         }

@@ -156,7 +156,7 @@ class TagController extends AbstractBase
     protected function getViewModelWithTag($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(TagService::class)->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $this->getDbService(TagService::class)->getByPrimaryKey(intval($id));
         if (!is_object($entity)) {
             return false;
         }
