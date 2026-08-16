@@ -53,7 +53,7 @@ class CategoryController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(CategoryService::class)->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $this->getDbService(CategoryService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return $this->forwardTo(__NAMESPACE__ . '\Category', 'notfound');
         }

@@ -132,7 +132,7 @@ class CityController extends AbstractBase
     public function getCityViewModel()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(CityService::class)->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $this->getDbService(CityService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }
