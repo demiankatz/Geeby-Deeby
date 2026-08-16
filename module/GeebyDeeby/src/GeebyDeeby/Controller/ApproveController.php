@@ -36,8 +36,6 @@ use GeebyDeeby\Db\Service\SeriesReviewService;
 use GeebyDeeby\Db\Service\SeriesService;
 use GeebyDeeby\Db\Service\UserService;
 
-use function intval;
-
 /**
  * Approval controller
  *
@@ -92,7 +90,7 @@ class ApproveController extends AbstractBase
         if ($user->isApproved()) {
             return $this->jsonDie('User already approved.');
         }
-        $person_id = intval($this->params()->fromPost('person_id'));
+        $person_id = (int)$this->params()->fromPost('person_id');
         $user->setPerson($person_id ? $person_id : null)
             ->setUsername($this->params()->fromPost('username'))
             ->setName($this->params()->fromPost('fullname'))

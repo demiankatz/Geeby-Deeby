@@ -516,7 +516,11 @@ class IntegrationTest extends MinkTestCase
         yield 'material type 2' => [
             'MaterialTypeList',
             '#add_material_type',
-            ['#Material_Type_Name' => 'second test material', '#Material_Type_Plural_Name' => 'second test materials'],
+            [
+                '#Material_Type_Name' => 'second test material',
+                '#Material_Type_Plural_Name' => 'second test materials',
+                '#Material_Type_RDF_Class' => 'http://second-test-material',
+            ],
             '#material_type_list',
             null,
             2,
@@ -1688,6 +1692,37 @@ class IntegrationTest extends MinkTestCase
     }
 
     /**
+     * Test setting up a regular date and the special "unpublished" date on two editions of the same item.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Depends('testCopyEdition')]
+    public function testUnpublishedDateBehavior(): void
+    {
+        // Set up a regular date in edition 2:
+        $this->testLinkCreation(
+            '/edit/Edition/2',
+            'Dates',
+            ['#releaseYear' => '2022'],
+            '#date_list',
+            '/^No dates set.$/',
+            '/2022/',
+        );
+        // Clear context so next call doesn't fail due to existing login:
+        $this->resetMinkSession();
+        // Set up an unpublished date in edition 6:
+        $this->testLinkCreation(
+            '/edit/Edition/6',
+            'Dates',
+            ['#releaseYear' => '-1'],
+            '#date_list',
+            '/^No dates set.$/',
+            '/Unpublished/',
+        );
+        // ...having these dates on different editions of the same item will exercise some edge cases later.
+    }
+
+    /**
      * Test setting custom full text link attributes.
      *
      * @return void
@@ -2065,7 +2100,7 @@ class IntegrationTest extends MinkTestCase
             . ' Translated Into: test series 1 (test language 1)'
             . ' This has been edited.'
             . ' second test materials (edited)'
-            . ' v. 1, no. 1. example issue 1 (example article 1 and 1 more item)'
+            . ' v. 1, no. 1. example issue 1 (2022; example article 1 and 1 more item)'
             . ' v. 1, no. 2. example issue 2'
             . ' User Comments No comments available. Please log in to leave a comment.',
         ];
@@ -2143,6 +2178,7 @@ class IntegrationTest extends MinkTestCase
             . ' Series: test series 2 (edited) — v. 1 no. 1'
             . ' Contents: example article 1 (second test material (edited), pages 3-6)'
             . ' example article 2 (second test material (edited))'
+            . ' Dates: Unpublished (Copy of test series 2 edition) 2022 (test series 2 edition)'
             . ' ISBN: 9798196260513 (test series 2 edition)'
             . ' Length: 32 pages Number of Endings: 1 Errata: none -- perfection! Special Thanks: for nothing'
             . ' Known Editions Copy of test series 2 edition test series 2 edition'
@@ -2158,14 +2194,14 @@ class IntegrationTest extends MinkTestCase
             . ' Item: example issue 1'
             . ' Contents: example article 1 (pages 3-6)'
             . ' example article 2'
-            . ' Length: 32 pages Number of Endings: 1'
+            . ' Date: Unpublished Length: 32 pages Number of Endings: 1'
             . ' test series 2 edition'
             . ' Online Full Text: test full text source 1'
             . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
             . ' Contents: example article 1 (pages 3-6)'
             . ' example article 2'
-            . ' ISBN: 9798196260513'
+            . ' Date: 2022 ISBN: 9798196260513'
             . ' Length: 32 pages Number of Endings: 1'
             . ' Please log in to manage your collection or post a review.',
         ];
@@ -2178,6 +2214,7 @@ class IntegrationTest extends MinkTestCase
             . ' Contained In: example article 2 (second test material (edited), test note)'
             . ' Translated Into: example article 2 (test language 1)'
             . ' Adapted Into: example article 2 (second test material (edited))'
+            . ' Dates: Unpublished (Copy of test series 2 edition) 2022 (test series 2 edition)'
             . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
             . ' Known Editions'
             . ' Copy of test series 2 edition (pages 3-6 in example issue 1)'
@@ -2198,6 +2235,7 @@ class IntegrationTest extends MinkTestCase
             . ' Incorrectly Attributed test person role (according to an uncited source):'
             . ' last, test-second-edited (test note 2 (edited))'
             . ' test person role (according to an uncited source): lastname, test-third (uncredited)'
+            . ' Dates: Unpublished (Copy of test series 2 edition) 2022 (test series 2 edition)'
             . ' Length: 16 pages Errata: undetermined Special Thanks: to test suites'
             . ' Known Editions'
             . ' Copy of test series 2 edition (in example issue 1) test series 2 edition (in example issue 1)'
@@ -2225,7 +2263,7 @@ class IntegrationTest extends MinkTestCase
             . ' Series: test series 2 (edited) v. 1 no. 1'
             . ' Item: example issue 1'
             . ' Contents: example article 1 (pages 3-6) example article 2'
-            . ' ISBN: 9798196260513'
+            . ' Date: 2022 ISBN: 9798196260513'
             . ' Length: 32 pages Number of Endings: 1',
         ];
         yield 'child edition' => [
@@ -2233,7 +2271,7 @@ class IntegrationTest extends MinkTestCase
             'Online Full Text: test full text source 1'
             . ' Series: test series 2 (edited) v. 1 no. 1 (pages 3-6)'
             . ' Item: example article 1'
-            . ' Length: 16 pages',
+            . ' Date: 2022 Length: 16 pages',
         ];
         yield 'platform' => ['/Platform/1', 'test series 1 test item'];
         yield 'tag' => [
@@ -2342,7 +2380,7 @@ class IntegrationTest extends MinkTestCase
     #[\PHPUnit\Framework\Attributes\Depends('testReviewApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCommentApproval')]
     #[\PHPUnit\Framework\Attributes\Depends('testCategoryLinking')]
-    #[\PHPUnit\Framework\Attributes\Depends('testCopyEdition')]
+    #[\PHPUnit\Framework\Attributes\Depends('testUnpublishedDateBehavior')]
     #[\PHPUnit\Framework\Attributes\Depends('testSettingUpPotentialTrade')]
     #[\PHPUnit\Framework\Attributes\DataProvider('populatedRecordsProvider')]
     public function testPopulatedRecords(
@@ -2391,7 +2429,9 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'item' => [
             '/Item/1/RDF',
-            '<http://localhost/Item/1> <http://purl.org/dc/terms/title> "test item" .',
+            '<http://localhost/Item/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> '
+            . "<http://second-test-material (edited)> .\n"
+            . '<http://localhost/Item/1> <http://purl.org/dc/terms/title> "test item" .',
         ];
         yield 'edition' => [
             '/Edition/1/RDF',
@@ -2572,11 +2612,16 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'items by platform' => ['by platform', 'T test platform test platform 2 (edited)', 2];
         yield 'items by subject/tag' => ['by subject/tag', 'T test tag test tag 2 (edited)', 2];
-        yield 'items by year' => ['by year', '1952 test item (test note)', 2];
+        yield 'items by year' => [
+            'by year',
+            'Never Published example issue 1 (Copy of test series 2 edition) '
+            . '1952 test item (test note) 2022 example issue 1 (test series 2 edition)',
+            2,
+        ];
         yield 'items with full text' => [
             'with full text',
-            '/.*test series 1 test item \\(1952\\) '
-            . 'test series 2 \\(edited\\) v. 1, no. 1. example issue 1 \\(example article 1 and 1 more item\\)$/',
+            '/.*test full text source 1 test full text source 2 \\(edited\\) test series 1 test item \\(1952\\) '
+            . 'test series 2 \\(edited\\) v. 1, no. 1. example issue 1 \\(2022; example article 1 and 1 more item\\)$/',
             2,
             true,
         ];
@@ -2651,18 +2696,10 @@ class IntegrationTest extends MinkTestCase
         ];
         yield 'series 2' => [
             2,
-            'Missing Credits '
-            . 'example article 1, [v. 1, no. 1], [v. 1, no. 2] '
-            . 'Unspecified Creators '
-            . 'example article 1, [v. 1, no. 1], [v. 1, no. 2] '
-            . 'Missing Dates '
-            . '[v. 1, no. 1], [v. 1, no. 2] '
-            . 'Statistics '
-            . 'No date information. '
-            . 'Series contains 3 total items representing 2 different positions. '
-            . 'Series contains volume numbers from 1 to 1. '
-            . 'Volume 1 '
-            . '3 item(s) numbered from 1 to 2. Duplicate numbers: 1',
+            'Missing Credits example article 1, [v. 1, no. 1], [v. 1, no. 2] Unspecified Creators example article 1, '
+            . '[v. 1, no. 1], [v. 1, no. 2] Missing Dates [v. 1, no. 2] Statistics Series contains dates ranging from'
+            . ' -1 to 2022. Series contains 3 total items representing 2 different positions. Series contains volume '
+            . 'numbers from 1 to 1. Volume 1 3 item(s) numbered from 1 to 2. Duplicate numbers: 1',
         ];
     }
 

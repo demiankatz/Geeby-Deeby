@@ -185,7 +185,8 @@ class ItemService extends AbstractDbService
         } else {
             $extraJoins = $extraSelect = '';
         }
-        $dql = 'SELECT ' . $extraSelect . 'MIN(erd.year) AS Earliest_Year, MIN(e.id) AS Edition_ID, '
+        $dql = 'SELECT ' . $extraSelect . 'COALESCE(MIN(erdFiltered.year), MIN(erd.year)) AS Earliest_Year, '
+            . 'MIN(e.id) AS Edition_ID, '
             . 'e.volume AS Volume, e.position AS Position, e.replacementNumber AS Replacement_Number, '
             . 'i.itemName AS Item_Name, i.id AS Item_ID, iat.altName AS Item_AltName, '
             . 'm.id AS Material_Type_ID, m.singularName AS Material_Type_Name, '
@@ -194,6 +195,9 @@ class ItemService extends AbstractDbService
             . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
             . 'INNER JOIN ' . MaterialType::class . ' m ON i.materialType=m.id '
             . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition '
+            // We need a filtered version of the join to prevent -1 (Unpublished) from being prioritized:
+            . 'LEFT JOIN ' . EditionsReleaseDate::class
+            . ' erdFiltered ON e.id=erdFiltered.edition AND erdFiltered.year > 0'
             . 'LEFT JOIN ' . ItemsAltTitle::class . ' iat ON e.preferredItemAltName=iat.id '
             . $extraJoins
             . 'WHERE ' . implode(' AND ', $where) . ' '

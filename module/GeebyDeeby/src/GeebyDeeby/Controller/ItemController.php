@@ -116,7 +116,7 @@ class ItemController extends AbstractBase
     protected function getViewModelWithItem($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(ItemService::class)->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $this->getDbService(ItemService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }
@@ -203,9 +203,9 @@ class ItemController extends AbstractBase
     /**
      * Build the primary resource in an RDF graph.
      *
-     * @param \EasyRdf\Graph $graph Graph to populate
-     * @param object         $view  View model populated with information.
-     * @param mixed          $class Class(es) for resource.
+     * @param \EasyRdf\Graph  $graph Graph to populate
+     * @param object          $view  View model populated with information.
+     * @param string|string[] $class Class(es) for resource.
      *
      * @return \EasyRdf\Resource
      */
@@ -216,9 +216,9 @@ class ItemController extends AbstractBase
         $uri = $this->getServerUrl('item', ['id' => $id]);
         $type = $this->getDbService(MaterialTypeService::class)
             ->getByPrimaryKey($view->item['Material_Type_ID']);
-        if (!empty($type['Material_Type_RDF_Class'])) {
+        if ($rdfClass = $type->getRdfClass()) {
             $class = (array)$class;
-            $class[] = $type['Material_Type_RDF_Class'];
+            $class[] = $rdfClass;
         }
         $item = $graph->resource($uri, $class);
         $name = $view->item['Item_Name'];

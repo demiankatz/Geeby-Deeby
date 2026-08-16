@@ -39,7 +39,6 @@ use GeebyDeeby\Db\Entity\PersonEntityInterface;
 use Laminas\Paginator\Paginator;
 
 use function count;
-use function intval;
 use function strlen;
 
 /**
@@ -167,7 +166,7 @@ class PersonService extends AbstractDbService
         $c = count($parts);
         $last = ($c > 1) ? $parts[$c - 1] : null;
         $dql = 'SELECT p FROM ' . Person::class . ' p WHERE (p.firstName LIKE :first OR p.lastName LIKE :first';
-        if (intval($first) > 0) {
+        if ((int)$first > 0) {
             $dql .= ' OR p.id=:first';
         }
         $dql .= ')';

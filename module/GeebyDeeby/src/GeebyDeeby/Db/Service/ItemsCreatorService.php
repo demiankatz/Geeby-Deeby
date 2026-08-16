@@ -96,8 +96,7 @@ class ItemsCreatorService extends AbstractDbService
     }
 
     /**
-     * Get a list of credits attached to the specified person, sorted by
-     * item.
+     * Get a list of credits attached to the specified person, sorted by title or year.
      *
      * @param int    $personID Person ID
      * @param string $sort     Type of sorting (title or year)
@@ -110,12 +109,15 @@ class ItemsCreatorService extends AbstractDbService
             ? 'r.roleName, Earliest_Year, i.itemName'
             : 'r.roleName, i.itemName, Earliest_Year';
         $dql = 'SELECT COUNT(DISTINCT icc.citation) AS Citation_Count, i.itemName AS Item_Name, i.id AS Item_ID, '
-            . 'MIN(erd.year) AS Earliest_Year, '
+            . 'COALESCE(MIN(erdFiltered.year), MIN(erd.year)) AS Earliest_Year, '
             . 'r.id AS Role_ID, r.roleName AS Role_Name, r.itemCreatorPredicate AS Item_Creator_Predicate '
             . 'FROM ' . Edition::class . ' e '
             . 'INNER JOIN ' . Item::class . ' i ON e.item=i.id '
             . 'INNER JOIN ' . ItemsCreator::class . ' ic ON ic.item=i.id '
             . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erd ON e.id=erd.edition OR e.parentEdition=erd.edition '
+            // We need a filtered version of the join to prevent -1 (Unpublished) from being prioritized:
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erdFiltered '
+            . 'ON (e.id=erdFiltered.edition OR e.parentEdition=erdFiltered.edition) AND erdFiltered.year > 0'
             . 'INNER JOIN ' . Role::class . ' r ON ic.role=r.id '
             . 'LEFT JOIN ' . ItemsCreatorsCitation::class . ' icc ON icc.creator=ic.id '
             . 'WHERE ic.person = :person '

@@ -51,7 +51,7 @@ class MaterialTypeController extends AbstractBase
     public function indexAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(MaterialTypeService::class)->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $this->getDbService(MaterialTypeService::class)->getByPrimaryKey((int)$id);
         if (!$entity) {
             return $this->forwardTo(__NAMESPACE__ . '\MaterialType', 'notfound');
         }
