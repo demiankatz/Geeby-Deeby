@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\CountriesUriService;
 use GeebyDeeby\Db\Service\CountryService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 
+use function intval;
 use function is_object;
 
 /**

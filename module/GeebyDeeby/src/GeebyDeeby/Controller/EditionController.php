@@ -41,6 +41,7 @@ use GeebyDeeby\Db\Service\EditionsProductCodeService;
 use GeebyDeeby\Db\Service\EditionsReleaseDateService;
 use GeebyDeeby\Db\Service\ItemsCreatorService;
 
+use function intval;
 use function is_object;
 
 /**

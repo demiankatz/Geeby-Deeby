@@ -52,6 +52,7 @@ use GeebyDeeby\Db\Service\TagService;
 use Laminas\View\Model\ViewModel;
 
 use function count;
+use function intval;
 use function is_object;
 
 /**

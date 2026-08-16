@@ -40,6 +40,7 @@ use GeebyDeeby\Db\Service\PersonService;
 use GeebyDeeby\Db\Service\PseudonymService;
 use Laminas\View\Model\ViewModel;
 
+use function intval;
 use function is_object;
 
 /**

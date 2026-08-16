@@ -35,6 +35,7 @@ use GeebyDeeby\Db\Service\ItemsReviewService;
 use GeebyDeeby\Db\Service\SeriesReviewService;
 use GeebyDeeby\Db\Service\UserService;
 
+use function intval;
 use function is_string;
 
 /**

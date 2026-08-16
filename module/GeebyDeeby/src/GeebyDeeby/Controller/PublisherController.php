@@ -33,6 +33,7 @@ use GeebyDeeby\Db\Service\PublisherService;
 use GeebyDeeby\Db\Service\PublishersUriService;
 use GeebyDeeby\Db\Service\SeriesPublisherService;
 
+use function intval;
 use function is_object;
 
 /**

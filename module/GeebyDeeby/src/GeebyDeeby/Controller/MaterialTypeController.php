@@ -32,6 +32,8 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesMaterialTypeService;
 
+use function intval;
+
 /**
  * Material type controller
  *

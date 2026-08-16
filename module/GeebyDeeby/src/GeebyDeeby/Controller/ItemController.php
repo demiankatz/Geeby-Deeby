@@ -60,6 +60,7 @@ use GeebyDeeby\Db\Service\MaterialTypeService;
 use GeebyDeeby\Db\Service\SeriesService;
 
 use function count;
+use function intval;
 use function is_object;
 
 /**

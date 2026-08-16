@@ -35,6 +35,7 @@ use GeebyDeeby\Db\Service\TagService;
 use GeebyDeeby\Db\Service\TagsRelationshipsValueService;
 use GeebyDeeby\Db\Service\TagsUriService;
 
+use function intval;
 use function is_object;
 
 /**

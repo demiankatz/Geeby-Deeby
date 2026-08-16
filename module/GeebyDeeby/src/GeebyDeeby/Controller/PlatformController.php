@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\EditionsPlatformService;
 use GeebyDeeby\Db\Service\PlatformService;
 
+use function intval;
 use function is_object;
 
 /**

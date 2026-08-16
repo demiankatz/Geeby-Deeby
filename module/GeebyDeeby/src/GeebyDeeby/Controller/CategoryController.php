@@ -32,6 +32,7 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Db\Service\CategoryService;
 use GeebyDeeby\Db\Service\SeriesCategoryService;
 
+use function intval;
 use function is_object;
 
 /**
