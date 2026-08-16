@@ -81,11 +81,11 @@ class PublishersAddress extends AbstractEntity implements PublishersAddressEntit
     /**
      * City.
      *
-     * @var City
+     * @var ?City
      */
     #[ORM\JoinColumn(name: 'City_ID', referencedColumnName: 'City_ID', nullable: true)]
     #[ORM\ManyToOne(targetEntity: City::class)]
-    protected City $city;
+    protected ?City $city;
 
     /**
      * Street.

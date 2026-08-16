@@ -160,7 +160,7 @@ BaseEditor.prototype.clearSaveData = function(saveFields) {
     for (var key in saveFields) {
         var rules = saveFields[key];
         var current = $(rules.id);
-        if (current.prop('type') == 'text' || current.prop('tagName').toLowerCase() == 'textarea') {
+        if (current.prop('type') == 'text' || current.prop('tagName')?.toLowerCase() == 'textarea') {
             current.val('');
         }
     }
