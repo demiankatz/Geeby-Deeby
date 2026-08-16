@@ -57,7 +57,7 @@ class UserController extends AbstractBase
     {
         $id = $this->params()->fromRoute('id');
         $service = $this->getDbService(UserService::class);
-        $entity = (null === $id) ? null : $service->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $service->getByPrimaryKey((int)$id);
         if (!$entity) {
             return false;
         }

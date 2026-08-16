@@ -75,7 +75,7 @@ class SeriesController extends AbstractBase
     protected function getViewModelWithSeries($extras = [])
     {
         $id = $this->params()->fromRoute('id');
-        $entity = (null === $id) ? null : $this->getDbService(SeriesService::class)->getByPrimaryKey($id);
+        $entity = (null === $id) ? null : $this->getDbService(SeriesService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }

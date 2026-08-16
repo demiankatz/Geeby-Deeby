@@ -219,7 +219,7 @@ class PersonController extends AbstractBase
      */
     protected function getPersonViewModel($id, $sort = 'title')
     {
-        $entity = $this->getDbService(PersonService::class)->getByPrimaryKey($id);
+        $entity = $this->getDbService(PersonService::class)->getByPrimaryKey((int)$id);
         if (!is_object($entity)) {
             return false;
         }
