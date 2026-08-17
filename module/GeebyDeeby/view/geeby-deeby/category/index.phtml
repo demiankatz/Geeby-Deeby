@@ -21,8 +21,14 @@
         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>
       <?php endif; ?>
     <?php endif; ?>
-    <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
-      <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
-    </a><br />
+    <?php if (!empty($current['Earliest_Year'])): ?>
+      <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
+        <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+      </a> <span class="series-year">(<?=$this->escapeHtml($current['Earliest_Year'])?>)</span><br />
+    <?php else: ?>
+      <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">
+        <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>
+      </a><br />
+    <?php endif; ?>
   <?php endforeach; ?>
 <?php endif; ?>
