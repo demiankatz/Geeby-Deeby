@@ -83,7 +83,7 @@ class SeriesReviews extends Gateway
                 'Series_Reviews.User_ID = u.User_ID'
             );
             if (null !== $approved) {
-                $select->where->equalTo('Approved', $approved);
+                $select->where->equalTo('Series_Reviews.Approved', $approved);
             }
             $select->where->equalTo('Series_ID', $seriesID);
         };
@@ -118,7 +118,7 @@ class SeriesReviews extends Gateway
                 ['Series_Name', 's.Series_ID']
             );
             if (null !== $approved) {
-                $select->where->equalTo('Approved', $approved);
+                $select->where->equalTo('Series_Reviews.Approved', $approved);
             }
             if (null !== $userID) {
                 $select->where->equalTo('User_ID', $userID);

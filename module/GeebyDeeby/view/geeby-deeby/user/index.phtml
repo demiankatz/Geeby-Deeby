@@ -10,6 +10,12 @@
       <a class="button" href="<?=$this->url('user', ['id' => $user['User_ID'], 'extra' => 'Edit'])?>">
         Edit Account Details
       </a>
+      <a class="button" href="<?=$this->url('user', ['id' => $user['User_ID'], 'action' => 'ExportHave'])?>">
+        Export Have List
+      </a>
+      <a class="button" href="<?=$this->url('user', ['id' => $user['User_ID'], 'action' => 'ExportWant'])?>">
+        Export Want List
+      </a>
     </p>
     <?php $controls = ob_get_flush(); ?>
   </div>

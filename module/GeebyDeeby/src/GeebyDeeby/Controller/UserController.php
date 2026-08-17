@@ -32,6 +32,8 @@ namespace GeebyDeeby\Controller;
 use GeebyDeeby\Crypt\PasswordHasher;
 
 use function is_object;
+use function preg_replace;
+use function strtolower;
 
 /**
  * User controller
@@ -88,6 +90,68 @@ class UserController extends AbstractBase
         $view->collection = $formatted;
         $view->seriesNames = $seriesNames;
         return $view;
+    }
+
+    /**
+     * Export a user's collection list as CSV.
+     *
+     * @param string $status Collection status to export.
+     * @param string $suffix  File suffix to use in the download name.
+     *
+     * @return mixed
+     */
+    protected function exportCollectionAction($status, $suffix)
+    {
+        $view = $this->getViewModelWithUser();
+        if (!$view) {
+            return $this->forwardTo(__NAMESPACE__ . '\User', 'notfound');
+        }
+
+        $rows = $this->getDbTable('collections')->getForUser(
+            $view->user['User_ID'],
+            $status,
+            true
+        );
+
+        $csv = [];
+        $csv[] = ['Series', 'Position', 'Item', 'Comment'];
+
+        foreach ($rows as $current) {
+            $itemTitle = empty($current['Item_AltName'])
+                ? $current['Item_Name']
+                : $current['Item_AltName'];
+            $csv[] = [
+                $this->serviceLocator->get('GeebyDeeby\Articles')
+                    ->formatTrailingArticles($current['Series_Name'] ?? ''),
+                $current['Position'] ?? '',
+                $this->serviceLocator->get('GeebyDeeby\Articles')
+                    ->formatTrailingArticles($itemTitle),
+                $current['Collection_Note'] ?? '',
+            ];
+        }
+
+        $output = fopen('php://temp', 'r+');
+        foreach ($csv as $row) {
+            fputcsv($output, $row);
+        }
+        rewind($output);
+        $csv = stream_get_contents($output);
+        fclose($output);
+
+        $filename = preg_replace(
+            '/[^A-Za-z0-9_-]+/',
+            '_',
+            strtolower($view->user['Username'] . '-' . $suffix . '-list')
+        );
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'text/csv; charset=UTF-8');
+        $headers->addHeaderLine(
+            'Content-Disposition',
+            'attachment; filename="' . $filename . '.csv"'
+        );
+        $response->setContent("\xEF\xBB\xBF" . $csv);
+        return $response;
     }
 
     /**
@@ -210,6 +274,16 @@ class UserController extends AbstractBase
     }
 
     /**
+     * Export the items on a user's have list.
+     *
+     * @return mixed
+     */
+    public function exporthaveAction()
+    {
+        return $this->exportCollectionAction('have', 'have');
+    }
+
+    /**
      * "Show user" page
      *
      * @return mixed
@@ -227,6 +301,16 @@ class UserController extends AbstractBase
         $view->reviews = $this->getDbTable('itemsreviews')
             ->getReviewIDsByUser($view->user['User_ID']);
         return $view;
+    }
+
+    /**
+     * Export the items on a user's want list.
+     *
+     * @return mixed
+     */
+    public function exportwantAction()
+    {
+        return $this->exportCollectionAction('want', 'want');
     }
 
     /**
