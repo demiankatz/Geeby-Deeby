@@ -36,7 +36,6 @@ use GeebyDeebyTest\Feature\ServiceLocatorTrait;
 use GeebyDeebyTest\Integration\MinkTestCase;
 use Generator;
 
-use function in_array;
 use function is_string;
 
 /**
@@ -799,7 +798,7 @@ class IntegrationTest extends MinkTestCase
     ): void {
         $links = $page->findAll('css', "$listSelector a");
         $linkText = array_map(fn ($a) => $a->getText(), $links);
-        $this->assertTrue(in_array($expectedLink, $linkText), "Link list should include '$expectedLink'");
+        $this->assertContains($expectedLink, $linkText, "Link list should include '$expectedLink'");
         if (null !== $expectedLinkCount) {
             $this->assertCount($expectedLinkCount, $links);
         }
@@ -951,7 +950,14 @@ class IntegrationTest extends MinkTestCase
                     ?? (is_string($data[$key]) ? $data[$key] . ' (edited)' : $data[$key]);
             }
             $expectedDisplay ??= $linkToClick . ' (edited)';
-            return [$url, $linkToClick, $data, $listSelector, $expectedDisplay, $inModal];
+            return [
+                $url,
+                $linkToClick,
+                $data,
+                $listSelector,
+                $expectedDisplay,
+                $inModal,
+            ];
         };
 
         yield 'category' => $deriveTestCase($populateData['category 2']);
