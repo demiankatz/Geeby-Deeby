@@ -30,6 +30,8 @@
 namespace GeebyDeeby\Db\Service;
 
 use GeebyDeeby\Db\Entity\Category;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
+use GeebyDeeby\Db\Entity\Edition;
 use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesCategory;
 use GeebyDeeby\Db\Entity\SeriesCategoryEntityInterface;
@@ -67,9 +69,14 @@ class SeriesCategoryService extends AbstractDbService
      */
     public function getSeriesForCategory(int $categoryID): array
     {
-        $dql = 'SELECT s FROM ' . SeriesCategory::class . ' sc '
+        $dql = 'SELECT MIN(erdFiltered.year) AS Earliest_Year, s.id AS Series_ID, s.seriesName AS Series_Name FROM '
+            . SeriesCategory::class . ' sc '
             . 'INNER JOIN ' . Series::class . ' s ON sc.series=s.id '
-            . 'WHERE sc.category=:category ORDER BY s.seriesName';
+            . 'LEFT JOIN ' . Edition::class . ' e ON e.series=s.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erdFiltered ON e.id=erdFiltered.edition '
+            . 'AND erdFiltered.year > 0 '
+            . 'WHERE sc.category=:category '
+            . 'GROUP BY s.id, s.seriesName ORDER BY s.seriesName';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameter('category', $categoryID);
         return $query->getResult();
