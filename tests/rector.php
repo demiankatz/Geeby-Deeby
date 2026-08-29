@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
-use Rector\PHPUnit\CodeQuality\Rector\Expression\AssertArrayCastedObjectToAssertSameRector;
-use Rector\PHPUnit\CodeQuality\Rector\MethodCall\AssertIssetToSpecificMethodRector;
-use Rector\PHPUnit\CodeQuality\Rector\StmtsAwareInterface\DeclareStrictTypesTestsRector;
-use Rector\PHPUnit\Set\PHPUnitSetList;
-use Rector\Privatization\Rector\Class_\FinalizeTestCaseClassRector;
+use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 
 return RectorConfig::configure()
     ->withCache(
@@ -23,15 +19,11 @@ return RectorConfig::configure()
         doctrine: true,
         phpunit: true,
     )
-    ->withSets([
-        PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
-        PHPUnitSetList::PHPUNIT_CODE_QUALITY,
-    ])
     ->withSkip([
-        AssertArrayCastedObjectToAssertSameRector::class,
-        AssertIssetToSpecificMethodRector::class,
-        DeclareStrictTypesTestsRector::class,
-        FinalizeTestCaseClassRector::class,
+        // This method causes a breaking change in \GeebyDeeby\Db\EntityManagerFactory; that
+        // change won't be safe to make until we raise the minimum PHP version to 8.4. We
+        // should remove this exclusion at that time.
+        RenameMethodRector::class,
     ])
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(6)
