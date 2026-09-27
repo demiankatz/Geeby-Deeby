@@ -77,10 +77,10 @@ class File extends AbstractEntity implements FileEntityInterface
     /**
      * Description.
      *
-     * @var string
+     * @var ?string
      */
     #[ORM\Column(name: 'Description', type: 'text', length: 65535, nullable: true)]
-    protected string $description;
+    protected ?string $description;
 
     /**
      * File type.
@@ -156,7 +156,7 @@ class File extends AbstractEntity implements FileEntityInterface
      *
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -164,11 +164,11 @@ class File extends AbstractEntity implements FileEntityInterface
     /**
      * Set the description of the file.
      *
-     * @param string $description New description
+     * @param ?string $description New description
      *
      * @return static
      */
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;
