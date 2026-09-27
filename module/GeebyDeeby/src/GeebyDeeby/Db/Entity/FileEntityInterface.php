@@ -82,18 +82,18 @@ interface FileEntityInterface extends EntityInterface
     /**
      * Get a description of the file.
      *
-     * @return string
+     * @return ?string
      */
-    public function getDescription(): string;
+    public function getDescription(): ?string;
 
     /**
      * Set the description of the file.
      *
-     * @param string $description New description
+     * @param ?string $description New description
      *
      * @return static
      */
-    public function setDescription(string $description): static;
+    public function setDescription(?string $description): static;
 
     /**
      * Get associated file type.
