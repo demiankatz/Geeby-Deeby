@@ -147,7 +147,8 @@ class EditionsImageService extends AbstractDbService
      */
     public function getImagesForItem(int $itemID): array
     {
-        $dql = 'SELECT DISTINCT e.id AS Edition_ID, i.imagePath AS Image_Path, i.thumbPath AS Thumb_Path, '
+        $dql = 'SELECT DISTINCT e.id AS Edition_ID, e.editionName as Edition_Name, '
+            . 'i.imagePath AS Image_Path, i.thumbPath AS Thumb_Path, '
             . 'i.iiifUri AS IIIF_URI, i.position AS Position, n.id AS Note_ID, n.note AS Note, item.id AS Item_ID, '
             . 'MIN(erd.year) AS Earliest_Year '
             . 'FROM ' . EditionsImage::class . ' i '
