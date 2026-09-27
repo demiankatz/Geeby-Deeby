@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- Missing edition name display on item-level cover images.
 - Missing edition name display on item-level edition attribute summaries.
 
 ## 3.0.2 - 2026-08-16
