@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next release - TBD
+## 3.0.4 - 2026-09-30
 
 ### Added
 
@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- Incomplete Person suggestions.
 
 ## 3.0.3 - 2026-09-27
 
