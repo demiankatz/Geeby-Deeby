@@ -1778,10 +1778,15 @@ class IntegrationTest extends MinkTestCase
         yield 'edition' => ['Edition', 'test', $expectedEditions];
         yield 'item' => ['Item', 'test', "1: test alternate title [alt. title for test item]\n1: test item"];
         yield 'note' => ['Note', 'test', "1: test note\n2: test note 2 (edited)"];
-        yield 'person' => [
+        yield 'person (one name)' => [
             'Person',
             'test',
             "2: test-second-edited last\n3: test-third lastname\n1: test-first test-last, extra",
+        ];
+        yield 'person (two partial name)' => [
+            'Person',
+            'tes las',
+            "2: test-second-edited last\n3: test-third lastname",
         ];
         yield 'predicate' => ['Predicate', 'test', '1: test_predicate'];
         yield 'publisher' => ['Publisher', 'test', "1: test publisher\n2: test publisher 2 (edited)"];
