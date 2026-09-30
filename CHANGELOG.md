@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.0.4 - 2026-09-30
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Updated dependencies.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Incomplete Person suggestions.
+
 ## 3.0.3 - 2026-09-27
 
 ### Added

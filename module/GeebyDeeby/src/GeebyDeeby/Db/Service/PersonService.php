@@ -172,7 +172,7 @@ class PersonService extends AbstractDbService
         $dql .= ')';
         if ($last) {
             $dql .= ' AND (p.firstName LIKE :last OR p.lastName LIKE :last)';
-            $params['last'] = $last;
+            $params['last'] = $last . '%';
         }
         $dql .= ' ORDER BY p.lastName, p.firstName, p.extraDetails, p.id';
         $query = $this->entityManager->createQuery($dql);
