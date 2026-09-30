@@ -1783,7 +1783,7 @@ class IntegrationTest extends MinkTestCase
             'test',
             "2: test-second-edited last\n3: test-third lastname\n1: test-first test-last, extra",
         ];
-        yield 'person (two partial name)' => [
+        yield 'person (two partial names)' => [
             'Person',
             'tes las',
             "2: test-second-edited last\n3: test-third lastname",
