@@ -3,6 +3,22 @@ function setupSearch() {
     document.querySelectorAll('.search-controls').forEach((element) => {
         element.classList.remove('hidden');
     });
+    document.querySelectorAll('.series-details-toggle').forEach((element) => {
+        let detailsVisible = sessionStorage.getItem("series_details_visible") === "1";
+        if (detailsVisible) {
+            document.querySelectorAll('.series-details').forEach((element) => {
+                element.classList.remove('hidden');
+            });
+            element.checked = true;
+        }
+        element.addEventListener('change', (event) => {
+            detailsVisible = element.checked;
+            sessionStorage.setItem("series_details_visible", detailsVisible ? "1" : "0");
+            document.querySelectorAll('.series-details').forEach((element) => {
+                element.classList.toggle('hidden', !detailsVisible);
+            });
+        });
+    });
     document.querySelectorAll('.creator-toggle').forEach((element) => {
         let creatorsVisible = sessionStorage.getItem("creators_visible") === "1";
         let creatorsLoading = false;

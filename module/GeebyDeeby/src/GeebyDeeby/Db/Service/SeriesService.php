@@ -34,6 +34,8 @@ use Doctrine\DBAL\Query\UnionType;
 use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;
 use GeebyDeeby\Db\DoctrinePaginatorAdapter;
 use GeebyDeeby\Db\Entity\Edition;
+use GeebyDeeby\Db\Entity\EditionsReleaseDate;
+use GeebyDeeby\Db\Entity\Language;
 use GeebyDeeby\Db\Entity\Item;
 use GeebyDeeby\Db\Entity\Series;
 use GeebyDeeby\Db\Entity\SeriesAltTitle;
@@ -158,8 +160,17 @@ class SeriesService extends AbstractDbService
     public function keywordSearch(array $tokens): array
     {
         $where = array_map(fn ($i) => 's.seriesName LIKE ?' . $i, array_keys($tokens));
-        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name FROM ' . Series::class . ' s WHERE '
-            . implode(' AND ', $where) . ' ORDER BY s.seriesName';
+        $dql = 'SELECT MIN(erdFiltered.year) AS Earliest_Year, COUNT(DISTINCT i.id) AS Item_Count, '
+            . 's.id AS Series_ID, s.seriesName AS Series_Name, l.id AS Language_ID, l.languageName AS Language_Name '
+            . 'FROM '
+            . Series::class . ' s '
+            . 'INNER JOIN ' . Language::class . ' l ON s.language=l.id '
+            . 'LEFT JOIN ' . Edition::class . ' e ON e.series=s.id '
+            . 'LEFT JOIN ' . Item::class . ' i ON e.item=i.id '
+            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erdFiltered ON e.id=erdFiltered.edition '
+            . 'AND erdFiltered.year > 0 '
+            . 'WHERE ' . implode(' AND ', $where) . ' '
+            . 'GROUP BY s.id, s.seriesName, l.id, l.languageName ORDER BY s.seriesName';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));
         return $query->getResult();
