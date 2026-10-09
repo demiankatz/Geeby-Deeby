@@ -34,7 +34,7 @@ use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Element\TraversableElement;
 use Behat\Mink\Session;
 use DMore\ChromeDriver\ChromeDriver;
-use WebSocket\ConnectionException;
+use WebSocket\Exception\ConnectionLevelInterface as ConnectionException;
 
 use function call_user_func;
 use function floatval;
