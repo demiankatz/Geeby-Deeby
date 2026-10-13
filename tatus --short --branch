@@ -1,0 +1,113 @@
+warning: in the working copy of 'module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesCategoryService.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesService.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'module/GeebyDeeby/view/geeby-deeby/category/index.phtml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'module/GeebyDeeby/view/geeby-deeby/search/controls.phtml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'module/GeebyDeeby/view/geeby-deeby/search/list.phtml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/css/geeby-deeby.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/js/search.js', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesCategoryService.php b/module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesCategoryService.php[m
+[1mindex b2add8e6..c4869533 100644[m
+[1m--- a/module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesCategoryService.php[m
+[1m+++ b/module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesCategoryService.php[m
+[36m@@ -30,6 +30,8 @@[m
+ namespace GeebyDeeby\Db\Service;[m
+ [m
+ use GeebyDeeby\Db\Entity\Category;[m
+[32m+[m[32muse GeebyDeeby\Db\Entity\EditionsReleaseDate;[m
+[32m+[m[32muse GeebyDeeby\Db\Entity\Edition;[m
+ use GeebyDeeby\Db\Entity\Series;[m
+ use GeebyDeeby\Db\Entity\SeriesCategory;[m
+ use GeebyDeeby\Db\Entity\SeriesCategoryEntityInterface;[m
+[36m@@ -67,9 +69,14 @@[m [mclass SeriesCategoryService extends AbstractDbService[m
+      */[m
+     public function getSeriesForCategory(int $categoryID): array[m
+     {[m
+[31m-        $dql = 'SELECT s FROM ' . SeriesCategory::class . ' sc '[m
+[32m+[m[32m        $dql = 'SELECT MIN(erdFiltered.year) AS Earliest_Year, s.id AS Series_ID, s.seriesName AS Series_Name FROM '[m
+[32m+[m[32m            . SeriesCategory::class . ' sc '[m
+             . 'INNER JOIN ' . Series::class . ' s ON sc.series=s.id '[m
+[31m-            . 'WHERE sc.category=:category ORDER BY s.seriesName';[m
+[32m+[m[32m            . 'LEFT JOIN ' . Edition::class . ' e ON e.series=s.id '[m
+[32m+[m[32m            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erdFiltered ON e.id=erdFiltered.edition '[m
+[32m+[m[32m            . 'AND erdFiltered.year > 0 '[m
+[32m+[m[32m            . 'WHERE sc.category=:category '[m
+[32m+[m[32m            . 'GROUP BY s.id, s.seriesName ORDER BY s.seriesName';[m
+         $query = $this->entityManager->createQuery($dql);[m
+         $query->setParameter('category', $categoryID);[m
+         return $query->getResult();[m
+[1mdiff --git a/module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesService.php b/module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesService.php[m
+[1mindex 664c84d0..41b62dc6 100644[m
+[1m--- a/module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesService.php[m
+[1m+++ b/module/GeebyDeeby/src/GeebyDeeby/Db/Service/SeriesService.php[m
+[36m@@ -34,6 +34,8 @@[m [muse Doctrine\DBAL\Query\UnionType;[m
+ use Doctrine\ORM\Tools\Pagination\Paginator as PaginationPaginator;[m
+ use GeebyDeeby\Db\DoctrinePaginatorAdapter;[m
+ use GeebyDeeby\Db\Entity\Edition;[m
+[32m+[m[32muse GeebyDeeby\Db\Entity\EditionsReleaseDate;[m
+[32m+[m[32muse GeebyDeeby\Db\Entity\Language;[m
+ use GeebyDeeby\Db\Entity\Item;[m
+ use GeebyDeeby\Db\Entity\Series;[m
+ use GeebyDeeby\Db\Entity\SeriesAltTitle;[m
+[36m@@ -158,8 +160,17 @@[m [mclass SeriesService extends AbstractDbService[m
+     public function keywordSearch(array $tokens): array[m
+     {[m
+         $where = array_map(fn ($i) => 's.seriesName LIKE ?' . $i, array_keys($tokens));[m
+[31m-        $dql = 'SELECT s.id AS Series_ID, s.seriesName AS Series_Name FROM ' . Series::class . ' s WHERE '[m
+[31m-            . implode(' AND ', $where) . ' ORDER BY s.seriesName';[m
+[32m+[m[32m        $dql = 'SELECT MIN(erdFiltered.year) AS Earliest_Year, COUNT(DISTINCT i.id) AS Item_Count, '[m
+[32m+[m[32m            . 's.id AS Series_ID, s.seriesName AS Series_Name, l.id AS Language_ID, l.languageName AS Language_Name '[m
+[32m+[m[32m            . 'FROM '[m
+[32m+[m[32m            . Series::class . ' s '[m
+[32m+[m[32m            . 'INNER JOIN ' . Language::class . ' l ON s.language=l.id '[m
+[32m+[m[32m            . 'LEFT JOIN ' . Edition::class . ' e ON e.series=s.id '[m
+[32m+[m[32m            . 'LEFT JOIN ' . Item::class . ' i ON e.item=i.id '[m
+[32m+[m[32m            . 'LEFT JOIN ' . EditionsReleaseDate::class . ' erdFiltered ON e.id=erdFiltered.edition '[m
+[32m+[m[32m            . 'AND erdFiltered.year > 0 '[m
+[32m+[m[32m            . 'WHERE ' . implode(' AND ', $where) . ' '[m
+[32m+[m[32m            . 'GROUP BY s.id, s.seriesName, l.id, l.languageName ORDER BY s.seriesName';[m
+         $query = $this->entityManager->createQuery($dql);[m
+         $query->setParameters(array_map(fn ($token) => "%$token%", $tokens));[m
+         return $query->getResult();[m
+[1mdiff --git a/module/GeebyDeeby/view/geeby-deeby/category/index.phtml b/module/GeebyDeeby/view/geeby-deeby/category/index.phtml[m
+[1mindex 7c2eb58a..6ad22ef9 100644[m
+[1m--- a/module/GeebyDeeby/view/geeby-deeby/category/index.phtml[m
+[1m+++ b/module/GeebyDeeby/view/geeby-deeby/category/index.phtml[m
+[36m@@ -21,8 +21,14 @@[m
+         <h2><?=$this->escapeHtml($currentLetter)?><a href="#" style="float:right">Back to Top &uarr;</a></h2>[m
+       <?php endif; ?>[m
+     <?php endif; ?>[m
+[31m-    <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">[m
+[31m-      <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>[m
+[31m-    </a><br />[m
+[32m+[m[32m    <?php if (!empty($current['Earliest_Year'])): ?>[m
+[32m+[m[32m      <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">[m
+[32m+[m[32m        <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>[m
+[32m+[m[32m      </a> <span class="series-year">(<?=$this->escapeHtml($current['Earliest_Year'])?>)</span><br />[m
+[32m+[m[32m    <?php else: ?>[m
+[32m+[m[32m      <a href="<?=$this->url('series', ['id' => $current['Series_ID']])?>">[m
+[32m+[m[32m        <?=$this->escapeHtml($this->fixtitle($current['Series_Name']))?>[m
+[32m+[m[32m      </a><br />[m
+[32m+[m[32m    <?php endif; ?>[m
+   <?php endforeach; ?>[m
+[31m-<?php endif; ?>[m
+\ No newline at end of file[m
+[32m+[m[32m<?php endif; ?>[m
+[1mdiff --git a/module/GeebyDeeby/view/geeby-deeby/search/controls.phtml b/module/GeebyDeeby/view/geeby-deeby/search/controls.phtml[m
+[1mindex 889e2cab..dc8ac378 100644[m
+[1m--- a/module/GeebyDeeby/view/geeby-deeby/search/controls.phtml[m
+[1m+++ b/module/GeebyDeeby/view/geeby-deeby/search/controls.phtml[m
+[36m@@ -1,6 +1,7 @@[m
+ <?php $config = $this->config('search_controls') ?? []; ?>[m
+ <div class="results row">[m
+   <ul class="search-controls hidden">[m
+[32m+[m[32m    <li><label><input class="series-details-toggle" type="checkbox" /> Show details</label></li>[m
+     <li><label><input class="creator-toggle" type="checkbox" /> Show credits</label></li>[m
+     <?php foreach ($config['edition_attributes'] ?? [] as $id => $label): ?>[m
+       <li><label><input class="edition-attribute-toggle" data-edition-attribute-id="<?=$id?>" type="checkbox" /> <?=$this->escapeHtml($label)?></label></li>[m
+[1mdiff --git a/module/GeebyDeeby/view/geeby-deeby/search/list.phtml b/module/GeebyDeeby/view/geeby-deeby/search/list.phtml[m
+[1mindex cfd68b92..1e82818c 100644[m
+[1m--- a/module/GeebyDeeby/view/geeby-deeby/search/list.phtml[m
+[1m+++ b/module/GeebyDeeby/view/geeby-deeby/search/list.phtml[m
+[36m@@ -7,6 +7,25 @@[m
+         <a href="<?=$this->url(strtolower($this->prefix), ['id' => $current[$this->prefix . '_ID']])?>">[m
+           <?=$this->escapeHtml($this->fixtitle($current[$this->prefix . '_Name'] ?? $current[$this->prefix . 
