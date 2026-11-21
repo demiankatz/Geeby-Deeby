@@ -220,6 +220,10 @@ ul.search-controls li,
 ul.person-full-text li {
   list-style-type: none;
 }
+ul.search-controls li {
+  display: inline-block;
+  margin-right: 1rem;
+}
 
 .item-image {
   max-width: 100%;

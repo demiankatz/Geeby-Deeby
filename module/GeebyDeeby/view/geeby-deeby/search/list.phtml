@@ -7,6 +7,25 @@
         <a href="<?=$this->url(strtolower($this->prefix), ['id' => $current[$this->prefix . '_ID']])?>">
           <?=$this->escapeHtml($this->fixtitle($current[$this->prefix . '_Name'] ?? $current[$this->prefix . '_AltName']))?>
         </a>
+        <?php if ($this->prefix === 'Series'): ?>
+          <?php
+            $details = [];
+            if (!empty($current['Earliest_Year'])) {
+                $details[] = $current['Earliest_Year'];
+            }
+            if (!empty($current['Language_Name'])) {
+                $details[] = $current['Language_Name'];
+            }
+            if (isset($current['Item_Count'])) {
+                $details[] = $current['Item_Count'] . ' ' . ($current['Item_Count'] == 1 ? 'item' : 'items');
+            }
+          ?>
+          <?php if (count($details) > 0): ?>
+            <div class="hidden series-details" data-loaded="1" data-item-id="<?=$current[$this->prefix . '_ID']?>">
+              <span class="values"><?= $this->escapeHtml(implode(', ', $details)) ?></span>
+            </div>
+          <?php endif; ?>
+        <?php endif; ?>
         <?php if ($this->prefix === 'Item'): ?>
           <div class="hidden creators" data-loaded="0" data-item-id="<?=$current[$this->prefix . '_ID']?>">
             <span class="values"></span>
